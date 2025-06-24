@@ -1,7 +1,12 @@
 import torch
 from typing import Tuple
-
-
+from torch_geometric.nn import radius_graph
+from torch_geometric.data import Data
+from ase.io import read
+from ase.data import covalent_radii
+import numpy as np
+import os
+import shutil
 
 
 def translate_to_origine(coords, node_mask):
@@ -218,4 +223,143 @@ def check_mask_correct(variables: list, node_mask: torch.Tensor) -> None:
         if len(variable) > 0:
             assert_correctly_masked(variable, node_mask)
 
+
+
+def read_xyz_file(xyz_file):
+    """
+    Reads an XYZ file and extracts atomic positions and atomic numbers.
+    Args:
+        xyz_file (str): Path to the XYZ file.
+    Returns:
+        tuple: A tuple containing:
+            - cartesian_coordinates_tensor (torch.Tensor): Tensor of shape (N, 3) with the Cartesian coordinates of the atoms.
+            - atomic_numbers_tensor (torch.Tensor): Tensor of shape (N,) with the atomic numbers of the atoms.
+    """
+    atoms = read(xyz_file)
+    cartesian_coordinates = atoms.get_positions()
+    atomic_numbers = atoms.get_atomic_numbers()
+    
+    
+    cartesian_coordinates_tensor = torch.tensor(cartesian_coordinates, dtype=torch.float32)
+    atomic_numbers_tensor = torch.tensor(atomic_numbers, dtype=torch.int16)
+    
+    return cartesian_coordinates_tensor, atomic_numbers_tensor
+
+
+def create_pyg_graph(cartesian_coordinates_tensor, 
+                     atomic_numbers_tensor, 
+                     xyz_filename=None,
+                     r=5.0):
+    """
+    Creates a PyTorch Geometric graph from given cartesian coordinates and atomic numbers.
+    Args:
+        cartesian_coordinates_tensor (torch.Tensor): A tensor containing the cartesian coordinates of the atoms.
+        atomic_numbers_tensor (torch.Tensor): A tensor containing the atomic numbers of the atoms.
+        xyz_filename (str): The filename of the XYZ file.
+        r (float, optional): The radius within which to consider edges between nodes. Default is 5.0.
+    Returns:
+        torch_geometric.data.Data: A PyTorch Geometric Data object containing the graph representation of the molecule.
+    """
+
+    
+    edge_index = radius_graph(cartesian_coordinates_tensor, r=r)
+
+    data = Data(x=atomic_numbers_tensor.view(-1, 1).float(), 
+                pos=cartesian_coordinates_tensor, 
+                edge_index=edge_index,
+                filename=xyz_filename
+                )
+
+    return data
+
+
+def correct_edges(data, scale_factor=1.3):
+    """
+    Corrects the edges in a molecular grapSCALE_FACTORh based on covalent radii.
+    This function iterates over the nodes and their adjacent nodes in the given
+    molecular graph data. It calculates the bond length between each pair of nodes
+    and checks if it is within the allowed bond length threshold (sum of covalent radii plus relaxation factor).
+    If the bond length is valid, the edge is kept; otherwise, it is removed.
+    
+    Parameters:
+    data (torch_geometric.data.Data): The input molecular graph data containing node features,
+                                      edge indices, and positions.
+    scale_factor (float): The scaling factor to apply to the covalent radii. Default is 1.3.
+    
+    Returns:
+    torch_geometric.data.Data: The corrected molecular graph data with updated edge indices.
+    """    
+    atomic_nums = data.x.view(-1).int().tolist()
+    edge_index = data.edge_index
+    valid_edges = []
+    
+    for node in range(len(atomic_nums)):
+        adjacent_nodes = edge_index[1][edge_index[0] == node].tolist()
+        for adj_node in adjacent_nodes:
+            bond_length = torch.norm(data.pos[node] - data.pos[adj_node]).item()
+            
+            # Get covalent radii from ASE
+            r1 = covalent_radii[atomic_nums[node]]*scale_factor
+            r2 = covalent_radii[atomic_nums[adj_node]]*scale_factor
+            max_bond_length = r1 + r2 
+            
+            if bond_length <= max_bond_length:
+                valid_edges.append([node, adj_node])
+                
+    data.edge_index = torch.tensor(valid_edges, dtype=torch.long).t().contiguous()
+    return data
+
+def save_xyz_file(
+    path,
+    one_hot,
+    positions,
+    atom_decoder,
+    id_from=0,
+    name="molecule",
+    node_mask=None,
+    idxs=None,
+):
+    try:
+        os.makedirs(path, exist_ok=True)
+    except OSError:
+        pass
+
+    if node_mask is not None:
+        atomsxmol = torch.sum(node_mask, dim=1)
+    else:
+        atomsxmol = [one_hot.size(1)] * one_hot.size(0)
+
+    for batch_i in range(one_hot.size(0)):
+        try:
+        
+            if idxs is None:
+                idx = batch_i + id_from
+            else:
+                idx = idxs[batch_i]
+
+            f = open(name + "_" + "%03d.xyz" % (idx), "w")
+            f.write("%d\n\n" % atomsxmol[batch_i])
+            atoms = torch.argmax(one_hot[batch_i], dim=1)
+            n_atoms = int(atomsxmol[batch_i])
+            for atom_i in range(n_atoms):
+                atom = atoms[atom_i]
+                atom = atom_decoder[atom]
+                f.write(
+                    "%s %.9f %.9f %.9f\n"
+                    % (
+                        atom,
+                        positions[batch_i, atom_i, 0],
+                        positions[batch_i, atom_i, 1],
+                        positions[batch_i, atom_i, 2],
+                    )
+                )
+            f.close()
+            filename_xyz = name + "_" + "%03d.xyz" % (idx)
+            if os.path.exists(filename_xyz):
+                shutil.move(filename_xyz, path)
+            else:
+                pass
+        except Exception as e:
+            # print("Error in saving molecule: ", idx)
+            pass
 

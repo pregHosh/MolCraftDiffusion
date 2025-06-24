@@ -16,7 +16,7 @@ from torch_geometric.data import Data
 from torch_geometric.nn import knn_graph, radius_graph
 
 from MolecularDiffusion import core, utils
-from MolecularDiffusion.utils.geom_analyzer import smilify
+from MolecularDiffusion.utils.smilify import smilify_cell2mol as smilify
 from .feature import (
     onehot,
     atom_default_condense,
@@ -54,7 +54,7 @@ BASE_ATOM_VOCAB = [
     "I",
 ]
 
-class GraphDataset(torch_data.Dataset, core.Configurable):
+class GraphDataset(torch_data.Dataset):
     
     def load_smiles(self):
         pass
@@ -388,7 +388,7 @@ class GraphDataset(torch_data.Dataset, core.Configurable):
 
 
 
-class PointCloudDataset(torch_data.Dataset, core.Configurable):
+class PointCloudDataset(torch_data.Dataset):
 
     def load_xyz(
         self,

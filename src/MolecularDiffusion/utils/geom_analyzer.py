@@ -9,18 +9,15 @@ import networkx as nx
 import scipy as sp
 import torch
 import wandb
-from ase import neighborlist
+
 from ase.data import covalent_radii
-from ase.io.extxyz import read_xyz
 from rdkit import Chem
 from rdkit.Chem import AllChem
-from rdkit.Chem import MolToSmiles as mol2smi
 from torch_geometric.nn import radius_graph
 from torch_geometric.utils import to_networkx
 from torch_geometric.data import Data
 
-from cell2mol.xyz2mol import xyz2mol
-
+from MolecularDiffusion.utils.smilify import smilify_cell2mol as smilify
 # %% predefined data
 
 
@@ -687,50 +684,6 @@ def check_connected(am, tol=1e-8):
     eigvals, eigvects = np.linalg.eig(lap)
     return len(np.where(abs(eigvals) < tol)[0]) < 2
 
-def smilify(filename):
-    covalent_factors = [1.0, 1.05, 1.10, 1.15, 1.20]
-    ok = False
-    for covalent_factor in covalent_factors:
-        assert filename[-4:] == ".xyz"
-        name = filename.strip().split(".")[-2].split("/")[-1]
-        mol = next(read_xyz(open(filename)))
-        charge = sum(mol.get_initial_charges())
-        atoms = mol.get_chemical_symbols()
-        z = [int(zi) for zi in mol.get_atomic_numbers()]
-        coordinates = mol.get_positions()
-        cutoff = get_cutoffs(z, radii=ase.data.covalent_radii, mult=covalent_factor)
-        nl = neighborlist.NeighborList(
-            cutoff, self_interaction=False, bothways=True
-        )
-        nl.update(mol)
-        AC = nl.get_connectivity_matrix(sparse=False)
-        try:
-            assert check_connected(AC) and check_symmetric(AC)
-            mol = xyz2mol(
-                z,
-                coordinates,
-                AC,
-                covalent_factor,
-                charge=charge,
-                use_graph=True,
-                allow_charged_fragments=True,
-                embed_chiral=True,
-                use_huckel=True,
-            )
-            if isinstance(mol, list):
-                mol = mol[0]
-            smiles = mol2smi(mol)
-            if isinstance(smiles, list):
-                smiles = smiles[0]
-            ok = True
-            break
-        except Exception as m:
-            continue
-    if ok:
-        return smiles, mol, AC
-    else:
-        return None, None, AC
-
 def check_stability(positions, atom_type):
     """
     Check the stability of a molecule based on atom positions and types.
@@ -927,3 +880,45 @@ class BasicMolecularMetrics(object):
         uniqueness = uniqueness
         novelty = novelty
         return [validity, uniqueness, novelty], unique
+
+def check_stability(positions, atom_type):
+    """
+    Check the stability of a molecule based on atom positions and types.
+
+    Parameters:
+    - positions (np.ndarray): An array of shape (N, 3) containing the 3D coordinates of the atoms.
+    - atom_type (List[int]): A list of atom types corresponding to the positions.
+    - atom_decoder (Dict[int, str]): A dictionary mapping atom type indices to atom symbols.
+
+    Returns:
+    Tuple[bool, int, int]: A tuple containing a boolean indicating if the molecule is stable,
+                        the number of stable bonds, and the total number of atoms.
+    """
+    molecule_stable = 0
+    ratio_stable_atoms = 0
+    n_stable_atom = 0
+    TMP_XYZ_PATH = "tmp_analyze.xyz"
+    atom_symbols = [num2symbol[atom] for atom in atom_type]
+    save_xyz_tmp(TMP_XYZ_PATH, atom_symbols, positions)
+    smiles, mol, AC = smilify(TMP_XYZ_PATH)
+    if smiles is not None and mol is not None:
+        molecule = Chem.MolFromSmiles(smiles)
+        smiles = Chem.MolToSmiles(molecule, canonical=True)
+        molecule_stable = 1
+        ratio_stable_atoms = 1
+    else:
+        k = 0
+        for atom, bond in zip(atom_symbols, AC):
+            nbond = len(np.where(bond == 1)[0])
+            if nbond <= allowed_bonds[atom]:
+                n_stable_atom += 1
+            else:
+                continue
+                # print(f"{atom}{k} has {nbond} bonds")
+            k += 1
+        ratio_stable_atoms = n_stable_atom / len(atom_type)
+
+    if os.path.exists(TMP_XYZ_PATH):
+        os.remove(TMP_XYZ_PATH)
+
+    return molecule_stable, ratio_stable_atoms, smiles

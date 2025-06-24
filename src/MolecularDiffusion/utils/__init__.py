@@ -10,7 +10,8 @@ from .geom_utils import (
     translate_to_origine,
     sample_center_gravity_zero_gaussian_with_mask,
     sample_gaussian_with_mask,
-    random_rotation
+    random_rotation,
+    check_mask_correct,
 )
 
 from .molgraph_utils import (
@@ -22,7 +23,8 @@ from .molgraph_utils import (
 
 from .geom_analyzer import (
     check_connected,
-    check_quality    
+    check_quality,
+    check_stability
 )
 
 from .geom_constraint import (
@@ -59,9 +61,16 @@ from .io import (
     literal_eval,
     no_rdkit_log,
     CaptureStdIO,
-    capture_rdkit_log
+    capture_rdkit_log,
+    RankedLogger
 )
 
+from .pretty import task_wrapper
+
+
+from . import sascore
+
+from . import geom_metrics, geom_utils
 
 __all__ = [
     "coord2diff",
@@ -86,6 +95,7 @@ __all__ = [
     "find_close_points_torch_and_push_op2",
     "check_connected",
     "check_quality",
+    "check_stability",
     "prepare_context",
     "compute_mean_mad_from_dataloader",
     "cpu",
@@ -104,5 +114,10 @@ __all__ = [
     "literal_eval",
     "no_rdkit_log",
     "CaptureStdIO",
-    "capture_rdkit_log"
+    "capture_rdkit_log",
+    "RankedLogger",
+    "task_wrapper",
+    "sascore",
+    "geom_metrics",
+    "geom_utils"
 ]

@@ -14,8 +14,7 @@ from . import data
 from . import modules
 from . import utils
 from . import callbacks
-from . import tools
-from . import eval
+from . import runmodes
 
 __all__ = [
     "core",
@@ -23,6 +22,5 @@ __all__ = [
     "modules",
     "utils",
     "callbacks",
-    "tools",
-    "eval",
+    "runmodes"
 ] 

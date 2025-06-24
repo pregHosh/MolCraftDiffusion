@@ -10,7 +10,7 @@ from rdkit import Chem
 
 from MolecularDiffusion import core
 from MolecularDiffusion.callbacks import SP_regularizer
-from MolecularDiffusion.modules.layers import MLP, functional
+from MolecularDiffusion.modules.layers import common, functional
 from MolecularDiffusion.modules.models.en_diffusion import (
     DistributionNodes,
     DistributionProperty,
@@ -1030,7 +1030,7 @@ class GuidanceModelPrediction(Task, core.Configurable):
 
         if load_mlps_layer > 0:
             hidden_dims = [self.model.hidden_nf] * (self.num_mlp_layer - 1)
-            self.mlp = MLP(
+            self.mlp = common.MLP(
                 self.model.hidden_nf,
                 hidden_dims,
                 batch_norm=self.mlp_batch_norm,
@@ -1042,7 +1042,7 @@ class GuidanceModelPrediction(Task, core.Configurable):
         if self.num_class:
             if load_mlps_layer > 0:
                 n_layer_final = self.num_mlp_layer - load_mlps_layer - 1
-                self.mlp_final = MLP(
+                self.mlp_final = common.MLP(
                     hidden_dims[n_layer_final:-1],
                     sum(self.num_class) ,
                     batch_norm=self.mlp_batch_norm,
@@ -1050,7 +1050,7 @@ class GuidanceModelPrediction(Task, core.Configurable):
                 )
             else:
                 hidden_dims = [self.model.hidden_nf] * (self.num_mlp_layer - 1)
-                self.mlp = MLP(
+                self.mlp = common.MLP(
                     self.model.hidden_nf,
                     hidden_dims + [sum(self.num_class) ],
                     batch_norm=self.mlp_batch_norm,
@@ -1096,7 +1096,7 @@ class GuidanceModelPrediction(Task, core.Configurable):
         hidden_dims = [self.model.hidden_nf] * (self.num_mlp_layer - 1)
 
         if self.mlp is None:
-            self.mlp = MLP(
+            self.mlp = common.MLP(
                 self.model.hidden_nf,
                 hidden_dims + [sum(self.num_class) ],
                 batch_norm=self.mlp_batch_norm,
@@ -1104,7 +1104,7 @@ class GuidanceModelPrediction(Task, core.Configurable):
             )
         if self.load_mlps_layer > 0:
             n_layer_final = self.num_mlp_layer - self.load_mlps_layer - 1
-            self.mlp_final = MLP(
+            self.mlp_final = common.MLP(
                 hidden_dims[n_layer_final:-1],
                 sum(self.num_class) ,
                 batch_norm=self.mlp_batch_norm,

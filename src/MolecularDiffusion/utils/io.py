@@ -3,7 +3,8 @@ import sys
 import ast
 import tempfile
 from contextlib import contextmanager
-
+import logging
+from typing import Mapping, Optional
 from rdkit import RDLogger
 
 
@@ -84,3 +85,51 @@ def capture_rdkit_log():
         >>> print(log.content)
     """
     return CaptureStdIO(True, True)
+
+
+# Fallback rank utility — can be manually set if needed
+class RankState:
+    rank: Optional[int] = None
+
+    @classmethod
+    def get_rank(cls) -> int:
+        if cls.rank is not None:
+            return cls.rank
+        for env_var in ["LOCAL_RANK", "RANK"]:
+            if env_var in os.environ:
+                return int(os.environ[env_var])
+        return 0  # default to rank 0 if unknown
+
+    @classmethod
+    def set_rank(cls, value: int):
+        cls.rank = value
+
+
+def rank_prefixed_message(msg: str, rank: int) -> str:
+    return f"[rank: {rank}] {msg}"
+
+
+class RankedLogger(logging.LoggerAdapter):
+    """A multi-GPU-friendly python command line logger."""
+
+    def __init__(
+        self,
+        name: str = __name__,
+        rank_zero_only: bool = False,
+        extra: Optional[Mapping[str, object]] = None,
+    ) -> None:
+        logger = logging.getLogger(name)
+        super().__init__(logger=logger, extra=extra)
+        self.rank_zero_only = rank_zero_only
+
+    def log(self, level: int, msg: str, rank: Optional[int] = None, *args, **kwargs) -> None:
+        if self.isEnabledFor(level):
+            msg, kwargs = self.process(msg, kwargs)
+            current_rank = RankState.get_rank()
+            msg = rank_prefixed_message(msg, current_rank)
+            if self.rank_zero_only:
+                if current_rank == 0:
+                    self.logger.log(level, msg, *args, **kwargs)
+            else:
+                if rank is None or current_rank == rank:
+                    self.logger.log(level, msg, *args, **kwargs)

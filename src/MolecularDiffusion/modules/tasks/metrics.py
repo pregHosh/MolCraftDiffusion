@@ -8,7 +8,7 @@ from torch.nn import functional as F
 from torch_scatter import scatter_add, scatter_mean, scatter_max
 
 from MolecularDiffusion.modules.layers import functional
-from MolecularDiffusion.utils import sascorer
+from MolecularDiffusion.utils import sascore
 
 
 @contextmanager
@@ -119,7 +119,7 @@ def penalized_logP(pred):
                 mol.UpdatePropertyCache()
                 Chem.GetSymmSSSR(mol)
                 logp = Descriptors.MolLogP(mol)
-                sa = sascorer.calculateScore(mol)
+                sa = sascore.calculateScore(mol)
             logp = (logp - logp_mean) / logp_std
             sa = (sa - sa_mean) / sa_std
             cycle = (cycle - cycle_mean) / cycle_std
@@ -142,7 +142,7 @@ def SA(pred):
     sa = []
     for mol in pred:
         with no_rdkit_log():
-            score = sascorer.calculateScore(mol.to_molecule())
+            score = sascore.calculateScore(mol.to_molecule())
         sa.append(score)
 
     return torch.tensor(sa, dtype=torch.float, device=pred.device)
