@@ -343,7 +343,7 @@ def save_xyz_file(
             n_atoms = int(atomsxmol[batch_i])
             for atom_i in range(n_atoms):
                 atom = atoms[atom_i]
-                atom = atom_decoder[atom]
+                atom = atom_decoder[atom.item() if isinstance(atom, torch.Tensor) else atom]
                 f.write(
                     "%s %.9f %.9f %.9f\n"
                     % (

@@ -8,11 +8,12 @@ defaults:
 
 # output directory, generated dynamically on each run
 run:
-  dir: ${trainer.output_path}/${tasks.task_type}/runs/${name}_${now:%Y-%m-%d}_${now:%H-%M-%S}
+  dir: ${trainer.output_path}
+  # dir: ${trainer.output_path}/${tasks.task_type}/runs/${name}_${now:%Y-%m-%d}_${now:%H-%M-%S}
 
 job_logging:
   handlers:
     file:
       # Incorporates fix from https://github.com/facebookresearch/hydra/pull/2242
-      filename: ${hydra.runtime.output_dir}/${tasks.task_type}.log
+      filename: ${hydra.runtime.output_dir}/${name}_${now:%Y-%m-%d}_${now:%H-%M-%S}.log
 

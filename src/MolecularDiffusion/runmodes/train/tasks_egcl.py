@@ -270,6 +270,7 @@ class ModelTaskFactory:
                 self.task.load_state_dict(chk_point, strict=False)
             except FileNotFoundError:
                 print(f"Checkpoint not found at {self.chkpt_path}. Initializing model without loading.")
-          
+        
+        self.task.atom_vocab = self.atom_vocab
             
         return self.task

@@ -37,3 +37,8 @@ sp_regularizer_lambda_update_value: 1
 sp_regularizer_lambda_update_step: 100
 sp_regularizer_polynomial_p: 1.1
 sp_regularizer_warm_up_steps: 100
+
+# evaluator parameters
+metrics: "Validity Relax and connected" # Validity Relax and connected, Validity Strict and connected, Validity Strict, Validity Relax
+n_samples: 4
+generative_analysis: True

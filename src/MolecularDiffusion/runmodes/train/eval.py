@@ -21,7 +21,13 @@ from MolecularDiffusion.utils.geom_utils import (
 DIST_THRESHOLD = 3
 DIST_RELAX_BOND = 0.25
 ANGLE_RELAX = 20
+SCALE_FACTOR = 1.2
 
+import logging
+logging.basicConfig(
+    level=logging.INFO,  # Change to DEBUG, WARNING, ERROR, or CRITICAL as needed
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 def evaluate(
     task: str,
@@ -47,7 +53,7 @@ def evaluate(
         logger (Literal["wandb", "logging"], optional): The logging backend to use. Defaults to "logging".
         **kwargs: Additional keyword arguments specific to the task, such as:
             - output_generated_dir (str): Directory to save generated molecules (for diffusion).
-            - generative_analz (bool): Whether to perform generative analysis (for diffusion).
+            - generative_analysis (bool): Whether to perform generative analysis (for diffusion).
             - n_samples (int): Number of samples to generate (for diffusion).
             - metric (str): The metric to return from generative analysis (for diffusion).
 
@@ -68,7 +74,7 @@ def evaluate(
         _, test_loss, _ = solver.evaluate("test")
         val_loss = torch.tensor(val_loss).mean().item()
         test_loss = torch.tensor(test_loss).mean().item()
-        if kwargs.get("generative_analz", False):
+        if kwargs.get("generative_analysis", False):
             path = os.path.join(output_generated_dir, f"gen_xyz_{epoch}")
             performances = analyze_and_save(
                                 solver.model,
@@ -78,13 +84,19 @@ def evaluate(
                                 logger=logger,
                                 path_save=path,
                             )
-            
+
             metrics = performances[kwargs.get("metric", "Validity Relax and connected")]
+            logging.info("Improvement by {:.4f} at epoch {}".format(
+                metrics, epoch))
+            if metrics > current_best_metric:
+                solver.save(os.path.join(output_path, f"edm_{epoch}.pkl"))
+
         else:
             metrics = test_loss
-
-        if metrics > current_best_metric:
-            solver.save(os.path.join(output_path, f"edm_{epoch}.pkl"))
+            logging.info("Improvement by {:.4f} at epoch {}".format(
+                metrics, epoch))
+            if metrics < current_best_metric:
+                solver.save(os.path.join(output_path, f"edm_{epoch}.pkl"))
         
 
     elif task in ("property", "guidance"):
@@ -109,7 +121,6 @@ def evaluate(
             )
 
     return metrics
-
     
 def analyze_and_save(
     model,
@@ -135,7 +146,7 @@ def analyze_and_save(
         Dict[str, Any]: Dictionary summarizing validity and connectivity statistics.
     """
 
-    print(f"Analyzing molecule stability at epoch {epoch}...")
+    logging.warning(f"Analyzing molecule stability at epoch {epoch}...")
 
     batch_size = min(batch_size, n_samples)
     model.max_n_nodes = 150
@@ -203,16 +214,18 @@ def _validate_xyzs(path_save: str, logger: str) -> Dict[str, float]:
         "Validity Relax": torch.zeros(n, dtype=torch.float16),
         "Fully-connected": torch.zeros(n, dtype=torch.float16),
         "Percent Atom Valid": torch.zeros(n, dtype=torch.float16),
+        "Validity Relax and connected": torch.zeros(n, dtype=torch.float16),
+        "Validity Strict and connected": torch.zeros(n, dtype=torch.float16),
     }
 
     for idx, xyz in enumerate(tqdm(xyzs, desc="Processing XYZ files", total=n)):
         try:
             coords, atomic_numbers = read_xyz_file(xyz)
             data = create_pyg_graph(coords, atomic_numbers, r=DIST_THRESHOLD)
-            data = correct_edges(data, d_relax=DIST_RELAX_BOND)
+            data = correct_edges(data, scale_factor=SCALE_FACTOR)
 
             is_valid, percent_atom_valid, num_components, _, to_recheck = check_validity_v0(
-                data, angle_relax=ANGLE_RELAX, verbose=True
+                data, angle_relax=ANGLE_RELAX, verbose=False
             )
 
             metrics["Validity Strict"][idx] = float(is_valid)
@@ -223,7 +236,7 @@ def _validate_xyzs(path_save: str, logger: str) -> Dict[str, float]:
             metrics["Validity Strict and connected"][idx] = float(is_valid and num_components == 1)
 
         except Exception as e:
-            print(f"[Error] Failed to process {xyz}: {e}")
+            logging.debug(f"[Error] Failed to process {xyz}: {e}")
 
     df = pd.DataFrame({
         "Filename": xyzs,
@@ -238,6 +251,6 @@ def _validate_xyzs(path_save: str, logger: str) -> Dict[str, float]:
     elif logger == "logging":
         max_key_len = max(len(k) for k in summary)
         for key, value in summary.items():
-            print(f"{key:<{max_key_len}} : {value:.4f}")
+            logging.info(f"{key:<{max_key_len}} : {value:.4f}")
 
     return summary
