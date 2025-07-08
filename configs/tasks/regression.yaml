@@ -1,18 +1,18 @@
 _target_: MolecularDiffusion.runmodes.train.ModelTaskFactory_EGCL
-task_type: diffusion
+task_type: regression
 atom_vocab: ${data.atom_vocab}
 condition_names: []
-hidden_size: 192
+hidden_size: 512
 act_fn:
-__target__: torch.nn.SiLU
-num_layers: 1
+  _target_: torch.nn.ReLU
+num_layers: 5
 attention: True
 tanh: True
-num_sublayers: 9
+num_sublayers: 1
 sin_embedding: False
 aggregation_method: "sum"
 dropout: 0.0
-normalization: False
+normalization: True
 include_cosine: True
 norm_constant: 1.0
 normalization_factor: 1.0

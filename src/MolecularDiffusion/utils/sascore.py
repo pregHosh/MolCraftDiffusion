@@ -6,7 +6,7 @@ import pickle
 from rdkit import Chem
 from rdkit.Chem import rdMolDescriptors
 
-from torchdrug import utils
+from MolecularDiffusion import utils
 
 module = sys.modules[__name__]
 path = os.path.dirname(__file__)

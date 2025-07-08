@@ -1,10 +1,10 @@
 _target_: MolecularDiffusion.runmodes.train.ModelTaskFactory_EGCL
-task_type: diffusion
+task_type: guidance
 atom_vocab: ${data.atom_vocab}
 condition_names: []
 hidden_size: 192
 act_fn:
-__target__: torch.nn.SiLU
+  _target_: torch.nn.SiLU
 num_layers: 1
 attention: True
 tanh: True

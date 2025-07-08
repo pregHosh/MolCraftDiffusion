@@ -2,6 +2,7 @@
 
 from typing import Any, Dict,  Optional, Tuple
 
+import pickle
 import hydra
 import rootutils
 import torch
@@ -31,11 +32,12 @@ from MolecularDiffusion.utils import (
     task_wrapper,
     seed_everything,
 )
+import os
 
 log = RankedLogger(__name__, rank_zero_only=True)
 
 
-def engine_wrapper(task_module, data_module, trainer_module, logger_module):
+def engine_wrapper(task_module, data_module, trainer_module, logger_module, **kwargs):
     
     trainer_module.get_optimizer()
     trainer_module.get_scheduler()
@@ -58,13 +60,48 @@ def engine_wrapper(task_module, data_module, trainer_module, logger_module):
                 project_wandb=logger_module.project_wandb,
                 dir_wandb=trainer_module.output_path,
             )
-    
-    best_metrics = torch.inf
+
+    if task_module.task_type == "diffusion" and kwargs.get("generative_analysis"):
+        best_metrics = -torch.inf
+        models_to_save = {"node": task_module.task.node_dist_model}
+
+        if len(task_module.condition_names) > 0:
+            models_to_save["prop"] = task_module.task.prop_dist_model
+
+        with open(os.path.join(trainer_module.output_path, "edm_stat.pkl"), "wb") as f:
+            pickle.dump(models_to_save, f)       
+    else:
+        best_metrics = torch.inf
     for i in range(trainer_module.num_epochs):
         solver.train(num_epoch=1)
         if i % trainer_module.validation_interval == 0 or i == trainer_module.num_epochs - 1:
-            best_metrics = evaluate(task_module.task_name, solver, i, best_metrics, logger_module.logger, trainer_module.output_path)
-            
+            if  task_module.task_type == "diffusion":
+                output_generated_dir = os.path.join(
+                    trainer_module.output_path, "generated_molecules"
+                )
+                if not os.path.exists(output_generated_dir):
+                    os.makedirs(output_generated_dir, exist_ok=True)
+                best_metrics = evaluate(
+                    task_module.task_type, 
+                    solver, 
+                    i, 
+                    best_metrics, 
+                    logger_module.logger, 
+                    output_generated_dir=output_generated_dir,
+                    generative_analysis=kwargs.get("generative_analysis", False),
+                    n_samples=kwargs.get("n_samples", 100),
+                    metric=kwargs.get("metric", "Validity Relax and connected"),
+                    output_path=trainer_module.output_path
+                    )
+            else:
+                best_metrics = evaluate(
+                    task_module.task_type,
+                    solver,
+                    i,
+                    best_metrics,
+                    logger_module.logger,
+                    output_path=trainer_module.output_path
+                    )
     return best_metrics, solver
         
 #TODO to safely retrieve metric value for hydra-based hyperparameter optimization
@@ -86,7 +123,7 @@ def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
 
     log.info(f"Instantiating datamodule <{cfg.data._target_}>")
     data_module: DataModule = hydra.utils.instantiate(
-        cfg.data
+        cfg.data, task_type=cfg.tasks.task_type
     )
     data_module.load()
     log.info(f"Instantiating task <{cfg.tasks._target_}>")
@@ -101,8 +138,6 @@ def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     log.info(f"Instantiating loggers... <{cfg.logger._target_}>")
     logger_module: Logger = hydra.utils.instantiate(cfg.logger, project_wandb=project_name)
 
-
-
     object_dict = {
         "cfg": cfg,
         "datamodule": data_module,
@@ -111,10 +146,23 @@ def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         "logger": logger_module,
     }
 
-    metrics = engine_wrapper(task_module, data_module, trainer_module, logger_module)
-
+    # This does not work atm
     log.info("Logging hyperparameters!")
     log_hyperparameters(object_dict)
+    
+    if task_module.task_type == "diffusion":
+        metrics = engine_wrapper(
+            task_module, 
+            data_module,
+            trainer_module,
+            logger_module,
+            generative_analysis=cfg.tasks.generative_analysis,
+            n_samples=cfg.tasks.n_samples,
+            metric=cfg.tasks.metrics,
+            )
+    else:
+        metrics = engine_wrapper(task_module, data_module, trainer_module, logger_module)
+
 
     return metrics, object_dict
 

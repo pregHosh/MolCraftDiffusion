@@ -140,7 +140,7 @@ class DataModule:
                         pad_data=not self.data_efficient_collator,
                         verbose=1,
                     )
-            elif self.task_type in ("predictive", "guidance"):
+            elif self.task_type in ("regression", "guidance"):
                 dataset = pointcloud_dataset_pyG(
                     path=self.filename,
                     xyz_dir=self.xyz_dir,
@@ -155,7 +155,7 @@ class DataModule:
                     verbose=1,
                 )
             else:
-                raise ValueError(f"Unknown task_type '{self.task_type}'. Choose 'diffusion', 'predictive', or 'guidance'.")
+                raise ValueError(f"Unknown task_type '{self.task_type}'. Choose 'diffusion', 'regression', or 'guidance'.")
 
             # save to pickle if requested
             if self.save_pkl:

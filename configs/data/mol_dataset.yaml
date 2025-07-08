@@ -1,6 +1,5 @@
 _target_: MolecularDiffusion.runmodes.train.DataModule
 filename: /home/pregabalin/RF/blue_edm/data/qm9/dsgdb9nsd_4k.csv
-task_type: diffusion
 atom_vocab: [H,B,C,N,O,F,Al,Si,P,S,Cl,As,Se,Br,I,Hg,Bi]
 with_hydrogen: True
 node_feature: null
@@ -13,6 +12,6 @@ data_efficient_collator: True
 train_ratio: 0.8
 load_pkl: null
 save_pkl: data/test.pkl
-data_type: pointcloud
-batch_size: 32
+data_type: pointcloud # pyg or pointcloud
+batch_size: 8
 num_workers: 0

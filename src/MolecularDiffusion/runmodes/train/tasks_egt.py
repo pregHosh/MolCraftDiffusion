@@ -152,7 +152,7 @@ class ModelTaskFactory:
                 reference_indices=self.kwargs.get("reference_indices", None), # outpaint task
             )
 
-        elif self.task_type == "property":
+        elif self.task_type == "regression":
             model = GraphTransformer(
                 in_node_nf=self.in_node_nf,
                 in_edge_nf=1,
@@ -213,7 +213,7 @@ class ModelTaskFactory:
             )
 
         else:
-            raise ValueError(f"Unknown task_type '{self.task_type}'. Choose 'diffusion', 'property', or 'guidance'.")
+            raise ValueError(f"Unknown task_type '{self.task_type}'. Choose 'diffusion', 'regression', or 'guidance'.")
 
         n_params = sum(p.numel() for p in model.parameters() if p.requires_grad) # type: ignore
         print(f"\n{'='*50}\nNumber of parameters: {n_params}\n{'='*50}\n")

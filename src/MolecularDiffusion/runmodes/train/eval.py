@@ -99,17 +99,18 @@ def evaluate(
                 solver.save(os.path.join(output_path, f"edm_{epoch}.pkl"))
         
 
-    elif task in ("property", "guidance"):
+    elif task in ("regression", "guidance"):
         _, preds, targets = solver.evaluate("valid")
         _, preds_test, targets_test = solver.evaluate("test")
         preds = torch.cat(preds, dim=0)
         targets = torch.cat(targets, dim=0)
         mae_per_property = torch.mean(torch.abs(preds - targets), dim=0)
-        val_loss_avg = torch.mean(mae_per_property)
         y_preds = torch.cat(preds_test, dim=0)
         y_trues = torch.cat(targets_test, dim=0)
-
-        if metrics > val_loss_avg:
+        metrics = torch.mean(mae_per_property)
+        if metrics < current_best_metric:
+            logging.info("Improvement by {:.4f} at epoch {}".format(
+                metrics, epoch))
             solver.save(os.path.join(output_path, f"{task}_{epoch}.pkl"))
             np.save(
                 os.path.join(output_path, f"y_preds_{epoch}.npy"),
@@ -119,7 +120,7 @@ def evaluate(
                 os.path.join(output_path, f"y_trues_{epoch}.npy"),
                 y_trues.detach().cpu().numpy(),
             )
-
+            
     return metrics
     
 def analyze_and_save(

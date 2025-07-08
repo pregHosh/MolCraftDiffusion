@@ -11,7 +11,7 @@ class ModelTaskFactory:
     - Guidance-conditioned generation
 
     Constructor Parameters:
-        task_type (str): One of "diffusion", "property", or "guidance".
+        task_type (str): One of "diffusion", "regression", or "guidance".
         atom_vocab (list): List of atom vocabulary used for encoding.
         condition_names (list): List of conditional labels.
         hidden_size (int): Hidden dimension size.
@@ -190,7 +190,7 @@ class ModelTaskFactory:
                 reference_indices=self.kwargs.get("reference_indices", None), # outpaint task
             )
 
-        elif self.task_type == "property":
+        elif self.task_type == "regression":
             model = EGNN(
                 in_node_nf=self.in_node_nf,
                 hidden_nf=self.hidden_size,
@@ -204,7 +204,7 @@ class ModelTaskFactory:
                 normalization_factor=self.normalization_factor,
                 aggregation_method=self.aggregation_method,
                 dropout=self.dropout,
-                normalization=self.normalization,
+                normalization=False,
                 include_cosine=self.include_cosine,
             )
             self.task = ProperyPrediction(
@@ -253,12 +253,12 @@ class ModelTaskFactory:
                 mlp_dropout=self.kwargs.get("mlp_dropout", 0.0),
                 normalization=True,
                 weight_classes=self.kwargs.get("weight_classes"),
-                norm_values=self.kwargs.get("normalize_factors"),
+                norm_values=self.kwargs.get("norm_values"),
                 t_max=self.kwargs.get("t_max"),
             )
 
         else:
-            raise ValueError(f"Unknown task_type '{self.task_type}'. Choose 'diffusion', 'property', or 'guidance'.")
+            raise ValueError(f"Unknown task_type '{self.task_type}'. Choose 'diffusion', 'regression', or 'guidance'.")
 
         n_params = sum(p.numel() for p in model.parameters() if p.requires_grad) # type: ignore
         print(f"\n{'='*50}\nNumber of parameters: {n_params}\n{'='*50}\n")
