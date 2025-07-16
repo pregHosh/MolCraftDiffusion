@@ -216,7 +216,8 @@ class ModelTaskFactory:
                 num_mlp_layer=self.kwargs.get("num_mlp_layer", 2),
                 mlp_batch_norm=self.normalization,
                 mlp_dropout=self.kwargs.get("mlp_dropout", 0.0),
-                normalization=self.normalization
+                normalization=self.normalization,
+                num_class=len(self.kwargs.get("task_learn", ""))
             )
 
         elif self.task_type == "guidance":
@@ -255,6 +256,7 @@ class ModelTaskFactory:
                 weight_classes=self.kwargs.get("weight_classes"),
                 norm_values=self.kwargs.get("norm_values"),
                 t_max=self.kwargs.get("t_max"),
+                num_class=len(self.kwargs.get("task_learn", ""))
             )
 
         else:

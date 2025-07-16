@@ -211,7 +211,11 @@ class GenerativeFactory:
     
     
     def property_guidance(self):
-    
+        
+        target_function=self.condition_configs.get("target_function", None)
+        target_function.atom_vocab = self.task.atom_vocab   
+        target_function.norm_factor = self.task.norm_factor
+        
         fail_count = 0
         progress_bar = tqdm(range(self.num_generate), desc="Sampling molecules", leave=True)
         
@@ -242,7 +246,7 @@ class GenerativeFactory:
                 
                 
                 one_hot, charges, x, node_mask  = self.task.sample_guidance_conitional(
-                    target_function=self.condition_configs.get("target_function", None),
+                    target_function=target_function,
                     target_value=self.target_values,
                     nodesxsample=nodesxsample,
                     gg_scale=self.condition_configs.get("gg_scale",1),

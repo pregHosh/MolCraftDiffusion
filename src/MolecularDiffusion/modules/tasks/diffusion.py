@@ -1004,7 +1004,6 @@ class GuidanceModelPrediction(Task, core.Configurable):
         
         self.metric = metric
         self.criterion = {"mse":1}
-        self.THESHOLD = 4.5
 
         self.gamma = noisemodel
         self.task = task
@@ -1067,64 +1066,70 @@ class GuidanceModelPrediction(Task, core.Configurable):
                     dropout=self.mlp_dropout,
                 )
 
+
     def preprocess(self, train_set, valid_set=None, test_set=None):
         """
         Compute the mean and derivation for each task on the training set.
         """
         values = defaultdict(list)
 
-        for sample in train_set:
-            if not sample.get("labeled", True):
-                continue
-            for task in self.task:
-                if not math.isnan(sample[task]):
-                    values[task].append(sample[task])
-        mean = []
-        std = []
-        weight = []
-        num_class = []
-        for task, w in self.task.items():
-            value = torch.tensor(values[task])
-            mean.append(value.float().mean())
-            std.append(value.float().std())
-            weight.append(w)
-            if value.ndim > 1:
-                num_class.append(value.shape[1])
-            elif value.dtype == torch.long:
-                task_class = value.max().item()
-                if task_class == 1 and "bce" in self.criterion:
-                    num_class.append(1)
+        if train_set is not None:
+
+            for sample in train_set:
+                if not sample.get("labeled", True):
+                    continue
+                for task in self.task:
+                    if not math.isnan(sample[task]):
+                        values[task].append(sample[task])
+            mean = []
+            std = []
+            weight = []
+            num_class = []
+            for task, w in self.task.items():
+                value = torch.tensor(values[task])
+                mean.append(value.float().mean())
+                std.append(value.float().std())
+                weight.append(w)
+                if value.ndim > 1:
+                    num_class.append(value.shape[1])
+                elif value.dtype == torch.long:
+                    task_class = value.max().item()
+                    if task_class == 1 and "bce" in self.criterion:
+                        num_class.append(1)
+                    else:
+                        num_class.append(task_class + 1)
                 else:
-                    num_class.append(task_class + 1)
-            else:
-                num_class.append(1)
-        self.register_buffer("mean", torch.as_tensor(mean, dtype=torch.float))
-        self.register_buffer("std", torch.as_tensor(std, dtype=torch.float))
-        self.register_buffer("weight", torch.as_tensor(weight, dtype=torch.float))
-        self.num_class = self.num_class or num_class
+                    num_class.append(1)
+            self.register_buffer("mean", torch.as_tensor(mean, dtype=torch.float))
+            self.register_buffer("std", torch.as_tensor(std, dtype=torch.float))
+            self.register_buffer("weight", torch.as_tensor(weight, dtype=torch.float))
+            self.num_class = self.num_class or num_class
 
-        hidden_dims = [self.model.hidden_nf] * (self.num_mlp_layer - 1)
+            hidden_dims = [self.model.hidden_nf] * (self.num_mlp_layer - 1)
 
-        if self.mlp is None:
-            self.mlp = common.MLP(
-                self.model.hidden_nf,
-                hidden_dims + [sum(self.num_class) ],
-                batch_norm=self.mlp_batch_norm,
-                dropout=self.mlp_dropout,
-            )
-        if self.load_mlps_layer > 0:
-            n_layer_final = self.num_mlp_layer - self.load_mlps_layer - 1
-            self.mlp_final = common.MLP(
-                hidden_dims[n_layer_final:-1],
-                sum(self.num_class) ,
-                batch_norm=self.mlp_batch_norm,
-                dropout=self.mlp_dropout,
-            )
+            if self.mlp is None:
+                self.mlp = common.MLP(
+                    self.model.hidden_nf,
+                    hidden_dims + [sum(self.num_class) ],
+                    batch_norm=self.mlp_batch_norm,
+                    dropout=self.mlp_dropout,
+                )
+            if self.load_mlps_layer > 0:
+                n_layer_final = self.num_mlp_layer - self.load_mlps_layer - 1
+                self.mlp_final = common.MLP(
+                    hidden_dims[n_layer_final:-1],
+                    sum(self.num_class) ,
+                    batch_norm=self.mlp_batch_norm,
+                    dropout=self.mlp_dropout,
+                )
 
-        self.train_set_size = len(train_set)
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.weight_classes = self.weight_classes.to(device)
-
+            self.train_set_size = len(train_set)
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            self.weight_classes = self.weight_classes.to(device)
+        else:
+            self.train_set_size = 0
+            
+            
     def forward(self, batch):
         """"""
         all_loss = torch.tensor(0, dtype=torch.float32, device=self.device)
