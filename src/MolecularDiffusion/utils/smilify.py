@@ -6,11 +6,7 @@ import tempfile
 import os
 import re
 import signal
-import csv
-import glob
-import argparse
-from pathlib import Path
-from typing import List, Tuple, Sequence
+from typing import List, Tuple
 
 import torch
 from rdkit import Chem, RDLogger
