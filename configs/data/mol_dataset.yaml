@@ -1,6 +1,8 @@
 _target_: MolecularDiffusion.runmodes.train.DataModule
-filename: /home/pregabalin/RF/blue_edm/data/qm9/dsgdb9nsd_4k.csv
+root: /home/pregabalin/RF/blue_edm/data/qm9
+filename: /home/pregabalin/RF/blue_edm/data/qm9/dsgdb9nsd_4k.csv # 4k or ready
 atom_vocab: [H,B,C,N,O,F,Al,Si,P,S,Cl,As,Se,Br,I,Hg,Bi]
+dataset_name: qm9
 with_hydrogen: True
 node_feature: null
 max_atom: 29

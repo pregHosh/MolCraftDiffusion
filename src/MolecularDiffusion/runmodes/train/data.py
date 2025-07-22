@@ -31,6 +31,7 @@ class DataModule:
     """
     def __init__(
         self,
+        root: str,
         filename: str,
         task_type: str,
         atom_vocab: list,
@@ -48,7 +49,9 @@ class DataModule:
         data_type: str = "pointcloud",
         batch_size: int = 32,
         num_workers: int = 0,
+        dataset_name: str = "suisei",
     ):
+        self.root = root
         self.filename = filename
         self.task_type = task_type
         self.atom_vocab = atom_vocab
@@ -64,6 +67,7 @@ class DataModule:
         self.load_pkl = load_pkl
         self.save_pkl = save_pkl
         self.data_type = data_type.lower()
+        self.dataset_name = dataset_name    
         
         self.train_set = None
         self.valid_set = None
@@ -114,7 +118,8 @@ class DataModule:
         
                 if self.data_type == "pyg":
                     dataset = pointcloud_dataset_pyG(
-                        path=self.filename,
+                        root=self.root,
+                        df_path=self.filename,
                         xyz_dir=self.xyz_dir,
                         coord_file=self.coord_file,
                         natoms_file=self.natoms_file,
@@ -124,11 +129,13 @@ class DataModule:
                         with_hydrogen=self.with_hydrogen,
                         forbidden_atoms=self.forbidden_atom,
                         pad_data=not self.data_efficient_collator,
+                        dataset_name=self.dataset_name,
                         verbose=1,
                     )
                 else:
                     dataset = pointcloud_dataset(
-                        path=self.filename,
+                        root=self.root,
+                        df_path=self.filename,
                         xyz_dir=self.xyz_dir,
                         coord_file=self.coord_file,
                         natoms_file=self.natoms_file,
@@ -138,11 +145,13 @@ class DataModule:
                         with_hydrogen=self.with_hydrogen,
                         forbidden_atoms=self.forbidden_atom,
                         pad_data=not self.data_efficient_collator,
+                        dataset_name=self.dataset_name,
                         verbose=1,
                     )
             elif self.task_type in ("regression", "guidance"):
                 dataset = pointcloud_dataset_pyG(
-                    path=self.filename,
+                    root=self.root,
+                    df_path=self.filename,
                     xyz_dir=self.xyz_dir,
                     coord_file=self.coord_file,
                     natoms_file=self.natoms_file,
@@ -152,6 +161,7 @@ class DataModule:
                     with_hydrogen=self.with_hydrogen,
                     forbidden_atoms=self.forbidden_atom,
                     pad_data=not self.data_efficient_collator,
+                    dataset_name=self.dataset_name,
                     verbose=1,
                 )
             else:

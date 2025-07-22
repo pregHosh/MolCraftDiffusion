@@ -30,6 +30,13 @@ class Meter(object):
         self.silent = silent
         self.logger = logger
 
+        # Set up the root logger to avoid printing to console
+        root_logger = logging.getLogger()
+        for handler in root_logger.handlers[:]:
+            root_logger.removeHandler(handler)
+        root_logger.addHandler(logging.NullHandler())
+        root_logger.setLevel(logging.CRITICAL)
+        
     def log(self, record, category="train/batch"):
         """
         Log a record.
@@ -46,7 +53,7 @@ class Meter(object):
             step_id = self.batch_id
         elif category.endswith("epoch"):
             step_id = self.epoch_id
-        # self.logger.log(record, step_id=step_id, category=category)
+        self.logger.log(record, step_id=step_id, category=category)
 
     def log_config(self, config):
         """

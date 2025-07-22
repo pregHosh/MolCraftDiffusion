@@ -203,7 +203,7 @@ class Engine(core.Configurable):
         self.meter = core.Meter(
             log_interval=log_interval, silent=self.rank > 0, logger=logger
         )
-        self.meter.log_config(self.config_dict())
+        # self.meter.log_config(self.config_dict())
 
     def train(self, num_epoch=1, batch_per_epoch=None, use_amp=False):
         """
@@ -301,11 +301,6 @@ class Engine(core.Configurable):
                             module.logger.info(
                                 f"Gradient - {name}: {param.grad.norm().item()}"
                             )
-                            # if torch.isnan(param.grad).any():
-                            #     print(f"Faulty Grad: {param.grad}")
-                            #     print(
-                            #         f"Params whose grad is NaN: {param[torch.isnan(param.grad)]}"
-                            #     )
 
                 metrics.append(metric)
                 if torch.isnan(torch.tensor(grad_norms)).any() and self.debug:

@@ -42,6 +42,7 @@ def engine_wrapper(task_module, data_module, trainer_module, logger_module, **kw
     trainer_module.get_optimizer()
     trainer_module.get_scheduler()
     
+    
     solver = Engine(
                 task_module.task,
                 data_module.train_set,
@@ -134,10 +135,9 @@ def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     log.info(f"Instantiating trainer <{cfg.trainer._target_}>")
     trainer_module: OptimSchedulerFactory = hydra.utils.instantiate(cfg.trainer, parameters=task_module.task.parameters())
 
-    project_name = trainer_module.output_path.split('/')[-1] if "/" in trainer_module.output_path else trainer_module.output_path
+    name_wandb = trainer_module.output_path.split('/')[-1] if "/" in trainer_module.output_path else trainer_module.output_path
     log.info(f"Instantiating loggers... <{cfg.logger._target_}>")
-    logger_module: Logger = hydra.utils.instantiate(cfg.logger, project_wandb=project_name)
-
+    logger_module: Logger = hydra.utils.instantiate(cfg.logger, name_wandb=name_wandb)
     object_dict = {
         "cfg": cfg,
         "datamodule": data_module,

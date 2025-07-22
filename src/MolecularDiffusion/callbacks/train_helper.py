@@ -1,7 +1,9 @@
 import numpy as np
 import torch
+import logging
 
-
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.CRITICAL)
 class Queue:
     def __init__(self, max_len=50):
         self.items = []
@@ -57,7 +59,7 @@ class gradient_clipping:
             gradnorm_queue.add(float(grad_norm))
 
         if float(grad_norm) > self.max_grad_norm:
-            print(
+            logger.info(
                 f"Clipped gradient with value {grad_norm:.1f} "
                 f"while allowed {self.max_grad_norm:.1f}"
             )

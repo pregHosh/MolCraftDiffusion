@@ -1049,15 +1049,8 @@ class PointCloudDataset(torch_data.Dataset):
                     self.xyzs.append(xyz)
                     for task, value in zip(tasks, values):
                         self.targets[task].append(value)
+            self.smiles_list, self.atom_vocab, self.with_hydrogen = pickle.load(fin)
 
-        fname, _ = os.path.splitext(pkl_file)
-        fname = fname + ".smi"
-        self.smiles_list = []
-
-        if os.path.exists(fname):
-            with open(fname, "r") as f:
-                for line in f:
-                    self.smiles_list.append(line.strip())
 
     def save_pickle(self, pkl_file, verbose=0, cheap_data=False):
         """
@@ -1101,15 +1094,15 @@ class PointCloudDataset(torch_data.Dataset):
                     ),
                     fout,
                 )
-        if len(self.smiles_list) > 0:
-            fname = pkl_file.split(".")[0]
-            fname = fname + ".smi"
-            with open(fname, "w") as f:
-                for smi in self.smiles_list:
-                    if smi is None:
-                        smi = ""
-                    f.write(smi + "\n")
-
+            pickle.dump(
+                (
+                    self.smiles_list,
+                    self.atom_vocab,
+                    self.with_hydrogen,
+                ),
+                fout,
+            )
+            
     def __getitem__(self, index):
         if isinstance(index, int):
             return self.get_item(index)
@@ -1125,10 +1118,10 @@ class PointCloudDataset(torch_data.Dataset):
     def atom_types(self):
         """All atom types."""
 
-        if len(self.smiles_list) == 0:
-            raise ValueError(
-                "No SMILES available in the dataset or not yet converted from XYZ."
-            )
+        # if len(self.smiles_list) == 0:
+        #     raise ValueError(
+        #         "No SMILES available in the dataset or not yet converted from XYZ."
+        #     )
         atom_types = set()
         for symbol in self.atom_vocab:
             atom_types.add(atomic_numbers[symbol])
