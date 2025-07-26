@@ -23,7 +23,7 @@ For a more detailed installation, including setting up a conda environment and i
     pip install torch_geometric
 
     # install other libraries
-    pip install decorator numpy==1.26.4 scipy rdkit-pypi networkx matplotlib pandas scikit-learn tqdm pyyaml omegaconf ase morfeus cosymlib wandb torch-scatter torch-cluster -f https://data.pyg.org/whl/torch-2.5.1+cu121.html
+    pip install decorator numpy==1.26.4 scipy rdkit-pypi networkx matplotlib pandas scikit-learn tqdm pyyaml omegaconf ase morfeus cosymlib morfeus-ml wandb torch-scatter torch-cluster -f https://data.pyg.org/whl/torch-2.5.1+cu121.html
 
     pip install hydra-core==1.* hydra-colorlog rootutils
 

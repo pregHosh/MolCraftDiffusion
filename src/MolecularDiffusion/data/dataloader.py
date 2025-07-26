@@ -3,15 +3,11 @@ from collections.abc import Mapping, Sequence
 
 import torch
 import torch_geometric
-from torchdrug import data
 
 
 def graph_collate(batch):
     """
     Convert any list of same nested container into a container of tensors.
-
-    For instances of :class:`data.Graph <torchdrug.data.Graph>`, they are collated
-    by :meth:`data.Graph.pack <torchdrug.data.Graph.pack>`.
 
     Parameters:
         batch (list): list of samples with the same nested container
@@ -35,8 +31,6 @@ def graph_collate(batch):
         return torch.tensor(batch)
     elif isinstance(elem, (str, bytes)):
         return batch
-    elif isinstance(elem, data.Graph):
-        return elem.pack(batch)
     elif isinstance(elem, torch_geometric.data.Data):
         return torch_geometric.data.Batch.from_data_list(batch)
     elif isinstance(elem, Mapping):
@@ -54,9 +48,6 @@ def graph_collate(batch):
 def pointcloud_collate_v0(batch, to_keep=None):
     """
     Convert any list of same nested container into a container of tensors.
-
-    For instances of :class:`data.Graph <torchdrug.data.Graph>`, they are collated
-    by :meth:`data.Graph.pack <torchdrug.data.Graph.pack>`.
 
     Parameters:
         batch (list): list of samples with the same nested container
@@ -108,10 +99,7 @@ def pointcloud_collate(vram_size=40):
     def _pointcloud_collate(batch):
         """
         Convert any list of same nested container into a container of tensors.
-
-        For instances of :class:`data.Graph <torchdrug.data.Graph>`, they are collated
-        by :meth:`data.Graph.pack <torchdrug.data.Graph.pack>`.
-
+        
         Parameters:
             batch (list): list of samples with the same nested container
         """
