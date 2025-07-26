@@ -1,7 +1,7 @@
 MolecularDiffusion
 ==================
-
-A molecular diffusion framework for machine learning applications.
+![workflow](./images/overview.png)
+A 3D Molecular Generation Framework for Data-driven Molecular Applications.
 
 Installation
 -----------
