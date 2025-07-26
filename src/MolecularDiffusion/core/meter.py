@@ -5,8 +5,8 @@ from collections import defaultdict
 import numpy as np
 import torch
 
-from torchdrug import core
-from torchdrug.utils import pretty
+
+from MolecularDiffusion.utils import pretty
 
 logger = logging.getLogger(__name__)
 
