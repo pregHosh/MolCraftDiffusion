@@ -62,6 +62,10 @@ def engine_wrapper(task_module, data_module, trainer_module, logger_module, **kw
                 dir_wandb=trainer_module.output_path,
             )
 
+    if trainer_module.precision in ["bf16", 16]:
+        use_amp = True
+    elif trainer_module == 32:
+        use_amp = False
     if task_module.task_type == "diffusion" and kwargs.get("generative_analysis"):
         best_metrics = -torch.inf
         models_to_save = {"node": task_module.task.node_dist_model}
@@ -74,7 +78,7 @@ def engine_wrapper(task_module, data_module, trainer_module, logger_module, **kw
     else:
         best_metrics = torch.inf
     for i in range(trainer_module.num_epochs):
-        solver.train(num_epoch=1)
+        solver.train(num_epoch=1, use_amp=use_amp, precision=trainer_module.precision)
         if i % trainer_module.validation_interval == 0 or i == trainer_module.num_epochs - 1:
             if  task_module.task_type == "diffusion":
                 output_generated_dir = os.path.join(
@@ -92,7 +96,9 @@ def engine_wrapper(task_module, data_module, trainer_module, logger_module, **kw
                     generative_analysis=kwargs.get("generative_analysis", False),
                     n_samples=kwargs.get("n_samples", 100),
                     metric=kwargs.get("metric", "Validity Relax and connected"),
-                    output_path=trainer_module.output_path
+                    output_path=trainer_module.output_path,
+                    use_amp=use_amp,
+                    precision=trainer_module.precision,
                     )
             else:
                 best_metrics = evaluate(

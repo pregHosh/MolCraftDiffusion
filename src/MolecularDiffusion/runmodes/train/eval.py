@@ -36,6 +36,8 @@ def evaluate(
     current_best_metric: float = torch.inf,
     logger: Literal["wandb", "logging"] = "logging",
     output_path: str = None,
+    use_amp: bool = False,
+    precision: str = "bf16",
     **kwargs
 ):
     """
@@ -70,8 +72,8 @@ def evaluate(
         if output_generated_dir is None:
             output_generated_dir = "generated_molecules"
 
-        _, val_loss, _ = solver.evaluate("valid")
-        _, test_loss, _ = solver.evaluate("test")
+        _, val_loss, _ = solver.evaluate("valid", use_amp=use_amp, precision=precision)
+        _, test_loss, _ = solver.evaluate("test", use_amp=use_amp, precision=precision)
         val_loss = torch.tensor(val_loss).mean().item()
         test_loss = torch.tensor(test_loss).mean().item()
         if kwargs.get("generative_analysis", False):

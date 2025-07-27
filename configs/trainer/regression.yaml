@@ -20,3 +20,4 @@ gradient_clip_mode: null # value or norm
 grad_clip_value: null
 chkpt_path: 
 output_path: logs
+precision: 32 # 16, 32, bf16

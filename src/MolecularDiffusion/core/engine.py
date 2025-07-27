@@ -205,7 +205,7 @@ class Engine(core.Configurable):
         )
         # self.meter.log_config(self.config_dict())
 
-    def train(self, num_epoch=1, batch_per_epoch=None, use_amp=False):
+    def train(self, num_epoch=1, batch_per_epoch=None, use_amp=False, precision="bf16"):
         """
         Train the model.
 
@@ -216,7 +216,11 @@ class Engine(core.Configurable):
             num_epoch (int, optional): number of epochs
             batch_per_epoch (int, optional): number of batches per epoch
             use_amp(bool, optional): whether to use automatic mixed precision (AMP) during training.
+            precision (str, optional): precision to use for AMP, either "bfloat16" or "float16".
+        Returns:
+            dict: metrics
         """
+        amp_dtype = torch.bfloat16 if precision == "bf16" else torch.float16
         sampler = torch_data.DistributedSampler(
             self.train_set, self.world_size, self.rank
         )
@@ -278,7 +282,7 @@ class Engine(core.Configurable):
                     batch = utils.cuda(batch, device=self.device)
 
                 # Forward pass with autocast
-                with autocast(enabled=use_amp, dtype=torch.float16, device_type=self.device.type):
+                with autocast(enabled=use_amp, dtype=amp_dtype, device_type=self.device.type):
                     loss, metric = model(batch)
                     if not loss.requires_grad:
                         raise RuntimeError(
@@ -379,7 +383,7 @@ class Engine(core.Configurable):
 
 
     @torch.no_grad()
-    def evaluate(self, split, log=True, use_amp=False):
+    def evaluate(self, split, log=True, use_amp=False, precision="bfloat16"):
         """
         Evaluate the model.
 
@@ -387,10 +391,12 @@ class Engine(core.Configurable):
             split (str): split to evaluate. Can be ``train``, ``valid`` or ``test``.
             log (bool, optional): log metrics or not
             use_amp (bool, optional): whether to use automatic mixed precision (AMP) during evaluation.
-
+            precision (str, optional): precision to use for AMP, either "bfloat16" or "float16".
         Returns:
             dict: metrics
         """
+        
+        amp_dtype = torch.bfloat16 if precision == "bf16" else torch.float16
         if comm.get_rank() == 0:
             logger.warning(pretty.separator)
             logger.warning("Evaluate on %s" % split)
@@ -430,7 +436,7 @@ class Engine(core.Configurable):
 
             try:
                 # AMP: Autocast context for mixed precision during evaluation
-                with autocast(enabled=use_amp, dtype=torch.float16, device_type=self.device.type):
+                with autocast(enabled=use_amp, dtype=amp_dtype, device_type=self.device.type):
                     pred, target = model.predict_and_target(batch)
                     preds.append(pred)
                     targets.append(target)
