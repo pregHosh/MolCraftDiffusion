@@ -61,11 +61,11 @@ def engine_wrapper(task_module, data_module, trainer_module, logger_module, **kw
                 project_wandb=logger_module.project_wandb,
                 dir_wandb=trainer_module.output_path,
             )
-
+    use_amp = False
     if trainer_module.precision in ["bf16", 16]:
         use_amp = True
-    elif trainer_module == 32:
-        use_amp = False
+
+    best_checkpoints = []
     if task_module.task_type == "diffusion" and kwargs.get("generative_analysis"):
         best_metrics = -torch.inf
         models_to_save = {"node": task_module.task.node_dist_model}
@@ -86,11 +86,12 @@ def engine_wrapper(task_module, data_module, trainer_module, logger_module, **kw
                 )
                 if not os.path.exists(output_generated_dir):
                     os.makedirs(output_generated_dir, exist_ok=True)
-                best_metrics = evaluate(
+                best_metrics, best_checkpoints = evaluate(
                     task_module.task_type, 
                     solver, 
                     i, 
                     best_metrics, 
+                    best_checkpoints, 
                     logger_module.logger, 
                     output_generated_dir=output_generated_dir,
                     generative_analysis=kwargs.get("generative_analysis", False),
@@ -101,16 +102,17 @@ def engine_wrapper(task_module, data_module, trainer_module, logger_module, **kw
                     precision=trainer_module.precision,
                     )
             else:
-                best_metrics = evaluate(
+                best_metrics, best_checkpoints = evaluate(
                     task_module.task_type,
                     solver,
                     i,
                     best_metrics,
+                    best_checkpoints,
                     logger_module.logger,
                     output_path=trainer_module.output_path
                     )
     return best_metrics, solver
-        
+    
 #TODO to safely retrieve metric value for hydra-based hyperparameter optimization
 @task_wrapper
 def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:

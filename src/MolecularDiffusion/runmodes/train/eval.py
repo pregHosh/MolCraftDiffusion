@@ -29,11 +29,57 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
+def _manage_best_checkpoints(
+    metric_value: float,
+    epoch: int,
+    solver: Engine,
+    output_path: str,
+    best_checkpoints: list,
+    task_name: str,
+    top_k: int = 3,
+    higher_is_better: bool = False,
+) -> list:
+    """Manages saving top-k checkpoints and removing older, less performant ones."""
+    
+    is_top_k = False
+    if len(best_checkpoints) < top_k:
+        is_top_k = True
+    else:
+        best_checkpoints.sort(key=lambda x: x[0], reverse=higher_is_better)
+        worst_best_metric = best_checkpoints[-1][0]
+        if higher_is_better:
+            if metric_value > worst_best_metric:
+                is_top_k = True
+        else:
+            if metric_value < worst_best_metric:
+                is_top_k = True
+
+    if is_top_k:
+        checkpoint_name = f"{task_name}-epoch={epoch}-metric={metric_value:.4f}.pkl"
+        new_checkpoint_path = os.path.join(output_path, checkpoint_name)
+        solver.save(new_checkpoint_path)
+        print(f"\033[92m🚀 Saved new top-k checkpoint: {new_checkpoint_path}\033[0m")
+
+        best_checkpoints.append((metric_value, new_checkpoint_path))
+
+        if len(best_checkpoints) > top_k:
+            best_checkpoints.sort(key=lambda x: x[0], reverse=higher_is_better)
+            worst_checkpoint_to_remove = best_checkpoints.pop()
+            worst_checkpoint_path = worst_checkpoint_to_remove[1]
+            try:
+                os.remove(worst_checkpoint_path)
+                logging.info(f"Removed old top-k checkpoint: {worst_checkpoint_path}")
+            except OSError as e:
+                logging.warning(f"Error removing old checkpoint {worst_checkpoint_path}: {e}")
+
+    return best_checkpoints
+
 def evaluate(
     task: str,
     solver: Engine,
     epoch: int = 0,
     current_best_metric: float = torch.inf,
+    best_checkpoints: list = None,
     logger: Literal["wandb", "logging"] = "logging",
     output_path: str = None,
     use_amp: bool = False,
@@ -52,6 +98,7 @@ def evaluate(
         task (str): The type of task being evaluated ("diffusion", "property", or "guidance").
         solver (Engine): The training engine containing the model and evaluation methods.
         epoch (int, optional): The current training epoch, used for naming generated files. Defaults to 0.
+        best_checkpoints (list, optional): A list of tuples containing the metric and path of the best checkpoints.
         logger (Literal["wandb", "logging"], optional): The logging backend to use. Defaults to "logging".
         **kwargs: Additional keyword arguments specific to the task, such as:
             - output_generated_dir (str): Directory to save generated molecules (for diffusion).
@@ -59,12 +106,16 @@ def evaluate(
             - n_samples (int): Number of samples to generate (for diffusion).
             - metric (str): The metric to return from generative analysis (for diffusion).
 
-    Returns: float
-        The performance metric for the given task.
-        - For 'diffusion' with generative analysis: The specified performance metric (e.g., "Validity Relax and connected").
-        - For 'diffusion' without generative analysis: The test loss.
-        - For 'property' or 'guidance': The average MAE on the validation set.
+    Returns:
+        Tuple[float, list]: A tuple containing the best performance metric and the list of best checkpoints.
     """
+    if best_checkpoints is None:
+        best_checkpoints = []
+
+    if output_path:
+        last_path = os.path.join(output_path, "last.pkl")
+        solver.save(last_path)
+        logging.info(f"Saved last model checkpoint to {last_path}")
     
     if task == "diffusion":
         
@@ -88,17 +139,25 @@ def evaluate(
                             )
 
             metrics = performances[kwargs.get("metric", "Validity Relax and connected")]
-            logging.info("Improvement by {:.4f} at epoch {}".format(
-                metrics, epoch))
+
             if metrics > current_best_metric:
-                solver.save(os.path.join(output_path, f"edm_{epoch}.pkl"))
+                print(f"\033[92m🚀 New best metric at epoch {epoch}: {metrics:.4f} (previously: {current_best_metric:.4f})\033[0m")
+                current_best_metric = metrics
+                best_checkpoints = _manage_best_checkpoints(
+                    metric_value=metrics, epoch=epoch, solver=solver, output_path=output_path,
+                    best_checkpoints=best_checkpoints, task_name="edm-gen", top_k=3, higher_is_better=True
+                )
 
         else:
             metrics = test_loss
-            logging.info("Improvement by {:.4f} at epoch {}".format(
-                metrics, epoch))
+
             if metrics < current_best_metric:
-                solver.save(os.path.join(output_path, f"edm_{epoch}.pkl"))
+                print(f"\033[92m🚀 New best metric at epoch {epoch}: {metrics:.4f} (previously: {current_best_metric:.4f})\033[0m")
+                current_best_metric = metrics
+                best_checkpoints = _manage_best_checkpoints(
+                    metric_value=metrics, epoch=epoch, solver=solver, output_path=output_path,
+                    best_checkpoints=best_checkpoints, task_name="edm-loss", top_k=3, higher_is_better=False
+                )
         
 
     elif task in ("regression", "guidance"):
@@ -111,9 +170,12 @@ def evaluate(
         y_trues = torch.cat(targets_test, dim=0)
         metrics = torch.mean(mae_per_property)
         if metrics < current_best_metric:
-            logging.info("Improvement by {:.4f} at epoch {}".format(
-                metrics, epoch))
-            solver.save(os.path.join(output_path, f"{task}_{epoch}.pkl"))
+            print(f"\033[92m🚀 New best metric at epoch {epoch}: {metrics:.4f} (previously: {current_best_metric:.4f})\033[0m")
+            current_best_metric = metrics
+            best_checkpoints = _manage_best_checkpoints(
+                metric_value=metrics, epoch=epoch, solver=solver, output_path=output_path,
+                best_checkpoints=best_checkpoints, task_name=task, top_k=3, higher_is_better=False
+            )
             np.save(
                 os.path.join(output_path, f"y_preds_{epoch}.npy"),
                 y_preds.detach().cpu().numpy(),
@@ -123,7 +185,7 @@ def evaluate(
                 y_trues.detach().cpu().numpy(),
             )
             
-    return metrics
+    return current_best_metric, best_checkpoints 
     
 def analyze_and_save(
     model,
