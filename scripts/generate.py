@@ -16,8 +16,10 @@ from MolecularDiffusion.utils import (
     RankedLogger,
     # task_wrapper,
     seed_everything,
+    recursive_module_to_device
 )
 import os
+
 
 
 log = RankedLogger(__name__, rank_zero_only=True)
@@ -26,8 +28,13 @@ log = RankedLogger(__name__, rank_zero_only=True)
 def load_model(chkpt_directory, total_step=0):
 
     model_path = os.path.join(chkpt_directory, "edm_chem.pkl")
-    with open(os.path.join(chkpt_directory, "edm_stat.pkl"), "rb") as file:
-        edm_stats = pickle.load(file)   
+    
+    try:
+        with open(os.path.join(chkpt_directory, "edm_stat.pkl"), "rb") as file:
+            edm_stats = pickle.load(file)   
+    except ImportError:
+        edm_stats = {"node": None}
+    
 
     engine = Engine(None, None, None, None, None)
     engine = engine.load_from_checkpoint(model_path)
@@ -42,8 +49,7 @@ def load_model(chkpt_directory, total_step=0):
     engine.model.eval()
     return engine
 
-
-
+    
 # @task_wrapper
 def generate(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """Generate mode
@@ -66,6 +72,13 @@ def generate(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     if not(hasattr(solver.model, 'atom_vocab')) or solver.model.atom_vocab is None:
         solver.model.atom_vocab = cfg.atom_vocab
     
+    if not(hasattr(solver.model, 'device')):
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        recursive_module_to_device(solver.model, device)
+
+
+
     log.info(f"Instantiating generator... <{cfg.interference._target_}>")
     generator: GenerativeFactory = hydra.utils.instantiate(cfg.interference, task=solver.model)
 

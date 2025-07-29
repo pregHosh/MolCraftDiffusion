@@ -62,6 +62,7 @@ class OptimSchedulerFactory:
         grad_clip_value: float = 1.0,
         chkpt_path: str = None,
         output_path: str = None,
+        precision: int | str = 32,
     ):
         self.parameters = parameters
         self.optimizer_choice = optimizer_choice.lower()
@@ -75,6 +76,7 @@ class OptimSchedulerFactory:
         self.num_epochs = num_epochs
         self.train_set = train_set
         self.batch_size = batch_size
+        self.precision = precision
         
         if queue_size > 0:
             self.gradnorm_queue = Queue(max_len=queue_size)

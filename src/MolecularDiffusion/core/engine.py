@@ -12,7 +12,7 @@ from torch.amp import GradScaler, autocast
 from torch.utils import data as torch_data
 
 from MolecularDiffusion import utils, core, data
-from MolecularDiffusion.utils import comm, pretty
+from MolecularDiffusion.utils import comm, pretty, recursive_module_to_device
 from MolecularDiffusion.callbacks import EMA, Queue, gradient_clipping
 
 module = sys.modules[__name__]
@@ -167,6 +167,9 @@ class Engine(core.Configurable):
         if self.device.type == "cuda" and task is not None:
             task = task.cuda(self.device)
 
+        if not(hasattr(task, 'device')):
+            recursive_module_to_device(task, self.device)
+            
         self.model = task
         self.ema_decay = ema_decay
         if ema_decay > 0:
@@ -421,7 +424,7 @@ class Engine(core.Configurable):
             shuffle=False,
         )
 
-        model = self.ema_model
+        model = self.model
         model.split = split
         model.eval()
 

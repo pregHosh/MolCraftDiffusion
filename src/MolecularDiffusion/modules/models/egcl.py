@@ -119,7 +119,7 @@ class  EGNN(nn.Module):
                     normalization=normalization,
                 ),
             )
-        self.to(self.device)
+        # self.to(self.device)
         
         self.adapter_module = adapter_module    
         if self.adapter_module:

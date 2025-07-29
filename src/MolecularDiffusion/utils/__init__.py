@@ -47,7 +47,8 @@ from .torch import (
     cat,
     stack,
     seed_everything,
-    get_vram_size
+    get_vram_size,
+    recursive_module_to_device
 )
 
 from .file import (
@@ -109,6 +110,7 @@ __all__ = [
     "stack",
     "seed_everything",
     "get_vram_size",
+    "recursive_module_to_device",
     "download",
     "smart_open",
     "extract",

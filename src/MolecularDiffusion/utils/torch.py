@@ -1,6 +1,7 @@
 
 
 import torch
+from torch import nn
 
 from MolecularDiffusion import data # TODO
 import os
@@ -10,6 +11,29 @@ import random
 MIN_SEED_VALUE = 0
 MAX_SEED_VALUE = 2**32 - 1
 
+
+def recursive_module_to_device(module: nn.Module, device: torch.device):
+    """
+    Recursively assigns a given device to all submodules of a torch.nn.Module.
+
+    Args:
+        module (nn.Module): The main module to which the device needs to be assigned.
+        device (torch.device): The target device (e.g., torch.device('cuda') or torch.device('cpu')).
+    """
+    for child_name, child_module in module.named_children():
+        # If the child module has its own children, recurse
+        if len(list(child_module.children())) > 0:
+            recursive_module_to_device(child_module, device)
+        # Move the current child module to the specified device
+        child_module.to(device)
+        child_module.device = device
+
+    # Finally, move the top-level module itself to the device
+    module.to(device)
+    module.device = device
+    
+    
+    
 def cpu(obj, *args, **kwargs):
     """
     Transfer any nested container of tensors to CPU.
