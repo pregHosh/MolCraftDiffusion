@@ -6,8 +6,6 @@ from tqdm import tqdm
 import pandas as pd
 import numpy as np
 import itertools
-from scipy.spatial.distance import cosine, euclidean
-from ase.data import chemical_symbols
 from torch_geometric.data import Data
 from torch_geometric.utils import to_networkx
 import networkx as nx
@@ -25,43 +23,21 @@ from .geom_constant import (
     allow_n_bonds, 
     valid_valencies
 )
+
+from posebusters import PoseBusters
+from openbabel import pybel
+import logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s"
+)
+logging.getLogger("posebusters").setLevel(logging.CRITICAL)
+logger = logging.getLogger(__name__)
 SCORES_THRESHOLD = 3.0
 
 EDGE_THRESHOLD = 4
 SCALE_FACTOR = 1.2
-#%% Diversity
 
-def sim_3d_distribution(xyz_list, type="eucledian"):
-    
-    soap_representations = []
-    for xyz in tqdm(xyz_list, total=len(xyz_list)):
-        try:
-            soap_representations.append(xyz_2_soap(xyz))
-        except:
-            pass
-    soap_paris = itertools.combinations(soap_representations, 2)    
-    
-    similarities = []
-    for soap_pair in soap_paris:
-        try:
-            if type == "euclidean":
-                similarity = euclidean(soap_pair[0][0], soap_pair[1][0])
-            elif type == "cosine":
-                similarity = 1 - cosine(soap_pair[0][0], soap_pair[1][0])
-            similarities.append(similarity)
-        except Exception as e:
-            print(f"Error in calculating similarity due to {e}")
-            pass
-        
-    return np.asarray(similarities)
-
-def diversity_score(xyzs, 
-                    type_3d="euclidean",
-                    ):
-    
-    similarity_3ds = sim_3d_distribution(xyzs, type_3d)
-        
-    return similarity_3ds
 
 #%%
 def compare_graph_topology(graph1, graph2):
@@ -226,7 +202,6 @@ def check_validity_v0(data,
     return is_valid, percent_atom_valid, num_components, bad_atoms, to_be_recheck_flag
 
 
-
 def check_validity_v1(data, 
                    score_threshold=3,
                    scale_factor=1.3,
@@ -363,10 +338,10 @@ def check_chem_validity(mol_list,
         Total counts of atoms encountered, keyed by atom symbol.
     good_smiles : list of str
         Canonical SMILES strings for molecules deemed chemically valid and not
-        containing disconnected fragments (“.”).
+        containing disconnected fragments (".").
     bad_smiles_broken : list of str
         Canonical SMILES for molecules that are chemically valid but contain
-        disconnected fragments (i.e. salts or mixtures with “.” in the SMILES).
+        disconnected fragments (i.e. salts or mixtures with "." in the SMILES).
     bad_smiles_chem : list of str
         Canonical SMILES for molecules that failed the valency checks.
 
@@ -441,7 +416,6 @@ def check_chem_validity(mol_list,
         bad_smiles_chem,
     )
     
-
 def smilify_wrapper(xyzs, xyz2mol):
     smiles_list = []
     mol_list = []
@@ -469,6 +443,53 @@ def smilify_wrapper(xyzs, xyz2mol):
 
     validity = len(smiles_list) / len(xyzs)
     return validity, smiles_list, mol_list, dicts
+
+#%% postbuster
+
+def xyz_to_pdb(xyz_file_path, pdb_file_path):
+    """Converts an XYZ file to a PDB file using OpenBabel."""
+    try:
+        mol = next(pybel.readfile("xyz", xyz_file_path))
+        mol.write("pdb", pdb_file_path, overwrite=True)
+    except Exception as e:
+        logger.error(f"Error converting {xyz_file_path} to PDB: {e}")
+
+
+def load_molecules_from_xyz(xyz_dir):
+    """Converts all XYZ files in a directory to RDKit Mol objects."""
+    xyz_files = glob.glob(os.path.join(xyz_dir, "*.xyz"))
+    valid_molecules = []
+
+    for xyz_file in xyz_files:
+        try:
+            pdb_file = os.path.splitext(xyz_file)[0] + ".pdb"
+            xyz_to_pdb(xyz_file, pdb_file)
+            mol = Chem.MolFromPDBFile(pdb_file, removeHs=False)
+            if mol is not None:
+                valid_molecules.append(mol)
+        except Exception as e:
+            logger.warning(f"Skipping {xyz_file} due to error: {e}")
+
+    total = len(xyz_files)
+    success = len(valid_molecules)
+    percent = (success / total) * 100 if total > 0 else 0.0
+
+    logger.info(f"Successfully converted {success} out of {total} XYZ files ({percent:.2f}%).")
+
+    return valid_molecules
+
+
+def run_postbuster(mols):
+    """
+    Run PoseBusters on a list of RDKit molecules.
+    """
+    if not mols:
+        logger.warning("No valid molecules loaded. Exiting.")
+        return None
+
+    buster = PoseBusters(config="mol")
+    results = buster.bust(mols)
+    return results
 
 
 #%% All

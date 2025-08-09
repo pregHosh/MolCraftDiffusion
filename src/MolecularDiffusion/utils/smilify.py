@@ -143,7 +143,7 @@ def smilify_cell2mol(filename, z=None, coordinates=None, timeout=30):
                 break
 
             except Exception as e:
-                print("Attempt failed for factor", covalent_factor, "error:", e) # verb
+                # print("Attempt failed for factor", covalent_factor, "error:", e) # verb
                 continue
     except TimeoutException:
         print(f"{filename}: timed out after {timeout} seconds")
@@ -319,9 +319,9 @@ def guess_bond_matrix(
                 adj[i, j] = adj[j, i] 
     return adj
 
-def read_xyz(path: os.PathLike | str) -> Tuple[List[str], torch.Tensor]:
-    atoms = ase_read(path)
-    return atoms.get_chemical_symbols(), torch.tensor(atoms.get_positions(), dtype=torch.float)
+# def read_xyz(path: os.PathLike | str) -> Tuple[List[str], torch.Tensor]:
+#     atoms = ase_read(path)
+#     return atoms.get_chemical_symbols(), torch.tensor(atoms.get_positions(), dtype=torch.float)
 
 class Molecule:
     def __init__(

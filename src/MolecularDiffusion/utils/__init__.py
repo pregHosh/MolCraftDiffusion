@@ -75,6 +75,11 @@ from . import sascore
 
 from . import geom_metrics, geom_utils
 
+from .smilify import (
+    smilify_cell2mol,
+    smilify_openbabel,
+)
+
 __all__ = [
     "coord2diff",
     "remove_mean",
@@ -125,5 +130,8 @@ __all__ = [
     "task_wrapper",
     "sascore",
     "geom_metrics",
-    "geom_utils"
+    "geom_utils",
+    
+    "smilify_cell2mol",
+    "smilify_openbabel",
 ]
