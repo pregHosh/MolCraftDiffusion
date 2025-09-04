@@ -8,10 +8,17 @@ docs/source/_autosummary
 *.db
 *.csv
 *.out
+*.xyz
+*.pkl
+*.npy
+*.smi
+*.log
+*.png
 
 wandb/
 outputs/
 training/
 lightning_logs/
+trained_models/
 
 logs/

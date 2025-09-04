@@ -28,6 +28,7 @@ dependencies = [
     "tqdm>=4.62.0",
     "pyyaml>=6.0",
     "omegaconf>=2.3.0",
+    "fire>=0.5.0",
 ]
 
 [project.optional-dependencies]
@@ -59,6 +60,7 @@ Documentation = "https://moleculardiffusion.readthedocs.io"
 
 [project.scripts]
 moleculardiffusion = "MolecularDiffusion.cli:main"
+MolCraftDiff = "MolecularDiffusion.molcraftdiff:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

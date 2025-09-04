@@ -52,6 +52,8 @@ def load_model(chkpt_path):
     engine = Engine(None, None, None, None, None)
     
     engine = engine.load_from_checkpoint(chkpt_path)
+    engine.model.mlp.dropout.p = 0
+    # engine.model.load_state_dict(torch.load(chkpt_path)["model"])
     engine.model.eval()
     
 
@@ -59,7 +61,7 @@ def load_model(chkpt_path):
 
 
 
-def xyz2mol(xyz_file, atom_vocab, node_feature, edge_type="distance", radius=4.0, n_neigh=5, device="cpu"):
+def xyz2mol(xyz_file, atom_vocab, node_feature, edge_type="fully_connected", radius=4.0, n_neigh=5, device="cpu"):
     """
     Converts an XYZ file into a PyTorch Geometric Data object suitable for the model.
 
@@ -72,7 +74,7 @@ def xyz2mol(xyz_file, atom_vocab, node_feature, edge_type="distance", radius=4.0
                                       or None for only one-hot encoding.
         edge_type (str, optional): Type of graph edge construction.
                                    "distance" (radius_graph), "neighbor" (knn_graph),
-                                   or "fully_connected". Defaults to "distance".
+                                   or "fully_connected". Defaults to "fully_connected" as in the original implementation.
         radius (float, optional): Radius for "distance" edge type. Defaults to 4.0.
         n_neigh (int, optional): Number of neighbors for "neighbor" edge type. Defaults to 5.
         device (str, optional): The device to move the resulting Data object to ('cpu' or 'cuda').
@@ -90,6 +92,7 @@ def xyz2mol(xyz_file, atom_vocab, node_feature, edge_type="distance", radius=4.0
     n_nodes = len(mol_xyz.atoms)
 
     node_features = []
+    
     for atom in mol_xyz.atoms:
         node_features.append(
             onehot(atom.element, atom_vocab, allow_unknown=False)
@@ -139,11 +142,9 @@ def xyz2mol(xyz_file, atom_vocab, node_feature, edge_type="distance", radius=4.0
     diag_mask = ~torch.eye(n_nodes, dtype=torch.bool)
     edge_mask *= diag_mask
     edge_mask = edge_mask.view(1 * n_nodes * n_nodes, 1)
-    x = coords.view(1 * n_nodes, -1).clone()
-
     h = node_features.view(1 * n_nodes, -1).clone()
-
-    if edge_type == "distance":
+    
+    if edge_type == "fully_connected":
         edge_index = radius_graph(coords, r=radius)
     elif edge_type == "neighbor":
         edge_index = knn_graph(coords, k=n_neigh)
@@ -156,27 +157,42 @@ def xyz2mol(xyz_file, atom_vocab, node_feature, edge_type="distance", radius=4.0
     else:
         raise ValueError("Unknown edge type %s" % edge_type)
     
-
     graph_data = Data(
         x=h,
         pos=coords,
         atomic_numbers=charges,
-        natoms=torch.tensor([n_nodes]),
+        natoms=torch.tensor(n_nodes),
         edge_index=edge_index,
         times=torch.tensor([0]),
-        batch=torch.tensor([0],)
+        batch=torch.zeros(n_nodes, dtype=torch.long),
             ).to(device)
     mol_obj["graph"] = graph_data
+    
     return mol_obj
 
 
-def _runner(solver, xyz_paths: list) -> torch.Tensor:
+def count_atoms_from_xyz(path: str) -> int:
+    """
+    Fast atom counter for XYZ files: reads the first non-empty line and returns it as int.
+    Falls back to 0 if format is unexpected.
+    """
+    try:
+        with open(path, "r") as f:
+            first = f.readline().strip()
+            # Some XYZs might include a BOM or whitespace
+            return int(first)
+    except Exception:
+        return 0
+    
+def _runner(solver, xyz_paths: list, max_atoms: int = 100) -> torch.Tensor:
     """
     Runs predictions on a list of XYZ files using the provided model solver.
 
     Args:
         solver (MolecularDiffusion.core.Engine): The loaded Engine object containing the model.
         xyz_paths (list): A list of paths to XYZ files for which to make predictions.
+        max_atoms (int, optional): The maximum number of atoms allowed for a molecule to be processed.
+                                    Molecules with more atoms will be skipped. Defaults to 100.
 
     Returns:
         torch.Tensor: A tensor containing the predictions for each molecule.
@@ -200,7 +216,16 @@ def _runner(solver, xyz_paths: list) -> torch.Tensor:
 
     predictions = []
     xyz_paths_clear = []
+    skipped = 0
+    
     for i, xyz_path in progress_bar:
+        n_atoms = count_atoms_from_xyz(xyz_path)
+        if n_atoms > max_atoms:
+            skipped += 1
+            progress_bar.set_postfix({"batch": i + 1, "skipped": skipped, "reason": f"atoms={n_atoms}>" + str(max_atoms)})
+            log.info(f"Skipping {xyz_path} (atoms={n_atoms} > max_atoms={max_atoms})")
+            continue
+
         # try:
         mol_obj = xyz2mol(xyz_file=xyz_path,
                         atom_vocab=solver.model.atom_vocab,
@@ -210,7 +235,7 @@ def _runner(solver, xyz_paths: list) -> torch.Tensor:
         prediction = solver.model.predict(mol_obj, evaluate=True)[0]
         predictions.append(prediction.detach().cpu().numpy())
         current_preds_dict = {prop_name: prediction[j].item() for j, prop_name in enumerate(task_names)}
-        progress_bar.set_postfix({"batch": i + 1, **current_preds_dict})
+        progress_bar.set_postfix({"batch": i + 1, "skipped": skipped, **current_preds_dict})
         xyz_paths_clear.append(xyz_path)
 
     predictions = np.array(predictions)
@@ -287,7 +312,7 @@ def runner(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
 
     log.info(f"Instantiating diffusion task and loading the model <{cfg.tasks._target_}>")
     solver = load_model(cfg.chkpt_directory)
-    
+   
     task_names = list(solver.model.task.keys())
     
 
@@ -319,7 +344,7 @@ def runner(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     log.info(f"Running the predictions...")
     xyz_paths = glob(f"{cfg.xyz_directory}/*.xyz")
     xyz_paths = [str(xyz_path) for xyz_path in xyz_paths]
-    predictions, xyz_paths_clear = _runner(solver, xyz_paths)
+    predictions, xyz_paths_clear = _runner(solver, xyz_paths, max_atoms=cfg.get("max_atoms", 100))
 
     df_dicts = {}
     for task_name, prediction in zip(task_names, predictions.T):
