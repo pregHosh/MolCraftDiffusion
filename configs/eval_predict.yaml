@@ -5,19 +5,9 @@
 defaults:
   - data: mol_dataset  
   - tasks: diffusion
-  - logger: default # set logger here or use command line (e.g. `python train.py logger=tensorboard`)
   - trainer: default
   - hydra: default
   - _self_
-
-# add this section to configure logging levels
-hydra:
-  job_logging:
-    root:
-      level: INFO
-  hydra_logging:
-    root:
-      level: INFO
 
 # run name, eg. for wandb logging
 name: "ayanami"

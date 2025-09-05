@@ -55,7 +55,13 @@ class GenerativeFactory:
 
         self.condition_configs = condition_configs
 
-    
+        if self.task.node_dist_model is None:
+            logging.warning("Number of atoms distribution is not available, specify the size of molecules to generate")
+            import random
+            if len(self.mol_size) == 2:
+                if self.mol_size[0] == 0 and self.mol_size[1] == 0:
+                    self.mol_size = random.randint(14, 100)
+        
     def run(self):
         
         if self.task_type == "unconditional":

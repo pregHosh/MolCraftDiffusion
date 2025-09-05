@@ -1,0 +1,45 @@
+_target_: MolecularDiffusion.runmodes.train.ModelTaskFactory_EGCL
+task_type: diffusion
+atom_vocab: ${data.atom_vocab}
+condition_names: []
+hidden_size: 192
+act_fn:
+  _target_: torch.nn.SiLU
+num_layers: 1
+attention: True
+tanh: True
+num_sublayers: 9
+sin_embedding: False
+aggregation_method: "sum"
+dropout: 0.0
+normalization: False
+include_cosine: True
+norm_constant: 1.0
+normalization_factor: 1.0
+chkpt_path: null
+
+# specific to diffusion
+diffusion_steps : 900
+diffusion_noise_schedule : polynomial_2 # learned, cosine_x, polynomial_x, issnr_x, smld_x
+diffusion_noise_precision: 1e-5
+diffusion_loss_type:  vlb
+normalize_factors: [1,4,10]
+extra_norm_values: []
+augment_noise: False
+data_augmentation: False
+context_mask_rate: 0.0
+mask_value: null
+normalize_condition: value_10 # [None, "maxmin", "mad"]
+sp_regularizer_deploy: False
+sp_regularizer_regularizer: hard
+sp_regularizer_lambda_: 0
+sp_regularizer_lambda_2: 1000
+sp_regularizer_lambda_update_value: 1
+sp_regularizer_lambda_update_step: 100
+sp_regularizer_polynomial_p: 1.1
+sp_regularizer_warm_up_steps: 100
+reference_indices: null # indices of core atoms for the outpainting objective
+# evaluator parameters
+metrics: "Validity Relax and connected" # Validity Relax and connected, Validity Strict and connected, Validity Strict, Validity Relax
+n_samples: 24
+generative_analysis: True

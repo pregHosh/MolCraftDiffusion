@@ -26,7 +26,7 @@ rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 # more info: https://github.com/ashleve/rootutils
 # ------------------------------------------------------------------------------------ #
 from MolecularDiffusion.core import Engine
-from MolecularDiffusion.runmodes.train import evaluate, DataModule, Logger, ModelTaskFactory_EGCL, OptimSchedulerFactory
+from MolecularDiffusion.runmodes.train import evaluate, DataModule, Logger, OptimSchedulerFactory
 from MolecularDiffusion.utils import (
     RankedLogger,
     task_wrapper,
@@ -136,9 +136,20 @@ def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     )
     data_module.load()
     log.info(f"Instantiating task <{cfg.tasks._target_}>")
+
+    factory_cfg = cfg.tasks
     
-    act_fn = hydra.utils.instantiate(cfg.tasks.act_fn)
-    task_module: ModelTaskFactory_EGCL = hydra.utils.instantiate(cfg.tasks, act_fn=act_fn)
+    # The EGT factory requires the train_set, which is not in the config.
+    # We add it to the instantiation call as an override.
+    overrides = {}
+    if "tasks_egt" in factory_cfg._target_:
+        overrides["train_set"] = data_module.train_set
+        # The EGT factory uses 'task_names', but for consistency in configs we might have 'condition_names'
+        # This allows using 'condition_names' in the yaml and it will be passed as 'task_names'
+        if "condition_names" in factory_cfg:
+            overrides["task_names"] = factory_cfg.condition_names
+
+    task_module = hydra.utils.instantiate(factory_cfg, **overrides)
     task_module.build()
     log.info(f"Instantiating trainer <{cfg.trainer._target_}>")
     trainer_module: OptimSchedulerFactory = hydra.utils.instantiate(cfg.trainer, parameters=task_module.task.parameters())

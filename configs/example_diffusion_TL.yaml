@@ -1,31 +1,28 @@
-# This is an example configuration file for training a diffusion model.
+# This is an example configuration file for fine-tuning a pre-trained diffusion model.
 
 defaults:
   - data: mol_dataset
-  - tasks: diffusion
+  - tasks: diffusion_pretrained
   - logger: wandb
   - trainer: default
   - hydra: default
   - _self_
 
 # --- Experiment Tracking ---
-name: "my_first_diffusion_experiment"
+name: "TL_exp"
 tags: ["diffusion", "example", "baseline"]
 seed: 42
 
 # --- Task-Specific Overrides ---
 tasks:
-  diffusion_steps: 500     
-  num_layers: 8            
-  hidden_size: 256        
-  dropout: 0.1           
+  chkpt_path: "edm_chem.pkl"  # Path to a pre-trained model checkpoint.
 
 # --- Trainer Overrides ---
 trainer:
   num_epochs: 50           
   lr: 0.0002    
   validation_interval: 3   
-  output_path: "edm_test"
+  output_path: "logs_TL"
 
 # --- Data Overrides ---
 data:

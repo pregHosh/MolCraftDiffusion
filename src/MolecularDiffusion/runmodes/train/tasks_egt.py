@@ -13,6 +13,8 @@ class ModelTaskFactory:
             train_set: Training dataset, used to infer input node feature dimensions.
             atom_vocab (list): List of atom vocabulary used for encoding.
             task_names (list): List of conditional labels (e.g., properties for guidance).
+            condition_names (list): List of condition names for conditional generation.
+            num_layers (int): Number of transformer layers.
             hidden_mlp_dims (dict): Dictionary of hidden MLP dimensions for the model.
             hidden_dims (dict): Dictionary of hidden dimensions for the model.
             act_fn_in (torch.nn.Module): Activation function for input layers.
@@ -66,7 +68,9 @@ class ModelTaskFactory:
         train_set,
         atom_vocab,
         task_names,
+        condition_names: list = [],
         # Common model arguments
+        num_layers: int = 6,
         hidden_mlp_dims: dict = {},
         hidden_dims: dict = {},
         act_fn_in: torch.nn.Module = torch.nn.SiLU(),
@@ -78,7 +82,9 @@ class ModelTaskFactory:
         self.train_set = train_set
         self.atom_vocab = atom_vocab
         self.task_names = task_names
+        self.condition_names = condition_names
         # Common model hyperparameters
+        self.num_layers = num_layers
         self.hidden_mlp_dims = hidden_mlp_dims
         self.hidden_dims = hidden_dims
         self.act_fn_in = act_fn_in
@@ -104,6 +110,7 @@ class ModelTaskFactory:
         """
         # Construct shared EGNN dynamics
         dynamics_model = EGT_dynamics(
+            in_node_nf=self.dynamics_in_node_nf,
             in_edge_nf=1,
             in_global_nf=1,
             n_layers=self.num_layers,
@@ -111,6 +118,7 @@ class ModelTaskFactory:
             hidden_dims=self.hidden_dims,
             context_node_nf=self.context_node_nf,
             n_dims=3,
+            condition_time=True
         )
         
 
@@ -223,8 +231,12 @@ class ModelTaskFactory:
                 chk_point = torch.load(self.chkpt_path)["model"]
                 print(f"Loading checkpoint from {self.chkpt_path}")
                 self.task.load_state_dict(chk_point, strict=False)
+                if "mean" in chk_point and "std" in chk_point:
+                    self.task.mean = chk_point["mean"]
+                    self.task.std = chk_point["std"]
             except FileNotFoundError:
                 print(f"Checkpoint not found at {self.chkpt_path}. Initializing model without loading.")
-          
+        
+        self.task.atom_vocab = self.atom_vocab
             
         return self.task
