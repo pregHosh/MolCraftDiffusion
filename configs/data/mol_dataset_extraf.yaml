@@ -1,0 +1,19 @@
+_target_: MolecularDiffusion.runmodes.train.DataModule
+root: /home/pregabalin/RF/blue_edm/data/qm9
+filename: /home/pregabalin/RF/blue_edm/data/qm9/dsgdb9nsd_4k.csv # 4k or ready
+atom_vocab: [H,B,C,N,O,F,Al,Si,P,S,Cl,As,Se,Br,I,Hg,Bi]
+dataset_name: qm9
+with_hydrogen: True
+node_feature: atom_geom_compact # atom_topological, atom_geom, atom_geom_compact, atom_geom_opt
+max_atom: 29
+xyz_dir: /home/pregabalin/RF/blue_edm/data/qm9/dsgdb9nsd/
+coord_file: null
+natoms_file: null
+forbidden_atom: []
+data_efficient_collator: True
+train_ratio: 0.8
+load_pkl: null
+save_pkl: data/test.pkl
+data_type: pointcloud # pyg or pointcloud
+batch_size: 48
+num_workers: 0

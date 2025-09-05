@@ -93,8 +93,8 @@ class ModelTaskFactory:
 
         # Compute feature dimensions
        
-        self.in_node_nf = self.train_set[0]["node_feature"].size(1) + 1 # +1 for atomic number
-        self.dynamics_in_node_nf = self.in_node_nf + 1 # +1 for time 
+        self.in_node_nf = len(atom_vocab) + len(kwargs.get("extra_norm_values", [])) + 1 # +1 for atomic number
+        self.dynamics_in_node_nf = self.in_node_nf + 1 # +1 for time (always include time in dynamics)
         self.context_node_nf = len(self.task_names)
         
         # checkpoint path
