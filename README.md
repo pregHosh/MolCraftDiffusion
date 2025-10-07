@@ -29,7 +29,7 @@ For a more detailed installation, including setting up a conda environment and i
     pip install torch_geometric
 
     # install other libraries
-    pip install decorator numpy==1.26.4 scipy rdkit-pypi posebusters networkx matplotlib pandas scikit-learn tqdm pyyaml omegaconf ase morfeus cosymlib morfeus-ml wandb torch-scatter torch-cluster -f https://data.pyg.org/whl/torch-2.5.1+cu121.html
+    pip install fire decorator numpy==1.26.4 scipy rdkit-pypi posebusters networkx matplotlib pandas scikit-learn tqdm pyyaml omegaconf ase morfeus cosymlib morfeus-ml wandb torch-scatter torch-cluster -f https://data.pyg.org/whl/torch-2.5.1+cu121.html
 
     pip install hydra-core==1.* hydra-colorlog rootutils
 
@@ -42,10 +42,16 @@ For a more detailed installation, including setting up a conda environment and i
 
     # Install the package. Use editable mode (-e) to make the MolCraftDiff CLI tool available.
     pip install -e .
-
-Usage
------
-
+    
+    
+    Pre-trained Models
+    ------------------
+    
+    Pre-trained diffusion models are available at [Hugging Face](https://huggingface.co/pregH/MolecularDiffusion) or in the `models/edm_pretrained/` directory. These can be used as a starting point for downstream applications.
+    
+    
+    Usage
+    -----
 There are two ways to run experiments: using the `MolCraftDiff` command-line tool (recommended) or by executing the Python scripts directly.
 
 ### `MolCraftDiff` CLI (Recommended)
@@ -105,6 +111,12 @@ where INTERFERENCE is one of the following: `gen_cfg`, `gen_cfggg`, `gen_conditi
 
 
 
+Visualization
+-------------
+
+Generated 3D molecules and their properties can be visualized using the [3DMolViewer](https://github.com/pregHosh/3DMolViewer) package.
+
+
 Documentation
 ------------
 
@@ -142,6 +154,7 @@ Project Structure
 │   │   └── default.yaml
 │   ├── tasks
 │   │   ├── diffusion.yaml
+│   │   ├── diffusion_egt.yaml
 │   │   ├── guidance.yaml
 │   │   └── regression.yaml
 │   └── trainer
