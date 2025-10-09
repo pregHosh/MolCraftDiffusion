@@ -1,13 +1,30 @@
-_target_: MolecularDiffusion.runmodes.generate.GenerativeFactory
-task_type: outpaint
-sampling_mode: "ddpm"
-num_generate: 50
-mol_size: [30, 40] # Target size of the generated molecule
-output_path: "results/my_outpainting_run"
-condition_configs:
-  reference_structure_path: "assets/BINOLCp.xyz"
-  # To decorate BINOL-Cp with substituents at 0-indexed atoms 1, 2, and 3, each with 3 bonds:
-  connector_dicts:
-    1: [3]
-    2: [3]
-    3: [3]
+# This file represents the combined configuration for outpainting generation.
+# In the actual project, this is composed from `configs/generate.yaml` and `configs/interference/my_outpaint.yaml`.
+
+defaults:
+  - tasks: diffusion
+  - interference: my_outpaint
+  - _self_
+
+name: "akatsuki"
+chkpt_directory: "models/edm_pretrained/"
+atom_vocab: [H,B,C,N,O,F,Al,Si,P,S,Cl,As,Se,Br,I,Hg,Bi]
+diffusion_steps: 600
+seed: 9
+
+interference:
+  _target_: MolecularDiffusion.runmodes.generate.GenerativeFactory
+  task_type: outpaint
+  sampling_mode: "ddpm"
+  num_generate: 50
+  mol_size: [30, 40] # Target size of the generated molecule
+  output_path: "results/my_outpainting_run"
+  condition_configs:
+    reference_structure_path: "assets/BINOLCp.xyz"
+    # To decorate BINOL-Cp with substituents at 0-indexed atoms 1, 2, and 3, each with 3 bonds:
+    connector_dicts:
+      1: [3]
+      2: [3]
+      3: [3]
+
+

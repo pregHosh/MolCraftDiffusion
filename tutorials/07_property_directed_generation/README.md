@@ -33,25 +33,38 @@ The configuration for CFG is in `configs/interference/gen_cfg.yaml`.
 ### Example `gen_cfg.yaml`
 
 ```yaml
-_target_: MolecularDiffusion.runmodes.generate.GenerativeFactory
-task_type: conditional
-sampling_mode: "ddpm"
-num_generate: 100
-mol_size:  [0,0]
-target_values: [3,1.5]
-property_names: ["S1_exc", "T1_exc"]
-batch_size: 1
-seed: 86
-visualize_trajectory: False
-output_path: generated_mol
-condition_configs:
-  cfg_scale: 1
+
+defaults:
+  - tasks: diffusion
+  - interference: gen_cfg
+  - _self_
+
+name: "akatsuki"
+chkpt_directory: "models/edm_formed_s1t1/"
+atom_vocab: [H,B,C,N,O,F,Al,Si,P,S,Cl,As,Se,Br,I,Hg,Bi]
+diffusion_steps: 600
+seed: 9
+
+interference:
+  _target_: MolecularDiffusion.runmodes.generate.GenerativeFactory
+  task_type: conditional
+  sampling_mode: "ddpm"
+  num_generate: 100
+  mol_size:  [0,0]
+  target_values: [3,1.5]
+  property_names: ["S1_exc", "T1_exc"]
+  batch_size: 1
+  seed: 86
+  visualize_trajectory: False
+  output_path: generated_mol
+  condition_configs:
+    cfg_scale: 1
 ```
 
 ### Running CFG Generation
 
 ```bash
-MolCraftDiff generate interference=gen_cfg
+MolCraftDiff generate [config_file]
 ```
 
 ## 3. Gradient Guidance (GG)
@@ -77,40 +90,52 @@ The configuration for GG is in `configs/interference/gen_gg.yaml`.
 ### Example `gen_gg.yaml`
 
 ```yaml
-_target_: MolecularDiffusion.runmodes.generate.GenerativeFactory
-task_type: gradient_guidance # gg
-sampling_mode: "ddpm"
-num_generate: 100
-mol_size:  [0,0]
-target_values: []
-property_names: []
-batch_size: 1
-seed: 86
-visualize_trajectory: False
-output_path: generated_mol
-condition_configs:
-  cfg_scale: 0
-  target_function:
-    _target_: scripts.gradient_guidance.sf_energy_score.SFEnergyScore
-    _partial_: true
-    chkpt_directory: trained_models/egcl_guidance_s1t1.ckpt
-  gg_scale: 1e-3
-  max_norm: 1e-3
-  scheduler:
-    _target_: scripts.gradient_guidance.scheduler.CosineAnnealing
-    _partial_: true
-    T_max: 1000
-    eta_min: 0
-  guidance_ver: 2
-  guidance_at: 1
-  guidance_stop: 0
-  n_backwards: 0
+defaults:
+  - tasks: diffusion
+  - interference: gen_gg
+  - _self_
+
+name: "akatsuki"
+chkpt_directory: "models/edm_formed_s1t1/"
+atom_vocab: [H,B,C,N,O,F,Al,Si,P,S,Cl,As,Se,Br,I,Hg,Bi]
+diffusion_steps: 600
+seed: 9
+
+interference:
+  _target_: MolecularDiffusion.runmodes.generate.GenerativeFactory
+  task_type: gradient_guidance # gg
+  sampling_mode: "ddpm"
+  num_generate: 100
+  mol_size:  [0,0]
+  target_values: []
+  property_names: []
+  batch_size: 1
+  seed: 86
+  visualize_trajectory: False
+  output_path: generated_mol
+  condition_configs:
+    cfg_scale: 0
+    target_function:
+      _target_: scripts.gradient_guidance.sf_energy_score.SFEnergyScore
+      _partial_: true
+      chkpt_directory: trained_models/egcl_guidance_s1t1.ckpt
+    gg_scale: 1e-3
+    max_norm: 1e-3
+    scheduler:
+      _target_: scripts.gradient_guidance.scheduler.CosineAnnealing
+      _partial_: true
+      T_max: 1000
+      eta_min: 0
+    guidance_ver: 2
+    guidance_at: 1
+    guidance_stop: 0
+    n_backwards: 0
 ```
 
 ### Running GG Generation
 
 ```bash
-MolCraftDiff generate interference=gen_gg
+MolCraftDiff generate [config_file]
 ```
 
 ## 4. Hybrid CFG/GG Guidance
@@ -124,38 +149,50 @@ The configuration for hybrid CFG/GG is in `configs/interference/gen_cfggg.yaml`.
 ### Example `gen_cfggg.yaml`
 
 ```yaml
-_target_: MolecularDiffusion.runmodes.generate.GenerativeFactory
-task_type: gradient_guidance # cfggg
-sampling_mode: "ddpm"
-num_generate: 100
-mol_size:  [0,0]
-target_values: [3,1.5]
-property_names: ["S1_exc", "T1_exc"]
-batch_size: 1
-seed: 86
-visualize_trajectory: False
-output_path: generated_mol
-condition_configs:
-  cfg_scale: 1
-  target_function:
-    _target_: scripts.gradient_guidance.sf_energy_score.SFEnergyScore
-    _partial_: true
-    chkpt_directory: trained_models/egcl_guidance_s1t1.ckpt
-  gg_scale: 1e-3
-  max_norm: 1e-3
-  scheduler:
-    _target_: scripts.gradient_guidance.scheduler.CosineAnnealing
-    _partial_: true
-    T_max: 1000
-    eta_min: 0
-  guidance_ver: 2
-  guidance_at: 1
-  guidance_stop: 0
-  n_backwards: 3
+defaults:
+  - tasks: diffusion
+  - interference: gen_cfggg
+  - _self_
+
+name: "akatsuki"
+chkpt_directory:  "models/edm_formed_s1t1/"
+atom_vocab: [H,B,C,N,O,F,Al,Si,P,S,Cl,As,Se,Br,I,Hg,Bi]
+diffusion_steps: 600
+seed: 9
+
+interference:
+  _target_: MolecularDiffusion.runmodes.generate.GenerativeFactory
+  task_type: gradient_guidance # cfggg
+  sampling_mode: "ddpm"
+  num_generate: 100
+  mol_size:  [0,0]
+  target_values: [3,1.5]
+  property_names: ["S1_exc", "T1_exc"]
+  batch_size: 1
+  seed: 86
+  visualize_trajectory: False
+  output_path: generated_mol
+  condition_configs:
+    cfg_scale: 1
+    target_function:
+      _target_: scripts.gradient_guidance.sf_energy_score.SFEnergyScore
+      _partial_: true
+      chkpt_directory: trained_models/egcl_guidance_s1t1.ckpt
+    gg_scale: 1e-3
+    max_norm: 1e-3
+    scheduler:
+      _target_: scripts.gradient_guidance.scheduler.CosineAnnealing
+      _partial_: true
+      T_max: 1000
+      eta_min: 0
+    guidance_ver: 2
+    guidance_at: 1
+    guidance_stop: 0
+    n_backwards: 3
 ```
 
 ### Running Hybrid CFG/GG Generation
 
 ```bash
-MolCraftDiff generate interference=gen_cfggg
+MolCraftDiff generate [config_file]
 ```

@@ -1,28 +1,43 @@
-_target_: MolecularDiffusion.runmodes.generate.GenerativeFactory
-task_type: gradient_guidance # gg
-sampling_mode: "ddpm"
-num_generate: 100
-mol_size:  [0,0]
-target_values: [] 
-property_names: []
-batch_size: 1
-seed: 86
-visualize_trajectory: False
-output_path: generated_mol
-condition_configs:
-  cfg_scale: 0
-  target_function:
-    _target_: scripts.gradient_guidance.sf_energy_score.SFEnergyScore
-    _partial_: true
-    chkpt_directory: trained_models/egcl_guidance_s1t1.ckpt
-  gg_scale: 1e-3
-  max_norm: 1e-3
-  scheduler:
-    _target_: scripts.gradient_guidance.scheduler.CosineAnnealing
-    _partial_: true
-    T_max: 1000
-    eta_min: 0
-  guidance_ver: 2
-  guidance_at: 1
-  guidance_stop: 0
-  n_backwards: 0
+# This file represents the combined configuration for Gradient Guidance generation.
+# In the actual project, this is composed from `configs/generate.yaml` and `configs/interference/gen_gg.yaml`.
+
+defaults:
+  - tasks: diffusion
+  - interference: gen_gg
+  - _self_
+
+name: "akatsuki"
+chkpt_directory: "models/edm_formed_s1t1/"
+atom_vocab: [H,B,C,N,O,F,Al,Si,P,S,Cl,As,Se,Br,I,Hg,Bi]
+diffusion_steps: 600
+seed: 9
+
+interference:
+  _target_: MolecularDiffusion.runmodes.generate.GenerativeFactory
+  task_type: gradient_guidance # gg
+  sampling_mode: "ddpm"
+  num_generate: 100
+  mol_size:  [0,0]
+  target_values: []
+  property_names: []
+  batch_size: 1
+  seed: 86
+  visualize_trajectory: False
+  output_path: generated_mol
+  condition_configs:
+    cfg_scale: 0
+    target_function:
+      _target_: scripts.gradient_guidance.sf_energy_score.SFEnergyScore
+      _partial_: true
+      chkpt_directory: trained_models/egcl_guidance_s1t1.ckpt
+    gg_scale: 1e-3
+    max_norm: 1e-3
+    scheduler:
+      _target_: scripts.gradient_guidance.scheduler.CosineAnnealing
+      _partial_: true
+      T_max: 1000
+      eta_min: 0
+    guidance_ver: 2
+    guidance_at: 1
+    guidance_stop: 0
+    n_backwards: 0

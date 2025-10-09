@@ -65,12 +65,10 @@ While the example above is minimal, you can control the generation process with 
 
 ### Running Unconditional Generation
 
-To start the process, you would run the following command in your terminal:
+Use the `MolCraftDiff generate` command with the config file:
 
 ```bash
-MolCraftDiff generate interference=gen_unconditional
+MolCraftDiff generate [config_file]
 ```
-
-This will load the model specified in `chkpt_directory`, generate 100 molecules using the specified parameters, and save them to the `generated_mol` directory.
 
 ---
