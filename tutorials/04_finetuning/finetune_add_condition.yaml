@@ -1,0 +1,22 @@
+defaults:
+  - data: my_conditional_dataset # A dataset with property labels
+  - tasks: diffusion_pretrained
+  - logger: wandb
+  - trainer: default
+  - _self_
+
+name: "finetune_for_cfg"
+seed: 42
+
+trainer:
+  output_path: "training_outputs/finetuned_cfg_model"
+  num_epochs: 50
+  lr: 1e-5
+
+tasks:
+  # CRITICAL: Path to the pre-trained unconditional model
+  chkpt_path: "path/to/downloaded_unconditional_model.ckpt"
+  
+  # KEY CHANGE: Add the conditions to learn
+  condition_names: ["S1_exc", "T1_exc"]
+  context_mask_rate: 0.1 # Make it CFG-ready

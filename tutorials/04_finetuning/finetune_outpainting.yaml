@@ -1,0 +1,21 @@
+defaults:
+  - data: my_scaffold_dataset # A dataset of molecules with the same core
+  - tasks: diffusion_pretrained
+  - logger: wandb
+  - trainer: default
+  - _self_
+
+name: "finetune_for_outpainting"
+seed: 42
+
+trainer:
+  output_path: "training_outputs/finetuned_outpainting_model"
+  num_epochs: 25 # This can be a very short fine-tuning task
+  lr: 2e-5
+
+tasks:
+  # CRITICAL: Path to a pre-trained model
+  chkpt_path: "path/to/downloaded_model.ckpt"
+  
+  # KEY CHANGE: Define the scaffold atoms
+  reference_indices: [0, 1, 2, 3, 4, 5] # The indices of the core atoms

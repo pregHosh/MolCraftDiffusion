@@ -1,0 +1,13 @@
+_target_: MolecularDiffusion.runmodes.generate.GenerativeFactory
+task_type: conditional
+sampling_mode: "ddpm"
+num_generate: 100
+mol_size:  [0,0]
+target_values: [3,1.5] 
+property_names: ["S1_exc", "T1_exc"]
+batch_size: 1
+seed: 86
+visualize_trajectory: False
+output_path: generated_mol
+condition_configs:
+  cfg_scale: 1

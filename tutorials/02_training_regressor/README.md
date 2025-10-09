@@ -57,6 +57,8 @@ Now, we override the defaults to configure our specific experiment. Below are th
 | `tasks.task_learn` | `tasks: {task_learn: ["S1_exc"]}` | **CRITICAL:** Tell the model which property from your dataset to predict. |
 | `tasks.hidden_size` | `tasks: {hidden_size: 512}` | Regressors often benefit from being wider than diffusion models. `512` is a good starting point. |
 | `tasks.act_fn` | `act_fn: {_target_: torch.nn.ReLU}` | `ReLU` is a common and effective activation function for regression tasks. |
+| `tasks.num_layers` | `tasks: {num_layers: 1}` | For property prediction, it is preferred to have just one block of EGCL. |
+| `tasks.num_sublayers`| `tasks: {num_sublayers: 4}` | Inside the single EGCL block, use multiple sublayers for a deeper model. |
 
 #### **Trainer Settings for Regression**
 
@@ -108,6 +110,8 @@ tasks:
   # Tell the model to learn the S1 and T1 excitation energies
   task_learn: ["S1_exc", "T1_exc"]
   hidden_size: 512
+  num_layers: 1
+  num_sublayers: 4
 ```
 
 ### Step 5: Run Your Training

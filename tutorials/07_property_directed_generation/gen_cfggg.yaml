@@ -1,0 +1,28 @@
+_target_: MolecularDiffusion.runmodes.generate.GenerativeFactory
+task_type: gradient_guidance # cfggg
+sampling_mode: "ddpm"
+num_generate: 100
+mol_size:  [0,0]
+target_values: [3,1.5] 
+property_names: ["S1_exc", "T1_exc"]
+batch_size: 1
+seed: 86
+visualize_trajectory: False
+output_path: generated_mol
+condition_configs:
+  cfg_scale: 1
+  target_function:
+    _target_: scripts.gradient_guidance.sf_energy_score.SFEnergyScore
+    _partial_: true
+    chkpt_directory: trained_models/egcl_guidance_s1t1.ckpt
+  gg_scale: 1e-3
+  max_norm: 1e-3
+  scheduler:
+    _target_: scripts.gradient_guidance.scheduler.CosineAnnealing
+    _partial_: true
+    T_max: 1000
+    eta_min: 0
+  guidance_ver: 2
+  guidance_at: 1
+  guidance_stop: 0
+  n_backwards: 3

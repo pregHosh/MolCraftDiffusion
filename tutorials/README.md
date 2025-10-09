@@ -1,6 +1,6 @@
 # Molecular Diffusion Tutorials
 
-This directory contains a series of tutorials for using the `MolecularDiffusion` package. Each tutorial is self-contained in its own directory.
+This directory, available at `/tutorials`, contains a series of tutorials for using the `MolecularDiffusion` package. Each tutorial is self-contained in its own directory.
 
 ## Table of Contents
 

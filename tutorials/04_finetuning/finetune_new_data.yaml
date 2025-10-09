@@ -1,0 +1,18 @@
+defaults:
+  - data: my_new_dataset # Use your new dataset configuration
+  - tasks: diffusion_pretrained
+  - logger: wandb
+  - trainer: default
+  - _self_
+
+name: "finetune_on_new_data"
+seed: 42
+
+trainer:
+  output_path: "training_outputs/finetuned_new_data"
+  num_epochs: 50 # Fine-tuning often requires fewer epochs
+  lr: 1e-5       # Use a very small learning rate
+
+tasks:
+  # CRITICAL: Path to the pre-trained model to start from
+  chkpt_path: "path/to/downloaded_model.ckpt"

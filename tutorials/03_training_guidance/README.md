@@ -55,6 +55,8 @@ Most settings are identical to the regressor setup. The main difference is the a
 | :--- | :--- | :--- |
 | `tasks.task_learn` | `tasks: {task_learn: ["S1_exc"]}` | **CRITICAL:** The property from your dataset the model should learn to predict on noisy data. |
 | `tasks.hidden_size` | `tasks: {hidden_size: 512}` | A wider model (`512`) is often a good choice. |
+| `tasks.num_layers` | `tasks: {num_layers: 1}` | For property prediction, it is preferred to have just one block of EGCL. |
+| `tasks.num_sublayers`| `tasks: {num_sublayers: 4}` | Inside the single EGCL block, use multiple sublayers for a deeper model. |
 
 #### **Noise Injection Settings (The Key Difference)**
 These parameters control how noise is added to the molecules during training.
@@ -97,6 +99,8 @@ data:
 tasks:
   task_learn: ["S1_exc", "T1_exc"]
   hidden_size: 512
+  num_layers: 1
+  num_sublayers: 4
   # Noise injection settings
   diffusion_steps: 900
   t_max: 0.8

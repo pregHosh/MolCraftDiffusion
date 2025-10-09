@@ -1,0 +1,34 @@
+# Inherit from the regression-specific default templates
+defaults:
+  - data: mol_dataset
+  - tasks: regression
+  - logger: wandb
+  - trainer: regression
+  - _self_
+
+# Set top-level experiment parameters
+name: "my_s1_t1_regressor"
+seed: 42
+
+# Override Paths and Hyperparameters
+trainer:
+  output_path: "training_outputs/my_s1_t1_regressor"
+  num_epochs: 100
+
+logger:
+  project_wandb: "My_Regressor_Project"
+
+data:
+  # Assuming default data paths are correct for this example
+  data_type: "pyg" # Set data type for regression
+  batch_size: 128
+  filename: molecule.csv
+  xyz_dir: xyz_files
+
+
+tasks:
+  # Tell the model to learn the S1 and T1 excitation energies
+  task_learn: ["S1_exc", "T1_exc"]
+  hidden_size: 512
+  num_layers: 1
+  num_sublayers: 4

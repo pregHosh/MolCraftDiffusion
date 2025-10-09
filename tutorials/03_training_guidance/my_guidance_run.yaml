@@ -1,0 +1,32 @@
+# Inherit from the default templates
+defaults:
+  - data: mol_dataset
+  - tasks: guidance
+  - logger: wandb
+  - trainer: regression
+  - _self_
+
+# Set top-level experiment parameters
+name: "my_time_aware_guidance_model"
+seed: 42
+
+# Override Paths and Hyperparameters
+trainer:
+  output_path: "training_outputs/my_guidance_model"
+  num_epochs: 100
+
+logger:
+  project_wandb: "My_Guidance_Models"
+
+data:
+  data_type: "pyg" # Set data type for guidance
+  batch_size: 128
+
+tasks:
+  task_learn: ["S1_exc", "T1_exc"]
+  hidden_size: 512
+  num_layers: 1
+  num_sublayers: 4
+  # Noise injection settings
+  diffusion_steps: 900
+  t_max: 0.8

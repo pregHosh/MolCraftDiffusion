@@ -1,0 +1,26 @@
+# This file represents the combined configuration for unconditional generation.
+# In the actual project, this is composed from `configs/generate.yaml` and `configs/interference/gen_unconditional.yaml`.
+
+defaults:
+  - tasks: diffusion
+  - interference: gen_unconditional
+  - _self_
+
+name: "akatsuki"
+chkpt_directory: "/home/pregabalin/RF/MolecularDiffusion/trained_models/edm_pretrained/"
+atom_vocab: [H,B,C,N,O,F,Al,Si,P,S,Cl,As,Se,Br,I,Hg,Bi]
+diffusion_steps: 600
+seed: 9
+
+interference:
+  _target_: MolecularDiffusion.runmodes.generate.GenerativeFactory
+  task_type: unconditional
+  sampling_mode: "ddpm"
+  num_generate: 100
+  mol_size:  [16]
+  target_values: []
+  property_names: []
+  batch_size: 1
+  seed: 86
+  visualize_trajectory: False
+  output_path: generated_mol

@@ -1,0 +1,31 @@
+# Inherit from the default templates
+defaults:
+  - data: mol_dataset
+  - tasks: diffusion
+  - logger: wandb
+  - trainer: default
+  - _self_
+
+# Set top-level experiment parameters
+name: "my_cfg_model_training"
+seed: 42
+
+# Override Essential Paths and Hyperparameters
+trainer:
+  output_path: "training_outputs/my_cfg_model"
+  num_epochs: 200
+  lr: 0.0002
+
+logger:
+  project_wandb: "My_Diffusion_Project"
+
+data:
+  batch_size: 64
+  filename: molecule.csv
+  xyz_dir: xyz_files
+
+tasks:
+  condition_names: ["S1_exc", "T1_exc"] # Specify properties from our dataset
+  context_mask_rate: 0.1 # Enable CFG training
+  hidden_size: 256
+  sp_regularizer_deploy: False # toggle to deploy SPL
