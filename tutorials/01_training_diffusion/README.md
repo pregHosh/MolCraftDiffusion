@@ -53,6 +53,7 @@ The first time you run a training job, the script processes your raw dataset (`.
 | :--- | :--- | :--- |
 | `data.root` | `data: {root: "data/processed"}` | The directory where processed dataset files are stored. |
 | `data.dataset_name` | `data: {dataset_name: "my_molecule_set"}` | A unique name for your processed dataset. This becomes part of the saved filename (`processed_data_my_molecule_set.pt`). This is crucial for preventing conflicts when you work with multiple datasets. |
+| `data.max_atom` | `data: {max_atom: 50}` | Sets the maximum molecular size (number of atoms). Larger molecules will be discarded. If not specified, the maximum size is determined automatically by scanning the dataset, which can be slow. |
 
 **Best Practice:**
 - Set a descriptive `dataset_name` for each new dataset you work with.

@@ -13,9 +13,15 @@ from torch.utils import data as torch_data
 from tqdm import tqdm
 
 from ase.data import atomic_numbers
+from ase.db import connect
+try:
+    from rdkit import Chem
+except ImportError:
+    Chem = None
 from torch_geometric.data import Data
 from torch_geometric.nn import knn_graph, radius_graph
 
+from MolecularDiffusion.utils import sascore
 from MolecularDiffusion import core, utils
 from MolecularDiffusion.utils.smilify import smilify_cell2mol as smilify
 from .feature import (
@@ -33,6 +39,10 @@ from .pointcloud import PointCloud_Mol
 
 logger = logging.getLogger(__name__)
 
+hybiridization_map = {
+    "S": 0, 'SP': 1, 'SP2': 2, 'SP3': 3, 'SP3D': 4, 'SP3D2': 5, 'UNSPECIFIED': -1
+}
+        
 BASE_ATOM_VOCAB = [
     "H",
     "B",
@@ -320,6 +330,189 @@ class GraphDataset(torch_data.Dataset):
 
             except Exception as e:
                 logging.error(f"Error in loading {xyz}: {e}")
+                continue
+
+    def load_db(
+        self,
+        db_path: str,
+        atom_vocab: List[str] = [],
+        node_feature_choice: Optional[List[str]] = None,
+        consider_global_attributes: bool = True,
+        target_fields: Optional[List[str]] = None,
+        transform: Optional[Callable] = None,
+        max_atom: int = 200,
+        with_hydrogen: bool = True,
+        forbidden_atoms: List[str] = [],
+        edge_type: str = "distance",
+        radius: float = 4.0,
+        n_neigh: int = 5,
+        verbose: int = 0,
+        **kwargs: Any,
+    ):
+        """
+        Load the dataset from an ASE db file.
+
+        Parameters:
+            db_path (str): path to ASE db file
+            atom_vocab (list of str, optional): atom types
+            node_feature_choice (list of str, optional): RDKit atom features to extract
+            target_fields (list of str, optional): name of target columns in the table.
+            transform (Callable, optional): data transformation function
+            max_atom (int, optional): maximum number of atoms in a molecule
+            with_hydrogen (bool, optional): whether to add hydrogen atoms
+            forbidden_atoms (list of str, optional): forbidden atoms
+            edge_type (str, optional): type of edge to construct the graph (default: distance, neighbor)
+            radius (float, optional): radius to construct the graph (default: 4.0)
+            n_neigh (int, optional): number of neighbors to consider (default: 5)
+            verbose (int, optional): output verbose level
+            **kwargs
+        """
+        if Chem is None and node_feature_choice is not None:
+            raise ImportError("RDKit is required for node_feature_choice. Please install it.")
+
+        if not atom_vocab:
+            atom_vocab = BASE_ATOM_VOCAB
+            print("atom vocabulary not provided, using default")
+
+        self.with_hydrogen = with_hydrogen
+        self.transform = transform
+        self.kwargs = kwargs
+        self.targets = defaultdict(list)
+        self.atom_vocab = atom_vocab
+        self.graph_data_list = []
+        self.n_atoms = []
+        
+        db = connect(db_path)
+        iterator = db.select()
+        if verbose:
+            iterator = tqdm(iterator, "Processing ASE db files", total=len(db))
+
+        for i, row in enumerate(iterator):
+            try:
+                mol_ase = row.toatoms()
+
+                if len(mol_ase) > max_atom:
+                    if verbose > 0:
+                        logger.warning(f"Skipping entry {i} with {len(mol_ase)} atoms (> {max_atom})")
+                    continue
+
+                if any(atom.symbol in forbidden_atoms for atom in mol_ase):
+                    if verbose > 0:
+                        logger.warning(f"Skipping entry {i} due to forbidden atoms")
+                    continue
+
+                coords = torch.from_numpy(mol_ase.get_positions()).to(torch.float32)
+                charges = torch.from_numpy(mol_ase.get_atomic_numbers()).to(torch.long)
+                n_nodes = len(mol_ase)
+
+                atomic_symbols = mol_ase.get_chemical_symbols()
+                node_features = [onehot(atom, atom_vocab, allow_unknown=False) for atom in atomic_symbols]
+                node_features = torch.tensor(node_features, dtype=torch.float32)
+
+                mol_rdkit = None
+                if node_feature_choice:
+                    if "mol_block" not in row.data:
+                        if verbose > 0:
+                            logger.warning(f"Skipping entry {i} as it lacks 'mol_block' for rdkit features")
+                        continue
+                    
+                    mol_block = row.data.get('mol_block')
+                    if isinstance(mol_block, bytes):
+                        mol_block = mol_block.decode('utf-8')
+
+                    mol_rdkit = Chem.MolFromMolBlock(mol_block, removeHs=False)
+                    if not mol_rdkit:
+                        logger.warning(f"RDKit failed to parse mol_block for entry {i}")
+                        continue
+
+                    ase_atomic_num = mol_ase.get_atomic_numbers()
+                    rdkit_atomic_num = np.array([atom.GetAtomicNum() for atom in mol_rdkit.GetAtoms()])
+                    if not np.array_equal(ase_atomic_num, rdkit_atomic_num):
+                         if verbose > 0:
+                            logger.warning(f"Atom order mismatch for entry {i}. Skipping.")
+                         continue
+
+                    atom_feats = defaultdict(list)
+                    for atom in mol_rdkit.GetAtoms():
+                        atom_feats['degree'].append(atom.GetDegree())
+                        atom_feats['formal_charge'].append(atom.GetFormalCharge())
+                        atom_feats['hybridization'].append(hybiridization_map.get(str(atom.GetHybridization()), -1))
+                        atom_feats['is_aromatic'].append(atom.GetIsAromatic())
+                        atom_feats['valence'].append(atom.GetTotalValence())
+                    
+                    node_features_extra = torch.tensor([
+                        atom_feats[key] for key in node_feature_choice
+                    ], dtype=torch.float32).T
+                    
+                    node_features = torch.cat((node_features, node_features_extra), dim=1)
+
+                if torch.isnan(coords).any() or torch.isnan(node_features).any():
+                    if verbose > 0:
+                        print(f"Skipping entry {i} due to NaN values in coordinates or node features")
+                    continue
+                
+                smiles = Chem.MolToSmiles(mol_rdkit) if mol_rdkit else None
+
+                if edge_type == "distance":
+                    edge_index = radius_graph(coords, r=radius)
+                elif edge_type == "neighbor":
+                    edge_index = knn_graph(coords, k=n_neigh)
+                elif edge_type == "fully_connected":
+                    num_nodes = coords.size(0)
+                    row = torch.arange(num_nodes).repeat_interleave(num_nodes)
+                    col = torch.arange(num_nodes).repeat(num_nodes)
+                    edge_index = torch.stack([row, col], dim=0)
+                    edge_index = edge_index[:, row != col]
+                else:
+                    raise ValueError(f"Unknown edge type {edge_type}")
+
+                tags = torch.zeros(n_nodes, dtype=torch.long) + i
+                graph_data = Data(
+                    x=node_features,
+                    pos=coords,
+                    atomic_numbers=charges,
+                    natoms=n_nodes,
+                    smiles=smiles,
+                    xyz=f"db_entry_{i}",
+                    edge_index=edge_index,
+                    tags=tags,
+                )
+                
+                self.graph_data_list.append(graph_data)
+                self.n_atoms.append(n_nodes)
+
+                if target_fields:
+                    for field in target_fields:
+                        value = row.data.get(field, math.nan)
+                        try:
+                            value = utils.literal_eval(str(value))
+                        except (ValueError, SyntaxError):
+                            if isinstance(value, (np.ndarray, torch.Tensor)):
+                                value = value.tolist()
+                        if value == "":
+                            value = math.nan
+                        self.targets[field].append(value)
+                
+                if consider_global_attributes:
+                    self.targets['total_charge'].append(row.data.get('total_charge', 0))
+                    self.targets['num_graph'].append(row.data.get('num_graph', 1))
+                    self.targets['distortion_d'].append(row.data.get('distortion_d', 0))
+
+                    sascore_value = 0
+                    if mol_rdkit is not None:
+                        if 'sascore' in row.data:
+                            sascore_value = row.data.get('sascore', 0)
+                        else:
+                            try:
+                                mol_withoutH = Chem.RemoveHs(mol_rdkit)
+                                mol_clean = Chem.MolFromSmiles(Chem.MolToSmiles(mol_withoutH))
+                                sascore_value = sascore.calculateScore(mol_clean)
+                            except Exception:
+                                sascore_value = 0
+                    self.targets['sascore'].append(sascore_value)
+
+            except Exception as e:
+                logging.error(f"Error in loading db entry {i}: {e}")
                 continue
             
          
@@ -1006,6 +1199,198 @@ class PointCloudDataset(torch_data.Dataset):
             verbose=verbose,
             **kwargs,
         )
+
+    def load_db(
+        self,
+        db_path: str,
+        atom_vocab: List[str] = [],
+        node_feature_choice: Optional[List[str]] = None,
+        consider_global_attributes: bool = True,
+        target_fields: Optional[List[str]] = None,
+        transform: Optional[Callable] = None,
+        max_atom: int = 200,
+        with_hydrogen: bool = True,
+        forbidden_atoms: List[str] = [],
+        pad_data: bool = False,
+        verbose: int = 0,
+        **kwargs: Any,
+    ):
+        """
+        Load the dataset from an ASE db file.
+
+        Parameters:
+            db_path (str): path to ASE db file
+            atom_vocab (list of str, optional): atom types
+            node_feature_choice (list of str, optional): RDKit atom features to extract
+            target_fields (list of str, optional): name of target columns in the table.
+            transform (Callable, optional): data transformation function
+            max_atom (int, optional): maximum number of atoms in a molecule
+            with_hydrogen (bool, optional): whether to add hydrogen atoms
+            forbidden_atoms (list of str, optional): forbidden atoms
+            pad_data (bool, optional): whether to pad data to max_atom)
+            verbose (int, optional): output verbose level
+            **kwargs
+        """
+        if Chem is None and node_feature_choice is not None:
+            raise ImportError("RDKit is required for node_feature_choice. Please install it.")
+
+        if atom_vocab == []:
+            atom_vocab = BASE_ATOM_VOCAB
+            print("atom vocabulary not provided, using default")
+
+        self.with_hydrogen = with_hydrogen
+        self.transform = transform
+        self.kwargs = kwargs
+        self.xyzs = []
+        self.smiles_list = []
+        self.coords_list = []
+        self.node_mask_list = []
+        self.edge_mask_list = []
+        self.node_feature_list = []
+        self.charges_list = []
+        self.targets = defaultdict(list)
+        self.n_atoms = []
+        self.atom_vocab = atom_vocab
+
+        db = connect(db_path)
+
+
+        iterator = db.select()
+        if verbose:
+            iterator = tqdm(iterator, "Processing ASE db files", total=len(db))
+
+        for i, row in enumerate(iterator):
+            try:
+                mol_ase = row.toatoms()
+
+                if len(mol_ase) > max_atom:
+                    if verbose > 0:
+                        logger.warning(f"Skipping entry {i} with {len(mol_ase)} atoms (> {max_atom})")
+                    continue
+
+                if any(atom.symbol in forbidden_atoms for atom in mol_ase):
+                    if verbose > 0:
+                        logger.warning(f"Skipping entry {i} due to forbidden atoms")
+                    continue
+
+                coords = torch.from_numpy(mol_ase.get_positions()).to(torch.float32)
+                charges = torch.from_numpy(mol_ase.get_atomic_numbers()).to(torch.long)
+                n_nodes = len(mol_ase)
+                self.n_atoms.append(n_nodes)
+
+                atomic_symbols = mol_ase.get_chemical_symbols()
+                node_features = [onehot(atom, atom_vocab, allow_unknown=False) for atom in atomic_symbols]
+                node_features = torch.tensor(node_features, dtype=torch.float32)
+
+                mol_rdkit = None
+                if node_feature_choice:
+                    if "mol_block" not in row.data:
+                        if verbose > 0:
+                            logger.warning(f"Skipping entry {i} as it lacks 'mol_block' for rdkit features")
+                        continue
+                    
+                    mol_block = row.data.get('mol_block')
+                    if isinstance(mol_block, bytes):
+                        mol_block = mol_block.decode('utf-8')
+
+                    mol_rdkit = Chem.MolFromMolBlock(mol_block, removeHs=False)
+                    if not mol_rdkit:
+                        logger.warning(f"RDKit failed to parse mol_block for entry {i}")
+                        continue
+
+                    ase_atomic_num = mol_ase.get_atomic_numbers()
+                    rdkit_atomic_num = np.array([atom.GetAtomicNum() for atom in mol_rdkit.GetAtoms()])
+                    if not np.array_equal(ase_atomic_num, rdkit_atomic_num):
+                         if verbose > 0:
+                            logger.warning(f"Atom order mismatch for entry {i}. Skipping.")
+                         continue
+
+                    atom_feats = defaultdict(list)
+                    for atom in mol_rdkit.GetAtoms():
+                        atom_feats['degree'].append(atom.GetDegree())
+                        atom_feats['formal_charge'].append(atom.GetFormalCharge())
+                        atom_feats['hybridization'].append(hybiridization_map.get(str(atom.GetHybridization()), -1))
+                        atom_feats['is_aromatic'].append(atom.GetIsAromatic())
+                        atom_feats['valence'].append(atom.GetTotalValence())
+                    
+                    node_features_extra = torch.tensor([
+                        atom_feats[key] for key in node_feature_choice
+                    ], dtype=torch.float32).T
+                    
+                    node_features = torch.cat((node_features, node_features_extra), dim=1)
+
+                if target_fields:
+                    for field in target_fields:
+                        value = row.data.get(field, math.nan)
+                        try:
+                            value = utils.literal_eval(str(value))
+                        except (ValueError, SyntaxError):
+                            if isinstance(value, (np.ndarray, torch.Tensor)):
+                                value = value.tolist()
+                        if value == "":
+                            value = math.nan
+                        self.targets[field].append(value)
+                
+                # consider global attributes of molecules
+                # total_charge, num_graph, sascore, distortion_d
+                if consider_global_attributes:
+                    self.targets['total_charge'].append(row.data.get('total_charge', 0))
+                    self.targets['num_graph'].append(row.data.get('num_graph', 1))
+                    self.targets['distortion_d'].append(row.data.get('distortion_d', 0))
+
+                    if mol_rdkit is not None:
+                        if 'sascore' in row.data:
+                            self.targets['sascore'].append(row.data.get('sascore', 0))
+                        else:
+                            try:
+                                mol_withoutH = Chem.RemoveHs(mol_rdkit)
+                                mol_clean = Chem.MolFromSmiles(Chem.MolToSmiles(mol_withoutH))
+                                sascore_value = sascore.calculateScore(mol_clean)
+                            except ImportError:
+                                sascore_value = 0
+                            self.targets['sascore'].append(sascore_value)
+                    
+                if mol_rdkit is not None:
+                    smiles = Chem.MolToSmiles(mol_rdkit) if mol_rdkit else None
+                    self.smiles_list.append(smiles)
+
+                node_mask = torch.ones(n_nodes, dtype=torch.int8)
+
+                if pad_data:
+                    coords_full = torch.zeros(max_atom, 3, dtype=torch.float32)
+                    charges_mask = torch.zeros(max_atom, dtype=torch.long)
+                    node_mask = torch.zeros(max_atom, dtype=torch.int8)
+                    coords_full[:n_nodes] = coords
+                    node_mask[:n_nodes] = 1
+                    node_feat_full = torch.zeros(max_atom, node_features.size(1), dtype=torch.float32)
+                    node_feat_full[:n_nodes] = node_features
+                    charges_mask[:n_nodes] = charges
+                    coords = coords_full
+                    node_features = node_feat_full
+                    charges = charges_mask
+                    edge_mask = node_mask.unsqueeze(0) * node_mask.unsqueeze(1)
+                    diag_mask = ~torch.eye(max_atom, dtype=torch.bool)
+                    edge_mask *= diag_mask
+                else:
+                    edge_mask = node_mask.unsqueeze(0) * node_mask.unsqueeze(1)
+                    diag_mask = ~torch.eye(n_nodes, dtype=torch.bool)
+                    edge_mask *= diag_mask
+
+                if torch.isnan(coords).any() or torch.isnan(node_features).any():
+                    if verbose > 0:
+                        print(f"Skipping entry {i} due to NaN values in coordinates or node features")
+                    continue
+
+                self.coords_list.append(coords)
+                self.node_mask_list.append(node_mask)
+                self.edge_mask_list.append(edge_mask)
+                self.node_feature_list.append(node_features)
+                self.charges_list.append(charges)
+                self.xyzs.append(f"db_entry_{i}")
+    
+            except Exception as e:
+                logging.error(f"Error in loading db entry {i}: {e}")
+                continue
 
     def _standarize_index(self, index, count):
         if isinstance(index, slice):

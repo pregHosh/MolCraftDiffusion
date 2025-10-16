@@ -20,6 +20,7 @@ class DataModule:
             xyz_dir="xyz/",
             coord_file="coords.csv",
             natoms_file="natoms.csv",
+            ase_db_path=None,
             forbidden_atom=None,
             data_efficient_collator=False,
             train_ratio=0.8,
@@ -41,6 +42,7 @@ class DataModule:
         xyz_dir: str = None,
         coord_file: str = None,
         natoms_file: str = None,
+        ase_db_path: str = None,
         forbidden_atom: list = None,
         data_efficient_collator: bool = False,
         train_ratio: float = 0.8,
@@ -68,6 +70,7 @@ class DataModule:
         self.save_pkl = save_pkl
         self.data_type = data_type.lower()
         self.dataset_name = dataset_name    
+        self.ase_db_path = ase_db_path  
         
         self.train_set = None
         self.valid_set = None
@@ -133,6 +136,7 @@ class DataModule:
                         xyz_dir=self.xyz_dir,
                         coord_file=self.coord_file,
                         natoms_file=self.natoms_file,
+                        ase_db_path=self.ase_db_path,
                         max_atom=self.max_atom,
                         node_feature=self.node_feature,
                         atom_vocab=self.atom_vocab,
@@ -149,6 +153,7 @@ class DataModule:
                         xyz_dir=self.xyz_dir,
                         coord_file=self.coord_file,
                         natoms_file=self.natoms_file,
+                        ase_db_path=self.ase_db_path,
                         max_atom=self.max_atom,
                         node_feature=self.node_feature,
                         atom_vocab=self.atom_vocab,
@@ -165,6 +170,7 @@ class DataModule:
                     xyz_dir=self.xyz_dir,
                     coord_file=self.coord_file,
                     natoms_file=self.natoms_file,
+                    ase_db_path=self.ase_db_path,
                     max_atom=self.max_atom,
                     node_feature=self.node_feature,
                     atom_vocab=self.atom_vocab,
