@@ -1282,17 +1282,18 @@ class PointCloudDataset(torch_data.Dataset):
                 node_features = torch.tensor(node_features, dtype=torch.float32)
 
                 mol_rdkit = None
+                    
+                mol_block = row.data.get('mol_block')
+                if isinstance(mol_block, bytes):
+                    mol_block = mol_block.decode('utf-8')
+
+                mol_rdkit = Chem.MolFromMolBlock(mol_block, removeHs=False)
                 if node_feature_choice:
                     if "mol_block" not in row.data:
                         if verbose > 0:
                             logger.warning(f"Skipping entry {i} as it lacks 'mol_block' for rdkit features")
                         continue
-                    
-                    mol_block = row.data.get('mol_block')
-                    if isinstance(mol_block, bytes):
-                        mol_block = mol_block.decode('utf-8')
 
-                    mol_rdkit = Chem.MolFromMolBlock(mol_block, removeHs=False)
                     if not mol_rdkit:
                         logger.warning(f"RDKit failed to parse mol_block for entry {i}")
                         continue
