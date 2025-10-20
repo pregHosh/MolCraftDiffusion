@@ -242,21 +242,28 @@ class ModelTaskFactory:
                 try:
                     self.task.load_state_dict(chk_point, strict=False)
                 except RuntimeError as e:
-                    logger.info("Adding new condition(s) to the diffusion model...")
-                    if len(self.condition_names) > 0 and self.task_type == "diffusion":
+                    logger.info("Adding dimensions to the EGNN...")
+                    
+                    n_dim_pretrain = chk_point["model.dynamics.egnn.embedding.layers.0.weight"].shape[1] 
+                    
+                    n_extra_dim = self.dynamics_in_node_nf - n_dim_pretrain + len(self.condition_names)
+
+                    if n_extra_dim > 0:
                         chk_point["model.dynamics.egnn.embedding.layers.0.weight"] = adjust_weights(
                             chk_point["model.dynamics.egnn.embedding.layers.0.weight"], (self.hidden_size, 
-                                                                                        self.dynamics_in_node_nf + len(self.condition_names))
+                                                                                        n_dim_pretrain + n_extra_dim)
                         )
 
                         chk_point["model.dynamics.egnn.embedding_out.layers.2.weight"] = adjust_weights(
-                            chk_point["model.dynamics.egnn.embedding_out.layers.2.weight"], (self.dynamics_in_node_nf + len(self.condition_names), 
+                            chk_point["model.dynamics.egnn.embedding_out.layers.2.weight"], (n_dim_pretrain + n_extra_dim, 
                                                                                             self.hidden_size)
                         )
+ 
                         chk_point["model.dynamics.egnn.embedding_out.layers.2.bias"] = adjust_bias(
-                        chk_point["model.dynamics.egnn.embedding_out.layers.2.bias"], (self.dynamics_in_node_nf + len(self.condition_names),)
-                        )                        
-                        
+                        chk_point["model.dynamics.egnn.embedding_out.layers.2.bias"], (n_dim_pretrain + n_extra_dim,)
+                        )      
+                        res = self.task.load_state_dict(chk_point, strict=False) 
+                        logger.info("LOAD STATUS", res)
                         
                 if "mean" in chk_point and "std" in chk_point:
                     self.task.mean = chk_point["mean"]
