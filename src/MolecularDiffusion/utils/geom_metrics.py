@@ -479,17 +479,43 @@ def load_molecules_from_xyz(xyz_dir):
     return valid_molecules
 
 
-def run_postbuster(mols):
+import multiprocessing
+
+def _run_buster(mols, queue):
+    """Helper function to run PoseBusters in a separate process."""
+    try:
+        buster = PoseBusters(config="mol")
+        results = buster.bust(mols)
+        queue.put(results)
+    except Exception as e:
+        queue.put(e)
+
+
+def run_postbuster(mols, timeout=60):
     """
-    Run PoseBusters on a list of RDKit molecules.
+    Run PoseBusters on a list of RDKit molecules with a timeout.
     """
     if not mols:
         logger.warning("No valid molecules loaded. Exiting.")
         return None
 
-    buster = PoseBusters(config="mol")
-    results = buster.bust(mols)
-    return results
+    queue = multiprocessing.Queue()
+    process = multiprocessing.Process(target=_run_buster, args=(mols, queue))
+    process.start()
+    process.join(timeout)
+
+    if process.is_alive():
+        process.terminate()
+        process.join()
+        logger.warning(f"PoseBusters timed out after {timeout} seconds.")
+        return None
+
+    result = queue.get()
+    if isinstance(result, Exception):
+        logger.error(f"PoseBusters failed with an exception: {result}")
+        return None
+    
+    return result
 
 
 #%% All

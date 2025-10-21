@@ -100,6 +100,7 @@ def engine_wrapper(task_module, data_module, trainer_module, logger_module, **kw
                     output_path=trainer_module.output_path,
                     use_amp=use_amp,
                     precision=trainer_module.precision,
+                    use_posebuster=kwargs.get("use_posebuster", False),
                     )
             else:
                 best_metrics, best_checkpoints = evaluate(
@@ -191,6 +192,7 @@ def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
             generative_analysis=cfg.tasks.generative_analysis,
             n_samples=cfg.tasks.n_samples,
             metric=cfg.tasks.metrics,
+            use_posebuster=cfg.tasks.use_posebuster,    
             )
     else:
         metrics = engine_wrapper(task_module, data_module, trainer_module, logger_module)

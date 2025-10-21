@@ -14,7 +14,7 @@ from MolecularDiffusion.utils.geom_analyzer import (
     create_pyg_graph,
     correct_edges,
 )
-from MolecularDiffusion.utils.geom_metrics import check_validity_v0
+from MolecularDiffusion.utils.geom_metrics import check_validity_v0, load_molecules_from_xyz, run_postbuster
 from MolecularDiffusion.utils.geom_utils import (
     read_xyz_file, save_xyz_file)
 
@@ -137,6 +137,8 @@ def evaluate(
                                 batch_size=1,
                                 logger=logger,
                                 path_save=path,
+                                use_posebuster=kwargs.get("use_posebuster", False),
+                                postbuster_timeout=kwargs.get("postbuster_timeout", 120),
                             )
 
             metrics = performances[kwargs.get("metric", "Validity Relax and connected")]
@@ -194,6 +196,7 @@ def evaluate(
             
     return current_best_metric, best_checkpoints 
     
+
 def analyze_and_save(
     model,
     epoch: int,
@@ -201,6 +204,8 @@ def analyze_and_save(
     batch_size: int = 100,
     logger: Literal["wandb", "logging"] = "logging",
     path_save: str = "samples",
+    use_posebuster: bool = False,
+    postbuster_timeout: int = 60,
 ) -> Dict[str, Any]:
     """
     Samples molecules from a generative model, saves them as XYZ files,
@@ -231,8 +236,23 @@ def analyze_and_save(
     progress_bar = tqdm(range(n_batches), desc="Sampling molecules", leave=True)
     for i in progress_bar:
         nodesxsample = model.node_dist_model.sample(batch_size)
+        if model.prop_dist_model:
+            size = nodesxsample.item()
+            target_value = model.prop_dist_model.sample(size)
         try:
-            one_hot, charges, x, node_mask = model.sample(nodesxsample=nodesxsample)
+            if model.prop_dist_model:
+                if model.model.context_mask_rate > 0:
+                    one_hot, charges, x, node_mask = model.sample_guidance_conitional(
+                                                                nodesxsample=nodesxsample,
+                                                                target_value=target_value,
+                                                                cfg_scale=1,
+                                                                target_function=None,
+                                                                guidance_ver="cfg") 
+                else:
+                    one_hot, charges, x, node_mask = model.sample_conditonal(nodesxsample=nodesxsample,
+                                                                target_value=target_value,)
+            else:
+                one_hot, charges, x, node_mask = model.sample(nodesxsample=nodesxsample)
             keep = (charges > 0).squeeze()
 
             one_hot = one_hot[:, keep, :]
@@ -258,10 +278,10 @@ def analyze_and_save(
             "success_rate": f"{100 * (i + 1 - fail_count) / (i + 1):.1f}%",
         })
 
-    return _validate_xyzs(path_save, logger)
+    return _validate_xyzs(path_save, logger, use_posebuster=use_posebuster, postbuster_timeout=postbuster_timeout)
 
 # TODO postbuster
-def _validate_xyzs(path_save: str, logger: str) -> Dict[str, float]:
+def _validate_xyzs(path_save: str, logger: str, use_posebuster: bool = False, postbuster_timeout: int = 60) -> Dict[str, float]:
     """
     Validates the molecular structures saved as XYZ files by checking geometric and
     connectivity criteria, then logs and returns summary statistics.
@@ -269,6 +289,7 @@ def _validate_xyzs(path_save: str, logger: str) -> Dict[str, float]:
     Args:
         path_save (str): Directory containing the XYZ files.
         logger (str): Logging backend, either "wandb" or "logging".
+        use_posebuster (bool): Whether to run posebuster analysis.
 
     Returns:
         Dict[str, float]: Dictionary summarizing average metrics:
@@ -318,9 +339,33 @@ def _validate_xyzs(path_save: str, logger: str) -> Dict[str, float]:
 
     summary = {k: v.mean().item() for k, v in metrics.items()}
 
+    if use_posebuster:
+        mols = load_molecules_from_xyz(path_save)
+        if mols:
+            postbuster_results = run_postbuster(mols, timeout=postbuster_timeout)
+            if postbuster_results is not None:
+                postbuster_output_path = os.path.join(path_save, "postbuster_metrics.csv")
+                postbuster_results.to_csv(postbuster_output_path, index=False)
+
+                check_cols = [
+                    col
+                    for col in postbuster_results.columns
+                    if pd.api.types.is_numeric_dtype(postbuster_results[col])
+                    or pd.api.types.is_bool_dtype(postbuster_results[col])
+                ]
+                if check_cols:
+                    summary["valid_posebuster"] = postbuster_results[check_cols].all(axis=1).mean()
+                else:
+                    summary["valid_posebuster"] = 0.0
+                
+                summary.update({
+                    f"posebuster_{col}_mean": postbuster_results[col].mean()
+                    for col in postbuster_results.columns
+                    if pd.api.types.is_numeric_dtype(postbuster_results[col])
+                })
     if logger == "wandb":
         wandb.log(summary)
-    elif logger == "logging":
+    else:
         max_key_len = max(len(k) for k in summary)
         for key, value in summary.items():
             logging.info(f"{key:<{max_key_len}} : {value:.4f}")
