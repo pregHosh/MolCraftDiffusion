@@ -109,6 +109,14 @@ where INTERFERENCE is one of the following: `gen_cfg`, `gen_cfggg`, `gen_conditi
     python scripts/predict.py
 
 
+We also have scripts in `scripts/applications/utils/` for tasks such as xtb optimization, converting xyz to rdkit mol, assess the quality of 3D geomtry, etc.
+
+
+Tutorials
+---------
+
+A comprehensive set of tutorials is available in the [`tutorials/`](./tutorials/) directory, covering topics from basic model training to advanced generation techniques.
+
 
 Visualization
 -------------

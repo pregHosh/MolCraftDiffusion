@@ -539,11 +539,11 @@ class GraphDataset(torch_data.Dataset):
             if verbose:
                 indexes = tqdm(indexes, "Loading %s" % pkl_file)
             for i in indexes:
-                graph_data, values = pickle.load(fin)
+                graph_data, values = pickle.load(fin) 
                 self.graph_data_list.append(graph_data)
                 self.n_atoms.append(graph_data.natoms)
                 for task, value in zip(tasks, values):
-                    self.targets[task].append(value)
+                    self.targets[task].append(float(value))
             self.atom_vocab, self.with_hydrogen = pickle.load(fin)
 
     def save_pickle(self, pkl_file, verbose=0):
@@ -1367,6 +1367,7 @@ class PointCloudDataset(torch_data.Dataset):
                             value = math.nan
                         self.targets[field].append(value)
                 
+                #TODO too hard coded
                 # consider global attributes of molecules
                 # total_charge, num_graph, sascore, distortion_d
                 if consider_global_attributes:
@@ -1410,7 +1411,6 @@ class PointCloudDataset(torch_data.Dataset):
         return index
 
     def get_item(self, index):
-        # item = {"Point Cloud": self.data[index]}
 
         item = {k: v[index] for k, v in self.targets.items()}
         item.update({"coords": self.coords_list[index]})
@@ -1493,7 +1493,7 @@ class PointCloudDataset(torch_data.Dataset):
                     self.charges_list.append(charge)
                     self.xyzs.append(xyz)
                     for task, value in zip(tasks, values):
-                        self.targets[task].append(value)
+                        self.targets[task].append(float(value))
             self.smiles_list, self.atom_vocab, self.with_hydrogen = pickle.load(fin)
 
 

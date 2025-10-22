@@ -2,6 +2,18 @@
 
 Fine-tuning is a powerful technique where you take a pre-trained model and continue training it. This is useful for adapting a general model to a specific chemical space, teaching it new tricks, or simply improving its performance without starting from zero.
 
+> **Crucial Prerequisite: Model Architecture Consistency**
+>
+> **This is extremely important!** When fine-tuning, the architecture of the model you are training **must** be identical to the architecture of the pre-trained model loaded from the checkpoint (`chkpt_path`). This includes parameters like:
+>
+> *   Number of layers (`n_layers`)
+> *   Hidden feature dimensions (`hidden_dim`)
+> *   Number of attention heads, etc.
+>
+> The only exception is when you are adding a new capability, such as adding conditions for Classifier-Free Guidance. In this case, the input layer's dimension might change to accommodate the new conditional information, but the core structure (layers, hidden sizes) must remain the same.
+>
+> If the architectures do not match, PyTorch will be unable to load the weights from the checkpoint, and the fine-tuning process will fail. Always ensure your model configuration YAML file matches the settings of the pre-trained model.
+
 ## The Core Concepts of Fine-Tuning
 
 **Important Note:** The configuration files for this tutorial must be placed in the `configs/` directory at the root of the project for the scripts to read the settings.
