@@ -499,7 +499,11 @@ class Engine(core.Configurable):
         engine.model.to(engine.device)
 
         # Load weights
-        engine.model.load_state_dict(state["ema_model"], strict=strict)
+        if "ema_model" in state:
+            engine.model.load_state_dict(state["ema_model"], strict=strict)
+        else:
+            engine.model.load_state_dict(state["model"], strict=strict)
+
 
         # Load optimizer
         if engine.optimizer is not None and optimizer_state is not None:
@@ -536,7 +540,11 @@ class Engine(core.Configurable):
         checkpoint = os.path.expanduser(checkpoint)
         state = torch.load(checkpoint, map_location=self.device)
 
-        self.model.load_state_dict(state["model"], strict=strict)
+        if "ema_model" in state:
+            self.model.load_state_dict(state["ema_model"], strict=strict)
+        else:
+            self.model.load_state_dict(state["model"], strict=strict)
+            
 
         if self.ema_decay > 0:
             if "ema_model" in state:

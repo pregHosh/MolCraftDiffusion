@@ -239,6 +239,9 @@ def analyze_and_save(
         if model.prop_dist_model:
             size = nodesxsample.item()
             target_value = model.prop_dist_model.sample(size)
+            target_value = model.prop_dist_model.sample(size)
+            if "distortion_d" in model.condition: # only sample clean molecules during the interference
+                target_value[-2] = 0
         try:
             if model.prop_dist_model:
                 if model.model.context_mask_rate > 0:
