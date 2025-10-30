@@ -104,6 +104,8 @@ class ProperyPrediction(Task, core.Configurable):
         """
         Compute the mean and derivation for each task on the training set.
         """
+        if len(train_set) == 0:
+            raise ValueError("Training set is empty. check the data path and format.")
         values = defaultdict(list)
         if train_set is not None:
             for sample in train_set:

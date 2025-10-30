@@ -83,6 +83,8 @@ class GeomMolecularGenerative(Task, core.Configurable):
         self,
         train_set=None,
     ):
+        if len(train_set) == 0:
+            raise ValueError("Training set is empty. check the data path and format.")
         if train_set is not None:
             self.atomic_numbers = train_set.atom_types()
             self.atom_decoder = [
@@ -686,6 +688,8 @@ class GeomMolecularGenerative(Task, core.Configurable):
         - n_backwards (int): Number of backward steps. Default is 0.
         - h_weight (float): Weight for the gradient of atom feature. Default is 1.0.
         - x_weight (float): Weight for the gradient of cartesian coordinate. Default is 1.0.
+        - context (Optional[Tensor]): Context tensor for sampling. Default is None.
+        - condition_tensor (Optional[Tensor]): Condition tensor for sampling. Default is None.
         - debug (bool): Debug mode. Default is False.
             Save gradient norms, max gradients, clipping coefficients, and energies to files.
 
@@ -733,6 +737,7 @@ class GeomMolecularGenerative(Task, core.Configurable):
             n_backwards=n_backwards,
             h_weight=h_weight,
             x_weight=x_weight,
+            
             debug=debug,
         )
 
@@ -1109,6 +1114,8 @@ class GuidanceModelPrediction(Task, core.Configurable):
         """
         Compute the mean and derivation for each task on the training set.
         """
+        if len(train_set) == 0:
+            raise ValueError("Training set is empty. check the data path and format.")
         values = defaultdict(list)
 
         if train_set is not None:

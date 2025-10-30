@@ -346,6 +346,7 @@ def _validate_xyzs(path_save: str, logger: str, use_posebuster: bool = False, po
         mols = load_molecules_from_xyz(path_save)
         if mols:
             postbuster_results = run_postbuster(mols, timeout=postbuster_timeout)
+            print(postbuster_results)
             if postbuster_results is not None:
                 postbuster_output_path = os.path.join(path_save, "postbuster_metrics.csv")
                 postbuster_results.to_csv(postbuster_output_path, index=False)
