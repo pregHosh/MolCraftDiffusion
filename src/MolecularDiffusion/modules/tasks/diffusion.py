@@ -134,7 +134,13 @@ class GeomMolecularGenerative(Task, core.Configurable):
                 num_atoms = train_set.num_atoms
                 props = []
                 for task in self.condition:
-                    props.append(train_set.get_property(task))
+                    if task not in train_set.targets.keys():
+                        raise ValueError(f"Task {task} not found in dataset")
+                    try:
+                        props.append(train_set.get_property(task))
+                    except Exception as e:
+                        raise ValueError(f"Fail {task} to get property from dataset due to {e}")
+                    
                 props = torch.stack(props)
                 self.prop_dist_model = DistributionProperty(
                     num_atoms, props, self.condition, num_bins=10
@@ -528,8 +534,6 @@ class GeomMolecularGenerative(Task, core.Configurable):
         return one_hot, charges, x, node_mask
 
 
-
-
     def sample_around_xh_target(self, nodesxsample=torch.tensor([10]), 
                                 xh_target=None, context=None, fix_noise=False):
                             
@@ -911,6 +915,198 @@ class GeomMolecularGenerative(Task, core.Configurable):
         one_hot = h["categorical"]
         charges = h["integer"]
         return one_hot, charges, x, node_mask
+
+
+    def sample_hybrid_guidance(
+        self,
+        target_function,
+        target_value=[0],
+        negative_target_value=[],
+        nodesxsample=torch.tensor([10]),
+        gg_scale=1,
+        cfg_scale=1,
+        max_norm=10,
+        std=1.0,
+        fix_noise=False,
+        scheduler=None,
+        guidance_at=1,
+        guidance_stop=0,
+        guidance_ver=1,
+        n_backwards=0,
+        h_weight=1,
+        x_weight=1,
+        condition_tensor=None,
+        condition_mode=None,
+        mask_node_index=torch.tensor([[]]), # For Inpainting
+        denoising_strength=0.0, # For Inpainting
+        noise_initial_mask=False, # For Inpainting
+        t_start=1.0,
+        t_critical=0,
+        debug=False,
+    ):
+        """
+        Sample molecular structures with guidance from target function and conditional property.
+
+        Parameters:
+        - target_function (Callable[[Tensor], Tensor]): Target function for guidance. Higher value, better
+        - target_value (List[float]): Target values for conditional sampling.
+        - nodesxsample (Tensor): Number of nodes per sample. Default is torch.tensor([10]).
+        - gg_scale (float): Scale factor for gradient guidance. Default is 1.0.
+        - cfg_scale (float): Scale factor for classifier-free guidance. Default is 1.0.
+        - max_norm (float): Initial maximum norm for the gradients. Default is 10.0.
+        - std (float): Standard deviation of the noise. Default is 1.0.
+        - fix_noise (bool): Fix noise for visualization purposes. Default is False.
+        - scheduler (RateScheduler): Rate scheduler. Default is None.
+            The scheduler should have a step method that takes the energy and the current scale as input.
+        - guidance_at (int): The timestep at which to apply guidance [0-1]  0 = since beginning. Default is 1.
+        - guidance_stop (int): The timestep at which to stop applying guidance [0-1]  1 = until the end. Default is 0.  
+        - guidance_ver (int): The version of the guidance. Default is 1. [0,1,2,cfg,cfg_gg]
+        - n_backwards (int): Number of backward steps. Default is 0.
+        - h_weight (float): Weight for the gradient of atom feature. Default is 1.0.
+        - x_weight (float): Weight for the gradient of cartesian coordinate. Default is 1.0.
+        - debug (bool): Debug mode. Default is False.
+            Save gradient norms, max gradients, clipping coefficients, and energies to files.
+        - condition_tensor (torch.Tensor, optional): Tensor for conditional guidance. Defaults to None.
+        - condition_mode (str, optional): Mode for conditional guidance. Defaults to None.
+        - mask_node_index (torch.Tensor, optional): Indices of nodes to be inpainted. Defaults to an empty tensor.
+        - denoising_strength (float, optional): Strength of denoising for inpainting
+        - noise_initial_mask (bool, optional): Whether to noise the initial masked region. Defaults to False.
+        - t_start (float, optional): Timestep to start applying guidance. Defaults to 1.0.
+        - t_critical (float, optional): Timestep threshold for applying reference tensor constraints. Defaults to None.
+
+        Returns:
+        Tuple[Tensor, Tensor, Tensor, Tensor]: Positions, one-hot encoding of atoms, node mask, and edge mask.
+        """
+        # assert int(torch.max(nodesxsample)) <= self.max_n_nodes
+        # nodesxsample = torch.where(
+        #     nodesxsample > self.max_n_nodes, self.max_n_nodes, nodesxsample
+        # )
+        batch_size = len(nodesxsample)
+        if batch_size > 1:
+            node_mask = torch.zeros(batch_size, self.max_n_nodes)
+            nnode = self.max_n_nodes
+        else:
+            nnode = int(nodesxsample[0])
+            node_mask = torch.zeros(batch_size, nnode)
+
+        for i in range(batch_size):
+            node_mask[i, 0 : nodesxsample[i]] = 1
+
+        # Compute edge_mask
+        edge_mask = node_mask.unsqueeze(1) * node_mask.unsqueeze(2)
+        diag_mask = ~torch.eye(edge_mask.size(1), dtype=torch.bool).unsqueeze(0)
+        edge_mask *= diag_mask
+        edge_mask = edge_mask.view(batch_size * nnode * nnode, 1).to(self.device)
+        node_mask = node_mask.unsqueeze(2).to(self.device)
+        n_node = node_mask.size(1)  
+        
+        if target_value is not None:
+            context = []
+            for i, key in enumerate(self.prop_dist_model.distributions):
+                if self.normalize_condition is not None:
+                    if self.normalize_condition == "mad":
+                        mean, mad = (
+                            self.prop_dist_model.normalizer[key]["mean"],
+                            self.prop_dist_model.normalizer[key]["mad"],
+                        )
+                        val = (target_value[i] - mean) / (mad)
+                    elif self.normalize_condition == "maxmin":   
+                        mean, min, max = (
+                            self.prop_dist_model.normalizer[key]["mean"],
+                            self.prop_dist_model.normalizer[key]["min"],
+                            self.prop_dist_model.normalizer[key]["max"],
+                        )
+                        val = 2 * (target_value[i] - min) / (max - min) - 1   
+
+                    elif "value" in self.normalize_condition: # "value_n where n is the value to normalize"
+                        value = float(self.normalize_condition.split("_")[1])
+                        val = target_value[i] / value    
+                    else:
+                        raise ValueError(f"Unknown normalization method: {self.normalize_condition}")    
+                else:
+                    val = target_value[i]
+                context_row = torch.tensor(
+                    [val]
+                ).unsqueeze(1)
+                context.append(context_row)
+
+            context = torch.cat(context, dim=1).float().to(self.device)
+            context = context.repeat(1, n_node, 1)
+
+            if negative_target_value:
+                context_negative = []
+                for i, key in enumerate(self.prop_dist_model.distributions):
+                    if i < len(negative_target_value):
+                        if self.normalize_condition is not None:
+                            if self.normalize_condition == "mad":
+                                mean, mad = (
+                                    self.prop_dist_model.normalizer[key]["mean"],
+                                    self.prop_dist_model.normalizer[key]["mad"],
+                                )
+                                val = (negative_target_value[i] - mean) / (mad)
+                            elif self.normalize_condition == "maxmin":   
+                                mean, min, max = (
+                                    self.prop_dist_model.normalizer[key]["mean"],
+                                    self.prop_dist_model.normalizer[key]["min"],
+                                    self.prop_dist_model.normalizer[key]["max"],
+                                )
+                                val = 2 * (negative_target_value[i] - min) / (max - min) - 1   
+
+                            elif "value" in self.normalize_condition: # "value_n where n is the value to normalize"
+                                value = float(self.normalize_condition.split("_")[1])
+                                val = negative_target_value[i] / value    
+                            else:
+                                raise ValueError(f"Unknown normalization method: {self.normalize_condition}")    
+                        else:
+                            val = negative_target_value[i]
+                        context_row = torch.tensor(
+                            [val]
+                        ).unsqueeze(1)
+                        context_negative.append(context_row)
+                context_negative = torch.cat(context_negative, dim=1).float().to(self.device)
+                context_negative = context_negative.repeat(1, n_node, 1)
+            else:
+                context_negative = None
+        else:
+            context = None
+
+
+        # sample from the EDM model
+        x, h = self.model.sample_guidance(
+            batch_size,
+            target_function,
+            node_mask,
+            edge_mask,
+            context,
+            context_negative=context_negative,
+            gg_scale=gg_scale,
+            cfg_scale=cfg_scale,
+            max_norm=max_norm,
+            fix_noise=fix_noise,
+            std=std,
+            scheduler=scheduler,
+            guidance_at=guidance_at,
+            guidance_stop=guidance_stop,
+            guidance_ver=guidance_ver,
+            n_backwards=n_backwards,
+            h_weight=h_weight,
+            x_weight=x_weight,
+            debug=debug,
+            condition_tensor=condition_tensor,
+            condition_mode=condition_mode,
+            mask_node_index=mask_node_index, # For Inpainting
+            denoising_strength=denoising_strength, # For Inpainting
+            noise_initial_mask=noise_initial_mask, # For Inpainting
+            t_start=t_start,
+            t_critical=t_critical,
+        )
+
+        assert_correctly_masked(x, node_mask)
+        assert_mean_zero_with_mask(x, node_mask)
+        one_hot = h["categorical"]
+        charges = h["integer"]
+        return one_hot, charges, x, node_mask
+    
     
 
     def sample_chain_guide(
@@ -1131,6 +1327,8 @@ class GuidanceModelPrediction(Task, core.Configurable):
             weight = []
             num_class = []
             for task, w in self.task.items():
+                if task not in train_set.targets.keys():
+                    raise ValueError(f"Task {task} not found in dataset")
                 value = torch.tensor(values[task])
                 mean.append(value.float().mean())
                 std.append(value.float().std())

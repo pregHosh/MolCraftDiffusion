@@ -17,4 +17,4 @@ save_pkl: data/test.pkl
 data_type: pointcloud # pyg or pointcloud
 batch_size: 48
 num_workers: 0
-consider_global_attributes: False
+# consider_global_attributes: False  #depricated

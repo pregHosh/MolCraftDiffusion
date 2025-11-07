@@ -210,6 +210,7 @@ class DataModule:
         # attach metadata
         for subset in (self.train_set, self.valid_set, self.test_set):
             subset.atom_types = dataset.atom_types
+            subset.targets = dataset.targets
         if self.task_type == "diffusion":
             for subset in (self.train_set, self.valid_set, self.test_set):
                 subset.smiles_list = dataset.smiles_list

@@ -119,6 +119,8 @@ class ProperyPrediction(Task, core.Configurable):
             weight = []
             num_class = []
             for task, w in self.task.items():
+                if task not in train_set.targets.keys():
+                    raise ValueError(f"Task {task} not found in dataset")
                 value = torch.tensor(values[task])
                 mean.append(value.float().mean())
                 std.append(value.float().std())
