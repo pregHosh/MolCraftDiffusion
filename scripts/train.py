@@ -166,6 +166,16 @@ def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         
     if cfg.data.get("allow_unknown", False):
         overrides["atom_vocab"].append("Suisei") # add an extra token for unknown atoms
+    
+    if cfg.task.get("metrics", None) is "valid_posebuster":
+        overrides["use_posebuster"] = True
+        try :
+            import posebusters
+        except ImportError:
+            log.warning("PoseBuster is not installed. Please install PoseBuster to use this metric.")
+            log.warning("Falling back to 'Validity Relax and connected' metric.")
+            overrides["use_posebuster"] = False
+            overrides["metrics"] = ["Validity Relax and connected"]
         
     task_module = hydra.utils.instantiate(factory_cfg, **overrides)
     task_module.build()
