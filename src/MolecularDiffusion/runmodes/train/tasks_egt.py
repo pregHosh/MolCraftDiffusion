@@ -99,16 +99,18 @@ class ModelTaskFactory:
 
 
         # Compute feature dimensions
-       
-        self.in_node_nf = len(atom_vocab) + len(kwargs.get("extra_norm_values", [])) + 1 # +1 for atomic number
+        n_dim_extra = len(kwargs.get("extra_norm_values", []))
+        self.in_node_nf = len(atom_vocab) + n_dim_extra + 1 # +1 for atomic number
         self.dynamics_in_node_nf = self.in_node_nf + 1 # +1 for time (always include time in dynamics)
         self.context_node_nf = len(self.task_names)
         
-        # checkpoint path
         self.chkpt_path = chkpt_path
-        
         self.kwargs = kwargs
 
+        # Some checks
+        use_adaptor_module = self.kwargs.get("use_adapter_module", False)
+        if use_adaptor_module and self.context_node_nf < 1:
+            raise ValueError("Must specify the contexts to use the adapter module.")
 
     def build(self):
         """

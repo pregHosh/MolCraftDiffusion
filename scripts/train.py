@@ -144,6 +144,13 @@ def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     data_module.load()
     log.info(f"Instantiating task <{cfg.tasks._target_}>")
 
+    data_point_chk = data_module.train_set[0]
+    n_dim = data_point_chk["node_feature"].shape[1]
+    n_dim_extra_data = n_dim - len(set(data_module.train_set.atom_types()))
+    n_dim_extra_model = len(cfg.tasks.extra_norm_values)
+    if n_dim_extra_data != n_dim_extra_model:
+        raise ValueError(f"The number of extra node feature dimensions in the data ({n_dim_extra_data}) does not match the model configuration ({n_dim_extra_model}).")
+    
     factory_cfg = cfg.tasks
     
     # The EGT factory requires the train_set, which is not in the config.
