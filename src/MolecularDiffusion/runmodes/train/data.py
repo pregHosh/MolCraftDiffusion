@@ -99,8 +99,14 @@ class DataModule:
         """
         Load dataset (from pickle if available), optionally save pickle, then split into train/valid/test.
         """
+        is_main_process = (
+            not torch.distributed.is_available()
+            or not torch.distributed.is_initialized()
+            or torch.distributed.get_rank() == 0
+        )
+
         if self.load_pkl and os.path.exists(self.root_path):
-            if self.data_type == "pointcloud" :
+            if self.data_type == "pointcloud":
                 dataset = pointcloud_dataset(
                     root=self.root,
                     dataset_name=self.dataset_name,
@@ -130,14 +136,12 @@ class DataModule:
                     return self.config_dict
 
             dataset.config_dict = Config(
-                self.with_hydrogen,
-                self.node_feature,
-                self.max_atom
+                self.with_hydrogen, self.node_feature, self.max_atom
             )
         else:
             # instantiate dataset for task
+            verbose_level = int(is_main_process)
             if self.task_type == "diffusion":
-        
                 if self.data_type == "pyg":
                     dataset = pointcloud_dataset_pyG(
                         root=self.root,
@@ -157,7 +161,7 @@ class DataModule:
                         dataset_name=self.dataset_name,
                         target_fields=self.target_fields,
                         allow_unknown=self.allow_unknown,
-                        verbose=1,
+                        verbose=verbose_level,
                     )
                 else:
                     dataset = pointcloud_dataset(
@@ -178,7 +182,7 @@ class DataModule:
                         dataset_name=self.dataset_name,
                         target_fields=self.target_fields,
                         allow_unknown=self.allow_unknown,
-                        verbose=1,
+                        verbose=verbose_level,
                     )
             elif self.task_type in ("regression", "guidance"):
                 dataset = pointcloud_dataset_pyG(
@@ -199,11 +203,12 @@ class DataModule:
                     dataset_name=self.dataset_name,
                     target_fields=self.target_fields,
                     allow_unknown=self.allow_unknown,
-                    verbose=1,
+                    verbose=verbose_level,
                 )
             else:
-                raise ValueError(f"Unknown task_type '{self.task_type}'. Choose 'diffusion', 'regression', or 'guidance'.")
-
+                raise ValueError(
+                    f"Unknown task_type '{self.task_type}'. Choose 'diffusion', 'regression', or 'guidance'."
+                )
 
         # split
         total = len(dataset)
@@ -224,7 +229,8 @@ class DataModule:
                 subset.num_atoms = dataset.num_atoms
                 subset.get_property = dataset.get_property
 
-        print(
-            f"Total: {total}, Train: {len(self.train_set)}, Valid: {len(self.valid_set)}, Test: {len(self.test_set)}"
-        )
+        if is_main_process:
+            print(
+                f"Total: {total}, Train: {len(self.train_set)}, Valid: {len(self.valid_set)}, Test: {len(self.test_set)}"
+            )
         return self.train_set, self.valid_set, self.test_set

@@ -37,6 +37,12 @@ import os
 log = RankedLogger(__name__, rank_zero_only=True)
 
 
+def is_rank_zero():
+    if torch.distributed.is_available() and torch.distributed.is_initialized():
+        return torch.distributed.get_rank() == 0
+    return True
+
+
 def engine_wrapper(task_module, data_module, trainer_module, logger_module, **kwargs):
     
     trainer_module.get_optimizer()
@@ -72,8 +78,9 @@ def engine_wrapper(task_module, data_module, trainer_module, logger_module, **kw
         if len(task_module.condition_names) > 0:
             models_to_save["prop"] = task_module.task.prop_dist_model
 
-        with open(os.path.join(trainer_module.output_path, "edm_stat.pkl"), "wb") as f:
-            pickle.dump(models_to_save, f)       
+        if is_rank_zero():
+            with open(os.path.join(trainer_module.output_path, "edm_stat.pkl"), "wb") as f:
+                pickle.dump(models_to_save, f)       
     else:
         best_metrics = torch.inf
     for i in range(trainer_module.num_epochs):
@@ -216,13 +223,6 @@ def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     return metrics, object_dict
 
 def log_hyperparameters(object_dict: dict):
-
-
-    def is_rank_zero():
-        if torch.distributed.is_available() and torch.distributed.is_initialized():
-            return torch.distributed.get_rank() == 0
-        return True
-
     if not is_rank_zero():
         return  # Skip logging for non-zero ranks
 

@@ -196,14 +196,17 @@ class Engine(core.Configurable):
             if logger == "logging":
                 logger = core.LoggingLogger()
             elif logger == "wandb":
-                if self.project_wandb is None:
-                    self.project_wandb = task.__class__.__name__
-                logger = core.WandbLogger(
-                    project=self.project_wandb,
-                    name=self.name_wandb,
-                    dir=self.dir_wandb,
-                    rank=self.rank,
-                )
+                if self.rank == 0:
+                    if self.project_wandb is None:
+                        self.project_wandb = task.__class__.__name__
+                    logger = core.WandbLogger(
+                        project=self.project_wandb,
+                        name=self.name_wandb,
+                        dir=self.dir_wandb,
+                        rank=self.rank,
+                    )
+                else:
+                    logger = core.LoggingLogger() # Fallback for non-main processes
             else:
                 raise ValueError("Unknown logger `%s`" % logger)
             self.logger = logger

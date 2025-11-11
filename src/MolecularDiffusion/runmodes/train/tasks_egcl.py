@@ -138,6 +138,11 @@ class ModelTaskFactory:
 
 
         """
+        is_main_process = (
+            not torch.distributed.is_available()
+            or not torch.distributed.is_initialized()
+            or torch.distributed.get_rank() == 0
+        )
         # Construct shared EGNN dynamics
         dynamics_model = EGNN_dynamics(
             in_node_nf=self.dynamics_in_node_nf,
@@ -177,7 +182,8 @@ class ModelTaskFactory:
             )
             
             if self.kwargs.get("sp_regularizer_deploy", False):
-                logging.info("SP regularizer is enabled for diffusion task.")
+                if is_main_process:
+                    logging.info("SP regularizer is enabled for diffusion task.")
                 sp_reg = SP_regularizer(
                     regularizer=self.kwargs.get("sp_regularizer_regularizer", "hard"),
                     lambda_=self.kwargs.get("sp_regularizer_lambda_", 0),
@@ -188,7 +194,8 @@ class ModelTaskFactory:
                     warm_up_steps=self.kwargs.get("sp_regularizer_warm_up_steps", 100),
                 )
             else:
-                logging.info("SP regularizer is disabled for diffusion task.")
+                if is_main_process:
+                    logging.info("SP regularizer is disabled for diffusion task.")
                 sp_reg = None
             self.task = GeomMolecularGenerative(
                 model,
@@ -273,28 +280,32 @@ class ModelTaskFactory:
             raise ValueError(f"Unknown task_type '{self.task_type}'. Choose 'diffusion', 'regression', or 'guidance'.")
 
         n_params = sum(p.numel() for p in model.parameters() if p.requires_grad) # type: ignore
-        logger.info(f"Number of parameters: {n_params}")
+        if is_main_process:
+            logger.info(f"Number of parameters: {n_params}")
 
         if self.chkpt_path:    
             try:
                 ckpt = torch.load(self.chkpt_path)
                 chk_point = getattr(ckpt, "ema_model", ckpt["model"])
-                logger.info(f"Loading checkpoint from {self.chkpt_path}")
+                if is_main_process:
+                    logger.info(f"Loading checkpoint from {self.chkpt_path}")
                 
                 try:
                     load_result = self.task.load_state_dict(chk_point, strict=False)
                     if load_result.missing_keys or load_result.unexpected_keys:
-                        logger.warning(f"\033[93mCheckpoint loaded with mismatched keys.\033[0m")
-                        if load_result.missing_keys:
-                            logger.warning(f"\033[93mMissing keys ({len(load_result.missing_keys)}): {load_result.missing_keys}\033[0m")
-                        if load_result.unexpected_keys:
-                            logger.warning(f"\033[93mUnexpected keys ({len(load_result.unexpected_keys)}): {load_result.unexpected_keys}\033[0m")
+                        if is_main_process:
+                            logger.warning(f"\033[93mCheckpoint loaded with mismatched keys.\033[0m")
+                            if load_result.missing_keys:
+                                logger.warning(f"\033[93mMissing keys ({len(load_result.missing_keys)}): {load_result.missing_keys}\033[0m")
+                            if load_result.unexpected_keys:
+                                logger.warning(f"\033[93mUnexpected keys ({len(load_result.unexpected_keys)}): {load_result.unexpected_keys}\033[0m")
                 except RuntimeError as e:
                     n_dim_pretrain = chk_point["model.dynamics.egnn.embedding.layers.0.weight"].shape[1] 
                     n_extra_dim = self.dynamics_in_node_nf - n_dim_pretrain + len(self.condition_names)
 
                     if n_extra_dim > 0:
-                        logger.info("Adding dimensions to the EGNN...")
+                        if is_main_process:
+                            logger.info("Adding dimensions to the EGNN...")
                         chk_point["model.dynamics.egnn.embedding.layers.0.weight"] = adjust_weights(
                             chk_point["model.dynamics.egnn.embedding.layers.0.weight"], (self.hidden_size, 
                                                                                         n_dim_pretrain + n_extra_dim)
@@ -310,11 +321,12 @@ class ModelTaskFactory:
                         )      
                         res = self.task.load_state_dict(chk_point, strict=False) 
                         if res.missing_keys or res.unexpected_keys:
-                            logger.warning(f"\033[93mCheckpoint loaded with mismatched keys after adjustment.\033[0m")
-                            if res.missing_keys:
-                                logger.warning(f"\033[93mMissing keys ({len(res.missing_keys)}): {res.missing_keys}\033[0m")
-                            if res.unexpected_keys:
-                                logger.warning(f"\033[93mUnexpected keys ({len(res.unexpected_keys)}): {res.unexpected_keys}\033[0m")
+                            if is_main_process:
+                                logger.warning(f"\033[93mCheckpoint loaded with mismatched keys after adjustment.\033[0m")
+                                if res.missing_keys:
+                                    logger.warning(f"\033[93mMissing keys ({len(res.missing_keys)}): {res.missing_keys}\033[0m")
+                                if res.unexpected_keys:
+                                    logger.warning(f"\033[93mUnexpected keys ({len(res.unexpected_keys)}): {res.unexpected_keys}\033[0m")
                     else:
                         raise RuntimeError("The specified model configuration does not match with the checkpoint.")
                                 
@@ -323,7 +335,8 @@ class ModelTaskFactory:
                     self.task.mean = chk_point["mean"]
                     self.task.std = chk_point["std"]                           
             except FileNotFoundError:
-                logger.warning(f"Checkpoint not found at {self.chkpt_path}. Initializing model without loading.")      
+                if is_main_process:
+                    logger.warning(f"Checkpoint not found at {self.chkpt_path}. Initializing model without loading.")      
                 raise FileNotFoundError(f"Checkpoint not found at {self.chkpt_path}.")
         self.task.atom_vocab = self.atom_vocab
             
