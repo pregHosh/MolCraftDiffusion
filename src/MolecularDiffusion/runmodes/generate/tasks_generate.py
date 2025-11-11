@@ -38,7 +38,12 @@ class GenerativeFactory:
         self.task = task
         self.task_type = task_type
         self.num_generate = num_generate
-        self.max_atom = max(task.n_node_dist.keys())
+        try:
+            self.max_atom = max(task.n_node_dist.keys())
+        except ValueError:
+            logger.warning("Node distribution model is not available, set max_atom to 86")
+            self.max_atom = 86
+            
         self.mol_size = mol_size
 
         if self.mol_size is not None and len(self.mol_size) > 0:
@@ -82,27 +87,41 @@ class GenerativeFactory:
             self.property_guidance()
         elif self.task_type in ("inpaint", "outpaint", "outpaintft"):
             self.structural_guidance()
-            
+        elif self.task_type in {"inpaint_cfg", "inpaint_gg", "inpaint_cfggg", "outpaint_cfg", "outpaint_gg", "outpaint_cfggg"}:
+            self.hybrid_guidance()
+        else:
+            raise ValueError(f"Unknown task type: {self.task_type}")
         
     def unconditional_generation(self):
             
-
         fail_count = 0
-        progress_bar = tqdm(range(self.num_generate), desc="Sampling molecules", leave=True)
+        
+        num_round = self.num_generate // self.batch_size
+        if self.num_generate % self.batch_size != 0:
+            num_round += 1
+        current_batch_size = self.batch_size
+        
+        progress_bar = tqdm(range(num_round), desc="Sampling molecules", leave=True)
         
         for i in progress_bar:
+            if i == num_round-1 and self.num_generate % self.batch_size != 0:
+                current_batch_size = self.num_generate % self.batch_size
+            else:
+                current_batch_size = self.batch_size
+                
             try:
                 if len(self.mol_size) == 1:
                     nodesxsample = torch.tensor(self.mol_size, dtype=torch.long)
+                    nodesxsample = nodesxsample.repeat(current_batch_size) 
                 elif len(self.mol_size) == 2:
                     if self.mol_size[0] == 0 and self.mol_size[1] == 0:
-                        nodesxsample = self.task.node_dist_model.sample(self.batch_size)
+                        nodesxsample = self.task.node_dist_model.sample(current_batch_size)
                     else:
                         mean = (self.mol_size[0] + self.mol_size[1]) / 2
                         std = (self.mol_size[1] - self.mol_size[0]) / 4
                         nodesxsample = torch.normal(mean=mean, std=std, size=(1,)).long()
                         nodesxsample = torch.clamp(nodesxsample, min=self.mol_size[0], max=self.mol_size[1])
-
+                        nodesxsample = nodesxsample.repeat(current_batch_size) 
                 if self.task.prop_dist_model and len(self.target_values) == 0:
                     size = nodesxsample.item()
                     target_value = self.task.prop_dist_model.sample(size)
@@ -124,11 +143,14 @@ class GenerativeFactory:
                     atom_decoder=self.task.atom_vocab,
                 )
 
-                path_xyz = os.path.join(self.output_path, f"molecule_000.xyz")
-                shutil.move(
-                    path_xyz,
-                    os.path.join(self.output_path, f"molecule_{str(i+1).zfill(4)}.xyz"),
-                )
+                for j in range(current_batch_size):
+                    
+                    path_xyz = os.path.join(self.output_path, f"molecule_{str(j).zfill(3)}.xyz")
+                    idx = i * self.batch_size + j
+                    shutil.move(
+                        path_xyz,
+                        os.path.join(self.output_path, f"molecule_{str(idx).zfill(4)}.xyz"),
+                    )
             except Exception as e:
                 fail_count += 1
                 tqdm.write(f"[Batch {i}] Sampling failed: {e}")
@@ -157,21 +179,32 @@ class GenerativeFactory:
             property_eval = False        
         
         fail_count = 0
-        progress_bar = tqdm(range(self.num_generate), desc="Sampling molecules", leave=True)
+        num_round = self.num_generate // self.batch_size
+        if self.num_generate % self.batch_size != 0:
+            num_round += 1
+        current_batch_size = self.batch_size
+        progress_bar = tqdm(range(num_round), desc="Sampling molecules", leave=True)
         
         for i in progress_bar:
+
+            if i == num_round-1 and self.num_generate % self.batch_size != 0:
+                current_batch_size = self.num_generate % self.batch_size
+            else:
+                current_batch_size = self.batch_size
+                
             try:
                 if len(self.mol_size) == 1:
                     nodesxsample = torch.tensor(self.mol_size, dtype=torch.long)
+                    nodesxsample = nodesxsample.repeat(current_batch_size) 
                 elif len(self.mol_size) == 2:
                     if self.mol_size[0] == 0 and self.mol_size[1] == 0:
-                        nodesxsample = self.task.node_dist_model.sample(self.batch_size)
+                        nodesxsample = self.task.node_dist_model.sample(current_batch_size)
                     else:
                         mean = (self.mol_size[0] + self.mol_size[1]) / 2
                         std = (self.mol_size[1] - self.mol_size[0]) / 4
                         nodesxsample = torch.normal(mean=mean, std=std, size=(1,)).long()
                         nodesxsample = torch.clamp(nodesxsample, min=self.mol_size[0], max=self.mol_size[1])
-                
+                        nodesxsample = nodesxsample.repeat(current_batch_size) 
                 if self.task_type == "conditional":
                     one_hot, charges, x, _ = self.task.sample_conditonal(
                             nodesxsample=nodesxsample, 
@@ -193,12 +226,16 @@ class GenerativeFactory:
                     atom_decoder=self.task.atom_vocab,
                 )
 
-                path_xyz = os.path.join(self.output_path, f"molecule_000.xyz")
-                shutil.move(
-                    path_xyz,
-                    os.path.join(self.output_path, f"molecule_{str(i+1).zfill(4)}.xyz"),
-                )
+                for j in range(current_batch_size):
+                    
+                    path_xyz = os.path.join(self.output_path, f"molecule_{str(j).zfill(3)}.xyz")
+                    idx = i * self.batch_size + j
+                    shutil.move(
+                        path_xyz,
+                        os.path.join(self.output_path, f"molecule_{str(idx).zfill(4)}.xyz"),
+                    )
                 
+                #TODO to adapt this to work with batch of mols
                 if property_eval:
                     xh = torch.cat([
                         x,
@@ -478,7 +515,133 @@ class GenerativeFactory:
                 "success": (i + 1 - fail_count),
                 "success_rate": f"{100 * (i + 1 - fail_count) / (i + 1):.1f}%",
             })   
+
+    def hybrid_guidance(self):
+        
+        xh_ref = self.preprocess_ref_structure(self.task.device)
+        condition_mode = self.task_type.split("_")[0] + "_" + self.condition_configs.get("condition_component",  "xh")
+        
+        guidance_ver = self.condition_configs.get("guidance_ver", "cfg")
+        if guidance_ver in [0,1,2,"cfggg"]:
+
+            target_function=self.condition_configs.get("target_function", None)            
+            if target_function is None:
+                raise ValueError("Target function must be provided for gradient guidance")
+            else:
+                target_function.atom_vocab = self.task.atom_vocab      
+                target_function.norm_factor = self.task.model.norm_values
+                target_function = target_function()
+        else:
+            target_function = None
                 
+        scheduler = self.condition_configs.get("scheduler", None)
+        if scheduler is not None:
+            scheduler = scheduler()
+            
+        fail_count = 0
+        progress_bar = tqdm(range(self.num_generate), desc="Sampling molecules", leave=True)
+        
+        if hasattr(self.task, 'predictive_model'):
+            property_eval = True
+            df_dict = {
+                "filename": [],
+            }
+            for prop_name in self.property_names:
+                df_dict[prop_name] = []
+            df_dict["size"] = []           
+        else:
+            logger.warning("Property model is not available, skip evaluation.")
+            property_eval = False
+             
+        for i in progress_bar:
+            try:
+                if len(self.mol_size) == 1:
+                    nodesxsample = torch.tensor(self.mol_size, dtype=torch.long)
+                elif len(self.mol_size) == 2:
+                    if self.mol_size[0] == 0 and self.mol_size[1] == 0:
+                        nodesxsample = self.task.node_dist_model.sample(self.batch_size)
+                    else:
+                        mean = (self.mol_size[0] + self.mol_size[1]) / 2
+                        std = (self.mol_size[1] - self.mol_size[0]) / 4
+                        nodesxsample = torch.normal(mean=mean, std=std, size=(1,)).long()
+                        nodesxsample = torch.clamp(nodesxsample, min=self.mol_size[0], max=self.mol_size[1])
+
+                if "inpaint" in self.task_type:
+                    if nodesxsample.item() < xh_ref.shape[1]:
+                        nodesxsample = torch.tensor([xh_ref.shape[1]])
+                        logging.warning("Specified molecular size is too small, set it as the same size as the reference structure")
+                                           
+                    try:
+                        mask_node_index = torch.tensor([self.condition_configs.get("mask_node_index", [])])
+                    except RuntimeError:
+                        mask_node_index = torch.tensor([[]])
+                else:
+                    mask_node_index = torch.tensor([[]])
+
+            
+                one_hot, charges, x, _  = self.task.sample_hybrid_guidance(
+                    target_function=target_function,
+                    target_value=self.target_values,
+                    negative_target_value=self.negative_target_values,
+                    nodesxsample=nodesxsample,
+                    gg_scale=self.condition_configs.get("gg_scale",1),
+                    cfg_scale=self.condition_configs.get("cfg_scale",1),
+                    max_norm=self.condition_configs.get("max_norm",1),
+                    std=1,
+                    scheduler=scheduler,
+                    guidance_ver=guidance_ver,
+                    guidance_at=self.condition_configs.get("guidance_at",1),
+                    guidance_stop=self.condition_configs.get("guidance_stop",0),
+                    n_backwards=self.condition_configs.get("n_backwards",1),
+                    condition_tensor=xh_ref,
+                    condition_mode=condition_mode,
+                    mask_node_index=mask_node_index, # For Inpainting
+                    denoising_strength=self.condition_configs.get("denoising_strength", 0.8), # For Inpainting
+                    noise_initial_mask=self.condition_configs.get("noise_initial_mask", False), # For Inpainting
+                    t_start=self.condition_configs.get("t_start", 1),
+                    t_critical=self.condition_configs.get("t_critical", 0),
+                )   
+                
+                save_xyz_file(
+                    self.output_path,
+                    one_hot,
+                    x,
+                    atom_decoder=self.task.atom_vocab,
+                )
+
+                path_xyz = os.path.join(self.output_path, f"molecule_000.xyz")
+                shutil.move(
+                    path_xyz,
+                    os.path.join(self.output_path, f"molecule_{str(i+1).zfill(4)}.xyz"),
+                )
+                
+                if property_eval:
+                    xh = torch.cat([
+                        x,
+                        one_hot,
+                        charges
+                    ])
+                    preds = self.property_prediction(xh, t=0)
+                    for prop_name in self.property_names:
+                        logger.info(f"{prop_name}: {preds[prop_name]}")
+                        df_dict[prop_name].append(preds[prop_name])
+                    df_dict["filename"].append(f"molecule_{str(i+1).zfill(4)}.xyz")
+                    df_dict["size"].append(nodesxsample.item())    
+            except Exception as e:
+                fail_count += 1
+                tqdm.write(f"[Batch {i}] Sampling failed: {e}")
+
+            progress_bar.set_postfix({
+                "completed": i + 1,
+                "failed": fail_count,
+                "success": (i + 1 - fail_count),
+                "success_rate": f"{100 * (i + 1 - fail_count) / (i + 1):.1f}%",
+            })
+            
+        if property_eval:    
+            self.df = pd.DataFrame(df_dict)
+    
+                   
     def property_prediction(self, 
                             xh: torch.Tensor, # pos, node_feature
                             t: int):

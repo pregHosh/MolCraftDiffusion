@@ -473,14 +473,14 @@ class Engine(core.Configurable):
         return metric, preds, targets
 
     @classmethod
-    def load_from_checkpoint(cls, checkpoint_path: str, strict: bool = False):
+    def load_from_checkpoint(cls, checkpoint_path: str, strict: bool = False, interference_mode: bool = False):
         """
         Load full Engine from a checkpoint using saved hyperparameters.
 
         Parameters:
             checkpoint_path (str): Path to the checkpoint file.
             strict (bool): Whether to strictly enforce that the keys in state_dict match the model.
-
+            ininterference_mode (bool): The train_set, val_set, and test_set will be set to None if True.
         Returns:
             Engine: Fully reconstructed Engine with model, optimizer, and scheduler states.
         """
@@ -493,6 +493,12 @@ class Engine(core.Configurable):
         config_dict = state["hyperparameters"]
         optimizer_state = state.get("optimizer", None)
         
+        if interference_mode:
+            config_dict["train_set"] = None
+            config_dict["valid_set"] = None
+            config_dict["test_set"] = None
+            optimizer_state = None
+
         engine = cls.load_config_dict(config_dict)  # Uses class method to build Engine
 
         # Move model to device

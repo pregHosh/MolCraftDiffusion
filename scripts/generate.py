@@ -35,10 +35,8 @@ def load_model(chkpt_directory, total_step=0):
     except ImportError:
         edm_stats = {"node": None}
     
-
     engine = Engine(None, None, None, None, None)
-    engine = engine.load_from_checkpoint(model_path)
-
+    engine = engine.load_from_checkpoint(model_path, interference_mode=True)
     engine.model.node_dist_model = edm_stats["node"]
     if "prop" in edm_stats:
         engine.model.prop_dist_model = edm_stats["prop"]

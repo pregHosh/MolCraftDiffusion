@@ -167,7 +167,7 @@ def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     if cfg.data.get("allow_unknown", False):
         overrides["atom_vocab"].append("Suisei") # add an extra token for unknown atoms
     
-    if cfg.task.get("metrics", None) is "valid_posebuster":
+    if cfg.task.get("metrics", None) == "valid_posebuster":
         overrides["use_posebuster"] = True
         try :
             import posebusters

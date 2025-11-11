@@ -83,8 +83,9 @@ class GeomMolecularGenerative(Task, core.Configurable):
         self,
         train_set=None,
     ):
-        if len(train_set) == 0:
-            raise ValueError("Training set is empty. check the data path and format.")
+        if train_set is not None:
+            if len(train_set) == 0:
+                raise ValueError("Training set is empty. check the data path and format.")
         if train_set is not None:
             self.atomic_numbers = train_set.atom_types()
             self.atom_decoder = [
@@ -437,8 +438,8 @@ class GeomMolecularGenerative(Task, core.Configurable):
         batch_size = nodesxsample.size(0)
 
         if batch_size > 1:
-            node_mask = torch.zeros(batch_size, self.max_n_nodes)
-            nnode = self.max_n_nodes
+            nnode = int(nodesxsample[0])
+            node_mask = torch.zeros(batch_size,nnode)
         else:
             nnode = int(nodesxsample[0])
             node_mask = torch.zeros(batch_size, nnode)
@@ -457,7 +458,7 @@ class GeomMolecularGenerative(Task, core.Configurable):
             if context is None:
                 context = self.prop_dist_model.sample_batch(nodesxsample)
             context = (
-                context.unsqueeze(1).repeat(1, nnode, 1).to(self.device) * node_mask
+                context.unsqueeze(1).repeat(batch_size, nnode, 1).to(self.device) * node_mask
             )
         else:
             context = None
@@ -657,6 +658,7 @@ class GeomMolecularGenerative(Task, core.Configurable):
         one_hot, charges, x, node_mask = self.sample(nodesxsample, context, fix_noise, mode=mode)
         return one_hot, charges, x, node_mask
 
+    #TODO batch
     def sample_guidance(
         self,
         target_function,
@@ -750,7 +752,6 @@ class GeomMolecularGenerative(Task, core.Configurable):
         one_hot = h["categorical"]
         charges = h["integer"]
         return one_hot, charges, x, node_mask
-
 
     def sample_guidance_conitional(
         self,
@@ -850,7 +851,7 @@ class GeomMolecularGenerative(Task, core.Configurable):
             context.append(context_row)
 
         context = torch.cat(context, dim=1).float().to(self.device)
-        context = context.repeat(1, n_node, 1)
+        context = context.repeat(batch_size, n_node, 1)
 
         if negative_target_value:
             context_negative = []
@@ -883,7 +884,7 @@ class GeomMolecularGenerative(Task, core.Configurable):
                     ).unsqueeze(1)
                     context_negative.append(context_row)
             context_negative = torch.cat(context_negative, dim=1).float().to(self.device)
-            context_negative = context_negative.repeat(1, n_node, 1)
+            context_negative = context_negative.repeat(batch_size, n_node, 1)
         else:
             context_negative = None
 
@@ -916,7 +917,7 @@ class GeomMolecularGenerative(Task, core.Configurable):
         charges = h["integer"]
         return one_hot, charges, x, node_mask
 
-
+    #TODO batch
     def sample_hybrid_guidance(
         self,
         target_function,
@@ -1306,16 +1307,15 @@ class GuidanceModelPrediction(Task, core.Configurable):
                 )
 
 
-    def preprocess(self, train_set, valid_set=None, test_set=None):
+    def preprocess(self, train_set=None, valid_set=None, test_set=None):
         """
         Compute the mean and derivation for each task on the training set.
         """
-        if len(train_set) == 0:
-            raise ValueError("Training set is empty. check the data path and format.")
+      
         values = defaultdict(list)
-
         if train_set is not None:
-
+            if len(train_set) == 0:
+                        raise ValueError("Training set is empty. check the data path and format.")
             for sample in train_set:
                 if not sample.get("labeled", True):
                     continue
