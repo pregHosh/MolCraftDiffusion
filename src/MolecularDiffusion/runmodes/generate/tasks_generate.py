@@ -641,11 +641,12 @@ class GenerativeFactory:
                         nodesxsample = torch.normal(mean=mean, std=std, size=(1,)).long()
                         nodesxsample = torch.clamp(nodesxsample, min=self.mol_size[0], max=self.mol_size[1])
 
+
                 if "inpaint" in self.task_type:
-                    if nodesxsample.item() < xh_ref.shape[1]:
-                        nodesxsample = torch.tensor([xh_ref.shape[1]])
+                    if nodesxsample[0].item() < xh_ref.shape[1]:
+                        nodesxsample = torch.tensor([xh_ref.shape[1]]*current_batch_size)
                         logging.warning("Specified molecular size is too small, set it as the same size as the reference structure")
-                               
+                            
                     try:
                         mask_node_index = torch.tensor([self.condition_configs.get("mask_node_index", [])])
                     except RuntimeError:

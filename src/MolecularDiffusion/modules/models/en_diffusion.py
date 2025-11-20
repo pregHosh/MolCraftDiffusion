@@ -68,10 +68,12 @@ class EnVariationalDiffusion(torch.nn.Module):
         context_mask_rate: float = 0.0,
         mask_value: float = 0.0,
         eval_mode: bool = False,
+        debug: bool = False,
     ):
         super().__init__()
         self.call = 0
         self.eval_mode = eval_mode
+        self.debug = debug
 
         # Loss and parametrization settings
         assert loss_type in {"vlb", "l2"}
@@ -456,7 +458,7 @@ class EnVariationalDiffusion(torch.nn.Module):
         eps_x = eps[:, :x_dim]
         eps_t_x = net_out[:, :x_dim]
         pos_sq = (eps_x - eps_t_x).pow(2).sum(dim=1)
-        pos_sum = torch_scatter.scatter_add(pos_sq, batch_idx, dim=0, dim_size=natom.size(0))
+        pos_sum = scatter_add(pos_sq, batch_idx, dim=0, dim_size=natom.size(0))
         pos_err = pos_sum / denom
 
         # hint and hcat indices
@@ -468,34 +470,34 @@ class EnVariationalDiffusion(torch.nn.Module):
             eps_hcat = eps[:, start:mid]
             eps_t_hcat = net_out[:, start:mid]
             cat_sq = (eps_hcat - eps_t_hcat).pow(2).sum(dim=1)
-            cat_sum = torch_scatter.scatter_add(cat_sq, batch_idx, dim=0)
+            cat_sum = scatter_add(cat_sq, batch_idx, dim=0)
             cat_err = cat_sum / denom
 
             # integer hint
             eps_hint = eps[:, hint_idx:hint_idx+hint_dim]
             eps_t_hint = net_out[:, hint_idx:hint_idx+hint_dim]
             int_sq = (eps_hint - eps_t_hint).pow(2).sum(dim=1)
-            int_sum = torch_scatter.scatter_add(int_sq, batch_idx, dim=0)
+            int_sum = scatter_add(int_sq, batch_idx, dim=0)
             int_err = int_sum / denom
 
             # extra dims
             eps_hextra = eps[:, -extra_dim:]
             eps_t_hextra = net_out[:, -extra_dim:]
             extra_sq = (eps_hextra - eps_t_hextra).pow(2).sum(dim=1)
-            extra_sum = torch_scatter.scatter_add(extra_sq, batch_idx, dim=0)
+            extra_sum = scatter_add(extra_sq, batch_idx, dim=0)
             extra_err = extra_sum / denom
         else:
             # hcat is middle, hint is last
             eps_hcat = eps[:, x_dim:-hint_dim]
             eps_t_hcat = net_out[:, x_dim:-hint_dim]
             cat_sq = (eps_hcat - eps_t_hcat).pow(2).sum(dim=1)
-            cat_sum = torch_scatter.scatter_add(cat_sq, batch_idx, dim=0)
+            cat_sum = scatter_add(cat_sq, batch_idx, dim=0)
             cat_err = cat_sum / denom
 
             eps_hint = eps[:, -hint_dim:]
             eps_t_hint = net_out[:, -hint_dim:]
             int_sq = (eps_hint - eps_t_hint).pow(2).sum(dim=1)
-            int_sum = torch_scatter.scatter_add(int_sq, batch_idx, dim=0)
+            int_sum = scatter_add(int_sq, batch_idx, dim=0)
             int_err = int_sum / denom
 
         return {
@@ -1788,7 +1790,6 @@ class EnVariationalDiffusion(torch.nn.Module):
         
         return zs, opt_info
 
-
     def sample_p_zs_given_zt_guidance_v2(
         self,
         s,
@@ -2092,7 +2093,6 @@ class EnVariationalDiffusion(torch.nn.Module):
 
         # Compute sigma for p(zs | zt).
         sigma = sigma_t_given_s * sigma_s / sigma_t
-
         # Sample zs given the paramters derived from zt.
         zs = self.sample_normal(mu, sigma, node_mask, fix_noise)
     
@@ -2878,7 +2878,6 @@ class EnVariationalDiffusion(torch.nn.Module):
         z = torch.cat([z_x, z_h], dim=2)
         return z
 
-
     def sample_ddim_step(self, zt, s, t, node_mask, edge_mask, context, eta=0.0):
         """
         Deterministic DDIM step: z_s ← z_t - f(eps_theta), no stochasticity when eta=0.
@@ -2927,7 +2926,7 @@ class EnVariationalDiffusion(torch.nn.Module):
         fix_noise=False,
         n_steps=None,
         eta=0.0,
-        save_frame=False, # since there are fewer steps, we save all frames
+        n_frames=0, # since there are fewer steps, we save all frames
     ):
         """
         DDIM sampling: deterministic, optionally fewer steps.
@@ -2936,7 +2935,6 @@ class EnVariationalDiffusion(torch.nn.Module):
         """
         n_steps = n_steps or self.T  # use full steps unless specified
         step_indices = torch.linspace(0, self.T - 1, n_steps, dtype=torch.long, device=node_mask.device)
-
         # Initialize with Gaussian noise
         if fix_noise:
             # Noise is broadcasted over the batch axis, useful for visualizations.
@@ -2945,18 +2943,21 @@ class EnVariationalDiffusion(torch.nn.Module):
             z = self.sample_combined_position_feature_noise(
                 n_samples, n_nodes, node_mask
             )
-
         assert_mean_zero_with_mask(z[:, :, : self.n_dims], node_mask)
 
-        if save_frame:
+        if n_frames > 0:
             
             z_size = (z.size(0), z.size(1), z.size(2)-len(self.extra_norm_values))
          
-            chain = torch.zeros((n_steps-1,) + z_size, device=z.device)
-
+            chain = torch.zeros((n_frames,) + z_size, device=z.device)
+            s_saves = torch.linspace(0, self.T, 
+                                         steps=n_frames, device=z.device).long() 
+            
+        write_index = 0
         # Time steps for DDIM
         with tqdm(total=n_steps-1, dynamic_ncols=True, unit="steps") as pbar:
-            for write_idx, i in enumerate(reversed(range(1, len(step_indices)))):
+            for _, i in enumerate(reversed(range(1, len(step_indices)))):
+                
                 t = step_indices[i]
                 s = step_indices[i-1]
 
@@ -2964,8 +2965,11 @@ class EnVariationalDiffusion(torch.nn.Module):
                 s_array = torch.full((n_samples, 1), s / self.T, device=z.device)
 
                 z = self.sample_ddim_step(z, s_array, t_array, node_mask, edge_mask, context, eta)
-                if save_frame:
-                    chain[write_idx] = self.unnormalize_z(z, node_mask)
+                if n_frames > 0:
+                    if s in s_saves:
+                        chain[write_index] = self.unnormalize_z(z, node_mask)
+                        write_index += 1
+                    
                 pbar.update(1)
         # Final decode
         x, h = self.sample_p_xh_given_z0(z, node_mask, edge_mask, context, fix_noise=fix_noise)
@@ -2977,17 +2981,16 @@ class EnVariationalDiffusion(torch.nn.Module):
             print(f"[DDIM] Warning cog drift: {max_cog:.3f}, projecting positions.")
             x = remove_mean_with_mask(x, node_mask)
         
-        if save_frame:
+        if n_frames > 0:
             # Save the chain of frames
             xh = torch.cat([x, h["categorical"], h["integer"]], dim=2)
             chain[-1] = xh   
-            chain_flat = chain.view(n_samples * n_steps, z.size(1), z.size(2)-len(self.extra_norm_values)) 
+            chain_flat = chain.view(n_frames, n_samples, z.size(1), z.size(2)-len(self.extra_norm_values)) 
         else:
             chain_flat = None
         return x, h, chain_flat
+ 
 
-    
-    
     @torch.no_grad()
     def sample(
         self, 
@@ -4320,6 +4323,9 @@ class EnVariationalDiffusion(torch.nn.Module):
             z, node_mask, edge_mask, context=context, fix_noise=fix_noise
         )
 
+        x, h = self.check_sanity_xh(
+            x, h, node_mask, edge_mask, context, chain
+        )
         assert_mean_zero_with_mask(x, node_mask)
 
         max_cog = torch.sum(x, dim=1, keepdim=True).abs().max().item()
@@ -4339,7 +4345,6 @@ class EnVariationalDiffusion(torch.nn.Module):
             chain_flat = None
         
         return x, h, chain_flat
-
 
     @torch.no_grad()
     def sample_chain(
@@ -4392,6 +4397,109 @@ class EnVariationalDiffusion(torch.nn.Module):
         chain_flat = chain.view(n_samples * keep_frames, *z.size()[1:])
 
         return chain_flat
+
+    def check_sanity_xh(
+        self,
+        x: torch.Tensor,
+        h: dict,
+        node_mask: torch.Tensor,
+        edge_mask: torch.Tensor,
+        context: torch.Tensor,
+        chain: torch.Tensor,
+        n_frame_look_back: int = 4,    
+    ):
+        """
+        Performs a sanity check on the generated molecule (x, h) by computing its loss.
+        If the loss is infinite, it attempts to find a "clean" molecule from previous frames
+        in the sampling chain by iterating backward and re-sampling x and h from z_0.
+        This helps to recover from potential numerical instabilities during sampling.
+
+        Args:
+            x (torch.Tensor): Current atom positions (B, N, 3).
+            h (dict): Dictionary of atom features {'categorical', 'integer', 'extra'}.
+            node_mask (torch.Tensor): Mask indicating valid nodes (B, N, 1).
+            edge_mask (torch.Tensor): Mask indicating valid edges (B, N, N).
+            context (torch.Tensor): Context tensor for the diffusion model.
+            chain (torch.Tensor): A tensor containing intermediate states (z) from the sampling process.
+                                  Shape: (num_frames, B, N, D_latent).
+            n_frame_look_back (int, optional): Number of frames to look back in the chain
+                                               if the current molecule is "unclean". Defaults to 4.
+
+        Returns:
+            Tuple[torch.Tensor, dict]: A tuple containing the (potentially corrected) atom positions (x)
+                                      and atom features (h) that result in a finite loss.
+        """
+        self.loss_type = "vlb"
+        self.context_mask_rate = 0
+
+        loss, _ = self.compute_loss(
+            x,
+            h,
+            node_mask=node_mask,
+            edge_mask=edge_mask,
+            context=context,
+            reference_indices=None,
+            t0_always=True)
+                        
+        n_core = self.in_node_nf - self.ndim_extra - 1
+        start  = self.n_dims
+        mid    = start + n_core
+        hint_i = mid 
+
+        if torch.isinf(loss).any():
+            for i in range(1, n_frame_look_back+1):
+                
+                x_i = chain[-i-1][:, :, : self.n_dims]
+                
+                if self.ndim_extra > 0:
+                    h_cat_i = chain[-i-1][:, :, start:mid]
+                    h_int_i = chain[-i-1][:, :, hint_i:hint_i+1]
+                    h_extra_i = chain[-i-1][:, :, -self.ndim_extra:]
+                    h_i = {
+                        "categorical": h_cat_i,
+                        "integer": h_int_i,
+                        "extra": h_extra_i,
+                    }
+                else:
+                    h_cat_i = chain[-i-1][:, :, start: -1]
+                    h_int_i = chain[-i-1][:, :, -1:]
+                    h_i = {
+                        "categorical": h_cat_i,
+                        "integer": h_int_i,
+                        "extra": None,
+                    }
+                
+                zx_i, zh_i, _ = self.normalize(x_i, h_i, node_mask)
+                
+                # Reconstruct z_i from normalized components
+                if self.ndim_extra > 0:
+                    zh_i_combined = torch.cat([zh_i["categorical"], zh_i["integer"], zh_i["extra"]], dim=2)
+                else:
+                    zh_i_combined = torch.cat([zh_i["categorical"], zh_i["integer"]], dim=2)
+
+                z_i = torch.cat([zx_i, zh_i_combined], dim=2)
+
+                x, h = self.sample_p_xh_given_z0(
+            z_i, node_mask, edge_mask, context=context, fix_noise=False
+        )
+                loss, _ = self.compute_loss(       
+                        x,
+                        h,
+                        node_mask=node_mask,
+                        edge_mask=edge_mask,
+                        context=context,
+                        reference_indices=None,
+                        t0_always=True)
+                if not torch.isinf(loss).any():
+                    # if self.debug:
+                    #     logger.info(f"Found clean molecule at chain frame {i}")
+                    break
+        # else:
+            # if self.debug:
+            #     logger.info("The generated molecule is clean.")
+
+        return x, h
+
 
     def log_info(self):
         """
@@ -4719,8 +4827,8 @@ def gaussian_KL_for_dimension(q_mu, q_sigma, p_mu, p_sigma, d):
         The KL distance, summed over all dimensions except the batch dim.
     """
     mu_norm2 = sum_except_batch((q_mu - p_mu) ** 2)
-    assert len(q_sigma.size()) == 1
-    assert len(p_sigma.size()) == 1
+    # assert len(q_sigma.size()) == 1
+    # assert len(p_sigma.size()) == 1
     return (
         d * torch.log(p_sigma / q_sigma)
         + 0.5 * (d * q_sigma**2 + mu_norm2) / (p_sigma**2)

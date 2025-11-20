@@ -14,6 +14,7 @@ from MolecularDiffusion.utils import smilify_cell2mol, smilify_openbabel
 
 import logging
 from rdkit import RDLogger
+import matplotlib.pyplot as plt
 
 # Suppress RDKit warnings
 RDLogger.DisableLog('rdApp.*')
@@ -51,13 +52,15 @@ def runner(args):
         "bad_atom_chem": [],
         "neutral_molecule": [],
         "smiles": [],
+        "num_atoms": [],
     }
     
     if args.metrics in ["all", "core"]:
         for xyz in tqdm(xyzs, desc="Processing XYZ files", total=len(xyzs)):
-
+            num_atoms = 0
             try:
                 cartesian_coordinates_tensor, atomic_numbers_tensor = read_xyz_file(xyz)
+                num_atoms = cartesian_coordinates_tensor.size(0)
                 data = create_pyg_graph(cartesian_coordinates_tensor, 
                                             atomic_numbers_tensor,
                                             xyz_filename=xyz,
@@ -73,8 +76,8 @@ def runner(args):
                 is_valid = False
                 percent_atom_valid = 0
                 num_components = 100
-                bad_atom_chem = torch.arange(0,data.num_nodes)
-                bad_atom_distort = torch.arange(0,data.num_nodes)
+                bad_atom_chem = torch.arange(0, data.num_nodes) if 'data' in locals() and hasattr(data, 'num_nodes') else []
+                bad_atom_distort = torch.arange(0, data.num_nodes) if 'data' in locals() and hasattr(data, 'num_nodes') else []
     
             try:
                 smiles_list, mol_list = smilify_openbabel(xyz)
@@ -128,6 +131,7 @@ def runner(args):
             df_res_dict["num_graphs"].append(num_components)
             df_res_dict["bad_atom_distort"].append(bad_atom_distort)
             df_res_dict["bad_atom_chem"].append(bad_atom_chem)
+            df_res_dict["num_atoms"].append(num_atoms)
 
         df = pd.DataFrame(df_res_dict)
         df = df.sort_values(by="file")
@@ -138,6 +142,10 @@ def runner(args):
         logging.info(f"{df['valid_connected'].mean() * 100:.2f}% of 3D molecules are valid and fully-connected")
         logging.info(f"{sum(fully_connected) / len(fully_connected) * 100:.2f}% of 3D molecules are fully connected")
         
+        logging.info(f"Molecular size mean: {df['num_atoms'].mean():.2f}")
+        logging.info(f"Molecular size max: {df['num_atoms'].max()}")
+        logging.info(f"Molecular size std: {df['num_atoms'].std():.2f}")
+
         if args.check_strain: # Only run check_strain if core metrics are computed, as it relies on 'df'
             rmsd_mean = df["rmsd"].dropna().mean()
             delta_energy_mean = df["delta_energy"].dropna().mean()
@@ -148,8 +156,21 @@ def runner(args):
         
         if args.output is None:
             output_path = f"{xyz_dir}/output_metrics.csv"
+            hist_path = f"{xyz_dir}/molecular_size_histogram.png"
         else:
             output_path = args.output
+            base, _ = os.path.splitext(output_path)
+            hist_path = f"{base}_molecular_size_histogram.png"
+
+        plt.figure()
+        plt.hist(df['num_atoms'], bins='auto')
+        plt.title('Histogram of Molecular Sizes')
+        plt.xlabel('Number of Atoms')
+        plt.ylabel('Frequency')
+        plt.savefig(hist_path)
+        plt.close()
+        logging.info(f"Molecular size histogram saved to {hist_path}")
+
         df.to_csv(output_path, index=False)
 
     if args.metrics in ["all", "posebuster"]:
@@ -161,6 +182,9 @@ def runner(args):
       
         postbuster_results = run_postbuster(mols)
         if postbuster_results is not None:
+            num_atoms_list = [mol.GetNumAtoms() for mol in mols]
+            postbuster_results['num_atoms'] = num_atoms_list
+            
             posebuster_checks = [
                 'bond_lengths', 'bond_angles', 'internal_steric_clash',
                 'aromatic_ring_flatness', 'non-aromatic_ring_non-flatness',
@@ -170,12 +194,27 @@ def runner(args):
 
             if args.output is None:
                 postbuster_output_path = f"{xyz_dir}/postbuster_metrics.csv"
+                hist_path = f"{xyz_dir}/postbuster_molecular_size_histogram.png"
             else:
                 base, ext = os.path.splitext(args.output)
                 postbuster_output_path = f"{base}_postbuster{ext}"
-                
+                hist_path = f"{base}_postbuster_molecular_size_histogram.png"
+
             postbuster_results['neutral_molecule'] = neutral_mols
             postbuster_results.to_csv(postbuster_output_path, index=False)
+
+            logging.info(f"Molecular size mean: {postbuster_results['num_atoms'].mean():.2f}")
+            logging.info(f"Molecular size max: {postbuster_results['num_atoms'].max()}")
+            logging.info(f"Molecular size std: {postbuster_results['num_atoms'].std():.2f}")
+
+            plt.figure()
+            plt.hist(postbuster_results['num_atoms'], bins='auto')
+            plt.title('Histogram of Molecular Sizes (Posebuster)')
+            plt.xlabel('Number of Atoms')
+            plt.ylabel('Frequency')
+            plt.savefig(hist_path)
+            plt.close()
+            logging.info(f"Molecular size histogram for posebuster saved to {hist_path}")
 
             logging.info(f"Sanitization: {postbuster_results['sanitization'].mean() * 100:.2f}%")
             logging.info(f"InChI Convertible: {postbuster_results['inchi_convertible'].mean() * 100:.2f}%")

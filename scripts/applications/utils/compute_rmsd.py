@@ -64,13 +64,9 @@ from tqdm import tqdm  # progress bar
 
 # ── import your chemistry helpers here ──────────────────────────────────────
 #     Replace `metrics` with the real module name if different.
-from metrics import (
-    read_xyz_file,
-    create_pyg_graph,
-    correct_edges,
-    compare_graph_topology,
-    is_fully_connected
-)
+from MolecularDiffusion.utils.geom_utils import read_xyz_file, create_pyg_graph, correct_edges
+from MolecularDiffusion.utils.geom_metrics import (is_fully_connected, 
+                                                   compare_graph_topology)
 
 # ── tunable constants ───────────────────────────────────────────────────────
 EDGE_THRESHOLD: float = 2.5   # Å – radius used in create_pyg_graph

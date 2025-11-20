@@ -133,12 +133,6 @@ def evaluate(
     save_top_k = kwargs.get("save_top_k", 3)
     save_every_val_epoch = kwargs.get("save_every_val_epoch", False)
 
-    if save_every_val_epoch and is_main_process:
-        checkpoint_name = f"epoch_{epoch}.pkl"
-        checkpoint_path = os.path.join(output_path, checkpoint_name)
-        solver.save(checkpoint_path)
-        logging.info(f"Saved checkpoint for epoch {epoch} at {checkpoint_path}")
-
     if task == "diffusion":
         output_generated_dir = kwargs.get("output_generated_dir", None)
         if output_generated_dir is None:
@@ -170,6 +164,11 @@ def evaluate(
             metrics = performances[
                 kwargs.get("metric", "Validity Relax and connected")
             ]
+            if save_every_val_epoch and is_main_process:
+                checkpoint_name = f"edm-gen-epoch={epoch}-metric={metrics:.4f}.pkl"
+                checkpoint_path = os.path.join(output_path, checkpoint_name)
+                solver.save(checkpoint_path)
+                logging.info(f"Saved checkpoint for epoch {epoch} with metric {metrics:.4f} at {checkpoint_path}")
             if metrics > current_best_metric:
                 if is_main_process:
                     print(

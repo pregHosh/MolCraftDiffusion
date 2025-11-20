@@ -77,11 +77,13 @@ class GeomMolecularGenerative(Task, core.Configurable):
         self.sp_regularizer = sp_regularizer
         self.reference_indices = reference_indices
         self.normalize_condition = normalize_condition
-
+        
         self.n_dim_data = self.model.in_node_nf 
         self.n_atom_types = self.model.in_node_nf - len(self.model.extra_norm_values)
         if self.model.include_charges:
-            self.n_atom_types -= 1        
+            self.n_atom_types -= 1
+        
+        
         
     def preprocess(
         self,
@@ -439,6 +441,8 @@ class GeomMolecularGenerative(Task, core.Configurable):
         # nodesxsample = torch.where(
         #     nodesxsample > self.max_n_nodes, self.max_n_nodes, nodesxsample
         # )
+        
+        
         batch_size = nodesxsample.size(0)
 
         if batch_size > 1:
@@ -467,9 +471,9 @@ class GeomMolecularGenerative(Task, core.Configurable):
                 context = (
                 context.unsqueeze(1).repeat(batch_size, nnode, 1).to(self.device) * node_mask
             )
+       
         else:
             context = None
-       
 
         if mode == "ddpm":
             x, h, chain = self.model.sample(
@@ -494,10 +498,11 @@ class GeomMolecularGenerative(Task, core.Configurable):
                 node_mask,
                 edge_mask,
                 context,
+                eta=1,
                 # condition_tensor,
                 # condition_mode,
                 fix_noise=fix_noise,
-                # n_frames=n_frames,
+                n_frames=n_frames,
                 # n_retrys=n_retrys,
                 # t_retry=t_retry,
                 **kwargs # eta, n_steps, save_frame
@@ -505,7 +510,7 @@ class GeomMolecularGenerative(Task, core.Configurable):
 
         if chain is not None:
 
-            chain = chain.reshape(batch_size, n_frames, nnode, -1)
+            # chain = chain.reshape(batch_size, n_frames, nnode, -1)
             # Prepare entire chain.
             if isinstance(chain, torch.Tensor):
                 x = chain[:, :, :, 0:3]
@@ -514,6 +519,7 @@ class GeomMolecularGenerative(Task, core.Configurable):
                     torch.argmax(one_hot, dim=3), num_classes=self.n_atom_types
                 )
                 charges = torch.round(chain[:, :, :, -1:]).long()
+                
             #TODO how to deal with batch in case of retry here
             elif isinstance(chain, list):
                 x_0 = chain[0][:, :, 0:3]
@@ -543,6 +549,7 @@ class GeomMolecularGenerative(Task, core.Configurable):
             one_hot = h["categorical"]
             charges = h["integer"]
         return one_hot, charges, x, node_mask
+
 
     def sample_around_xh_target(self, nodesxsample=torch.tensor([10]), 
                                 xh_target=None, context=None, fix_noise=False):
@@ -581,19 +588,14 @@ class GeomMolecularGenerative(Task, core.Configurable):
         edge_mask = edge_mask.view(batch_size * nnode * nnode, 1).to(self.device)
         node_mask = node_mask.unsqueeze(2).to(self.device)
 
-
         if (len(self.condition) > 0) and (self.prop_dist_model is not None):
             if context is None:
                 context = self.prop_dist_model.sample_batch(nodesxsample)
-                context = context.unsqueeze(1)
-                context = context.expand(-1, nnode, -1)
-            else:
-                context = (
-                context.unsqueeze(1).repeat(batch_size, nnode, 1).to(self.device) * node_mask
+            context = (
+                context.unsqueeze(1).repeat(1, nnode, 1).to(self.device) * node_mask
             )
         else:
             context = None
-       
 
         x, h = self.model.sample_around_xh(
             batch_size,
@@ -622,6 +624,7 @@ class GeomMolecularGenerative(Task, core.Configurable):
         target_value=[0],
         fix_noise=False,
         mode="ddpm",
+        n_frames=0,
     ):
         """
         Sample molecular structures conditioned on a property value.
@@ -635,6 +638,8 @@ class GeomMolecularGenerative(Task, core.Configurable):
         - target_value (List[float]): Target values for conditional sampling.
         - fix_nose (bool): Fix noise for visualization purposes. Default is False.
         - mode (str): Mode for sampling. Default is "ddpm ["ddpm", "ddim"].
+        - n_frames (int): Number of frames to keep. Default is 0.
+
         Returns:
         Tuple[Tensor, Tensor, Tensor, Tensor]: One-hot encoding of atoms, charges, positions, and node mask.
         """
@@ -669,9 +674,10 @@ class GeomMolecularGenerative(Task, core.Configurable):
             ).unsqueeze(1)
             context.append(context_row)
         context = torch.cat(context, dim=1).float().to(self.device)
-        one_hot, charges, x, node_mask = self.sample(nodesxsample, context, fix_noise, mode=mode)
+        one_hot, charges, x, node_mask = self.sample(nodesxsample, context, fix_noise, mode=mode, n_frames=n_frames)
         return one_hot, charges, x, node_mask
 
+    #GG
     def sample_guidance(
         self,
         target_function,
@@ -687,6 +693,7 @@ class GeomMolecularGenerative(Task, core.Configurable):
         n_backwards=0,
         h_weight=1,
         x_weight=1,
+        n_frames=0,
         debug=False,
     ):
         """
@@ -709,6 +716,7 @@ class GeomMolecularGenerative(Task, core.Configurable):
         - x_weight (float): Weight for the gradient of cartesian coordinate. Default is 1.0.
         - context (Optional[Tensor]): Context tensor for sampling. Default is None.
         - condition_tensor (Optional[Tensor]): Condition tensor for sampling. Default is None.
+        - n_frames (int): Number of frames to keep. Default is 0.
         - debug (bool): Debug mode. Default is False.
             Save gradient norms, max gradients, clipping coefficients, and energies to files.
 
@@ -739,13 +747,15 @@ class GeomMolecularGenerative(Task, core.Configurable):
 
 
         # sample from the EDM model
-        x, h = self.model.sample_guidance(
+        x, h, chain = self.model.sample_guidance(
             batch_size,
             target_function,
             node_mask,
             edge_mask,
             None,
+            context_negative=None,
             gg_scale=scale,
+            cfg_scale=None,
             max_norm=max_norm,
             fix_noise=fix_noise,
             std=std,
@@ -756,17 +766,53 @@ class GeomMolecularGenerative(Task, core.Configurable):
             n_backwards=n_backwards,
             h_weight=h_weight,
             x_weight=x_weight,
-            
             debug=debug,
+            n_frames=n_frames,
         )
 
-        assert_correctly_masked(x, node_mask)
-        assert_mean_zero_with_mask(x, node_mask)
-        one_hot = h["categorical"]
-        charges = h["integer"]
+        if chain is not None:
+
+            # chain = chain.reshape(batch_size, n_frames, nnode, -1)
+            # Prepare entire chain.
+            if isinstance(chain, torch.Tensor):
+                x = chain[:, :, :, 0:3]
+                one_hot = chain[:, :, :, 3:-1]
+                one_hot = F.one_hot(
+                    torch.argmax(one_hot, dim=3), num_classes=self.n_atom_types
+                )
+                charges = torch.round(chain[:, :, :, -1:]).long()
+                
+            #TODO how to deal with batch in case of retry here
+            elif isinstance(chain, list):
+                x_0 = chain[0][:, :, 0:3]
+                one_hot_0 = chain[0][:, :, 3:-1]
+                one_hot_0 = F.one_hot(
+                    torch.argmax(one_hot_0, dim=2), num_classes=self.n_atom_types
+                )
+                charges_0 = torch.round(chain[0][:, :, -1:]).long()
+                
+                x_retrys = []
+                one_hot_retrys = []
+                charges_retrys = []
+                for i in range(chain[1].shape[0]):
+                    x_i = chain[1][i][:, :, 0:3]
+                    one_hot_i = chain[1][i][:, :, 3:-1]
+                    one_hot_i = F.one_hot(
+                        torch.argmax(one_hot_i, dim=2), num_classes=self.n_atom_types
+                    )
+                    charges_i = torch.round(chain[1][i][:, :, -1:]).long()
+                    x_retrys.append(x_i)
+                    one_hot_retrys.append(one_hot_i)
+                    charges_retrys.append(charges_i)
+                one_hot = [one_hot_0, one_hot_retrys]
+                charges = [charges_0, charges_retrys]
+                x = [x_0, x_retrys]
+        else:
+            one_hot = h["categorical"]
+            charges = h["integer"]
         return one_hot, charges, x, node_mask
 
-
+    #CFG/CFGGG
     def sample_guidance_conitional(
         self,
         target_function,
@@ -970,8 +1016,8 @@ class GeomMolecularGenerative(Task, core.Configurable):
             one_hot = h["categorical"]
             charges = h["integer"]
         return one_hot, charges, x, node_mask
-    
-    
+
+
     def sample_hybrid_guidance(
         self,
         target_function,
@@ -1129,7 +1175,7 @@ class GeomMolecularGenerative(Task, core.Configurable):
 
 
         # sample from the EDM model
-        x, h = self.model.sample_guidance(
+        x, h, chain = self.model.sample_guidance(
             batch_size,
             target_function,
             node_mask,
@@ -1159,12 +1205,47 @@ class GeomMolecularGenerative(Task, core.Configurable):
             n_frames=n_frames,
         )
 
-        assert_correctly_masked(x, node_mask)
-        assert_mean_zero_with_mask(x, node_mask)
-        one_hot = h["categorical"]
-        charges = h["integer"]
+        if chain is not None:
+
+            # chain = chain.reshape(batch_size, n_frames, nnode, -1)
+            # Prepare entire chain.
+            if isinstance(chain, torch.Tensor):
+                x = chain[:, :, :, 0:3]
+                one_hot = chain[:, :, :, 3:-1]
+                one_hot = F.one_hot(
+                    torch.argmax(one_hot, dim=3), num_classes=self.n_atom_types
+                )
+                charges = torch.round(chain[:, :, :, -1:]).long()
+                
+            #TODO how to deal with batch in case of retry here
+            elif isinstance(chain, list):
+                x_0 = chain[0][:, :, 0:3]
+                one_hot_0 = chain[0][:, :, 3:-1]
+                one_hot_0 = F.one_hot(
+                    torch.argmax(one_hot_0, dim=2), num_classes=self.n_atom_types
+                )
+                charges_0 = torch.round(chain[0][:, :, -1:]).long()
+                
+                x_retrys = []
+                one_hot_retrys = []
+                charges_retrys = []
+                for i in range(chain[1].shape[0]):
+                    x_i = chain[1][i][:, :, 0:3]
+                    one_hot_i = chain[1][i][:, :, 3:-1]
+                    one_hot_i = F.one_hot(
+                        torch.argmax(one_hot_i, dim=2), num_classes=self.n_atom_types
+                    )
+                    charges_i = torch.round(chain[1][i][:, :, -1:]).long()
+                    x_retrys.append(x_i)
+                    one_hot_retrys.append(one_hot_i)
+                    charges_retrys.append(charges_i)
+                one_hot = [one_hot_0, one_hot_retrys]
+                charges = [charges_0, charges_retrys]
+                x = [x_0, x_retrys]
+        else:
+            one_hot = h["categorical"]
+            charges = h["integer"]
         return one_hot, charges, x, node_mask
-    
     
 
     def sample_chain_guide(

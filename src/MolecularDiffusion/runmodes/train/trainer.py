@@ -63,6 +63,8 @@ class OptimSchedulerFactory:
         chkpt_path: str = None,
         output_path: str = None,
         precision: int | str = 32,
+        save_top_k: int = 3,
+        save_every_val_epoch: bool = False
     ):
         self.parameters = parameters
         self.optimizer_choice = optimizer_choice.lower()
@@ -77,6 +79,8 @@ class OptimSchedulerFactory:
         self.train_set = train_set
         self.batch_size = batch_size
         self.precision = precision
+        self.save_top_k = save_top_k
+        self.save_every_val_epoch = save_every_val_epoch
         
         if queue_size > 0:
             self.gradnorm_queue = Queue(max_len=queue_size)

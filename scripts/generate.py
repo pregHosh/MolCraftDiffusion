@@ -1,6 +1,8 @@
 
 """Copyright (c) Meta Platforms, Inc. and affiliates."""
 
+import glob
+import re
 from typing import Any, Dict,  Optional, Tuple
 
 import pickle
@@ -29,10 +31,38 @@ def load_model(chkpt_directory, total_step=0):
 
     model_path = os.path.join(chkpt_directory, "edm_chem.pkl")
     
+    if not os.path.exists(model_path):
+        log.info(f"'edm_chem.pkl' not found in {chkpt_directory}. Searching for other checkpoints.")
+        
+        checkpoint_files = glob.glob(os.path.join(chkpt_directory, '*.pkl'))
+        checkpoint_files = [f for f in checkpoint_files if 'edm_stat.pkl' not in os.path.basename(f)]
+
+        if not checkpoint_files:
+            raise FileNotFoundError(f"No checkpoints found in {chkpt_directory}")
+
+        best_metric = -1.0
+        best_checkpoint = None
+        
+        for ckpt_file in checkpoint_files:
+            match = re.search(r"metric=([\d.]+)\.pkl", os.path.basename(ckpt_file))
+            if match:
+                metric = float(match.group(1))
+                if metric > best_metric:
+                    best_metric = metric
+                    best_checkpoint = ckpt_file
+        
+        if best_checkpoint:
+            model_path = best_checkpoint
+        else:
+            log.warning("Could not determine best checkpoint from metrics in filenames. Using the first one found.")
+            model_path = checkpoint_files[0]
+
+    log.info(f"Loading model from: {model_path}")
+    
     try:
         with open(os.path.join(chkpt_directory, "edm_stat.pkl"), "rb") as file:
             edm_stats = pickle.load(file)   
-    except ImportError:
+    except (ImportError, FileNotFoundError):
         edm_stats = {"node": None}
     
     engine = Engine(None, None, None, None, None)
