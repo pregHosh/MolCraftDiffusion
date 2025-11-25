@@ -1068,6 +1068,7 @@ class GeomMolecularGenerative(Task, core.Configurable):
         nodesxsample=torch.tensor([10]),
         gg_scale=1,
         cfg_scale=1,
+        cfg_scale_schedule=None,
         max_norm=10,
         std=1.0,
         fix_noise=False,
@@ -1097,6 +1098,7 @@ class GeomMolecularGenerative(Task, core.Configurable):
         - nodesxsample (Tensor): Number of nodes per sample. Default is torch.tensor([10]).
         - gg_scale (float): Scale factor for gradient guidance. Default is 1.0.
         - cfg_scale (float): Scale factor for classifier-free guidance. Default is 1.0.
+        - cfg_scale_schedule (str, optional): Scheduler for cfg scale. Default is None. [linear, exponential, cosine]
         - max_norm (float): Initial maximum norm for the gradients. Default is 10.0.
         - std (float): Standard deviation of the noise. Default is 1.0.
         - fix_noise (bool): Fix noise for visualization purposes. Default is False.
@@ -1245,6 +1247,7 @@ class GeomMolecularGenerative(Task, core.Configurable):
             t_start=t_start,
             t_critical=t_critical,
             n_frames=n_frames,
+            cfg_scale_schedule=cfg_scale_schedule
         )
 
         if self.model.ndim_extra > 0:

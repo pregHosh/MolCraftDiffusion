@@ -169,7 +169,13 @@ class GenerativeFactory:
                             x[:, j],
                             atom_decoder=self.task.atom_vocab,
                             idxs=self.s_saves.tolist()
-                        )            
+                        )   
+                        path_xyz = os.path.join(output_path_frame, f"molecule_000.xyz")
+                        idx = i * self.batch_size + j
+                        shutil.move(
+                            path_xyz,
+                            os.path.join(self.output_path, f"molecule_{str(idx).zfill(4)}.xyz"),
+                        )         
                 else:
                     save_xyz_file(
                         self.output_path,
@@ -269,6 +275,12 @@ class GenerativeFactory:
                             atom_decoder=self.task.atom_vocab,
                             idxs=self.s_saves.tolist()
                         )     
+                        path_xyz = os.path.join(output_path_frame, f"molecule_000.xyz")
+                        idx = i * self.batch_size + j
+                        shutil.move(
+                            path_xyz,
+                            os.path.join(self.output_path, f"molecule_{str(idx).zfill(4)}.xyz"),
+                        )
                     x = x[:, -1]
                     one_hot = one_hot[:, -1]   
                 else:     
@@ -554,6 +566,12 @@ class GenerativeFactory:
                         atom_decoder=self.task.atom_vocab,
                         idxs=self.s_saves.tolist()
                     )     
+                    path_xyz = os.path.join(output_path_frame, f"molecule_000.xyz")
+                    idx = i  
+                    shutil.move(
+                        path_xyz,
+                        os.path.join(self.output_path, f"molecule_{str(idx).zfill(4)}.xyz"),
+                    )
                     x = x[:, -1]
                     one_hot = one_hot[:, -1]   
                 else:     
@@ -662,6 +680,7 @@ class GenerativeFactory:
                     nodesxsample=nodesxsample,
                     gg_scale=self.condition_configs.get("gg_scale",1),
                     cfg_scale=self.condition_configs.get("cfg_scale",1),
+                    cfg_scale_schedule=self.condition_configs.get("cfg_scale_schedule", None),
                     max_norm=self.condition_configs.get("max_norm",1),
                     std=1,
                     scheduler=scheduler,
@@ -690,6 +709,13 @@ class GenerativeFactory:
                             atom_decoder=self.task.atom_vocab,
                             idxs=self.s_saves.tolist()
                         )     
+                        path_xyz = os.path.join(output_path_frame, f"molecule_000.xyz")
+                        idx = i * self.batch_size + j
+                        shutil.move(
+                            path_xyz,
+                            os.path.join(self.output_path, f"molecule_{str(idx).zfill(4)}.xyz"),
+                        )
+            
                     x = x[:, -1]
                     one_hot = one_hot[:, -1]   
                 else:     
@@ -782,15 +808,19 @@ class GenerativeFactory:
 
         Returns:
             torch.Tensor: Tensor of shape (1, n_atoms, 3 + n_features + 1) containing:
-                        [normalized_coords | normalized_onehot_features | normalized_charges],
-                        or `None` if the file path does not exist.
+                        [normalized_coords | normalized_onehot_features | normalized_charges].
+        
+        Raises:
+            FileNotFoundError: If the reference structure file is not found.
+            ValueError: If the processed reference structure is empty.
         """
-        if not os.path.exists(self.condition_configs.get("reference_structure_path", None)):
-            return None
+        file_path = self.condition_configs.get("reference_structure_path", None)
+        if not file_path or not os.path.exists(file_path):
+            raise FileNotFoundError(f"Reference structure file not found at path: {file_path}")
 
         # Load molecule with hydrogen atoms
         mol = PointCloud_Mol.from_xyz(
-            self.condition_configs.get("reference_structure_path"), with_hydrogen=True, forbidden_atoms=[]
+            file_path, with_hydrogen=True, forbidden_atoms=[]
         )
         
         # Extract atomic coordinates and number of atoms
@@ -819,5 +849,8 @@ class GenerativeFactory:
         # Concatenate features: [coords | onehot | charges]
         features = torch.cat([node_features_tensor, charges_tensor], dim=-1)
         xh_ref = torch.cat([coords_tensor, features], dim=-1).to(device)
+
+        if xh_ref.nelement() == 0:
+            raise ValueError("Reference structure is empty or could not be processed.")
 
         return xh_ref

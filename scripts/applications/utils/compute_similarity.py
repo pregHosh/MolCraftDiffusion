@@ -17,6 +17,7 @@ from collections.abc import Iterable
 import argparse
 import logging
 import os
+import glob
 import sys
 
 import pandas as pd
@@ -120,10 +121,30 @@ def max_similarity_df(
 # File iterator supporting .txt or .csv
 # ────────────────────────────────────────────────────────────────────────────
 
-def _iter_smiles_from_file(path: str):
+def _iter_smiles_from_path(path: str):
     """
-    Yield SMILES strings from a plain text file (one per line) or a CSV file
-    with a column named 'smiles'."""
+    Yield SMILES strings from:
+      - a plain text file (one per line)
+      - a CSV file with a column named 'smiles'
+      - a directory containing .pdb files
+    """
+    if os.path.isdir(path):
+        pdb_files = sorted(glob.glob(os.path.join(path, "*.pdb")))
+        logging.info("Found %d PDB files in %s", len(pdb_files), path)
+        for pdb_file in pdb_files:
+            try:
+                mol = Chem.MolFromPDBFile(pdb_file)
+                if mol:
+                    # Canonical SMILES
+                    smi = Chem.MolToSmiles(mol)
+                    if smi:
+                        yield smi
+                else:
+                    logging.warning("Failed to load PDB: %s", pdb_file)
+            except Exception as e:
+                logging.warning("Error processing %s: %s", pdb_file, e)
+        return
+
     ext = os.path.splitext(path)[1].lower()
     if ext == '.csv':
         df = pd.read_csv(path)
@@ -144,8 +165,8 @@ def _cli():
         description="Compute per‑molecule maximum Tanimoto similarity "
                     "between a TARGET set and a REFERENCE set of SMILES."
     )
-    parser.add_argument("target_file", help="Text (.txt) or CSV (.csv) file: SMILES data")
-    parser.add_argument("reference_file", help="Text (.txt) or CSV (.csv) file: SMILES data")
+    parser.add_argument("target_path", help="File (.txt/.csv) or Directory (containing .pdb) for target")
+    parser.add_argument("reference_path", help="File (.txt/.csv) or Directory (containing .pdb) for reference")
     parser.add_argument("output_csv", help="Where to write the results as CSV")
     parser.add_argument("--bits", type=int, default=2048,
                         help="Number of bits in the Morgan fingerprint (default: 2048)")
@@ -153,8 +174,8 @@ def _cli():
 
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
-    tgt = list(_iter_smiles_from_file(args.target_file))
-    ref = list(_iter_smiles_from_file(args.reference_file))
+    tgt = list(_iter_smiles_from_path(args.target_path))
+    ref = list(_iter_smiles_from_path(args.reference_path))
     logging.info("Target SMILES: %d | Reference SMILES: %d", len(tgt), len(ref))
 
     df = max_similarity_df(tgt, ref, fp_bits=args.bits)

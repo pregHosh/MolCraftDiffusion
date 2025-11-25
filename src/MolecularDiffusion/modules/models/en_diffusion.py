@@ -2038,7 +2038,7 @@ class EnVariationalDiffusion(torch.nn.Module):
             structure_guidance (bool, optional): If inpaint or outpaint, applies structure guidance. Defaults to False.
             t_critical (float, optional): Timestep threshold for applying reference tensor constraints. Defaults to None.
             mask_node_index (list, optional): List of node indices to mask during inpaiting. Defaults to [].
-            scale_schedule_type (str, optional): Type of scheduler for CFG scale.
+            scale_schedule_type (str, optional): Type of scheduler for CFG scale. [Available: 'linear', 'cosine']. Defaults to None.
 
         Returns:
             torch.Tensor: The sampled data `zs` at timestep `s`.
@@ -2069,27 +2069,25 @@ class EnVariationalDiffusion(torch.nn.Module):
         # Neural net prediction.
         with torch.no_grad():
             eps_t_cond_positive = self.phi(zt, t, node_mask, edge_mask, context=context,)
-            
-            if self.dynamics.use_adapter_module:
-                context_null = None
-            else:
-                context_null = torch.zeros_like(context, device=eps_t_cond_positive.device) + self.mask_value   
-            eps_t_uncond = self.phi(zt, t, node_mask, edge_mask, context=context_null)
 
             if torch.any(torch.isnan(eps_t_cond_positive)):
-                print("eps_t_cond is nan, setting to 0")  
-                eps_t_cond_positive = eps_t_cond_positive.nan_to_num(0.0)
-            if torch.any(torch.isnan(eps_t_uncond)):
-                print("eps_t_uncond is nan, setting to 0") 
-                eps_t_uncond = eps_t_uncond.nan_to_num(0.0)
-
+                logger.warning("eps_t_cond is nan, setting to 0")  
+                eps_t_cond_positive = eps_t_cond_positive.nan_to_num(0.0)            
             if context_negative is not None:
                 eps_t_cond_negative = self.phi(zt, t, node_mask, edge_mask, context=context_negative)
                 if torch.any(torch.isnan(eps_t_cond_negative)):
-                    print("eps_t_cond_negative is nan, setting to 0")
+                    logger.warning("eps_t_cond_negative is nan, setting to 0")
                     eps_t_cond_negative = eps_t_cond_negative.nan_to_num(0.0)
-                eps_t = (1 + scale) * eps_t_cond_positive - scale * eps_t_cond_negative
-            else:
+                eps_t = (1 + scale) * eps_t_cond_positive - scale * eps_t_cond_negative      
+            else:      
+                if self.dynamics.use_adapter_module:
+                    context_null = None
+                else:
+                    context_null = torch.zeros_like(context, device=eps_t_cond_positive.device) + self.mask_value   
+                eps_t_uncond = self.phi(zt, t, node_mask, edge_mask, context=context_null)
+                if torch.any(torch.isnan(eps_t_uncond)):
+                    print("eps_t_uncond is nan, setting to 0") 
+                    eps_t_uncond = eps_t_uncond.nan_to_num(0.0)
                 eps_t =  (1 + scale) * eps_t_cond_positive - scale * eps_t_uncond
         mu = (
             zt / alpha_t_given_s
@@ -3517,7 +3515,7 @@ class EnVariationalDiffusion(torch.nn.Module):
         #TODO extra nf!
         # In the event EGNN fails at p(xh | z0), we retry the chain
         bad_xh = (num_components > N_COMPONENT_MAX) or any([n_degree > N_DEGREE_MAX for n_degree in n_degrees])
-        if bad_xh and n_retrys > 0:
+        if bad_xh and n_retrys > 0 and n_frames > 0:
             x = chain[-2, :, :, 0:3]
             h["integer"] = chain[-2, :, :, -1:].long()  
             h["categorical"] = chain[-2, :, :, 3:-1]
@@ -3846,7 +3844,7 @@ class EnVariationalDiffusion(torch.nn.Module):
         - context_negative (Tensor): Conditonal properties. Default is None.
         - gg_scale (float): Scale factor for gradient guidance. Default is 1.0.
         - cfg_scale (float): Scale factor for classifier-free guidance. Default is 1.0.
-        - cfg_scale_schedule (str|optional): The schedule for cfg_scale. Can be "linear", "exponential", or "cosine". Default is "linear".
+        - cfg_scale_schedule (str|optional): The schedule for cfg_scale. Can be "linear", "exponential", or "cosine". Default is None.
         - max_norm (float): Initial maximum norm for the gradients. Default is 10.0.
         - fix_noise (bool): Fix noise for visualization purposes. Default is False.
         - std (float): Standard deviation of the noise. Default is 1.0.
