@@ -373,10 +373,19 @@ class GeomMolecularGenerative(Task, core.Configurable):
             )
             chain = reverse_tensor(chain)
 
+            if self.model.ndim_extra > 0:
+                n_core = self.model.in_node_nf - self.model.ndim_extra - 1
+                start  = self.model.n_dims
+                mid    = start + n_core
+            
             # Repeat last frame to see final sample better.
             chain = torch.cat([chain, chain[-1:].repeat(10, 1, 1)], dim=0)
             x = chain[-1:, :, 0:3]
-            one_hot = chain[-1:, :, 3:-1]
+            if  self.model.ndim_extra > 0:
+                one_hot = chain[-1:, :, start:mid]
+            else:
+                one_hot = chain[-1:, :, 3:-1]
+                
             one_hot = torch.argmax(one_hot, dim=2)
 
             atom_type = one_hot.squeeze(0).cpu().detach().numpy()
@@ -388,7 +397,10 @@ class GeomMolecularGenerative(Task, core.Configurable):
 
             # Prepare entire chain.
             x = chain[:, :, 0:3]
-            one_hot = chain[:, :, 3:-1]
+            if  self.model.ndim_extra > 0:
+                one_hot = chain[-1:, :, start:mid]
+            else:
+                one_hot = chain[-1:, :, 3:-1]
             one_hot = F.one_hot(
                 torch.argmax(one_hot, dim=2), num_classes=len(self.atom_decoder)
             )
@@ -508,13 +520,23 @@ class GeomMolecularGenerative(Task, core.Configurable):
                 **kwargs # eta, n_steps, save_frame
             )
 
+        if self.model.ndim_extra > 0:
+            n_core = self.model.in_node_nf - self.model.ndim_extra - 1
+            start  = self.model.n_dims
+            mid    = start + n_core
+            
         if chain is not None:
 
             # chain = chain.reshape(batch_size, n_frames, nnode, -1)
             # Prepare entire chain.
             if isinstance(chain, torch.Tensor):
                 x = chain[:, :, :, 0:3]
-                one_hot = chain[:, :, :, 3:-1]
+
+                if  self.model.ndim_extra > 0:
+                    one_hot = chain[:, :, :, start:mid]
+                else:
+                    one_hot = chain[:, :, :, 3:-1]
+                    
                 one_hot = F.one_hot(
                     torch.argmax(one_hot, dim=3), num_classes=self.n_atom_types
                 )
@@ -770,13 +792,22 @@ class GeomMolecularGenerative(Task, core.Configurable):
             n_frames=n_frames,
         )
 
+        
+        if self.model.ndim_extra > 0:
+            n_core = self.model.in_node_nf - self.model.ndim_extra - 1
+            start  = self.model.n_dims
+            mid    = start + n_core
+
         if chain is not None:
 
             # chain = chain.reshape(batch_size, n_frames, nnode, -1)
             # Prepare entire chain.
             if isinstance(chain, torch.Tensor):
+                if  self.model.ndim_extra > 0:
+                    one_hot = chain[:, :, :, start:mid]
+                else:
+                    one_hot = chain[:, :, :, 3:-1]
                 x = chain[:, :, :, 0:3]
-                one_hot = chain[:, :, :, 3:-1]
                 one_hot = F.one_hot(
                     torch.argmax(one_hot, dim=3), num_classes=self.n_atom_types
                 )
@@ -785,7 +816,10 @@ class GeomMolecularGenerative(Task, core.Configurable):
             #TODO how to deal with batch in case of retry here
             elif isinstance(chain, list):
                 x_0 = chain[0][:, :, 0:3]
-                one_hot_0 = chain[0][:, :, 3:-1]
+                if  self.model.ndim_extra > 0:
+                    one_hot = chain[:, :, :, start:mid]
+                else:
+                    one_hot = chain[:, :, :, 3:-1]
                 one_hot_0 = F.one_hot(
                     torch.argmax(one_hot_0, dim=2), num_classes=self.n_atom_types
                 )
@@ -975,13 +1009,21 @@ class GeomMolecularGenerative(Task, core.Configurable):
             n_frames=n_frames,
         )
 
+        if self.model.ndim_extra > 0:
+            n_core = self.model.in_node_nf - self.model.ndim_extra - 1
+            start  = self.model.n_dims
+            mid    = start + n_core
+            
         if chain is not None:
 
             # chain = chain.reshape(batch_size, n_frames, nnode, -1)
             # Prepare entire chain.
             if isinstance(chain, torch.Tensor):
                 x = chain[:, :, :, 0:3]
-                one_hot = chain[:, :, :, 3:-1]
+                if  self.model.ndim_extra > 0:
+                    one_hot = chain[:, :, :, start:mid]
+                else:
+                    one_hot = chain[:, :, :, 3:-1]
                 one_hot = F.one_hot(
                     torch.argmax(one_hot, dim=3), num_classes=self.n_atom_types
                 )
@@ -1134,7 +1176,7 @@ class GeomMolecularGenerative(Task, core.Configurable):
                 context.append(context_row)
 
             context = torch.cat(context, dim=1).float().to(self.device)
-            context = context.repeat(1, n_node, 1)
+            context = context.repeat(batch_size, n_node, 1)
 
             if negative_target_value:
                 context_negative = []
@@ -1167,7 +1209,7 @@ class GeomMolecularGenerative(Task, core.Configurable):
                         ).unsqueeze(1)
                         context_negative.append(context_row)
                 context_negative = torch.cat(context_negative, dim=1).float().to(self.device)
-                context_negative = context_negative.repeat(1, n_node, 1)
+                context_negative = context_negative.repeat(batch_size, n_node, 1)
             else:
                 context_negative = None
         else:
@@ -1205,13 +1247,21 @@ class GeomMolecularGenerative(Task, core.Configurable):
             n_frames=n_frames,
         )
 
+        if self.model.ndim_extra > 0:
+            n_core = self.model.in_node_nf - self.model.ndim_extra - 1
+            start  = self.model.n_dims
+            mid    = start + n_core
+            
         if chain is not None:
 
             # chain = chain.reshape(batch_size, n_frames, nnode, -1)
             # Prepare entire chain.
             if isinstance(chain, torch.Tensor):
                 x = chain[:, :, :, 0:3]
-                one_hot = chain[:, :, :, 3:-1]
+                if  self.model.ndim_extra > 0:
+                    one_hot = chain[:, :, :, start:mid]
+                else:
+                    one_hot = chain[:, :, :, 3:-1]
                 one_hot = F.one_hot(
                     torch.argmax(one_hot, dim=3), num_classes=self.n_atom_types
                 )
@@ -1316,9 +1366,17 @@ class GeomMolecularGenerative(Task, core.Configurable):
 
             mol_stable = check_stability(x_squeeze, zs, self.atom_decoder)[0]
 
+            if self.model.ndim_extra > 0:
+                n_core = self.model.in_node_nf - self.model.ndim_extra - 1
+                start  = self.model.n_dims
+                mid    = start + n_core
+            
             # Prepare entire chain.
             x = chain[:, :, 0:3]
-            one_hot = chain[:, :, 3:-1]
+            if  self.model.ndim_extra > 0:
+                one_hot = chain[:, :, :, start:mid]
+            else:
+                one_hot = chain[:, :, :, 3:-1]
             one_hot = F.one_hot(
                 torch.argmax(one_hot, dim=2), num_classes=len(self.atom_decoder)
             )

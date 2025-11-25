@@ -2013,7 +2013,8 @@ class EnVariationalDiffusion(torch.nn.Module):
         context_negative=None,
         structure_guidance=False,
         t_critical=0, # For outpaint
-        mask_node_index=[] # For inpaint
+        mask_node_index=[], # For inpaint
+        scale_schedule_type=None
     ):
         """
         Samples from zs ~ p(zs | zt) using classifier-free guidance (CFG).
@@ -2037,6 +2038,7 @@ class EnVariationalDiffusion(torch.nn.Module):
             structure_guidance (bool, optional): If inpaint or outpaint, applies structure guidance. Defaults to False.
             t_critical (float, optional): Timestep threshold for applying reference tensor constraints. Defaults to None.
             mask_node_index (list, optional): List of node indices to mask during inpaiting. Defaults to [].
+            scale_schedule_type (str, optional): Type of scheduler for CFG scale.
 
         Returns:
             torch.Tensor: The sampled data `zs` at timestep `s`.
@@ -2060,7 +2062,10 @@ class EnVariationalDiffusion(torch.nn.Module):
         sigma_s = self.sigma(gamma_s, target_tensor=zt)
         sigma_t = self.sigma(gamma_t, target_tensor=zt)
 
-
+        if scale_schedule_type is not None:
+            scale = self.scale_schedule(t, 0, scale, schedule_type=scale_schedule_type)
+            scale = scale.view(-1, 1, 1) # Reshape for broadcasting
+        
         # Neural net prediction.
         with torch.no_grad():
             eps_t_cond_positive = self.phi(zt, t, node_mask, edge_mask, context=context,)
@@ -3745,7 +3750,6 @@ class EnVariationalDiffusion(torch.nn.Module):
         return x, h, chain_flat
 
     
-
     @torch.no_grad()
     def sample_chain(
         self,
@@ -3798,9 +3802,6 @@ class EnVariationalDiffusion(torch.nn.Module):
 
         return chain_flat
 
-    #TODO we have to preprocess the data for structure-guidnace here
-    #TODO for the hybrid, intend to use with fine-tuned adapted model
-    #TODO 3D constaints will not be employed
     @torch.no_grad()
     def sample_guidance(
         self,
@@ -3812,6 +3813,7 @@ class EnVariationalDiffusion(torch.nn.Module):
         context_negative=None,
         gg_scale=1,
         cfg_scale=1,
+        cfg_scale_schedule=None,
         max_norm=10,
         fix_noise=False,
         std=1.0,
@@ -3844,6 +3846,7 @@ class EnVariationalDiffusion(torch.nn.Module):
         - context_negative (Tensor): Conditonal properties. Default is None.
         - gg_scale (float): Scale factor for gradient guidance. Default is 1.0.
         - cfg_scale (float): Scale factor for classifier-free guidance. Default is 1.0.
+        - cfg_scale_schedule (str|optional): The schedule for cfg_scale. Can be "linear", "exponential", or "cosine". Default is "linear".
         - max_norm (float): Initial maximum norm for the gradients. Default is 10.0.
         - fix_noise (bool): Fix noise for visualization purposes. Default is False.
         - std (float): Standard deviation of the noise. Default is 1.0.
@@ -4263,7 +4266,8 @@ class EnVariationalDiffusion(torch.nn.Module):
                                 context_negative=context_negative,
                                 t_critical=t_critical,
                                 structure_guidance=condition_alg,
-                                mask_node_index=mask_node_bool_corr
+                                mask_node_index=mask_node_bool_corr,
+                                scale_schedule_type=cfg_scale_schedule
                             )
                         elif guidance_ver == "cfg_gg":
                             z = self.sample_p_zs_given_zt_guidance_cfg_gg(
@@ -4323,9 +4327,10 @@ class EnVariationalDiffusion(torch.nn.Module):
             z, node_mask, edge_mask, context=context, fix_noise=fix_noise
         )
 
-        x, h = self.check_sanity_xh(
-            x, h, node_mask, edge_mask, context, chain
-        )
+        if n_frames > 0:
+            x, h = self.check_sanity_xh(
+                x, h, node_mask, edge_mask, context, chain
+            )
         assert_mean_zero_with_mask(x, node_mask)
 
         max_cog = torch.sum(x, dim=1, keepdim=True).abs().max().item()
@@ -4499,6 +4504,28 @@ class EnVariationalDiffusion(torch.nn.Module):
             #     logger.info("The generated molecule is clean.")
 
         return x, h
+
+    def scale_schedule(self, t, initial_scale=10.0, final_scale=1.0, schedule_type="linear"):
+        """
+        Calculates a dynamic guidance scale.
+        Example: Linear decay from an initial scale to a final scale.
+        """
+        # t is a tensor of shape [B, 1], normalized between 0 and 1
+        t_normalized = t.squeeze()
+        x = 1 - t_normalized
+
+        if schedule_type == "linear":
+            scale = initial_scale + (final_scale - initial_scale) * x
+        elif schedule_type == "exponential":
+            # Using a power of 2 for a gentle curve
+            scale = initial_scale + (final_scale - initial_scale) * (x**2)
+        elif schedule_type == "cosine":
+            scale = initial_scale + (final_scale - initial_scale) * (
+                1 - torch.cos(x * math.pi / 2)
+            )
+        else:
+            raise ValueError(f"Unknown scale schedule: {schedule_type}")
+        return scale
 
 
     def log_info(self):
@@ -5012,5 +5039,3 @@ class DistributionProperty:
         right = float(idx + 1) / n_bins * prop_range + params[0]
         val = torch.rand(1) * (right - left) + left
         return val
-
-

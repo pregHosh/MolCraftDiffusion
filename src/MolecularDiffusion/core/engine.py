@@ -215,18 +215,20 @@ class Engine(core.Configurable):
         )
         # self.meter.log_config(self.config_dict())
 
-    def train(self, num_epoch=1, batch_per_epoch=None, use_amp=False, precision="bf16"):
+    def train(self, num_epoch=1, batch_per_epoch=1, use_amp=False, precision="bf16"):
         """
         Train the model.
 
-        If ``batch_per_epoch`` is specified, randomly draw a subset of the training set for each epoch.
-        Otherwise, the whole training set is used for each epoch.
+        Iterates over the WHOLE dataset for each epoch.
 
         Parameters:
-            num_epoch (int, optional): number of epochs
-            batch_per_epoch (int, optional): number of batches per epoch
-            use_amp(bool, optional): whether to use automatic mixed precision (AMP) during training.
-            precision (str, optional): precision to use for AMP, either "bfloat16" or "float16".
+            num_epoch (int, optional): number of epochs.
+            batch_per_epoch (int, optional): Gradient Accumulation Steps.
+                                             The number of batches to accumulate gradients
+                                             for before performing an optimizer step.
+                                             Default is 1 (step every batch).
+            use_amp(bool, optional): whether to use automatic mixed precision (AMP).
+            precision (str, optional): precision to use for AMP ("bfloat16" or "float16").
         Returns:
             dict: metrics
         """
@@ -235,12 +237,14 @@ class Engine(core.Configurable):
             self.train_set, self.world_size, self.rank
         )
 
+        # Auto-adjust batch size if needed
         batch_size = self.batch_size
         while len(self.train_set) % batch_size == 1:
             batch_size += 1
         if batch_size != self.batch_size:
             logger.warning(f"Batch size adjusted to {batch_size} for training")
 
+        # Initialize DataLoader
         dataloader = data.dataloader.DataLoader(
             self.train_set,
             batch_size,
@@ -250,9 +254,17 @@ class Engine(core.Configurable):
             pin_memory=self.pin_memory,
             shuffle=False
         )
-        batch_per_epoch = batch_per_epoch or len(dataloader)
+
+
+        # Total number of batches in the dataset
+        total_batches = len(dataloader)
+
+        # Use batch_per_epoch as the number of accumulation steps
+        accumulation_steps = batch_per_epoch
+
         model = self.model
         model.split = "train"
+
         if self.world_size > 1:
             if self.device.type == "cuda":
                 model = nn.parallel.DistributedDataParallel(
@@ -266,23 +278,19 @@ class Engine(core.Configurable):
 
         scaler = GradScaler() if use_amp and self.device.type == "cuda" else None
 
-        
         for epoch in self.meter(num_epoch):
             sampler.set_epoch(epoch)
 
             metrics = []
-            start_id = 0
             batch_loss = 0
-            # the last gradient update may contain less than gradient_interval
-            # batches
-            gradient_interval = min(batch_per_epoch - start_id, self.gradient_interval)
 
+            # Iterate over the ENTIRE dataset
             progress_bar = tqdm(
-                enumerate(islice(dataloader, batch_per_epoch)),
+                enumerate(dataloader),
                 desc=f"Training Epoch [{epoch + 1}]",
                 leave=True,
                 dynamic_ncols=True,
-                total=batch_per_epoch,
+                total=total_batches,
                 disable=self.rank != 0
             )
 
@@ -292,99 +300,118 @@ class Engine(core.Configurable):
                 if self.device.type == "cuda":
                     batch = utils.cuda(batch, device=self.device)
 
-                # Forward pass with autocast
+                # --- 1. Forward Pass ---
                 with autocast(enabled=use_amp, dtype=amp_dtype, device_type=self.device.type):
                     loss, metric = model(batch)
-                    if not loss.requires_grad:
-                        raise RuntimeError(
-                            "Loss doesn't require grad. Did you define any loss in the task?"
-                        )
-                    batch_loss += loss.item()
-                    loss = loss / gradient_interval
 
-                # Backward pass with AMP scaling
+
+                    # Check if loss requires grad (SKIP logic)
+                    if not loss.requires_grad:
+                        if self.rank == 0:
+                            print(f"Warning: Skipping batch {batch_id} - Loss does not require gradients.")
+                        continue # Skip this batch entirely, don't zero_grad yet as we might be accumulating
+
+                    loss_val = loss.item()
+
+                    # Check for invalid loss (NaN/Inf/Zero)
+                    if torch.isnan(loss) or torch.isinf(loss) or loss_val == 0:
+                        if self.rank == 0:
+                            print(f"Skipping batch due to invalid loss: {loss_val}")
+                        # If we skip a batch, we don't add to accumulation.
+                        # Note: If your loss is frequently NaN, you might need to reset the optimizer/accumulation here.
+                        continue
+
+                    batch_loss += loss_val
+
+                    # Normalize loss by accumulation steps
+                    loss = loss / accumulation_steps
+
+                # --- 2. Backward Pass (Accumulate) ---
                 if use_amp:
                     scaler.scale(loss).backward()
                 else:
                     loss.backward()
 
-                grad_norms = []
-                for name, param in model.named_parameters():
-                    if param.grad is not None:
-                        grad_norms.append(param.grad.norm().item())
-                        if self.debug:
-                            module.logger.info(
-                                f"Gradient - {name}: {param.grad.norm().item()}"
-                            )
-
                 metrics.append(metric)
-                if torch.isnan(torch.tensor(grad_norms)).any() and self.debug:
-                    module.logger.info(
-                        "NaN gradients detected in batch {}. Skipping this batch.".format(
-                            batch_id
-                        )
-                    )
-                    self.optimizer.zero_grad()
-                    continue
 
-                if type(self.clip_value) == float:
-                    if self.clipping_gradient == "norm":
-                        if use_amp:
-                            scaler.unscale_(self.optimizer)
-                        torch.nn.utils.clip_grad_norm_(
-                            model.parameters(), max_norm=self.clip_value
-                        )
-                    if self.clipping_gradient == "value":
-                        if use_amp:
-                            scaler.unscale_(self.optimizer)
-                        torch.nn.utils.clip_grad_value_(
-                            model.parameters(), clip_value=self.clip_value
-                        )
-                elif type(self.clip_value) == Queue:
+                # --- 3. Optimizer Step Condition ---
+                # Step if: We reached the accumulation limit OR we are at the very last batch of the dataset
+                is_update_step = ((batch_id + 1) % accumulation_steps == 0) or ((batch_id + 1) == total_batches)
+
+                if is_update_step:
+
+                    # A. Explicit Unscale
                     if use_amp:
                         scaler.unscale_(self.optimizer)
-                    grad_norms = self.clipper(model, self.clip_value)
-                    if self.debug:
-                        module.logger.info(f"Gradient norm: {grad_norms}")
 
-                if batch_id - start_id + 1 == gradient_interval:
-                    if use_amp:
-                        # Check for scaler overflow
-                        scaler_result = scaler.step(self.optimizer)
-                        scaler.update()
-                        if scaler_result is not None and self.debug:
-                            module.logger.warning(f"Scaler overflow detected in batch {batch_id}")
+                    # B. Log & Check Gradients
+                    grad_norms = []
+                    for name, param in model.named_parameters():
+                        if param.grad is not None:
+                            grad_norms.append(param.grad.norm().item())
+                            if self.debug:
+                                module.logger.info(f"Gradient - {name}: {param.grad.norm().item()}")
+
+                    # Check for NaN gradients
+                    if torch.tensor(grad_norms).isnan().any():
+                        if self.debug:
+                            module.logger.info(f"NaN gradients detected at step {batch_id}. Skipping step.")
+                        self.optimizer.zero_grad()
+                        # Don't continue the loop, just skip the step updates
                     else:
-                        self.optimizer.step()
+                        # C. Clipping
+                        if type(self.clip_value) == float:
 
+
+                            if self.clipping_gradient == "norm":
+                                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=self.clip_value)
+                            elif self.clipping_gradient == "value":
+                                torch.nn.utils.clip_grad_value_(model.parameters(), clip_value=self.clip_value)
+                        elif type(self.clip_value) == Queue:
+                            grad_norms = self.clipper(model, self.clip_value)
+
+                        # D. Step
+                        if use_amp:
+                            scaler.step(self.optimizer)
+                            scaler.update()
+                        else:
+                            self.optimizer.step()
+
+                    # E. Reset Gradients
                     self.optimizer.zero_grad()
 
-                    metric = utils.stack(metrics, dim=0)
-                    metric = utils.mean(metric, dim=0)
+                    # F. EMA Update
+                    if self.EMA:
+                        self.EMA.update_model_average(self.ema_model, self.model)
+
+                # --- 4. Metrics Calculation ---
+                # (Update metrics every step, or accumulate them - adhering to original logic of updating meter)
+                # To keep the progress bar responsive, we calculate metrics for the current batch
+                # but we only update the global meter occasionally to save time if needed.
+                # Here we update per batch to match the progress bar flow.
+
+                if len(metrics) > 0:
+                    metric_stack = utils.stack(metrics, dim=0)
+                    metric_mean = utils.mean(metric_stack, dim=0)
                     if self.world_size > 1:
-                        metric = comm.reduce(metric, op="mean")
-                    self.meter.update(metric)
+                        metric_mean = comm.reduce(metric_mean, op="mean")
 
-                    metrics = []
-                    start_id = batch_id + 1
-                    gradient_interval = min(
-                        batch_per_epoch - start_id, self.gradient_interval
-                    )
+                    # Update the global meter
+                    self.meter.update(metric_mean)
+                    metrics = [] # Reset local metric accumulation
 
-                if self.EMA:
-                    self.EMA.update_model_average(self.ema_model, self.model)
-                progress_bar.set_postfix({
-                    "batch": batch_id + 1,
-                })
-                for metric_name in metric.keys():
-                    progress_bar.set_postfix({metric_name: metric[metric_name].item() if isinstance(metric[metric_name], torch.Tensor) else metric[metric_name]})
+                # --- 5. Progress Bar Update ---
+                progress_bar.set_postfix({"batch": batch_id + 1})
+                if 'metric' in locals() and metric:
+                     for metric_name in metric.keys():
+                        val = metric[metric_name]
+                        progress_bar.set_postfix({metric_name: val.item() if isinstance(val, torch.Tensor) else val})
 
+            # --- 6. Scheduler Step (End of Epoch) ---
             if self.scheduler:
                 if type(self.scheduler).__name__ == "ReduceLROnPlateau":
                     try:
-                        self.scheduler.step(
-                            batch_loss / len(dataloader)
-                        )  # mean loss over an epoch
+                        self.scheduler.step(batch_loss / total_batches)
                     except IndexError:
                         pass
                 else:
@@ -457,6 +484,7 @@ class Engine(core.Configurable):
                 # AMP: Autocast context for mixed precision during evaluation
                 with autocast(enabled=use_amp, dtype=amp_dtype, device_type=self.device.type):
                     pred, target = model.predict_and_target(batch)
+                
                     preds.append(pred)
                     targets.append(target)
             except Exception as e:
@@ -466,9 +494,28 @@ class Engine(core.Configurable):
         pred = utils.cat(preds)
         target = utils.cat(targets)
 
+
         if self.world_size > 1:
             pred = comm.cat(pred)
             target = comm.cat(target)
+
+        # Identify NaN or Inf values in pred and target
+        invalid_pred_indices = torch.isnan(pred) | torch.isinf(pred)
+        invalid_target_indices = torch.isnan(target) | torch.isinf(target)
+
+        # Combine invalid indices
+        combined_invalid_indices = invalid_pred_indices | invalid_target_indices
+
+        # Get the mask for valid (non-nan/inf) values
+        valid_mask = ~combined_invalid_indices
+
+        # Filter pred and target to keep only valid values
+        pred = pred[valid_mask]
+        target = target[valid_mask]
+
+        if pred.numel() == 0: # Check if any valid predictions are left
+            module.logger.warning("All predictions or targets are NaN/Inf. Skipping evaluation for this split.")
+            return {}, [], [] # Return empty metrics and data if nothing valid is left.
 
         metric = model.evaluate(pred, target)
 

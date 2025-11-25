@@ -318,7 +318,7 @@ def analyze_and_save(
     for i in progress_bar:
         nodesxsample = model.node_dist_model.sample(batch_size)
         if model.prop_dist_model:
-            size = nodesxsample.item()
+            size = nodesxsample[0].item()
             target_value = model.prop_dist_model.sample(size)
             target_value = model.prop_dist_model.sample(size)
             if "distortion_d" in model.condition: # only sample clean molecules during the interference

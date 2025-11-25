@@ -180,7 +180,7 @@ def runner(args):
         for xyz in tqdm(xyz_passed, desc="Checking neutrality of molecules", total=len(xyz_passed)):
             neutral_mols.append(check_neutrality(xyz))
       
-        postbuster_results = run_postbuster(mols)
+        postbuster_results = run_postbuster(mols, timeout=300)
         if postbuster_results is not None:
             num_atoms_list = [mol.GetNumAtoms() for mol in mols]
             postbuster_results['num_atoms'] = num_atoms_list
