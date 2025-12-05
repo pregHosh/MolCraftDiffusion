@@ -669,6 +669,7 @@ class Engine(core.Configurable):
 
                 # 3. node_feature
                 # Try to get from config_dict if available
+                node_feature = None
                 if hasattr(dataset, "config_dict"):
                     try:
                         # config_dict might be a method or property or object
@@ -676,9 +677,15 @@ class Engine(core.Configurable):
                         if callable(cfg):
                             cfg = cfg()
                         if "atom_feature" in cfg:
-                            hyperparameters["node_feature"] = cfg["atom_feature"]
+                            node_feature = cfg["atom_feature"]
                     except Exception:
                         pass
+                
+                # If still None, try accessing directly if attribute exists
+                if node_feature is None and hasattr(dataset, "node_feature"):
+                    node_feature = dataset.node_feature
+
+                hyperparameters["node_feature"] = node_feature
 
                 # 4. data_type
                 # Infer from class name

@@ -17,4 +17,7 @@ save_pkl: data/test.pkl #TODO this is not really used anymore
 data_type: pointcloud # pyg or pointcloud
 batch_size: 48
 num_workers: 0
+edge_type: fully_connected
+radius: 4.0
+n_neigh: 5
 # consider_global_attributes: False  #depricated

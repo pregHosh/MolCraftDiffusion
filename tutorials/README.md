@@ -11,3 +11,4 @@ This directory, available at `/tutorials`, contains a series of tutorials for us
 5.  [Generation Overview](./05_generation_overview/README.md)
 6.  [Structure-Guided Generation (Inpainting/Outpainting)](./06_structure_guided_generation/README.md)
 7.  [Property-Directed Generation (CFG/GG/Hybrid)](./07_property_directed_generation/README.md)
+8.  [Prediction and Evaluation Modes](./08_eval_predict/README.md)

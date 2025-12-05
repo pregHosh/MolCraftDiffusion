@@ -1641,12 +1641,6 @@ class GuidanceModelPrediction(Task, core.Configurable):
         """"
         If evaluate is True, the data must be normalized beforehand.
         """
-        if evaluate:
-            self.eval()
-            self.model.eval()
-        else:
-            self.train()
-            self.model.train()
         h = batch["graph"].x
         charges = batch["graph"].atomic_numbers.unsqueeze(-1)
         x = batch["graph"].pos

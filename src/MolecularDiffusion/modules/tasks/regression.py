@@ -327,13 +327,7 @@ class ProperyPrediction(Task, core.Configurable):
         return metric
 
     def predict(self, batch, all_loss=None, metric=None, evaluate=False):
-        if evaluate:
-            self.eval()
-            self.model.eval()
-        else:
-            self.train()
-            self.model.train()
-            
+
         if self.architecture == "egcn":
             h = batch["graph"].x
             charges = batch["graph"].atomic_numbers
