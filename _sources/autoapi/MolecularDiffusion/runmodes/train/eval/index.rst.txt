@@ -1,0 +1,114 @@
+MolecularDiffusion.runmodes.train.eval
+======================================
+
+.. py:module:: MolecularDiffusion.runmodes.train.eval
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.eval.ANGLE_RELAX
+   MolecularDiffusion.runmodes.train.eval.DISTRIBUTED_DEFAULT_TIMEOUT_SEC
+   MolecularDiffusion.runmodes.train.eval.DIST_RELAX_BOND
+   MolecularDiffusion.runmodes.train.eval.DIST_THRESHOLD
+   MolecularDiffusion.runmodes.train.eval.SCALE_FACTOR
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.eval.analyze_and_save
+   MolecularDiffusion.runmodes.train.eval.evaluate
+   MolecularDiffusion.runmodes.train.eval.get_versioned_output_path
+
+
+Module Contents
+---------------
+
+.. py:function:: analyze_and_save(model, epoch: int, n_samples: int = 1000, batch_size: int = 100, logger: Literal['wandb', 'logging'] = 'logging', path_save: str = 'samples', use_posebuster: bool = False, postbuster_timeout: int = 60) -> Dict[str, Any]
+
+   Samples molecules from a generative model, saves them as XYZ files,
+   and computes structural validity statistics.
+
+   :param model: The generative model used for sampling.
+   :param epoch: The current training epoch (for logging purposes).
+   :type epoch: int
+   :param n_samples: Total number of molecules to sample.
+   :type n_samples: int
+   :param batch_size: Number of molecules sampled per batch.
+   :type batch_size: int
+   :param logger: Logging backend, either "wandb" or "logging".
+   :type logger: str
+   :param path_save: Directory to save the sampled XYZ files and CSV.
+   :type path_save: str
+
+   :returns: Dictionary summarizing validity and connectivity statistics.
+   :rtype: Dict[str, Any]
+
+
+.. py:function:: evaluate(task: str, solver: MolecularDiffusion.core.Engine, epoch: int = 0, current_best_metric: float = torch.inf, best_checkpoints: list = None, logger: Literal['wandb', 'logging'] = 'logging', output_path: str = None, use_amp: bool = False, precision: str = 'bf16', **kwargs)
+
+   Evaluates the performance of a trained model based on the specified task.
+
+   For 'diffusion' tasks, it evaluates generative performance by sampling molecules,
+   saving them, and analyzing their structural validity and connectivity.
+   For 'property' or 'guidance' tasks, it evaluates predictive performance
+   by calculating Mean Absolute Error (MAE).
+
+   :param task: The type of task being evaluated ("diffusion", "property", or "guidance").
+   :type task: str
+   :param solver: The training engine containing the model and evaluation methods.
+   :type solver: Engine
+   :param epoch: The current training epoch, used for naming generated files. Defaults to 0.
+   :type epoch: int, optional
+   :param best_checkpoints: A list of tuples containing the metric and path of the best checkpoints.
+   :type best_checkpoints: list, optional
+   :param logger: The logging backend to use. Defaults to "logging".
+   :type logger: Literal["wandb", "logging"], optional
+   :param \*\*kwargs: Additional keyword arguments specific to the task, such as:
+                      - output_generated_dir (str): Directory to save generated molecules (for diffusion).
+                      - generative_analysis (bool): Whether to perform generative analysis (for diffusion).
+                      - n_samples (int): Number of samples to generate (for diffusion).
+                      - metric (str): The metric to return from generative analysis (for diffusion).
+
+   :returns: A tuple containing the best performance metric and the list of best checkpoints.
+   :rtype: Tuple[float, list]
+
+
+.. py:function:: get_versioned_output_path(base_output_path: str) -> str
+
+   Get next available version folder (engine_logs/version_X).
+
+   This mimics Lightning's behavior of creating version_0, version_1, etc.
+
+   :param base_output_path: The base output directory (e.g., training_outputs/my_model)
+   :type base_output_path: str
+
+   :returns: Path to the versioned checkpoint folder (e.g., training_outputs/my_model/engine_logs/version_0)
+   :rtype: str
+
+
+.. py:data:: ANGLE_RELAX
+   :value: 20
+
+
+.. py:data:: DISTRIBUTED_DEFAULT_TIMEOUT_SEC
+   :value: 1800
+
+
+.. py:data:: DIST_RELAX_BOND
+   :value: 0.25
+
+
+.. py:data:: DIST_THRESHOLD
+   :value: 3
+
+
+.. py:data:: SCALE_FACTOR
+   :value: 1.2
+
+

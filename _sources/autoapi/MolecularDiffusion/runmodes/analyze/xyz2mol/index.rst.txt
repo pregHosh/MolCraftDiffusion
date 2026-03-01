@@ -1,0 +1,95 @@
+MolecularDiffusion.runmodes.analyze.xyz2mol
+===========================================
+
+.. py:module:: MolecularDiffusion.runmodes.analyze.xyz2mol
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.xyz2mol.extract_scaffold_and_fingerprints
+   MolecularDiffusion.runmodes.analyze.xyz2mol.load_file_list_from_dir
+   MolecularDiffusion.runmodes.analyze.xyz2mol.main
+   MolecularDiffusion.runmodes.analyze.xyz2mol.run_processing
+   MolecularDiffusion.runmodes.analyze.xyz2mol.sanitize_smiles
+
+
+Module Contents
+---------------
+
+.. py:function:: extract_scaffold_and_fingerprints(smiles_iter, fp_bits=2048)
+
+   Sanitizes SMILES strings and computes molecular descriptors:
+   Morgan fingerprints, Bemis-Murcko scaffolds, and BRICS substructure counts.
+
+   :param smiles_iter: An iterable of SMILES strings.
+   :param fp_bits: Number of bits for the Morgan fingerprint.
+   :type fp_bits: int
+
+   :returns:
+
+             A tuple containing:
+                 - fps (np.ndarray): Array of Morgan fingerprints.
+                 - scaffolds (list): List of Bemis-Murcko scaffold SMILES.
+                 - clean_smiles (list): List of canonicalized and sanitized SMILES.
+                 - n_fail (int): Number of SMILES strings that failed processing.
+                 - substruct_counts (dict): Dictionary of BRICS substructure counts.
+   :rtype: tuple
+
+
+.. py:function:: load_file_list_from_dir(xyz_dir: str) -> pandas.DataFrame
+
+   Lists all .xyz files in the given directory and returns a DataFrame
+   with a single column 'xyz_file'.
+
+   :param xyz_dir: Path to the directory containing .xyz files.
+   :type xyz_dir: str
+
+   :returns: DataFrame with 'xyz_file' column.
+   :rtype: pd.DataFrame
+
+
+.. py:function:: main()
+
+   Main function to parse command-line arguments and initiate the processing
+   of XYZ files to generate SMILES strings, followed by fingerprint and scaffold extraction.
+   All 2D representation outputs are saved in a '2d_reprs' subdirectory within xyz_dir.
+
+
+.. py:function:: run_processing(df: pandas.DataFrame, xyz_dir: str, label: Optional[str], output_csv_filepath: pathlib.Path, timeout: int = 30, verbose: bool = True) -> None
+
+   Processes each row of a DataFrame to generate SMILES strings from XYZ files.
+   Uses multiprocessing to handle files, with a timeout for each conversion.
+   Saves the results to a CSV file at the specified output_csv_filepath.
+
+   :param df: DataFrame containing a column with XYZ file names.
+   :type df: pd.DataFrame
+   :param xyz_dir: Path to the directory containing the XYZ files.
+   :type xyz_dir: str
+   :param label: Label to assign to the processed files.
+   :type label: Optional[str]
+   :param output_csv_filepath: The full path where the processed SMILES CSV will be saved.
+   :type output_csv_filepath: Path
+   :param timeout: Maximum time in seconds for each XYZ to SMILES conversion process.
+                   Defaults to 30.
+   :type timeout: int
+   :param verbose: If True, print per-row messages and a summary. Defaults to True.
+   :type verbose: bool
+
+
+.. py:function:: sanitize_smiles(smiles: str) -> Optional[str]
+
+   Sanitizes a single SMILES string and returns its canonical form.
+
+   :param smiles: The SMILES string to sanitize.
+   :type smiles: str
+
+   :returns:
+
+             Canonical SMILES string if valid and sanitization succeeds,
+                            otherwise None.
+   :rtype: Optional[str]
+
+

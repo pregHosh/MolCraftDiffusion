@@ -1,0 +1,187 @@
+MolecularDiffusion.runmodes.train.data
+======================================
+
+.. py:module:: MolecularDiffusion.runmodes.train.data
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.data.DataModule
+
+
+Module Contents
+---------------
+
+.. py:class:: DataModule(root: str, filename: str, task_type: str, atom_vocab: list, with_hydrogen: bool, node_feature_choice=None, max_atom: int = 200, target_fields: list = None, xyz_dir: str = None, coord_file: str = None, natoms_file: str = None, ase_db_path: str = None, forbidden_atom: list = None, data_efficient_collator: bool = False, train_ratio: float = 0.8, load_pkl: str = None, save_pkl: str = None, data_type: str = 'pointcloud', allow_unknown: bool = False, batch_size: int = 32, num_workers: int = 0, dataset_name: str = 'suisei', edge_type: str = 'fully_connected', radius: float = 4.0, n_neigh: int = 5, use_ohe_feature: bool = True)
+
+   DataModule to load, optionally save/load pickle, and split datasets for diffusion or predictive tasks.
+
+   Usage:
+       module = DataModule(
+           filename="data.pkl",
+           task_type="diffusion",
+           atom_vocab=atom_vocab_list,
+           with_hydrogen=True,
+           node_feature_choice="geom",
+           max_atom=50,
+           xyz_dir="xyz/",
+           coord_file="coords.csv",
+           natoms_file="natoms.csv",
+           ase_db_path=None,
+           forbidden_atom=None,
+           data_efficient_collator=False,
+           train_ratio=0.8,
+           load_pkl=None,            # path to load dataset pickle
+           save_pkl="cached_dataset.pkl"  # path to save dataset pickle
+       )
+       module.load()
+       train_ds, valid_ds, test_ds = module.train_set, module.valid_set, module.test_set
+
+
+   .. py:method:: load()
+
+      Load dataset (from pickle if available), optionally save pickle, then split into train/valid/test.
+
+
+
+   .. py:attribute:: allow_unknown
+      :value: False
+
+
+
+   .. py:attribute:: ase_db_path
+      :value: None
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: batch_size
+      :value: 32
+
+
+
+   .. py:attribute:: coord_file
+      :value: None
+
+
+
+   .. py:attribute:: data_efficient_collator
+      :value: False
+
+
+
+   .. py:attribute:: data_type
+      :value: ''
+
+
+
+   .. py:attribute:: dataset_name
+      :value: 'suisei'
+
+
+
+   .. py:attribute:: edge_type
+      :value: 'fully_connected'
+
+
+
+   .. py:attribute:: filename
+
+
+   .. py:attribute:: forbidden_atom
+      :value: None
+
+
+
+   .. py:attribute:: load_pkl
+      :value: None
+
+
+
+   .. py:attribute:: max_atom
+      :value: 200
+
+
+
+   .. py:attribute:: n_neigh
+      :value: 5
+
+
+
+   .. py:attribute:: natoms_file
+      :value: None
+
+
+
+   .. py:attribute:: node_feature_choice
+      :value: None
+
+
+
+   .. py:attribute:: num_workers
+      :value: 0
+
+
+
+   .. py:attribute:: radius
+      :value: 4.0
+
+
+
+   .. py:attribute:: root
+
+
+   .. py:attribute:: root_path
+
+
+   .. py:attribute:: save_pkl
+      :value: None
+
+
+
+   .. py:attribute:: target_fields
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+
+
+   .. py:attribute:: test_set
+      :value: None
+
+
+
+   .. py:attribute:: train_ratio
+      :value: 0.8
+
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+   .. py:attribute:: use_ohe_feature
+      :value: True
+
+
+
+   .. py:attribute:: valid_set
+      :value: None
+
+
+
+   .. py:attribute:: with_hydrogen
+
+
+   .. py:attribute:: xyz_dir
+      :value: None
+
+
+

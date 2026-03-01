@@ -1,0 +1,157 @@
+MolecularDiffusion.utils.geom_stability
+=======================================
+
+.. py:module:: MolecularDiffusion.utils.geom_stability
+
+.. autoapi-nested-parse::
+
+   Molecular Stability Assessment Module for 3D Molecular Generation Evaluation.
+
+   This module provides aromatic-aware stability validation by separating aromatic
+   and non-aromatic bond contributions. Ported from geom-drugs-3dgen-evaluation.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.geom_stability.bond_type_to_symbol
+   MolecularDiffusion.utils.geom_stability.compute_bond_angles_diff
+   MolecularDiffusion.utils.geom_stability.compute_bond_lengths_diff
+   MolecularDiffusion.utils.geom_stability.compute_differences
+   MolecularDiffusion.utils.geom_stability.compute_mmff_energy_drop
+   MolecularDiffusion.utils.geom_stability.compute_molecules_stability
+   MolecularDiffusion.utils.geom_stability.compute_molecules_stability_from_graph
+   MolecularDiffusion.utils.geom_stability.compute_rmsd
+   MolecularDiffusion.utils.geom_stability.compute_statistics
+   MolecularDiffusion.utils.geom_stability.compute_torsion_angles_diff
+   MolecularDiffusion.utils.geom_stability.generate_canonical_key
+   MolecularDiffusion.utils.geom_stability.get_default_valencies
+   MolecularDiffusion.utils.geom_stability.get_simple_valencies
+   MolecularDiffusion.utils.geom_stability.is_valid
+   MolecularDiffusion.utils.geom_stability.load_valency_table
+
+
+Module Contents
+---------------
+
+.. py:function:: bond_type_to_symbol(bond_type_numeric: int) -> str
+
+   Convert bond type numeric to chemical symbol.
+
+
+.. py:function:: compute_bond_angles_diff(pair: Tuple) -> Dict
+
+   Compute bond angle differences between initial and optimized structures.
+
+
+.. py:function:: compute_bond_lengths_diff(pair: Tuple) -> Dict
+
+   Compute bond length differences between initial and optimized structures.
+
+   :param pair: (initial_mol, optimized_mol) RDKit molecule objects
+
+   :returns: Dict mapping bond type keys to (diff_list, count)
+
+
+.. py:function:: compute_differences(pairs: List[Tuple], compute_function, show_progress: bool = False) -> Dict
+
+   Compute geometry differences using a specific compute_function.
+
+   :param pairs: List of (init_mol, opt_mol) pairs
+   :param compute_function: Function that computes differences for a molecule pair
+   :param show_progress: Whether to show a tqdm progress bar
+
+   :returns: Dict with geometry difference stats
+
+
+.. py:function:: compute_mmff_energy_drop(mol, max_iters: int = 1000) -> Optional[float]
+
+   Compute MMFF energy drop after optimization.
+
+   :returns: Energy difference (E_before - E_after), or None if failed.
+
+
+.. py:function:: compute_molecules_stability(rdkit_molecules: List, aromatic: bool = True, allowed_bonds: Optional[Dict] = None) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]
+
+   Compute stability metrics for RDKit molecules.
+
+   :param rdkit_molecules: List of RDKit Mol objects
+   :param aromatic: Whether aromatic bonds are expected
+   :param allowed_bonds: Custom valency table (defaults to aromatic-aware tuple table)
+
+   :returns: (validity, stability, n_stable_atoms, n_atoms)
+
+
+.. py:function:: compute_molecules_stability_from_graph(adjacency_matrices: torch.Tensor, numbers: torch.Tensor, charges: torch.Tensor, allowed_bonds: Optional[Dict] = None, aromatic: bool = True) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+
+   Compute molecular stability from graph representations.
+
+   :param adjacency_matrices: Bond matrices [batch, n_atoms, n_atoms]
+                              Values: 1=single, 2=double, 3=triple, 1.5=aromatic
+   :param numbers: Atomic numbers [batch, n_atoms]
+   :param charges: Formal charges [batch, n_atoms]
+   :param allowed_bonds: Valency lookup table
+   :param aromatic: If True, use tuple valencies (n_aromatic, v_other).
+                    If False, sum all bonds (MS 1.5 Arom mode)
+
+   :returns: (stable_mask, n_stable_atoms, n_atoms)
+
+
+.. py:function:: compute_rmsd(init_mol, opt_mol, hydrogens: bool = True) -> float
+
+   Compute RMSD between initial and optimized molecule coordinates.
+
+
+.. py:function:: compute_statistics(diff_sums: Dict) -> Dict
+
+   Compute statistics: average difference, standard deviation, and weight.
+
+   :param diff_sums: Dict mapping keys to (diff_list, count)
+
+   :returns: Dict mapping keys to (avg_diff, std_dev, weight)
+
+
+.. py:function:: compute_torsion_angles_diff(pair: Tuple) -> Dict
+
+   Compute torsion angle differences using SMARTS-based rotatable bond identification.
+
+
+.. py:function:: generate_canonical_key(*components) -> tuple
+
+   Generate canonical key for molecular components (order-independent).
+
+
+.. py:function:: get_default_valencies() -> Dict[str, Any]
+
+   Get default aromatic-aware valency table (lazy loading).
+
+
+.. py:function:: get_simple_valencies() -> Dict[str, Any]
+
+   Get simple valency table for 1.5 aromatic mode (lazy loading).
+
+
+.. py:function:: is_valid(mol, verbose: bool = False) -> bool
+
+   Validate molecule for single fragment and successful sanitization.
+
+   :param mol: RDKit molecule object
+   :param verbose: Print error messages if validation fails
+
+   :returns: True if valid, otherwise False
+
+
+.. py:function:: load_valency_table(name: str = 'tuple', validate_schema: bool = False) -> Dict[str, Any]
+
+   Load valency table from package JSON data.
+
+   :param name: Table name - "tuple" (aromatic-aware) or "legacy" (backward compat)
+   :param validate_schema: Whether to validate against JSON schema (requires jsonschema)
+
+   :returns: Valency table mapping element -> charge -> allowed valencies
+   :rtype: dict
+
+

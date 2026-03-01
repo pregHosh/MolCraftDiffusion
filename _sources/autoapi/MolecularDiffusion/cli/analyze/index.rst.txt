@@ -1,0 +1,148 @@
+MolecularDiffusion.cli.analyze
+==============================
+
+.. py:module:: MolecularDiffusion.cli.analyze
+
+.. autoapi-nested-parse::
+
+   Analyze CLI subcommands for 3D molecule analysis.
+
+   Provides subcommands for:
+   - optimize: XTB geometry optimization
+   - metrics: Validity/connectivity metrics
+   - compare: RMSD, energy, and optional bond analysis
+   - xyz2mol: XYZ to SMILES conversion + fingerprints
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.cli.analyze.CONTEXT_SETTINGS
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.cli.analyze.analyze
+   MolecularDiffusion.cli.analyze.compare
+   MolecularDiffusion.cli.analyze.metrics
+   MolecularDiffusion.cli.analyze.optimize
+   MolecularDiffusion.cli.analyze.xtb_electronic
+   MolecularDiffusion.cli.analyze.xyz2mol
+
+
+Module Contents
+---------------
+
+.. py:function:: analyze()
+
+   Analyze 3D molecular structures.
+
+   
+   Subcommands:
+     optimize  XTB geometry optimization
+     metrics   Validity/connectivity metrics
+     compare   RMSD, energy, and bond analysis
+     xyz2mol   Convert XYZ to SMILES + fingerprints
+
+
+.. py:function:: compare(directory, mol_converter, n_subsets, csv_path, charge, level, timeout)
+
+   Compare XYZ files with their optimized counterparts.
+
+   Computes RMSD, xTB Energy Difference, and Bond Geometry Metrics.
+   Enforces strict connectivity checks.
+
+   Requires 'optimized_xyz' subdirectory with *_opt.xyz files.
+
+
+.. py:function:: metrics(input_dir, output, metrics_type, recheck_topo, check_strain, portion, mol_converter, skip_atoms, n_subsets, timeout)
+
+   Compute validity and connectivity metrics for XYZ files.
+
+   
+   Metrics types:
+     all          Run all metrics (core + posebuster + geom_revised)
+     core         Basic validity checks (connectivity, atom stability)
+     posebuster   PoseBusters checks (bond lengths, angles, clashes)
+     geom_revised Aromatic-aware stability metrics
+
+   
+   .. rubric:: Examples
+
+   MolCraftDiff analyze metrics gen_xyz/
+   MolCraftDiff analyze metrics gen_xyz/ --metrics posebuster
+   MolCraftDiff analyze metrics gen_xyz/ --metrics geom_revised --mol-converter openbabel
+
+
+.. py:function:: optimize(input_dir, output_dir, charge, level, timeout, scale_factor, csv_path, filter_column)
+
+   Optimize XYZ geometries using xTB.
+
+   
+   .. rubric:: Examples
+
+   MolCraftDiff analyze optimize gen_xyz/
+   MolCraftDiff analyze optimize gen_xyz/ --o optimized/ --level gfn2
+
+
+.. py:function:: xtb_electronic(input_dir, output, method, charge, n_unpaired, solvent, properties, corrected, timeout, n_jobs, output_format)
+
+   Compute XTB electronic properties for XYZ files.
+
+   Uses morfeus to calculate quantum-chemical descriptors at the GFN-xTB level.
+
+   
+   Property groups (molecular-level):
+     energy      Total energy, HOMO, LUMO, gap, Fermi level
+     dipole      Dipole moment and vector
+     reactivity  IP, EA, electronegativity, hardness, softness
+     global      Electrophilicity, nucleophilicity, fugalities
+     solvation   Solvation energy, H-bond correction (requires --solvent)
+
+   
+   Property groups (atomic-level):
+     charges     Atomic charges (Mulliken)
+     fukui       Fukui indices (f+, f-, f, dual)
+     bond_orders Bond orders between atom pairs
+
+   
+   Output formats:
+     csv   Molecular-level properties only (one row per molecule)
+     json  Full data including atomic-level properties
+     ase   ASE database with properties in atoms.info/arrays
+     all   Generate all three formats
+
+   
+   .. rubric:: Examples
+
+   MolCraftDiff analyze xtb-electronic gen_xyz/
+   MolCraftDiff analyze xtb-electronic gen_xyz/ -p energy -p reactivity
+   MolCraftDiff analyze xtb-electronic gen_xyz/ -s water -p solvation
+   MolCraftDiff analyze xtb-electronic gen_xyz/ -p all -f ase -o results.db
+
+
+.. py:function:: xyz2mol(xyz_dir, input_csv, label, timeout, bits, verbose)
+
+   Convert XYZ files to SMILES and extract fingerprints/scaffolds.
+
+   Outputs are saved to xyz_dir/2d_reprs/:
+     - smiles_processed.csv
+     - fingerprints.npy
+     - scaffolds.txt
+     - substructures.json
+
+   
+   .. rubric:: Examples
+
+   MolCraftDiff analyze xyz2mol gen_xyz/
+   MolCraftDiff analyze xyz2mol gen_xyz/ --bits 1024 -v
+
+
+.. py:data:: CONTEXT_SETTINGS
+

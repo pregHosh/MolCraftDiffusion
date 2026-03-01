@@ -1,0 +1,195 @@
+MolecularDiffusion.runmodes.train.tasks_egcl
+============================================
+
+.. py:module:: MolecularDiffusion.runmodes.train.tasks_egcl
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.tasks_egcl.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: ModelTaskFactory(task_type: str, atom_vocab: list, condition_names: list = [], hidden_size: int = 64, act_fn: torch.nn.Module = torch.nn.SiLU(), num_layers: int = 1, attention: bool = True, tanh: bool = True, num_sublayers: int = 9, sin_embedding: bool = True, aggregation_method: str = 'sum', dropout: float = 0.0, normalization: bool = False, include_cosine: bool = True, norm_constant: float = 1.0, normalization_factor: float = 1.0, chkpt_path: str = None, **kwargs)
+
+   Factory to construct models and task handlers for different learning paradigms:
+   - Molecular diffusion
+   - Property prediction
+   - Guidance-conditioned generation
+
+   Constructor Parameters:
+       task_type (str): One of "diffusion", "regression", or "guidance".
+       atom_vocab (list): List of atom vocabulary used for encoding.
+       condition_names (list): List of conditional labels.
+       hidden_size (int): Hidden dimension size.
+       act_fn (str): Activation function name.
+       num_layers (int): Number of layers.
+       attention (bool): Use attention mechanism or not.
+       tanh (bool): Use tanh activation or not.
+       num_sublayers (int): Number of sublayers in EGNN.
+       sin_embedding (bool): Use sinusoidal embedding.
+       aggregation_method (str): Aggregation method (e.g., sum, mean).
+       dropout (float): Dropout probability.
+       normalization (bool): Apply normalization.
+       include_cosine (bool): Include cosine features.
+       norm_constant (float): Normalization constant.
+       normalization_factor (float): Scaling for norm.
+       chkpt_path (str): Optional path to model checkpoint.
+
+       Diffusion kwargs:
+           diffusion_steps (int): Number of timesteps.
+           diffusion_noise_schedule (str)
+           diffusion_noise_precision (float)
+           diffusion_loss_type (str)
+           normalize_factors (List)
+           extra_norm_values (List)
+           augment_noise (bool)
+           data_augmentation (bool)
+           context_mask_rate (float)
+           mask_value (float)
+           normalize_condition (str)
+           sp_regularizer_regularizer (str)
+           sp_regularizer_lambda_ (float)
+           sp_regularizer_lambda_2 (float)
+           sp_regularizer_lambda_update_value (float)
+           sp_regularizer_lambda_update_step (int)
+           sp_regularizer_polynomial_p (float)
+           sp_regularizer_warm_up_steps (int)
+
+       Property-prediction kwargs:
+           task_learn (List)
+           criterion (str)
+           metric (List)
+           num_mlp_layer (int)
+           mlp_dropout (float)
+
+       Guidance kwargs:
+           diffusion_steps (int)
+           diffusion_noise_precision (float)
+           nu_arr (List)
+           mapping (List)
+           task_learn (List)
+           metric (List)
+           num_mlp_layer (int)
+           mlp_dropout (float)
+           weight_classes (list)
+           norm_values (list)
+           t_max (float)
+
+
+   .. py:method:: build()
+
+      Build and return (model, task) based on task_type.
+
+      :param task_type: "diffusion", "property", or "guidance".
+      :type task_type: str
+      :param \*\*kwargs: task-specific keyword arguments.
+
+
+
+   .. py:attribute:: act_fn
+
+
+   .. py:attribute:: aggregation_method
+      :value: 'sum'
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: attention
+      :value: True
+
+
+
+   .. py:attribute:: chkpt_path
+      :value: None
+
+
+
+   .. py:attribute:: condition_names
+      :value: []
+
+
+
+   .. py:attribute:: context_node_nf
+
+
+   .. py:attribute:: dropout
+      :value: 0.0
+
+
+
+   .. py:attribute:: dynamics_in_node_nf
+
+
+   .. py:attribute:: hidden_size
+      :value: 64
+
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: include_cosine
+      :value: True
+
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: norm_constant
+      :value: 1.0
+
+
+
+   .. py:attribute:: normalization
+      :value: False
+
+
+
+   .. py:attribute:: normalization_factor
+      :value: 1.0
+
+
+
+   .. py:attribute:: num_layers
+      :value: 1
+
+
+
+   .. py:attribute:: num_sublayers
+      :value: 9
+
+
+
+   .. py:attribute:: sin_embedding
+      :value: True
+
+
+
+   .. py:attribute:: tanh
+      :value: True
+
+
+
+   .. py:attribute:: task_type
+
+
+.. py:data:: logger
+

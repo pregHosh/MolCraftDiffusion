@@ -1,0 +1,89 @@
+MolecularDiffusion.modules.layers.common
+========================================
+
+.. py:module:: MolecularDiffusion.modules.layers.common
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.common.MLP
+   MolecularDiffusion.modules.layers.common.SinusoidalPositionEmbedding
+   MolecularDiffusion.modules.layers.common.SinusoidsEmbeddingNew
+
+
+Module Contents
+---------------
+
+.. py:class:: MLP(input_dim, hidden_dims, short_cut=False, batch_norm=False, activation='relu', dropout=0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Multi-layer Perceptron.
+   Note there is no batch normalization, activation or dropout in the last layer.
+
+   :param input_dim: input dimension
+   :type input_dim: int
+   :param hidden_dim: hidden dimensions
+   :type hidden_dim: list of int
+   :param short_cut: use short cut or not
+   :type short_cut: bool, optional
+   :param batch_norm: apply batch normalization or not
+   :type batch_norm: bool, optional
+   :param activation: activation function
+   :type activation: str or function, optional
+   :param dropout: dropout rate
+   :type dropout: float, optional
+
+
+   .. py:method:: forward(input)
+
+
+   .. py:attribute:: dims
+
+
+   .. py:attribute:: layers
+
+
+   .. py:attribute:: short_cut
+      :value: False
+
+
+
+.. py:class:: SinusoidalPositionEmbedding(output_dim)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Positional embedding based on sine and cosine functions, proposed in `Attention Is All You Need`_.
+
+   .. _Attention Is All You Need:
+      https://arxiv.org/pdf/1706.03762.pdf
+
+   :param output_dim: output dimension
+   :type output_dim: int
+
+
+   .. py:method:: forward(input)
+
+
+.. py:class:: SinusoidsEmbeddingNew(max_res=15.0, min_res=15.0 / 2000.0, div_factor=4)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: dim
+
+
+   .. py:attribute:: frequencies
+
+
+   .. py:attribute:: n_frequencies
+
+

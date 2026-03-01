@@ -1,0 +1,137 @@
+MolecularDiffusion.utils.smilify
+================================
+
+.. py:module:: MolecularDiffusion.utils.smilify
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.smilify.TIMEOUT
+   MolecularDiffusion.utils.smilify.bond_dict
+   MolecularDiffusion.utils.smilify.lg
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.smilify.TimeoutException
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.smilify.Molecule
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.smilify.check_connected
+   MolecularDiffusion.utils.smilify.check_symmetric
+   MolecularDiffusion.utils.smilify.cov_radius
+   MolecularDiffusion.utils.smilify.get_cutoffs
+   MolecularDiffusion.utils.smilify.guess_bond_matrix
+   MolecularDiffusion.utils.smilify.read_xyz_ob
+   MolecularDiffusion.utils.smilify.simple_idx_match_check
+   MolecularDiffusion.utils.smilify.simple_idx_match_check
+   MolecularDiffusion.utils.smilify.smilfy_xtb
+   MolecularDiffusion.utils.smilify.smilify_cell2mol
+   MolecularDiffusion.utils.smilify.smilify_openbabel
+
+
+Module Contents
+---------------
+
+.. py:exception:: TimeoutException
+
+   Bases: :py:obj:`Exception`
+
+
+   Common base class for all non-exit exceptions.
+
+   Initialize self.  See help(type(self)) for accurate signature.
+
+
+.. py:class:: Molecule(symbols: List[str], positions: torch.Tensor, *, scale: float = 1.2, total_charge: int = 0)
+
+   .. py:attribute:: bond_matrix
+
+
+   .. py:attribute:: num_atoms
+
+
+   .. py:attribute:: positions
+
+
+   .. py:attribute:: rdkit_mol
+
+
+   .. py:attribute:: symbols
+
+
+   .. py:attribute:: total_charge
+      :value: 0
+
+
+
+.. py:function:: check_connected(am, tol=1e-08)
+
+.. py:function:: check_symmetric(am, tol=1e-08)
+
+.. py:function:: cov_radius(symbol: str) -> float
+
+   Return covalent radius (Å) for a chemical symbol (via ASE).
+
+
+.. py:function:: get_cutoffs(z, radii=ase.data.covalent_radii, mult=1)
+
+.. py:function:: guess_bond_matrix(symbols: List[str], positions: torch.Tensor, *, scale: float = 1.2, total_charge: int | None = None) -> torch.LongTensor
+
+   Return an (n, n) bond‐order matrix, using Open Babel if available.
+   If total_charge is given, we tell OBMol about it so it can distribute
+   formal charges when perceiving bond orders.
+
+
+.. py:function:: read_xyz_ob(path: os.PathLike | str) -> Tuple[List[str], torch.Tensor]
+
+.. py:function:: simple_idx_match_check(rdkit_mol, ase_symbols)
+
+   Check that RDKit atom order matches the ASE symbol list exactly.
+
+
+.. py:function:: simple_idx_match_check(mol, ase_atoms)
+
+.. py:function:: smilfy_xtb(filename)
+
+   Assume neutral molecule
+   If fails, change charge to +1 (there could be a better method to detect charge as either +1 or-1)
+
+   Then if fails again, loosen the critaria to not sanitize the molecule.
+
+
+
+
+.. py:function:: smilify_cell2mol(filename, z=None, coordinates=None, timeout=30, total_charge=0)
+
+   Convert XYZ to mol using cell2mol with optional timeout.
+
+
+.. py:function:: smilify_openbabel(filename)
+
+.. py:data:: TIMEOUT
+   :value: 300
+
+
+.. py:data:: bond_dict
+
+.. py:data:: lg
+

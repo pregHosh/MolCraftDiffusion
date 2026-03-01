@@ -1,0 +1,195 @@
+MolecularDiffusion.callbacks.train_helper
+=========================================
+
+.. py:module:: MolecularDiffusion.callbacks.train_helper
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.callbacks.train_helper.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.callbacks.train_helper.EMA
+   MolecularDiffusion.callbacks.train_helper.Queue
+   MolecularDiffusion.callbacks.train_helper.SP_regularizer
+   MolecularDiffusion.callbacks.train_helper.gradient_clipping
+   MolecularDiffusion.callbacks.train_helper.gradient_clipping_0
+
+
+Module Contents
+---------------
+
+.. py:class:: EMA(beta)
+
+   .. py:method:: update_average(old, new)
+
+
+   .. py:method:: update_model_average(ma_model, current_model)
+
+
+   .. py:attribute:: beta
+
+
+.. py:class:: Queue(max_len=50)
+
+   .. py:method:: add(item)
+
+
+   .. py:method:: mean()
+
+
+   .. py:method:: std()
+
+
+   .. py:attribute:: items
+      :value: []
+
+
+
+   .. py:attribute:: max_len
+      :value: 50
+
+
+
+.. py:class:: SP_regularizer(regularizer: str, lambda_: float = 10, lambda_2: float = 100, lambda_update_value: float = 50, lambda_update_step: int = 2500, polynomial_p: float = 1.5, warm_up_steps: int = 100)
+
+   
+   Self-paced regularizer for curriculum learning
+   :param regularizer: Regularizer to use. Options are:
+                       - hard
+                       - linear
+                       - logaritmic
+                       - logistic
+   :type regularizer: str
+   :param lambda_: Initial lambda value
+   :type lambda_: float
+   :param lambda_2: Initial lambda value for the second regularizer
+   :type lambda_2: float
+   :param lambda_update_value: Value to update lambda
+   :type lambda_update_value: float
+   :param lambda_update_step: Number of steps to update lambda
+   :type lambda_update_step: int
+   :param polynomial_p: Value of p for polynomial regularizer
+   :type polynomial_p: float
+   :param warm_up_steps: Number of steps to use the regularizer
+   :type warm_up_steps: int
+
+
+   .. py:method:: hard(losses: torch.Tensor)
+
+
+   .. py:method:: hard_relax(losses: torch.Tensor)
+
+
+   .. py:method:: linear(losses: torch.Tensor)
+
+
+   .. py:method:: logaritmic(losses: torch.Tensor)
+
+
+   .. py:method:: logistic(losses: torch.Tensor)
+
+
+   .. py:method:: polynomial(losses: torch.Tensor)
+
+
+   .. py:method:: update_lambda()
+
+
+   .. py:attribute:: lambda_
+      :value: 10
+
+
+
+   .. py:attribute:: lambda_2
+      :value: 100
+
+
+
+   .. py:attribute:: lambda_update_step
+      :value: 2500
+
+
+
+   .. py:attribute:: lambda_update_value
+      :value: 50
+
+
+
+   .. py:attribute:: n_calls
+      :value: 1
+
+
+
+   .. py:attribute:: p
+      :value: 1.5
+
+
+
+   .. py:attribute:: regularizer
+
+
+   .. py:attribute:: warm_up_steps
+      :value: 100
+
+
+
+.. py:class:: gradient_clipping(m=1, max_len=200)
+
+   .. py:attribute:: FACTOR
+      :value: 100
+
+
+
+   .. py:attribute:: m
+      :value: 1
+
+
+
+   .. py:attribute:: max_grad_norm
+      :value: None
+
+
+
+   .. py:attribute:: max_grad_norms
+      :value: []
+
+
+
+   .. py:attribute:: max_len
+      :value: 200
+
+
+
+.. py:class:: gradient_clipping_0(m=1, max_len=200)
+
+   .. py:attribute:: m
+      :value: 1
+
+
+
+   .. py:attribute:: max_grad_norm
+      :value: None
+
+
+
+   .. py:attribute:: max_grad_norms
+      :value: []
+
+
+
+   .. py:attribute:: max_len
+      :value: 200
+
+
+
+.. py:data:: logger
+

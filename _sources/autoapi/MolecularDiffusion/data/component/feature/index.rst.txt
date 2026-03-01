@@ -1,0 +1,321 @@
+MolecularDiffusion.data.component.feature
+=========================================
+
+.. py:module:: MolecularDiffusion.data.component.feature
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.feature.ECFP
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.feature.NodeFeaturizer
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.feature.ExtendedConnectivityFingerprint
+   MolecularDiffusion.data.component.feature.atom_center_identification
+   MolecularDiffusion.data.component.feature.atom_default
+   MolecularDiffusion.data.component.feature.atom_explicit_property_prediction
+   MolecularDiffusion.data.component.feature.atom_geom
+   MolecularDiffusion.data.component.feature.atom_geom_compact
+   MolecularDiffusion.data.component.feature.atom_geom_opt
+   MolecularDiffusion.data.component.feature.atom_geom_v2
+   MolecularDiffusion.data.component.feature.atom_pretrain
+   MolecularDiffusion.data.component.feature.atom_property_prediction
+   MolecularDiffusion.data.component.feature.atom_symbol
+   MolecularDiffusion.data.component.feature.atom_synthon_completion
+   MolecularDiffusion.data.component.feature.atom_topological
+   MolecularDiffusion.data.component.feature.bond_default
+   MolecularDiffusion.data.component.feature.bond_length
+   MolecularDiffusion.data.component.feature.bond_pretrain
+   MolecularDiffusion.data.component.feature.bond_property_prediction
+   MolecularDiffusion.data.component.feature.molecule_default
+   MolecularDiffusion.data.component.feature.onehot
+
+
+Module Contents
+---------------
+
+.. py:class:: NodeFeaturizer(atom_vocab: list, use_ohe: bool = True, geom_feature: str = None, allow_unknown: bool = False)
+
+   Unified node featurization for both GraphDataset and PointCloudDataset.
+
+   Supports:
+   - OHE (one-hot encoding) of atom types
+   - Geom-based features from atomic numbers and coordinates
+
+   Usage:
+       featurizer = NodeFeaturizer(atom_vocab, use_ohe=True, geom_feature="geometric_fast")
+       features = featurizer.featurize_all(atom_symbols, charges, coords)
+
+   :param atom_vocab: List of atom symbols for OHE encoding
+   :param use_ohe: Whether to include one-hot encoding of atom type
+   :param geom_feature: Name of geom feature type (None for OHE only)
+   :param allow_unknown: Whether to allow unknown atoms in OHE
+
+
+   .. py:method:: available_features() -> list
+      :classmethod:
+
+
+      Return list of available feature names.
+
+
+
+   .. py:method:: compute_geom(charges: torch.Tensor, coords: torch.Tensor) -> torch.Tensor
+
+      Compute geom features from atomic numbers and coordinates.
+
+      :param charges: Atomic numbers tensor (N,)
+      :param coords: Coordinates tensor (N, 3)
+
+      :returns: Geom features tensor (N, F)
+
+
+
+   .. py:method:: compute_ohe(atom_symbols: list) -> torch.Tensor
+
+      Compute one-hot encoding for atom symbols.
+
+      :param atom_symbols: List of atom symbols (e.g., ['C', 'H', 'O'])
+
+      :returns: OHE tensor (N, len(vocab)) or (N, len(vocab)+1) if allow_unknown
+
+
+
+   .. py:method:: featurize(charges: torch.Tensor, coords: torch.Tensor) -> torch.Tensor
+
+      Compute geom features only (legacy interface).
+
+
+
+   .. py:method:: featurize_all(atom_symbols: list, charges: torch.Tensor, coords: torch.Tensor) -> torch.Tensor
+
+      Compute all features: OHE + geom (if specified).
+
+      :param atom_symbols: List of atom symbols
+      :param charges: Atomic numbers tensor (N,)
+      :param coords: Coordinates tensor (N, 3)
+
+      :returns: Combined features tensor (N, total_dim) or None if no features
+
+
+
+   .. py:attribute:: GEOM_FEATURES
+      :value: None
+
+
+
+   .. py:attribute:: allow_unknown
+      :value: False
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: geom_feature
+      :value: None
+
+
+
+   .. py:attribute:: use_ohe
+      :value: True
+
+
+
+.. py:function:: ExtendedConnectivityFingerprint(mol, radius=2, length=1024)
+
+   Extended Connectivity Fingerprint molecule feature.
+
+   Features:
+       GetMorganFingerprintAsBitVect(): a Morgan fingerprint for a molecule as a bit vector
+
+
+.. py:function:: atom_center_identification(atom)
+
+   Reaction center identification atom feature.
+
+   Features:
+       GetSymbol(): one-hot embedding for the atomic symbol
+
+       GetTotalNumHs(): one-hot embedding for the total number of Hs (explicit and implicit) on the atom
+
+       GetTotalDegree(): one-hot embedding for the degree of the atom in the molecule including Hs
+
+       GetTotalValence(): one-hot embedding for the total valence (explicit + implicit) of the atom
+
+       GetIsAromatic(): whether the atom is aromatic
+
+       IsInRing(): whether the atom is in a ring
+
+
+.. py:function:: atom_default(atom)
+
+   Default atom feature.
+
+   Features:
+       GetSymbol(): one-hot embedding for the atomic symbol
+
+       GetChiralTag(): one-hot embedding for atomic chiral tag
+
+       GetTotalDegree(): one-hot embedding for the degree of the atom in the molecule including Hs
+
+       GetFormalCharge(): one-hot embedding for the number of formal charges in the molecule
+
+       GetTotalNumHs(): one-hot embedding for the total number of Hs (explicit and implicit) on the atom
+
+       GetNumRadicalElectrons(): one-hot embedding for the number of radical electrons on the atom
+
+       GetHybridization(): one-hot embedding for the atom's hybridization
+
+       GetIsAromatic(): whether the atom is aromatic
+
+       IsInRing(): whether the atom is in a ring
+
+
+.. py:function:: atom_explicit_property_prediction(atom)
+
+   Explicit property prediction atom feature.
+
+   Features:
+       GetSymbol(): one-hot embedding for the atomic symbol
+
+       GetDegree(): one-hot embedding for the degree of the atom in the molecule
+
+       GetTotalValence(): one-hot embedding for the total valence (explicit + implicit) of the atom
+
+       GetFormalCharge(): one-hot embedding for the number of formal charges in the molecule
+
+       GetIsAromatic(): whether the atom is aromatic
+
+
+.. py:function:: atom_geom(z, coords)
+
+.. py:function:: atom_geom_compact(z, coords, scale_factor=1.3)
+
+.. py:function:: atom_geom_opt(z, coords, scale_factor=1.3)
+
+.. py:function:: atom_geom_v2(z, coords)
+
+.. py:function:: atom_pretrain(atom)
+
+   Atom feature for pretraining.
+
+   Features:
+       GetSymbol(): one-hot embedding for the atomic symbol
+
+       GetChiralTag(): one-hot embedding for atomic chiral tag
+
+
+.. py:function:: atom_property_prediction(atom)
+
+   Property prediction atom feature.
+
+   Features:
+       GetSymbol(): one-hot embedding for the atomic symbol
+
+       GetDegree(): one-hot embedding for the degree of the atom in the molecule
+
+       GetTotalNumHs(): one-hot embedding for the total number of Hs (explicit and implicit) on the atom
+
+       GetTotalValence(): one-hot embedding for the total valence (explicit + implicit) of the atom
+
+       GetFormalCharge(): one-hot embedding for the number of formal charges in the molecule
+
+       GetIsAromatic(): whether the atom is aromatic
+
+
+.. py:function:: atom_symbol(atom)
+
+   Symbol atom feature.
+
+   Features:
+       GetSymbol(): one-hot embedding for the atomic symbol
+
+
+.. py:function:: atom_synthon_completion(atom)
+
+   Synthon completion atom feature.
+
+   Features:
+       GetSymbol(): one-hot embedding for the atomic symbol
+
+       GetTotalNumHs(): one-hot embedding for the total number of Hs (explicit and implicit) on the atom
+
+       GetTotalDegree(): one-hot embedding for the degree of the atom in the molecule including Hs
+
+       IsInRing(): whether the atom is in a ring
+
+       IsInRingSize(3, 4, 5, 6): whether the atom is in a ring of a particular size
+
+       IsInRing() and not IsInRingSize(3, 4, 5, 6): whether the atom is in a ring and not in a ring of 3, 4, 5, 6
+
+
+.. py:function:: atom_topological(z, coords)
+
+.. py:function:: bond_default(bond)
+
+   Default bond feature.
+
+   Features:
+       GetBondType(): one-hot embedding for the type of the bond
+
+       GetBondDir(): one-hot embedding for the direction of the bond
+
+       GetStereo(): one-hot embedding for the stereo configuration of the bond
+
+       GetIsConjugated(): whether the bond is considered to be conjugated
+
+
+.. py:function:: bond_length(bond)
+
+   Bond length in the molecular conformation.
+
+   Note it takes much time to compute the conformation for large molecules.
+
+
+.. py:function:: bond_pretrain(bond)
+
+   Bond feature for pretraining.
+
+   Features:
+       GetBondType(): one-hot embedding for the type of the bond
+
+       GetBondDir(): one-hot embedding for the direction of the bond
+
+
+.. py:function:: bond_property_prediction(bond)
+
+   Property prediction bond feature.
+
+   Features:
+       GetBondType(): one-hot embedding for the type of the bond
+
+       GetIsConjugated(): whether the bond is considered to be conjugated
+
+       IsInRing(): whether the bond is in a ring
+
+
+.. py:function:: molecule_default(mol)
+
+   Default molecule feature.
+
+
+.. py:function:: onehot(x, vocab, allow_unknown=False)
+
+.. py:data:: ECFP
+

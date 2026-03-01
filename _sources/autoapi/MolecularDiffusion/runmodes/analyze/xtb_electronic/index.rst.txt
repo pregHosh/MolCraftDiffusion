@@ -1,0 +1,80 @@
+MolecularDiffusion.runmodes.analyze.xtb_electronic
+==================================================
+
+.. py:module:: MolecularDiffusion.runmodes.analyze.xtb_electronic
+
+.. autoapi-nested-parse::
+
+   XTB Electronic Property Computation using morfeus.
+
+   Provides functions to compute electronic properties for XYZ files using
+   the morfeus XTB interface, with support for batch processing and multiple
+   output formats (CSV, JSON, ASE database).
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.xtb_electronic.ATOMIC_LEVEL_GROUPS
+   MolecularDiffusion.runmodes.analyze.xtb_electronic.MOLECULAR_LEVEL_GROUPS
+   MolecularDiffusion.runmodes.analyze.xtb_electronic.PROPERTY_GROUPS
+   MolecularDiffusion.runmodes.analyze.xtb_electronic.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.xtb_electronic.batch_xtb_electronic
+   MolecularDiffusion.runmodes.analyze.xtb_electronic.compute_xtb_electronic
+
+
+Module Contents
+---------------
+
+.. py:function:: batch_xtb_electronic(input_dir: str, output_path: str | None = None, output_format: str = 'csv', method: int | str = 2, charge: int = 0, n_unpaired: int = 0, solvent: str | None = None, properties: list[str] | None = None, corrected: bool = True, timeout: int = 120, n_jobs: int = 1) -> pandas.DataFrame
+
+   Batch compute XTB electronic properties for XYZ files in a directory.
+
+   :param input_dir: Directory containing XYZ files
+   :param output_path: Output file path (without extension for 'all' format)
+   :param output_format: Output format ("csv", "json", "ase", or "all")
+   :param method: XTB method (1=GFN1, 2=GFN2, "ptb"=PTB)
+   :param charge: Molecular charge
+   :param n_unpaired: Number of unpaired electrons
+   :param solvent: Solvent name for implicit solvation
+   :param properties: List of property groups to compute
+   :param corrected: Whether to apply empirical IP/EA correction
+   :param timeout: Timeout per molecule in seconds
+   :param n_jobs: Number of parallel jobs
+
+   :returns: DataFrame with results
+
+
+.. py:function:: compute_xtb_electronic(xyz_path: str, method: int | str = 2, charge: int = 0, n_unpaired: int = 0, solvent: str | None = None, properties: list[str] | None = None, corrected: bool = True) -> dict[str, Any]
+
+   Compute XTB electronic properties for a single XYZ file.
+
+   :param xyz_path: Path to XYZ file
+   :param method: XTB method (1=GFN1, 2=GFN2, "ptb"=PTB)
+   :param charge: Molecular charge
+   :param n_unpaired: Number of unpaired electrons
+   :param solvent: Solvent name for implicit solvation (e.g., "water", "thf")
+   :param properties: List of property groups to compute. If None, computes "energy"
+   :param corrected: Whether to apply empirical IP/EA correction
+
+   :returns: Dictionary containing computed properties and metadata
+
+
+.. py:data:: ATOMIC_LEVEL_GROUPS
+
+.. py:data:: MOLECULAR_LEVEL_GROUPS
+
+.. py:data:: PROPERTY_GROUPS
+
+.. py:data:: logger
+

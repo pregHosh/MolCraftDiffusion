@@ -1,0 +1,107 @@
+MolecularDiffusion.utils.plot_function
+======================================
+
+.. py:module:: MolecularDiffusion.utils.plot_function
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.plot_function.plot_correlation_with_histograms
+   MolecularDiffusion.utils.plot_function.plot_correlation_with_kde
+   MolecularDiffusion.utils.plot_function.plot_embedding
+   MolecularDiffusion.utils.plot_function.plot_histogram_distribution
+   MolecularDiffusion.utils.plot_function.plot_kde_distribution
+   MolecularDiffusion.utils.plot_function.plot_kde_distribution_multiple
+
+
+Module Contents
+---------------
+
+.. py:function:: plot_correlation_with_histograms(true_values: numpy.ndarray, predicted_values: numpy.ndarray, property_name: str = 'E', unit: str = 'eV', output_path: Optional[str] = None) -> None
+
+   Plot a scatter plot comparing predicted vs. true values, with marginal histograms.
+
+   :param true_values: True target values.
+   :type true_values: np.ndarray
+   :param predicted_values: Predicted target values.
+   :type predicted_values: np.ndarray
+   :param property_name: Name of the property (for axis labels). Default is "E".
+   :type property_name: str
+   :param unit: Unit of the property. Default is "eV".
+   :type unit: str
+   :param output_path: If provided, path to save the figure.
+   :type output_path: Optional[str]
+
+
+.. py:function:: plot_correlation_with_kde(true_values: numpy.ndarray, predicted_values: numpy.ndarray, property_name: str = 'E', output_path: Optional[str] = None) -> None
+
+   Plot a correlation scatter plot between predicted and true values,
+   with probability density coloring, R² and MAE.
+
+   :param true_values: Array of true values.
+   :type true_values: np.ndarray
+   :param predicted_values: Array of predicted values.
+   :type predicted_values: np.ndarray
+   :param property_name: Name of the property being compared (for axis labels). Defaults to 'E'.
+   :type property_name: str
+   :param output_path: Path to save the figure. If None, the plot is not saved.
+   :type output_path: Optional[str]
+
+
+.. py:function:: plot_embedding(embedding: numpy.ndarray, labels: Optional[numpy.ndarray] = None, label_names: Optional[Union[str, List[str]]] = None, label_type: str = 'reg', output_path: str = 'tSNE.png') -> None
+
+   Plot a 2D embedding with optional labels (for classification or regression).
+
+   :param embedding: 2D array of shape (n_samples, 2) representing t-SNE embedding.
+   :type embedding: np.ndarray
+   :param labels: 1D array of target labels (regression values or class indices).
+   :type labels: Optional[np.ndarray]
+   :param label_names: Name of the regression label or list of class names.
+   :type label_names: Optional[Union[str, List[str]]]
+   :param label_type: Type of label ("reg" for regression, "class" for classification).
+   :type label_type: str
+   :param output_path: Path to save the output image. Defaults to 'tSNE.png'.
+   :type output_path: str
+
+
+.. py:function:: plot_histogram_distribution(predictions: numpy.ndarray, task_name: str, output_path: Optional[str] = None, num_bins: int = 50) -> None
+
+   Plot a histogram of the distribution for a single target.
+
+   :param predictions: Array of prediction values (1D).
+   :type predictions: np.ndarray
+   :param task_name: Name of the task/property for labeling.
+   :type task_name: str
+   :param output_path: Path to save the plot. Defaults to 'hist_targets.png'.
+   :type output_path: Optional[str]
+   :param num_bins: Number of histogram bins. Defaults to 50.
+   :type num_bins: int
+
+
+.. py:function:: plot_kde_distribution(predictions: numpy.ndarray, task_name: str, output_path: Optional[str] = None) -> None
+
+   Plot the Kernel Density Estimate (KDE) of a single target distribution.
+
+   :param predictions: Array of prediction values (1D).
+   :type predictions: np.ndarray
+   :param task_name: Name of the task/property for labeling.
+   :type task_name: str
+   :param output_path: Path to save the plot. Defaults to 'kde_targets.png'.
+   :type output_path: Optional[str]
+
+
+.. py:function:: plot_kde_distribution_multiple(predictions: numpy.ndarray, task_names: List[str], output_path: Optional[str] = None) -> None
+
+   Plot KDEs of multiple target distributions on the same axes.
+
+   :param predictions: 2D array of shape (n_samples, n_tasks).
+   :type predictions: np.ndarray
+   :param task_names: List of task/property names.
+   :type task_names: List[str]
+   :param output_path: Path to save the plot. Defaults to 'kde_targets.png'.
+   :type output_path: Optional[str]
+
+

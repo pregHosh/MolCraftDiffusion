@@ -1,0 +1,122 @@
+MolecularDiffusion.data.component.pointcloud
+============================================
+
+.. py:module:: MolecularDiffusion.data.component.pointcloud
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.pointcloud.Atom
+   MolecularDiffusion.data.component.pointcloud.PointCloud_Mol
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.pointcloud.simple_idx_match_check
+
+
+Module Contents
+---------------
+
+.. py:class:: Atom
+
+   .. py:method:: get_coord()
+
+
+   .. py:attribute:: element
+      :type:  str
+
+
+   .. py:attribute:: index
+      :type:  int
+
+
+   .. py:attribute:: x
+      :type:  float
+
+
+   .. py:attribute:: y
+      :type:  float
+
+
+   .. py:attribute:: z
+      :type:  float
+
+
+.. py:class:: PointCloud_Mol(_atoms)
+
+   Point Cloud representation of a molecule.
+
+   Parameters:
+   _atoms: List of atoms in the molecule. Each atom is a list with the following elements:
+       - Atomic symbol (str)
+       - x coordinate (float)
+       - y coordinate (float)
+       - z coordinate (float)
+
+
+   .. py:method:: from_arrays(zs: torch.Tensor, coords: torch.Tensor, with_hydrogen: bool = False, forbidden_atoms=[])
+      :classmethod:
+
+
+      load arrays to mol representation
+
+      parameters:
+      zs: Tensor with the atomic numbers.
+      coords: Tensor with the atomic coordinates.
+      with_hydrogen: Boolean to include Hydrogen atoms in the representation.
+      forbidden_atoms: List of forbidden atoms to be excluded from the representation.
+
+      out:
+      molrepr: Mol Object containing the molecular information (coordinates and elements).
+
+
+
+
+   .. py:method:: from_xyz(_path: str, with_hydrogen: bool = False, forbidden_atoms=[])
+      :classmethod:
+
+
+      load_xyz(_path: str) -> molrepr: Mol
+
+      Load molecule from an XYZ input file and initialize a Mol Object for it.
+
+      parameters:
+      _path: String with the path of the input file.
+      with_hydrogen: Boolean to include Hydrogen atoms in the representation.
+      forbidden_atoms: List of forbidden atoms to be excluded from the representation.
+
+      out:
+      molrepr: Mol Object containing the molecular information (coordinates and elements).
+
+
+
+
+   .. py:method:: get_coord()
+
+
+   .. py:method:: str_atom(_atom: int) -> str
+      :classmethod:
+
+
+      str_atom(_atom: int) -> atom: str
+
+      Convert integer atom to string atom.
+
+      in:
+      _atom: Integer with the atomic number.
+
+      out:
+      atom: String with the atomic element.
+
+
+
+
+.. py:function:: simple_idx_match_check(mol, ase_atoms)
+

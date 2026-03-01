@@ -1,0 +1,75 @@
+MolecularDiffusion.cli.predict
+==============================
+
+.. py:module:: MolecularDiffusion.cli.predict
+
+.. autoapi-nested-parse::
+
+   Prediction command for MolCraft CLI.
+
+   Adapted from scripts/predict.py for package-level execution.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.cli.predict.log
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.cli.predict.count_atoms_from_xyz
+   MolecularDiffusion.cli.predict.is_rank_zero
+   MolecularDiffusion.cli.predict.load_model
+   MolecularDiffusion.cli.predict.log_hyperparameters
+   MolecularDiffusion.cli.predict.predict_main
+   MolecularDiffusion.cli.predict.runner
+   MolecularDiffusion.cli.predict.xyz2mol
+
+
+Module Contents
+---------------
+
+.. py:function:: count_atoms_from_xyz(path: str) -> int
+
+   Fast atom counter for XYZ files.
+
+
+.. py:function:: is_rank_zero()
+
+   Check if current process is rank zero.
+
+
+.. py:function:: load_model(chkpt_path, task_config=None, atom_vocab=None)
+
+   Load a pre-trained model from checkpoint with auto-detection.
+
+
+.. py:function:: log_hyperparameters(object_dict: dict)
+
+   Log hyperparameters for debugging.
+
+
+.. py:function:: predict_main(cfg: omegaconf.DictConfig)
+
+   Entry point for CLI predict command.
+
+
+.. py:function:: runner(cfg: omegaconf.DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]
+
+   Property prediction run.
+
+
+.. py:function:: xyz2mol(xyz_file, atom_vocab, node_feature, edge_type='fully_connected', radius=4.0, n_neigh=5, device='cpu')
+
+   Convert an XYZ file into a PyTorch Geometric Data object.
+
+
+.. py:data:: log
+

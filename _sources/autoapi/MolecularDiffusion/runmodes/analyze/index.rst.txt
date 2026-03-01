@@ -1,0 +1,32 @@
+MolecularDiffusion.runmodes.analyze
+===================================
+
+.. py:module:: MolecularDiffusion.runmodes.analyze
+
+.. autoapi-nested-parse::
+
+   Analysis utilities for 3D molecular structures.
+
+   This module provides tools for:
+   - XTB geometry optimization
+   - XTB electronic property computation
+   - Validity/connectivity metrics
+   - Energy and RMSD computation
+   - Bond/angle/torsion analysis
+   - XYZ to SMILES conversion
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/runmodes/analyze/compare_to_optimized/index
+   /autoapi/MolecularDiffusion/runmodes/analyze/compute_metrics/index
+   /autoapi/MolecularDiffusion/runmodes/analyze/xtb_electronic/index
+   /autoapi/MolecularDiffusion/runmodes/analyze/xtb_optimization/index
+   /autoapi/MolecularDiffusion/runmodes/analyze/xyz2mol/index
+
+

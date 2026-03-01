@@ -1,0 +1,310 @@
+MolecularDiffusion.utils.geom_analyzer
+======================================
+
+.. py:module:: MolecularDiffusion.utils.geom_analyzer
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.geom_analyzer.EDGE_THRESHOLD
+   MolecularDiffusion.utils.geom_analyzer.SCALE_FACTOR
+   MolecularDiffusion.utils.geom_analyzer.allowed_bonds
+   MolecularDiffusion.utils.geom_analyzer.bond_dict
+   MolecularDiffusion.utils.geom_analyzer.bonds1
+   MolecularDiffusion.utils.geom_analyzer.bonds2
+   MolecularDiffusion.utils.geom_analyzer.bonds3
+   MolecularDiffusion.utils.geom_analyzer.num2symbol
+   MolecularDiffusion.utils.geom_analyzer.stdv
+   MolecularDiffusion.utils.geom_analyzer.symbol2num
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics
+   MolecularDiffusion.utils.geom_analyzer.Histogram_cont
+   MolecularDiffusion.utils.geom_analyzer.Histogram_discrete
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.geom_analyzer.analyze_node_distribution
+   MolecularDiffusion.utils.geom_analyzer.analyze_stability_for_molecules
+   MolecularDiffusion.utils.geom_analyzer.build_molecule
+   MolecularDiffusion.utils.geom_analyzer.build_xae_molecule
+   MolecularDiffusion.utils.geom_analyzer.check_connected
+   MolecularDiffusion.utils.geom_analyzer.check_consistency_bond_dictionaries
+   MolecularDiffusion.utils.geom_analyzer.check_quality
+   MolecularDiffusion.utils.geom_analyzer.check_stability
+   MolecularDiffusion.utils.geom_analyzer.check_stability
+   MolecularDiffusion.utils.geom_analyzer.check_symmetric
+   MolecularDiffusion.utils.geom_analyzer.correct_edges
+   MolecularDiffusion.utils.geom_analyzer.create_pyg_graph
+   MolecularDiffusion.utils.geom_analyzer.geom_predictor
+   MolecularDiffusion.utils.geom_analyzer.get_bond_order
+   MolecularDiffusion.utils.geom_analyzer.get_cutoffs
+   MolecularDiffusion.utils.geom_analyzer.is_fully_connected
+   MolecularDiffusion.utils.geom_analyzer.mol2smiles
+   MolecularDiffusion.utils.geom_analyzer.normalize_histogram
+   MolecularDiffusion.utils.geom_analyzer.save_xyz_tmp
+   MolecularDiffusion.utils.geom_analyzer.single_bond_only
+
+
+Module Contents
+---------------
+
+.. py:class:: BasicMolecularMetrics(ratio, dataset_smiles_list)
+
+   Bases: :py:obj:`object`
+
+
+   Valid amongst all generated molecules
+   Uniqueness amongst valid molecules
+   Novelty amongst unique molecules
+
+
+   .. py:method:: compute_novelty(unique)
+
+
+   .. py:method:: compute_uniqueness(valid)
+
+      valid: list of SMILES strings.
+
+
+
+   .. py:method:: compute_validity(generated)
+
+      generated smiles
+
+
+
+   .. py:method:: evaluate(generated)
+
+      generated: list of pairs (positions: n x 3, atom_types: n [int])
+      the positions and atom types should already be masked.
+
+
+
+   .. py:attribute:: dataset_smiles_list
+
+
+   .. py:attribute:: ratio
+
+
+.. py:class:: Histogram_cont(num_bins=100, range=(0.0, 13.0), name='histogram', ignore_zeros=False)
+
+   .. py:method:: add(elements)
+
+
+   .. py:method:: plot(save_path=None)
+
+
+   .. py:method:: plot_both(hist_b, save_path=None, wandb_obj=None)
+
+
+   .. py:attribute:: bins
+      :value: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...
+
+
+
+   .. py:attribute:: ignore_zeros
+      :value: False
+
+
+
+   .. py:attribute:: name
+      :value: 'histogram'
+
+
+
+   .. py:attribute:: range
+      :value: (0.0, 13.0)
+
+
+
+.. py:class:: Histogram_discrete(name='histogram')
+
+   .. py:method:: add(elements)
+
+
+   .. py:method:: normalize()
+
+
+   .. py:method:: plot(save_path=None)
+
+
+   .. py:attribute:: bins
+
+
+   .. py:attribute:: name
+      :value: 'histogram'
+
+
+
+.. py:function:: analyze_node_distribution(mol_list)
+
+.. py:function:: analyze_stability_for_molecules(molecule_list: Dict[str, torch.Tensor], atom_decoder: List[str], dataset_smiles_list: List[str], use_rdkit: bool = True, debug: bool = True) -> Tuple[Dict[str, float], Optional[List[float]]]
+
+   Analyze the stability of a list of molecules.
+   If xyz cannot be converted to mol and smiles, the molecule is considered unstable.
+   Then for unstable molecules, the number of bonds is checked against the allowed bonds.
+   Only "stable" smiles are then used for the RDKit metrics.
+
+   Parameters:
+   - molecule_list (Dict[str, torch.Tensor]): Dictionary containing 'one_hot', 'x', and 'node_mask' tensors.
+   - atom_decoder (List[str]): List to decode atomic types to element symbols.
+   - dataset_smiles_list (List[str]): List of reference SMILES strings from the dataset.
+   - use_rdkit (bool): Whether to use RDKit for additional metrics. Default is True.
+
+   Returns:
+   Tuple[Dict[str, float], Optional[List[float]]]:
+   - Dictionary with molecule and atomic stability.
+   - List of RDKit metrics if `use_rdkit` is True, otherwise None.
+
+
+.. py:function:: build_molecule(positions, atom_types, atom_decoder)
+
+.. py:function:: build_xae_molecule(positions, atom_types, atom_decoder)
+
+   Returns a triplet (X, A, E): atom_types, adjacency matrix, edge_types
+   args:
+   positions: N x 3  (already masked to keep final number nodes)
+   atom_types: N
+   returns:
+   X: N         (int)
+   A: N x N     (bool)                  (binary adjacency matrix)
+   E: N x N     (int)  (bond type, 0 if no bond) such that A = E.bool()
+
+
+.. py:function:: check_connected(am, tol=1e-08)
+
+.. py:function:: check_consistency_bond_dictionaries()
+
+.. py:function:: check_quality(cartesian_coordinates_tensor, atomic_numbers_tensor)
+
+.. py:function:: check_stability(positions, atom_type)
+
+   Check the stability of a molecule based on atom positions and types.
+
+   Parameters:
+   - positions (np.ndarray): An array of shape (N, 3) containing the 3D coordinates of the atoms.
+   - atom_type (List[int]): A list of atom types corresponding to the positions.
+   - atom_decoder (Dict[int, str]): A dictionary mapping atom type indices to atom symbols.
+
+   Returns:
+   Tuple[bool, int, int]: A tuple containing a boolean indicating if the molecule is stable,
+                       the number of stable bonds, and the total number of atoms.
+
+
+.. py:function:: check_stability(positions, atom_type)
+
+   Check the stability of a molecule based on atom positions and types.
+
+   Parameters:
+   - positions (np.ndarray): An array of shape (N, 3) containing the 3D coordinates of the atoms.
+   - atom_type (List[int]): A list of atom types corresponding to the positions.
+   - atom_decoder (Dict[int, str]): A dictionary mapping atom type indices to atom symbols.
+
+   Returns:
+   Tuple[bool, int, int]: A tuple containing a boolean indicating if the molecule is stable,
+                       the number of stable bonds, and the total number of atoms.
+
+
+.. py:function:: check_symmetric(am, tol=1e-08)
+
+.. py:function:: correct_edges(data, scale_factor=1.3)
+
+   Corrects the edges in a molecular grapSCALE_FACTORh based on covalent radii.
+   This function iterates over the nodes and their adjacent nodes in the given
+   molecular graph data. It calculates the bond length between each pair of nodes
+   and checks if it is within the allowed bond length threshold (sum of covalent radii plus relaxation factor).
+   If the bond length is valid, the edge is kept; otherwise, it is removed.
+
+   Parameters:
+   data (torch_geometric.data.Data): The input molecular graph data containing node features,
+                                     edge indices, and positions.
+   scale_factor (float): The scaling factor to apply to the covalent radii. Default is 1.3.
+
+   Returns:
+   torch_geometric.data.Data: The corrected molecular graph data with updated edge indices.
+
+
+.. py:function:: create_pyg_graph(cartesian_coordinates_tensor, atomic_numbers_tensor, xyz_filename=None, r=5.0)
+
+   Creates a PyTorch Geometric graph from given cartesian coordinates and atomic numbers.
+   :param cartesian_coordinates_tensor: A tensor containing the cartesian coordinates of the atoms.
+   :type cartesian_coordinates_tensor: torch.Tensor
+   :param atomic_numbers_tensor: A tensor containing the atomic numbers of the atoms.
+   :type atomic_numbers_tensor: torch.Tensor
+   :param xyz_filename: The filename of the XYZ file.
+   :type xyz_filename: str
+   :param r: The radius within which to consider edges between nodes. Default is 5.0.
+   :type r: float, optional
+
+   :returns: A PyTorch Geometric Data object containing the graph representation of the molecule.
+   :rtype: torch_geometric.data.Data
+
+
+.. py:function:: geom_predictor(p, l, margin1=5, limit_bonds_to_one=False)
+
+   p: atom pair (couple of str)
+   l: bond length (float)
+
+
+.. py:function:: get_bond_order(atom1, atom2, distance, check_exists=False)
+
+.. py:function:: get_cutoffs(z, radii=ase.data.covalent_radii, mult=1)
+
+.. py:function:: is_fully_connected(edge_index, num_nodes)
+
+   Determines if the graph is fully connected.
+   :param edge_index: The edge indices of the graph.
+   :type edge_index: torch.Tensor
+   :param num_nodes: The number of nodes in the graph.
+   :type num_nodes: int
+
+   :returns: True if the graph is fully connected, False otherwise.
+             int: The number of connected components in the graph.
+   :rtype: bool
+
+
+.. py:function:: mol2smiles(mol)
+
+.. py:function:: normalize_histogram(hist)
+
+.. py:function:: save_xyz_tmp(path, atom_type, position)
+
+.. py:function:: single_bond_only(threshold, length, margin1=5)
+
+.. py:data:: EDGE_THRESHOLD
+   :value: 2
+
+
+.. py:data:: SCALE_FACTOR
+   :value: 1.3
+
+
+.. py:data:: allowed_bonds
+
+.. py:data:: bond_dict
+
+.. py:data:: bonds1
+
+.. py:data:: bonds2
+
+.. py:data:: bonds3
+
+.. py:data:: num2symbol
+
+.. py:data:: stdv
+
+.. py:data:: symbol2num
+

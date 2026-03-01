@@ -1,0 +1,63 @@
+MolecularDiffusion.cli.generate
+===============================
+
+.. py:module:: MolecularDiffusion.cli.generate
+
+.. autoapi-nested-parse::
+
+   Generation command for MolCraft CLI.
+
+   Adapted from scripts/generate.py for package-level execution.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.cli.generate.log
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.cli.generate.generate
+   MolecularDiffusion.cli.generate.generate_main
+   MolecularDiffusion.cli.generate.is_rank_zero
+   MolecularDiffusion.cli.generate.load_model
+   MolecularDiffusion.cli.generate.log_hyperparameters
+
+
+Module Contents
+---------------
+
+.. py:function:: generate(cfg: omegaconf.DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]
+
+   Main generation function.
+
+
+.. py:function:: generate_main(cfg: omegaconf.DictConfig)
+
+   Entry point for CLI generate command.
+
+
+.. py:function:: is_rank_zero()
+
+   Check if current process is rank zero.
+
+
+.. py:function:: load_model(chkpt_directory, task_config=None, atom_vocab=None, total_step=0)
+
+   Load model from checkpoint directory with auto-detection.
+
+
+.. py:function:: log_hyperparameters(object_dict: dict)
+
+   Log hyperparameters for debugging.
+
+
+.. py:data:: log
+

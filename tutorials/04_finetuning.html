@@ -1,0 +1,630 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Tutorial 5: Molecule Generation Overview" href="05_generation_overview.html"><link rel="prev" title="Tutorial 3: Training a Time-Aware Guidance Model" href="03_training_guidance.html">
+
+    <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+        <title>Tutorial 4: Fine-Tuning a Diffusion Model - MolCraftDiffusion</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fbb7725e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  --color-brand-primary: #4A90D9;
+  --color-brand-content: #4A90D9;
+  --font-stack: Inter, sans-serif;
+  --font-stack--monospace: JetBrains Mono, monospace;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #6BAAD9;
+  --color-brand-content: #6BAAD9;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #6BAAD9;
+  --color-brand-content: #6BAAD9;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">MolCraftDiffusion</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <span class="sidebar-brand-text">MolCraftDiffusion</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="00_data_preparation.html">Tutorial 0: Data Preparation &amp; Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_training_diffusion.html">Tutorial 1: Training a Diffusion Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_training_regressor.html">Tutorial 2: Training a Regressor Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_training_guidance.html">Tutorial 3: Training a Time-Aware Guidance Model</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Tutorial 4: Fine-Tuning a Diffusion Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_generation_overview.html">Tutorial 5: Molecule Generation Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/index.html">MolecularDiffusion</a><input aria-label="Toggle navigation of MolecularDiffusion" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/callbacks/index.html">MolecularDiffusion.callbacks</a><input aria-label="Toggle navigation of MolecularDiffusion.callbacks" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/callbacks/train_helper/index.html">MolecularDiffusion.callbacks.train_helper</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/cli/index.html">MolecularDiffusion.cli</a><input aria-label="Toggle navigation of MolecularDiffusion.cli" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/cli/analyze/index.html">MolecularDiffusion.cli.analyze</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/cli/data/index.html">MolecularDiffusion.cli.data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/cli/eval_predict/index.html">MolecularDiffusion.cli.eval_predict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/cli/generate/index.html">MolecularDiffusion.cli.generate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/cli/main/index.html">MolecularDiffusion.cli.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/cli/predict/index.html">MolecularDiffusion.cli.predict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/cli/train/index.html">MolecularDiffusion.cli.train</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/core/core/index.html">MolecularDiffusion.core.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/core/engine/index.html">MolecularDiffusion.core.engine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/core/logger/index.html">MolecularDiffusion.core.logger</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/core/meter/index.html">MolecularDiffusion.core.meter</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/data/index.html">MolecularDiffusion.data</a><input aria-label="Toggle navigation of MolecularDiffusion.data" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/data/component/index.html">MolecularDiffusion.data.component</a><input aria-label="Toggle navigation of MolecularDiffusion.data.component" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/data/component/dataset/index.html">MolecularDiffusion.data.component.dataset</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/data/component/feature/index.html">MolecularDiffusion.data.component.feature</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/data/component/pointcloud/index.html">MolecularDiffusion.data.component.pointcloud</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/data/dataloader/index.html">MolecularDiffusion.data.dataloader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/data/dataset/index.html">MolecularDiffusion.data.dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/data/valency_tables/index.html">MolecularDiffusion.data.valency_tables</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../autoapi/MolecularDiffusion/molcraftdiff/index.html">MolecularDiffusion.molcraftdiff</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/index.html">MolecularDiffusion.runmodes</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/index.html">MolecularDiffusion.runmodes.analyze</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.analyze" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/compare_to_optimized/index.html">MolecularDiffusion.runmodes.analyze.compare_to_optimized</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/compute_metrics/index.html">MolecularDiffusion.runmodes.analyze.compute_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/xtb_electronic/index.html">MolecularDiffusion.runmodes.analyze.xtb_electronic</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/xtb_optimization/index.html">MolecularDiffusion.runmodes.analyze.xtb_optimization</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/xyz2mol/index.html">MolecularDiffusion.runmodes.analyze.xyz2mol</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/generate/index.html">MolecularDiffusion.runmodes.generate</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.generate" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/generate/tasks_generate/index.html">MolecularDiffusion.runmodes.generate.tasks_generate</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/index.html">MolecularDiffusion.runmodes.train</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.train" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/data/index.html">MolecularDiffusion.runmodes.train.data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/eval/index.html">MolecularDiffusion.runmodes.train.eval</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/logger/index.html">MolecularDiffusion.runmodes.train.logger</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_egcl/index.html">MolecularDiffusion.runmodes.train.tasks_egcl</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_egt/index.html">MolecularDiffusion.runmodes.train.tasks_egt</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/trainer/index.html">MolecularDiffusion.runmodes.train.trainer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/index.html">MolecularDiffusion.utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/comm/index.html">MolecularDiffusion.utils.comm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/diffusion_utils/index.html">MolecularDiffusion.utils.diffusion_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/file/index.html">MolecularDiffusion.utils.file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/geom_analyzer/index.html">MolecularDiffusion.utils.geom_analyzer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/geom_constant/index.html">MolecularDiffusion.utils.geom_constant</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/geom_constraint/index.html">MolecularDiffusion.utils.geom_constraint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/geom_metrics/index.html">MolecularDiffusion.utils.geom_metrics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/geom_stability/index.html">MolecularDiffusion.utils.geom_stability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/geom_utils/index.html">MolecularDiffusion.utils.geom_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/io/index.html">MolecularDiffusion.utils.io</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/molgraph_utils/index.html">MolecularDiffusion.utils.molgraph_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/plot_function/index.html">MolecularDiffusion.utils.plot_function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/pretty/index.html">MolecularDiffusion.utils.pretty</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/sascore/index.html">MolecularDiffusion.utils.sascore</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/smilify/index.html">MolecularDiffusion.utils.smilify</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/torch/index.html">MolecularDiffusion.utils.torch</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/pregHosh/MolCraftDiffusion/blob/main/docs/tutorials/04_finetuning.md?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/pregHosh/MolCraftDiffusion/edit/main/docs/tutorials/04_finetuning.md" rel="edit" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="tutorial-4-fine-tuning-a-diffusion-model">
+<h1>Tutorial 4: Fine-Tuning a Diffusion Model<a class="headerlink" href="#tutorial-4-fine-tuning-a-diffusion-model" title="Link to this heading">¶</a></h1>
+<p>Fine-tuning adapts a pre-trained model to a specific chemical space or teaches it new capabilities, like conditional generation.</p>
+<p><strong>This tutorial assumes you are familiar with the override-only configuration workflow from <a class="reference internal" href="01_training_diffusion.html"><span class="std std-doc">Tutorial 1</span></a>.</strong></p>
+<section id="core-fine-tuning-principles">
+<h2>Core Fine-Tuning Principles<a class="headerlink" href="#core-fine-tuning-principles" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Matching Architecture is Critical</strong>: Your config file’s model architecture (<code class="docutils literal notranslate"><span class="pre">hidden_size</span></code>, <code class="docutils literal notranslate"><span class="pre">num_layers</span></code>, etc.) <strong>must exactly match</strong> the pre-trained checkpoint, or loading will fail. Use the <code class="docutils literal notranslate"><span class="pre">diffusion_pretrained</span></code> task template when adapting our provided models.</p></li>
+<li><p><strong>Use a Low Learning Rate</strong>: The model is already trained; you only need small adjustments. Start with a learning rate around <code class="docutils literal notranslate"><span class="pre">1e-5</span></code> to <code class="docutils literal notranslate"><span class="pre">2e-5</span></code>.</p></li>
+<li><p><strong>Unique Dataset Names</strong>: Always use a unique <code class="docutils literal notranslate"><span class="pre">data.dataset_name</span></code> so you don’t corrupt the cached <code class="docutils literal notranslate"><span class="pre">.pt</span></code> files from your broader pre-training runs.</p></li>
+</ol>
+<p>Fine-tuning is activated by a single parameter: <code class="docutils literal notranslate"><span class="pre">tasks.chkpt_path</span></code>.</p>
+<p>Below are three common scenarios.</p>
+<hr class="docutils" />
+<section id="scenario-1-continue-training-on-a-new-dataset">
+<h3>Scenario 1: Continue Training on a New Dataset<a class="headerlink" href="#scenario-1-continue-training-on-a-new-dataset" title="Link to this heading">¶</a></h3>
+<p><strong>Goal:</strong> To adapt a general, pre-trained model to a new, more specific dataset.</p>
+<p><strong>Configuration:</strong> This is the simplest case. You load the pre-trained model and point the trainer to your new data.</p>
+<p><strong>Example <code class="docutils literal notranslate"><span class="pre">finetune_new_data.yaml</span></code>:</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">defaults</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_new_dataset</span><span class="w"> </span><span class="c1"># Use your new dataset configuration</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diffusion_pretrained</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">logger</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wandb</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">trainer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">_self_</span>
+
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;finetune_on_new_data&quot;</span>
+<span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">42</span>
+
+<span class="nt">trainer</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;training_outputs/finetuned_new_data&quot;</span>
+<span class="w">  </span><span class="nt">num_epochs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span><span class="w"> </span><span class="c1"># Fine-tuning often requires fewer epochs</span>
+<span class="w">  </span><span class="nt">lr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1e-5</span><span class="w">       </span><span class="c1"># Use a very small learning rate</span>
+
+<span class="nt">tasks</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># CRITICAL: Path to the pre-trained model to start from</span>
+<span class="w">  </span><span class="nt">chkpt_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/downloaded_model.ckpt&quot;</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="scenario-2-fine-tune-to-add-a-condition">
+<h3>Scenario 2: Fine-Tune to Add a Condition<a class="headerlink" href="#scenario-2-fine-tune-to-add-a-condition" title="Link to this heading">¶</a></h3>
+<p><strong>Goal:</strong> To teach a pre-trained unconditional model to generate molecules based on specific properties (e.g., for conditional generation or CFG).</p>
+<p><strong>Configuration:</strong> You load the unconditional model but provide it with conditional data and settings during fine-tuning.</p>
+<p><strong>Key Parameters for Adding a Condition:</strong></p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Parameter</p></th>
+<th class="head text-left"><p>Example</p></th>
+<th class="head text-left"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">tasks.condition_names</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[&quot;S1_exc&quot;,</span> <span class="pre">&quot;T1_exc&quot;]</span></code></p></td>
+<td class="text-left"><p>A list of property names from your dataset that the model should learn to associate with the molecules.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">tasks.context_mask_rate</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">0.1</span></code></p></td>
+<td class="text-left"><p>The probability of hiding the condition during training. A value greater than 0 is required to enable Classifier-Free Guidance (CFG) during generation. A common value is 0.1 (10% of the time).</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">tasks.mask_value</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">0]</span></code></p></td>
+<td class="text-left"><p>The value to use when a condition is masked. This should be a list with the same length as <code class="docutils literal notranslate"><span class="pre">condition_names</span></code>. Typically, this is <code class="docutils literal notranslate"><span class="pre">0</span></code> or the mean value of the property in the dataset.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">tasks.normalization_method</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">&quot;maxmin&quot;</span></code></p></td>
+<td class="text-left"><p>The method to normalize conditional properties. Options are: <code class="docutils literal notranslate"><span class="pre">&quot;maxmin&quot;</span></code> (scales to [-1, 1]), <code class="docutils literal notranslate"><span class="pre">&quot;mad&quot;</span></code> (mean absolute deviation), <code class="docutils literal notranslate"><span class="pre">&quot;value_N&quot;</span></code> (divides by a specific value N), or <code class="docutils literal notranslate"><span class="pre">null</span></code> for no normalization.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Concatenation vs. Adapter Conditioning:</strong></p>
+<p>By default, the model injects conditional properties by naively <strong>concatenating</strong> them to the input node features.
+Alternatively, you can use <strong>Adapters</strong> (MLP networks) to project the conditions into the model’s hidden dimension before adding them to the node features. This can be more expressive.
+To use an adapter for a specific condition, list its name in <code class="docutils literal notranslate"><span class="pre">tasks.adapter_conditions</span></code>.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Parameter</p></th>
+<th class="head text-left"><p>Example</p></th>
+<th class="head text-left"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">tasks.adapter_conditions</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[&quot;S1_exc&quot;]</span></code></p></td>
+<td class="text-left"><p>A list of condition names (must be a subset of <code class="docutils literal notranslate"><span class="pre">condition_names</span></code>) that should be routed through Adapter MLPs instead of being concatenated.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Example <code class="docutils literal notranslate"><span class="pre">finetune_add_condition.yaml</span></code>:</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">defaults</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_conditional_dataset</span><span class="w"> </span><span class="c1"># A dataset with property labels</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diffusion_pretrained</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">logger</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wandb</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">trainer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">_self_</span>
+
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;finetune_for_cfg&quot;</span>
+<span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">42</span>
+
+<span class="nt">trainer</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;training_outputs/finetuned_cfg_model&quot;</span>
+<span class="w">  </span><span class="nt">num_epochs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+<span class="w">  </span><span class="nt">lr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1e-5</span>
+
+<span class="nt">tasks</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># CRITICAL: Path to the pre-trained unconditional model</span>
+<span class="w">  </span><span class="nt">chkpt_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/downloaded_unconditional_model.ckpt&quot;</span>
+
+<span class="w">  </span><span class="c1"># KEY CHANGE: Add the conditions to learn</span>
+<span class="w">  </span><span class="nt">condition_names</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;S1_exc&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;T1_exc&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">adapter_conditions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;S1_exc&quot;</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># Process S1_exc through an adapter, T1_exc is concatenated</span>
+<span class="w">  </span><span class="nt">context_mask_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span><span class="w"> </span><span class="c1"># Make it CFG-ready</span>
+<span class="w">  </span><span class="nt">normalization_method</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value_10</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="scenario-3-fine-tune-for-outpainting">
+<h3>Scenario 3: Fine-Tune for Outpainting<a class="headerlink" href="#scenario-3-fine-tune-for-outpainting" title="Link to this heading">¶</a></h3>
+<p><strong>Goal:</strong> To specialize a model to become an expert at “growing” new functional groups from a common scaffold.</p>
+<p><strong>Configuration:</strong> You load a pre-trained model and fine-tune it on a dataset of molecules, telling it which atoms belong to the core scaffold.</p>
+<p><strong>Key Parameter for Outpainting:</strong></p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Parameter</p></th>
+<th class="head text-left"><p>Example</p></th>
+<th class="head text-left"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">tasks.reference_indices</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5]</span></code></p></td>
+<td class="text-left"><p>A list of 0-indexed atom indices that define the common scaffold (the “core”) of the molecules in your dataset. These atoms will be treated as the fixed part of the molecule during training.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p><strong>Important Data Preprocessing Note:</strong>
+For this fine-tuning scenario to work correctly, you <strong>must</strong> preprocess your dataset to ensure that the core atom indices are consistent across all molecules. For example, if your scaffold is a benzene ring, the atoms of the ring should have the same indices (e.g., 0 through 5) in every molecule’s coordinate file in your training set.</p>
+</div></blockquote>
+<p><strong>Example <code class="docutils literal notranslate"><span class="pre">finetune_outpainting.yaml</span></code>:</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">defaults</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_scaffold_dataset</span><span class="w"> </span><span class="c1"># A dataset of molecules with the same core</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diffusion_pretrained</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">logger</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wandb</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">trainer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">_self_</span>
+
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;finetune_for_outpainting&quot;</span>
+<span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">42</span>
+
+<span class="nt">trainer</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;training_outputs/finetuned_outpainting_model&quot;</span>
+<span class="w">  </span><span class="nt">num_epochs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">25</span><span class="w"> </span><span class="c1"># This can be a very short fine-tuning task</span>
+<span class="w">  </span><span class="nt">lr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2e-5</span>
+
+<span class="nt">tasks</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># CRITICAL: Path to a pre-trained model</span>
+<span class="w">  </span><span class="nt">chkpt_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/downloaded_model.ckpt&quot;</span>
+
+<span class="w">  </span><span class="c1"># KEY CHANGE: Define the scaffold atoms</span>
+<span class="w">  </span><span class="nt">reference_indices</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">4</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">5</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># The indices of the core atoms</span>
+</pre></div>
+</div>
+</section>
+<section id="run-your-fine-tuning-job">
+<h3>Run Your Fine-Tuning Job<a class="headerlink" href="#run-your-fine-tuning-job" title="Link to this heading">¶</a></h3>
+<p>For any of these scenarios, you launch the training with the same <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">train</span></code> command, pointing to your experiment config file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example for Scenario 2</span>
+MolCraftDiff<span class="w"> </span>train<span class="w"> </span>finetune_add_condition
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="05_generation_overview.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Tutorial 5: Molecule Generation Overview</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="03_training_guidance.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Tutorial 3: Training a Time-Aware Guidance Model</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, pregHosh
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/pregHosh/MolCraftDiffusion" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0"
+                     viewBox="0 0 16 16" height="1em" width="1em">
+                    <path fill-rule="evenodd"
+                          d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                          0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                          -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+                          .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+                          -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0
+                          1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82
+                          1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01
+                          1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+                    />
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Tutorial 4: Fine-Tuning a Diffusion Model</a><ul>
+<li><a class="reference internal" href="#core-fine-tuning-principles">Core Fine-Tuning Principles</a><ul>
+<li><a class="reference internal" href="#scenario-1-continue-training-on-a-new-dataset">Scenario 1: Continue Training on a New Dataset</a></li>
+<li><a class="reference internal" href="#scenario-2-fine-tune-to-add-a-condition">Scenario 2: Fine-Tune to Add a Condition</a></li>
+<li><a class="reference internal" href="#scenario-3-fine-tune-for-outpainting">Scenario 3: Fine-Tune for Outpainting</a></li>
+<li><a class="reference internal" href="#run-your-fine-tuning-job">Run Your Fine-Tuning Job</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>

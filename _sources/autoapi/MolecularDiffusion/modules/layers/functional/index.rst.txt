@@ -1,0 +1,347 @@
+MolecularDiffusion.modules.layers.functional
+============================================
+
+.. py:module:: MolecularDiffusion.modules.layers.functional
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.functional.as_mask
+   MolecularDiffusion.modules.layers.functional.clipped_policy_gradient_objective
+   MolecularDiffusion.modules.layers.functional.masked_mean
+   MolecularDiffusion.modules.layers.functional.mean_with_nan
+   MolecularDiffusion.modules.layers.functional.multi_slice
+   MolecularDiffusion.modules.layers.functional.multi_slice_mask
+   MolecularDiffusion.modules.layers.functional.multinomial
+   MolecularDiffusion.modules.layers.functional.one_hot
+   MolecularDiffusion.modules.layers.functional.padded_to_variadic
+   MolecularDiffusion.modules.layers.functional.policy_gradient_objective
+   MolecularDiffusion.modules.layers.functional.shifted_softplus
+   MolecularDiffusion.modules.layers.functional.variadic_arange
+   MolecularDiffusion.modules.layers.functional.variadic_cross_entropy
+   MolecularDiffusion.modules.layers.functional.variadic_log_softmax
+   MolecularDiffusion.modules.layers.functional.variadic_max
+   MolecularDiffusion.modules.layers.functional.variadic_mean
+   MolecularDiffusion.modules.layers.functional.variadic_meshgrid
+   MolecularDiffusion.modules.layers.functional.variadic_randperm
+   MolecularDiffusion.modules.layers.functional.variadic_sample
+   MolecularDiffusion.modules.layers.functional.variadic_softmax
+   MolecularDiffusion.modules.layers.functional.variadic_sort
+   MolecularDiffusion.modules.layers.functional.variadic_sum
+   MolecularDiffusion.modules.layers.functional.variadic_to_padded
+   MolecularDiffusion.modules.layers.functional.variadic_topk
+
+
+Module Contents
+---------------
+
+.. py:function:: as_mask(indexes, length)
+
+   Convert indexes into a binary mask.
+
+   :param indexes: positive indexes
+   :type indexes: LongTensor
+   :param length: maximal possible value of indexes
+   :type length: int
+
+
+.. py:function:: clipped_policy_gradient_objective(policy, agent, reward, eps=0.2)
+
+.. py:function:: masked_mean(input, mask, dim=None, keepdim=False)
+
+   Masked mean of a tensor.
+
+   :param input: input tensor
+   :type input: Tensor
+   :param mask: mask tensor
+   :type mask: BoolTensor
+   :param dim: dimension to reduce
+   :type dim: int or tuple of int, optional
+   :param keepdim: whether retain ``dim`` or not
+   :type keepdim: bool, optional
+
+
+.. py:function:: mean_with_nan(input, dim=None, keepdim=False)
+
+   Mean of a tensor. Ignore all nan values.
+
+   :param input: input tensor
+   :type input: Tensor
+   :param dim: dimension to reduce
+   :type dim: int or tuple of int, optional
+   :param keepdim: whether retain ``dim`` or not
+   :type keepdim: bool, optional
+
+
+.. py:function:: multi_slice(starts, ends)
+
+   Compute the union of indexes in multiple slices.
+
+   Example::
+
+       >>> mask = multi_slice(torch.tensor([0, 1, 4]), torch.tensor([2, 3, 6]), 6)
+       >>> assert (mask == torch.tensor([0, 1, 2, 4, 5]).all()
+
+   :param starts: start indexes of slices
+   :type starts: LongTensor
+   :param ends: end indexes of slices
+   :type ends: LongTensor
+
+
+.. py:function:: multi_slice_mask(starts, ends, length)
+
+   Compute the union of multiple slices into a binary mask.
+
+   Example::
+
+       >>> mask = multi_slice_mask(torch.tensor([0, 1, 4]), torch.tensor([2, 3, 6]), 6)
+       >>> assert (mask == torch.tensor([1, 1, 1, 0, 1, 1])).all()
+
+   :param starts: start indexes of slices
+   :type starts: LongTensor
+   :param ends: end indexes of slices
+   :type ends: LongTensor
+   :param length: length of mask
+   :type length: int
+
+
+.. py:function:: multinomial(input, num_sample, replacement=False)
+
+   Fast multinomial sampling. This is the default implementation in PyTorch v1.6.0+.
+
+   :param input: unnormalized distribution
+   :type input: Tensor
+   :param num_sample: number of samples
+   :type num_sample: int
+   :param replacement: sample with replacement or not
+   :type replacement: bool, optional
+
+
+.. py:function:: one_hot(index, size)
+
+   Expand indexes into one-hot vectors.
+
+   :param index: index
+   :type index: Tensor
+   :param size: size of the one-hot dimension
+   :type size: int
+
+
+.. py:function:: padded_to_variadic(padded, size)
+
+   Convert a padded tensor to a variadic tensor.
+
+   :param padded: padded tensor of shape :math:`(N, ...)`
+   :type padded: Tensor
+   :param size: size of sets of shape :math:`(N,)`
+   :type size: LongTensor
+
+
+.. py:function:: policy_gradient_objective(policy, reward)
+
+.. py:function:: shifted_softplus(input)
+
+   Shifted softplus function.
+
+   :param input: input tensor
+   :type input: Tensor
+
+
+.. py:function:: variadic_arange(size)
+
+   Return a 1-D tensor that contains integer intervals of variadic sizes.
+   This is a variadic variant of ``torch.arange(stop).expand(batch_size, -1)``.
+
+   Suppose there are :math:`N` intervals.
+
+   :param size: size of intervals of shape :math:`(N,)`
+   :type size: LongTensor
+
+
+.. py:function:: variadic_cross_entropy(input, target, size, reduction='mean')
+
+   Compute cross entropy loss over categories with variadic sizes.
+
+   Suppose there are :math:`N` samples, and the numbers of categories in all samples are summed to :math:`B`.
+
+   :param input: prediction of shape :math:`(B, ...)`
+   :type input: Tensor
+   :param target: target of shape :math:`(N, ...)`. Each target is a relative index in a sample.
+   :type target: Tensor
+   :param size: number of categories of shape :math:`(N,)`
+   :type size: LongTensor
+   :param reduction: reduction to apply to the output.
+                     Available reductions are ``none``, ``sum`` and ``mean``.
+   :type reduction: string, optional
+
+
+.. py:function:: variadic_log_softmax(input, size)
+
+   Compute log softmax over categories with variadic sizes.
+
+   Suppose there are :math:`N` samples, and the numbers of categories in all samples are summed to :math:`B`.
+
+   :param input: input of shape :math:`(B, ...)`
+   :type input: Tensor
+   :param size: number of categories of shape :math:`(N,)`
+   :type size: LongTensor
+
+
+.. py:function:: variadic_max(input, size)
+
+   Compute max over sets with variadic sizes.
+
+   Suppose there are :math:`N` sets, and the sizes of all sets are summed to :math:`B`.
+
+   :param input: input of shape :math:`(B, ...)`
+   :type input: Tensor
+   :param size: size of sets of shape :math:`(N,)`
+   :type size: LongTensor
+
+   Returns
+       (Tensor, LongTensor): max values and indexes
+
+
+.. py:function:: variadic_mean(input, size)
+
+   Compute mean over sets with variadic sizes.
+
+   Suppose there are :math:`N` sets, and the sizes of all sets are summed to :math:`B`.
+
+   :param input: input of shape :math:`(B, ...)`
+   :type input: Tensor
+   :param size: size of sets of shape :math:`(N,)`
+   :type size: LongTensor
+
+
+.. py:function:: variadic_meshgrid(input1, size1, input2, size2)
+
+   Compute the Cartesian product for two batches of sets with variadic sizes.
+
+   Suppose there are :math:`N` sets in each input,
+   and the sizes of all sets are summed to :math:`B_1` and :math:`B_2` respectively.
+
+   :param input1: input of shape :math:`(B_1, ...)`
+   :type input1: Tensor
+   :param size1: size of :attr:`input1` of shape :math:`(N,)`
+   :type size1: LongTensor
+   :param input2: input of shape :math:`(B_2, ...)`
+   :type input2: Tensor
+   :param size2: size of :attr:`input2` of shape :math:`(N,)`
+   :type size2: LongTensor
+
+   Returns
+       (Tensor, Tensor): the first and the second elements in the Cartesian product
+
+
+.. py:function:: variadic_randperm(size)
+
+   Return random permutations for sets with variadic sizes.
+   The ``i``-th permutation contains integers from 0 to ``size[i] - 1``.
+
+   Suppose there are :math:`N` sets.
+
+   :param size: size of sets of shape :math:`(N,)`
+   :type size: LongTensor
+   :param device: device of the tensor
+   :type device: torch.device, optional
+
+
+.. py:function:: variadic_sample(input, size, num_sample)
+
+   Draw samples with replacement from sets with variadic sizes.
+
+   Suppose there are :math:`N` sets, and the sizes of all sets are summed to :math:`B`.
+
+   :param input: input of shape :math:`(B, ...)`
+   :type input: Tensor
+   :param size: size of sets of shape :math:`(N,)`
+   :type size: LongTensor
+   :param num_sample: number of samples to draw from each set
+   :type num_sample: int
+
+
+.. py:function:: variadic_softmax(input, size)
+
+   Compute softmax over categories with variadic sizes.
+
+   Suppose there are :math:`N` samples, and the numbers of categories in all samples are summed to :math:`B`.
+
+   :param input: input of shape :math:`(B, ...)`
+   :type input: Tensor
+   :param size: number of categories of shape :math:`(N,)`
+   :type size: LongTensor
+
+
+.. py:function:: variadic_sort(input, size, descending=False)
+
+   Sort elements in sets with variadic sizes.
+
+   Suppose there are :math:`N` sets, and the sizes of all sets are summed to :math:`B`.
+
+   :param input: input of shape :math:`(B, ...)`
+   :type input: Tensor
+   :param size: size of sets of shape :math:`(N,)`
+   :type size: LongTensor
+   :param descending: return ascending or descending order
+   :type descending: bool, optional
+
+   Returns
+       (Tensor, LongTensor): sorted values and indexes
+
+
+.. py:function:: variadic_sum(input, size)
+
+   Compute sum over sets with variadic sizes.
+
+   Suppose there are :math:`N` sets, and the sizes of all sets are summed to :math:`B`.
+
+   :param input: input of shape :math:`(B, ...)`
+   :type input: Tensor
+   :param size: size of sets of shape :math:`(N,)`
+   :type size: LongTensor
+
+
+.. py:function:: variadic_to_padded(input, size, value=0)
+
+   Convert a variadic tensor to a padded tensor.
+
+   Suppose there are :math:`N` sets, and the sizes of all sets are summed to :math:`B`.
+
+   :param input: input of shape :math:`(B, ...)`
+   :type input: Tensor
+   :param size: size of sets of shape :math:`(N,)`
+   :type size: LongTensor
+   :param value: fill value for padding
+   :type value: scalar
+
+   :returns: padded tensor and mask
+   :rtype: (Tensor, BoolTensor)
+
+
+.. py:function:: variadic_topk(input, size, k, largest=True)
+
+   Compute the :math:`k` largest elements over sets with variadic sizes.
+
+   Suppose there are :math:`N` sets, and the sizes of all sets are summed to :math:`B`.
+
+   If any set has less than than :math:`k` elements, the size-th largest element will be
+   repeated to pad the output to :math:`k`.
+
+   :param input: input of shape :math:`(B, ...)`
+   :type input: Tensor
+   :param size: size of sets of shape :math:`(N,)`
+   :type size: LongTensor
+   :param k: the k in "top-k". Can be a fixed value for all sets,
+             or different values for different sets of shape :math:`(N,)`.
+   :type k: int or LongTensor
+   :param largest: return largest or smallest elements
+   :type largest: bool, optional
+
+   Returns
+       (Tensor, LongTensor): top-k values and indexes
+
+

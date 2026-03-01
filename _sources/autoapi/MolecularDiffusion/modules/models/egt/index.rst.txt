@@ -1,0 +1,244 @@
+MolecularDiffusion.modules.models.egt
+=====================================
+
+.. py:module:: MolecularDiffusion.modules.models.egt
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.egt.EGT_dynamics
+   MolecularDiffusion.modules.models.egt.GraphDiffTransformer
+   MolecularDiffusion.modules.models.egt.GraphTransformer
+
+
+Module Contents
+---------------
+
+.. py:class:: EGT_dynamics(in_node_nf: int, in_edge_nf: int, in_global_nf: int, n_layers: int, hidden_mlp_dims: dict, hidden_dims: dict, context_node_nf: int, dropout: float = 0.0, n_dims: int = 3, condition_time=True, model: str = 'GraphTransformer')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   The dynamic function for EGT-based diffusion models.
+   :param in_node_nf: Number of input node features per node.
+   :type in_node_nf: int
+   :param in_edge_nf: Number of input edge features per edge.
+   :type in_edge_nf: int
+   :param in_global_nf: Number of input global features.
+   :type in_global_nf: int
+   :param n_layers: Number of transformer layers.
+   :type n_layers: int
+   :param hidden_mlp_dims: Hidden dimensions for MLPs.
+   :type hidden_mlp_dims: dict
+   :param hidden_dims: Hidden dimensions for transformer layers.
+   :type hidden_dims: dict
+   :param context_node_nf: Number of context features per node.
+   :type context_node_nf: int
+   :param dropout: Dropout probability.
+   :type dropout: float
+   :param n_dims: Number of spatial dimensions (e.g., 3 for 3D coordinates).
+   :type n_dims: int
+   :param condition_time: Whether to condition on time.
+   :type condition_time: bool
+   :param model: The name of the EGNN model to use ('GraphTransformer' or 'GraphDiffTransformer').
+   :type model: str
+
+
+   .. py:method:: forward(t, xh, node_mask, edge_mask, context=None)
+      :abstractmethod:
+
+
+
+   .. py:method:: unwrap_forward()
+
+
+   .. py:method:: wrap_forward(node_mask, edge_mask, context)
+
+
+   .. py:attribute:: condition_time
+      :value: True
+
+
+
+   .. py:attribute:: context_node_nf
+
+
+   .. py:attribute:: egnn
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: n_dims
+      :value: 3
+
+
+
+.. py:class:: GraphDiffTransformer(in_node_nf: int, in_edge_nf: int, in_global_nf: int, n_layers: int, hidden_mlp_dims: dict, hidden_dims: dict, out_node_nf: int = None, out_edge_nf: int = None, dropout: float = 0.0, act_fn_in: torch.nn.Module = nn.SiLU(), act_fn_out: torch.nn.Module = nn.SiLU())
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   :param in_node_nf: Number of input node features.
+   :type in_node_nf: int
+   :param in_edge_nf: Number of input edge features.
+   :type in_edge_nf: int
+   :param in_global_nf: Number of input global features.
+   :type in_global_nf: int
+   :param n_layers: Number of transformer layers.
+   :type n_layers: int
+   :param hidden_mlp_dims: Dictionary specifying hidden dimensions for MLPs for 'X' (node), 'E' (edge), 'y' (global), and 'pos' (position) features.
+   :type hidden_mlp_dims: dict
+   :param hidden_dims: Dictionary specifying hidden dimensions for the transformer layers, including 'dx', 'de', 'dy', 'n_head', 'dim_ffX', and 'dim_ffE'.
+   :type hidden_dims: dict
+   :param out_node_nf: Number of output node features. Defaults to `in_node_nf`.
+   :type out_node_nf: int, optional
+   :param out_edge_nf: Number of output edge features. Defaults to `in_edge_nf`.
+   :type out_edge_nf: int, optional
+   :param dropout: Dropout probability. Defaults to 0.0.
+   :type dropout: float
+   :param act_fn_in: Activation function for input MLPs. Defaults to `nn.SiLU()`.
+   :type act_fn_in: nn.Module
+   :param act_fn_out: Activation function for output MLPs. Defaults to `nn.SiLU()`.
+   :type act_fn_out: nn.Module
+
+
+   .. py:method:: forward(X, E, y, pos, node_mask, get_emd=False)
+
+      X: node features (bs, n, in_node_nf)
+      E: adjacncy matrixs (bs, n, n, edge features dim)
+      y: global features (bs, n, global features dim)
+      pos: positions (bs, n, 3)
+      node_mask: node mask (bs, n)
+
+
+
+   .. py:attribute:: in_edge_nf
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: mlp_in_E
+
+
+   .. py:attribute:: mlp_in_X
+
+
+   .. py:attribute:: mlp_in_pos
+
+
+   .. py:attribute:: mlp_in_y
+
+
+   .. py:attribute:: mlp_out_E
+
+
+   .. py:attribute:: mlp_out_X
+
+
+   .. py:attribute:: mlp_out_pos
+
+
+   .. py:attribute:: n_layers
+
+
+   .. py:attribute:: out_dim_charges
+      :value: 1
+
+
+
+   .. py:attribute:: out_dim_y
+
+
+   .. py:attribute:: tf_layers
+
+
+.. py:class:: GraphTransformer(in_node_nf: int, in_edge_nf: int, in_global_nf: int, n_layers: int, hidden_mlp_dims: dict, hidden_dims: dict, out_node_nf: int = None, out_edge_nf: int = None, dropout: float = 0.0, act_fn_in: torch.nn.Module = nn.SiLU(), act_fn_out: torch.nn.Module = nn.SiLU())
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Graph Transformer model for processing graph-structured data with node, edge, and global features.
+
+   This model applies a stack of transformer layers to update node, edge, and global features, supporting flexible input and output dimensions.
+   It is suitable for tasks such as molecular property prediction, generative modeling, and other graph-based learning problems.
+
+   :param in_node_nf: Number of input node features.
+   :type in_node_nf: int
+   :param in_edge_nf: Number of input edge features.
+   :type in_edge_nf: int
+   :param in_global_nf: Number of input global features.
+   :type in_global_nf: int
+   :param n_layers: Number of transformer layers.
+   :type n_layers: int
+   :param hidden_mlp_dims: Hidden dimensions for MLPs (keys: 'X', 'E', 'y', 'pos').
+   :type hidden_mlp_dims: dict
+   :param hidden_dims: Hidden dimensions for transformer layers (keys: 'dx', 'de', 'dy', 'n_head', 'dim_ffX', 'dim_ffE').
+   :type hidden_dims: dict
+   :param out_node_nf: Number of output node features. Defaults to in_node_nf.
+   :type out_node_nf: int, optional
+   :param out_edge_nf: Number of output edge features. Defaults to in_edge_nf.
+   :type out_edge_nf: int, optional
+   :param dropout: Dropout probability.
+   :type dropout: float
+   :param act_fn_in: Activation function for input MLPs.
+   :type act_fn_in: nn.Module
+   :param act_fn_out: Activation function for output MLPs.
+   :type act_fn_out: nn.Module
+
+
+   .. py:method:: forward(X, E, y, pos, node_mask, get_emd=False)
+
+      X: node features (bs, n, in_node_nf)
+      E: adjacncy matrixs (bs, n, n, edge features dim)
+      y: global features (bs, n, global features dim)
+      pos: positions (bs, n, 3)
+      node_mask: node mask (bs, n)
+
+
+
+   .. py:attribute:: in_edge_nf
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: mlp_in_E
+
+
+   .. py:attribute:: mlp_in_X
+
+
+   .. py:attribute:: mlp_in_pos
+
+
+   .. py:attribute:: mlp_in_y
+
+
+   .. py:attribute:: mlp_out_E
+
+
+   .. py:attribute:: mlp_out_X
+
+
+   .. py:attribute:: mlp_out_pos
+
+
+   .. py:attribute:: n_layers
+
+
+   .. py:attribute:: out_dim_charges
+      :value: 1
+
+
+
+   .. py:attribute:: out_dim_y
+
+
+   .. py:attribute:: tf_layers
+
+

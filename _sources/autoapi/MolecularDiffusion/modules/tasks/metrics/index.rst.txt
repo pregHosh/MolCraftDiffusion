@@ -1,0 +1,225 @@
+MolecularDiffusion.modules.tasks.metrics
+========================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.metrics
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.metrics.QED
+   MolecularDiffusion.modules.tasks.metrics.SA
+   MolecularDiffusion.modules.tasks.metrics.accuracy
+   MolecularDiffusion.modules.tasks.metrics.area_under_prc
+   MolecularDiffusion.modules.tasks.metrics.area_under_roc
+   MolecularDiffusion.modules.tasks.metrics.chemical_validity
+   MolecularDiffusion.modules.tasks.metrics.f1_max
+   MolecularDiffusion.modules.tasks.metrics.logP
+   MolecularDiffusion.modules.tasks.metrics.matthews_corrcoef
+   MolecularDiffusion.modules.tasks.metrics.no_rdkit_log
+   MolecularDiffusion.modules.tasks.metrics.pearsonr
+   MolecularDiffusion.modules.tasks.metrics.penalized_logP
+   MolecularDiffusion.modules.tasks.metrics.r2
+   MolecularDiffusion.modules.tasks.metrics.spearmanr
+   MolecularDiffusion.modules.tasks.metrics.variadic_accuracy
+   MolecularDiffusion.modules.tasks.metrics.variadic_area_under_prc
+   MolecularDiffusion.modules.tasks.metrics.variadic_area_under_roc
+   MolecularDiffusion.modules.tasks.metrics.variadic_top_precision
+
+
+Module Contents
+---------------
+
+.. py:function:: QED(pred)
+
+   Quantitative estimation of drug-likeness.
+
+   :param pred: molecules to evaluate
+   :type pred: PackedMolecule
+
+
+.. py:function:: SA(pred)
+
+   Synthetic accesibility score.
+
+   :param pred: molecules to evaluate
+   :type pred: PackedMolecule
+
+
+.. py:function:: accuracy(pred, target)
+
+   Classification accuracy.
+
+   Suppose there are :math:`N` sets and :math:`C` categories.
+
+   :param pred: prediction of shape :math:`(N, C)`
+   :type pred: Tensor
+   :param target: target of shape :math:`(N,)`
+   :type target: Tensor
+
+
+.. py:function:: area_under_prc(pred, target)
+
+   Area under precision-recall curve (PRC).
+
+   :param pred: predictions of shape :math:`(n,)`
+   :type pred: Tensor
+   :param target: binary targets of shape :math:`(n,)`
+   :type target: Tensor
+
+
+.. py:function:: area_under_roc(pred, target)
+
+   Area under receiver operating characteristic curve (ROC).
+
+   :param pred: predictions of shape :math:`(n,)`
+   :type pred: Tensor
+   :param target: binary targets of shape :math:`(n,)`
+   :type target: Tensor
+
+
+.. py:function:: chemical_validity(pred)
+
+   Chemical validity of molecules.
+
+   :param pred: molecules to evaluate
+   :type pred: PackedMolecule
+
+
+.. py:function:: f1_max(pred, target)
+
+   F1 score with the optimal threshold.
+
+   This function first enumerates all possible thresholds for deciding positive and negative
+   samples, and then pick the threshold with the maximal F1 score.
+
+   :param pred: predictions of shape :math:`(B, N)`
+   :type pred: Tensor
+   :param target: binary targets of shape :math:`(B, N)`
+   :type target: Tensor
+
+
+.. py:function:: logP(pred)
+
+   Logarithm of partition coefficient between octanol and water for a compound.
+
+   :param pred: molecules to evaluate
+   :type pred: PackedMolecule
+
+
+.. py:function:: matthews_corrcoef(pred, target)
+
+   Matthews correlation coefficient between prediction and target.
+
+   Definition follows matthews_corrcoef for K classes in sklearn.
+   For details, see: `https://scikit-learn.org/stable/modules/model_evaluation.html#matthews-corrcoef`
+
+   :param pred: prediction of shape :math: `(N, K)`
+   :type pred: Tensor
+   :param target: target of shape :math: `(N,)`
+   :type target: Tensor
+
+
+.. py:function:: no_rdkit_log()
+
+   Context manager to suppress all rdkit loggings.
+
+
+.. py:function:: pearsonr(pred, target)
+
+   Pearson correlation between prediction and target.
+
+   :param pred: prediction of shape :math: `(N,)`
+   :type pred: Tensor
+   :param target: target of shape :math: `(N,)`
+   :type target: Tensor
+
+
+.. py:function:: penalized_logP(pred)
+
+   Logarithm of partition coefficient, penalized by cycle length and synthetic accessibility.
+
+   :param pred: molecules to evaluate
+   :type pred: PackedMolecule
+
+
+.. py:function:: r2(pred, target)
+
+   :math:`R^2` regression score.
+
+   :param pred: predictions of shape :math:`(n,)`
+   :type pred: Tensor
+   :param target: targets of shape :math:`(n,)`
+   :type target: Tensor
+
+
+.. py:function:: spearmanr(pred, target)
+
+   Spearman correlation between prediction and target.
+
+   :param pred: prediction of shape :math: `(N,)`
+   :type pred: Tensor
+   :param target: target of shape :math: `(N,)`
+   :type target: Tensor
+
+
+.. py:function:: variadic_accuracy(input, target, size)
+
+   Classification accuracy for categories with variadic sizes.
+
+   Suppose there are :math:`N` samples, and the number of categories in all samples is summed to :math:`B`.
+
+   :param input: prediction of shape :math:`(B,)`
+   :type input: Tensor
+   :param target: target of shape :math:`(N,)`. Each target is a relative index in a sample.
+   :type target: Tensor
+   :param size: number of categories of shape :math:`(N,)`
+   :type size: Tensor
+
+
+.. py:function:: variadic_area_under_prc(pred, target, size)
+
+   Area under precision-recall curve (PRC) for sets with variadic sizes.
+
+   Suppose there are :math:`N` sets, and the sizes of all sets are summed to :math:`B`.
+
+   :param pred: prediction of shape :math:`(B,)`
+   :type pred: Tensor
+   :param target: target of shape :math:`(B,)`.
+   :type target: Tensor
+   :param size: size of sets of shape :math:`(N,)`
+   :type size: Tensor
+
+
+.. py:function:: variadic_area_under_roc(pred, target, size)
+
+   Area under receiver operating characteristic curve (ROC) for sets with variadic sizes.
+
+   Suppose there are :math:`N` sets, and the sizes of all sets are summed to :math:`B`.
+
+   :param pred: prediction of shape :math:`(B,)`
+   :type pred: Tensor
+   :param target: target of shape :math:`(B,)`.
+   :type target: Tensor
+   :param size: size of sets of shape :math:`(N,)`
+   :type size: Tensor
+
+
+.. py:function:: variadic_top_precision(pred, target, size, k)
+
+   Top-k precision for sets with variadic sizes.
+
+   Suppose there are :math:`N` sets, and the sizes of all sets are summed to :math:`B`.
+
+   :param pred: prediction of shape :math:`(B,)`
+   :type pred: Tensor
+   :param target: target of shape :math:`(B,)`
+   :type target: Tensor
+   :param size: size of sets of shape :math:`(N,)`
+   :type size: Tensor
+   :param k: the k in "top-k" for different sets of shape :math:`(N,)`
+   :type k: LongTensor
+
+

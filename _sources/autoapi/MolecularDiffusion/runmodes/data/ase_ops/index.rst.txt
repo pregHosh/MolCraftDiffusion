@@ -1,0 +1,73 @@
+MolecularDiffusion.runmodes.data.ase_ops
+========================================
+
+.. py:module:: MolecularDiffusion.runmodes.data.ase_ops
+
+.. autoapi-nested-parse::
+
+   ASE database operations module.
+   Handles merging, inspecting, splitting, and sampling.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.data.ase_ops.Chem
+   MolecularDiffusion.runmodes.data.ase_ops.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.data.ase_ops.inspect_db
+   MolecularDiffusion.runmodes.data.ase_ops.is_clean
+   MolecularDiffusion.runmodes.data.ase_ops.merge_dbs
+   MolecularDiffusion.runmodes.data.ase_ops.sample_db
+   MolecularDiffusion.runmodes.data.ase_ops.split_db
+   MolecularDiffusion.runmodes.data.ase_ops.verify_datapoint
+
+
+Module Contents
+---------------
+
+.. py:function:: inspect_db(db_path: pathlib.Path, output_dir: pathlib.Path = None, keys_to_plot: List[str] = None, limit_print: int = 10)
+
+   Inspects an ASE DB, printing stats and optionally plotting distributions.
+
+
+.. py:function:: is_clean(row)
+
+   Verifies that the atom order in ASE atoms and RDKit mol from mol_block are identical.
+
+
+.. py:function:: merge_dbs(input_dir: pathlib.Path, output_db: pathlib.Path, recursive: bool = False, pattern: str = '*.db')
+
+   Merges multiple ASE databases into one.
+
+
+.. py:function:: sample_db(input_db: pathlib.Path, output: pathlib.Path, output_type: str = None, fraction: float = None, number: int = None, seed: int = None, verify_clean: bool = False)
+
+   Samples a random fraction or number of entries from an ASE database.
+
+
+.. py:function:: split_db(db_path: pathlib.Path, output_dir: pathlib.Path, n_splits: int = 2)
+
+   Splits a DB into N smaller DBs.
+
+
+.. py:function:: verify_datapoint(atoms, mol_block)
+
+   Verifies that ASE Atoms match RDKit Mol block.
+
+
+.. py:data:: Chem
+   :value: None
+
+
+.. py:data:: logger
+

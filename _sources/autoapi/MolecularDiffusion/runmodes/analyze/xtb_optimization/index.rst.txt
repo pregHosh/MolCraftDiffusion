@@ -1,0 +1,142 @@
+MolecularDiffusion.runmodes.analyze.xtb_optimization
+====================================================
+
+.. py:module:: MolecularDiffusion.runmodes.analyze.xtb_optimization
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.xtb_optimization.parser
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.xtb_optimization.check_neutrality
+   MolecularDiffusion.runmodes.analyze.xtb_optimization.check_xyz
+   MolecularDiffusion.runmodes.analyze.xtb_optimization.get_xtb_optimized_xyz
+   MolecularDiffusion.runmodes.analyze.xtb_optimization.optimize_molecule
+
+
+Module Contents
+---------------
+
+.. py:function:: check_neutrality(filename: str, charge: int = -1, timeout: int = 180) -> bool
+
+   Checks if a molecule described in an XYZ file is neutral using xTB.
+
+   This function executes the `xtb` command with the `--ptb` (print properties)
+   flag and parses its log output to detect if xTB reports a mismatch
+   between the number of electrons and spin multiplicity, which indicates
+   a non-neutral molecule. Temporary xTB output files are cleaned up afterwards.
+
+   Note: This function assumes `xtb` is installed and accessible in the system's PATH.
+   This functionality could potentially be integrated with other molecular property
+   calculation modules if available.
+
+   :param filename: The path to the XYZ file of the molecule to check.
+   :type filename: str
+   :param charge: The molecular charge to use for the xTB calculation. Defaults to -1.
+   :type charge: int
+   :param timeout: The maximum time in seconds to wait for the xTB process to complete.
+   :type timeout: int
+
+   :returns:
+
+             True if the molecule is inferred to be neutral based on xTB's output,
+                   False otherwise.
+   :rtype: bool
+
+
+.. py:function:: check_xyz(filename: str, connector_dicts: dict = None, scale_factor: float = 1.3) -> tuple[bool, int, bool]
+
+   Performs a series of checks on an XYZ file to validate its molecular structure.
+
+   This includes checking for zero coordinates, graph connectivity, and
+   optionally, the degree of specific 'connector' nodes.
+
+   :param filename: The path to the XYZ file to be checked.
+   :type filename: str
+   :param connector_dicts: A dictionary where keys are node indices
+                           and values are lists of expected degrees for those nodes. Used to
+                           validate connectivity at specific points in the molecule. Defaults to None.
+   :type connector_dicts: dict, optional
+   :param scale_factor: The scaling factor for covalent radii in edge correction. Defaults to 1.3.
+   :type scale_factor: float, optional
+
+   :returns:
+
+             A tuple containing:
+                 - is_connected (bool): True if the molecule's graph is fully connected.
+                 - num_components (int): The number of connected components in the graph.
+                 - match_n_degree (bool): True if all specified connector nodes have
+                   degrees matching their expected values in `connector_dicts`, False otherwise.
+   :rtype: tuple[bool, int, bool]
+
+
+.. py:function:: get_xtb_optimized_xyz(input_directory: str, output_directory: str = None, charge: int = -1, level: str = 'gfn1', timeout: int = 240, scale_factor: float = 1.3, optimize_all: bool = True, csv_path: str = None, filter_column: str = None) -> list[str]
+
+   Optimizes all XYZ files in a given input directory using xTB or OpenBabel and saves them
+   to an output directory.
+
+   This function iterates through all `.xyz` files, performs initial structural
+   checks (connectivity, zero coordinates, and optional degree checks), and then
+   attempts to optimize valid structures using `optimize_molecule`. It skips files
+   that already have an optimized counterpart in the output directory.
+
+   :param input_directory: The path to the directory containing the input XYZ files.
+   :type input_directory: str
+   :param output_directory: The path to the directory where optimized
+                            XYZ files will be saved. If None, optimized files are saved in the
+                            `input_directory`. Defaults to None.
+   :type output_directory: str, optional
+   :param charge: The molecular charge to use for xTB optimizations. Defaults to -1.
+   :type charge: int, optional
+   :param level: The calculation level (e.g., "gfn1", "gfn2", "gfn-ff", "mmff94"). Defaults to "gfn1".
+   :type level: str, optional
+   :param timeout: The maximum time in seconds to wait for each xTB process. Defaults to 240.
+   :type timeout: int, optional
+   :param scale_factor: The scaling factor for covalent radii in edge correction. Defaults to 1.3.
+   :type scale_factor: float, optional
+   :param optimize_all: If True, optimizes all files regardless of existing optimized versions.
+   :type optimize_all: bool, optional
+   :param csv_path: Path to a CSV file to filter which XYZ files to optimize.
+   :type csv_path: str, optional
+   :param filter_column: The column name in the CSV to filter by (values must be 1).
+   :type filter_column: str, optional
+
+   :returns: A list of paths to the successfully optimized XYZ files.
+   :rtype: list[str]
+
+
+.. py:function:: optimize_molecule(filename: str, charge: int, level: str, timeout: int) -> str | None
+
+   Optimizes the geometry of a molecule from an XYZ file using xTB or OpenBabel.
+
+   This function attempts to optimize the molecule with a specified charge and
+   calculation level. If the optimization is successful, it moves the
+   output file to a new name based on the input filename.
+
+   :param filename: The path to the input XYZ file.
+   :type filename: str
+   :param charge: The molecular charge to use for the calculation (xTB only).
+   :type charge: int
+   :param level: The calculation level (e.g., "gfn1", "gfn2", "gfn-ff", "mmff94").
+   :type level: str
+   :param timeout: The maximum time in seconds to wait for the process to complete.
+   :type timeout: int
+
+   :returns:
+
+             The path to the optimized XYZ file if successful,
+                         otherwise None if it times out or fails to produce output.
+   :rtype: str | None
+
+
+.. py:data:: parser
+

@@ -1,0 +1,108 @@
+MolecularDiffusion.utils.torch
+==============================
+
+.. py:module:: MolecularDiffusion.utils.torch
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.torch.MAX_SEED_VALUE
+   MolecularDiffusion.utils.torch.MIN_SEED_VALUE
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.torch.adjust_bias
+   MolecularDiffusion.utils.torch.adjust_weights
+   MolecularDiffusion.utils.torch.cat
+   MolecularDiffusion.utils.torch.clone
+   MolecularDiffusion.utils.torch.cpu
+   MolecularDiffusion.utils.torch.cuda
+   MolecularDiffusion.utils.torch.detach
+   MolecularDiffusion.utils.torch.get_vram_size
+   MolecularDiffusion.utils.torch.mean
+   MolecularDiffusion.utils.torch.recursive_module_to_device
+   MolecularDiffusion.utils.torch.seed_everything
+   MolecularDiffusion.utils.torch.stack
+
+
+Module Contents
+---------------
+
+.. py:function:: adjust_bias(param, new_shape)
+
+.. py:function:: adjust_weights(param, new_shape)
+
+.. py:function:: cat(objs, *args, **kwargs)
+
+   Concatenate a list of nested containers with the same structure.
+
+
+.. py:function:: clone(obj, *args, **kwargs)
+
+   Clone tensors in any nested conatiner.
+
+
+.. py:function:: cpu(obj, *args, **kwargs)
+
+   Transfer any nested container of tensors to CPU.
+
+
+.. py:function:: cuda(obj, *args, **kwargs)
+
+   Transfer any nested container of tensors to CUDA.
+
+
+.. py:function:: detach(obj)
+
+   Detach tensors in any nested conatiner.
+
+
+.. py:function:: get_vram_size()
+
+.. py:function:: mean(obj, *args, **kwargs)
+
+   Compute mean of tensors in any nested container.
+
+
+.. py:function:: recursive_module_to_device(module: torch.nn.Module, device: torch.device)
+
+   Recursively assigns a given device to all submodules of a torch.nn.Module.
+
+   :param module: The main module to which the device needs to be assigned.
+   :type module: nn.Module
+   :param device: The target device (e.g., torch.device('cuda') or torch.device('cpu')).
+   :type device: torch.device
+
+
+.. py:function:: seed_everything(seed: int = None, workers: bool = False, verbose: bool = True) -> int
+
+   Sets seed for reproducibility across torch, numpy, and random modules.
+
+   :param seed: The seed to use. If None, it checks 'PL_GLOBAL_SEED' in env or defaults to 0.
+   :type seed: int, optional
+   :param workers: Whether to set the 'PL_SEED_WORKERS' env variable.
+   :type workers: bool
+   :param verbose: If True, logs the chosen seed.
+   :type verbose: bool
+
+
+.. py:function:: stack(objs, *args, **kwargs)
+
+   Stack a list of nested containers with the same structure.
+
+
+.. py:data:: MAX_SEED_VALUE
+   :value: 4294967295
+
+
+.. py:data:: MIN_SEED_VALUE
+   :value: 0
+
+

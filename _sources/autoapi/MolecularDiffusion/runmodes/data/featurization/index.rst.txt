@@ -1,0 +1,67 @@
+MolecularDiffusion.runmodes.data.featurization
+==============================================
+
+.. py:module:: MolecularDiffusion.runmodes.data.featurization
+
+.. autoapi-nested-parse::
+
+   Featurization module for MolCraft.
+   Handles generating vectorial representations (Morgan fingerprints, SOAP) from 3D molecular data.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.data.featurization.Chem
+   MolecularDiffusion.runmodes.data.featurization.logger
+   MolecularDiffusion.runmodes.data.featurization.save_safetensors
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.data.featurization.featurize
+   MolecularDiffusion.runmodes.data.featurization.generate_morgan
+   MolecularDiffusion.runmodes.data.featurization.generate_soap
+   MolecularDiffusion.runmodes.data.featurization.save_features
+
+
+Module Contents
+---------------
+
+.. py:function:: featurize(input_source: str, output_dir: str, method: str = 'morgan', format: str = 'npy', readout: str = 'mean', smilify_method: str = 'hybrid', radius: int = 2, nbits: int = 2048, rcut: float = 5.0, nmax: int = 8, lmax: int = 6)
+
+   Main featurization driver.
+
+
+.. py:function:: generate_morgan(entries: List[Dict], radius: int = 2, nbits: int = 2048, smilify_method: str = 'hybrid', n_jobs: int = 1) -> Tuple[numpy.ndarray, List[str]]
+
+   Generates Morgan fingerprints for a list of entries.
+   Entries is a list of dicts with 'file' (path) or 'data' (atoms/coords) and 'id'.
+
+
+.. py:function:: generate_soap(entries: List[Dict], rcut: float = 5.0, nmax: int = 8, lmax: int = 6, readout: str = 'mean', species: List[str] = None) -> Tuple[numpy.ndarray, List[str]]
+
+   Generates SOAP descriptors.
+
+
+.. py:function:: save_features(features: numpy.ndarray, ids: List[str], output_dir: pathlib.Path, format: str = 'npy')
+
+   Saves features and indices.
+
+
+.. py:data:: Chem
+   :value: None
+
+
+.. py:data:: logger
+
+.. py:data:: save_safetensors
+   :value: None
+
+

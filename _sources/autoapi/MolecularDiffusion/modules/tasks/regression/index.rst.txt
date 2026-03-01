@@ -1,0 +1,190 @@
+MolecularDiffusion.modules.tasks.regression
+===========================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.regression
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.regression.ProperyPrediction
+
+
+Module Contents
+---------------
+
+.. py:class:: ProperyPrediction(model, task=(), include_charge=False, criterion='mse', metric=('mae', 'rmse'), loss_param=None, num_mlp_layer=1, normalization=True, num_class=None, mlp_batch_norm=False, condition_time=False, readout='mean', mlp_dropout=0, std_mean=None, load_mlps_layer=0, verbose=0)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.task.Task`, :py:obj:`MolecularDiffusion.core.Configurable`
+
+
+   Class for load/save configuration.
+   It will automatically record every argument passed to the ``__init__`` function.
+
+   This class is inspired by :meth:`state_dict()` in PyTorch, but designed for hyperparameters.
+
+   Inherit this class to construct a configurable class.
+
+   >>> class MyClass(nn.Module, core.Configurable):
+
+   Note :class:`Configurable` only applies to the current class rather than any derived class.
+   For example, the following definition only records the arguments of ``MyClass``.
+
+   >>> class DerivedClass(MyClass):
+
+   In order to record the arguments of ``DerivedClass``, explicitly specify the inheritance.
+
+   >>> class DerivedClass(MyClass, core.Configurable):
+
+   To get the configuration of an instance, use :meth:`config_dict()`,
+   which returns a dict of argument names and values.
+   If an argument is also an instance of :class:`Configurable`, it will be recursively expanded in the dict.
+   The configuration dict can be passed to :meth:`load_config_dict()` to create a copy of the instance.
+
+   For classes already registered in :class:`Registry`,
+   they can be directly created from the :class:`Configurable` class.
+   This is convenient for building models from configuration files.
+
+   >>> config = models.GCN(128, [128]).config_dict()
+   >>> gcn = Configurable.load_config_dict(config)
+
+
+   .. py:method:: evaluate(pred, target)
+
+
+   .. py:method:: forward(batch)
+
+
+   .. py:method:: get_adj_matrix(_edges_dict, n_nodes, batch_size)
+
+
+   .. py:method:: pad_data(array, batch, dim)
+
+      "
+      array: torch.Tensor of shape (n_atoms, n_features)
+      batch: pytorch_geometric.data.Batch
+
+
+
+   .. py:method:: predict(batch, all_loss=None, metric=None, evaluate=False)
+
+
+   .. py:method:: preprocess(train_set, valid_set=None, test_set=None)
+
+      Compute the mean and derivation for each task on the training set.
+
+
+
+   .. py:method:: readout_f(embeddings: torch.Tensor) -> torch.Tensor
+
+      Perform readout operation over nodes in each molecule.
+
+      Parameters:
+      - embeddings (torch.Tensor): Tensor of size (x, y, z) where x is the batch size, y is the number of nodes, and z is the feature size.
+
+      Returns:
+      torch.Tensor: Aggregated tensor of size (x, z).
+
+
+
+   .. py:method:: target(batch)
+
+
+   .. py:attribute:: THESHOLD
+      :value: 4.5
+
+
+
+   .. py:attribute:: condition_time
+      :value: False
+
+
+
+   .. py:attribute:: criterion
+      :value: 'mse'
+
+
+
+   .. py:attribute:: eps
+      :value: 1e-10
+
+
+
+   .. py:attribute:: include_charge
+      :value: False
+
+
+
+   .. py:attribute:: load_mlps_layer
+      :value: 0
+
+
+
+   .. py:attribute:: loss_param
+      :value: None
+
+
+
+   .. py:attribute:: metric
+      :value: ('mae', 'rmse')
+
+
+
+   .. py:attribute:: mlp
+      :value: None
+
+
+
+   .. py:attribute:: mlp_batch_norm
+      :value: False
+
+
+
+   .. py:attribute:: mlp_dropout
+      :value: 0
+
+
+
+   .. py:attribute:: mlp_final
+      :value: None
+
+
+
+   .. py:attribute:: model
+
+
+   .. py:attribute:: normalization
+      :value: True
+
+
+
+   .. py:attribute:: num_class
+
+
+   .. py:attribute:: num_mlp_layer
+      :value: 1
+
+
+
+   .. py:attribute:: readout
+      :value: 'mean'
+
+
+
+   .. py:attribute:: std_mean
+      :value: None
+
+
+
+   .. py:attribute:: task
+      :value: ()
+
+
+
+   .. py:attribute:: verbose
+      :value: 0
+
+
+

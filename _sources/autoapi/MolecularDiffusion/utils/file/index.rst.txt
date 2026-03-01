@@ -1,0 +1,89 @@
+MolecularDiffusion.utils.file
+=============================
+
+.. py:module:: MolecularDiffusion.utils.file
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.file.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.file.compute_md5
+   MolecularDiffusion.utils.file.download
+   MolecularDiffusion.utils.file.extract
+   MolecularDiffusion.utils.file.get_line_count
+   MolecularDiffusion.utils.file.smart_open
+
+
+Module Contents
+---------------
+
+.. py:function:: compute_md5(file_name, chunk_size=65536)
+
+   Compute MD5 of the file.
+
+   :param file_name: file name
+   :type file_name: str
+   :param chunk_size: chunk size for reading large files
+   :type chunk_size: int, optional
+
+
+.. py:function:: download(url, path, save_file=None, md5=None)
+
+   Download a file from the specified url.
+   Skip the downloading step if there exists a file satisfying the given MD5.
+
+   :param url: URL to download
+   :type url: str
+   :param path: path to store the downloaded file
+   :type path: str
+   :param save_file: name of save file. If not specified, infer the file name from the URL.
+   :type save_file: str, optional
+   :param md5: MD5 of the file
+   :type md5: str, optional
+
+
+.. py:function:: extract(zip_file, member=None)
+
+   Extract files from a zip file. Currently, ``zip``, ``gz``, ``tar.gz``, ``tar`` file types are supported.
+
+   :param zip_file: file name
+   :type zip_file: str
+   :param member: extract specific member from the zip file.
+                  If not specified, extract all members.
+   :type member: str, optional
+
+
+.. py:function:: get_line_count(file_name, chunk_size=8192 * 1024)
+
+   Get the number of lines in a file.
+
+   :param file_name: file name
+   :type file_name: str
+   :param chunk_size: chunk size for reading large files
+   :type chunk_size: int, optional
+
+
+.. py:function:: smart_open(file_name, mode='rb')
+
+   Open a regular file or a zipped file.
+
+   This function can be used as drop-in replacement of the builtin function `open()`.
+
+   :param file_name: file name
+   :type file_name: str
+   :param mode: open mode for the file stream
+   :type mode: str, optional
+
+
+.. py:data:: logger
+

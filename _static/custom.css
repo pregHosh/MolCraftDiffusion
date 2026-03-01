@@ -1,0 +1,31 @@
+/* Custom style tweaks on top of Furo */
+
+/* Import modern fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* Slightly larger code blocks */
+.highlight pre {
+    font-size: 0.88em;
+    line-height: 1.55;
+}
+
+/* Subtle left border on admonitions */
+.admonition {
+    border-left-width: 4px;
+}
+
+/* Table header style */
+table thead th {
+    font-weight: 600;
+}
+
+/* Copy button positioning tweak */
+button.copybtn {
+    top: 0.5rem;
+    right: 0.5rem;
+}
+
+/* API ref: reduce excessive vertical spacing */
+dl.py dd {
+    margin-top: 0.25em;
+}

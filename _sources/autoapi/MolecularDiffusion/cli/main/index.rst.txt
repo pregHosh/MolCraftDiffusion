@@ -1,0 +1,135 @@
+MolecularDiffusion.cli.main
+===========================
+
+.. py:module:: MolecularDiffusion.cli.main
+
+.. autoapi-nested-parse::
+
+   MolCraft CLI - Unified command-line interface for MolecularDiffusion.
+
+   Usage:
+       molcraft train config.yaml [overrides...]
+       molcraft generate config.yaml [overrides...]
+       molcraft predict config.yaml [overrides...]
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.cli.main.CONTEXT_SETTINGS
+   MolecularDiffusion.cli.main.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.cli.main.cli
+   MolecularDiffusion.cli.main.eval_predict
+   MolecularDiffusion.cli.main.generate
+   MolecularDiffusion.cli.main.log_system_info
+   MolecularDiffusion.cli.main.main
+   MolecularDiffusion.cli.main.predict
+   MolecularDiffusion.cli.main.train
+
+
+Module Contents
+---------------
+
+.. py:function:: cli()
+
+   MolCraft - Molecular Diffusion CLI.
+
+   A unified command-line interface for training, generation, and prediction
+   with molecular diffusion models.
+
+   
+   .. rubric:: Examples
+
+   molcraft train configs/my_train_config.yaml
+   molcraft generate configs/my_gen_config.yaml
+   molcraft predict configs/my_pred_config.yaml
+
+
+.. py:function:: eval_predict(config: str, overrides: tuple)
+
+   Evaluate model predictions on validation/test sets.
+
+   
+   :param CONFIG     Config file path:
+   :type CONFIG     Config file path: e.g., configs/eval_predict.yaml
+   :param OVERRIDES  Hydra-style config overrides:
+
+   
+   .. rubric:: Examples
+
+   molcraft eval-predict configs/eval_predict.yaml
+
+
+.. py:function:: generate(config: str, overrides: tuple)
+
+   Generate molecules using a trained model.
+
+   
+   :param CONFIG     Config file path:
+   :type CONFIG     Config file path: e.g., configs/generate.yaml
+   :param OVERRIDES  Hydra-style config overrides:
+
+   
+   .. rubric:: Examples
+
+   molcraft generate configs/gen_config.yaml
+   molcraft generate configs/gen_config.yaml interference.n_samples=1000
+
+
+.. py:function:: log_system_info()
+
+   Log basic system information.
+
+
+.. py:function:: main()
+
+   Entry point.
+
+
+.. py:function:: predict(config: str, overrides: tuple)
+
+   Run property prediction on molecules.
+
+   
+   :param CONFIG     Config file path:
+   :type CONFIG     Config file path: e.g., configs/predict.yaml
+   :param OVERRIDES  Hydra-style config overrides:
+
+   
+   .. rubric:: Examples
+
+   molcraft predict configs/predict.yaml
+   molcraft predict configs/my_pred.yaml xyz_directory=/path/to/xyz
+
+
+.. py:function:: train(config: str, overrides: tuple)
+
+   Train a molecular diffusion model.
+
+   
+   :param CONFIG     Config file path:
+   :type CONFIG     Config file path: e.g., configs/train.yaml
+   :param OVERRIDES  Hydra-style config overrides:
+   :type OVERRIDES  Hydra-style config overrides: e.g., trainer.num_epochs=100
+
+   
+   .. rubric:: Examples
+
+   molcraft train configs/train_tabasco_geom.yaml
+   molcraft train configs/my_config.yaml trainer.num_epochs=50 seed=42
+
+
+.. py:data:: CONTEXT_SETTINGS
+
+.. py:data:: logger
+

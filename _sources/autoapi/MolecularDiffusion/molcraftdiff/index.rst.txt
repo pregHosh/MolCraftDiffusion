@@ -1,0 +1,130 @@
+MolecularDiffusion.molcraftdiff
+===============================
+
+.. py:module:: MolecularDiffusion.molcraftdiff
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.molcraftdiff.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.molcraftdiff.MolCraftDiff
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.molcraftdiff.find_project_root
+   MolecularDiffusion.molcraftdiff.log_system_info
+   MolecularDiffusion.molcraftdiff.main
+
+
+Module Contents
+---------------
+
+.. py:class:: MolCraftDiff
+
+   MolCraftDiff: A command-line interface for the Molecular Diffusion project.
+
+   This tool provides access to the main workflows of the project, such as training
+   models, generating molecules, and running predictions.
+
+   Available commands are:
+     - train
+     - generate
+     - predict
+     - eval_predict
+
+   To get help for a specific command, run:
+     MolCraftDiff <command> --help
+
+   .. rubric:: Example
+
+   MolCraftDiff train --help
+
+
+   .. py:method:: eval_predict(config_file: str)
+
+      Run the prediction evaluation script.
+
+      This command launches a prediction evaluation run using the specified configuration file.
+
+      :param config_file: The name of the configuration file (e.g., 'eval_predict' or 'eval_predict.yaml')
+                          located in the 'configs/' directory.
+
+      .. rubric:: Example
+
+      MolCraftDiff eval_predict my_eval_config
+
+
+
+   .. py:method:: generate(config_file: str)
+
+      Run the generation script.
+
+      This command launches a generation run using the specified configuration file.
+
+      :param config_file: The name of the configuration file (e.g., 'generate' or 'generate.yaml')
+                          located in the 'configs/' directory.
+
+      .. rubric:: Example
+
+      MolCraftDiff generate my_generation_config
+
+
+
+   .. py:method:: predict(config_file: str)
+
+      Run the prediction script.
+
+      This command launches a prediction run using the specified configuration file.
+
+      :param config_file: The name of the configuration file (e.g., 'predict' or 'predict.yaml')
+                          located in the 'configs/' directory.
+
+      .. rubric:: Example
+
+      MolCraftDiff predict my_prediction_config
+
+
+
+   .. py:method:: train(config_file: str)
+
+      Run the training script.
+
+      This command launches a training run using the specified configuration file.
+
+      :param config_file: The name of the configuration file (e.g., 'train' or 'train.yaml')
+                          located in the 'configs/' directory.
+
+      .. rubric:: Example
+
+      MolCraftDiff train example_diffusion_config
+
+
+
+.. py:function:: find_project_root(marker='.project-root')
+
+   Find the project root directory by checking the current working directory.
+
+
+.. py:function:: log_system_info()
+
+   Logs detailed system information.
+
+
+.. py:function:: main()
+
+.. py:data:: logger
+

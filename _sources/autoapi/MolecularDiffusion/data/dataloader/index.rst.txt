@@ -1,0 +1,92 @@
+MolecularDiffusion.data.dataloader
+==================================
+
+.. py:module:: MolecularDiffusion.data.dataloader
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.dataloader.DataLoader
+   MolecularDiffusion.data.dataloader.DataQueue
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.dataloader.estimate_batch_size
+   MolecularDiffusion.data.dataloader.graph_collate
+   MolecularDiffusion.data.dataloader.pointcloud_collate
+   MolecularDiffusion.data.dataloader.pointcloud_collate_v0
+
+
+Module Contents
+---------------
+
+.. py:class:: DataLoader(dataset, batch_size=1, shuffle=False, sampler=None, batch_sampler=None, num_workers=0, collate_fn=graph_collate, **kwargs)
+
+   Bases: :py:obj:`torch.utils.data.DataLoader`
+
+
+   Extended data loader for batching graph structured data.
+
+   See `torch.utils.data.DataLoader`_ for more details.
+
+   .. _torch.utils.data.DataLoader:
+       https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader
+
+   :param dataset: dataset from which to load the data
+   :type dataset: Dataset
+   :param batch_size: how many samples per batch to load
+   :type batch_size: int, optional
+   :param shuffle: set to ``True`` to have the data reshuffled at every epoch
+   :type shuffle: bool, optional
+   :param sampler: sampler that draws single sample from the dataset
+   :type sampler: Sampler, optional
+   :param batch_sampler: sampler that draws a mini-batch of data from the dataset
+   :type batch_sampler: Sampler, optional
+   :param num_workers: how many subprocesses to use for data loading
+   :type num_workers: int, optional
+   :param collate_fn: merge a list of samples into a mini-batch
+   :type collate_fn: callable, optional
+   :param kwargs: keyword arguments for `torch.utils.data.DataLoader`_
+
+
+.. py:class:: DataQueue
+
+   Bases: :py:obj:`torch.utils.data.Dataset`
+
+
+   .. py:method:: append(item)
+
+
+   .. py:method:: pop()
+
+
+   .. py:attribute:: queue
+
+
+.. py:function:: estimate_batch_size(nmax, vram_size=40)
+
+.. py:function:: graph_collate(batch)
+
+   Convert any list of same nested container into a container of tensors.
+
+   :param batch: list of samples with the same nested container
+   :type batch: list
+
+
+.. py:function:: pointcloud_collate(vram_size=40)
+
+.. py:function:: pointcloud_collate_v0(batch, to_keep=None)
+
+   Convert any list of same nested container into a container of tensors.
+
+   :param batch: list of samples with the same nested container
+   :type batch: list
+
+

@@ -1,0 +1,294 @@
+MolecularDiffusion.core.engine
+==============================
+
+.. py:module:: MolecularDiffusion.core.engine
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.core.engine.logger
+   MolecularDiffusion.core.engine.module
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.core.engine.Engine
+
+
+Module Contents
+---------------
+
+.. py:class:: Engine(task, train_set, valid_set, test_set, optimizer=None, collate_fn=None, scheduler=None, batch_size=1, gradient_interval=1, clipping_gradient=None, clip_value=1, ema_decay=0.0, num_worker=0, pin_memory=True, logger='logging', log_interval=100, project_wandb=None, name_wandb=None, dir_wandb=None, debug=False)
+
+   Bases: :py:obj:`MolecularDiffusion.core.Configurable`
+
+
+   General class that handles everything about training and test of a task.
+
+   If :meth:`preprocess` is defined by the task, it will be applied to ``train_set``, ``valid_set`` and ``test_set``.
+
+   :param task: task
+   :type task: nn.Module
+   :param train_set: training set
+   :type train_set: data.Dataset
+   :param valid_set: validation set
+   :type valid_set: data.Dataset
+   :param test_set: test set
+   :type test_set: data.Dataset
+   :param optimizer: optimizer
+   :type optimizer: optim.Optimizer
+   :param collate_fn: collate function for batching (default to :func:`data.graph_collate`)
+   :type collate_fn: callable, optional
+   :param scheduler: scheduler
+   :type scheduler: lr_scheduler._LRScheduler, optional
+   :param batch_size: batch size of a single CPU / GPU
+   :type batch_size: int, optional
+   :param gradient_interval: perform a gradient update every n batches.
+                             This creates an equivalent batch size of ``batch_size * gradient_interval`` for optimization.
+   :type gradient_interval: int, optional
+   :param clipping_gradient: toggle to clip the gradient (by norm or value, default is None)
+   :type clipping_gradient: str, optional
+   :param clip_value: clip value (value of norm), or provide gradient gradient queue
+   :type clip_value: float, Queue, optional
+   :param ema_decay: decay rate for exponential moving average
+   :type ema_decay: float, optional
+   :param num_worker: number of CPU workers per GPU
+   :type num_worker: int, optional
+   :param pin_memory: pin memory for faster data transfer
+   :type pin_memory: bool, optional
+   :param logger: logger type or logger instance.
+                  Available types are ``logging`` and ``wandb``.
+   :type logger: str or core.LoggerBase, optional
+   :param log_interval: log every n gradient updates
+   :type log_interval: int, optional
+   :param project_wandb: project name for wandb
+   :type project_wandb: str, optional
+   :param name_wandb: name for wandb
+   :type name_wandb: str, optional
+   :param dir_wandb: directory for wandb
+   :type dir_wandb: str, optional
+   :param debug: Toggle debug mode
+   :type debug: bool, optional
+
+
+   .. py:method:: evaluate(split, log=True, use_amp=False, precision='bfloat16')
+
+      Evaluate the model.
+
+      :param split: split to evaluate. Can be ``train``, ``valid`` or ``test``.
+      :type split: str
+      :param log: log metrics or not
+      :type log: bool, optional
+      :param use_amp: whether to use automatic mixed precision (AMP) during evaluation.
+      :type use_amp: bool, optional
+      :param precision: precision to use for AMP, either "bfloat16" or "float16".
+      :type precision: str, optional
+
+      :returns: metrics
+      :rtype: dict
+
+
+
+   .. py:method:: load(checkpoint, load_optimizer=True, strict=True)
+
+      Load a checkpoint from file.
+
+      :param checkpoint: checkpoint file
+      :type checkpoint: file-like
+      :param load_optimizer: load optimizer state or not
+      :type load_optimizer: bool, optional
+      :param strict: whether to strictly check the checkpoint matches the model parameters
+      :type strict: bool, optional
+
+
+
+   .. py:method:: load_config_dict(config)
+      :classmethod:
+
+
+      Construct an instance from the configuration dict.
+
+
+
+   .. py:method:: load_from_checkpoint(checkpoint_path: str, strict: bool = False, interference_mode: bool = False)
+      :classmethod:
+
+
+      Load full Engine from a checkpoint using saved hyperparameters.
+
+      :param checkpoint_path: Path to the checkpoint file.
+      :type checkpoint_path: str
+      :param strict: Whether to strictly enforce that the keys in state_dict match the model.
+      :type strict: bool
+      :param ininterference_mode: The train_set, val_set, and test_set will be set to None if True.
+      :type ininterference_mode: bool
+
+      :returns: Fully reconstructed Engine with model, optimizer, and scheduler states.
+      :rtype: Engine
+
+
+
+   .. py:method:: resume(checkpoint, strict=True)
+
+      Resume training from a checkpoint (loads full training state).
+
+      This loads model weights, optimizer, scheduler, epoch counter, and gradnorm queue.
+      Use this to continue training from where it left off.
+
+      :param checkpoint: checkpoint file path
+      :type checkpoint: file-like
+      :param strict: whether to strictly check the checkpoint matches the model parameters
+      :type strict: bool, optional
+
+      :returns: The epoch to resume from (for adjusting training loop)
+      :rtype: int
+
+
+
+   .. py:method:: sanitized_config_dict()
+
+
+   .. py:method:: save(checkpoint, compact=True, full_state=False)
+
+      Save checkpoint to file.
+
+      :param checkpoint: checkpoint file
+      :type checkpoint: file-like
+      :param compact: whether to save a lightweight checkpoint (no optimizer state).
+      :type compact: bool, optional
+      :param full_state: save full training state for resumption (epoch, scheduler, etc.).
+      :type full_state: bool, optional
+
+
+
+   .. py:method:: train(num_epoch=1, batch_per_epoch=1, use_amp=False, precision='bf16')
+
+      Train the model.
+
+      Iterates over the WHOLE dataset for each epoch.
+
+      :param num_epoch: number of epochs.
+      :type num_epoch: int, optional
+      :param batch_per_epoch: Gradient Accumulation Steps.
+                              The number of batches to accumulate gradients
+                              for before performing an optimizer step.
+                              Default is 1 (step every batch).
+      :type batch_per_epoch: int, optional
+      :param use_amp: whether to use automatic mixed precision (AMP).
+      :type use_amp: bool, optional
+      :param precision: precision to use for AMP ("bfloat16" or "float16").
+      :type precision: str, optional
+
+      :returns: metrics
+      :rtype: dict
+
+
+
+   .. py:attribute:: batch_size
+      :value: 1
+
+
+
+   .. py:attribute:: clip_value
+      :value: 1
+
+
+
+   .. py:attribute:: clipping_gradient
+      :value: None
+
+
+
+   .. py:attribute:: debug
+      :value: False
+
+
+
+   .. py:attribute:: dir_wandb
+      :value: None
+
+
+
+   .. py:attribute:: ema_decay
+      :value: 0.0
+
+
+
+   .. py:property:: epoch
+
+      Current epoch.
+
+
+   .. py:attribute:: gpus
+      :value: None
+
+
+
+   .. py:attribute:: gpus_per_node
+      :value: 0
+
+
+
+   .. py:attribute:: gradient_interval
+      :value: 1
+
+
+
+   .. py:attribute:: meter
+
+
+   .. py:attribute:: model
+
+
+   .. py:attribute:: name_wandb
+      :value: None
+
+
+
+   .. py:attribute:: num_worker
+      :value: 0
+
+
+
+   .. py:attribute:: optimizer
+      :value: None
+
+
+
+   .. py:attribute:: pin_memory
+      :value: True
+
+
+
+   .. py:attribute:: project_wandb
+      :value: None
+
+
+
+   .. py:attribute:: scheduler
+      :value: None
+
+
+
+   .. py:attribute:: test_set
+
+
+   .. py:attribute:: train_set
+
+
+   .. py:attribute:: valid_set
+
+
+   .. py:attribute:: world_size
+
+
+.. py:data:: logger
+
+.. py:data:: module
+

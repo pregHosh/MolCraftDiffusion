@@ -1,0 +1,129 @@
+MolecularDiffusion.utils.io
+===========================
+
+.. py:module:: MolecularDiffusion.utils.io
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.io.CaptureStdIO
+   MolecularDiffusion.utils.io.RankState
+   MolecularDiffusion.utils.io.RankedLogger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.io.capture_rdkit_log
+   MolecularDiffusion.utils.io.input_choice
+   MolecularDiffusion.utils.io.literal_eval
+   MolecularDiffusion.utils.io.no_rdkit_log
+   MolecularDiffusion.utils.io.rank_prefixed_message
+
+
+Module Contents
+---------------
+
+.. py:class:: CaptureStdIO(stdout=True, stderr=False)
+
+   Bases: :py:obj:`object`
+
+
+   .. py:attribute:: file
+
+
+   .. py:attribute:: stderr
+      :value: False
+
+
+
+   .. py:attribute:: stdout
+      :value: True
+
+
+
+.. py:class:: RankState
+
+   .. py:method:: get_rank() -> int
+      :classmethod:
+
+
+
+   .. py:method:: set_rank(value: int)
+      :classmethod:
+
+
+
+   .. py:attribute:: rank
+      :type:  Optional[int]
+      :value: None
+
+
+
+.. py:class:: RankedLogger(name: str = __name__, rank_zero_only: bool = False, extra: Optional[Mapping[str, object]] = None)
+
+   Bases: :py:obj:`logging.LoggerAdapter`
+
+
+   A multi-GPU-friendly python command line logger.
+
+   Initialize the adapter with a logger and a dict-like object which
+   provides contextual information. This constructor signature allows
+   easy stacking of LoggerAdapters, if so desired.
+
+   You can effectively pass keyword arguments as shown in the
+   following example:
+
+   adapter = LoggerAdapter(someLogger, dict(p1=v1, p2="v2"))
+
+
+   .. py:method:: log(level: int, msg: str, rank: Optional[int] = None, *args, **kwargs) -> None
+
+      Delegate a log call to the underlying logger, after adding
+      contextual information from this adapter instance.
+
+
+
+   .. py:attribute:: rank_zero_only
+      :value: False
+
+
+
+.. py:function:: capture_rdkit_log()
+
+   Context manager to capture all rdkit loggings.
+
+   Example::
+
+       >>> with utils.capture_rdkit_log() as log:
+       >>>     ...
+       >>> print(log.content)
+
+
+.. py:function:: input_choice(prompt, choice=('y', 'n'))
+
+   Print a prompt on the command line and wait for a choice.
+
+   :param prompt: prompt string
+   :type prompt: str
+   :param choice: candidate choices
+   :type choice: tuple of str, optional
+
+
+.. py:function:: literal_eval(string)
+
+   Evaluate an expression into a Python literal structure.
+
+
+.. py:function:: no_rdkit_log()
+
+   Context manager to suppress all rdkit loggings.
+
+
+.. py:function:: rank_prefixed_message(msg: str, rank: int) -> str
+

@@ -1,0 +1,985 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="next" title="MolecularDiffusion.utils.geom_constant" href="../geom_constant/index.html"><link rel="prev" title="MolecularDiffusion.utils.file" href="../file/index.html">
+
+    <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+        <title>MolecularDiffusion.utils.geom_analyzer - MolCraftDiffusion</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=fbb7725e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  --color-brand-primary: #4A90D9;
+  --color-brand-content: #4A90D9;
+  --font-stack: Inter, sans-serif;
+  --font-stack--monospace: JetBrains Mono, monospace;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #6BAAD9;
+  --color-brand-content: #6BAAD9;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #6BAAD9;
+  --color-brand-content: #6BAAD9;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../../index.html"><div class="brand">MolCraftDiffusion</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
+  
+  <span class="sidebar-brand-text">MolCraftDiffusion</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/00_data_preparation.html">Tutorial 0: Data Preparation &amp; Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/01_training_diffusion.html">Tutorial 1: Training a Diffusion Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/02_training_regressor.html">Tutorial 2: Training a Regressor Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/03_training_guidance.html">Tutorial 3: Training a Time-Aware Guidance Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/04_finetuning.html">Tutorial 4: Fine-Tuning a Diffusion Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/05_generation_overview.html">Tutorial 5: Molecule Generation Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../../../api.html">API Reference</a><input aria-label="Toggle navigation of API Reference" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../../index.html">MolecularDiffusion</a><input aria-label="Toggle navigation of MolecularDiffusion" checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../callbacks/index.html">MolecularDiffusion.callbacks</a><input aria-label="Toggle navigation of MolecularDiffusion.callbacks" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../callbacks/train_helper/index.html">MolecularDiffusion.callbacks.train_helper</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../cli/index.html">MolecularDiffusion.cli</a><input aria-label="Toggle navigation of MolecularDiffusion.cli" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/analyze/index.html">MolecularDiffusion.cli.analyze</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/data/index.html">MolecularDiffusion.cli.data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/eval_predict/index.html">MolecularDiffusion.cli.eval_predict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/generate/index.html">MolecularDiffusion.cli.generate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/main/index.html">MolecularDiffusion.cli.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/predict/index.html">MolecularDiffusion.cli.predict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/train/index.html">MolecularDiffusion.cli.train</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../core/core/index.html">MolecularDiffusion.core.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../core/engine/index.html">MolecularDiffusion.core.engine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../core/logger/index.html">MolecularDiffusion.core.logger</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../core/meter/index.html">MolecularDiffusion.core.meter</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../data/index.html">MolecularDiffusion.data</a><input aria-label="Toggle navigation of MolecularDiffusion.data" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../data/component/index.html">MolecularDiffusion.data.component</a><input aria-label="Toggle navigation of MolecularDiffusion.data.component" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../data/component/dataset/index.html">MolecularDiffusion.data.component.dataset</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../data/component/feature/index.html">MolecularDiffusion.data.component.feature</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../data/component/pointcloud/index.html">MolecularDiffusion.data.component.pointcloud</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../data/dataloader/index.html">MolecularDiffusion.data.dataloader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../data/dataset/index.html">MolecularDiffusion.data.dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../data/valency_tables/index.html">MolecularDiffusion.data.valency_tables</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../molcraftdiff/index.html">MolecularDiffusion.molcraftdiff</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../runmodes/index.html">MolecularDiffusion.runmodes</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../runmodes/analyze/index.html">MolecularDiffusion.runmodes.analyze</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.analyze" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/compare_to_optimized/index.html">MolecularDiffusion.runmodes.analyze.compare_to_optimized</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/compute_metrics/index.html">MolecularDiffusion.runmodes.analyze.compute_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/xtb_electronic/index.html">MolecularDiffusion.runmodes.analyze.xtb_electronic</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/xtb_optimization/index.html">MolecularDiffusion.runmodes.analyze.xtb_optimization</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/xyz2mol/index.html">MolecularDiffusion.runmodes.analyze.xyz2mol</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../runmodes/generate/index.html">MolecularDiffusion.runmodes.generate</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.generate" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/generate/tasks_generate/index.html">MolecularDiffusion.runmodes.generate.tasks_generate</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../runmodes/train/index.html">MolecularDiffusion.runmodes.train</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.train" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/train/data/index.html">MolecularDiffusion.runmodes.train.data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/train/eval/index.html">MolecularDiffusion.runmodes.train.eval</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/train/logger/index.html">MolecularDiffusion.runmodes.train.logger</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/train/tasks_egcl/index.html">MolecularDiffusion.runmodes.train.tasks_egcl</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/train/tasks_egt/index.html">MolecularDiffusion.runmodes.train.tasks_egt</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/train/trainer/index.html">MolecularDiffusion.runmodes.train.trainer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 current has-children"><a class="reference internal" href="../index.html">MolecularDiffusion.utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils" checked="" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../comm/index.html">MolecularDiffusion.utils.comm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../diffusion_utils/index.html">MolecularDiffusion.utils.diffusion_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../file/index.html">MolecularDiffusion.utils.file</a></li>
+<li class="toctree-l4 current current-page"><a class="current reference internal" href="#">MolecularDiffusion.utils.geom_analyzer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../geom_constant/index.html">MolecularDiffusion.utils.geom_constant</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../geom_constraint/index.html">MolecularDiffusion.utils.geom_constraint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../geom_metrics/index.html">MolecularDiffusion.utils.geom_metrics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../geom_stability/index.html">MolecularDiffusion.utils.geom_stability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../geom_utils/index.html">MolecularDiffusion.utils.geom_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../io/index.html">MolecularDiffusion.utils.io</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../molgraph_utils/index.html">MolecularDiffusion.utils.molgraph_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../plot_function/index.html">MolecularDiffusion.utils.plot_function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pretty/index.html">MolecularDiffusion.utils.pretty</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../sascore/index.html">MolecularDiffusion.utils.sascore</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../smilify/index.html">MolecularDiffusion.utils.smilify</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../torch/index.html">MolecularDiffusion.utils.torch</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/pregHosh/MolCraftDiffusion/blob/main/docs/autoapi/MolecularDiffusion/utils/geom_analyzer/index.rst?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/pregHosh/MolCraftDiffusion/edit/main/docs/autoapi/MolecularDiffusion/utils/geom_analyzer/index.rst" rel="edit" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-MolecularDiffusion.utils.geom_analyzer">
+<span id="moleculardiffusion-utils-geom-analyzer"></span><h1>MolecularDiffusion.utils.geom_analyzer<a class="headerlink" href="#module-MolecularDiffusion.utils.geom_analyzer" title="Link to this heading">¶</a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.EDGE_THRESHOLD" title="MolecularDiffusion.utils.geom_analyzer.EDGE_THRESHOLD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EDGE_THRESHOLD</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.SCALE_FACTOR" title="MolecularDiffusion.utils.geom_analyzer.SCALE_FACTOR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCALE_FACTOR</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.allowed_bonds" title="MolecularDiffusion.utils.geom_analyzer.allowed_bonds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">allowed_bonds</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.bond_dict" title="MolecularDiffusion.utils.geom_analyzer.bond_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bond_dict</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.bonds1" title="MolecularDiffusion.utils.geom_analyzer.bonds1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bonds1</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.bonds2" title="MolecularDiffusion.utils.geom_analyzer.bonds2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bonds2</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.bonds3" title="MolecularDiffusion.utils.geom_analyzer.bonds3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bonds3</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.num2symbol" title="MolecularDiffusion.utils.geom_analyzer.num2symbol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">num2symbol</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.stdv" title="MolecularDiffusion.utils.geom_analyzer.stdv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stdv</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.symbol2num" title="MolecularDiffusion.utils.geom_analyzer.symbol2num"><code class="xref py py-obj docutils literal notranslate"><span class="pre">symbol2num</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics" title="MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BasicMolecularMetrics</span></code></a></p></td>
+<td><p>Valid amongst all generated molecules</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_cont" title="MolecularDiffusion.utils.geom_analyzer.Histogram_cont"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Histogram_cont</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_discrete" title="MolecularDiffusion.utils.geom_analyzer.Histogram_discrete"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Histogram_discrete</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.analyze_node_distribution" title="MolecularDiffusion.utils.geom_analyzer.analyze_node_distribution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">analyze_node_distribution</span></code></a>(mol_list)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.analyze_stability_for_molecules" title="MolecularDiffusion.utils.geom_analyzer.analyze_stability_for_molecules"><code class="xref py py-obj docutils literal notranslate"><span class="pre">analyze_stability_for_molecules</span></code></a>(→ Tuple[Dict[str, ...)</p></td>
+<td><p>Analyze the stability of a list of molecules.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.build_molecule" title="MolecularDiffusion.utils.geom_analyzer.build_molecule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_molecule</span></code></a>(positions, atom_types, atom_decoder)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.build_xae_molecule" title="MolecularDiffusion.utils.geom_analyzer.build_xae_molecule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_xae_molecule</span></code></a>(positions, atom_types, atom_decoder)</p></td>
+<td><p>Returns a triplet (X, A, E): atom_types, adjacency matrix, edge_types</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.check_connected" title="MolecularDiffusion.utils.geom_analyzer.check_connected"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_connected</span></code></a>(am[, tol])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.check_consistency_bond_dictionaries" title="MolecularDiffusion.utils.geom_analyzer.check_consistency_bond_dictionaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_consistency_bond_dictionaries</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.check_quality" title="MolecularDiffusion.utils.geom_analyzer.check_quality"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_quality</span></code></a>(cartesian_coordinates_tensor, ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id0" title="MolecularDiffusion.utils.geom_analyzer.check_stability"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_stability</span></code></a>(positions, atom_type)</p></td>
+<td><p>Check the stability of a molecule based on atom positions and types.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id0" title="MolecularDiffusion.utils.geom_analyzer.check_stability"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_stability</span></code></a>(positions, atom_type)</p></td>
+<td><p>Check the stability of a molecule based on atom positions and types.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.check_symmetric" title="MolecularDiffusion.utils.geom_analyzer.check_symmetric"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_symmetric</span></code></a>(am[, tol])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.correct_edges" title="MolecularDiffusion.utils.geom_analyzer.correct_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">correct_edges</span></code></a>(data[, scale_factor])</p></td>
+<td><p>Corrects the edges in a molecular grapSCALE_FACTORh based on covalent radii.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.create_pyg_graph" title="MolecularDiffusion.utils.geom_analyzer.create_pyg_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_pyg_graph</span></code></a>(cartesian_coordinates_tensor, ...[, ...])</p></td>
+<td><p>Creates a PyTorch Geometric graph from given cartesian coordinates and atomic numbers.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.geom_predictor" title="MolecularDiffusion.utils.geom_analyzer.geom_predictor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geom_predictor</span></code></a>(p, l[, margin1, limit_bonds_to_one])</p></td>
+<td><p>p: atom pair (couple of str)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.get_bond_order" title="MolecularDiffusion.utils.geom_analyzer.get_bond_order"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bond_order</span></code></a>(atom1, atom2, distance[, check_exists])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.get_cutoffs" title="MolecularDiffusion.utils.geom_analyzer.get_cutoffs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cutoffs</span></code></a>(z[, radii, mult])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.is_fully_connected" title="MolecularDiffusion.utils.geom_analyzer.is_fully_connected"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_fully_connected</span></code></a>(edge_index, num_nodes)</p></td>
+<td><p>Determines if the graph is fully connected.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.mol2smiles" title="MolecularDiffusion.utils.geom_analyzer.mol2smiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mol2smiles</span></code></a>(mol)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.normalize_histogram" title="MolecularDiffusion.utils.geom_analyzer.normalize_histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_histogram</span></code></a>(hist)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.save_xyz_tmp" title="MolecularDiffusion.utils.geom_analyzer.save_xyz_tmp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_xyz_tmp</span></code></a>(path, atom_type, position)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.single_bond_only" title="MolecularDiffusion.utils.geom_analyzer.single_bond_only"><code class="xref py py-obj docutils literal notranslate"><span class="pre">single_bond_only</span></code></a>(threshold, length[, margin1])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">BasicMolecularMetrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_smiles_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Valid amongst all generated molecules
+Uniqueness amongst valid molecules
+Novelty amongst unique molecules</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics.compute_novelty">
+<span class="sig-name descname"><span class="pre">compute_novelty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">unique</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics.compute_novelty" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics.compute_uniqueness">
+<span class="sig-name descname"><span class="pre">compute_uniqueness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">valid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics.compute_uniqueness" title="Link to this definition">¶</a></dt>
+<dd><p>valid: list of SMILES strings.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics.compute_validity">
+<span class="sig-name descname"><span class="pre">compute_validity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generated</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics.compute_validity" title="Link to this definition">¶</a></dt>
+<dd><p>generated smiles</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generated</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics.evaluate" title="Link to this definition">¶</a></dt>
+<dd><p>generated: list of pairs (positions: n x 3, atom_types: n [int])
+the positions and atom types should already be masked.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics.dataset_smiles_list">
+<span class="sig-name descname"><span class="pre">dataset_smiles_list</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics.dataset_smiles_list" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics.ratio">
+<span class="sig-name descname"><span class="pre">ratio</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics.ratio" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.Histogram_cont">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">Histogram_cont</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">13.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'histogram'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_zeros</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_cont" title="Link to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.Histogram_cont.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elements</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_cont.add" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.Histogram_cont.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_cont.plot" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.Histogram_cont.plot_both">
+<span class="sig-name descname"><span class="pre">plot_both</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hist_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wandb_obj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_cont.plot_both" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.Histogram_cont.bins">
+<span class="sig-name descname"><span class="pre">bins</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0,...</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_cont.bins" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.Histogram_cont.ignore_zeros">
+<span class="sig-name descname"><span class="pre">ignore_zeros</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_cont.ignore_zeros" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.Histogram_cont.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'histogram'</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_cont.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.Histogram_cont.range">
+<span class="sig-name descname"><span class="pre">range</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(0.0,</span> <span class="pre">13.0)</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_cont.range" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.Histogram_discrete">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">Histogram_discrete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'histogram'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_discrete" title="Link to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.Histogram_discrete.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elements</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_discrete.add" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.Histogram_discrete.normalize">
+<span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_discrete.normalize" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.Histogram_discrete.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_discrete.plot" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.Histogram_discrete.bins">
+<span class="sig-name descname"><span class="pre">bins</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_discrete.bins" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.Histogram_discrete.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'histogram'</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_discrete.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.analyze_node_distribution">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">analyze_node_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.analyze_node_distribution" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.analyze_stability_for_molecules">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">analyze_stability_for_molecules</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">molecule_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.10)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_decoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_smiles_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_rdkit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.analyze_stability_for_molecules" title="Link to this definition">¶</a></dt>
+<dd><p>Analyze the stability of a list of molecules.
+If xyz cannot be converted to mol and smiles, the molecule is considered unstable.
+Then for unstable molecules, the number of bonds is checked against the allowed bonds.
+Only “stable” smiles are then used for the RDKit metrics.</p>
+<p>Parameters:
+- molecule_list (Dict[str, torch.Tensor]): Dictionary containing ‘one_hot’, ‘x’, and ‘node_mask’ tensors.
+- atom_decoder (List[str]): List to decode atomic types to element symbols.
+- dataset_smiles_list (List[str]): List of reference SMILES strings from the dataset.
+- use_rdkit (bool): Whether to use RDKit for additional metrics. Default is True.</p>
+<p>Returns:
+Tuple[Dict[str, float], Optional[List[float]]]:
+- Dictionary with molecule and atomic stability.
+- List of RDKit metrics if <cite>use_rdkit</cite> is True, otherwise None.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.build_molecule">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">build_molecule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">positions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_types</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_decoder</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.build_molecule" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.build_xae_molecule">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">build_xae_molecule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">positions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_types</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_decoder</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.build_xae_molecule" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a triplet (X, A, E): atom_types, adjacency matrix, edge_types
+args:
+positions: N x 3  (already masked to keep final number nodes)
+atom_types: N
+returns:
+X: N         (int)
+A: N x N     (bool)                  (binary adjacency matrix)
+E: N x N     (int)  (bond type, 0 if no bond) such that A = E.bool()</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.check_connected">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">check_connected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">am</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.check_connected" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.check_consistency_bond_dictionaries">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">check_consistency_bond_dictionaries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.check_consistency_bond_dictionaries" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.check_quality">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">check_quality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cartesian_coordinates_tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomic_numbers_tensor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.check_quality" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.check_stability">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">check_stability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">positions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.check_stability" title="Link to this definition">¶</a></dt>
+<dd><p>Check the stability of a molecule based on atom positions and types.</p>
+<p>Parameters:
+- positions (np.ndarray): An array of shape (N, 3) containing the 3D coordinates of the atoms.
+- atom_type (List[int]): A list of atom types corresponding to the positions.
+- atom_decoder (Dict[int, str]): A dictionary mapping atom type indices to atom symbols.</p>
+<p>Returns:
+Tuple[bool, int, int]: A tuple containing a boolean indicating if the molecule is stable,</p>
+<blockquote>
+<div><p>the number of stable bonds, and the total number of atoms.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">check_stability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">positions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
+<dd><p>Check the stability of a molecule based on atom positions and types.</p>
+<p>Parameters:
+- positions (np.ndarray): An array of shape (N, 3) containing the 3D coordinates of the atoms.
+- atom_type (List[int]): A list of atom types corresponding to the positions.
+- atom_decoder (Dict[int, str]): A dictionary mapping atom type indices to atom symbols.</p>
+<p>Returns:
+Tuple[bool, int, int]: A tuple containing a boolean indicating if the molecule is stable,</p>
+<blockquote>
+<div><p>the number of stable bonds, and the total number of atoms.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.check_symmetric">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">check_symmetric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">am</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.check_symmetric" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.correct_edges">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">correct_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.correct_edges" title="Link to this definition">¶</a></dt>
+<dd><p>Corrects the edges in a molecular grapSCALE_FACTORh based on covalent radii.
+This function iterates over the nodes and their adjacent nodes in the given
+molecular graph data. It calculates the bond length between each pair of nodes
+and checks if it is within the allowed bond length threshold (sum of covalent radii plus relaxation factor).
+If the bond length is valid, the edge is kept; otherwise, it is removed.</p>
+<p>Parameters:
+data (torch_geometric.data.Data): The input molecular graph data containing node features,</p>
+<blockquote>
+<div><p>edge indices, and positions.</p>
+</div></blockquote>
+<p>scale_factor (float): The scaling factor to apply to the covalent radii. Default is 1.3.</p>
+<p>Returns:
+torch_geometric.data.Data: The corrected molecular graph data with updated edge indices.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.create_pyg_graph">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">create_pyg_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cartesian_coordinates_tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomic_numbers_tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz_filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.create_pyg_graph" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a PyTorch Geometric graph from given cartesian coordinates and atomic numbers.
+:param cartesian_coordinates_tensor: A tensor containing the cartesian coordinates of the atoms.
+:type cartesian_coordinates_tensor: torch.Tensor
+:param atomic_numbers_tensor: A tensor containing the atomic numbers of the atoms.
+:type atomic_numbers_tensor: torch.Tensor
+:param xyz_filename: The filename of the XYZ file.
+:type xyz_filename: str
+:param r: The radius within which to consider edges between nodes. Default is 5.0.
+:type r: float, optional</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A PyTorch Geometric Data object containing the graph representation of the molecule.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>torch_geometric.data.Data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.geom_predictor">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">geom_predictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margin1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_bonds_to_one</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.geom_predictor" title="Link to this definition">¶</a></dt>
+<dd><p>p: atom pair (couple of str)
+l: bond length (float)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.get_bond_order">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">get_bond_order</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_exists</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.get_bond_order" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.get_cutoffs">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">get_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ase.data.covalent_radii</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mult</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.get_cutoffs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.is_fully_connected">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">is_fully_connected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_nodes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.is_fully_connected" title="Link to this definition">¶</a></dt>
+<dd><p>Determines if the graph is fully connected.
+:param edge_index: The edge indices of the graph.
+:type edge_index: torch.Tensor
+:param num_nodes: The number of nodes in the graph.
+:type num_nodes: int</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the graph is fully connected, False otherwise.
+int: The number of connected components in the graph.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.mol2smiles">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">mol2smiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.mol2smiles" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.normalize_histogram">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">normalize_histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.normalize_histogram" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.save_xyz_tmp">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">save_xyz_tmp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.save_xyz_tmp" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.single_bond_only">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">single_bond_only</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">margin1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.single_bond_only" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.EDGE_THRESHOLD">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">EDGE_THRESHOLD</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.EDGE_THRESHOLD" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.SCALE_FACTOR">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">SCALE_FACTOR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.3</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.SCALE_FACTOR" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.allowed_bonds">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">allowed_bonds</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.allowed_bonds" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.bond_dict">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">bond_dict</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.bond_dict" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.bonds1">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">bonds1</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.bonds1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.bonds2">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">bonds2</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.bonds2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.bonds3">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">bonds3</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.bonds3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.num2symbol">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">num2symbol</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.num2symbol" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.stdv">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">stdv</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.stdv" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_analyzer.symbol2num">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_analyzer.</span></span><span class="sig-name descname"><span class="pre">symbol2num</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_analyzer.symbol2num" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../geom_constant/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">MolecularDiffusion.utils.geom_constant</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../file/index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">MolecularDiffusion.utils.file</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, pregHosh
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/pregHosh/MolCraftDiffusion" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0"
+                     viewBox="0 0 16 16" height="1em" width="1em">
+                    <path fill-rule="evenodd"
+                          d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                          0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                          -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+                          .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+                          -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0
+                          1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82
+                          1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01
+                          1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+                    />
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">MolecularDiffusion.utils.geom_analyzer</a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics"><code class="docutils literal notranslate"><span class="pre">BasicMolecularMetrics</span></code></a><ul>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics.compute_novelty"><code class="docutils literal notranslate"><span class="pre">BasicMolecularMetrics.compute_novelty()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics.compute_uniqueness"><code class="docutils literal notranslate"><span class="pre">BasicMolecularMetrics.compute_uniqueness()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics.compute_validity"><code class="docutils literal notranslate"><span class="pre">BasicMolecularMetrics.compute_validity()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics.evaluate"><code class="docutils literal notranslate"><span class="pre">BasicMolecularMetrics.evaluate()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics.dataset_smiles_list"><code class="docutils literal notranslate"><span class="pre">BasicMolecularMetrics.dataset_smiles_list</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics.ratio"><code class="docutils literal notranslate"><span class="pre">BasicMolecularMetrics.ratio</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_cont"><code class="docutils literal notranslate"><span class="pre">Histogram_cont</span></code></a><ul>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_cont.add"><code class="docutils literal notranslate"><span class="pre">Histogram_cont.add()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_cont.plot"><code class="docutils literal notranslate"><span class="pre">Histogram_cont.plot()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_cont.plot_both"><code class="docutils literal notranslate"><span class="pre">Histogram_cont.plot_both()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_cont.bins"><code class="docutils literal notranslate"><span class="pre">Histogram_cont.bins</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_cont.ignore_zeros"><code class="docutils literal notranslate"><span class="pre">Histogram_cont.ignore_zeros</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_cont.name"><code class="docutils literal notranslate"><span class="pre">Histogram_cont.name</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_cont.range"><code class="docutils literal notranslate"><span class="pre">Histogram_cont.range</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_discrete"><code class="docutils literal notranslate"><span class="pre">Histogram_discrete</span></code></a><ul>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_discrete.add"><code class="docutils literal notranslate"><span class="pre">Histogram_discrete.add()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_discrete.normalize"><code class="docutils literal notranslate"><span class="pre">Histogram_discrete.normalize()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_discrete.plot"><code class="docutils literal notranslate"><span class="pre">Histogram_discrete.plot()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_discrete.bins"><code class="docutils literal notranslate"><span class="pre">Histogram_discrete.bins</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.Histogram_discrete.name"><code class="docutils literal notranslate"><span class="pre">Histogram_discrete.name</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.analyze_node_distribution"><code class="docutils literal notranslate"><span class="pre">analyze_node_distribution()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.analyze_stability_for_molecules"><code class="docutils literal notranslate"><span class="pre">analyze_stability_for_molecules()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.build_molecule"><code class="docutils literal notranslate"><span class="pre">build_molecule()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.build_xae_molecule"><code class="docutils literal notranslate"><span class="pre">build_xae_molecule()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.check_connected"><code class="docutils literal notranslate"><span class="pre">check_connected()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.check_consistency_bond_dictionaries"><code class="docutils literal notranslate"><span class="pre">check_consistency_bond_dictionaries()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.check_quality"><code class="docutils literal notranslate"><span class="pre">check_quality()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.check_stability"><code class="docutils literal notranslate"><span class="pre">check_stability()</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">check_stability()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.check_symmetric"><code class="docutils literal notranslate"><span class="pre">check_symmetric()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.correct_edges"><code class="docutils literal notranslate"><span class="pre">correct_edges()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.create_pyg_graph"><code class="docutils literal notranslate"><span class="pre">create_pyg_graph()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.geom_predictor"><code class="docutils literal notranslate"><span class="pre">geom_predictor()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.get_bond_order"><code class="docutils literal notranslate"><span class="pre">get_bond_order()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.get_cutoffs"><code class="docutils literal notranslate"><span class="pre">get_cutoffs()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.is_fully_connected"><code class="docutils literal notranslate"><span class="pre">is_fully_connected()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.mol2smiles"><code class="docutils literal notranslate"><span class="pre">mol2smiles()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.normalize_histogram"><code class="docutils literal notranslate"><span class="pre">normalize_histogram()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.save_xyz_tmp"><code class="docutils literal notranslate"><span class="pre">save_xyz_tmp()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.single_bond_only"><code class="docutils literal notranslate"><span class="pre">single_bond_only()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.EDGE_THRESHOLD"><code class="docutils literal notranslate"><span class="pre">EDGE_THRESHOLD</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.SCALE_FACTOR"><code class="docutils literal notranslate"><span class="pre">SCALE_FACTOR</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.allowed_bonds"><code class="docutils literal notranslate"><span class="pre">allowed_bonds</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.bond_dict"><code class="docutils literal notranslate"><span class="pre">bond_dict</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.bonds1"><code class="docutils literal notranslate"><span class="pre">bonds1</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.bonds2"><code class="docutils literal notranslate"><span class="pre">bonds2</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.bonds3"><code class="docutils literal notranslate"><span class="pre">bonds3</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.num2symbol"><code class="docutils literal notranslate"><span class="pre">num2symbol</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.stdv"><code class="docutils literal notranslate"><span class="pre">stdv</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_analyzer.symbol2num"><code class="docutils literal notranslate"><span class="pre">symbol2num</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>

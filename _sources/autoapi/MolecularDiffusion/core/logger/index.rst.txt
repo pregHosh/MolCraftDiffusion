@@ -1,0 +1,152 @@
+MolecularDiffusion.core.logger
+==============================
+
+.. py:module:: MolecularDiffusion.core.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.core.logger.LoggerBase
+   MolecularDiffusion.core.logger.LoggingLogger
+   MolecularDiffusion.core.logger.WandbLogger
+
+
+Module Contents
+---------------
+
+.. py:class:: LoggerBase
+
+   Bases: :py:obj:`object`
+
+
+   Base class for loggers.
+
+   Any custom logger should be derived from this class.
+
+
+   .. py:method:: log(record, step_id, category='train/batch')
+      :abstractmethod:
+
+
+      Log a record.
+
+      :param record: dict of any metric
+      :type record: dict
+      :param step_id: index of this log step
+      :type step_id: int
+      :param category: log category.
+                       Available types are ``train/batch``, ``train/epoch``, ``valid/epoch`` and ``test/epoch``.
+      :type category: str, optional
+
+
+
+   .. py:method:: log_config(config)
+      :abstractmethod:
+
+
+      Log a hyperparameter config.
+
+      :param config: hyperparameter config
+      :type config: dict
+
+
+
+.. py:class:: LoggingLogger
+
+   Bases: :py:obj:`LoggerBase`
+
+
+   Log outputs with the builtin logging module of Python.
+
+   By default, the logs will be printed to the console. To additionally log outputs to a file,
+   add the following lines in the beginning of your code.
+
+   .. code-block: python
+
+       import logging
+
+       format = logging.Formatter("%(asctime)-10s %(message)s", "%H:%M:%S")
+       handler = logging.FileHandler("log.txt")
+       handler.setFormatter(format)
+       logger = logging.getLogger("")
+       logger.addHandler(handler)
+
+
+   .. py:method:: log(record, step_id, category='train/batch')
+
+      Log a record.
+
+      :param record: dict of any metric
+      :type record: dict
+      :param step_id: index of this log step
+      :type step_id: int
+      :param category: log category.
+                       Available types are ``train/batch``, ``train/epoch``, ``valid/epoch`` and ``test/epoch``.
+      :type category: str, optional
+
+
+
+   .. py:method:: log_config(config)
+
+      Log a hyperparameter config.
+
+      :param config: hyperparameter config
+      :type config: dict
+
+
+
+   .. py:attribute:: logger
+
+
+.. py:class:: WandbLogger(project=None, name=None, dir=None, rank=0, **kwargs)
+
+   Bases: :py:obj:`LoggingLogger`
+
+
+   Log outputs with `Weights and Biases`_ and track the experiment progress.
+
+   Note this class also output logs with the builtin logging module.
+
+   See `wandb.init`_ for more details.
+
+   .. _Weights and Biases:
+       https://docs.wandb.ai
+
+   .. _wandb.init:
+       https://docs.wandb.ai/ref/python/init
+
+   :param project: name of the project
+   :type project: str, optional
+   :param name: name of this run
+   :type name: str, optional
+   :param dir: path to store meta data. Default is `./wandb`.
+   :type dir: str, optional
+   :param kwargs: keyword arguments for `wandb.init`_
+
+
+   .. py:method:: log(record, step_id, category='train/batch')
+
+      Log a record.
+
+      :param record: dict of any metric
+      :type record: dict
+      :param step_id: index of this log step
+      :type step_id: int
+      :param category: log category.
+                       Available types are ``train/batch``, ``train/epoch``, ``valid/epoch`` and ``test/epoch``.
+      :type category: str, optional
+
+
+
+   .. py:method:: log_config(confg_dict)
+
+      Log a hyperparameter config.
+
+      :param config: hyperparameter config
+      :type config: dict
+
+
+

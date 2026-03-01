@@ -1,0 +1,291 @@
+MolecularDiffusion.utils.geom_metrics
+=====================================
+
+.. py:module:: MolecularDiffusion.utils.geom_metrics
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.geom_metrics.EDGE_THRESHOLD
+   MolecularDiffusion.utils.geom_metrics.SCALE_FACTOR
+   MolecularDiffusion.utils.geom_metrics.SCORES_THRESHOLD
+   MolecularDiffusion.utils.geom_metrics.is_cosymlib_available
+   MolecularDiffusion.utils.geom_metrics.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.geom_metrics.check_chem_validity
+   MolecularDiffusion.utils.geom_metrics.check_neutrality
+   MolecularDiffusion.utils.geom_metrics.check_validity_v0
+   MolecularDiffusion.utils.geom_metrics.check_validity_v1
+   MolecularDiffusion.utils.geom_metrics.compare_graph_topology
+   MolecularDiffusion.utils.geom_metrics.is_fully_connected
+   MolecularDiffusion.utils.geom_metrics.load_molecules_from_xyz
+   MolecularDiffusion.utils.geom_metrics.run_postbuster
+   MolecularDiffusion.utils.geom_metrics.runner
+   MolecularDiffusion.utils.geom_metrics.smilify_wrapper
+   MolecularDiffusion.utils.geom_metrics.xyz_to_pdb
+
+
+Module Contents
+---------------
+
+.. py:function:: check_chem_validity(mol_list, skip_idx=[], verbose=0)
+
+   Analyze a list of RDKit molecules for chemical validity based on atom valencies
+   and identify broken or disconnected fragments.
+
+   :param mol_list: A list of RDKit Mol objects to be checked.
+   :type mol_list: list of rdkit.Chem.Mol
+   :param skip_idx: Atom indices to skip when counting and checking (currently unused in logic;
+                    provided for future extension). Default is None.
+   :type skip_idx: list of int, optional
+   :param verbose: If > 0, prints detailed information about each valency violation as:
+                   "<SMILES> has invalid valency: <AtomSymbol> <TotalValence> <FormalCharge>".
+   :type verbose: int, default=0
+
+   :returns: * **natom_stability_dicts** (*dict[str, int]*) -- Counts of atoms whose total electron count (valence minus formal charge)
+               matches a known valid valency (i.e. “stable” atoms), keyed by atom symbol.
+             * **natom_tot_dicts** (*dict[str, int]*) -- Total counts of atoms encountered, keyed by atom symbol.
+             * **good_smiles** (*list of str*) -- Canonical SMILES strings for molecules deemed chemically valid and not
+               containing disconnected fragments (".").
+             * **bad_smiles_broken** (*list of str*) -- Canonical SMILES for molecules that are chemically valid but contain
+               disconnected fragments (i.e. salts or mixtures with "." in the SMILES).
+             * **bad_smiles_chem** (*list of str*) -- Canonical SMILES for molecules that failed the valency checks.
+
+   .. rubric:: Notes
+
+   - This function relies on a pre-defined mapping `valid_valencies`:
+       >>> valid_valencies = {
+       ...     'H': {1}, 'C': {4}, 'N': {3, 5}, 'O': {2}, ...
+       ... }
+     which maps each element symbol to the set of permitted electron counts.
+   - The `skip_idx` argument is currently not applied in the loop; if you wish
+     to ignore certain atoms (for example, metals or explicit hydrogens), you
+     could uncomment and adapt the skip logic.
+
+   .. rubric:: Example
+
+   >>> from rdkit.Chem import MolFromSmiles
+   >>> smiles_list = ['CCO', 'C[N+](C)(C)C', 'C.C']  # ethanol, tetramethylammonium, disconnected C and C
+   >>> mols = [MolFromSmiles(s) for s in smiles_list]
+   >>> valid, total, good, broken, bad = check_chem_validity(mols, verbose=1)
+    # would print any valency errors if present
+
+
+.. py:function:: check_neutrality(filename)
+
+   Checks if a molecule (specified by an XYZ file) is neutral by running an xTB calculation.
+
+   It runs 'xtb <filename> --ptb' and checks the output log for messages indicating
+   a mismatch between electrons and spin multiplicity.
+
+   :param filename: Path to the XYZ file containing the molecule.
+   :type filename: str
+
+   :returns: True if the molecule is neutral (no mismatch found), False otherwise.
+   :rtype: bool
+
+
+.. py:function:: check_validity_v0(data, angle_relax=10, scale_factor=1.3, verbose=False)
+
+   Validate a molecular structure based on atomic distances and angles (Version 0).
+
+   :param data: A dictionary containing molecular information.
+                - 'atomic_numbers': List of integers representing the atomic number of each atom.
+                - 'positions': List of tuples (x, y, z) representing the position of each atom.
+   :param angle_relax: Tolerance allowed for bond angles in degrees. Default is 10.0.
+   :type angle_relax: float
+   :param scale_factor: The scaling factor to apply to the covalent radii. Default is 1.3.
+   :type scale_factor: float
+   :param verbose: Whether to print debug messages during validation. Default is False.
+   :type verbose: bool
+
+   :returns:
+
+             Contains the following elements:
+                 - is_valid (bool): Boolean indicating if the structure is valid.
+                 - percent_atom_valid (float): Percentage of atoms that meet the criteria.
+                 - num_components (int): Number of connected components in the molecular graph.
+                 - bad_atoms (list): List of indices for atoms that do not meet the criteria.
+                 - needs_rechecking (bool): Whether further checks are needed due to borderline cases or special conditions.
+   :rtype: tuple
+
+   .. rubric:: Notes
+
+   This function assumes that 'data' contains valid atomic numbers and positions.
+   The validation process involves checking bond distances and angles against predefined reference values.
+   Special handling is applied for atoms with certain atomic numbers, such as carbon (atomic number 6), which may require different criteria due to their bonding behavior.
+
+
+.. py:function:: check_validity_v1(data, score_threshold=3, scale_factor=1.3, skip_indices=[], verbose=False)
+
+   Validate a molecular structure based on atomic distances and angles (Version 1).
+
+   :param data: A dictionary containing molecular information.
+                - 'atomic_numbers': List of integers representing the atomic number of each atom.
+                - 'positions': List of tuples (x, y, z) representing the position of each atom.
+   :param score_threshold: Tolerance allowed for shape values. Default is 3.0.
+   :type score_threshold: float
+   :param scale_factor: The scaling factor to apply to the covalent radii. Default is 1.3.
+   :type scale_factor: float
+   :param skip_indices: List of atom indices to skip during validation.
+   :type skip_indices: list
+   :param verbose: Whether to print debug messages during validation. Default is False.
+   :type verbose: bool
+
+   :returns:
+
+             Contains the following elements:
+                 - is_valid (bool): Boolean indicating if the structure is valid.
+                 - percent_atom_valid (float): Percentage of atoms that meet the criteria.
+                 - num_components (int): Number of connected components in the molecular graph.
+                 - bad_atom_chem (list): List of indices for atoms that do not meet chemical valency criteria.
+                 - bad_atom_distort (list): List of indices for atoms that are geometrically distorted.
+   :rtype: tuple
+
+   .. rubric:: Notes
+
+   This function assumes that 'data' contains valid atomic numbers and positions.
+   The validation process involves checking bond distances and angles against predefined reference values.
+   Special handling is applied for atoms with certain atomic numbers, such as carbon (atomic number 6), which may require different criteria due to their bonding behavior.
+
+
+.. py:function:: compare_graph_topology(graph1, graph2)
+
+   Compare the topology of two PyG graphs by checking their edge indices.
+
+   :param graph1: The first PyG graph.
+   :type graph1: torch_geometric.data.Data
+   :param graph2: The second PyG graph.
+   :type graph2: torch_geometric.data.Data
+
+   :returns: True if the graphs have the same topology, False otherwise.
+   :rtype: bool
+
+
+.. py:function:: is_fully_connected(edge_index, num_nodes)
+
+   Determines if the graph is fully connected.
+
+   :param edge_index: The edge indices of the graph.
+   :type edge_index: torch.Tensor
+   :param num_nodes: The number of nodes in the graph.
+   :type num_nodes: int
+
+   :returns:
+
+             (bool, int)
+                 - bool: True if the graph is fully connected, False otherwise.
+                 - int: The number of connected components in the graph.
+   :rtype: tuple
+
+
+.. py:function:: load_molecules_from_xyz(xyz_dir)
+
+   Converts all XYZ files in a directory to RDKit Mol objects.
+
+   It first converts XYZ files to PDB using OpenBabel, then loads the PDBs into RDKit.
+
+   :param xyz_dir: Directory containing XYZ files.
+   :type xyz_dir: str
+
+   :returns:
+
+             (valid_molecules, pass_xyz_files)
+                 - valid_molecules (list of RDKit Mol): Successfully loaded molecules.
+                 - pass_xyz_files (list of str): Filenames of the successfully loaded molecules.
+   :rtype: tuple
+
+
+.. py:function:: run_postbuster(mols, timeout=60, batch_size=1)
+
+   Run PoseBusters on a list of RDKit molecules, optionally in batches, with a timeout per batch.
+
+   This function processes molecules using the PoseBusters library to compute various geometric checks.
+   Processing happens in separate processes to enforce timeouts.
+
+   :param mols: List of molecules to evaluate.
+   :type mols: list of RDKit Mol
+   :param timeout: Maximum time (in seconds) allowed for each batch calculation. Default is 60.
+   :type timeout: int, optional
+   :param batch_size: Number of molecules to process in a single batch.
+                      If None, processes all molecules in one batch. Default is None.
+   :type batch_size: int, optional
+
+   :returns:
+
+             DataFrame containing PoseBusters results for all processed molecules.
+                                   Returns None if no results could be obtained.
+   :rtype: pd.DataFrame or None
+
+
+.. py:function:: runner(args)
+
+   Main runner function to process a directory of XYZ files, compute geometric metrics,
+   check validity, and optionally run strain and diversity checks.
+
+   :param args: Arguments containing:
+                - input (str): Input directory path containing .xyz files.
+                - output (str, optional): Output CSV file path.
+                - recheck_topo (bool): Whether to recheck topology.
+                - check_strain (bool): Whether to check strain energy.
+                - check_diversity (bool): Whether to compute diversity scores.
+                - skip_atoms (list of int, optional): Atom indices to skip during checks.
+   :type args: argparse.Namespace
+
+
+.. py:function:: smilify_wrapper(xyzs, xyz2mol)
+
+   Convert a list of XYZ files to SMILES strings using a provided xyz2mol function.
+
+   :param xyzs: List of paths to XYZ files.
+   :type xyzs: list of str
+   :param xyz2mol: A function that takes an XYZ file path and returns (smiles, mol).
+   :type xyz2mol: callable
+
+   :returns:
+
+             (validity, smiles_list, mol_list, dicts)
+                 - validity (float): Fraction of successful conversions.
+                 - smiles_list (list of str): List of SMILES strings (None for failures).
+                 - mol_list (list of RDKit Mol): List of RDKit Mol objects (None for failures).
+                 - dicts (dict): Dictionary with 'smiles' and 'filename' lists.
+   :rtype: tuple
+
+
+.. py:function:: xyz_to_pdb(xyz_file_path, pdb_file_path)
+
+   Converts an XYZ file to a PDB file using OpenBabel (via pybel).
+
+   :param xyz_file_path: Path to input XYZ file.
+   :type xyz_file_path: str
+   :param pdb_file_path: Path to output PDB file.
+   :type pdb_file_path: str
+
+
+.. py:data:: EDGE_THRESHOLD
+   :value: 4
+
+
+.. py:data:: SCALE_FACTOR
+   :value: 1.2
+
+
+.. py:data:: SCORES_THRESHOLD
+   :value: 3.0
+
+
+.. py:data:: is_cosymlib_available
+   :value: True
+
+
+.. py:data:: logger
+

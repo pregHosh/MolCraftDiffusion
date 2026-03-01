@@ -1,0 +1,130 @@
+MolecularDiffusion.runmodes.generate.tasks_generate
+===================================================
+
+.. py:module:: MolecularDiffusion.runmodes.generate.tasks_generate
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.generate.tasks_generate.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.generate.tasks_generate.GenerativeFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: GenerativeFactory(task: MolecularDiffusion.modules.tasks.task.Task, task_type: str = 'unconditional', sampling_mode: str = 'ddpm', num_generate: int = 100, mol_size: List[int] = [0, 0], target_values: List[float] = [], property_names: List[str] = [], negative_target_values: List[float] = [], batch_size: int = 1, seed: int = 86, n_frames: int = 0, output_path: str = 'generated_mol', condition_configs={})
+
+   .. py:method:: conditional_generation()
+
+
+   .. py:method:: hybrid_guidance()
+
+
+   .. py:method:: preprocess_ref_structure(device)
+
+      Load and preprocess a reference molecular structure from an XYZ file.
+
+      This function reads an XYZ file, encodes atomic features, normalizes
+      coordinates and features, and returns a tensor combining positions
+      and processed features.
+
+      :returns:
+
+                Tensor of shape (1, n_atoms, 3 + n_features + 1) containing:
+                            [normalized_coords | normalized_onehot_features | normalized_charges].
+      :rtype: torch.Tensor
+
+      :raises FileNotFoundError: If the reference structure file is not found.
+      :raises ValueError: If the processed reference structure is empty.
+
+
+
+   .. py:method:: property_guidance()
+
+
+   .. py:method:: property_prediction(xh: torch.Tensor, t: int)
+
+
+   .. py:method:: run()
+
+
+   .. py:method:: structural_guidance()
+
+
+   .. py:method:: unconditional_generation()
+
+
+   .. py:attribute:: batch_size
+      :value: 1
+
+
+
+   .. py:attribute:: condition_configs
+
+
+   .. py:attribute:: mol_size
+      :value: [0, 0]
+
+
+
+   .. py:attribute:: n_frames
+      :value: 0
+
+
+
+   .. py:attribute:: negative_target_values
+      :value: []
+
+
+
+   .. py:attribute:: num_generate
+      :value: 100
+
+
+
+   .. py:attribute:: output_path
+      :value: 'generated_mol'
+
+
+
+   .. py:attribute:: property_names
+      :value: []
+
+
+
+   .. py:attribute:: sampling_mode
+      :value: 'ddpm'
+
+
+
+   .. py:attribute:: seed
+      :value: 86
+
+
+
+   .. py:attribute:: target_values
+      :value: []
+
+
+
+   .. py:attribute:: task
+
+
+   .. py:attribute:: task_type
+      :value: 'unconditional'
+
+
+
+.. py:data:: logger
+

@@ -1,0 +1,73 @@
+MolecularDiffusion.cli.train
+============================
+
+.. py:module:: MolecularDiffusion.cli.train
+
+.. autoapi-nested-parse::
+
+   Training command for MolCraft CLI.
+
+   Adapted from scripts/train.py for package-level execution.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.cli.train.log
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.cli.train.engine_wrapper
+   MolecularDiffusion.cli.train.is_rank_zero
+   MolecularDiffusion.cli.train.load_weights
+   MolecularDiffusion.cli.train.log_hyperparameters
+   MolecularDiffusion.cli.train.train
+   MolecularDiffusion.cli.train.train_main
+
+
+Module Contents
+---------------
+
+.. py:function:: engine_wrapper(task_module, data_module, trainer_module, logger_module, resume_from_checkpoint=None, **kwargs)
+
+   Training loop using original Engine.
+
+
+.. py:function:: is_rank_zero()
+
+   Check if current process is rank zero.
+
+
+.. py:function:: load_weights(task, ckpt_path)
+
+   Load model weights from a checkpoint file (weights only).
+
+   This loads the state_dict from the checkpoint into the task model,
+   ignoring optimizer/scheduler states and other metadata.
+   Useful for fine-tuning or starting from a pre-trained model.
+
+
+.. py:function:: log_hyperparameters(object_dict: dict)
+
+   Log hyperparameters for debugging.
+
+
+.. py:function:: train(cfg: omegaconf.DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]
+
+   Main training function.
+
+
+.. py:function:: train_main(cfg: omegaconf.DictConfig)
+
+   Entry point for CLI train command.
+
+
+.. py:data:: log
+

@@ -1,0 +1,141 @@
+MolecularDiffusion.cli.data
+===========================
+
+.. py:module:: MolecularDiffusion.cli.data
+
+.. autoapi-nested-parse::
+
+   Data CLI module for MolCraft.
+   Exposes data preparation, augmentation, and ASE operations via CLI commands.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.cli.data.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.cli.data.VariadicOption
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.cli.data.annotate_cmd
+   MolecularDiffusion.cli.data.ase_ops_group
+   MolecularDiffusion.cli.data.augment
+   MolecularDiffusion.cli.data.charge_cmd
+   MolecularDiffusion.cli.data.compile_cmd
+   MolecularDiffusion.cli.data.data
+   MolecularDiffusion.cli.data.distortion_cmd
+   MolecularDiffusion.cli.data.featurize_cmd
+   MolecularDiffusion.cli.data.generate_blocks_cmd
+   MolecularDiffusion.cli.data.inspect_cmd
+   MolecularDiffusion.cli.data.merge_cmd
+   MolecularDiffusion.cli.data.prepare
+   MolecularDiffusion.cli.data.sample_cmd
+   MolecularDiffusion.cli.data.size_cmd
+   MolecularDiffusion.cli.data.split_cmd
+
+
+Module Contents
+---------------
+
+.. py:class:: VariadicOption(*args, **kwargs)
+
+   Bases: :py:obj:`click.Option`
+
+
+   A Click Option that consumes all remaining arguments until the next flag.
+
+
+   .. py:method:: add_to_parser(parser, ctx)
+
+
+.. py:function:: annotate_cmd(db, tag, value)
+
+   Annotate an ASE database with a tag.
+
+
+.. py:function:: ase_ops_group()
+
+   ASE database operations.
+
+
+.. py:function:: augment()
+
+   Data augmentation commands.
+
+
+.. py:function:: charge_cmd(input, output, max_h, fraction, db)
+
+   Augment data by random charge modification.
+
+
+.. py:function:: compile_cmd(source, db, natoms, csv, sdf, fraction, seed)
+
+   Compile molecular data into an ASE database.
+
+
+.. py:function:: data()
+
+   Data processing utilities.
+
+
+.. py:function:: distortion_cmd(input, output, sigma, fraction, freeze)
+
+   Augment data by random coordinate distortion.
+
+
+.. py:function:: featurize_cmd(method, input, output, format, readout, smilify_method, radius, nbits, rcut, nmax, lmax)
+
+   Featurize 3D molecules into vectors.
+
+
+.. py:function:: generate_blocks_cmd(source, sdf, natoms, csv, fraction, indices, method)
+
+   Generate Mol Blocks, SMILES, and properties (SA, SC).
+
+
+.. py:function:: inspect_cmd(db, output, keys, limit)
+
+   Inspect an ASE database and optionally plot statistics.
+
+
+.. py:function:: merge_cmd(input, output, recursive)
+
+   Merge multiple ASE databases.
+
+
+.. py:function:: prepare()
+
+   Data preparation commands.
+
+
+.. py:function:: sample_cmd(input, output, fraction, number, seed, verify)
+
+   Sample entries from an ASE database.
+
+
+.. py:function:: size_cmd(input, output, s_start, t_start, s_end, t_end, strength, decay, invert, plot_prefix)
+
+   Augment data to balance molecule sizes.
+
+
+.. py:function:: split_cmd(db, output, n)
+
+   Split an ASE database.
+
+
+.. py:data:: logger
+

@@ -1,0 +1,28 @@
+MolecularDiffusion
+==================
+
+.. py:module:: MolecularDiffusion
+
+.. autoapi-nested-parse::
+
+   MolecularDiffusion - A molecular diffusion framework.
+
+   This package provides tools and models for molecular diffusion processes.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/callbacks/index
+   /autoapi/MolecularDiffusion/cli/index
+   /autoapi/MolecularDiffusion/core/index
+   /autoapi/MolecularDiffusion/data/index
+   /autoapi/MolecularDiffusion/molcraftdiff/index
+   /autoapi/MolecularDiffusion/runmodes/index
+   /autoapi/MolecularDiffusion/utils/index
+
+

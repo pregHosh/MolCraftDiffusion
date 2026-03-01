@@ -1,0 +1,47 @@
+MolecularDiffusion.data.dataset
+===============================
+
+.. py:module:: MolecularDiffusion.data.dataset
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.dataset.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.dataset.pointcloud_dataset
+   MolecularDiffusion.data.dataset.pointcloud_dataset_pyG
+
+
+Module Contents
+---------------
+
+.. py:class:: pointcloud_dataset(root, df_path=None, xyz_dir=None, ase_db_path=None, coord_file=None, natoms_file=None, max_atom=0, with_hydrogen=True, forbidden_atoms=[], verbose=1, node_feature_choice=None, target_fields=None, pad_data=False, dataset_name='suisei', allow_unknown=False, **kwargs)
+
+   Bases: :py:obj:`MolecularDiffusion.data.component.dataset.PointCloudDataset`
+
+
+   Point cloud dataset for EDM archietcture
+
+   :param path: path to store the dataset
+   :type path: str
+   :param verbose: output verbose level
+   :type verbose: int, optional
+   :param \*\*kwargs:
+
+
+.. py:class:: pointcloud_dataset_pyG(root, df_path=None, xyz_dir=None, ase_db_path=None, coord_file=None, natoms_file=None, max_atom=0, with_hydrogen=True, forbidden_atoms=[], verbose=1, node_feature_choice=None, target_fields=None, pad_data=False, dataset_name='suisei', edge_type='fully_connected', radius=4.0, n_neigh=5, allow_unknown=False, **kwargs)
+
+   Bases: :py:obj:`MolecularDiffusion.data.component.dataset.GraphDataset`
+
+
+.. py:data:: logger
+

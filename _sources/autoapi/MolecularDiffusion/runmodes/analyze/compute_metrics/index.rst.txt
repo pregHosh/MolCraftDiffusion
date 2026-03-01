@@ -1,0 +1,44 @@
+MolecularDiffusion.runmodes.analyze.compute_metrics
+===================================================
+
+.. py:module:: MolecularDiffusion.runmodes.analyze.compute_metrics
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.compute_metrics.EDGE_THRESHOLD
+   MolecularDiffusion.runmodes.analyze.compute_metrics.SCALE_FACTOR
+   MolecularDiffusion.runmodes.analyze.compute_metrics.SCORES_THRESHOLD
+   MolecularDiffusion.runmodes.analyze.compute_metrics.parser
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.compute_metrics.runner
+
+
+Module Contents
+---------------
+
+.. py:function:: runner(args)
+
+.. py:data:: EDGE_THRESHOLD
+   :value: 4
+
+
+.. py:data:: SCALE_FACTOR
+   :value: 1.2
+
+
+.. py:data:: SCORES_THRESHOLD
+   :value: 3.0
+
+
+.. py:data:: parser
+

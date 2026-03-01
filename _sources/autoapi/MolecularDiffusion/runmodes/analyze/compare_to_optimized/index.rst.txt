@@ -1,0 +1,70 @@
+MolecularDiffusion.runmodes.analyze.compare_to_optimized
+========================================================
+
+.. py:module:: MolecularDiffusion.runmodes.analyze.compare_to_optimized
+
+.. autoapi-nested-parse::
+
+   Compute unified comparison metrics (RMSD, xTB Energy, Bond Geometry) between
+   initial XYZ files and their optimized counterparts in the `optimized_xyz` subdirectory.
+
+   Features:
+   - Validates connectivity (skip disjoint graphs)
+   - Computes RMSD and Energy difference (via xTB)
+   - Computes Bond Length, Angle, and Torsion differences (via OpenBabel/cell2mol)
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.compare_to_optimized.parser
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.compare_to_optimized.compute_all_metrics
+   MolecularDiffusion.runmodes.analyze.compare_to_optimized.compute_coord_rmsd
+   MolecularDiffusion.runmodes.analyze.compare_to_optimized.get_xtb_energy
+   MolecularDiffusion.runmodes.analyze.compare_to_optimized.run_compare_analysis
+   MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_cell2mol
+   MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_openbabel
+
+
+Module Contents
+---------------
+
+.. py:function:: compute_all_metrics(init_file: pathlib.Path, opt_file: pathlib.Path, args: argparse.Namespace) -> dict
+
+   Compute all available metrics for a single pair.
+
+
+.. py:function:: compute_coord_rmsd(coords1: numpy.ndarray, coords2: numpy.ndarray) -> float
+
+   Compute RMSD between two coordinate sets.
+
+
+.. py:function:: get_xtb_energy(xyz_path: str, charge: int = 0, level: str = 'gfn2', timeout: int = 120) -> Optional[float]
+
+   Compute xTB single-point energy for an XYZ file (returns Hartree).
+
+
+.. py:function:: run_compare_analysis(args: argparse.Namespace)
+
+.. py:function:: xyz2mol_cell2mol(xyz_file: str, timeout: int = 10) -> Optional[rdkit.Chem.Mol]
+
+   Convert XYZ to RDKit Mol using cell2mol logic.
+
+
+.. py:function:: xyz2mol_openbabel(xyz_file: str) -> Optional[rdkit.Chem.Mol]
+
+   Convert XYZ to RDKit Mol using OpenBabel (via pybel).
+
+
+.. py:data:: parser
+

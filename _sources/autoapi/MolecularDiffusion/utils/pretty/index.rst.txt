@@ -1,0 +1,154 @@
+MolecularDiffusion.utils.pretty
+===============================
+
+.. py:module:: MolecularDiffusion.utils.pretty
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.pretty.ellipsis
+   MolecularDiffusion.utils.pretty.line
+   MolecularDiffusion.utils.pretty.log
+   MolecularDiffusion.utils.pretty.separator
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.pretty.Ellipsis
+   MolecularDiffusion.utils.pretty.PrettyPrinter
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.pretty.format
+   MolecularDiffusion.utils.pretty.long_array
+   MolecularDiffusion.utils.pretty.print
+   MolecularDiffusion.utils.pretty.task_wrapper
+   MolecularDiffusion.utils.pretty.time
+
+
+Module Contents
+---------------
+
+.. py:class:: Ellipsis
+
+   Bases: :py:obj:`object`
+
+
+.. py:class:: PrettyPrinter(indent=1, width=80, depth=None, stream=None, *, compact=False, sort_dicts=True, underscore_numbers=False)
+
+   Bases: :py:obj:`pprint.PrettyPrinter`
+
+
+   
+   Handle pretty printing operations onto a stream using a set of
+   configured parameters.
+
+   indent
+       Number of spaces to indent for each level of nesting.
+
+   width
+       Attempted maximum number of columns in the output.
+
+   depth
+       The maximum depth to print out nested structures.
+
+   stream
+       The desired output stream.  If omitted (or false), the standard
+       output stream available at construction will be used.
+
+   compact
+       If true, several items will be combined in one line.
+
+   sort_dicts
+       If true, dict keys are sorted.
+
+   underscore_numbers
+       If true, digit groups are separated with underscores.
+
+
+
+   .. py:attribute:: display
+      :value: 3
+
+
+
+   .. py:attribute:: truncation
+      :value: 10
+
+
+
+.. py:function:: format(object, *args, **kwargs)
+
+   Format a python object as a string.
+
+
+.. py:function:: long_array(array, truncation=10, display=3)
+
+   Format an array as a string.
+
+   :param array: array-like data
+   :type array: array_like
+   :param truncation: truncate array if its length exceeds this threshold
+   :type truncation: int, optional
+   :param display: number of elements to display at the beginning and the end in truncated mode
+   :type display: int, optional
+
+
+.. py:function:: print(object, *args, **kwargs)
+
+   Print a python object to a stream.
+
+
+.. py:function:: task_wrapper(task_func: Callable) -> Callable
+
+   Optional decorator that controls the failure behavior when executing the task function.
+
+   This wrapper can be used to:
+       - make sure loggers are closed even if the task function raises an exception (prevents multirun failure)
+       - save the exception to a `.log` file
+       - mark the run as failed with a dedicated file in the `logs/` folder (so we can find and rerun it later)
+       - etc. (adjust depending on your needs)
+
+   Example:
+   ```
+   @utils.task_wrapper
+   def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+       ...
+       return metric_dict, object_dict
+   ```
+
+   :param task_func: The task function to be wrapped.
+
+   :return: The wrapped task function.
+
+
+.. py:function:: time(seconds)
+
+   Format time as a string.
+
+   :param seconds: time in seconds
+   :type seconds: float
+
+
+.. py:data:: ellipsis
+
+.. py:data:: line
+   :value: '------------------------------'
+
+
+.. py:data:: log
+
+.. py:data:: separator
+   :value: '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+
+

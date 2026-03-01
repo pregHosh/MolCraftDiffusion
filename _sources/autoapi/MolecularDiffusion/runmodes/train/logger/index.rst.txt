@@ -1,0 +1,34 @@
+MolecularDiffusion.runmodes.train.logger
+========================================
+
+.. py:module:: MolecularDiffusion.runmodes.train.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.logger.Logger
+
+
+Module Contents
+---------------
+
+.. py:class:: Logger(logger, log_interval, name_wandb, project_wandb, dir_wandb)
+
+   .. py:attribute:: dir_wandb
+
+
+   .. py:attribute:: log_interval
+
+
+   .. py:attribute:: logger
+
+
+   .. py:attribute:: name_wandb
+
+
+   .. py:attribute:: project_wandb
+
+

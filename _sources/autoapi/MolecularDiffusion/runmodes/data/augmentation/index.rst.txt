@@ -1,0 +1,108 @@
+MolecularDiffusion.runmodes.data.augmentation
+=============================================
+
+.. py:module:: MolecularDiffusion.runmodes.data.augmentation
+
+.. autoapi-nested-parse::
+
+   Data augmentation module for MolCraft.
+   Handles random charge, distortion, and size augmentation.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.data.augmentation.CSV_FIELDS
+   MolecularDiffusion.runmodes.data.augmentation.CUTOFF
+   MolecularDiffusion.runmodes.data.augmentation.SCALE_FACTOR
+   MolecularDiffusion.runmodes.data.augmentation.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.data.augmentation.add_h_unit
+   MolecularDiffusion.runmodes.data.augmentation.augment_charge
+   MolecularDiffusion.runmodes.data.augmentation.augment_distortion
+   MolecularDiffusion.runmodes.data.augmentation.augment_size
+   MolecularDiffusion.runmodes.data.augmentation.correct_edges
+   MolecularDiffusion.runmodes.data.augmentation.create_pyg_graph
+   MolecularDiffusion.runmodes.data.augmentation.get_electronegativity
+   MolecularDiffusion.runmodes.data.augmentation.get_num_graphs
+   MolecularDiffusion.runmodes.data.augmentation.get_target_count
+   MolecularDiffusion.runmodes.data.augmentation.read_xyz
+   MolecularDiffusion.runmodes.data.augmentation.remove_h_unit
+   MolecularDiffusion.runmodes.data.augmentation.write_xyz
+
+
+Module Contents
+---------------
+
+.. py:function:: add_h_unit(atoms: List[str], coords: numpy.ndarray) -> Optional[Tuple[List[str], numpy.ndarray, int]]
+
+   Adds a single hydrogen to a non-halogen heteroatom.
+
+
+.. py:function:: augment_charge(input_source: str, output_target: str, max_h_change: int = 1, fraction: float = 1.0, seed: int = None, is_db_mode: bool = False)
+
+   Main function for random charge augmentation via H addition/removal + XTB re-optimization.
+
+
+.. py:function:: augment_distortion(input_source: pathlib.Path, output_target: pathlib.Path, sigma: float = 0.1, fraction: float = 1.0, is_db_mode: bool = None, freeze_indices: List[int] = None)
+
+   Applies random distortion to atomic coordinates.
+   Also calculates graph connectivity.
+
+
+.. py:function:: augment_size(input_db: pathlib.Path, output_db: pathlib.Path, s_start: int, t_start: int, s_end: int, t_end: int, strength: float = 1.0, decay_power: float = 1.0, invert_prob: float = 0.5, plot_prefix: pathlib.Path = None)
+
+   Augments DB by adding rotated/inverted versions to balance molecule sizes.
+
+
+.. py:function:: correct_edges(data, scale_factor=1.3)
+
+   Corrects edges based on covalent radii.
+
+
+.. py:function:: create_pyg_graph(cartesian_coordinates_tensor, atomic_numbers_tensor, r=2.5)
+
+   Creates a PyTorch Geometric graph.
+
+
+.. py:function:: get_electronegativity(element_symbol)
+
+.. py:function:: get_num_graphs(data)
+
+   Calculates number of connected components.
+
+
+.. py:function:: get_target_count(s, s_start, t_start, s_end, t_end, decay_power=1.0)
+
+.. py:function:: read_xyz(filename) -> Tuple[List[str], numpy.ndarray]
+
+.. py:function:: remove_h_unit(atoms: List[str], coords: numpy.ndarray) -> Optional[Tuple[List[str], numpy.ndarray, int]]
+
+   Removes a single hydrogen.
+
+
+.. py:function:: write_xyz(filename, atoms, coords)
+
+.. py:data:: CSV_FIELDS
+   :value: ['filename', 'total_charge', 'num_atoms', 'num_graph']
+
+
+.. py:data:: CUTOFF
+   :value: 3
+
+
+.. py:data:: SCALE_FACTOR
+   :value: 1.2
+
+
+.. py:data:: logger
+

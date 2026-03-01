@@ -1,0 +1,146 @@
+MolecularDiffusion.core.core
+============================
+
+.. py:module:: MolecularDiffusion.core.core
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.core.core.Configurable
+   MolecularDiffusion.core.core.Registry
+   MolecularDiffusion.core.core.Tree
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.core.core.make_configurable
+
+
+Module Contents
+---------------
+
+.. py:class:: Configurable
+
+   Class for load/save configuration.
+   It will automatically record every argument passed to the ``__init__`` function.
+
+   This class is inspired by :meth:`state_dict()` in PyTorch, but designed for hyperparameters.
+
+   Inherit this class to construct a configurable class.
+
+   >>> class MyClass(nn.Module, core.Configurable):
+
+   Note :class:`Configurable` only applies to the current class rather than any derived class.
+   For example, the following definition only records the arguments of ``MyClass``.
+
+   >>> class DerivedClass(MyClass):
+
+   In order to record the arguments of ``DerivedClass``, explicitly specify the inheritance.
+
+   >>> class DerivedClass(MyClass, core.Configurable):
+
+   To get the configuration of an instance, use :meth:`config_dict()`,
+   which returns a dict of argument names and values.
+   If an argument is also an instance of :class:`Configurable`, it will be recursively expanded in the dict.
+   The configuration dict can be passed to :meth:`load_config_dict()` to create a copy of the instance.
+
+   For classes already registered in :class:`Registry`,
+   they can be directly created from the :class:`Configurable` class.
+   This is convenient for building models from configuration files.
+
+   >>> config = models.GCN(128, [128]).config_dict()
+   >>> gcn = Configurable.load_config_dict(config)
+
+
+.. py:class:: Registry
+
+   Bases: :py:obj:`object`
+
+
+   Registry class for managing all call-by-name access to objects.
+
+   Typical scenarios:
+
+   1. Create a model according to a string.
+
+   >>> gcn = R.search("GCN")(128, [128])
+
+   2. Register a customize hook to the package.
+
+   >>> @R.register("features.atom.my_feature")
+   >>> def my_featurizer(atom):
+   >>>     ...
+   >>>
+   >>> data.Molecule.from_smiles("C1=CC=CC=C1", atom_feature="my_feature")
+
+
+   .. py:method:: get(name)
+      :classmethod:
+
+
+      Get an object with a canonical name. Hierarchical names are separated by ``.``.
+
+
+
+   .. py:method:: register(name)
+      :classmethod:
+
+
+      Register an object with a canonical name. Hierarchical names are separated by ``.``.
+
+
+
+   .. py:method:: search(name)
+      :classmethod:
+
+
+      Search an object with the given name. The name doesn't need to be canonical.
+
+      For example, we can search ``GCN`` and get the object of ``models.GCN``.
+
+
+
+   .. py:attribute:: table
+
+
+.. py:class:: Tree
+
+   Bases: :py:obj:`collections.defaultdict`
+
+
+   dict() -> new empty dictionary
+   dict(mapping) -> new dictionary initialized from a mapping object's
+       (key, value) pairs
+   dict(iterable) -> new dictionary initialized as if via:
+       d = {}
+       for k, v in iterable:
+           d[k] = v
+   dict(**kwargs) -> new dictionary initialized with the name=value pairs
+       in the keyword argument list.  For example:  dict(one=1, two=2)
+
+   Initialize self.  See help(type(self)) for accurate signature.
+
+
+   .. py:method:: flatten(prefix=None, result=None)
+
+
+.. py:function:: make_configurable(cls, module=None, ignore_args=())
+
+   Make a configurable class out of an existing class.
+   The configurable class will automatically record every argument passed to its ``__init__`` function.
+
+   :param cls: input class
+   :type cls: type
+   :param module: bind the output class to this module.
+                  By default, bind to the original module of the input class.
+   :type module: str, optional
+   :param ignore_args: arguments to ignore in the ``__init__`` function
+   :type ignore_args: set of str, optional
+
+

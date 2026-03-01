@@ -1,0 +1,117 @@
+MolecularDiffusion.runmodes.data.preparation
+============================================
+
+.. py:module:: MolecularDiffusion.runmodes.data.preparation
+
+.. autoapi-nested-parse::
+
+   Data preparation module for MolCraft.
+   Handles conversion of molecular data to ASE databases, annotation, and mol block generation.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.data.preparation.Chem
+   MolecularDiffusion.runmodes.data.preparation.Molecule
+   MolecularDiffusion.runmodes.data.preparation.logger
+   MolecularDiffusion.runmodes.data.preparation.xyz2mol
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.data.preparation.align_atoms
+   MolecularDiffusion.runmodes.data.preparation.annotate_db
+   MolecularDiffusion.runmodes.data.preparation.calculate_props
+   MolecularDiffusion.runmodes.data.preparation.calculate_sa_score
+   MolecularDiffusion.runmodes.data.preparation.compile_to_asedb
+   MolecularDiffusion.runmodes.data.preparation.convert_props_to_float
+   MolecularDiffusion.runmodes.data.preparation.generate_mol_blocks_and_sdf
+   MolecularDiffusion.runmodes.data.preparation.get_asset_path
+   MolecularDiffusion.runmodes.data.preparation.get_scscore_model
+   MolecularDiffusion.runmodes.data.preparation.iter_files
+   MolecularDiffusion.runmodes.data.preparation.read_fragment_scores
+   MolecularDiffusion.runmodes.data.preparation.smilify_cell2mol
+   MolecularDiffusion.runmodes.data.preparation.smilify_openbabel
+   MolecularDiffusion.runmodes.data.preparation.smilify_structure
+
+
+Module Contents
+---------------
+
+.. py:function:: align_atoms(ase_atoms, rdkit_mol)
+
+   Aligns RDKit molecule atoms to match ASE atoms order based on coordinates.
+   Tries to add Hs if atom counts differ.
+
+
+.. py:function:: annotate_db(db_path: pathlib.Path, tag: Union[str, List[str]], value: Union[Any, List[Any]], verbose: bool = False)
+
+   Annotates all rows in an ASE database with one or multiple tags.
+
+
+.. py:function:: calculate_props(mol)
+
+.. py:function:: calculate_sa_score(m)
+
+   Calculates the Synthetic Accessibility Score (SA Score).
+
+
+.. py:function:: compile_to_asedb(input_source: str, db_path: pathlib.Path, input_type: str = None, natoms_file: pathlib.Path = None, csv_file: pathlib.Path = None, sdf_path: pathlib.Path = None, fraction: float = 1.0, seed: int = None, relative_to: pathlib.Path = None, pattern: str = '*.xyz', recursive: bool = False)
+
+   Compiles molecular data into an ASE database.
+
+
+.. py:function:: convert_props_to_float(data)
+
+   Tries to convert values in data dict to float appropriately and normalizes keys.
+
+
+.. py:function:: generate_mol_blocks_and_sdf(input_source: str, output_sdf: pathlib.Path = None, natoms_file: pathlib.Path = None, csv_file: pathlib.Path = None, fraction: float = 1.0, timeout: int = 60, smilify_method: str = 'hybrid', n_jobs: int = 1, indices: str = None)
+
+   Generates Mol Blocks, SMILES, and properties (SA, SC).
+   - If input is DB: Updates DB in-place.
+   - If input is XYZ/NPY: Generates SDF file.
+
+
+.. py:function:: get_asset_path(filename: str) -> pathlib.Path
+
+   Resolves the path to an asset file.
+   Favors package-relative path, but falls back to local source path if not found.
+
+
+.. py:function:: get_scscore_model()
+
+   Initializes and returns the SCScorer model if available.
+
+
+.. py:function:: iter_files(root: pathlib.Path, pattern: str, recursive: bool)
+
+.. py:function:: read_fragment_scores(name='fpscores')
+
+.. py:function:: smilify_cell2mol(filename, total_charge=0, timeout=30)
+
+.. py:function:: smilify_openbabel(filename, total_charge=0, timeout=30)
+
+.. py:function:: smilify_structure(filename, total_charge=0, timeout=30, method='hybrid')
+
+.. py:data:: Chem
+   :value: None
+
+
+.. py:data:: Molecule
+   :value: None
+
+
+.. py:data:: logger
+
+.. py:data:: xyz2mol
+   :value: None
+
+

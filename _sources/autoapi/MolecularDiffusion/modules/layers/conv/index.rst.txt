@@ -1,0 +1,456 @@
+MolecularDiffusion.modules.layers.conv
+======================================
+
+.. py:module:: MolecularDiffusion.modules.layers.conv
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.conv.EquivariantBlock
+   MolecularDiffusion.modules.layers.conv.EquivariantUpdate
+   MolecularDiffusion.modules.layers.conv.EtoX
+   MolecularDiffusion.modules.layers.conv.Etoy
+   MolecularDiffusion.modules.layers.conv.GCL
+   MolecularDiffusion.modules.layers.conv.NodeEdgeBlock
+   MolecularDiffusion.modules.layers.conv.PositionsMLP
+   MolecularDiffusion.modules.layers.conv.SE3Norm
+   MolecularDiffusion.modules.layers.conv.XEyTransformerLayer
+   MolecularDiffusion.modules.layers.conv.Xtoy
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.conv.masked_softmax
+   MolecularDiffusion.modules.layers.conv.unsorted_segment_sum
+
+
+Module Contents
+---------------
+
+.. py:class:: EquivariantBlock(hidden_nf, edge_feat_nf=2, act_fn=nn.SiLU(), n_layers=2, attention=True, norm_diff=True, tanh=False, coords_range=15, norm_constant=1, sin_embedding=None, normalization_factor=100, aggregation_method='sum', dropout=0.0, normalization=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(h, x, edge_index, node_mask=None, edge_mask=None, edge_attr=None)
+
+
+   .. py:attribute:: aggregation_method
+      :value: 'sum'
+
+
+
+   .. py:attribute:: coords_range_layer
+
+
+   .. py:attribute:: hidden_nf
+
+
+   .. py:attribute:: n_layers
+      :value: 2
+
+
+
+   .. py:attribute:: norm_constant
+      :value: 1
+
+
+
+   .. py:attribute:: norm_diff
+      :value: True
+
+
+
+   .. py:attribute:: normalization_factor
+      :value: 100
+
+
+
+   .. py:attribute:: sin_embedding
+      :value: None
+
+
+
+.. py:class:: EquivariantUpdate(hidden_nf, normalization_factor, aggregation_method, edges_in_d=1, act_fn=nn.SiLU(), tanh=False, coords_range=10.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: coord_model(h, coord, edge_index, coord_diff, edge_attr, edge_mask)
+
+
+   .. py:method:: forward(h, coord, edge_index, coord_diff, edge_attr=None, node_mask=None, edge_mask=None)
+
+
+   .. py:attribute:: aggregation_method
+
+
+   .. py:attribute:: coord_mlp
+
+
+   .. py:attribute:: coords_range
+      :value: 10.0
+
+
+
+   .. py:attribute:: normalization_factor
+
+
+   .. py:attribute:: tanh
+      :value: False
+
+
+
+.. py:class:: EtoX(de, dx)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(E, e_mask2)
+
+      E: bs, n, n, de
+
+
+
+   .. py:attribute:: lin
+
+
+.. py:class:: Etoy(d, dy)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   
+   Map edge features to global features.
+
+
+   .. py:method:: forward(E, e_mask1, e_mask2)
+
+      E: bs, n, n, de
+      Features relative to the diagonal of E could potentially be added.
+
+
+
+   .. py:attribute:: lin
+
+
+.. py:class:: GCL(input_nf, output_nf, hidden_nf, normalization_factor, aggregation_method, edges_in_d=0, nodes_att_dim=0, act_fn=nn.SiLU(), attention=False, dropout=0.0, normalization=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: edge_model(source, target, edge_attr, edge_mask)
+
+
+   .. py:method:: forward(h, edge_index, edge_attr=None, node_attr=None, node_mask=None, edge_mask=None)
+
+
+   .. py:method:: node_model(x, edge_index, edge_attr, node_attr)
+
+
+   .. py:attribute:: aggregation_method
+
+
+   .. py:attribute:: attention
+      :value: False
+
+
+
+   .. py:attribute:: dropout
+
+
+   .. py:attribute:: edge_mlp
+
+
+   .. py:attribute:: node_mlp
+
+
+   .. py:attribute:: normalization
+      :value: False
+
+
+
+   .. py:attribute:: normalization_factor
+
+
+.. py:class:: NodeEdgeBlock(dx, de, dy, n_head, last_layer=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Self attention layer that also updates the representations on the edges.
+
+
+   .. py:method:: forward(X, E, y, pos, node_mask)
+
+      :param X: bs, n, d        node features
+      :param E: bs, n, n, d     edge features
+      :param y: bs, dz           global features
+      :param pos: bs, n, 3
+      :param node_mask: bs, n
+      :return: newX, newE, new_y with the same shape.
+
+
+
+   .. py:attribute:: a
+
+
+   .. py:attribute:: de
+
+
+   .. py:attribute:: df
+
+
+   .. py:attribute:: dist_add_e
+
+
+   .. py:attribute:: dist_mul_e
+
+
+   .. py:attribute:: dx
+
+
+   .. py:attribute:: dy
+
+
+   .. py:attribute:: e_att_mul
+
+
+   .. py:attribute:: e_out
+
+
+   .. py:attribute:: e_pos1
+
+
+   .. py:attribute:: e_pos2
+
+
+   .. py:attribute:: e_x_mul
+
+
+   .. py:attribute:: in_E
+
+
+   .. py:attribute:: k
+
+
+   .. py:attribute:: last_layer
+      :value: False
+
+
+
+   .. py:attribute:: lin_dist1
+
+
+   .. py:attribute:: lin_norm_pos1
+
+
+   .. py:attribute:: lin_norm_pos2
+
+
+   .. py:attribute:: n_head
+
+
+   .. py:attribute:: out
+
+
+   .. py:attribute:: pos_att_mul
+
+
+   .. py:attribute:: pos_x_mul
+
+
+   .. py:attribute:: pre_softmax
+
+
+   .. py:attribute:: q
+
+
+   .. py:attribute:: v
+
+
+   .. py:attribute:: x_e_mul1
+
+
+   .. py:attribute:: x_e_mul2
+
+
+   .. py:attribute:: x_out
+
+
+   .. py:attribute:: y_e_add
+
+
+   .. py:attribute:: y_e_mul
+
+
+   .. py:attribute:: y_x_add
+
+
+   .. py:attribute:: y_x_mul
+
+
+.. py:class:: PositionsMLP(hidden_dim, eps=1e-05)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(pos, node_mask)
+
+
+   .. py:attribute:: eps
+      :value: 1e-05
+
+
+
+   .. py:attribute:: mlp
+
+
+.. py:class:: SE3Norm(eps: float = 1e-05, device=None, dtype=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   
+   Note: There is a relatively similar layer implemented by NVIDIA:
+   https://catalog.ngc.nvidia.com/orgs/nvidia/resources/se3transformer_for_pytorch.
+   It computes a ReLU on a mean-zero normalized norm, which I find surprising.
+
+
+   .. py:method:: extra_repr() -> str
+
+
+   .. py:method:: forward(pos, node_mask)
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: eps
+      :value: 1e-05
+
+
+
+   .. py:attribute:: normalized_shape
+      :value: (1,)
+
+
+
+   .. py:attribute:: weight
+
+
+.. py:class:: XEyTransformerLayer(dx: int, de: int, dy: int, n_head: int, dim_ffX: int = 2048, dim_ffE: int = 128, dim_ffy: int = 2048, dropout: float = 0.0, layer_norm_eps: float = 1e-05, last_layer=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Transformer that updates node, edge and global features
+   d_x: node features
+   d_e: edge features
+   dz : global features
+   n_head: the number of heads in the multi_head_attention
+   dim_feedforward: the dimension of the feedforward network model after self-attention
+   dropout: dropout probablility. 0 to disable
+   layer_norm_eps: eps value in layer normalizations.
+
+
+   .. py:method:: forward(X, E, y, pos, node_mask)
+
+      Pass the input through the encoder layer.
+      X: (bs, n, d)
+      E: (bs, n, n, d)
+      y: (bs, dy)
+      pos: (bs, n, 3)
+      node_mask: (bs, n) Mask for the src keys per batch (optional)
+      Output: newX, newE, new_y with the same shape.
+
+
+
+   .. py:attribute:: activation
+
+
+   .. py:attribute:: dropoutE1
+
+
+   .. py:attribute:: dropoutE2
+
+
+   .. py:attribute:: dropoutE3
+
+
+   .. py:attribute:: dropoutX1
+
+
+   .. py:attribute:: dropoutX2
+
+
+   .. py:attribute:: dropoutX3
+
+
+   .. py:attribute:: last_layer
+      :value: False
+
+
+
+   .. py:attribute:: linE1
+
+
+   .. py:attribute:: linE2
+
+
+   .. py:attribute:: linX1
+
+
+   .. py:attribute:: linX2
+
+
+   .. py:attribute:: normE1
+
+
+   .. py:attribute:: normE2
+
+
+   .. py:attribute:: normX1
+
+
+   .. py:attribute:: normX2
+
+
+   .. py:attribute:: norm_pos1
+
+
+   .. py:attribute:: self_attn
+
+
+.. py:class:: Xtoy(dx, dy)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   
+   Map node features to global features
+
+
+   .. py:method:: forward(X, x_mask)
+
+      X: bs, n, dx.
+
+
+
+   .. py:attribute:: lin
+
+
+.. py:function:: masked_softmax(x, mask, **kwargs)
+
+.. py:function:: unsorted_segment_sum(data, segment_ids, num_segments, normalization_factor, aggregation_method: str)
+
+   Custom PyTorch op to replicate TensorFlow's `unsorted_segment_sum`.
+   Normalization: 'sum' or 'mean'.
+
+

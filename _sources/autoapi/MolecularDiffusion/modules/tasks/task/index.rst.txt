@@ -1,0 +1,43 @@
+MolecularDiffusion.modules.tasks.task
+=====================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.task
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.task.Task
+
+
+Module Contents
+---------------
+
+.. py:class:: Task
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: evaluate(pred, target)
+      :abstractmethod:
+
+
+
+   .. py:method:: predict(batch, all_loss=None, metric=None)
+      :abstractmethod:
+
+
+
+   .. py:method:: predict_and_target(batch, all_loss=None, metric=None)
+
+
+   .. py:method:: preprocess(train_set, valid_set=None, test_set=None)
+
+
+   .. py:method:: target(batch)
+      :abstractmethod:
+
+
+

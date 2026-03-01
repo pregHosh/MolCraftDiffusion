@@ -1,0 +1,26 @@
+MolecularDiffusion.cli
+======================
+
+.. py:module:: MolecularDiffusion.cli
+
+.. autoapi-nested-parse::
+
+   Unified command-line interface for MolecularDiffusion package.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/cli/analyze/index
+   /autoapi/MolecularDiffusion/cli/data/index
+   /autoapi/MolecularDiffusion/cli/eval_predict/index
+   /autoapi/MolecularDiffusion/cli/generate/index
+   /autoapi/MolecularDiffusion/cli/main/index
+   /autoapi/MolecularDiffusion/cli/predict/index
+   /autoapi/MolecularDiffusion/cli/train/index
+
+

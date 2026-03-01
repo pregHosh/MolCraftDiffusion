@@ -1,0 +1,131 @@
+MolecularDiffusion.core.meter
+=============================
+
+.. py:module:: MolecularDiffusion.core.meter
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.core.meter.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.core.meter.Meter
+
+
+Module Contents
+---------------
+
+.. py:class:: Meter(log_interval=100, silent=False, logger=None)
+
+   Bases: :py:obj:`object`
+
+
+   Meter for recording metrics and training progress.
+
+   :param log_interval: log every n updates
+   :type log_interval: int, optional
+   :param silent: surpress all outputs or not
+   :type silent: int, optional
+   :param logger: log handler
+   :type logger: core.LoggerBase, optional
+
+
+   .. py:method:: log(record, category='train/batch')
+
+      Log a record.
+
+      :param record: dict of any metric
+      :type record: dict
+      :param category: log category.
+                       Available types are ``train/batch``, ``train/epoch``, ``valid/epoch`` and ``test/epoch``.
+      :type category: str, optional
+
+
+
+   .. py:method:: log_config(config)
+
+      Log a hyperparameter config.
+
+      :param config: hyperparameter config
+      :type config: dict
+
+
+
+   .. py:method:: set_epoch(epoch_id)
+
+      Set the epoch counter for resuming from a checkpoint.
+
+      This method properly pads the internal time and epoch2batch lists
+      to handle the case where training is resumed from an intermediate epoch.
+
+      :param epoch_id: The epoch to resume from.
+      :type epoch_id: int
+
+
+
+   .. py:method:: step()
+
+      Step an epoch for this meter.
+
+      Instead of manually invoking :meth:`step()`, it is suggested to use the following line
+
+          >>> for epoch in meter(num_epoch):
+          >>>     # do something
+
+
+
+   .. py:method:: update(record)
+
+      Update the meter with a record.
+
+      :param record: dict of any metric
+      :type record: dict
+
+
+
+   .. py:attribute:: batch_id
+      :value: 0
+
+
+
+   .. py:attribute:: epoch2batch
+      :value: [0]
+
+
+
+   .. py:attribute:: epoch_id
+      :value: 0
+
+
+
+   .. py:attribute:: log_interval
+      :value: 100
+
+
+
+   .. py:attribute:: logger
+      :value: None
+
+
+
+   .. py:attribute:: records
+
+
+   .. py:attribute:: silent
+      :value: False
+
+
+
+   .. py:attribute:: time
+
+
+.. py:data:: logger
+

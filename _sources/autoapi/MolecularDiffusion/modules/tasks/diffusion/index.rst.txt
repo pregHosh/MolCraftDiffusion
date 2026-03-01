@@ -1,0 +1,574 @@
+MolecularDiffusion.modules.tasks.diffusion
+==========================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative
+   MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion.reverse_tensor
+
+
+Module Contents
+---------------
+
+.. py:class:: GeomMolecularGenerative(diffusion_model, node_dist_model=None, prop_dist_model=None, n_node_dist: Dict = {}, augment_noise: float = 0, data_augmentation: bool = False, condition: List = [], normalize_condition: str = None, sp_regularizer: MolecularDiffusion.callbacks.SP_regularizer = None, reference_indices: List = None)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.task.Task`, :py:obj:`MolecularDiffusion.core.Configurable`
+
+
+   Class for load/save configuration.
+   It will automatically record every argument passed to the ``__init__`` function.
+
+   This class is inspired by :meth:`state_dict()` in PyTorch, but designed for hyperparameters.
+
+   Inherit this class to construct a configurable class.
+
+   >>> class MyClass(nn.Module, core.Configurable):
+
+   Note :class:`Configurable` only applies to the current class rather than any derived class.
+   For example, the following definition only records the arguments of ``MyClass``.
+
+   >>> class DerivedClass(MyClass):
+
+   In order to record the arguments of ``DerivedClass``, explicitly specify the inheritance.
+
+   >>> class DerivedClass(MyClass, core.Configurable):
+
+   To get the configuration of an instance, use :meth:`config_dict()`,
+   which returns a dict of argument names and values.
+   If an argument is also an instance of :class:`Configurable`, it will be recursively expanded in the dict.
+   The configuration dict can be passed to :meth:`load_config_dict()` to create a copy of the instance.
+
+   For classes already registered in :class:`Registry`,
+   they can be directly created from the :class:`Configurable` class.
+   This is convenient for building models from configuration files.
+
+   >>> config = models.GCN(128, [128]).config_dict()
+   >>> gcn = Configurable.load_config_dict(config)
+
+   Generative Diffusion model for molecular structures.
+   Parameters:
+   - diffusion_model: The dynamic functional model for diffusion.
+   - node_dist_model (Optional[NodeDistributionModel]): The model for number of node distribution. Default is None.
+   - prop_dist_model (Optional[PropertyDistributionModel]): The model for property distribution. Default is None.
+   - n_node_dist (Dict): The distribution of number of nodes. Default is {}.
+   - augment_noise (float): The amount of noise to add to the coordinates for data augmentation. Default is 0.
+   - data_augmentation (bool): Whether to apply data augmentation by symmetry operations. Default is False.
+   - condition (List): The list of conditions for the model. Default is [].
+   - normalize_condition (str): The normalization method for the condition. Default is None. [None, "maxmin", "mad"]
+   - sp_regularizer (SP_regularizer): The self-pace learning regularizer for the model. Default is None.
+
+
+   .. py:method:: density_estimation(batch)
+
+
+   .. py:method:: evaluate(all_loss, dummy_tensor)
+
+
+   .. py:method:: forward(batch)
+
+
+   .. py:method:: predict_and_target(batch)
+
+
+   .. py:method:: preprocess(train_set=None)
+
+
+   .. py:method:: sample(nodesxsample=torch.tensor([10]), context=None, condition_tensor=None, condition_mode=None, fix_noise=False, n_frames=0, n_retrys=0, t_retry=180, mode='ddpm', **kwargs)
+
+      Sample molecular structures.
+
+      Parameters:
+      - nodesxsample (Tensor): Number of nodes per sample.
+      - context (Optional[Tensor]): Context tensor for sampling. Default is None.
+      - condition_tensor (Optional[Tensor]): Condition tensor for sampling. Default is None.
+          Note that it has to be normalized the same way as the training set.
+          Size = [batch size, n_atom, n_features]
+      - condition_mode (Optional[str]): Mode for conditioning. Default is None.
+          Format: [condition_name]_[component_alg]
+          component name can be x, h, or xh
+          component_alg: SSGD, ...
+      - fix_noise (bool): Fix noise for visualization purposes. Default is False.
+      - n_frames (int): Number of frames to keep. Default is 0.
+      - n_retrys (int): Number of retry attempts in the event of bad molecules . Default is 0.
+      - t_retrys (int): Timestep to start retrying. Default is 180.
+      - mode (str): Mode for sampling. Default is "ddpm ["ddpm", "ddim"].
+
+      Returns:
+      Tuple[Tensor, Tensor, Tensor, Tensor]: One-hot encoding of atoms, charges, positions, and node mask.
+
+
+
+   .. py:method:: sample_around_xh_target(nodesxsample=torch.tensor([10]), xh_target=None, context=None, fix_noise=False)
+
+      Sample molecular structures.
+
+      Parameters:
+      - nodesxsample (Tensor): Number of nodes per sample.
+      - xh_target (Tensor): target xh: [batch size, n_atom, n_features]
+      - context (Optional[Tensor]): Context tensor for sampling. Default is None.
+      - fix_noise (bool): Fix noise for visualization purposes. Default is False.
+
+      Returns:
+      Tuple[Tensor, Tensor, Tensor, Tensor]: One-hot encoding of atoms, charges, positions, and node mask.
+
+
+
+   .. py:method:: sample_chain(n_nodes: int, n_tries: int, keep_frames: int = 100)
+
+      Sample a molecule for visualizing the diffusion process.
+
+      Parameters:
+      - n_nodes (int): Number of nodes in the molecular graph.
+      - n_tries (int): Number of attempts to find a stable molecule.
+      - keep_frames (int): Number of frames to keep. Default is 100.
+
+      Returns:
+      Tuple[Tensor, Tensor, Tensor]: One-hot encoding of atoms, charges, and positions.
+
+
+
+   .. py:method:: sample_chain_guide(n_nodes: int, n_tries: int, target_function, scale: float = 1, max_norm=10, std: float = 1.0, scheduler=None, keep_frames: int = 100)
+
+      Sample a molecule for visualizing the diffusion process.
+
+      Parameters:
+      - n_nodes (int): Number of nodes in the molecular graph.
+      - n_tries (int): Number of attempts to find a stable molecule.
+      - target_function (Callable[[Tensor], Tensor]): Target function for guidance. Higher value, better
+      - scale (float): Scale factor for guidance. Default is 1.0.
+      - max_norm (float): Initial maximum norm for the gradients. Default is 10.0.
+      - std (float): Standard deviation of the noise. Default is 1.0.
+      - scheduler (RateScheduler): Rate scheduler. Default is None.
+          The scheduler should have a step method that takes the energy and the current scale as input.
+      - keep_frames (int): Number of frames to keep. Default is 100.
+
+      Returns:
+      Tuple[Tensor, Tensor, Tensor]: One-hot encoding of atoms, charges, and positions.
+
+
+
+   .. py:method:: sample_conditonal(nodesxsample=torch.tensor([10]), target_value=[0], fix_noise=False, mode='ddpm', n_frames=0)
+
+      Sample molecular structures conditioned on a property value.
+      Only works if the model is trained with a property distribution.
+
+      The interval should be wider than the bin width of the property distribution.
+      If the interval is too narrow, the model might just get the same molecule.
+
+      Parameters:
+      - nodesxsample (Tensor): Number of nodes per sample.
+      - target_value (List[float]): Target values for conditional sampling.
+      - fix_nose (bool): Fix noise for visualization purposes. Default is False.
+      - mode (str): Mode for sampling. Default is "ddpm ["ddpm", "ddim"].
+      - n_frames (int): Number of frames to keep. Default is 0.
+
+      Returns:
+      Tuple[Tensor, Tensor, Tensor, Tensor]: One-hot encoding of atoms, charges, positions, and node mask.
+
+
+
+   .. py:method:: sample_guidance(target_function, nodesxsample=torch.tensor([10]), scale=1, max_norm=10, std=1.0, fix_noise=False, scheduler=None, guidance_at=0, guidance_stop=1, guidance_ver=1, n_backwards=0, h_weight=1, x_weight=1, n_frames=0, debug=False)
+
+      Sample molecular structures with guidance from target function.
+
+      Parameters:
+      - target_function (Callable[[Tensor], Tensor]): Target function for guidance. Higher value, better
+      - nodesxsample (Tensor): Number of nodes per sample. Default is torch.tensor([10]).
+      - scale (float): Scale factor for gradient guidance. Default is 1.0.
+      - max_norm (float): Initial maximum norm for the gradients. Default is 10.0.
+      - std (float): Standard deviation of the noise. Default is 1.0.
+      - fix_noise (bool): Fix noise for visualization purposes. Default is False.
+      - scheduler (RateScheduler): Rate scheduler. Default is None.
+          The scheduler should have a step method that takes the energy and the current scale as input.
+      - guidance_at (int): The timestep at which to apply guidance [0-1]  0 = since beginning. Default is 1.
+      - guidance_stop (int): The timestep at which to stop applying guidance [0-1]  1 = until the end. Default is 0.
+      - guidance_ver (int): The version of the guidance. Default is 1. [0,1,2,cfg,cfg_gg]
+      - n_backwards (int): Number of backward steps. Default is 0.
+      - h_weight (float): Weight for the gradient of atom feature. Default is 1.0.
+      - x_weight (float): Weight for the gradient of cartesian coordinate. Default is 1.0.
+      - context (Optional[Tensor]): Context tensor for sampling. Default is None.
+      - condition_tensor (Optional[Tensor]): Condition tensor for sampling. Default is None.
+      - n_frames (int): Number of frames to keep. Default is 0.
+      - debug (bool): Debug mode. Default is False.
+          Save gradient norms, max gradients, clipping coefficients, and energies to files.
+
+      Returns:
+      Tuple[Tensor, Tensor, Tensor, Tensor]: Positions, one-hot encoding of atoms, node mask, and edge mask.
+
+
+
+   .. py:method:: sample_guidance_conitional(target_function, target_value=[0], negative_target_value=[], nodesxsample=torch.tensor([10]), gg_scale=1, cfg_scale=1, cfg_scale_schedule=None, max_norm=10, std=1.0, fix_noise=False, scheduler=None, guidance_at=1, guidance_stop=0, guidance_ver=1, n_backwards=0, h_weight=1, x_weight=1, n_frames=0, debug=False)
+
+      Sample molecular structures with guidance from target function and conditional property.
+
+      Parameters:
+      - target_function (Callable[[Tensor], Tensor]): Target function for guidance. Higher value, better
+      - target_value (List[float]): Target values for conditional sampling.
+      - nodesxsample (Tensor): Number of nodes per sample. Default is torch.tensor([10]).
+      - gg_scale (float): Scale factor for gradient guidance. Default is 1.0.
+      - cfg_scale (float): Scale factor for classifier-free guidance. Default is 1.0.
+      - cfg_scale_schedule (str, optional): Scheduler for cfg scale. Default is None. [linear, exponential, cosine]
+      - max_norm (float): Initial maximum norm for the gradients. Default is 10.0.
+      - std (float): Standard deviation of the noise. Default is 1.0.
+      - fix_noise (bool): Fix noise for visualization purposes. Default is False.
+      - scheduler (RateScheduler): Rate scheduler. Default is None.
+          The scheduler should have a step method that takes the energy and the current scale as input.
+      - guidance_at (int): The timestep at which to apply guidance [0-1]  0 = since beginning. Default is 1.
+      - guidance_stop (int): The timestep at which to stop applying guidance [0-1]  1 = until the end. Default is 0.
+      - guidance_ver (int): The version of the guidance. Default is 1. [0,1,2,cfg,cfg_gg]
+      - n_backwards (int): Number of backward steps. Default is 0.
+      - h_weight (float): Weight for the gradient of atom feature. Default is 1.0.
+      - x_weight (float): Weight for the gradient of cartesian coordinate. Default is 1.0.
+      - n_frames (int): Number of frames to keep. Default is 0.
+      - debug (bool): Debug mode. Default is False.
+          Save gradient norms, max gradients, clipping coefficients, and energies to files.
+
+      Returns:
+      Tuple[Tensor, Tensor, Tensor, Tensor]: Positions, one-hot encoding of atoms, node mask, and edge mask.
+
+
+
+   .. py:method:: sample_hybrid_guidance(target_function, target_value=[0], negative_target_value=[], nodesxsample=torch.tensor([10]), gg_scale=1, cfg_scale=1, cfg_scale_schedule=None, max_norm=10, std=1.0, fix_noise=False, scheduler=None, guidance_at=1, guidance_stop=0, guidance_ver=1, n_backwards=0, h_weight=1, x_weight=1, condition_tensor=None, condition_mode=None, inpaint_cfgs={}, outpaint_cfgs={}, n_frames=0, debug=False)
+
+              Sample molecular structures with guidance from target function and conditional property.
+
+              Parameters:
+              - target_function (Callable[[Tensor], Tensor]): Target function for guidance. Higher value, better
+              - target_value (List[float]): Target values for conditional sampling.
+              - nodesxsample (Tensor): Number of nodes per sample. Default is torch.tensor([10]).
+              - gg_scale (float): Scale factor for gradient guidance. Default is 1.0.
+              - cfg_scale (float): Scale factor for classifier-free guidance. Default is 1.0.
+              - cfg_scale_schedule (str, optional): Scheduler for cfg scale. Default is None. [linear, exponential, cosine]
+              - max_norm (float): Initial maximum norm for the gradients. Default is 10.0.
+              - std (float): Standard deviation of the noise. Default is 1.0.
+              - fix_noise (bool): Fix noise for visualization purposes. Default is False.
+              - scheduler (RateScheduler): Rate scheduler. Default is None.
+                  The scheduler should have a step method that takes the energy and the current scale as input.
+              - guidance_at (int): The timestep at which to apply guidance [0-1]  0 = since beginning. Default is 1.
+              - guidance_stop (int): The timestep at which to stop applying guidance [0-1]  1 = until the end. Default is 0.
+              - guidance_ver (int): The version of the guidance. Default is 1. [0,1,2,cfg,cfg_gg]
+              - n_backwards (int): Number of backward steps. Default is 0.
+              - h_weight (float): Weight for the gradient of atom feature. Default is 1.0.
+              - x_weight (float): Weight for the gradient of cartesian coordinate. Default is 1.0.
+              - debug (bool): Debug mode. Default is False.
+                  Save gradient norms, max gradients, clipping coefficients, and energies to files.
+              - condition_tensor (torch.Tensor, optional): Tensor for conditional guidance. Defaults to None.
+              - condition_mode (str, optional): Mode for conditional guidance. Defaults to None.
+              - inpaint_cfgs (dict, optional): Configuration for inpainting.
+                  The dictionary must contains:
+                      - mask_node_index (torch.Tensor, optional): Indices of nodes to be inpainted. Defaults to an empty tensor.
+                      - denoising_strength (float, optional): Strength of denoising for inpainting
+                      - noise_initial_mask (bool, optional): Whether to noise the initial masked region. Defaults to False.
+              - outpaint_cfgs (dict, optional): Configuration for outpainting.
+                  The dictionary must contains:
+                      - t_start (float, optional): Timestep to start the generation. Defaults to 1.0.
+                      - t_critical (float, optional): Timestep threshold for applying reference tensor constraints. Defaults to None.
+      `               - connector_index (torch.Tensor, optional): Indices of connector nodes for outpainting. Defaults to an empty tensor.
+                      - seed_dist (float, optional): Distance of the seed from the connector atom (used if n_bq_atom == 0)..
+                      - min_dist (float, optional): Minimum distance from any existing atom in xh_cond (except the connector itself). Defaults to 1.
+                      - spread (float, optional): Spread of the initiating nodes. Defaults is 1 angstrom.
+                      - n_bq_atom (int, optional): Number of dummy atoms. Defaults is 0.
+
+              - n_frames (int, optional): Number of frames to keep. Defaults to 0.
+
+              Returns:
+              Tuple[Tensor, Tensor, Tensor, Tensor]: Positions, one-hot encoding of atoms, node mask, and edge mask.
+
+
+
+
+   .. py:attribute:: augment_noise
+      :value: 0
+
+
+
+   .. py:attribute:: condition
+      :value: []
+
+
+
+   .. py:attribute:: data_augmentation
+      :value: False
+
+
+
+   .. py:attribute:: model
+
+
+   .. py:attribute:: n_atom_types
+
+
+   .. py:attribute:: n_dim_data
+
+
+   .. py:attribute:: n_node_dist
+
+
+   .. py:attribute:: node_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: normalize_condition
+      :value: None
+
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: reference_indices
+      :value: None
+
+
+
+   .. py:attribute:: sp_regularizer
+      :value: None
+
+
+
+.. py:class:: GuidanceModelPrediction(model, noisemodel, task=(), include_charge=True, metric=('mae', 'rmse'), num_mlp_layer=1, normalization=True, num_class=None, mlp_batch_norm=True, readout='mean', mlp_dropout=0, std_mean=None, load_mlps_layer=0, nextra_nf=0, norm_values=(1.0, 1.0, 1.0), extra_norm_values=(), norm_biases=(None, 0.0, 0.0), weight_classes=None, t_max=1, verbose=0)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.task.Task`, :py:obj:`MolecularDiffusion.core.Configurable`
+
+
+   Class for load/save configuration.
+   It will automatically record every argument passed to the ``__init__`` function.
+
+   This class is inspired by :meth:`state_dict()` in PyTorch, but designed for hyperparameters.
+
+   Inherit this class to construct a configurable class.
+
+   >>> class MyClass(nn.Module, core.Configurable):
+
+   Note :class:`Configurable` only applies to the current class rather than any derived class.
+   For example, the following definition only records the arguments of ``MyClass``.
+
+   >>> class DerivedClass(MyClass):
+
+   In order to record the arguments of ``DerivedClass``, explicitly specify the inheritance.
+
+   >>> class DerivedClass(MyClass, core.Configurable):
+
+   To get the configuration of an instance, use :meth:`config_dict()`,
+   which returns a dict of argument names and values.
+   If an argument is also an instance of :class:`Configurable`, it will be recursively expanded in the dict.
+   The configuration dict can be passed to :meth:`load_config_dict()` to create a copy of the instance.
+
+   For classes already registered in :class:`Registry`,
+   they can be directly created from the :class:`Configurable` class.
+   This is convenient for building models from configuration files.
+
+   >>> config = models.GCN(128, [128]).config_dict()
+   >>> gcn = Configurable.load_config_dict(config)
+
+
+   .. py:method:: evaluate(pred, target)
+
+
+   .. py:method:: forward(batch)
+
+
+   .. py:method:: get_adj_matrix(_edges_dict, n_nodes, batch_size)
+
+
+   .. py:method:: normalize(x, h, node_mask)
+
+
+   .. py:method:: pad_data(array, batch, dim)
+
+      "
+      array: torch.Tensor of shape (n_atoms, n_features)
+      batch: pytorch_geometric.data.Batch
+
+
+
+   .. py:method:: predict(batch, all_loss=None, metric=None, evaluate=False)
+
+      "
+      If evaluate is True, the data must be normalized beforehand.
+
+
+
+   .. py:method:: preprocess(train_set, valid_set=None, test_set=None)
+
+      Compute the mean and derivation for each task on the training set.
+
+
+
+   .. py:method:: readout_f(embeddings: torch.Tensor) -> torch.Tensor
+
+      Perform readout operation over nodes in each molecule.
+
+      Parameters:
+      - embeddings (torch.Tensor): Tensor of size (x, y, z) where x is the batch size, y is the number of nodes, and z is the feature size.
+
+      Returns:
+      torch.Tensor: Aggregated tensor of size (x, z).
+
+
+
+   .. py:method:: sample_combined_position_feature_noise(n_samples, n_nodes, node_mask, std=1.0)
+
+      Samples mean-centered normal noise for z_x, and standard normal noise for z_h.
+
+
+
+   .. py:method:: subspace_dimensionality(node_mask)
+
+      Compute the dimensionality on translation-invariant linear subspace where distributions on x are defined.
+
+
+
+   .. py:method:: target(batch)
+
+
+   .. py:attribute:: T
+
+
+   .. py:attribute:: criterion
+
+
+   .. py:attribute:: eps
+      :value: 1e-10
+
+
+
+   .. py:attribute:: extra_norm_values
+      :value: ()
+
+
+
+   .. py:attribute:: gamma
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: include_charge
+      :value: True
+
+
+
+   .. py:attribute:: load_mlps_layer
+      :value: 0
+
+
+
+   .. py:attribute:: metric
+      :value: ('mae', 'rmse')
+
+
+
+   .. py:attribute:: mlp
+      :value: None
+
+
+
+   .. py:attribute:: mlp_batch_norm
+      :value: True
+
+
+
+   .. py:attribute:: mlp_dropout
+      :value: 0
+
+
+
+   .. py:attribute:: mlp_final
+      :value: None
+
+
+
+   .. py:attribute:: model
+
+
+   .. py:attribute:: n_dims
+      :value: 3
+
+
+
+   .. py:attribute:: ndim_extra
+      :value: 0
+
+
+
+   .. py:attribute:: norm_biases
+      :value: (None, 0.0, 0.0)
+
+
+
+   .. py:attribute:: norm_values
+      :value: (1.0, 1.0, 1.0)
+
+
+
+   .. py:attribute:: normalization
+      :value: True
+
+
+
+   .. py:attribute:: num_class
+
+
+   .. py:attribute:: num_mlp_layer
+      :value: 1
+
+
+
+   .. py:attribute:: num_targets
+
+
+   .. py:attribute:: readout
+      :value: 'mean'
+
+
+
+   .. py:attribute:: std_mean
+      :value: None
+
+
+
+   .. py:attribute:: t_max
+      :value: 1
+
+
+
+   .. py:attribute:: task
+      :value: ()
+
+
+
+   .. py:attribute:: verbose
+      :value: 0
+
+
+
+.. py:function:: reverse_tensor(x)
+
+.. py:data:: logger
+

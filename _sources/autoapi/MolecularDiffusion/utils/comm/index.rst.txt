@@ -1,0 +1,145 @@
+MolecularDiffusion.utils.comm
+=============================
+
+.. py:module:: MolecularDiffusion.utils.comm
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.comm.cpu_group
+   MolecularDiffusion.utils.comm.gpu_group
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.comm.cat
+   MolecularDiffusion.utils.comm.get_cpu_count
+   MolecularDiffusion.utils.comm.get_group
+   MolecularDiffusion.utils.comm.get_rank
+   MolecularDiffusion.utils.comm.get_world_size
+   MolecularDiffusion.utils.comm.init_process_group
+   MolecularDiffusion.utils.comm.reduce
+   MolecularDiffusion.utils.comm.stack
+   MolecularDiffusion.utils.comm.synchronize
+
+
+Module Contents
+---------------
+
+.. py:function:: cat(obj, dst=None)
+
+   Concatenate any nested container of tensors along the 0-th axis.
+
+   :param obj: any container object. Can be nested list, tuple or dict.
+   :type obj: Object
+   :param dst: rank of destination worker. If not specified, broadcast the result to all workers.
+   :type dst: int, optional
+
+   Example::
+
+       >>> # assume 4 workers
+       >>> rank = comm.get_rank()
+       >>> rng = torch.arange(10)
+       >>> obj = {"range": rng[rank * (rank + 1) // 2: (rank + 1) * (rank + 2) // 2]}
+       >>> obj = comm.cat(obj)
+       >>> assert torch.allclose(obj["range"], rng)
+
+
+.. py:function:: get_cpu_count()
+
+   Get the number of CPUs on this node.
+
+
+.. py:function:: get_group(device)
+
+   Get the process group corresponding to the given device.
+
+   :param device: query device
+   :type device: torch.device
+
+
+.. py:function:: get_rank()
+
+   Get the rank of this process in distributed processes.
+
+   Return 0 for single process case.
+
+
+.. py:function:: get_world_size()
+
+   Get the total number of distributed processes.
+
+   Return 1 for single process case.
+
+
+.. py:function:: init_process_group(backend, init_method=None, **kwargs)
+
+   Initialize CPU and/or GPU process groups.
+
+   :param backend: Communication backend. Use ``nccl`` for GPUs and ``gloo`` for CPUs.
+   :type backend: str
+   :param init_method: URL specifying how to initialize the process group
+   :type init_method: str, optional
+
+
+.. py:function:: reduce(obj, op='sum', dst=None)
+
+   Reduce any nested container of tensors.
+
+   :param obj: any container object. Can be nested list, tuple or dict.
+   :type obj: Object
+   :param op: element-wise reduction operator.
+              Available operators are ``sum``, ``mean``, ``min``, ``max``, ``product``.
+   :type op: str, optional
+   :param dst: rank of destination worker. If not specified, broadcast the result to all workers.
+   :type dst: int, optional
+
+   Example::
+
+       >>> # assume 4 workers
+       >>> rank = comm.get_rank()
+       >>> x = torch.rand(5)
+       >>> obj = {"polynomial": x ** rank}
+       >>> obj = comm.reduce(obj)
+       >>> assert torch.allclose(obj["polynomial"], x ** 3 + x ** 2 + x + 1)
+
+
+.. py:function:: stack(obj, dst=None)
+
+   Stack any nested container of tensors. The new dimension will be added at the 0-th axis.
+
+   :param obj: any container object. Can be nested list, tuple or dict.
+   :type obj: Object
+   :param dst: rank of destination worker. If not specified, broadcast the result to all workers.
+   :type dst: int, optional
+
+   Example::
+
+       >>> # assume 4 workers
+       >>> rank = comm.get_rank()
+       >>> x = torch.rand(5)
+       >>> obj = {"exponent": x ** rank}
+       >>> obj = comm.stack(obj)
+       >>> truth = torch.stack([torch.ones_like(x), x, x ** 2, x ** 3]
+       >>> assert torch.allclose(obj["exponent"], truth))
+
+
+.. py:function:: synchronize()
+
+   Synchronize among all distributed processes.
+
+
+.. py:data:: cpu_group
+   :value: None
+
+
+.. py:data:: gpu_group
+   :value: None
+
+

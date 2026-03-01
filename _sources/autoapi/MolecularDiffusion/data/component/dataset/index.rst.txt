@@ -1,0 +1,418 @@
+MolecularDiffusion.data.component.dataset
+=========================================
+
+.. py:module:: MolecularDiffusion.data.component.dataset
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.dataset.BASE_ATOM_VOCAB
+   MolecularDiffusion.data.component.dataset.Chem
+   MolecularDiffusion.data.component.dataset.hybiridization_map
+   MolecularDiffusion.data.component.dataset.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.dataset.GraphDataset
+   MolecularDiffusion.data.component.dataset.PointCloudDataset
+
+
+Module Contents
+---------------
+
+.. py:class:: GraphDataset
+
+   Bases: :py:obj:`torch.utils.data.Dataset`
+
+
+   .. py:method:: atom_types()
+
+      All atom types.
+
+
+
+   .. py:method:: get_item(index)
+
+
+   .. py:method:: get_property(task)
+
+
+   .. py:method:: load_csv(csv_file: str, xyz_dir: str, xyz_field: str = 'xyz', smiles_field: str = 'smiles', target_fields: Optional[List[str]] = None, atom_vocab: List[str] = [], node_feature_choice: Optional[str] = None, forbidden_atoms: List[str] = [], verbose: int = 0, allow_unknown: bool = False, use_ohe_feature: bool = True, **kwargs)
+
+      Load the dataset from a csv file.
+
+      :param csv_file: file name
+      :type csv_file: str
+      :param xyz_dir: directory to store XYZ files
+      :type xyz_dir: str
+      :param xyz_field: name of the XYZ column in the table
+      :type xyz_field: str
+      :param smiles_field: name of the SMILES column in the table.
+                           Use ``None`` if there is no SMILES column.
+      :type smiles_field: str, optional
+      :param target_fields: name of target columns in the table.
+                            Default is all columns other than the SMILES column.
+      :type target_fields: list of str, optional
+      :param atom_vocab: atom types
+      :type atom_vocab: list of str, optional
+      :param node_feature_choice: geom features to extract
+      :type node_feature_choice: str, optional
+      :param forbidden_atoms: forbidden atoms
+      :type forbidden_atoms: list of str, optional
+      :param verbose: output verbose level
+      :type verbose: int, optional
+      :param \*\*kwargs:
+
+
+
+   .. py:method:: load_db(db_path: str, atom_vocab: List[str] = [], node_feature_choice: Optional[List[str]] = None, target_fields: Optional[List[str]] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], edge_type: str = 'distance', radius: float = 4.0, n_neigh: int = 5, verbose: int = 0, allow_unknown: bool = False, use_ohe_feature: bool = True, **kwargs: Any)
+
+      Load the dataset from an ASE db file.
+
+      :param db_path: path to ASE db file
+      :type db_path: str
+      :param atom_vocab: atom types
+      :type atom_vocab: list of str, optional
+      :param node_feature_choice: RDKit atom features to extract
+      :type node_feature_choice: list of str, optional
+      :param target_fields: name of target columns in the table.
+      :type target_fields: list of str, optional
+      :param transform: data transformation function
+      :type transform: Callable, optional
+      :param max_atom: maximum number of atoms in a molecule
+      :type max_atom: int, optional
+      :param with_hydrogen: whether to add hydrogen atoms
+      :type with_hydrogen: bool, optional
+      :param forbidden_atoms: forbidden atoms
+      :type forbidden_atoms: list of str, optional
+      :param edge_type: type of edge to construct the graph (default: distance, neighbor)
+      :type edge_type: str, optional
+      :param radius: radius to construct the graph (default: 4.0)
+      :type radius: float, optional
+      :param n_neigh: number of neighbors to consider (default: 5)
+      :type n_neigh: int, optional
+      :param verbose: output verbose level
+      :type verbose: int, optional
+      :param null_value: null value for missing context data
+      :type null_value: float, optional
+      :param \*\*kwargs:
+
+
+
+   .. py:method:: load_npy(coords: torch.Tensor, natoms: torch.Tensor, smiles_list: List[str], targets: Dict[str, List[Union[float, int]]], atom_vocab: List[str] = [], node_feature_choice: Optional[str] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], edge_type: str = 'distance', radius: float = 4.0, n_neigh: int = 5, verbose: int = 0, allow_unknown: bool = False, use_ohe_feature: bool = True, **kwargs: Any)
+
+      Load the dataset from npy tensors.
+
+      :param coords: tensor of coordinates [total_atoms, 5] with [mol_idx, Z, x, y, z]
+      :type coords: tensor
+      :param natoms: tensor of number of atoms per molecule
+      :type natoms: tensor
+      :param smiles_list: SMILES strings
+      :type smiles_list: list of str
+      :param targets: prediction targets
+      :type targets: dict of list
+      :param atom_vocab: atom types
+      :type atom_vocab: list of str
+      :param node_feature_choice: geom features to extract
+      :type node_feature_choice: str, optional
+      :param transform: data transformation function
+      :type transform: Callable, optional
+      :param max_atom: maximum number of atoms in a molecule
+      :type max_atom: int, optional
+      :param with_hydrogen: whether to include hydrogen atoms
+      :type with_hydrogen: bool, optional
+      :param forbidden_atoms: forbidden atoms
+      :type forbidden_atoms: list of str, optional
+      :param edge_type: type of edge to construct the graph
+      :type edge_type: str, optional
+      :param radius: radius to construct the graph
+      :type radius: float, optional
+      :param n_neigh: number of neighbors to consider
+      :type n_neigh: int, optional
+      :param verbose: output verbose level
+      :type verbose: int, optional
+      :param \*\*kwargs:
+
+
+
+   .. py:method:: load_pickle(pkl_file, verbose=0)
+
+      Load the dataset from a pickle file.
+
+      :param pkl_file: file name
+      :type pkl_file: str
+      :param verbose: output verbose level
+      :type verbose: int, optional
+
+
+
+   .. py:method:: load_smiles()
+
+
+   .. py:method:: load_xyz(xyz_list: List[str], smiles_list: List[str], targets: Dict[str, List[Union[float, int]]], atom_vocab: List[str] = [], node_feature_choice: Optional[str] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], edge_type: str = 'distance', radius: float = 4.0, n_neigh: int = 5, verbose: int = 0, allow_unknown: bool = False, use_ohe_feature: bool = True, **kwargs: Any)
+
+      Load the dataset from XYZ and targets.
+
+      :param xyz_list: XYZ file names
+      :type xyz_list: list of str
+      :param smiles_list: SMILES strings
+      :type smiles_list: list of str
+      :param targets: prediction targets
+      :type targets: dict of list
+      :param atom_vocab: atom types
+      :type atom_vocab: list of str
+      :param node_feature_choice: geom features to extract
+      :type node_feature_choice: str, optional
+      :param transform: data transformation function
+      :type transform: Callable, optional
+      :param max_atom: maximum number of atoms in a molecule (default: 120)
+      :type max_atom: int, optional
+      :param with_hydrogen: whether to add hydrogen atoms
+      :type with_hydrogen: bool, optional
+      :param forbidden_atoms: forbidden atoms
+      :type forbidden_atoms: list of str, optional
+      :param edge_type: type of edge to construct the graph (default: distance, neighbor)
+      :type edge_type: str, optional
+      :param radius: radius to construct the graph (default: 4.0)
+      :type radius: float, optional
+      :param n_neigh: number of neighbors to consider (default: 5)
+      :type n_neigh: int, optional
+      :param verbose: output verbose level
+      :type verbose: int, optional
+      :param \*\*kwargs:
+
+
+
+   .. py:method:: save_pickle(pkl_file, verbose=0)
+
+      Save the dataset to a pickle file.
+
+      :param pkl_file: file name
+      :type pkl_file: str
+      :param verbose: output verbose level
+      :type verbose: int, optional
+
+
+
+   .. py:property:: num_atom_type
+
+      Number of different atom types.
+
+
+   .. py:property:: num_atoms
+
+      Number of atoms in each molecule.
+
+
+   .. py:property:: tasks
+
+      List of tasks.
+
+
+.. py:class:: PointCloudDataset
+
+   Bases: :py:obj:`torch.utils.data.Dataset`
+
+
+   .. py:method:: atom_types()
+
+      All atom types.
+
+
+
+   .. py:method:: get_item(index)
+
+
+   .. py:method:: get_property(task)
+
+
+   .. py:method:: get_tabasco_stats()
+
+      Get dataset statistics required for TABASCO unconditional sampling.
+
+      :returns:     - max_atoms: Maximum number of atoms in dataset
+                    - num_atom_types: Number of atom types in vocabulary
+                    - atom_count_histogram: Histogram of molecule sizes
+                    - all_smiles: List of all SMILES strings
+      :rtype: Dictionary with
+
+
+
+   .. py:method:: load_csv(csv_file, xyz_dir, xyz_field='xyz', smiles_field='smiles', target_fields=None, atom_vocab=[], node_feature_choice=None, forbidden_atoms=[], null_value=math.nan, verbose=0, allow_unknown=False, use_ohe_feature=True, **kwargs)
+
+      Load the dataset from a csv file.
+
+      :param csv_file: file name
+      :type csv_file: str
+      :param xyz_dir: directory to store XYZ files
+      :type xyz_dir: str
+      :param xyz_field: name of the XYZ column in the table
+      :type xyz_field: str
+      :param smiles_field: name of the SMILES column in the table.
+                           Use ``None`` if there is no SMILES column.
+      :type smiles_field: str, optional
+      :param target_fields: name of target columns in the table.
+                            Default is all columns other than the SMILES column.
+      :type target_fields: list of str, optional
+      :param atom_vocab: atom types
+      :type atom_vocab: list of str, optional
+      :param node_feature_choice: geom features to extract
+      :type node_feature_choice: str, optional
+      :param forbidden_atoms: forbidden atoms
+      :type forbidden_atoms: list of str, optional
+      :param null_value: null value for missing targets
+      :type null_value: str, optional
+      :param verbose: output verbose level
+      :type verbose: int, optional
+      :param \*\*kwargs:
+
+
+
+   .. py:method:: load_db(db_path: str, atom_vocab: List[str] = [], node_feature_choice: Optional[List[str]] = None, target_fields: Optional[List[str]] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], pad_data: bool = False, verbose: int = 0, null_value=math.nan, allow_unknown: bool = False, use_ohe_feature: bool = True, **kwargs: Any)
+
+      Load the dataset from an ASE db file.
+
+      :param db_path: path to ASE db file
+      :type db_path: str
+      :param atom_vocab: atom types
+      :type atom_vocab: list of str, optional
+      :param node_feature_choice: RDKit atom features to extract
+      :type node_feature_choice: list of str, optional
+      :param target_fields: name of target columns in the table.
+      :type target_fields: list of str, optional
+      :param transform: data transformation function
+      :type transform: Callable, optional
+      :param max_atom: maximum number of atoms in a molecule
+      :type max_atom: int, optional
+      :param with_hydrogen: whether to add hydrogen atoms
+      :type with_hydrogen: bool, optional
+      :param forbidden_atoms: forbidden atoms
+      :type forbidden_atoms: list of str, optional
+      :param pad_data: whether to pad data to max_atom)
+      :type pad_data: bool, optional
+      :param verbose: output verbose level
+      :type verbose: int, optional
+      :param null_value: null value for missing context data
+      :type null_value: float, optional
+      :param \*\*kwargs:
+
+
+
+   .. py:method:: load_npy(coords: torch.Tensor, natoms: torch.Tensor, smiles_list: List[str], targets: Dict[str, List[Union[float, int]]], atom_vocab: List[str] = [], node_feature_choice: Optional[str] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], pad_data: bool = False, verbose: int = 0, allow_unknown: bool = False, use_ohe_feature: bool = True, **kwargs: Any)
+
+      Load the dataset from npy and targets.
+
+      :param coords: tensor of coordinates
+      :type coords: tensor
+      :param natoms: tensor of number of atoms
+      :type natoms: tensor
+      :param smiles_list: SMILES strings
+      :type smiles_list: list of str
+      :param targets: prediction targets
+      :type targets: dict of list
+      :param atom_vocab: atom types
+      :type atom_vocab: list of str
+      :param node_feature_choice: geom features to extract
+      :type node_feature_choice: str, optional
+      :param transform: data transformation function
+      :type transform: Callable, optional
+      :param max_atom: maximum number of atoms in a molecule (default: 120)
+      :type max_atom: int, optional
+      :param with_hydrogen: whether to add hydrogen atoms
+      :type with_hydrogen: bool, optional
+      :param forbidden_atoms: forbidden atoms
+      :type forbidden_atoms: list of str, optional
+      :param pad_data: whether to pad data to max_atom
+      :type pad_data: bool, optional
+      :param verbose: output verbose level
+      :type verbose: int, optional
+      :param \*\*kwargs:
+
+
+
+   .. py:method:: load_pickle(pkl_file, verbose=0, cheap_data=False)
+
+      Load the dataset from a pickle file.
+
+      :param pkl_file: file name
+      :type pkl_file: str
+      :param verbose: output verbose level
+      :type verbose: int, optional
+
+
+
+   .. py:method:: load_xyz(xyz_list: List[str], smiles_list: List[str], targets: Dict[str, List[Union[float, int]]], atom_vocab: List[str] = [], node_feature_choice: Optional[str] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], pad_data: bool = False, verbose: int = 0, allow_unknown: bool = False, use_ohe_feature: bool = True, **kwargs: Any)
+
+      Load the dataset from XYZ and targets.
+
+      :param xyz_list: XYZ file names
+      :type xyz_list: list of str
+      :param smiles_list: SMILES strings
+      :type smiles_list: list of str
+      :param targets: prediction targets
+      :type targets: dict of list
+      :param atom_vocab: atom types
+      :type atom_vocab: list of str
+      :param node_feature_choice: geom features to extract
+      :type node_feature_choice: str, optional
+      :param transform: data transformation function
+      :type transform: Callable, optional
+      :param max_atom: maximum number of atoms in a molecule (default: 120)
+      :type max_atom: int, optional
+      :param with_hydrogen: whether to add hydrogen atoms
+      :type with_hydrogen: bool, optional
+      :param pad_data: whether to pad data to max_atom
+      :type pad_data: bool, optional
+      :param forbidden_atoms: forbidden atoms
+      :type forbidden_atoms: list of str, optional
+      :param verbose: output verbose level
+      :type verbose: int, optional
+      :param \*\*kwargs:
+
+
+
+   .. py:method:: save_pickle(pkl_file, verbose=0, cheap_data=False)
+
+      Save the dataset to a pickle file.
+
+      :param pkl_file: file name
+      :type pkl_file: str
+      :param verbose: output verbose level
+      :type verbose: int, optional
+
+
+
+   .. py:property:: num_atom_type
+
+      Number of different atom types.
+
+
+   .. py:property:: num_atoms
+
+      Number of atoms in each molecule.
+
+
+   .. py:property:: tasks
+
+      List of tasks.
+
+
+.. py:data:: BASE_ATOM_VOCAB
+   :value: ['H', 'B', 'C', 'N', 'O', 'F', 'Mg', 'Si', 'P', 'S', 'Cl', 'Cu', 'Zn', 'Ge', 'As', 'Se', 'Br', 'Sn', 'I']
+
+
+.. py:data:: Chem
+   :value: None
+
+
+.. py:data:: hybiridization_map
+
+.. py:data:: logger
+

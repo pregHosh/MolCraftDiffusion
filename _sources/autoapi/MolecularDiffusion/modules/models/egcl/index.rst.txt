@@ -1,0 +1,222 @@
+MolecularDiffusion.modules.models.egcl
+======================================
+
+.. py:module:: MolecularDiffusion.modules.models.egcl
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.egcl.EGNN
+   MolecularDiffusion.modules.models.egcl.EGNN_dynamics
+
+
+Module Contents
+---------------
+
+.. py:class:: EGNN(in_node_nf, hidden_nf, act_fn=nn.SiLU(), in_context_nf=0, n_layers=3, n_mlp_layers=2, attention=False, norm_diff=True, out_node_nf=None, tanh=False, coords_range=15, norm_constant=1, inv_sublayers=2, sin_embedding=False, include_cosine=False, normalization_factor=100, aggregation_method='sum', dropout=0.0, normalization=False, adapter_module=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Equivariant Graph Neural Network (EGNN) module for processing graph-structured data with node features and coordinates.
+
+   This model supports optional context conditioning, sinusoidal embeddings, cosine edge features, and adapter modules for context.
+   It is designed for tasks where equivariance to geometric transformations is important, such as molecular modeling.
+
+   :param in_node_nf: Number of input node features.
+   :type in_node_nf: int
+   :param hidden_nf: Number of hidden features.
+   :type hidden_nf: int
+   :param act_fn: Activation function.
+   :type act_fn: nn.Module
+   :param in_context_nf: Number of context features (for adapter module).
+   :type in_context_nf: int
+   :param n_layers: Number of EGNN layers.
+   :type n_layers: int
+   :param n_mlp_layers: Number of layers in each MLP.
+   :type n_mlp_layers: int
+   :param attention: Whether to use attention in the EGNN blocks.
+   :type attention: bool
+   :param norm_diff: Whether to normalize coordinate differences.
+   :type norm_diff: bool
+   :param out_node_nf: Number of output node features. Defaults to in_node_nf.
+   :type out_node_nf: int, optional
+   :param tanh: Whether to use tanh activation in coordinate updates.
+   :type tanh: bool
+   :param coords_range: Range for coordinate normalization.
+   :type coords_range: float
+   :param norm_constant: Normalization constant for coordinates.
+   :type norm_constant: float
+   :param inv_sublayers: Number of sublayers in each EGNN block.
+   :type inv_sublayers: int
+   :param sin_embedding: Whether to use sinusoidal embedding for edge features.
+   :type sin_embedding: bool
+   :param include_cosine: Whether to include cosine similarity as edge features.
+   :type include_cosine: bool
+   :param normalization_factor: Factor for normalization in aggregation.
+   :type normalization_factor: float
+   :param aggregation_method: Aggregation method ('sum' or 'mean').
+   :type aggregation_method: str
+   :param dropout: Dropout probability.
+   :type dropout: float
+   :param normalization: Whether to use batch normalization in MLPs.
+   :type normalization: bool
+   :param adapter_module: Whether to use adapter modules for context.
+   :type adapter_module: bool
+
+
+   .. py:method:: forward(h, x, edge_index, node_mask=None, edge_mask=None, context=None, use_embed=False)
+
+
+   .. py:attribute:: adapter_module
+      :value: False
+
+
+
+   .. py:attribute:: aggregation_method
+      :value: 'sum'
+
+
+
+   .. py:attribute:: coords_range_layer
+
+
+   .. py:attribute:: embedding
+
+
+   .. py:attribute:: embedding_out
+
+
+   .. py:attribute:: hidden_nf
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: include_cosine
+      :value: False
+
+
+
+   .. py:attribute:: n_layers
+      :value: 3
+
+
+
+   .. py:attribute:: norm_diff
+      :value: True
+
+
+
+   .. py:attribute:: normalization_factor
+      :value: 100
+
+
+
+.. py:class:: EGNN_dynamics(in_node_nf, context_node_nf, n_dims, hidden_nf=64, act_fn=torch.nn.SiLU(), n_layers=4, attention=False, condition_time=True, tanh=False, norm_constant=0, inv_sublayers=2, sin_embedding=False, include_cosine=False, normalization_factor=100, aggregation_method='sum', dropout=0.0, normalization=False, use_adapter_module=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Dynamics model for Equivariant Diffusion Models (EDMs) using EGNNs.
+
+   This class wraps an EGNN to model the time evolution of node features and coordinates, supporting context conditioning, time conditioning, and adapter modules.
+   It is suitable for molecular dynamics, generative modeling, and other tasks requiring equivariant dynamics on graphs.
+
+   :param in_node_nf: Number of input node features per node (including time if used).
+   :type in_node_nf: int
+   :param context_node_nf: Number of context features per node.
+   :type context_node_nf: int
+   :param n_dims: Number of spatial dimensions (e.g., 3 for 3D coordinates).
+   :type n_dims: int
+   :param hidden_nf: Number of hidden features in the EGNN.
+   :type hidden_nf: int
+   :param act_fn: Activation function.
+   :type act_fn: nn.Module
+   :param n_layers: Number of EGNN blocks.
+   :type n_layers: int
+   :param attention: Whether to use attention in the EGNN.
+   :type attention: bool
+   :param condition_time: Whether to condition on time.
+   :type condition_time: bool
+   :param tanh: Whether to use tanh in the EGNN.
+   :type tanh: bool
+   :param norm_constant: Normalization constant for the EGNN.
+   :type norm_constant: float
+   :param inv_sublayers: Number of sublayers in the EGNN.
+   :type inv_sublayers: int
+   :param sin_embedding: Whether to use sinusoidal embedding in the EGNN.
+   :type sin_embedding: bool
+   :param include_cosine: Whether to include cosine as edge features.
+   :type include_cosine: bool
+   :param normalization_factor: Normalization factor for the EGNN.
+   :type normalization_factor: float
+   :param aggregation_method: Aggregation method for the EGNN.
+   :type aggregation_method: str
+   :param dropout: Dropout probability.
+   :type dropout: float
+   :param normalization: Whether to use normalization in the EGNN.
+   :type normalization: bool
+   :param use_adapter_module: Whether to use adapter module for context.
+   :type use_adapter_module: bool
+
+   Dynamics model for EDMs using EGNNs.
+   in_node_nf: int -- number of ALL input features per node (including time)
+   context_node_nf: int -- number of context features per node
+   n_dims: int -- number of dimensions for the output (3)
+   hidden_nf: int -- number of hidden features in the EGNN
+   act_fn: torch.nn.Module -- activation function
+   n_layers: int -- number of EGNN blocks
+   attention: bool -- whether to use attention in the EGNN
+   condition_time: bool -- whether to condition on time
+   tanh: bool -- whether to use tanh in the EGNN
+   norm_constant: float -- normalization constant for the EGNN
+   inv_sublayers: int -- number of layers in the EGNN
+   sin_embedding: bool -- whether to use sin embedding in the EGNN
+   include_cosine: bool -- whether to include cosine along with distance as edge features
+   normalization_factor: float -- normalization factor for the EGNN
+   aggregation_method: str -- aggregation method for the EGNN
+   dropout: float -- dropout probability
+   normalization: bool -- whether to use normalization in the EGNN
+   use_adapter_module: bool -- whether to use adapter module for context
+
+
+   .. py:method:: forward(t, xh, node_mask, edge_mask, context=None)
+      :abstractmethod:
+
+
+
+   .. py:method:: get_adj_matrix(n_nodes, batch_size, device)
+
+
+   .. py:method:: unwrap_forward()
+
+
+   .. py:method:: wrap_forward(node_mask, edge_mask, context)
+
+
+   .. py:attribute:: condition_time
+      :value: True
+
+
+
+   .. py:attribute:: context_node_nf
+
+
+   .. py:attribute:: egnn
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: n_dims
+
+
+   .. py:attribute:: use_adapter_module
+      :value: False
+
+
+

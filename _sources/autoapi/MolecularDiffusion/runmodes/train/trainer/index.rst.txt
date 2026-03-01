@@ -1,0 +1,166 @@
+MolecularDiffusion.runmodes.train.trainer
+=========================================
+
+.. py:module:: MolecularDiffusion.runmodes.train.trainer
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.trainer.OptimSchedulerFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: OptimSchedulerFactory(parameters, optimizer_choice: str = 'adam', lr: float = 0.001, eps: float = 1e-08, weight_decay: float = 0, betas: tuple = (0.9, 0.999), foreach: bool = False, scheduler: str = None, scheduler_kwargs: dict = None, num_epochs: int = None, validation_interval: int = 3, train_set=None, batch_size: int = None, queue_size: int = 100, init_grad_norm: float = 3000, ema_decay: float = 0.9999, gradient_clip_mode: str = 'value', gradient_clip_algorithm: str = 'adaptive', grad_clip_value: float = 1.0, chkpt_path: str = None, output_path: str = None, precision: int | str = 32, save_top_k: int = 3, save_every_val_epoch: bool = False, **kwargs)
+
+   Factory to build optimizer, scheduler, and gradient-norm queue for training.
+
+   Supported optimizers: adam, amsgrad, adamw, radam
+   Supported schedulers: steplr, multisteplr, exponentiarlr, cosineannealing, caws, onecyclelr, reducelronplateau, lambdalr
+
+   Usage:
+       factory = OptimSchedulerFactory(
+           parameters=model.parameters(),
+           optimizer_choice="adam",
+           lr=1e-3,
+           eps=1e-8,
+           weight_decay=0,
+           betas=(0.9,0.999),
+           foreach=False,
+           scheduler="reducelronplateau",
+           scheduler_kwargs={"mode":"min","factor":0.1,"patience":10},
+           num_epochs=100,
+           train_set=train_ds,
+           batch_size=32,
+           queue_size=3000,
+           init_grad_norm=3000,
+       )
+       optimizer = factory.get_optimizer()
+       scheduler = factory.get_scheduler(optimizer)
+       gradnorm_queue = factory.gradnorm_queue
+
+
+   .. py:method:: get_optimizer()
+
+      Return optimizer based on choice and hyperparameters.
+
+
+
+   .. py:method:: get_scheduler()
+
+      Return scheduler based on type and provided kwargs.
+
+
+
+   .. py:attribute:: batch_size
+      :value: None
+
+
+
+   .. py:attribute:: betas
+      :value: (0.9, 0.999)
+
+
+
+   .. py:attribute:: chkpt_path
+      :value: None
+
+
+
+   .. py:attribute:: ema_decay
+      :value: 0.9999
+
+
+
+   .. py:attribute:: eps
+      :value: 1e-08
+
+
+
+   .. py:attribute:: foreach
+      :value: False
+
+
+
+   .. py:attribute:: grad_clip_value
+      :value: 1.0
+
+
+
+   .. py:attribute:: gradient_clip_algorithm
+      :value: 'adaptive'
+
+
+
+   .. py:attribute:: gradient_clip_mode
+      :value: 'value'
+
+
+
+   .. py:attribute:: lr
+      :value: 0.001
+
+
+
+   .. py:attribute:: num_epochs
+      :value: None
+
+
+
+   .. py:attribute:: optimizer_choice
+      :value: ''
+
+
+
+   .. py:attribute:: output_path
+      :value: None
+
+
+
+   .. py:attribute:: parameters
+
+
+   .. py:attribute:: precision
+      :value: 32
+
+
+
+   .. py:attribute:: save_every_val_epoch
+      :value: False
+
+
+
+   .. py:attribute:: save_top_k
+      :value: 3
+
+
+
+   .. py:attribute:: scheduler_choice
+      :value: None
+
+
+
+   .. py:attribute:: scheduler_choice_kwargs
+      :value: None
+
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+   .. py:attribute:: validation_interval
+      :value: 3
+
+
+
+   .. py:attribute:: weight_decay
+      :value: 0
+
+
+
