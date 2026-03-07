@@ -2,7 +2,8 @@
 
 **A unified generative-AI framework for 3D molecular design.**
 
-MolCraftDiffusion streamlines the full pipeline — from training diffusion models to deploying them in data-driven computational chemistry workflows.
+MolCraftDiffusion is a framework for **3D molecular generation using diffusion models**
+for **data-driven molecular design and computational chemistry**.
 
 ![Workflow overview](../images/overview.png)
 
