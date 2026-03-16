@@ -406,7 +406,7 @@ Exposes data preparation, augmentation, and ASE operations via CLI commands.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.data.generate_blocks_cmd" title="MolecularDiffusion.cli.data.generate_blocks_cmd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_blocks_cmd</span></code></a>(source, sdf, natoms, csv, ...)</p></td>
 <td><p>Generate Mol Blocks, SMILES, and properties (SA, SC).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.data.inspect_cmd" title="MolecularDiffusion.cli.data.inspect_cmd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect_cmd</span></code></a>(db, output, keys, limit)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.data.inspect_cmd" title="MolecularDiffusion.cli.data.inspect_cmd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect_cmd</span></code></a>(db, output, keys, sample_size, limit)</p></td>
 <td><p>Inspect an ASE database and optionally plot statistics.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.data.merge_cmd" title="MolecularDiffusion.cli.data.merge_cmd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge_cmd</span></code></a>(input, output, recursive)</p></td>
@@ -415,13 +415,16 @@ Exposes data preparation, augmentation, and ASE operations via CLI commands.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.data.prepare" title="MolecularDiffusion.cli.data.prepare"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepare</span></code></a>()</p></td>
 <td><p>Data preparation commands.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.data.sample_cmd" title="MolecularDiffusion.cli.data.sample_cmd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_cmd</span></code></a>(input, output, fraction, number, seed, verify)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.data.rename_cmd" title="MolecularDiffusion.cli.data.rename_cmd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rename_cmd</span></code></a>(db, old, new)</p></td>
+<td><p>Rename a row attribute in an ASE database.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.data.sample_cmd" title="MolecularDiffusion.cli.data.sample_cmd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_cmd</span></code></a>(input, output, fmt, fraction, number, seed, ...)</p></td>
 <td><p>Sample entries from an ASE database.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.data.size_cmd" title="MolecularDiffusion.cli.data.size_cmd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size_cmd</span></code></a>(input, output, s_start, t_start, s_end, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.data.size_cmd" title="MolecularDiffusion.cli.data.size_cmd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size_cmd</span></code></a>(input, output, s_start, t_start, s_end, ...)</p></td>
 <td><p>Augment data to balance molecule sizes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.data.split_cmd" title="MolecularDiffusion.cli.data.split_cmd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split_cmd</span></code></a>(db, output, n)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.data.split_cmd" title="MolecularDiffusion.cli.data.split_cmd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split_cmd</span></code></a>(db, output, n)</p></td>
 <td><p>Split an ASE database.</p></td>
 </tr>
 </tbody>
@@ -498,7 +501,7 @@ Exposes data preparation, augmentation, and ASE operations via CLI commands.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.cli.data.inspect_cmd">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.data.</span></span><span class="sig-name descname"><span class="pre">inspect_cmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.data.inspect_cmd" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.data.</span></span><span class="sig-name descname"><span class="pre">inspect_cmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.data.inspect_cmd" title="Link to this definition">¶</a></dt>
 <dd><p>Inspect an ASE database and optionally plot statistics.</p>
 </dd></dl>
 
@@ -515,9 +518,21 @@ Exposes data preparation, augmentation, and ASE operations via CLI commands.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.cli.data.rename_cmd">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.data.</span></span><span class="sig-name descname"><span class="pre">rename_cmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.data.rename_cmd" title="Link to this definition">¶</a></dt>
+<dd><p>Rename a row attribute in an ASE database.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.cli.data.sample_cmd">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.data.</span></span><span class="sig-name descname"><span class="pre">sample_cmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.data.sample_cmd" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.data.</span></span><span class="sig-name descname"><span class="pre">sample_cmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.data.sample_cmd" title="Link to this definition">¶</a></dt>
 <dd><p>Sample entries from an ASE database.</p>
+<p>Output formats:</p>
+<blockquote>
+<div><p>db  – write a new ASE SQLite database (default)</p>
+<p>xyz – write one XYZ file per molecule into OUTPUT directory</p>
+<p>npy – write positions.npy / numbers.npy / natoms.npy into OUTPUT directory</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py function">
@@ -633,6 +648,7 @@ Exposes data preparation, augmentation, and ASE operations via CLI commands.</p>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.data.inspect_cmd"><code class="docutils literal notranslate"><span class="pre">inspect_cmd()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.data.merge_cmd"><code class="docutils literal notranslate"><span class="pre">merge_cmd()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.data.prepare"><code class="docutils literal notranslate"><span class="pre">prepare()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.cli.data.rename_cmd"><code class="docutils literal notranslate"><span class="pre">rename_cmd()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.data.sample_cmd"><code class="docutils literal notranslate"><span class="pre">sample_cmd()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.data.size_cmd"><code class="docutils literal notranslate"><span class="pre">size_cmd()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.data.split_cmd"><code class="docutils literal notranslate"><span class="pre">split_cmd()</span></code></a></li>

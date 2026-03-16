@@ -19,6 +19,7 @@ Attributes
 .. autoapisummary::
 
    MolecularDiffusion.runmodes.analyze.xtb_electronic.ATOMIC_LEVEL_GROUPS
+   MolecularDiffusion.runmodes.analyze.xtb_electronic.HARTREE_TO_EV
    MolecularDiffusion.runmodes.analyze.xtb_electronic.MOLECULAR_LEVEL_GROUPS
    MolecularDiffusion.runmodes.analyze.xtb_electronic.PROPERTY_GROUPS
    MolecularDiffusion.runmodes.analyze.xtb_electronic.logger
@@ -71,6 +72,10 @@ Module Contents
 
 
 .. py:data:: ATOMIC_LEVEL_GROUPS
+
+.. py:data:: HARTREE_TO_EV
+   :value: 27.211386245988
+
 
 .. py:data:: MOLECULAR_LEVEL_GROUPS
 

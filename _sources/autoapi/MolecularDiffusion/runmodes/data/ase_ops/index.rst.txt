@@ -27,6 +27,7 @@ Functions
    MolecularDiffusion.runmodes.data.ase_ops.inspect_db
    MolecularDiffusion.runmodes.data.ase_ops.is_clean
    MolecularDiffusion.runmodes.data.ase_ops.merge_dbs
+   MolecularDiffusion.runmodes.data.ase_ops.rename_db_attribute
    MolecularDiffusion.runmodes.data.ase_ops.sample_db
    MolecularDiffusion.runmodes.data.ase_ops.split_db
    MolecularDiffusion.runmodes.data.ase_ops.verify_datapoint
@@ -35,7 +36,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: inspect_db(db_path: pathlib.Path, output_dir: pathlib.Path = None, keys_to_plot: List[str] = None, limit_print: int = 10)
+.. py:function:: inspect_db(db_path: pathlib.Path, output_dir: pathlib.Path = None, keys_to_plot: List[str] = None, sample_size: int = 5000, limit_print: int = 10)
 
    Inspects an ASE DB, printing stats and optionally plotting distributions.
 
@@ -50,9 +51,22 @@ Module Contents
    Merges multiple ASE databases into one.
 
 
-.. py:function:: sample_db(input_db: pathlib.Path, output: pathlib.Path, output_type: str = None, fraction: float = None, number: int = None, seed: int = None, verify_clean: bool = False)
+.. py:function:: rename_db_attribute(db_path: pathlib.Path, old_name: str, new_name: str)
+
+   Renames a data attribute for all rows in an ASE database.
+
+
+.. py:function:: sample_db(input_db: pathlib.Path, output: pathlib.Path, output_type: str = 'db', fraction: float = None, number: int = None, seed: int = None, verify_clean: bool = False)
 
    Samples a random fraction or number of entries from an ASE database.
+
+   output_type:
+       'db'  – write to an ASE SQLite database (default)
+       'xyz' – write one XYZ file per molecule into the output directory
+       'npy' – write positions.npy (M,N,3), numbers.npy (M,N), and
+               natoms.npy (M,) arrays into the output directory, where
+               M is the number of sampled entries and N is padded to the
+               maximum atom count in the sample.
 
 
 .. py:function:: split_db(db_path: pathlib.Path, output_dir: pathlib.Path, n_splits: int = 2)

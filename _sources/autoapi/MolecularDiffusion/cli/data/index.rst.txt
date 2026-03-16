@@ -43,6 +43,7 @@ Functions
    MolecularDiffusion.cli.data.inspect_cmd
    MolecularDiffusion.cli.data.merge_cmd
    MolecularDiffusion.cli.data.prepare
+   MolecularDiffusion.cli.data.rename_cmd
    MolecularDiffusion.cli.data.sample_cmd
    MolecularDiffusion.cli.data.size_cmd
    MolecularDiffusion.cli.data.split_cmd
@@ -107,7 +108,7 @@ Module Contents
    Generate Mol Blocks, SMILES, and properties (SA, SC).
 
 
-.. py:function:: inspect_cmd(db, output, keys, limit)
+.. py:function:: inspect_cmd(db, output, keys, sample_size, limit)
 
    Inspect an ASE database and optionally plot statistics.
 
@@ -122,9 +123,22 @@ Module Contents
    Data preparation commands.
 
 
-.. py:function:: sample_cmd(input, output, fraction, number, seed, verify)
+.. py:function:: rename_cmd(db, old, new)
+
+   Rename a row attribute in an ASE database.
+
+
+.. py:function:: sample_cmd(input, output, fmt, fraction, number, seed, verify)
 
    Sample entries from an ASE database.
+
+   Output formats:
+
+     db  – write a new ASE SQLite database (default)
+
+     xyz – write one XYZ file per molecule into OUTPUT directory
+
+     npy – write positions.npy / numbers.npy / natoms.npy into OUTPUT directory
 
 
 .. py:function:: size_cmd(input, output, s_start, t_start, s_end, t_end, strength, decay, invert, plot_prefix)

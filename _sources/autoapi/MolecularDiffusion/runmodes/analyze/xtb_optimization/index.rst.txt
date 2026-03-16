@@ -20,6 +20,7 @@ Functions
    MolecularDiffusion.runmodes.analyze.xtb_optimization.check_neutrality
    MolecularDiffusion.runmodes.analyze.xtb_optimization.check_xyz
    MolecularDiffusion.runmodes.analyze.xtb_optimization.get_xtb_optimized_xyz
+   MolecularDiffusion.runmodes.analyze.xtb_optimization.optimize_ase_db
    MolecularDiffusion.runmodes.analyze.xtb_optimization.optimize_molecule
 
 
@@ -112,6 +113,29 @@ Module Contents
 
    :returns: A list of paths to the successfully optimized XYZ files.
    :rtype: list[str]
+
+
+.. py:function:: optimize_ase_db(input_db_path: str, output_db_path: str, charge: int = -1, level: str = 'gfn1', timeout: int = 240, scale_factor: float = 1.3, inherit_attributes: bool = True) -> int
+
+   Optimizes all structures in an ASE database row by row.
+
+   :param input_db_path: Path to the input ASE database (.db).
+   :type input_db_path: str
+   :param output_db_path: Path to the output ASE database (.db).
+   :type output_db_path: str
+   :param charge: Molecular charge for optimization.
+   :type charge: int
+   :param level: Optimization level ('gfn1', 'gfn2', 'gfn-ff', 'mmff94').
+   :type level: str
+   :param timeout: Timeout per molecule in seconds.
+   :type timeout: int
+   :param scale_factor: Scaling factor for covalent radii.
+   :type scale_factor: float
+   :param inherit_attributes: Whether to inherit row attributes (kvp and data).
+   :type inherit_attributes: bool
+
+   :returns: Number of successfully optimized rows.
+   :rtype: int
 
 
 .. py:function:: optimize_molecule(filename: str, charge: int, level: str, timeout: int) -> str | None
