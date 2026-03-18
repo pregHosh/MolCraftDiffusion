@@ -8,40 +8,34 @@
 ## Step-by-step
 
 ```bash
-# Create and activate a new environment
-conda create -n moleculardiffusion python=3.11 -c defaults
-conda activate moleculardiffusion
+# 1. Create and activate a new environment
+conda create -n molcraft python=3.11 -y
+conda activate molcraft
 
-# Install PyTorch (adjust CUDA version for your system)
-# https://pytorch.org/get-started/
-pip install torch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0 \
-    --index-url https://download.pytorch.org/whl/cu124
+# 2. Install conda-only tools (xtb, openbabel)
+conda install -c conda-forge xtb==6.7.1 openbabel -y
 
-# Install PyTorch Geometric
-# https://pytorch-geometric.readthedocs.io/
-pip install torch_geometric
+# 3. Install MolCraftDiffusion with PyTorch + PyG + sparse extensions
+pip install molcraftdiffusion[gpu] \
+    --find-links https://data.pyg.org/whl/torch-2.6.0+cu124.html
 
-# Optional PyG extensions
-pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv \
-    -f https://data.pyg.org/whl/torch-2.4.0+cu124.html
+# or CPU-only:
+pip install molcraftdiffusion[cpu] \
+    --extra-index-url https://download.pytorch.org/whl/cpu \
+    --find-links https://data.pyg.org/whl/torch-2.6.0+cpu.html
 
-# System-level chemistry tools
-conda install conda-forge::openbabel
-conda install xtb==6.7.1
+# Optional: xyz-to-SMILES conversion via cell2mol
+pip install molcraftdiffusion[cell2mol]
+```
 
-# Python dependencies
-pip install fire seaborn decorator numpy scipy rdkit-pypi posebusters==0.5.1 \
-    networkx matplotlib pandas scikit-learn tqdm pyyaml omegaconf ase \
-    morfeus-ml wandb rmsd
+### Development / editable install
 
-pip install hydra-core==1.* hydra-colorlog rootutils
-
-# Install cell2mol
-git clone https://github.com/lcmd-epfl/cell2mol
-cd cell2mol && python setup.py install && cd .. && rm -rf cell2mol
-
-# Install MolCraftDiffusion in editable mode (makes MolCraftDiff CLI available)
-pip install -e .
+```bash
+git clone https://github.com/pregHosh/MolCraftDiffusion
+cd MolCraftDiffusion
+conda install -c conda-forge xtb==6.7.1 openbabel -y
+pip install -e .[gpu] \
+    --find-links https://data.pyg.org/whl/torch-2.6.0+cu124.html
 ```
 
 ## Optional dependencies

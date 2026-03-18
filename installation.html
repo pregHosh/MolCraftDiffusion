@@ -357,42 +357,36 @@
 </section>
 <section id="step-by-step">
 <h2>Step-by-step<a class="headerlink" href="#step-by-step" title="Link to this heading">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create and activate a new environment</span>
-conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>moleculardiffusion<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.11<span class="w"> </span>-c<span class="w"> </span>defaults
-conda<span class="w"> </span>activate<span class="w"> </span>moleculardiffusion
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. Create and activate a new environment</span>
+conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>molcraft<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.11<span class="w"> </span>-y
+conda<span class="w"> </span>activate<span class="w"> </span>molcraft
 
-<span class="c1"># Install PyTorch (adjust CUDA version for your system)</span>
-<span class="c1"># https://pytorch.org/get-started/</span>
-pip<span class="w"> </span>install<span class="w"> </span><span class="nv">torch</span><span class="o">==</span><span class="m">2</span>.4.0<span class="w"> </span><span class="nv">torchvision</span><span class="o">==</span><span class="m">0</span>.19.0<span class="w"> </span><span class="nv">torchaudio</span><span class="o">==</span><span class="m">2</span>.4.0<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/cu124
+<span class="c1"># 2. Install conda-only tools (xtb, openbabel)</span>
+conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="nv">xtb</span><span class="o">==</span><span class="m">6</span>.7.1<span class="w"> </span>openbabel<span class="w"> </span>-y
 
-<span class="c1"># Install PyTorch Geometric</span>
-<span class="c1"># https://pytorch-geometric.readthedocs.io/</span>
-pip<span class="w"> </span>install<span class="w"> </span>torch_geometric
+<span class="c1"># 3. Install MolCraftDiffusion with PyTorch + PyG + sparse extensions</span>
+pip<span class="w"> </span>install<span class="w"> </span>molcraftdiffusion<span class="o">[</span>gpu<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--find-links<span class="w"> </span>https://data.pyg.org/whl/torch-2.6.0+cu124.html
 
-<span class="c1"># Optional PyG extensions</span>
-pip<span class="w"> </span>install<span class="w"> </span>pyg_lib<span class="w"> </span>torch_scatter<span class="w"> </span>torch_sparse<span class="w"> </span>torch_cluster<span class="w"> </span>torch_spline_conv<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>-f<span class="w"> </span>https://data.pyg.org/whl/torch-2.4.0+cu124.html
+<span class="c1"># or CPU-only:</span>
+pip<span class="w"> </span>install<span class="w"> </span>molcraftdiffusion<span class="o">[</span>cpu<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--extra-index-url<span class="w"> </span>https://download.pytorch.org/whl/cpu<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--find-links<span class="w"> </span>https://data.pyg.org/whl/torch-2.6.0+cpu.html
 
-<span class="c1"># System-level chemistry tools</span>
-conda<span class="w"> </span>install<span class="w"> </span>conda-forge::openbabel
-conda<span class="w"> </span>install<span class="w"> </span><span class="nv">xtb</span><span class="o">==</span><span class="m">6</span>.7.1
-
-<span class="c1"># Python dependencies</span>
-pip<span class="w"> </span>install<span class="w"> </span>fire<span class="w"> </span>seaborn<span class="w"> </span>decorator<span class="w"> </span>numpy<span class="w"> </span>scipy<span class="w"> </span>rdkit-pypi<span class="w"> </span><span class="nv">posebusters</span><span class="o">==</span><span class="m">0</span>.5.1<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>networkx<span class="w"> </span>matplotlib<span class="w"> </span>pandas<span class="w"> </span>scikit-learn<span class="w"> </span>tqdm<span class="w"> </span>pyyaml<span class="w"> </span>omegaconf<span class="w"> </span>ase<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>morfeus-ml<span class="w"> </span>wandb<span class="w"> </span>rmsd
-
-pip<span class="w"> </span>install<span class="w"> </span>hydra-core<span class="o">==</span><span class="m">1</span>.*<span class="w"> </span>hydra-colorlog<span class="w"> </span>rootutils
-
-<span class="c1"># Install cell2mol</span>
-git<span class="w"> </span>clone<span class="w"> </span>https://github.com/lcmd-epfl/cell2mol
-<span class="nb">cd</span><span class="w"> </span>cell2mol<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>python<span class="w"> </span>setup.py<span class="w"> </span>install<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>..<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>cell2mol
-
-<span class="c1"># Install MolCraftDiffusion in editable mode (makes MolCraftDiff CLI available)</span>
-pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+<span class="c1"># Optional: xyz-to-SMILES conversion via cell2mol</span>
+pip<span class="w"> </span>install<span class="w"> </span>molcraftdiffusion<span class="o">[</span>cell2mol<span class="o">]</span>
 </pre></div>
 </div>
+<section id="development-editable-install">
+<h3>Development / editable install<a class="headerlink" href="#development-editable-install" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/pregHosh/MolCraftDiffusion
+<span class="nb">cd</span><span class="w"> </span>MolCraftDiffusion
+conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="nv">xtb</span><span class="o">==</span><span class="m">6</span>.7.1<span class="w"> </span>openbabel<span class="w"> </span>-y
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>gpu<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--find-links<span class="w"> </span>https://data.pyg.org/whl/torch-2.6.0+cu124.html
+</pre></div>
+</div>
+</section>
 </section>
 <section id="optional-dependencies">
 <h2>Optional dependencies<a class="headerlink" href="#optional-dependencies" title="Link to this heading">¶</a></h2>
@@ -489,7 +483,10 @@ We recommend starting from these for any downstream application.</p>
             <ul>
 <li><a class="reference internal" href="#">Installation</a><ul>
 <li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
-<li><a class="reference internal" href="#step-by-step">Step-by-step</a></li>
+<li><a class="reference internal" href="#step-by-step">Step-by-step</a><ul>
+<li><a class="reference internal" href="#development-editable-install">Development / editable install</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#optional-dependencies">Optional dependencies</a></li>
 <li><a class="reference internal" href="#verifying-the-installation">Verifying the installation</a></li>
 <li><a class="reference internal" href="#pre-trained-models">Pre-trained models</a></li>

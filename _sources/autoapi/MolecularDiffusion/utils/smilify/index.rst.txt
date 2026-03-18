@@ -12,6 +12,7 @@ Attributes
    MolecularDiffusion.utils.smilify.TIMEOUT
    MolecularDiffusion.utils.smilify.bond_dict
    MolecularDiffusion.utils.smilify.lg
+   MolecularDiffusion.utils.smilify.xyz2mol
 
 
 Exceptions
@@ -134,4 +135,8 @@ Module Contents
 .. py:data:: bond_dict
 
 .. py:data:: lg
+
+.. py:data:: xyz2mol
+   :value: None
+
 
