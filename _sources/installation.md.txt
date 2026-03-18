@@ -25,7 +25,8 @@ pip install molcraftdiffusion[cpu] \
     --find-links https://data.pyg.org/whl/torch-2.6.0+cpu.html
 
 # Optional: xyz-to-SMILES conversion via cell2mol
-pip install molcraftdiffusion[cell2mol]
+git clone https://github.com/lcmd-epfl/cell2mol
+cd cell2mol && python setup.py install && cd .. && rm -rf cell2mol
 ```
 
 ### Development / editable install

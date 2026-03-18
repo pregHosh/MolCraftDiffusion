@@ -374,7 +374,8 @@ pip<span class="w"> </span>install<span class="w"> </span>molcraftdiffusion<span
 <span class="w">    </span>--find-links<span class="w"> </span>https://data.pyg.org/whl/torch-2.6.0+cpu.html
 
 <span class="c1"># Optional: xyz-to-SMILES conversion via cell2mol</span>
-pip<span class="w"> </span>install<span class="w"> </span>molcraftdiffusion<span class="o">[</span>cell2mol<span class="o">]</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/lcmd-epfl/cell2mol
+<span class="nb">cd</span><span class="w"> </span>cell2mol<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>python<span class="w"> </span>setup.py<span class="w"> </span>install<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>..<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>cell2mol
 </pre></div>
 </div>
 <section id="development-editable-install">
