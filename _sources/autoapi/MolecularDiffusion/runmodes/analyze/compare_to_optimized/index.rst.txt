@@ -11,7 +11,7 @@ MolecularDiffusion.runmodes.analyze.compare_to_optimized
    Features:
    - Validates connectivity (skip disjoint graphs)
    - Computes RMSD and Energy difference (via xTB)
-   - Computes Bond Length, Angle, and Torsion differences (via OpenBabel/cell2mol)
+   - Computes Bond Length, Angle, and Torsion differences (via OpenBabel/xyz2mol)
 
 
 
@@ -32,7 +32,7 @@ Functions
    MolecularDiffusion.runmodes.analyze.compare_to_optimized.compute_coord_rmsd
    MolecularDiffusion.runmodes.analyze.compare_to_optimized.get_xtb_energy
    MolecularDiffusion.runmodes.analyze.compare_to_optimized.run_compare_analysis
-   MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_cell2mol
+   MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_converter
    MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_openbabel
 
 
@@ -56,9 +56,9 @@ Module Contents
 
 .. py:function:: run_compare_analysis(args: argparse.Namespace)
 
-.. py:function:: xyz2mol_cell2mol(xyz_file: str, timeout: int = 10) -> Optional[rdkit.Chem.Mol]
+.. py:function:: xyz2mol_converter(xyz_file: str, timeout: int = 10) -> Optional[rdkit.Chem.Mol]
 
-   Convert XYZ to RDKit Mol using cell2mol logic.
+   Convert XYZ to RDKit Mol using xyz2mol logic.
 
 
 .. py:function:: xyz2mol_openbabel(xyz_file: str) -> Optional[rdkit.Chem.Mol]

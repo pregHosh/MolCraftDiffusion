@@ -1,0 +1,50 @@
+MolecularDiffusion.utils.xyz2mol.elements
+=========================================
+
+.. py:module:: MolecularDiffusion.utils.xyz2mol.elements
+
+.. autoapi-nested-parse::
+
+   Element data for XYZ-to-mol conversion.
+
+   Trimmed from the original ElementData class to include only the properties
+   used by the converter and featurizer modules:
+     elementnr, elementsym, valenceelectrons, elementperiod,
+     elementgroup, elementblock, ElectroNegativityPauling
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.xyz2mol.elements.ElementData
+
+
+Module Contents
+---------------
+
+.. py:class:: ElementData
+
+   .. py:attribute:: ElectroNegativityPauling
+
+
+   .. py:attribute:: elementblock
+
+
+   .. py:attribute:: elementgroup
+
+
+   .. py:attribute:: elementnr
+
+
+   .. py:attribute:: elementperiod
+
+
+   .. py:attribute:: elementsym
+
+
+   .. py:attribute:: valenceelectrons
+
+

@@ -298,6 +298,11 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../utils/sascore/index.html">MolecularDiffusion.utils.sascore</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../utils/smilify/index.html">MolecularDiffusion.utils.smilify</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../utils/torch/index.html">MolecularDiffusion.utils.torch</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../utils/xyz2mol/index.html">MolecularDiffusion.utils.xyz2mol</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.xyz2mol" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../utils/xyz2mol/converter/index.html">MolecularDiffusion.utils.xyz2mol.converter</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../utils/xyz2mol/elements/index.html">MolecularDiffusion.utils.xyz2mol.elements</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -364,9 +369,6 @@ Handles conversion of molecular data to ASE databases, annotation, and mol block
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.preparation.logger" title="MolecularDiffusion.runmodes.data.preparation.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.preparation.xyz2mol" title="MolecularDiffusion.runmodes.data.preparation.xyz2mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz2mol</span></code></a></p></td>
-<td><p></p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -409,13 +411,13 @@ Handles conversion of molecular data to ASE databases, annotation, and mol block
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.preparation.read_fragment_scores" title="MolecularDiffusion.runmodes.data.preparation.read_fragment_scores"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_fragment_scores</span></code></a>([name])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.preparation.smilify_cell2mol" title="MolecularDiffusion.runmodes.data.preparation.smilify_cell2mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilify_cell2mol</span></code></a>(filename[, total_charge, timeout])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.preparation.smilify_openbabel" title="MolecularDiffusion.runmodes.data.preparation.smilify_openbabel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilify_openbabel</span></code></a>(filename[, total_charge, timeout])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.preparation.smilify_openbabel" title="MolecularDiffusion.runmodes.data.preparation.smilify_openbabel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilify_openbabel</span></code></a>(filename[, total_charge, timeout])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.preparation.smilify_structure" title="MolecularDiffusion.runmodes.data.preparation.smilify_structure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilify_structure</span></code></a>(filename[, total_charge, timeout, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.preparation.smilify_structure" title="MolecularDiffusion.runmodes.data.preparation.smilify_structure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilify_structure</span></code></a>(filename[, total_charge, timeout, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.preparation.smilify_xyz2mol" title="MolecularDiffusion.runmodes.data.preparation.smilify_xyz2mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilify_xyz2mol</span></code></a>(filename[, total_charge, timeout])</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -492,11 +494,6 @@ Favors package-relative path, but falls back to local source path if not found.<
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.runmodes.data.preparation.smilify_cell2mol">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.data.preparation.</span></span><span class="sig-name descname"><span class="pre">smilify_cell2mol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.runmodes.data.preparation.smilify_cell2mol" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.runmodes.data.preparation.smilify_openbabel">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.data.preparation.</span></span><span class="sig-name descname"><span class="pre">smilify_openbabel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.runmodes.data.preparation.smilify_openbabel" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -504,6 +501,11 @@ Favors package-relative path, but falls back to local source path if not found.<
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.runmodes.data.preparation.smilify_structure">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.data.preparation.</span></span><span class="sig-name descname"><span class="pre">smilify_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hybrid'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.runmodes.data.preparation.smilify_structure" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.runmodes.data.preparation.smilify_xyz2mol">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.data.preparation.</span></span><span class="sig-name descname"><span class="pre">smilify_xyz2mol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.runmodes.data.preparation.smilify_xyz2mol" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
@@ -519,11 +521,6 @@ Favors package-relative path, but falls back to local source path if not found.<
 <dl class="py data">
 <dt class="sig sig-object py" id="MolecularDiffusion.runmodes.data.preparation.logger">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.data.preparation.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.data.preparation.logger" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="MolecularDiffusion.runmodes.data.preparation.xyz2mol">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.data.preparation.</span></span><span class="sig-name descname"><span class="pre">xyz2mol</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.data.preparation.xyz2mol" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
@@ -598,13 +595,12 @@ Favors package-relative path, but falls back to local source path if not found.<
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.data.preparation.get_scscore_model"><code class="docutils literal notranslate"><span class="pre">get_scscore_model()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.data.preparation.iter_files"><code class="docutils literal notranslate"><span class="pre">iter_files()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.data.preparation.read_fragment_scores"><code class="docutils literal notranslate"><span class="pre">read_fragment_scores()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.runmodes.data.preparation.smilify_cell2mol"><code class="docutils literal notranslate"><span class="pre">smilify_cell2mol()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.data.preparation.smilify_openbabel"><code class="docutils literal notranslate"><span class="pre">smilify_openbabel()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.data.preparation.smilify_structure"><code class="docutils literal notranslate"><span class="pre">smilify_structure()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.runmodes.data.preparation.smilify_xyz2mol"><code class="docutils literal notranslate"><span class="pre">smilify_xyz2mol()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.data.preparation.Chem"><code class="docutils literal notranslate"><span class="pre">Chem</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.data.preparation.Molecule"><code class="docutils literal notranslate"><span class="pre">Molecule</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.data.preparation.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.runmodes.data.preparation.xyz2mol"><code class="docutils literal notranslate"><span class="pre">xyz2mol</span></code></a></li>
 </ul>
 </li>
 </ul>

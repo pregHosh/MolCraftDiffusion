@@ -12,7 +12,6 @@ Attributes
    MolecularDiffusion.utils.smilify.TIMEOUT
    MolecularDiffusion.utils.smilify.bond_dict
    MolecularDiffusion.utils.smilify.lg
-   MolecularDiffusion.utils.smilify.xyz2mol
 
 
 Exceptions
@@ -45,8 +44,8 @@ Functions
    MolecularDiffusion.utils.smilify.simple_idx_match_check
    MolecularDiffusion.utils.smilify.simple_idx_match_check
    MolecularDiffusion.utils.smilify.smilfy_xtb
-   MolecularDiffusion.utils.smilify.smilify_cell2mol
    MolecularDiffusion.utils.smilify.smilify_openbabel
+   MolecularDiffusion.utils.smilify.smilify_xyz2mol
 
 
 Module Contents
@@ -121,12 +120,12 @@ Module Contents
 
 
 
-.. py:function:: smilify_cell2mol(filename, z=None, coordinates=None, timeout=30, total_charge=0)
-
-   Convert XYZ to mol using cell2mol with optional timeout.
-
-
 .. py:function:: smilify_openbabel(filename)
+
+.. py:function:: smilify_xyz2mol(filename, z=None, coordinates=None, timeout=30, total_charge=0)
+
+   Convert XYZ to mol using xyz2mol with optional timeout.
+
 
 .. py:data:: TIMEOUT
    :value: 300
@@ -135,8 +134,4 @@ Module Contents
 .. py:data:: bond_dict
 
 .. py:data:: lg
-
-.. py:data:: xyz2mol
-   :value: None
-
 

@@ -1,0 +1,21 @@
+MolecularDiffusion.utils.xyz2mol
+================================
+
+.. py:module:: MolecularDiffusion.utils.xyz2mol
+
+.. autoapi-nested-parse::
+
+   Vendored XYZ-to-mol conversion utilities.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/utils/xyz2mol/converter/index
+   /autoapi/MolecularDiffusion/utils/xyz2mol/elements/index
+
+

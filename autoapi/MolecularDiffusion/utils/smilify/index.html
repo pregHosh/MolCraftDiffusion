@@ -298,6 +298,11 @@
 <li class="toctree-l4"><a class="reference internal" href="../sascore/index.html">MolecularDiffusion.utils.sascore</a></li>
 <li class="toctree-l4 current current-page"><a class="current reference internal" href="#">MolecularDiffusion.utils.smilify</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../torch/index.html">MolecularDiffusion.utils.torch</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../xyz2mol/index.html">MolecularDiffusion.utils.xyz2mol</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.xyz2mol" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../xyz2mol/converter/index.html">MolecularDiffusion.utils.xyz2mol.converter</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../xyz2mol/elements/index.html">MolecularDiffusion.utils.xyz2mol.elements</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -362,9 +367,6 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.smilify.lg" title="MolecularDiffusion.utils.smilify.lg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lg</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.smilify.xyz2mol" title="MolecularDiffusion.utils.smilify.xyz2mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz2mol</span></code></a></p></td>
-<td><p></p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -425,11 +427,11 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.smilify.smilfy_xtb" title="MolecularDiffusion.utils.smilify.smilfy_xtb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilfy_xtb</span></code></a>(filename)</p></td>
 <td><p>Assume neutral molecule</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.smilify.smilify_cell2mol" title="MolecularDiffusion.utils.smilify.smilify_cell2mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilify_cell2mol</span></code></a>(filename[, z, coordinates, timeout, ...])</p></td>
-<td><p>Convert XYZ to mol using cell2mol with optional timeout.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.smilify.smilify_openbabel" title="MolecularDiffusion.utils.smilify.smilify_openbabel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilify_openbabel</span></code></a>(filename)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.smilify.smilify_openbabel" title="MolecularDiffusion.utils.smilify.smilify_openbabel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilify_openbabel</span></code></a>(filename)</p></td>
 <td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.smilify.smilify_xyz2mol" title="MolecularDiffusion.utils.smilify.smilify_xyz2mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilify_xyz2mol</span></code></a>(filename[, z, coordinates, timeout, ...])</p></td>
+<td><p>Convert XYZ to mol using xyz2mol with optional timeout.</p></td>
 </tr>
 </tbody>
 </table>
@@ -534,15 +536,15 @@ If fails, change charge to +1 (there could be a better method to detect charge a
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.smilify.smilify_cell2mol">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.smilify.</span></span><span class="sig-name descname"><span class="pre">smilify_cell2mol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.smilify.smilify_cell2mol" title="Link to this definition">¶</a></dt>
-<dd><p>Convert XYZ to mol using cell2mol with optional timeout.</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.smilify.smilify_openbabel">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.smilify.</span></span><span class="sig-name descname"><span class="pre">smilify_openbabel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.smilify.smilify_openbabel" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.smilify.smilify_xyz2mol">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.smilify.</span></span><span class="sig-name descname"><span class="pre">smilify_xyz2mol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.smilify.smilify_xyz2mol" title="Link to this definition">¶</a></dt>
+<dd><p>Convert XYZ to mol using xyz2mol with optional timeout.</p>
+</dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.smilify.TIMEOUT">
@@ -557,11 +559,6 @@ If fails, change charge to +1 (there could be a better method to detect charge a
 <dl class="py data">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.smilify.lg">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.smilify.</span></span><span class="sig-name descname"><span class="pre">lg</span></span><a class="headerlink" href="#MolecularDiffusion.utils.smilify.lg" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.smilify.xyz2mol">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.smilify.</span></span><span class="sig-name descname"><span class="pre">xyz2mol</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.utils.smilify.xyz2mol" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
@@ -664,12 +661,11 @@ If fails, change charge to +1 (there could be a better method to detect charge a
 <li><a class="reference internal" href="#MolecularDiffusion.utils.smilify.simple_idx_match_check"><code class="docutils literal notranslate"><span class="pre">simple_idx_match_check()</span></code></a></li>
 <li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">simple_idx_match_check()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.smilify.smilfy_xtb"><code class="docutils literal notranslate"><span class="pre">smilfy_xtb()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.smilify.smilify_cell2mol"><code class="docutils literal notranslate"><span class="pre">smilify_cell2mol()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.smilify.smilify_openbabel"><code class="docutils literal notranslate"><span class="pre">smilify_openbabel()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.smilify.smilify_xyz2mol"><code class="docutils literal notranslate"><span class="pre">smilify_xyz2mol()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.smilify.TIMEOUT"><code class="docutils literal notranslate"><span class="pre">TIMEOUT</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.smilify.bond_dict"><code class="docutils literal notranslate"><span class="pre">bond_dict</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.smilify.lg"><code class="docutils literal notranslate"><span class="pre">lg</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.smilify.xyz2mol"><code class="docutils literal notranslate"><span class="pre">xyz2mol</span></code></a></li>
 </ul>
 </li>
 </ul>

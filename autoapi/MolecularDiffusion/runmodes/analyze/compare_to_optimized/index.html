@@ -298,6 +298,11 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../utils/sascore/index.html">MolecularDiffusion.utils.sascore</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../utils/smilify/index.html">MolecularDiffusion.utils.smilify</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../utils/torch/index.html">MolecularDiffusion.utils.torch</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../utils/xyz2mol/index.html">MolecularDiffusion.utils.xyz2mol</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.xyz2mol" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../utils/xyz2mol/converter/index.html">MolecularDiffusion.utils.xyz2mol.converter</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../utils/xyz2mol/elements/index.html">MolecularDiffusion.utils.xyz2mol.elements</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -353,7 +358,7 @@ initial XYZ files and their optimized counterparts in the <cite>optimized_xyz</c
 <p>Features:
 - Validates connectivity (skip disjoint graphs)
 - Computes RMSD and Energy difference (via xTB)
-- Computes Bond Length, Angle, and Torsion differences (via OpenBabel/cell2mol)</p>
+- Computes Bond Length, Angle, and Torsion differences (via OpenBabel/xyz2mol)</p>
 <section id="attributes">
 <h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -383,8 +388,8 @@ initial XYZ files and their optimized counterparts in the <cite>optimized_xyz</c
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.run_compare_analysis" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.run_compare_analysis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_compare_analysis</span></code></a>(args)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_cell2mol" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_cell2mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz2mol_cell2mol</span></code></a>(→ Optional[rdkit.Chem.Mol])</p></td>
-<td><p>Convert XYZ to RDKit Mol using cell2mol logic.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_converter" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_converter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz2mol_converter</span></code></a>(→ Optional[rdkit.Chem.Mol])</p></td>
+<td><p>Convert XYZ to RDKit Mol using xyz2mol logic.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_openbabel" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_openbabel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz2mol_openbabel</span></code></a>(→ Optional[rdkit.Chem.Mol])</p></td>
 <td><p>Convert XYZ to RDKit Mol using OpenBabel (via pybel).</p></td>
@@ -419,9 +424,9 @@ initial XYZ files and their optimized counterparts in the <cite>optimized_xyz</c
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_cell2mol">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.analyze.compare_to_optimized.</span></span><span class="sig-name descname"><span class="pre">xyz2mol_cell2mol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">rdkit.Chem.Mol</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_cell2mol" title="Link to this definition">¶</a></dt>
-<dd><p>Convert XYZ to RDKit Mol using cell2mol logic.</p>
+<dt class="sig sig-object py" id="MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_converter">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.analyze.compare_to_optimized.</span></span><span class="sig-name descname"><span class="pre">xyz2mol_converter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">rdkit.Chem.Mol</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_converter" title="Link to this definition">¶</a></dt>
+<dd><p>Convert XYZ to RDKit Mol using xyz2mol logic.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -518,7 +523,7 @@ initial XYZ files and their optimized counterparts in the <cite>optimized_xyz</c
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.compute_coord_rmsd"><code class="docutils literal notranslate"><span class="pre">compute_coord_rmsd()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.get_xtb_energy"><code class="docutils literal notranslate"><span class="pre">get_xtb_energy()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.run_compare_analysis"><code class="docutils literal notranslate"><span class="pre">run_compare_analysis()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_cell2mol"><code class="docutils literal notranslate"><span class="pre">xyz2mol_cell2mol()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_converter"><code class="docutils literal notranslate"><span class="pre">xyz2mol_converter()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_openbabel"><code class="docutils literal notranslate"><span class="pre">xyz2mol_openbabel()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.parser"><code class="docutils literal notranslate"><span class="pre">parser</span></code></a></li>
 </ul>

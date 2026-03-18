@@ -76,7 +76,7 @@ MolCraftDiff analyze metrics gen_xyz/ --metrics all
 | `-m, --metrics` | `all` | Metric type to compute |
 | `--recheck-topo` | False | Recheck topology using RDKit |
 | `--check-strain` | False | Check strain via XTB optimization |
-| `--mol-converter` | `cell2mol` | XYZ to mol converter |
+| `--mol-converter` | `xyz2mol` | XYZ to mol converter |
 
 ---
 

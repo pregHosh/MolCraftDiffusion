@@ -1,0 +1,185 @@
+MolecularDiffusion.utils.xyz2mol.converter
+==========================================
+
+.. py:module:: MolecularDiffusion.utils.xyz2mol.converter
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.xyz2mol.converter.atomic_valence
+   MolecularDiffusion.utils.xyz2mol.converter.atomic_valence_electrons
+   MolecularDiffusion.utils.xyz2mol.converter.av
+   MolecularDiffusion.utils.xyz2mol.converter.elemdatabase
+   MolecularDiffusion.utils.xyz2mol.converter.rdEHTTools
+   MolecularDiffusion.utils.xyz2mol.converter.valence_electrons
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.xyz2mol.converter.AC2BO
+   MolecularDiffusion.utils.xyz2mol.converter.AC2mol
+   MolecularDiffusion.utils.xyz2mol.converter.BO2mol
+   MolecularDiffusion.utils.xyz2mol.converter.BO_is_OK
+   MolecularDiffusion.utils.xyz2mol.converter.charge_is_OK
+   MolecularDiffusion.utils.xyz2mol.converter.chiral_stereo_check
+   MolecularDiffusion.utils.xyz2mol.converter.clean_charges
+   MolecularDiffusion.utils.xyz2mol.converter.get_BO
+   MolecularDiffusion.utils.xyz2mol.converter.get_UA
+   MolecularDiffusion.utils.xyz2mol.converter.get_UA_pairs
+   MolecularDiffusion.utils.xyz2mol.converter.get_atomic_charge
+   MolecularDiffusion.utils.xyz2mol.converter.get_atomic_valences
+   MolecularDiffusion.utils.xyz2mol.converter.get_bonds
+   MolecularDiffusion.utils.xyz2mol.converter.get_proto_mol
+   MolecularDiffusion.utils.xyz2mol.converter.int_atom
+   MolecularDiffusion.utils.xyz2mol.converter.read_xyz_file
+   MolecularDiffusion.utils.xyz2mol.converter.set_atomic_charges
+   MolecularDiffusion.utils.xyz2mol.converter.set_atomic_radicals
+   MolecularDiffusion.utils.xyz2mol.converter.str_atom
+   MolecularDiffusion.utils.xyz2mol.converter.valences_not_too_large
+   MolecularDiffusion.utils.xyz2mol.converter.xyz2mol
+
+
+Module Contents
+---------------
+
+.. py:function:: AC2BO(AC, atoms, charge, allow_charged_fragments=True, use_graph=True)
+
+   implemenation of algorithm shown in Figure 2
+   UA: unsaturated atoms
+   DU: degree of unsaturation (u matrix in Figure)
+   best_BO: Bcurr in Figure
+
+
+.. py:function:: AC2mol(mol, AC, atoms, charge, allow_charged_fragments=True, use_graph=True)
+
+.. py:function:: BO2mol(mol, BO_matrix, atoms, atomic_valence_electrons, mol_charge, allow_charged_fragments=True)
+
+   based on code written by Paolo Toscani
+
+   From bond order, atoms, valence structure and total charge, generate an
+   rdkit molecule.
+
+   :param mol - rdkit molecule:
+   :param BO_matrix - bond order matrix of molecule:
+   :param atoms - list of integer atomic symbols:
+   :param atomic_valence_electrons -:
+   :param mol_charge - total charge of molecule:
+
+   optional:
+       allow_charged_fragments - bool - allow charged fragments
+
+   returns
+       mol - updated rdkit molecule with bond connectivity
+
+
+
+.. py:function:: BO_is_OK(BO, AC, charge, DU, atomic_valence_electrons, atoms, valences, allow_charged_fragments=True)
+
+   Sanity of bond-orders
+
+   :param BO -:
+   :param AC -:
+   :param charge -:
+   :param DU -:
+
+   optional
+       allow_charges_fragments -
+
+
+   :returns: boolean - true of molecule is OK, false if not
+
+
+.. py:function:: charge_is_OK(BO, AC, charge, DU, atomic_valence_electrons, atoms, valences, allow_charged_fragments=True)
+
+.. py:function:: chiral_stereo_check(mol)
+
+   Find and embed chiral information into the model based on the coordinates
+
+   :param mol - rdkit molecule:
+   :param with embeded conformer:
+
+
+.. py:function:: clean_charges(mol)
+
+   This hack should not be needed anymore, but is kept just in case
+
+
+
+.. py:function:: get_BO(AC, UA, DU, valences, UA_pairs, use_graph=True)
+
+.. py:function:: get_UA(maxValence_list, valence_list)
+
+.. py:function:: get_UA_pairs(UA, AC, use_graph=True)
+
+.. py:function:: get_atomic_charge(atom, atomic_valence_electrons, BO_valence)
+
+.. py:function:: get_atomic_valences(k)
+
+.. py:function:: get_bonds(UA, AC)
+
+.. py:function:: get_proto_mol(atoms)
+
+.. py:function:: int_atom(atom)
+
+   convert str atom to integer atom
+
+
+.. py:function:: read_xyz_file(filename, look_for_charge=True)
+
+.. py:function:: set_atomic_charges(mol, atoms, atomic_valence_electrons, BO_valences, BO_matrix, mol_charge)
+
+.. py:function:: set_atomic_radicals(mol, atoms, atomic_valence_electrons, BO_valences)
+
+   The number of radical electrons = absolute atomic charge
+
+
+
+.. py:function:: str_atom(atom)
+
+   convert integer atom to string atom
+
+
+.. py:function:: valences_not_too_large(BO, valences)
+
+.. py:function:: xyz2mol(atoms, coordinates, AC, covalent_factor, charge=0, allow_charged_fragments=True, use_graph=True, use_huckel=False, embed_chiral=True, exportBO=False)
+
+   Generate a rdkit molobj from atoms, coordinates and a total_charge.
+
+   :param atoms - list of atom types:
+   :type atoms - list of atom types: int
+   :param coordinates - 3xN Cartesian coordinates:
+   :param charge - total charge of the system (default: 0)
+
+   optional:
+       allow_charged_fragments - alternatively radicals are made
+       use_graph - use graph (networkx)
+       use_huckel - Use Huckel method for atom connectivity prediction
+       embed_chiral - embed chiral information to the molecule
+
+   :returns: mols - list of rdkit molobjects
+
+
+.. py:data:: atomic_valence
+
+.. py:data:: atomic_valence_electrons
+
+.. py:data:: av
+   :value: [3, 4]
+
+
+.. py:data:: elemdatabase
+
+.. py:data:: rdEHTTools
+   :value: None
+
+
+.. py:data:: valence_electrons
+   :value: []
+
+

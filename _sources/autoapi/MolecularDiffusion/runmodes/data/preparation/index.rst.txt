@@ -18,7 +18,6 @@ Attributes
    MolecularDiffusion.runmodes.data.preparation.Chem
    MolecularDiffusion.runmodes.data.preparation.Molecule
    MolecularDiffusion.runmodes.data.preparation.logger
-   MolecularDiffusion.runmodes.data.preparation.xyz2mol
 
 
 Functions
@@ -37,9 +36,9 @@ Functions
    MolecularDiffusion.runmodes.data.preparation.get_scscore_model
    MolecularDiffusion.runmodes.data.preparation.iter_files
    MolecularDiffusion.runmodes.data.preparation.read_fragment_scores
-   MolecularDiffusion.runmodes.data.preparation.smilify_cell2mol
    MolecularDiffusion.runmodes.data.preparation.smilify_openbabel
    MolecularDiffusion.runmodes.data.preparation.smilify_structure
+   MolecularDiffusion.runmodes.data.preparation.smilify_xyz2mol
 
 
 Module Contents
@@ -95,11 +94,11 @@ Module Contents
 
 .. py:function:: read_fragment_scores(name='fpscores')
 
-.. py:function:: smilify_cell2mol(filename, total_charge=0, timeout=30)
-
 .. py:function:: smilify_openbabel(filename, total_charge=0, timeout=30)
 
 .. py:function:: smilify_structure(filename, total_charge=0, timeout=30, method='hybrid')
+
+.. py:function:: smilify_xyz2mol(filename, total_charge=0, timeout=30)
 
 .. py:data:: Chem
    :value: None
@@ -110,8 +109,4 @@ Module Contents
 
 
 .. py:data:: logger
-
-.. py:data:: xyz2mol
-   :value: None
-
 

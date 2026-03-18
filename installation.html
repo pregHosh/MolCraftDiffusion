@@ -298,6 +298,11 @@
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/utils/sascore/index.html">MolecularDiffusion.utils.sascore</a></li>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/utils/smilify/index.html">MolecularDiffusion.utils.smilify</a></li>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/utils/torch/index.html">MolecularDiffusion.utils.torch</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/utils/xyz2mol/index.html">MolecularDiffusion.utils.xyz2mol</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.xyz2mol" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/utils/xyz2mol/converter/index.html">MolecularDiffusion.utils.xyz2mol.converter</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/utils/xyz2mol/elements/index.html">MolecularDiffusion.utils.xyz2mol.elements</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -372,10 +377,6 @@ pip<span class="w"> </span>install<span class="w"> </span>molcraftdiffusion<span
 pip<span class="w"> </span>install<span class="w"> </span>molcraftdiffusion<span class="o">[</span>cpu<span class="o">]</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--extra-index-url<span class="w"> </span>https://download.pytorch.org/whl/cpu<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--find-links<span class="w"> </span>https://data.pyg.org/whl/torch-2.6.0+cpu.html
-
-<span class="c1"># Optional: xyz-to-SMILES conversion via cell2mol</span>
-git<span class="w"> </span>clone<span class="w"> </span>https://github.com/lcmd-epfl/cell2mol
-<span class="nb">cd</span><span class="w"> </span>cell2mol<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>python<span class="w"> </span>setup.py<span class="w"> </span>install<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>..<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>cell2mol
 </pre></div>
 </div>
 <section id="development-editable-install">
