@@ -16,6 +16,9 @@ Structure-guided generation allows you to influence the output of the diffusion 
 *   **Inpainting**: Varying initial structures (either the whole molecule or replacing a specific part of it).
 *   **Outpainting**: Extending a molecule from a given fragment.
 
+
+![Workflow overview](../asset/ip_op.png)
+
 The process involves providing a reference structure in an XYZ file and specifying which parts of the structure to modify or keep fixed. **Note that all atom indices are 0-indexed.** You can create your experiment configuration files in any directory, as the base templates are bundled with the package.
 
 ## 2. Inpainting
