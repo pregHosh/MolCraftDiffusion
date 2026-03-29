@@ -1,0 +1,99 @@
+MolecularDiffusion.modules.layers.tabasco.transformer
+=====================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.tabasco.transformer
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.tabasco.transformer.Transformer
+   MolecularDiffusion.modules.layers.tabasco.transformer.TransformerBlock
+
+
+Module Contents
+---------------
+
+.. py:class:: Transformer(dim: int, depth: int, num_heads: int, mlp_dim: Optional[int] = None, dropout: float = 0.0, activation_type: str = 'gelu', norm_eps: float = 1e-05)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   A standard Transformer model with multiple layers.
+
+   This implements a sequence of transformer blocks, each containing
+   self-attention and feed-forward components with residual connections.
+
+   Initialize the Transformer module.
+
+   :param dim: Model dimension
+   :param depth: Number of transformer blocks
+   :param num_heads: Number of attention heads
+   :param mlp_dim: Hidden dimension for feed-forward networks (defaults to 4x dim)
+   :param dropout: Dropout probability
+   :param activation_type: Type of activation to use in feed-forward networks
+   :param norm_eps: Epsilon value for layer normalization
+
+
+   .. py:method:: forward(x: torch.Tensor, padding_mask: Optional[torch.Tensor] = None, attn_mask: Optional[torch.Tensor] = None) -> torch.Tensor
+
+      Forward pass through the transformer.
+
+      :param x: Input tensor of shape [batch_size, seq_len, dim]
+      :param padding_mask: Boolean mask for padding tokens (True means ignore)
+                           Shape: [batch_size, seq_len]
+      :param attn_mask: Mask to prevent attention to certain positions
+                        Shape: [seq_len, seq_len] or [batch_size, seq_len, seq_len]
+
+      :returns: Output tensor of shape [batch_size, seq_len, dim]
+
+
+
+   .. py:attribute:: layers
+
+
+   .. py:attribute:: norm
+
+
+.. py:class:: TransformerBlock(dim: int, num_heads: int, mlp_dim: int = None, dropout: float = 0.0, activation_type: str = 'swiglu', norm_eps: float = 1e-05)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   A transformer block with layer normalization and residual connections.
+
+   This implements a standard transformer block with self-attention followed by
+   a feed-forward network, with layer normalization and residual connections.
+
+   Initialize the TransformerBlock module.
+
+   :param dim: Input and output dimension
+   :param num_heads: Number of attention heads
+   :param mlp_dim: Hidden dimension for the feed-forward network (defaults to 4x input dim)
+   :param dropout: Dropout probability
+   :param activation_type: Type of activation to use in the feed-forward network
+   :param norm_eps: Epsilon value for layer normalization
+
+
+   .. py:method:: forward(x: torch.Tensor, padding_mask: Optional[torch.Tensor] = None, attn_mask: Optional[torch.Tensor] = None) -> torch.Tensor
+
+      Forward pass through the transformer block.
+
+      :param x: Input tensor of shape [batch_size, seq_len, dim]
+      :param padding_mask: Boolean mask for padding tokens (True means ignore)
+                           Shape: [batch_size, seq_len]
+      :param attn_mask: Mask to prevent attention to certain positions
+                        Shape: [seq_len, seq_len] or [batch_size, seq_len, seq_len]
+
+      :returns: Output tensor of shape [batch_size, seq_len, dim]
+
+
+
+   .. py:attribute:: attn_block
+
+
+   .. py:attribute:: ff_block
+
+

@@ -1,0 +1,212 @@
+MolecularDiffusion.modules.layers.tabasco.attention
+===================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.tabasco.attention
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.tabasco.attention.AdaLNAttention
+   MolecularDiffusion.modules.layers.tabasco.attention.Attention
+   MolecularDiffusion.modules.layers.tabasco.attention.AttentionBlock
+   MolecularDiffusion.modules.layers.tabasco.attention.CrossAdaLNAttention
+
+
+Module Contents
+---------------
+
+.. py:class:: AdaLNAttention(dim: int, num_heads: int, dropout: float = 0.0, bias: bool = True, batch_first: bool = True, norm_eps: float = 1e-05)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Attention module with Adaptive Layer Normalization (AdaLN).
+
+   This implements an attention mechanism with adaptive layer normalization,
+   which allows for conditioning the layer normalization parameters based on
+   additional inputs.
+
+   Initialize the AdaLNAttention module.
+
+   :param dim: Input dimension
+   :param num_heads: Number of attention heads
+   :param dropout: Dropout probability
+   :param bias: Whether to use bias in linear projections
+   :param batch_first: Whether input is batch-first (batch, seq, features)
+   :param norm_eps: Epsilon value for layer normalization
+
+
+   .. py:method:: forward(x: torch.Tensor, context: torch.Tensor, key_padding_mask: Optional[torch.Tensor] = None, attn_mask: Optional[torch.Tensor] = None, need_weights: bool = False) -> torch.Tensor
+
+      Forward pass through the AdaLN attention layer.
+
+      :param x: Input tensor of shape [batch_size, seq_len, dim]
+      :param context: Context tensor for conditioning the layer norm parameters
+                      Shape: [batch_size, context_dim] or [batch_size, seq_len, dim]
+      :param key_padding_mask: Boolean mask for keys to ignore (True means ignore)
+                               Shape: [batch_size, seq_len]
+      :param attn_mask: Mask to prevent attention to certain positions
+                        Shape: [seq_len, seq_len] or [batch_size, seq_len, seq_len]
+      :param need_weights: Whether to return attention weights
+
+      :returns: Output tensor of shape [batch_size, seq_len, dim]
+                (and optionally attention weights if need_weights=True)
+
+
+
+   .. py:attribute:: adaln_beta
+
+
+   .. py:attribute:: adaln_gamma
+
+
+   .. py:attribute:: dim
+
+
+   .. py:attribute:: mha
+
+
+   .. py:attribute:: norm
+
+
+   .. py:attribute:: norm_eps
+      :value: 1e-05
+
+
+
+   .. py:attribute:: num_heads
+
+
+.. py:class:: Attention(dim: int, num_heads: int, dropout: float = 0.0, bias: bool = True, batch_first: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   A wrapper around PyTorch's MultiheadAttention module with a simplified interface.
+
+   This class provides a more convenient interface for using multi-head attention
+   in transformer architectures, handling the reshaping and masking operations.
+
+   Initialize the Attention module.
+
+   :param dim: Input and output dimension
+   :param num_heads: Number of attention heads
+   :param dropout: Dropout probability for attention weights
+   :param bias: Whether to include bias terms in the projection layers
+   :param batch_first: Whether input tensors are in batch-first format (batch, seq, features)
+
+
+   .. py:method:: forward(query: torch.Tensor, key: Optional[torch.Tensor] = None, value: Optional[torch.Tensor] = None, key_padding_mask: Optional[torch.Tensor] = None, attn_mask: Optional[torch.Tensor] = None, need_weights: bool = False) -> torch.Tensor
+
+      Forward pass through the multi-head attention layer.
+
+      :param query: Query tensor of shape [batch_size, seq_len_q, dim]
+      :param key: Key tensor of shape [batch_size, seq_len_k, dim] (defaults to query if None)
+      :param value: Value tensor of shape [batch_size, seq_len_v, dim] (defaults to key if None)
+      :param key_padding_mask: Boolean mask for keys to ignore (True means ignore)
+                               Shape: [batch_size, seq_len_k]
+      :param attn_mask: Mask to prevent attention to certain positions
+                        Shape: [seq_len_q, seq_len_k] or [batch_size, seq_len_q, seq_len_k]
+      :param need_weights: Whether to return attention weights
+
+      :returns: Output tensor of shape [batch_size, seq_len_q, dim]
+                (and optionally attention weights if need_weights=True)
+
+
+
+   .. py:attribute:: mha
+
+
+.. py:class:: AttentionBlock(dim: int, num_heads: int, dropout: float = 0.0, bias: bool = True, batch_first: bool = True, norm_eps: float = 1e-05)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   A block of attention layers with layer normalization.
+
+   Initialize the AttentionBlock module.
+
+   :param dim: Input dimension
+   :param num_heads: Number of attention heads
+   :param dropout: Dropout probability
+   :param bias: Whether to use bias in linear projections
+   :param batch_first: Whether input is batch-first (batch, seq, features)
+   :param norm_eps: Epsilon value for layer normalization
+
+
+   .. py:method:: forward(x: torch.Tensor, key_padding_mask: Optional[torch.Tensor] = None, attn_mask: Optional[torch.Tensor] = None, need_weights: bool = False) -> torch.Tensor
+
+
+   .. py:attribute:: attention
+
+
+   .. py:attribute:: norm
+
+
+.. py:class:: CrossAdaLNAttention(dim: int, num_heads: int, dropout: float = 0.0, bias: bool = True, batch_first: bool = True, norm_eps: float = 1e-05)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Cross-attention module with Adaptive Layer Normalization (AdaLN).
+
+   This implements a cross-attention mechanism with adaptive layer normalization,
+   allowing for conditioning the layer normalization parameters based on
+   additional inputs.
+
+   Initialize the CrossAdaLNAttention module.
+
+   :param dim: Input dimension
+   :param num_heads: Number of attention heads
+   :param dropout: Dropout probability
+   :param bias: Whether to use bias in linear projections
+   :param batch_first: Whether input is batch-first (batch, seq, features)
+   :param norm_eps: Epsilon value for layer normalization
+
+
+   .. py:method:: forward(x: torch.Tensor, context: torch.Tensor, encoder_hidden_states: torch.Tensor, encoder_padding_mask: Optional[torch.Tensor] = None, attn_mask: Optional[torch.Tensor] = None, need_weights: bool = False) -> torch.Tensor
+
+      Forward pass through the CrossAdaLNAttention layer.
+
+      :param x: Input tensor of shape [batch_size, seq_len_q, dim]
+      :param context: Context tensor for conditioning the layer norm parameters
+                      Shape: [batch_size, context_dim] or [batch_size, seq_len_q, dim]
+      :param encoder_hidden_states: Key/value tensor from encoder
+                                    Shape: [batch_size, seq_len_kv, dim]
+      :param encoder_padding_mask: Boolean mask for encoder outputs to ignore (True means ignore)
+                                   Shape: [batch_size, seq_len_kv]
+      :param attn_mask: Mask to prevent attention to certain positions
+                        Shape: [seq_len_q, seq_len_kv] or [batch_size, seq_len_q, seq_len_kv]
+      :param need_weights: Whether to return attention weights
+
+      :returns: Output tensor of shape [batch_size, seq_len_q, dim]
+                (and optionally attention weights if need_weights=True)
+
+
+
+   .. py:attribute:: adaln_beta
+
+
+   .. py:attribute:: adaln_gamma
+
+
+   .. py:attribute:: dim
+
+
+   .. py:attribute:: mha
+
+
+   .. py:attribute:: norm
+
+
+   .. py:attribute:: norm_eps
+      :value: 1e-05
+
+
+
+   .. py:attribute:: num_heads
+
+

@@ -1,0 +1,276 @@
+MolecularDiffusion.modules.models.tabasco.callbacks.ema
+=======================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.callbacks.ema
+
+.. autoapi-nested-parse::
+
+   Copyright (c) Meta Platforms, Inc. and affiliates.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.callbacks.ema.EMA
+   MolecularDiffusion.modules.models.tabasco.callbacks.ema.EMAOptimizer
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.callbacks.ema.ema_update
+   MolecularDiffusion.modules.models.tabasco.callbacks.ema.run_ema_update_cpu
+
+
+Module Contents
+---------------
+
+.. py:class:: EMA(decay: float, validate_original_weights: bool = False, every_n_steps: int = 1, cpu_offload: bool = False)
+
+   Bases: :py:obj:`lightning.Callback`
+
+
+   Implements Exponential Moving Averaging (EMA).
+
+   When training a model, this callback will maintain moving averages of the trained parameters.
+   When evaluating, we use the moving averages copy of the trained parameters.
+   When saving, we save an additional set of parameters with the prefix `ema`.
+
+   :param decay: The exponential decay used when calculating the moving average. Has to be between 0-1.
+   :param validate_original_weights: Validate the original weights, as apposed to the EMA weights.
+   :param every_n_steps: Apply EMA every N steps.
+   :param cpu_offload: Offload weights to CPU.
+
+
+   .. py:method:: on_fit_start(trainer: lightning.pytorch.Trainer, pl_module: lightning.pytorch.LightningModule) -> None
+
+
+   .. py:method:: on_load_checkpoint(trainer: lightning.pytorch.Trainer, pl_module: lightning.pytorch.LightningModule, checkpoint: Dict[str, Any]) -> None
+
+      load the checkpoint
+
+      TODO: fix: adapt from NeMo in ckpt callback
+
+
+
+   .. py:method:: on_test_end(trainer: lightning.pytorch.Trainer, pl_module: lightning.pytorch.LightningModule) -> None
+
+      swap the model weights back to the original weights
+
+
+
+   .. py:method:: on_test_start(trainer: lightning.pytorch.Trainer, pl_module: lightning.pytorch.LightningModule) -> None
+
+      swap the model weights to the EMA weights
+
+
+
+   .. py:method:: on_validation_end(trainer: lightning.pytorch.Trainer, pl_module: lightning.pytorch.LightningModule) -> None
+
+      swap the model weights back to the original weights
+
+
+
+   .. py:method:: on_validation_start(trainer: lightning.pytorch.Trainer, pl_module: lightning.pytorch.LightningModule) -> None
+
+      swap the model weights to the EMA weights
+
+
+
+   .. py:method:: save_ema_model(trainer: lightning.pytorch.Trainer)
+
+      Saves an EMA copy of the model + EMA optimizer states for resume.
+
+
+
+   .. py:method:: save_original_optimizer_state(trainer: lightning.pytorch.Trainer)
+
+
+   .. py:method:: swap_model_weights(trainer: lightning.pytorch.Trainer, saving_ema_model: bool = False)
+
+      switch model weights
+
+
+
+   .. py:attribute:: cpu_offload
+      :value: False
+
+
+
+   .. py:attribute:: decay
+
+
+   .. py:attribute:: every_n_steps
+      :value: 1
+
+
+
+   .. py:attribute:: validate_original_weights
+      :value: False
+
+
+
+.. py:class:: EMAOptimizer(optimizer: torch.optim.Optimizer, device: torch.device, decay: float = 0.9999, every_n_steps: int = 1, current_step: int = 0)
+
+   Bases: :py:obj:`torch.optim.Optimizer`
+
+
+   EMAOptimizer is a wrapper for torch.optim.Optimizer that computes Exponential Moving Average
+   of parameters registered in the optimizer.
+
+   EMA parameters are automatically updated after every step of the optimizer
+   with the following formula:
+
+       ema_weight = decay * ema_weight + (1 - decay) * training_weight
+
+   To access EMA parameters, use ``swap_ema_weights()`` context manager to
+   perform a temporary in-place swap of regular parameters with EMA
+   parameters.
+
+   .. rubric:: Notes
+
+   - EMAOptimizer is not compatible with APEX AMP O2.
+
+   :param optimizer: optimizer to wrap
+   :type optimizer: torch.optim.Optimizer
+   :param device: device for EMA parameters
+   :type device: torch.device
+   :param decay: decay factor
+   :type decay: float
+
+   :returns: returns an instance of torch.optim.Optimizer that computes EMA of
+             parameters
+
+   .. rubric:: Example
+
+   model = Model().to(device)
+   opt = torch.optim.Adam(model.parameters())
+
+   opt = EMAOptimizer(opt, device, 0.9999)
+
+   for epoch in range(epochs):
+       training_loop(model, opt)
+
+       regular_eval_accuracy = evaluate(model)
+
+       with opt.swap_ema_weights():
+           ema_eval_accuracy = evaluate(model)
+
+
+   .. py:method:: add_param_group(param_group)
+
+
+   .. py:method:: all_parameters() -> Iterable[torch.Tensor]
+
+
+   .. py:method:: join()
+
+
+   .. py:method:: load_state_dict(state_dict)
+
+
+   .. py:method:: state_dict()
+
+
+   .. py:method:: step(closure=None, grad_scaler=None, **kwargs)
+
+
+   .. py:method:: swap_ema_weights(enabled: bool = True)
+
+      A context manager to in-place swap regular parameters with EMA parameters. It swaps back
+      to the original regular parameters on context manager exit.
+
+      :param enabled: whether the swap should be performed
+      :type enabled: bool
+
+
+
+   .. py:method:: swap_tensors(tensor1, tensor2)
+
+      swap two tensors
+
+
+
+   .. py:method:: switch_main_parameter_weights(saving_ema_model: bool = False)
+
+      switch the main parameter weights
+
+
+
+   .. py:method:: update()
+
+      update the EMA weights depending on the device
+
+
+
+   .. py:attribute:: current_step
+      :value: 0
+
+
+
+   .. py:attribute:: decay
+      :value: 0.9999
+
+
+
+   .. py:attribute:: device
+
+
+   .. py:attribute:: ema_params
+      :value: ()
+
+
+
+   .. py:attribute:: every_n_steps
+      :value: 1
+
+
+
+   .. py:attribute:: first_iteration
+      :value: True
+
+
+
+   .. py:attribute:: in_saving_ema_model_context
+      :value: False
+
+
+
+   .. py:attribute:: optimizer
+
+
+   .. py:attribute:: rebuild_ema_params
+      :value: True
+
+
+
+   .. py:attribute:: save_original_optimizer_state
+      :value: False
+
+
+
+   .. py:attribute:: stream
+      :value: None
+
+
+
+   .. py:attribute:: thread
+      :value: None
+
+
+
+.. py:function:: ema_update(ema_model_tuple, current_model_tuple, decay)
+
+   update the EMA weights
+
+
+.. py:function:: run_ema_update_cpu(ema_model_tuple, current_model_tuple, decay, pre_sync_stream=None)
+
+   update the EMA weights on the CPU
+
+

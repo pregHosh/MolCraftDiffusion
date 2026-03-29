@@ -1,0 +1,131 @@
+MolecularDiffusion.modules.models.tabasco.flow.time_factor
+==========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.flow.time_factor
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.flow.time_factor.BaseTimeFactor
+   MolecularDiffusion.modules.models.tabasco.flow.time_factor.InverseTimeFactor
+   MolecularDiffusion.modules.models.tabasco.flow.time_factor.SignalToNoiseTimeFactor
+   MolecularDiffusion.modules.models.tabasco.flow.time_factor.SquareTimeFactor
+   MolecularDiffusion.modules.models.tabasco.flow.time_factor.SquaredSignalToNoiseTimeFactor
+   MolecularDiffusion.modules.models.tabasco.flow.time_factor.ZeroTimeFactor
+
+
+Module Contents
+---------------
+
+.. py:class:: BaseTimeFactor(max_value: float, min_value: float = 0.05, zero_before: float = 0.0, eps: float = 1e-06)
+
+   Bases: :py:obj:`torch.nn.Module`, :py:obj:`abc.ABC`
+
+
+   Return a scalar weight per sample based on the interpolation time.
+
+   :param max_value: Upper clamp for the time-factor value.
+   :param min_value: Lower clamp for the time-factor value.
+   :param zero_before: If *t* ≤ this threshold the factor is forced to zero.
+   :param eps: Small constant to avoid division by zero.
+
+
+   .. py:method:: forward(t: torch.Tensor) -> torch.Tensor
+      :abstractmethod:
+
+
+      Return the time-factor for each element in `t`.
+
+
+
+   .. py:attribute:: eps
+      :value: 1e-06
+
+
+
+   .. py:attribute:: max_value
+
+
+   .. py:attribute:: min_value
+      :value: 0.05
+
+
+
+   .. py:attribute:: zero_before
+      :value: 0.0
+
+
+
+.. py:class:: InverseTimeFactor(max_value: float = 100.0, min_value: float = 0.05, zero_before: float = 0.0, eps: float = 1e-06)
+
+   Bases: :py:obj:`BaseTimeFactor`
+
+
+   Weight ~ 1 / (1 - t)^2 as used in the Proteina paper.
+
+
+   .. py:method:: forward(t: torch.Tensor) -> torch.Tensor
+
+      Return `1 / (1 - t)^2` clamped to [`min_value`, `max_value`].
+
+
+
+.. py:class:: SignalToNoiseTimeFactor(max_value: float = 1.5, min_value: float = 0.05, zero_before: float = 0.0, eps: float = 1e-06)
+
+   Bases: :py:obj:`BaseTimeFactor`
+
+
+   Weight ~ t / (1 - t) (signal-to-noise ratio).
+
+
+   .. py:method:: forward(t: torch.Tensor) -> torch.Tensor
+
+      Return `t / (1 - t)` clamped to [`min_value`, `max_value`].
+
+
+
+.. py:class:: SquareTimeFactor(max_value: float, min_value: float = 0.05, zero_before: float = 0.0, eps: float = 1e-06)
+
+   Bases: :py:obj:`BaseTimeFactor`
+
+
+   Weight ~ 1 / (t^2 + 1e-2)
+
+
+   .. py:method:: forward(t)
+
+      Return the time-factor for each element in `t`.
+
+
+
+.. py:class:: SquaredSignalToNoiseTimeFactor(max_value: float = 1.5, min_value: float = 0.05, zero_before: float = 0.0, eps: float = 1e-06)
+
+   Bases: :py:obj:`BaseTimeFactor`
+
+
+   Weight ~ (t / (1 - t))^2 (squared SNR).
+
+
+   .. py:method:: forward(t: torch.Tensor) -> torch.Tensor
+
+      Return `(t / (1 - t))^2` clamped to [`min_value`, `max_value`].
+
+
+
+.. py:class:: ZeroTimeFactor(max_value: float, min_value: float = 0.05, zero_before: float = 0.0, eps: float = 1e-06)
+
+   Bases: :py:obj:`BaseTimeFactor`
+
+
+   Weight = 0 for all t
+
+
+   .. py:method:: forward(t)
+
+      Return the time-factor for each element in `t`.
+
+
+

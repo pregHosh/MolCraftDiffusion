@@ -1,0 +1,60 @@
+MolecularDiffusion.modules.models.tabasco.data.transforms
+=========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.data.transforms
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.data.transforms.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.data.transforms.apply_random_rotation
+   MolecularDiffusion.modules.models.tabasco.data.transforms.permute_atoms
+   MolecularDiffusion.modules.models.tabasco.data.transforms.random_rotation
+   MolecularDiffusion.modules.models.tabasco.data.transforms.sample_uniform_rotation
+
+
+Module Contents
+---------------
+
+.. py:function:: apply_random_rotation(batch: tensordict.TensorDict, n_augmentations=10) -> tensordict.TensorDict
+
+   Augment a batch with `n_augmentations` additional random rotations.
+
+   :param batch: TensorDict with keys `coords`, `padding_mask`, `atomics`.
+   :param n_augmentations: Number of extra rotated copies to generate.
+
+   :returns: TensorDict with keys `coords`, `padding_mask`, `atomics` and
+             `n_augmentations` extra copies.
+
+   Reference: NVIDIA-Digital-Bio/proteina implementation.
+
+
+.. py:function:: permute_atoms(data: tensordict.TensorDict) -> tensordict.TensorDict
+
+   Randomly permute the order of non-padded atoms in a molecule tensor.
+
+
+.. py:function:: random_rotation(data: tensordict.TensorDict) -> tensordict.TensorDict
+
+   Apply a single random 3D rotation to data['coords'].
+
+
+.. py:function:: sample_uniform_rotation(shape: torch.Size, dtype: torch.dtype, device: torch.device) -> torch.Tensor
+
+   Sample uniform random rotation matrices.
+
+   Reference: NVIDIA-Digital-Bio/proteina implementation.
+
+
+.. py:data:: logger
+

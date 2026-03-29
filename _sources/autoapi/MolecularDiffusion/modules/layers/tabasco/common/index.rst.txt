@@ -1,0 +1,28 @@
+MolecularDiffusion.modules.layers.tabasco.common
+================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.tabasco.common
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.tabasco.common.SwiGLU
+
+
+Module Contents
+---------------
+
+.. py:class:: SwiGLU
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   SwiGLU activation function.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+

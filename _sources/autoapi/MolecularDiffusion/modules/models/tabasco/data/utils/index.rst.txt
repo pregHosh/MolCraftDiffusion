@@ -1,0 +1,35 @@
+MolecularDiffusion.modules.models.tabasco.data.utils
+====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.data.utils
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.data.utils.TensorDictCollator
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.data.utils.batch_to_list
+
+
+Module Contents
+---------------
+
+.. py:class:: TensorDictCollator
+
+   Stack a list of TensorDict objects along batch dimension.
+
+
+.. py:function:: batch_to_list(batch: Dict[str, torch.Tensor]) -> List[Dict[str, torch.Tensor]]
+
+   Split a stacked batch dict into a list of per-sample dicts.
+
+

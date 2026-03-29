@@ -1,0 +1,81 @@
+MolecularDiffusion.modules.models.tabasco.sample.noise_schedule
+===============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.sample.noise_schedule
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.sample.noise_schedule.BaseNoiseSchedule
+   MolecularDiffusion.modules.models.tabasco.sample.noise_schedule.RatioSampleNoiseSchedule
+   MolecularDiffusion.modules.models.tabasco.sample.noise_schedule.SampleNoiseSchedule
+   MolecularDiffusion.modules.models.tabasco.sample.noise_schedule.SquareSampleNoiseSchedule
+   MolecularDiffusion.modules.models.tabasco.sample.noise_schedule.ZeroSampleNoiseSchedule
+
+
+Module Contents
+---------------
+
+.. py:class:: BaseNoiseSchedule(cutoff: float = 0.9)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Interface for time-dependent noise scaling.
+
+   Args:
+   cutoff: Timesteps above this value return zero noise.
+
+
+   .. py:attribute:: cutoff
+      :value: 0.9
+
+
+
+.. py:class:: RatioSampleNoiseSchedule(cutoff: float = 0.9)
+
+   Bases: :py:obj:`BaseNoiseSchedule`
+
+
+   Ratio schedule: `scale = (1 - t) / (t + eps)`.
+
+   Args:
+   cutoff: Timesteps above this value return zero noise.
+
+
+.. py:class:: SampleNoiseSchedule(cutoff: float = 0.9)
+
+   Bases: :py:obj:`BaseNoiseSchedule`
+
+
+   Inverse schedule: `scale = 1 / (t + eps)`.
+
+   Args:
+   cutoff: Timesteps above this value return zero noise.
+
+
+.. py:class:: SquareSampleNoiseSchedule(cutoff: float = 0.9)
+
+   Bases: :py:obj:`BaseNoiseSchedule`
+
+
+   Inverse-square schedule: `scale = 1 / (t**2 + eps)`.
+
+   Args:
+   cutoff: Timesteps above this value return zero noise.
+
+
+.. py:class:: ZeroSampleNoiseSchedule(cutoff: float = 0.9)
+
+   Bases: :py:obj:`BaseNoiseSchedule`
+
+
+   Schedule that always returns zero (disables additional noise).
+
+   Args:
+   cutoff: Timesteps above this value return zero noise.
+
+

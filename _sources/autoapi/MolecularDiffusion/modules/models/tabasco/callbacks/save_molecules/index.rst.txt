@@ -1,0 +1,88 @@
+MolecularDiffusion.modules.models.tabasco.callbacks.save_molecules
+==================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.callbacks.save_molecules
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.callbacks.save_molecules.log
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.callbacks.save_molecules.SaveGeneratedMolsCallback
+
+
+Module Contents
+---------------
+
+.. py:class:: SaveGeneratedMolsCallback(num_samples: int = 100, num_trajectories: int = 10, num_display_mols: int = 10, num_sampling_steps: int = 100, compute_every: int = 1000)
+
+   Bases: :py:obj:`lightning.Callback`
+
+
+   Log generated molecules, trajectories, and SDF files to Weights & Biases.
+
+   Performs several logging passes:
+       - Sample preview molecules (`_log_mols_to_display`).
+       - Highlight novel molecules not present in the training set.
+       - Store invalid molecules for debugging.
+       - Persist full SDF and selected trajectories as W&B artifacts.
+   Heavy I/O is gated by `compute_every` and executed only on rank-0.
+
+   Args:
+   num_samples: Molecules sampled each evaluation.
+   num_trajectories: Trajectories to save as SDF files.
+   num_display_mols: Maximum molecules displayed inline in W&B.
+   num_sampling_steps: Reverse-diffusion steps in sampling.
+   compute_every: Scheduler interval in global steps.
+
+
+   .. py:method:: on_validation_epoch_end(trainer: lightning.Trainer, lightning_module: lightning.LightningModule) -> None
+
+      Core hook: sample molecules and trigger logging helpers.
+
+
+
+   .. py:attribute:: compute_every
+      :value: 1000
+
+
+
+   .. py:attribute:: mol_converter
+
+
+   .. py:attribute:: next_compute
+      :value: 0
+
+
+
+   .. py:attribute:: num_display_mols
+      :value: 10
+
+
+
+   .. py:attribute:: num_samples
+      :value: 100
+
+
+
+   .. py:attribute:: num_sampling_steps
+      :value: 100
+
+
+
+   .. py:attribute:: num_trajectories
+      :value: 10
+
+
+
+.. py:data:: log
+

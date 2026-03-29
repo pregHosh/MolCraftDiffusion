@@ -1,0 +1,383 @@
+MolecularDiffusion.modules.models.tabasco.utils.metrics
+=======================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.utils.metrics
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.utils.metrics.log
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.utils.metrics.AtomFractionMetric
+   MolecularDiffusion.modules.models.tabasco.utils.metrics.AtomTypeDistribution
+   MolecularDiffusion.modules.models.tabasco.utils.metrics.MolecularConnectivity
+   MolecularDiffusion.modules.models.tabasco.utils.metrics.MolecularDiversity
+   MolecularDiffusion.modules.models.tabasco.utils.metrics.MolecularLipinski
+   MolecularDiffusion.modules.models.tabasco.utils.metrics.MolecularLogP
+   MolecularDiffusion.modules.models.tabasco.utils.metrics.MolecularNovelty
+   MolecularDiffusion.modules.models.tabasco.utils.metrics.MolecularQEDValue
+   MolecularDiffusion.modules.models.tabasco.utils.metrics.MolecularUniqueness
+   MolecularDiffusion.modules.models.tabasco.utils.metrics.MolecularValidity
+   MolecularDiffusion.modules.models.tabasco.utils.metrics.PoseBustersValidity
+   MolecularDiffusion.modules.models.tabasco.utils.metrics.PoseCheckStrainEnergy
+
+
+Module Contents
+---------------
+
+.. py:class:: AtomFractionMetric(atom_symbol, **kwargs)
+
+   Bases: :py:obj:`torchmetrics.Metric`
+
+
+   Proportion of atoms matching a given element symbol (e.g. 'C' or 'c').
+
+
+   .. py:method:: compute()
+
+
+   .. py:method:: update(molecules: List[rdkit.Chem.Mol])
+
+      Update the fraction of carbons with a list of molecules.
+
+
+
+   .. py:attribute:: atom_symbol
+
+
+.. py:class:: AtomTypeDistribution(original_smiles: List[str], atom_names: Optional[List[str]] = ATOM_NAMES, **kwargs)
+
+   Bases: :py:obj:`torchmetrics.Metric`
+
+
+   Similarity of atom-type histograms between generated and training sets.
+
+
+   .. py:method:: compute()
+
+      Compute the atom type distribution.
+
+
+
+   .. py:method:: distribution_similarity(histo1, histo2)
+
+      Compute the similarity between two histograms.
+
+
+
+   .. py:method:: name_to_idx(atom_type: str) -> int
+
+      Convert an atom type to an index.
+
+
+
+   .. py:method:: update(molecules: List[rdkit.Chem.Mol])
+
+      Update the atom type distribution with a list of molecules.
+
+
+
+   .. py:attribute:: atom_names
+      :value: ['C', 'N', 'O', 'F', 'S', 'Cl', 'Br', 'I', '*']
+
+
+
+   .. py:attribute:: atom_type_dict
+
+
+.. py:class:: MolecularConnectivity(*args, **kwargs)
+
+   Bases: :py:obj:`torchmetrics.Metric`
+
+
+   Share of molecules whose graph is a single connected component.
+
+   Initialize the connectivity metric.
+
+   The connectivity metric measures whether generated molecules are fully connected graphs.
+   A molecule is considered connected if all atoms belong to a single component,
+   with no isolated fragments.
+
+   This metric is important for molecular generation since valid molecules should
+   not have disconnected components floating in space.
+
+
+   .. py:method:: compute()
+
+      Compute the connectivity metric.
+
+
+
+   .. py:method:: update(molecules: List[rdkit.Chem.Mol])
+
+      Update the connectivity metric with a list of molecules.
+
+      Counts the number of fully-connected molecules.
+
+
+
+   .. py:attribute:: higher_is_better
+      :value: True
+
+
+
+.. py:class:: MolecularDiversity(fp_size: int = 2048, fp_type: str = 'ecfp', **kwargs)
+
+   Bases: :py:obj:`torchmetrics.Metric`
+
+
+   Mean pair-wise fingerprint distance (higher ⇒ more diverse).
+
+   Uses `datamol.pdist` with fingerprints such as ECFP; see
+   `datamol.list_supported_fingerprints()` for available types.
+
+
+   .. py:method:: compute()
+
+
+   .. py:method:: update(molecules: List[rdkit.Chem.Mol])
+
+      Update the diversity metric with a list of molecules.
+
+
+
+   .. py:attribute:: fp_size
+      :value: 2048
+
+
+
+   .. py:attribute:: fp_type
+      :value: 'ecfp'
+
+
+
+   .. py:attribute:: higher_is_better
+      :value: True
+
+
+
+.. py:class:: MolecularLipinski(**kwargs)
+
+   Bases: :py:obj:`torchmetrics.Metric`
+
+
+   Use Lipinski's rules to compute the lipinski score of a list of molecules.
+
+
+   .. py:method:: compute()
+
+
+   .. py:method:: update(molecules: List[rdkit.Chem.Mol])
+
+
+   .. py:attribute:: higher_is_better
+      :value: True
+
+
+
+.. py:class:: MolecularLogP(*args, **kwargs)
+
+   Bases: :py:obj:`torchmetrics.Metric`
+
+
+   Average logP (hydrophobicity) via `Crippen.MolLogP`.
+
+
+   .. py:method:: compute()
+
+
+   .. py:method:: update(molecules: List[rdkit.Chem.Mol])
+
+
+.. py:class:: MolecularNovelty(original_smiles: List[str], **kwargs)
+
+   Bases: :py:obj:`torchmetrics.Metric`
+
+
+   Fraction of generated SMILES absent from the training set.
+
+
+   .. py:method:: compute()
+
+
+   .. py:method:: update(molecules: List[rdkit.Chem.Mol])
+
+      Compute smiles of generated molecules and compare to original smiles.
+
+
+
+   .. py:attribute:: higher_is_better
+      :value: True
+
+
+
+   .. py:attribute:: original_smiles
+
+
+.. py:class:: MolecularQEDValue(*args, **kwargs)
+
+   Bases: :py:obj:`torchmetrics.Metric`
+
+
+   Average QED score (0-1) over valid molecules.
+
+
+   .. py:method:: compute()
+
+
+   .. py:method:: update(molecules: List[rdkit.Chem.Mol])
+
+
+   .. py:attribute:: higher_is_better
+      :value: True
+
+
+
+.. py:class:: MolecularUniqueness(*args, sync_on_compute=True, **kwargs)
+
+   Bases: :py:obj:`torchmetrics.Metric`
+
+
+   Ratio of unique canonical SMILES among all *valid* samples.
+   Uses hashing to be fancy and compatible with distributed training.
+
+
+   .. py:method:: compute()
+
+      Calculate uniqueness ratio.
+
+
+
+   .. py:method:: reset()
+
+      Reset the metric state.
+
+
+
+   .. py:method:: update(molecules: List[rdkit.Chem.Mol])
+
+      Update the uniqueness metric with a list of molecules.
+
+
+
+   .. py:attribute:: higher_is_better
+      :value: True
+
+
+
+   .. py:attribute:: sync_on_compute
+      :value: True
+
+
+
+.. py:class:: MolecularValidity(*args, **kwargs)
+
+   Bases: :py:obj:`torchmetrics.Metric`
+
+
+   Fraction of *valid* RDKit molecules among generated samples.
+
+   This and the other metrics are mostly based on the code from the diffusion-hopping repo:
+   https://github.com/jostorge/diffusion-hopping/blob/main/diffusion_hopping/analysis/metrics.py
+
+
+   .. py:method:: compute()
+
+      Compute the validity metric.
+
+
+
+   .. py:method:: update(molecules: List[rdkit.Chem.Mol])
+
+      Update the validity metric with a list of molecules.
+
+
+
+   .. py:attribute:: higher_is_better
+      :value: True
+
+
+
+.. py:class:: PoseBustersValidity(**kwargs)
+
+   Bases: :py:obj:`torchmetrics.Metric`
+
+
+   Fraction of molecules passing PoseBusters checks.
+
+   :param \*\*kwargs: Forwarded to `Metric`; may include `cfg_file` to
+                      override the default PoseBusters YAML.
+
+   .. note::
+
+      Strain-energy evaluation is very slow—omit it during training
+      unless strictly required (see the YAML in `utils/posebusters_no_strain.yaml`).
+
+
+   .. py:method:: compute()
+
+
+   .. py:method:: update(molecules: List[rdkit.Chem.Mol])
+
+      Update the PoseBusters validity metric with a list of molecules, bad molecules cause the
+      list to fail.
+
+
+
+   .. py:attribute:: higher_is_better
+      :value: True
+
+
+
+.. py:class:: PoseCheckStrainEnergy(mode='median', num_confs=50, **kwargs)
+
+   Bases: :py:obj:`torchmetrics.Metric`
+
+
+   Average or median strain energy computed by PoseCheck.
+
+   Initialize the PoseCheck strain energy metric.
+
+   :param mode: Either "mean" or "median" to determine how the strain energy is aggregated
+   :param num_confs: Number of conformations to use for strain energy calculation
+   :param \*\*kwargs: Additional arguments to pass to the Metric constructor
+
+
+   .. py:method:: compute()
+
+      Compute the strain energy according to the specified mode.
+
+
+
+   .. py:method:: update(molecules: List[rdkit.Chem.Mol])
+
+      Update the PoseCheck strain energy metric with a list of valid molecules.
+
+
+
+   .. py:attribute:: higher_is_better
+      :value: False
+
+
+
+   .. py:attribute:: mode
+      :value: 'median'
+
+
+
+   .. py:attribute:: num_confs
+      :value: 50
+
+
+
+.. py:data:: log
+

@@ -1,0 +1,64 @@
+MolecularDiffusion.modules.models.tabasco.sample.interpolant_guidance
+=====================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.sample.interpolant_guidance
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.sample.interpolant_guidance.InterpolantGuidance
+   MolecularDiffusion.modules.models.tabasco.sample.interpolant_guidance.UFFBoundGuidance
+
+
+Module Contents
+---------------
+
+.. py:class:: InterpolantGuidance
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Interface for guidance modules that modify intermediate samples.
+
+
+.. py:class:: UFFBoundGuidance(mol_converter: MolecularDiffusion.modules.models.tabasco.chem.convert.MoleculeConverter, lr: float = 0.01, n_steps: int = 3, regress_to_center: bool = False)
+
+   Bases: :py:obj:`InterpolantGuidance`
+
+
+   Move atom coordinates towards locations that are within UFF distance bounds of their current conformation.
+
+   Args:
+   mol_converter: Helper that converts between tensors and `rdkit.Chem.Mol`.
+   lr: Step size applied to the sign of the gradient.
+   n_steps: Number of gradient steps taken per guidance call.
+   regress_to_center: If True, pull distances to interval centers instead of edges.
+
+
+   .. py:method:: loss_from_bounds(tensor_repr, bounds)
+
+      Return mean squared deviation of pairwise distances from allowed bounds.
+
+
+
+   .. py:attribute:: lr
+      :value: 0.01
+
+
+
+   .. py:attribute:: mol_converter
+
+
+   .. py:attribute:: n_steps
+      :value: 3
+
+
+
+   .. py:attribute:: regress_to_center
+      :value: False
+
+
+

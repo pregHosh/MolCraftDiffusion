@@ -1,0 +1,57 @@
+MolecularDiffusion.modules.models.tabasco.sample.guided_sampling
+================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.sample.guided_sampling
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.sample.guided_sampling.GuidedSampling
+
+
+Module Contents
+---------------
+
+.. py:class:: GuidedSampling(lightning_module: pytorch_lightning.LightningModule, inpaint_function: Optional[Callable] = None, steer_interpolant: Optional[Callable] = None, ema_optimizer: Optional[torch.optim.Optimizer] = None)
+
+   Utility that performs guided sampling over predefined timesteps.
+
+   Args:
+   lightning_module: Trained LightningModule containing the diffusion model.
+   inpaint_function: Optional callable that fills or fixes parts of `x_t` after each step.
+   steer_interpolant: Optional callable applied before each model step to guide the sample.
+   ema_optimizer: If provided, swaps EMA parameters for inference.
+
+
+   .. py:method:: sample(x_t, timesteps)
+
+      Iteratively denoise `x_t` following `timesteps`.
+
+      :param x_t: Initial noisy TensorDict at the first timestep.
+      :param timesteps: 1-D tensor or list of monotonically increasing timesteps.
+
+      :returns: TensorDict representing the final denoised sample.
+
+
+
+   .. py:attribute:: ema_optimizer
+      :value: None
+
+
+
+   .. py:attribute:: inpaint_function
+      :value: None
+
+
+
+   .. py:attribute:: lightning_module
+
+
+   .. py:attribute:: steer_interpolant
+      :value: None
+
+
+

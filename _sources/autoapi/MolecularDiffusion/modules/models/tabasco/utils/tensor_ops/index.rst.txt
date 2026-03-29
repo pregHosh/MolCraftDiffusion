@@ -1,0 +1,61 @@
+MolecularDiffusion.modules.models.tabasco.utils.tensor_ops
+==========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.utils.tensor_ops
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.utils.tensor_ops.apply_mask
+   MolecularDiffusion.modules.models.tabasco.utils.tensor_ops.mask_and_zero_com
+   MolecularDiffusion.modules.models.tabasco.utils.tensor_ops.mean_w_mask
+
+
+Module Contents
+---------------
+
+.. py:function:: apply_mask(x, padding_mask)
+
+   Zero out padded atoms.
+
+   :param x: Tensor `(*, N, D)`.
+   :param padding_mask: Bool/int tensor `(*, N)`.
+
+   :returns: Masked tensor.
+   :rtype: Tensor
+
+   Note: Based on the NVIDIA-Digital-Bio/proteina function of same name
+
+
+.. py:function:: mask_and_zero_com(x, padding_mask)
+
+   Center coordinates and zero padded atoms.
+
+   :param x: Tensor `(*, N, D)`.
+   :param padding_mask: Bool/int tensor `(*, N)`.
+
+   :returns: Centered and masked coordinates.
+   :rtype: Tensor
+
+   Note: Based on the NVIDIA-Digital-Bio/proteina function of same name
+
+
+.. py:function:: mean_w_mask(x, padding_mask)
+
+   Compute masked mean along the atom dimension.
+
+   Padded atoms (`padding_mask == 1`) are ignored. The result keeps a broadcastable
+   shape `(*, 1, D)` and padded rows are zeroed for numerical safety.
+
+   :param x: Tensor `(*, N, D)` of coordinates.
+   :param padding_mask: Bool/int tensor `(*, N)`.
+
+   :returns: Mean coordinates with same dtype/device as `x`.
+   :rtype: Tensor
+
+   Note: Based on the NVIDIA-Digital-Bio/proteina function of same name
+
+

@@ -1,0 +1,288 @@
+MolecularDiffusion.modules.models.tabasco.flow.interpolate
+==========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.flow.interpolate
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.flow.interpolate.CenteredMetricInterpolant
+   MolecularDiffusion.modules.models.tabasco.flow.interpolate.DiscreteInterpolant
+   MolecularDiffusion.modules.models.tabasco.flow.interpolate.Interpolant
+   MolecularDiffusion.modules.models.tabasco.flow.interpolate.SDEMetricInterpolant
+
+
+Module Contents
+---------------
+
+.. py:class:: CenteredMetricInterpolant(centered: bool = True, scale_noise_by_log_num_atoms: bool = False, noise_scale: float = 1.0, **kwargs)
+
+   Bases: :py:obj:`Interpolant`
+
+
+   Linear interpolation between two points in Euclidean space.
+
+   This class teaches the model to predict the endpoint of the path.
+
+   Initialize the metric interpolant.
+
+   :param centered: If True, subtract center-of-mass so translation is ignored.
+   :param scale_noise_by_log_num_atoms: Scale noise amplitude by `log(N_atoms)`.
+   :param noise_scale: Standard deviation of the sampled Gaussian noise.
+   :param \*\*kwargs: Forwarded to `Interpolant.__init__`.
+
+
+   .. py:method:: compute_loss(path: MolecularDiffusion.modules.models.tabasco.flow.path.FlowPath, pred: tensordict.TensorDict, compute_stats: bool = True) -> torch.Tensor
+
+      Mean-squared error on masked coordinates with optional time weighting.
+
+
+
+   .. py:method:: create_path(x_1: torch.Tensor, t: torch.Tensor, x_0: Optional[tensordict.TensorDict] = None) -> MolecularDiffusion.modules.models.tabasco.flow.path.FlowPath
+
+      Generate `(x_0, x_t, dx_t)` via linear interpolation in Euclidean space.
+
+
+
+   .. py:method:: sample_noise(shape: torch.Size, pad_mask: torch.Tensor) -> tensordict.TensorDict
+
+      Return masked Gaussian noise with optional scaling.
+
+      :param shape: Desired output shape.
+      :param pad_mask: Padding mask.
+
+      :returns: Noise tensor.
+      :rtype: Tensor
+
+
+
+   .. py:method:: step(batch_t: tensordict.TensorDict, pred: tensordict.TensorDict, t: torch.Tensor, dt: float)
+
+      Deterministic forward-Euler step for continuous coordinates.
+
+
+
+   .. py:attribute:: centered
+      :value: True
+
+
+
+   .. py:attribute:: mse_loss
+
+
+   .. py:attribute:: noise_scale
+      :value: 1.0
+
+
+
+   .. py:attribute:: scale_noise_by_log_num_atoms
+      :value: False
+
+
+
+.. py:class:: DiscreteInterpolant(**kwargs)
+
+   Bases: :py:obj:`Interpolant`
+
+
+   Interpolates between two discrete distributions.
+
+   Initialize the discrete interpolant.
+
+   :param \*\*kwargs: Forwarded to `Interpolant.__init__`.
+
+
+   .. py:method:: compute_loss(path: MolecularDiffusion.modules.models.tabasco.flow.path.FlowPath, pred: tensordict.TensorDict, compute_stats: bool = False) -> torch.Tensor
+
+      Cross-entropy loss between prediction and ground truth.
+
+      :param path: FlowPath from `create_path` (only `path.x_1` is required).
+      :param pred: Model logits with shape `(B, N, C)`.
+      :param compute_stats: Whether to return an empty stats dict (always empty here).
+
+      :returns: Mean loss over molecules and an empty statistics dict.
+      :rtype: Tuple[Tensor, dict]
+
+
+
+   .. py:method:: create_path(x_1: torch.Tensor, t: torch.Tensor, x_0: Optional[tensordict.TensorDict] = None) -> MolecularDiffusion.modules.models.tabasco.flow.path.FlowPath
+
+      Create a path for a ground truth point and a time step.
+
+
+
+   .. py:method:: sample_noise(shape: torch.Size, pad_mask: torch.Tensor) -> tensordict.TensorDict
+
+      Return uniformly random one-hot noise.
+
+      :param shape: Desired output shape `(…, C)` where `C` equals the number of discrete categories.
+      :param pad_mask: Padding mask; rows with 1s are ignored and set to zeros.
+
+      :returns: One-hot encoded noise tensor on the same device as `pad_mask`.
+      :rtype: Tensor
+
+
+
+   .. py:method:: step(batch_t: tensordict.TensorDict, pred: tensordict.TensorDict, t: torch.Tensor, dt: float)
+
+      Stochastic forward-Euler step for discrete states in continuous time.
+
+      :param batch_t: TensorDict containing one-hot states at time `t`.
+      :param pred: Logits predicting the terminal distribution.
+      :param t: Tensor `(B,)` with current time.
+      :param dt: Step size to advance.
+
+      :returns: One-hot tensor representing the new discrete state.
+      :rtype: Tensor
+
+
+
+   .. py:attribute:: ce_loss
+
+
+.. py:class:: Interpolant(key: str, key_pad_mask: str = 'padding_mask', loss_weight: float = 1.0, time_factor: Optional[Callable] = None)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Abstract base class for data–noise interpolation.
+
+   Subclasses must implement four domain-specific operations:
+   1. sample_noise:    draw a noise tensor matching the data layout;
+   2. create_path:     build the interpolation path between two data points for a given time t;
+   3. compute_loss:    return a supervised loss for a model prediction along the path;
+   4. step:            advance the system one explicit-Euler step during sampling.
+
+   All methods work on batched `TensorDict` objects; the data entry is accessed via
+   `key` and its padding mask via `key_pad_mask`.
+
+   Initialize the interpolant.
+
+   :param key: key to the data object of interest in the passed batch TensorDict
+   :param key_pad_mask: key to the padding mask in the batch TensorDict
+
+
+   .. py:method:: compute_loss(path: MolecularDiffusion.modules.models.tabasco.flow.path.FlowPath, pred: tensordict.TensorDict, compute_stats: bool = True) -> Tuple[torch.Tensor, dict]
+      :abstractmethod:
+
+
+      Return a supervised loss for a model prediction at time `t`.
+
+      :param path: FlowPath object generated by `create_path`.
+      :param pred: TensorDict with model outputs that correspond to `path.x_1[self.key]`.
+      :param compute_stats: If `True`, also compute and return auxiliary metrics.
+
+      :returns: Scalar loss and a (possibly empty) statistics
+                dictionary.
+      :rtype: Tuple[Tensor, dict]
+
+
+
+   .. py:method:: create_path(x_1: tensordict.TensorDict, t: torch.Tensor, x_0: Optional[tensordict.TensorDict] = None) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+      :abstractmethod:
+
+
+      Construct the interpolation triple `(x_0, x_t, dx_t)` for time `t`.
+
+      :param x_1: TensorDict containing the reference data point at *t = 1*.
+      :param t: Tensor of shape `(B,)` with interpolation times in `[0, 1]`.
+      :param x_0: Optional TensorDict with a pre-sampled noise state; if `None` a new
+                  one is drawn via `sample_noise`.
+
+      :returns:     * x_0: initial noise state,
+                    * x_t: interpolated state at time `t`,
+                    * dx_t: velocity, typically `x_1 - x_0`.
+      :rtype: Tuple[Tensor, Tensor, Tensor]
+
+
+
+   .. py:method:: sample_noise(shape: torch.Size, pad_mask: torch.Tensor) -> torch.Tensor
+      :abstractmethod:
+
+
+      Draw a random noise tensor compatible with the data layout.
+
+      :param shape: Desired tensor shape, usually `batch[self.key].shape`.
+      :param pad_mask: Boolean/int mask where 1 indicates padded positions; noise must be
+                       zeroed at these indices.
+
+      :returns:
+
+                Noise tensor of shape `shape` located on the same device as
+                    `pad_mask`.
+      :rtype: Tensor
+
+
+
+   .. py:method:: step(batch_t: tensordict.TensorDict, pred: tensordict.TensorDict, t: torch.Tensor, dt: float) -> torch.Tensor
+      :abstractmethod:
+
+
+      Advance the sample one explicit-Euler step along the reverse process.
+
+      :param batch_t: TensorDict with the current sample at time `t`.
+      :param pred: Model prediction (same layout as `batch_t`) used to compute the
+                   velocity field.
+      :param t: Tensor of shape `(B,)` with the current times.
+      :param dt: Scalar or tensor step size applied to each batch element.
+
+      :returns: Updated data tensor corresponding to time `t + dt`.
+      :rtype: Tensor
+
+
+
+   .. py:attribute:: key
+
+
+   .. py:attribute:: key_pad_mask
+      :value: 'padding_mask'
+
+
+
+   .. py:attribute:: loss_weight
+      :value: 1.0
+
+
+
+   .. py:attribute:: time_factor
+      :value: None
+
+
+
+.. py:class:: SDEMetricInterpolant(langevin_sampling_schedule: Optional[Callable] = None, white_noise_sampling_scale: float = 1.0, **kwargs)
+
+   Bases: :py:obj:`CenteredMetricInterpolant`
+
+
+   CenteredMetricInterpolant with Langevin/SDE-style sampling based on the proteina paper.
+
+   Initialize the SDE interpolant with Langevin sampling parameters.
+
+   :param langevin_sampling_schedule: Function that returns the sampling schedule for the score.
+   :param white_noise_sampling_scale: Standard deviation of the sampled white noise.
+   :param \*\*kwargs: Forwarded to `Interpolant.__init__`.
+
+
+   .. py:method:: calculate_score(v_t, x_t, t)
+
+      Return the diffusion score `(t * v_t - x_t) / (1 - t)` as used in Proteina.
+
+
+
+   .. py:method:: step(batch_t: tensordict.TensorDict, pred: tensordict.TensorDict, t: torch.Tensor, dt: float)
+
+      Forward Euler integration step with score components and white noise injection.
+
+
+
+   .. py:attribute:: mse_loss
+
+
+   .. py:attribute:: white_noise_sampling_scale
+      :value: 1.0
+
+
+

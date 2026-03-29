@@ -1,0 +1,127 @@
+MolecularDiffusion.modules.layers.tabasco.positional_encoder
+============================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.tabasco.positional_encoder
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.tabasco.positional_encoder.PositionalEncoding
+   MolecularDiffusion.modules.layers.tabasco.positional_encoder.SinusoidEncoding
+   MolecularDiffusion.modules.layers.tabasco.positional_encoder.TimeFourierEncoding
+
+
+Module Contents
+---------------
+
+.. py:class:: PositionalEncoding
+
+   Bases: :py:obj:`abc.ABC`, :py:obj:`torch.nn.Module`
+
+
+   Abstract interface for modules that add positional information to tensors.
+
+
+   .. py:method:: forward(*args, **kwargs) -> torch.Tensor
+      :abstractmethod:
+
+
+      Return positional encodings.
+
+
+
+   .. py:method:: out_dim()
+      :abstractmethod:
+
+
+      Embedding dimension produced by this encoder.
+
+
+
+.. py:class:: SinusoidEncoding(posenc_dim, max_len=100, random_permute=False)
+
+   Bases: :py:obj:`PositionalEncoding`
+
+
+   Classic sinusoidal positional encoding (Vaswani et al., 2017).
+
+   Initialize the positional encoding.
+
+   :param posenc_dim: Size of the embedding dimension.
+   :param max_len: Maximum sequence length supported. `seq_len` passed to
+                   `forward` must not exceed this value.
+   :param random_permute: If `True`, the positions are randomly permuted for each
+                          sample (useful as lightweight data augmentation but destroys absolute
+                          ordering).
+
+
+   .. py:method:: forward(batch_size: int, seq_len: int)
+
+      Return positional embeddings of shape `(batch_size, seq_len, posenc_dim)`.
+
+      :param batch_size: Number of samples in the batch.
+      :param seq_len: Length of the sequence.
+
+      .. note:: `seq_len` must not exceed the `max_len` passed at construction.
+
+
+
+   .. py:method:: out_dim()
+
+      Embedding dimension produced by this encoder.
+
+
+
+   .. py:attribute:: max_len
+      :value: 100
+
+
+
+   .. py:attribute:: posenc_dim
+
+
+   .. py:attribute:: random_permute
+      :value: False
+
+
+
+.. py:class:: TimeFourierEncoding(posenc_dim, max_len=100, random_permute=False)
+
+   Bases: :py:obj:`PositionalEncoding`
+
+
+   Encoder for continuous timesteps in `[0, 1]`
+
+
+   .. py:method:: forward(t: torch.Tensor)
+
+      Encode a tensor of timesteps.
+
+      :param t: 1-D tensor with values in `[0, 1]`.
+
+      :returns: Tensor of shape `(B, posenc_dim)` with sine/cosine features.
+
+
+
+   .. py:method:: out_dim()
+
+      Embedding dimension produced by this encoder.
+
+
+
+   .. py:attribute:: max_len
+      :value: 100
+
+
+
+   .. py:attribute:: posenc_dim
+
+
+   .. py:attribute:: random_permute
+      :value: False
+
+
+

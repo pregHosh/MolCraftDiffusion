@@ -1,0 +1,66 @@
+MolecularDiffusion.modules.models.tabasco.chem.utils
+====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.chem.utils
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.chem.utils.attempt_sanitize
+   MolecularDiffusion.modules.models.tabasco.chem.utils.largest_component
+   MolecularDiffusion.modules.models.tabasco.chem.utils.reorder_molecule_by_smiles
+   MolecularDiffusion.modules.models.tabasco.chem.utils.write_xyz_file
+
+
+Module Contents
+---------------
+
+.. py:function:: attempt_sanitize(mol: rdkit.Chem.Mol)
+
+   Run `Chem.SanitizeMol` and return `None` on failure.
+
+   :param mol: RDKit Mol to sanitize.
+
+   :returns: Sanitised molecule or `None` if RDKit raises.
+   :rtype: Chem.Mol | None
+
+   Credits: Charles Harris
+
+
+.. py:function:: largest_component(molecules: List[rdkit.Chem.Mol]) -> List[rdkit.Chem.Mol]
+
+   Return the largest connected component for each molecule.
+
+   :param molecules: Iterable of RDKit Mol objects with 3-D coordinates.
+
+   :returns: Each entry is the fragment with the most atoms for
+             the corresponding input molecule.
+   :rtype: list[Chem.Mol]
+
+   From: https://github.com/jostorge/diffusion-hopping/blob/main/diffusion_hopping/analysis/util.py
+
+
+.. py:function:: reorder_molecule_by_smiles(mol: rdkit.Chem.Mol) -> rdkit.Chem.Mol | None
+
+   Renumber atoms to follow canonical SMILES indexing.
+
+   :param mol: RDKit Mol. If `None`, the function returns `None`.
+
+   :returns: Renumbered copy of the molecule.
+   :rtype: Chem.Mol | None
+
+   :raises ValueError: If canonicalisation or substructure matching fails.
+
+
+.. py:function:: write_xyz_file(coords: torch.Tensor, atom_types: List[str], filename: str) -> None
+
+   Write an XYZ file.
+
+   :param coords: Array-like of shape `(N, 3)` with Cartesian coordinates.
+   :param atom_types: Sequence of length `N` with element symbols.
+   :param filename: Path to the output `.xyz` file.
+
+

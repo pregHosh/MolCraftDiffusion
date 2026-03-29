@@ -1,0 +1,280 @@
+MolecularDiffusion.modules.tasks.diffusion_tabasco
+==================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_tabasco
+
+.. autoapi-nested-parse::
+
+   TABASCO model integration with MolecularDiffusion data pipeline.
+
+   This module provides adapters to convert between PointCloudDataset format
+   and TABASCO's TensorDict format, plus a task wrapper for training.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_tabasco.ModelTaskFactory
+   MolecularDiffusion.modules.tasks.diffusion_tabasco.PointCloudToTensorDictAdapter
+   MolecularDiffusion.modules.tasks.diffusion_tabasco.TabascoDiffusionTask
+   MolecularDiffusion.modules.tasks.diffusion_tabasco.TabascoNodeDistribution
+   MolecularDiffusion.modules.tasks.diffusion_tabasco.TensorDictToPointCloudAdapter
+
+
+Module Contents
+---------------
+
+.. py:class:: ModelTaskFactory(task_type: str, transformer_config: dict, coords_interpolant_config: dict, atomics_interpolant_config: dict, flow_matching_config: dict, num_atom_types: int, dataset_stats: dict, atom_vocab: Optional[list] = None, train_set: Optional[torch.utils.data.Dataset] = None, **kwargs)
+
+   Factory to satisfy train.py instantiation pattern.
+   Matches conventions from tasks_egcl.py and tasks_esen.py.
+
+
+   .. py:method:: build()
+
+      Build and return the TabascoDiffusionTask.
+
+
+
+   .. py:method:: compute_dataset_stats(dataset)
+
+      Compute missing dataset statistics from the training set.
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: atomics_interpolant_config
+
+
+   .. py:attribute:: coords_interpolant_config
+
+
+   .. py:attribute:: dataset_stats
+
+
+   .. py:attribute:: flow_matching_config
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: num_atom_types
+
+
+   .. py:attribute:: task_type
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+   .. py:attribute:: transformer_config
+
+
+.. py:class:: PointCloudToTensorDictAdapter(num_atom_types: int)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Lightweight converter from PointCloud dict format to TABASCO TensorDict.
+
+   Converts:
+   - coords: (B, N, 3) → coords: (B, N, 3) [unchanged]
+   - node_mask: (B, N) with 1=real → padding_mask: (B, N) with 1=padded [inverted]
+   - charges: (B, N) integers → atomics: (B, N, num_types) one-hot
+
+
+   .. py:method:: forward(batch: Dict[str, torch.Tensor]) -> tensordict.TensorDict
+
+      Convert PointCloud batch to TABASCO TensorDict.
+
+      :param batch: Dictionary with keys:
+                    - coords: (B, N, 3) padded coordinates
+                    - node_mask: (B, N) with 1=real atom, 0=padded
+                    - charges: (B, N) atomic numbers (integers)
+                    - natoms: (B,) number of real atoms per molecule
+
+      :returns:     - coords: (B, N, 3)
+                    - atomics: (B, N, num_atom_types) one-hot encoded
+                    - padding_mask: (B, N) with 1=padded, 0=real
+      :rtype: TensorDict with keys
+
+
+
+   .. py:attribute:: num_atom_types
+
+
+.. py:class:: TabascoDiffusionTask(transformer_config: dict, coords_interpolant_config: dict, atomics_interpolant_config: dict, flow_matching_config: dict, num_atom_types: int, dataset_stats: dict, atom_vocab: Optional[list] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   TABASCO flow-matching diffusion model integrated with MolecularDiffusion.
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor) -> Dict[str, torch.Tensor]
+
+      Compute evaluation metrics from aggregated predictions.
+
+      :param pred: Concatenated losses from predict_and_target
+      :param target: Dummy targets
+
+      :returns: Dictionary of metrics
+
+
+
+   .. py:method:: forward(batch: Dict[str, torch.Tensor])
+
+      Training forward pass.
+
+      :param batch: PointCloud format batch from dataloader
+
+      :returns: Scalar training loss
+                stats: Dictionary of training statistics
+      :rtype: loss
+
+
+
+   .. py:method:: predict_and_target(batch: Dict[str, torch.Tensor])
+
+      Evaluation pass for Engine compatibility.
+
+      :param batch: PointCloud format batch from dataloader
+
+      :returns: Loss tensor (B,) or scalar
+                target: Dummy tensor of same shape
+      :rtype: pred
+
+
+
+   .. py:method:: sample(batch_size: Optional[int] = None, nodesxsample: Optional[torch.Tensor] = None, num_steps: int = 100, batch: Optional[Dict[str, torch.Tensor]] = None, return_trajectories: bool = False, **kwargs)
+
+      Generate molecules via sampling.
+
+      :param batch_size: Number of molecules to generate (if batch is None)
+      :param nodesxsample: Tensor of molecule sizes (EDM compatibility, used to infer batch_size)
+      :param num_steps: Number of denoising steps
+      :param batch: Optional reference batch for conditional generation
+      :param return_trajectories: If True, return intermediate states
+
+      :returns: Tuple of (one_hot, charges, coords, node_mask) matching EDM interface
+                - one_hot: (B, N, num_atom_types) one-hot encoded atom types
+                - charges: (B, N) atomic numbers
+                - coords: (B, N, 3) positions
+                - node_mask: (B, N) mask (1=real atom, 0=padding)
+
+
+
+   .. py:attribute:: atom_vocab
+      :value: None
+
+
+
+   .. py:property:: device
+
+      Get model device.
+
+
+   .. py:attribute:: max_n_nodes
+
+
+   .. py:property:: model
+
+      exposes self as the model interface.
+
+      :type: tasks_generate.py compatibility
+
+
+   .. py:property:: n_node_dist
+
+      Direct access to node distribution histogram (EDM compatibility).
+
+      Returns the histogram dictionary mapping number of atoms to counts.
+      This provides the standard interface expected by GenerativeFactory.
+
+
+   .. py:property:: node_dist_model
+
+      Return a node distribution sampler (EDM compatibility).
+
+
+   .. py:attribute:: num_atom_types
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: tabasco_model
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_tabasco'
+
+
+
+   .. py:attribute:: to_pointcloud
+
+
+   .. py:attribute:: to_tensordict
+
+
+.. py:class:: TabascoNodeDistribution(data_stats: dict)
+
+   Node distribution sampler compatible with EDM's node_dist_model interface.
+   Samples molecule sizes from a histogram of atom counts.
+
+
+   .. py:method:: sample(n_samples: int) -> torch.Tensor
+
+      Sample molecule sizes from the histogram distribution.
+
+      :param n_samples: Number of sizes to sample
+
+      :returns: Tensor of shape (n_samples,) with sampled molecule sizes
+
+
+
+   .. py:attribute:: histogram
+
+
+   .. py:attribute:: n_node_dist
+
+
+.. py:class:: TensorDictToPointCloudAdapter
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Convert TABASCO TensorDict output back to PointCloud format.
+
+   Converts:
+   - coords: (B, N, 3) → coords: (B, N, 3) [unchanged]
+   - atomics: (B, N, atom_dim) one-hot/logits → charges: (B, N) integers
+   - padding_mask: (B, N) with 1=padded → node_mask: (B, N) with 1=real [inverted]
+
+
+   .. py:method:: forward(tensor_dict: tensordict.TensorDict) -> Dict[str, torch.Tensor]
+
+      Convert TABASCO output to PointCloud format.
+
+      :param tensor_dict: TensorDict with:
+                          - coords: (B, N, 3)
+                          - atomics: (B, N, atom_dim) one-hot or logits
+                          - padding_mask: (B, N) with 1=padded
+
+      :returns:     - coords: (B, N, 3)
+                    - charges: (B, N) atomic numbers
+                    - node_mask: (B, N) with 1=real, 0=padded
+                    - natoms: (B,) count of real atoms
+      :rtype: Dictionary with
+
+
+

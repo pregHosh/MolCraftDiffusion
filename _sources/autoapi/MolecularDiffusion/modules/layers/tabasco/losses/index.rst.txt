@@ -1,0 +1,95 @@
+MolecularDiffusion.modules.layers.tabasco.losses
+================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.tabasco.losses
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.tabasco.losses.InterDistancesLoss
+
+
+Module Contents
+---------------
+
+.. py:class:: InterDistancesLoss(distance_threshold: Optional[float] = None, sqrd: bool = False, key: str = 'coords', key_pad_mask: str = 'padding_mask', time_factor: Optional[Callable] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Mean-squared error between predicted and reference inter-atomic distance matrices.
+
+   Initialize the loss module.
+
+   :param distance_threshold: If provided, only atom pairs with distance <= threshold
+                              contribute to the loss. Units must match the coordinate system.
+   :param sqrd: When `True` the raw *squared* distances are used instead of their square-root.
+                Set this to `True` if you have pre-squared your training targets.
+   :param key: Key that stores coordinates inside `TensorDict` objects.
+   :param key_pad_mask: Key that stores the boolean padding mask inside `TensorDict` objects.
+   :param time_factor: Optional callable `f(t)` that rescales the per-pair loss as a
+                       function of the interpolation time `t`.
+
+
+   .. py:method:: forward(path: MolecularDiffusion.modules.models.tabasco.flow.path.FlowPath, pred: tensordict.TensorDict, compute_stats: bool = True) -> torch.Tensor
+
+      Compute the inter-distance MSE loss.
+
+      :param path: `FlowPath` containing ground-truth endpoint coordinates and the
+                   interpolation time `t`.
+      :param pred: `TensorDict` with predicted coordinates under the same `key` as
+                   specified during initialization.
+      :param compute_stats: If `True` additionally returns distance-loss statistics binned
+                            by time for logging purposes.
+
+      :returns: Scalar tensor with the mean loss.
+                - stats_dict:   Dictionary with binned loss statistics. Empty when
+                    `compute_stats` is `False`.
+      :rtype: - loss
+
+
+
+   .. py:method:: inter_distances(coords1, coords2, eps: float = 1e-06) -> torch.Tensor
+
+      Compute pairwise distances between two coordinate sets.
+
+      :param coords1: Coordinate tensor of shape `(N, 3)`.
+      :param coords2: Coordinate tensor of shape `(M, 3)`.
+      :param eps: Numerical stability term added before `sqrt` when `sqrd` is `False`.
+
+      :returns: Tensor of shape `(N, M)` containing pairwise distances. Values are squared
+                distances when the instance was created with `sqrd=True`.
+
+
+
+   .. py:attribute:: distance_threshold
+      :value: None
+
+
+
+   .. py:attribute:: key
+      :value: 'coords'
+
+
+
+   .. py:attribute:: key_pad_mask
+      :value: 'padding_mask'
+
+
+
+   .. py:attribute:: mse_loss
+
+
+   .. py:attribute:: sqrd
+      :value: False
+
+
+
+   .. py:attribute:: time_factor
+      :value: None
+
+
+

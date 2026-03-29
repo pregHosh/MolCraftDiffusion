@@ -1,0 +1,32 @@
+MolecularDiffusion.modules.models.tabasco.chem.constants
+========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.chem.constants
+
+.. autoapi-nested-parse::
+
+   Chemical constants and utilities for the tabasco project.
+
+   This module defines the canonical atom types and related mappings used throughout
+   the project. The atom_dim in configs/globals/globals.yaml should match len(ATOM_NAMES).
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.chem.constants.ATOM_COLOR_MAP
+   MolecularDiffusion.modules.models.tabasco.chem.constants.ATOM_NAMES
+
+
+Module Contents
+---------------
+
+.. py:data:: ATOM_COLOR_MAP
+
+.. py:data:: ATOM_NAMES
+   :value: ['C', 'N', 'O', 'F', 'S', 'Cl', 'Br', 'I', '*']
+
+

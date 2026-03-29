@@ -1,0 +1,77 @@
+MolecularDiffusion.modules.models.tabasco.callbacks.posebusters
+===============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.callbacks.posebusters
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.callbacks.posebusters.log
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.callbacks.posebusters.PoseBustersCallback
+
+
+Module Contents
+---------------
+
+.. py:class:: PoseBustersCallback(num_samples: int = 1, num_sampling_steps: int = 100, compute_every: int = 1000, config_file: str = './src/tabasco/utils/posebusters_no_strain.yaml')
+
+   Bases: :py:obj:`lightning.Callback`
+
+
+   Compute PoseBusters quality metrics during validation.
+
+   Only rank-0 computes the metrics to avoid redundant heavy work.
+
+   Args:
+   num_samples: Molecules to sample per evaluation.
+   num_sampling_steps: Sampling iterations per molecule.
+   compute_every: Global-step interval between evaluations.
+   config_file: YAML file consumed by PoseBusters for thresholds.
+
+
+   .. py:method:: on_validation_epoch_end(trainer: lightning.Trainer, lightning_module: lightning.LightningModule) -> None
+
+      Sample molecules and log PoseBusters metrics.
+
+      Skips execution on non-zero ranks and throttles by `compute_every`.
+
+
+
+   .. py:attribute:: cfg_file
+
+
+   .. py:attribute:: compute_every
+      :value: 1000
+
+
+
+   .. py:attribute:: next_compute
+      :value: 0
+
+
+
+   .. py:attribute:: num_samples
+      :value: 1
+
+
+
+   .. py:attribute:: num_sampling_steps
+      :value: 100
+
+
+
+   .. py:attribute:: posebusters
+
+
+.. py:data:: log
+

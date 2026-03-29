@@ -1,0 +1,39 @@
+MolecularDiffusion.modules.models.tabasco.flow.path
+===================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.flow.path
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.flow.path.FlowPath
+
+
+Module Contents
+---------------
+
+.. py:class:: FlowPath
+
+   .. py:attribute:: dx_t
+      :type:  tensordict.TensorDict
+
+
+   .. py:attribute:: t
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: x_0
+      :type:  tensordict.TensorDict
+
+
+   .. py:attribute:: x_1
+      :type:  tensordict.TensorDict
+
+
+   .. py:attribute:: x_t
+      :type:  tensordict.TensorDict
+
+

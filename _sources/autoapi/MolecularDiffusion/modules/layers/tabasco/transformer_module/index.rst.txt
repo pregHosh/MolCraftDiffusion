@@ -1,0 +1,91 @@
+MolecularDiffusion.modules.layers.tabasco.transformer_module
+============================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.tabasco.transformer_module
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.tabasco.transformer_module.TransformerModule
+
+
+Module Contents
+---------------
+
+.. py:class:: TransformerModule(spatial_dim: int, atom_dim: int, num_heads: int, num_layers: int, hidden_dim: int, activation: str = 'SiLU', implementation: str = 'pytorch', cross_attention: bool = False, add_sinusoid_posenc: bool = True, concat_combine_input: bool = False, custom_weight_init: Optional[str] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Basic Transformer model for molecule generation.
+
+   :param custom_weight_init: None, "xavier", "kaiming", "orthogonal", "uniform", "eye", "normal"
+   :param (uniform does not work well):
+
+
+   .. py:method:: forward(coords, atomics, padding_mask, t) -> torch.Tensor
+
+      Forward pass of the module.
+
+
+
+   .. py:attribute:: add_sinusoid_posenc
+      :value: True
+
+
+
+   .. py:attribute:: atom_type_embed
+
+
+   .. py:attribute:: comb_input_dim
+
+
+   .. py:attribute:: concat_combine_input
+      :value: False
+
+
+
+   .. py:attribute:: cross_attention
+      :value: False
+
+
+
+   .. py:attribute:: custom_weight_init
+      :value: None
+
+
+
+   .. py:attribute:: hidden_dim
+
+
+   .. py:attribute:: implementation
+      :value: 'pytorch'
+
+
+
+   .. py:attribute:: input_dim
+
+
+   .. py:attribute:: linear_embed
+
+
+   .. py:attribute:: num_layers
+
+
+   .. py:attribute:: out_atom_type_linear
+
+
+   .. py:attribute:: out_coord_linear
+
+
+   .. py:attribute:: time_dim
+      :value: 1
+
+
+
+   .. py:attribute:: time_encoding
+
+

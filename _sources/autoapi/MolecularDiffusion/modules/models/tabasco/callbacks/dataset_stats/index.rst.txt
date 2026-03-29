@@ -1,0 +1,45 @@
+MolecularDiffusion.modules.models.tabasco.callbacks.dataset_stats
+=================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.callbacks.dataset_stats
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.callbacks.dataset_stats.log
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.callbacks.dataset_stats.DatasetStatsCallback
+
+
+Module Contents
+---------------
+
+.. py:class:: DatasetStatsCallback
+
+   Bases: :py:obj:`lightning.Callback`
+
+
+   Sync dataset statistics and effective batch size to the Lightning model.
+
+   The datamodule must expose `get_dataset_stats()` and the model must
+   implement `set_data_stats(stats)`; otherwise the callback logs a warning
+   and continues without raising.
+
+
+   .. py:method:: on_fit_start(trainer, pl_module)
+
+      Hook called once at the start of training.
+
+
+
+.. py:data:: log
+

@@ -1,0 +1,34 @@
+MolecularDiffusion.modules.models.tabasco.flow.utils
+====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.flow.utils
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.flow.utils.HistogramTimeDistribution
+
+
+Module Contents
+---------------
+
+.. py:class:: HistogramTimeDistribution(probs: torch.Tensor)
+
+   .. py:method:: sample(sample_shape: torch.Size = torch.Size([])) -> torch.Tensor
+
+
+   .. py:attribute:: bin_width
+
+
+   .. py:attribute:: categorical
+
+
+   .. py:attribute:: probs
+
+
+   .. py:attribute:: uniform
+
+

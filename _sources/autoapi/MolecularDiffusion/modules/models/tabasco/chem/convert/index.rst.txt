@@ -1,0 +1,102 @@
+MolecularDiffusion.modules.models.tabasco.chem.convert
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.chem.convert
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.chem.convert.log
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.chem.convert.MoleculeConverter
+
+
+Module Contents
+---------------
+
+.. py:class:: MoleculeConverter(atom_names=ATOM_NAMES, atom_color_map=ATOM_COLOR_MAP, dataset_normalizer=2.0)
+
+   Bidirectional converter between RDKit molecules and TensorDicts.
+
+   Coordinates are optionally centred and divided by `dataset_normalizer`
+   to improve numerical stability for learning tasks.
+
+   Args:
+   atom_names: Allowed element symbols; `'*'` is treated as a dummy.
+   atom_color_map: Parallel list of RGB colour triples.
+   dataset_normalizer: Value used to scale coordinates; see
+       `to_tensor` / `from_tensor`.
+
+
+   .. py:method:: data_to_atom_array(mol_tensor: tensordict.TensorDict, rescale_coords: bool = True, add_bonds=True, add_hydrogens=True, sanitize=True) -> biotite.structure.AtomArray
+
+      Shortcut: TensorDict -> RDKit Mol -> Biotite AtomArray.
+
+
+
+   .. py:method:: from_batch(batch: tensordict.TensorDict, **kwargs) -> List[rdkit.Chem.Mol]
+
+      Vectorised wrapper around `from_tensor` for batched data.
+
+      Unconvertible items are returned as `None` and logged as warnings.
+
+
+
+   .. py:method:: from_tensor(mol_tensor: tensordict.TensorDict, rescale_coords: bool = True, sanitize: bool = True, use_openbabel: bool = True)
+
+      Inverse of `to_tensor`.
+
+      :param mol_tensor: Unbatched TensorDict.
+      :param rescale_coords: Multiply coords back by `dataset_normalizer`.
+      :param sanitize: Run `Chem.SanitizeMol`; may fail on exotic molecules.
+      :param use_openbabel: Toggle OpenBabel bond inference.
+
+      :returns: RDKit Mol or `None` if any step fails.
+
+
+
+   .. py:method:: mol_to_atom_array(mol: rdkit.Chem.Mol) -> biotite.structure.AtomArray
+
+      Convert an RDKit Mol to a Biotite `AtomArray` (with bonds).
+
+
+
+   .. py:method:: tensor_obj_to_points(tensor_obj: tensordict.TensorDict) -> Tuple[torch.Tensor, torch.Tensor]
+
+      Return `(coords, atom_type_idx)` with padding rows removed.
+
+
+
+   .. py:method:: to_tensor(mol: rdkit.Chem.Mol, pad_to_size: Optional[int] = None, normalize_coords: bool = True, remove_hydrogens: bool = True) -> tensordict.TensorDict
+
+      Convert an RDKit mol to a TensorDict.
+
+      :param mol: Input molecule with 3-D conformer.
+      :param pad_to_size: If given, output is padded to this atom count.
+      :param normalize_coords: If True, centre of mass is removed and
+                               divided by `dataset_normalizer`.
+      :param remove_hydrogens: If True, strip explicit H atoms.
+
+      :returns:     • `coords`:         `(N, 3)` float32
+                    • `atomics`:        `(N, n_elements)` one-hot
+                    • `padding_mask`:   `(N,)` bool (optional)
+      :rtype: TensorDict with keys
+
+
+
+   .. py:attribute:: dataset_normalizer
+      :value: 2.0
+
+
+
+.. py:data:: log
+

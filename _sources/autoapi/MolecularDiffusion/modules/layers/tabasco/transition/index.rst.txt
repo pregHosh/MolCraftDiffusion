@@ -1,0 +1,86 @@
+MolecularDiffusion.modules.layers.tabasco.transition
+====================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.tabasco.transition
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.tabasco.transition.FeedForward
+   MolecularDiffusion.modules.layers.tabasco.transition.Transition
+
+
+Module Contents
+---------------
+
+.. py:class:: FeedForward(dim: int, hidden_dim: int, dropout: float = 0.0, activation: Type[torch.nn.Module] = nn.GELU)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Feed Forward Network with optional activation and dropout.
+
+   This is a standard feed forward network used in transformer architectures,
+   with a configurable activation function and dropout rate.
+
+   Initialize the FeedForward module.
+
+   :param dim: Input and output dimension
+   :param hidden_dim: Hidden dimension (typically 4x the input dimension)
+   :param dropout: Dropout probability
+   :param activation: Activation function to use
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+      Forward pass through the feed forward network.
+
+      :param x: Input tensor of shape [batch_size, seq_len, dim]
+
+      :returns: Output tensor of shape [batch_size, seq_len, dim]
+
+
+
+   .. py:attribute:: net
+
+
+.. py:class:: Transition(dim: int, hidden_dim: Optional[int] = None, dropout: float = 0.0, activation_type: str = 'swiglu', layer_norm: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Modern Transition MLP block with SwiGLU or other activation variants.
+
+   This implements a more modern version of the feed forward network used in
+   transformers, with options for different activation functions including SwiGLU
+   which is used in models like PaLM and LLaMA.
+
+   Initialize the Transition module.
+
+   :param dim: Input and output dimension
+   :param hidden_dim: Hidden dimension (defaults to 4x input dim)
+   :param dropout: Dropout probability
+   :param activation_type: Type of activation to use ('swiglu', 'geglu', 'gelu', 'relu', 'silu')
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+      Forward pass through the MLP.
+
+      :param x: Input tensor of shape [batch_size, seq_len, dim]
+
+      :returns: Output tensor of shape [batch_size, seq_len, dim]
+
+
+
+   .. py:attribute:: activation_type
+      :value: 'swiglu'
+
+
+
+   .. py:attribute:: dropout
+
+

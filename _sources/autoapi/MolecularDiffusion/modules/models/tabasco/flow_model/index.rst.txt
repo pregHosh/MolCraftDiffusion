@@ -1,0 +1,94 @@
+MolecularDiffusion.modules.models.tabasco.flow_model
+====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.flow_model
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.flow_model.FlowMatchingModel
+
+
+Module Contents
+---------------
+
+.. py:class:: FlowMatchingModel(net: torch.nn.Module, coords_interpolant: MolecularDiffusion.modules.models.tabasco.flow.interpolate.Interpolant, atomics_interpolant: MolecularDiffusion.modules.models.tabasco.flow.interpolate.Interpolant, time_distribution: str = 'uniform', time_alpha_factor: float = 2.0, interdist_loss: MolecularDiffusion.modules.layers.tabasco.losses.InterDistancesLoss = None, num_random_augmentations: Optional[int] = None, sample_schedule: str = 'linear', compile: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Flow-matching diffusion model for 3-D molecule generation.
+
+   Typical usage:
+   - `forward`:    called during training to compute loss and optional stats.
+   - `sample`:     runs the Euler sampler to generate new molecules at inference.
+
+   Args:
+   net: The neural network predicting velocity fields.
+   coords_interpolant: Interpolant for Cartesian coordinates.
+   atomics_interpolant: Interpolant for one-hot atom types.
+   time_distribution: `uniform`, `beta`, or `histogram`.
+   time_alpha_factor: Alpha for beta distribution (ignored otherwise).
+   interdist_loss: Optional additional loss on inter-atomic distances.
+   num_random_augmentations: Number of random rotations per sample.
+   sample_schedule: `linear`, `power`, or `log` schedule in `sample`.
+   compile: If True, passes the network through `torch.compile`.
+
+
+   .. py:method:: forward(batch, compute_stats: bool = True)
+
+      Compute training loss and optional stats.
+
+
+
+   .. py:method:: sample(batch: Optional[tensordict.TensorDict] = None, num_steps: int = 100, batch_size: Optional[int] = None, return_trajectories: bool = False)
+
+      Sample molecules.
+
+      :param batch: Optional reference batch whose padding mask/shape determine
+                    the noise tensor. If `None`, shapes are drawn from
+                    `self.data_stats`.
+      :param num_steps: Number of Euler steps.
+      :param batch_size: Required when `batch` is `None`.
+      :param return_trajectories: If True, also return intermediate snapshots.
+
+
+
+   .. py:method:: set_data_stats(stats: Dict)
+
+      Set the data statistics.
+
+
+
+   .. py:attribute:: atomics_interpolant
+
+
+   .. py:attribute:: coords_interpolant
+
+
+   .. py:attribute:: interdist_loss
+      :value: None
+
+
+
+   .. py:attribute:: net
+
+
+   .. py:attribute:: num_random_augmentations
+      :value: None
+
+
+
+   .. py:attribute:: sample_schedule
+      :value: 'linear'
+
+
+
+   .. py:attribute:: time_alpha_factor
+      :value: 2.0
+
+
+

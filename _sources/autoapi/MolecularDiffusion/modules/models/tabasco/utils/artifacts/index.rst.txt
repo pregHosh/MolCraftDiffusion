@@ -1,0 +1,27 @@
+MolecularDiffusion.modules.models.tabasco.utils.artifacts
+=========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.utils.artifacts
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.utils.artifacts.artifact_to_mols
+
+
+Module Contents
+---------------
+
+.. py:function:: artifact_to_mols(wandb_artifact_name: str, type: str = 'sdf_collection') -> List[rdkit.Chem.Mol]
+
+   Get molecules from a WandB artifact.
+
+   :param wandb_artifact_name: Full name of the artifact (e.g. 'username/project/artifact_name:version')
+   :param type: Type of the artifact, defaults to "sdf_collection"
+
+   :returns: List of RDKit molecules loaded from the SDF files in the artifact
+
+

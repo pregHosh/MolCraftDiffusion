@@ -1,0 +1,99 @@
+MolecularDiffusion.modules.models.tabasco.lightning_tabasco
+===========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.lightning_tabasco
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.lightning_tabasco.LightningTabasco
+
+
+Module Contents
+---------------
+
+.. py:class:: LightningTabasco(model: torch.nn.Module, optimizer: torch.optim.Optimizer)
+
+   Bases: :py:obj:`lightning.LightningModule`
+
+
+   Thin Lightning wrapper around a flow-matching molecule generator.
+
+   Provides:
+   - training / validation loops that delegate to `model`.
+   - sampling convenience (`sample`).
+   - molecule metrics computed on-device via `torchmetrics`.
+
+   Args:
+   model: `nn.Module` that implements `forward` and `sample` like
+       `FlowMatchingModel`.
+   optimizer: Callable that returns a `torch.optim.Optimizer` when
+       passed the model parameters.
+
+
+   .. py:method:: configure_optimizers()
+
+      Return the optimiser instantiated with current model parameters.
+
+
+
+   .. py:method:: on_before_optimizer_step(optimizer: torch.optim.optimizer.Optimizer) -> None
+
+      Log total L2 grad-norm prior to the optimiser update.
+
+
+
+   .. py:method:: on_load_checkpoint(checkpoint)
+
+      Restore `data_stats` from checkpoint if present.
+
+
+
+   .. py:method:: on_save_checkpoint(checkpoint)
+
+      Add `data_stats` to checkpoint so sampling works after resume.
+
+
+
+   .. py:method:: sample(**kwargs)
+
+      Sample from the model.
+
+
+
+   .. py:method:: set_data_stats(stats: Dict)
+
+      Pass dataset statistics to sub-modules and init metrics that need them.
+
+
+
+   .. py:method:: test_step(batch)
+
+      Perform a single test step.
+
+
+
+   .. py:method:: training_step(batch)
+
+      Perform a single training step.
+
+
+
+   .. py:method:: validation_step(batch)
+
+      Perform a single validation step.
+
+
+
+   .. py:attribute:: model
+
+
+   .. py:attribute:: mol_converter
+
+
+   .. py:attribute:: mol_metrics
+
+

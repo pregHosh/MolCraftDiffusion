@@ -1,0 +1,85 @@
+MolecularDiffusion.modules.models.tabasco.callbacks.molecule_metrics
+====================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.callbacks.molecule_metrics
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.callbacks.molecule_metrics.log
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.callbacks.molecule_metrics.MoleculeMetricsCallback
+
+
+Module Contents
+---------------
+
+.. py:class:: MoleculeMetricsCallback(num_samples: int = 100, num_sampling_steps: int = 100, compute_every: int = 1000)
+
+   Bases: :py:obj:`lightning.Callback`
+
+
+   Periodically sample molecules and log evaluation metrics.
+
+   Intended for use in validation where sampling is cheap relative to
+   training. Executes only on the main process (`global_rank == 0`) to avoid
+   duplicate work and noisy logging.
+
+   Args:
+   num_samples: Number of molecules to draw per evaluation.
+   num_sampling_steps: Iterations for the model's sampler.
+   compute_every: Global-step interval between evaluations.
+
+
+   .. py:method:: on_validation_epoch_end(trainer: lightning.Trainer, lightning_module: lightning.LightningModule) -> None
+
+      Sample molecules and update metric objects.
+
+      :param trainer: Lightning Trainer instance.
+      :param lightning_module: LightningModule with `sample` and `mol_metrics` attrs.
+
+      .. rubric:: Notes
+
+      - Runs only on rank-0 for distributed training.
+      - Heavy operation: sampling + metric computation; thus spaced by
+        `compute_every` steps.
+      - Metrics are expected to be torchmetrics.Metric callables stored in
+        `lightning_module.mol_metrics` and to be compatible with a list
+        of RDKit Mol objects.
+
+
+
+   .. py:attribute:: compute_every
+      :value: 1000
+
+
+
+   .. py:attribute:: mol_converter
+
+
+   .. py:attribute:: next_compute
+      :value: 0
+
+
+
+   .. py:attribute:: num_samples
+      :value: 100
+
+
+
+   .. py:attribute:: num_sampling_steps
+      :value: 100
+
+
+
+.. py:data:: log
+

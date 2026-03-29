@@ -1,0 +1,39 @@
+MolecularDiffusion.modules.models.tabasco.utils.metric_utils
+============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco.utils.metric_utils
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.utils.metric_utils.log
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco.utils.metric_utils.split_losses_by_time
+
+
+Module Contents
+---------------
+
+.. py:function:: split_losses_by_time(flow_time: torch.Tensor, losses: torch.Tensor, num_bins: int) -> List[float]
+
+   Split the losses by time.
+
+   :param time: time tensor
+   :param losses: losses tensor
+   :param num_bins: number of bins
+
+   :returns: list of mean losses for each bin
+   :rtype: List[float]
+
+
+.. py:data:: log
+
