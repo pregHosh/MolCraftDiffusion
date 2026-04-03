@@ -1,0 +1,122 @@
+MolecularDiffusion.modules.models.ldm.decoders.equivariant_feedforward
+======================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.ldm.decoders.equivariant_feedforward
+
+.. autoapi-nested-parse::
+
+   Copyright (c) Meta Platforms, Inc. and affiliates.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ldm.decoders.equivariant_feedforward.FeedForwardDecoder
+
+
+Module Contents
+---------------
+
+.. py:class:: FeedForwardDecoder(max_num_elements=90, sphere_channels=128, ffn_hidden_channels=512, lmax_list=[6], mmax_list=[2], grid_resolution=None, ffn_activation='scaled_silu', use_gate_act=False, use_grid_mlp=False, use_sep_s2_act=True, weight_init='normal')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Equivariant feedforward decoder as part of Equiformer-based VAEs.
+
+   See src/models/encoders/equiformer.py for documentation.
+
+
+   .. py:method:: forward(encoded_batch: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]
+
+      :param encoded_batch: Dict with the following attributes:
+                            x (torch.Tensor): Encoded batch of atomic environments
+                            num_atoms (torch.Tensor): Number of atoms in each molecular environment
+                            batch (torch.Tensor): Batch index for each atom
+
+
+
+   .. py:method:: no_weight_decay()
+
+
+   .. py:attribute:: SO3_grid
+
+
+   .. py:attribute:: atom_types_head
+
+
+   .. py:attribute:: d_model
+      :value: 6272
+
+
+
+   .. py:attribute:: ffn_activation
+      :value: 'scaled_silu'
+
+
+
+   .. py:attribute:: ffn_hidden_channels
+      :value: 512
+
+
+
+   .. py:attribute:: frac_coords_head
+
+
+   .. py:attribute:: grid_resolution
+      :value: None
+
+
+
+   .. py:attribute:: lattice_head
+
+
+   .. py:attribute:: lmax_list
+      :value: [6]
+
+
+
+   .. py:attribute:: max_num_elements
+      :value: 90
+
+
+
+   .. py:attribute:: mmax_list
+      :value: [2]
+
+
+
+   .. py:property:: num_params
+
+
+   .. py:attribute:: pos_head
+
+
+   .. py:attribute:: sphere_channels
+      :value: 128
+
+
+
+   .. py:attribute:: use_gate_act
+      :value: False
+
+
+
+   .. py:attribute:: use_grid_mlp
+      :value: False
+
+
+
+   .. py:attribute:: use_sep_s2_act
+      :value: True
+
+
+
+   .. py:attribute:: weight_init
+      :value: 'normal'
+
+
+

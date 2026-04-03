@@ -1,0 +1,250 @@
+MolecularDiffusion.modules.models.ldm.denoisers.dit
+===================================================
+
+.. py:module:: MolecularDiffusion.modules.models.ldm.denoisers.dit
+
+.. autoapi-nested-parse::
+
+   Diffusion Transformer (DiT) denoiser.
+
+   Copyright (c) Meta Platforms, Inc. and affiliates.
+   Adapted from: https://github.com/facebookresearch/DiT
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ldm.denoisers.dit.DiT
+   MolecularDiffusion.modules.models.ldm.denoisers.dit.DiTBlock
+   MolecularDiffusion.modules.models.ldm.denoisers.dit.FinalLayer
+   MolecularDiffusion.modules.models.ldm.denoisers.dit.LabelEmbedder
+   MolecularDiffusion.modules.models.ldm.denoisers.dit.Mlp
+   MolecularDiffusion.modules.models.ldm.denoisers.dit.TimestepEmbedder
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ldm.denoisers.dit.get_pos_embedding
+   MolecularDiffusion.modules.models.ldm.denoisers.dit.modulate
+
+
+Module Contents
+---------------
+
+.. py:class:: DiT(d_x: int = 8, d_model: int = 384, num_layers: int = 12, nhead: int = 6, mlp_ratio: float = 4.0, class_dropout_prob: float = 0.1, num_datasets: int = 2, num_spacegroups: int = 230)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Diffusion Transformer denoiser.
+
+   :param d_x: Latent token dimension (must match VAE latent_dim)
+   :param d_model: Model hidden dimension
+   :param num_layers: Number of Transformer layers
+   :param nhead: Number of attention heads
+   :param mlp_ratio: Ratio of hidden to input dimension in MLP
+   :param class_dropout_prob: Probability of dropping class labels for CFG
+   :param num_datasets: Number of datasets (for multi-dataset training, default 2)
+   :param num_spacegroups: Number of spacegroups (for crystals, default 230)
+
+
+   .. py:method:: forward(x, t, mask, dataset_idx=None, spacegroup=None, x_sc=None)
+
+      Forward pass of DiT.
+
+      :param x: Noisy latent tokens (B, N, d_x)
+      :param t: Timestep for each sample (B,) or (B, 1)
+      :param mask: Valid token mask, True if valid (B, N)
+      :param dataset_idx: Dataset index (B,) - default 1 for molecules
+      :param spacegroup: Spacegroup index (B,) - default 0 for molecules
+      :param x_sc: Self-conditioning input (B, N, d_x) - optional
+
+      :returns: Predicted clean latent (B, N, d_x)
+
+
+
+   .. py:method:: forward_with_cfg(x, t, mask, cfg_scale, dataset_idx=None, spacegroup=None, x_sc=None)
+
+      Forward with classifier-free guidance.
+
+
+
+   .. py:method:: initialize_weights()
+
+
+   .. py:attribute:: blocks
+
+
+   .. py:attribute:: d_model
+      :value: 384
+
+
+
+   .. py:attribute:: d_x
+      :value: 8
+
+
+
+   .. py:attribute:: dataset_embedder
+
+
+   .. py:attribute:: final_layer
+
+
+   .. py:attribute:: nhead
+      :value: 6
+
+
+
+   .. py:attribute:: spacegroup_embedder
+
+
+   .. py:attribute:: t_embedder
+
+
+   .. py:attribute:: x_embedder
+
+
+.. py:class:: DiTBlock(hidden_dim, num_heads, mlp_ratio=4.0, **block_kwargs)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   A DiT block with adaptive layer norm zero (adaLN-Zero) conditioning.
+
+
+   .. py:method:: forward(x, c, mask)
+
+
+   .. py:attribute:: adaLN_modulation
+
+
+   .. py:attribute:: attn
+
+
+   .. py:attribute:: mlp
+
+
+   .. py:attribute:: norm1
+
+
+   .. py:attribute:: norm2
+
+
+.. py:class:: FinalLayer(hidden_dim, out_dim)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   The final layer of DiT.
+
+
+   .. py:method:: forward(x, c)
+
+
+   .. py:attribute:: adaLN_modulation
+
+
+   .. py:attribute:: linear
+
+
+   .. py:attribute:: norm_final
+
+
+.. py:class:: LabelEmbedder(num_classes, hidden_dim, dropout_prob)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Embeds class labels into vector representations.
+
+   Also handles label dropout for classifier-free guidance.
+
+
+   .. py:method:: forward(labels, train, force_drop_ids=None)
+
+
+   .. py:method:: token_drop(labels, force_drop_ids=None)
+
+      Drops labels to enable classifier-free guidance.
+
+
+
+   .. py:attribute:: dropout_prob
+
+
+   .. py:attribute:: embedding_table
+
+
+   .. py:attribute:: num_classes
+
+
+.. py:class:: Mlp(in_features, hidden_features=None, out_features=None, act_layer=nn.GELU, norm_layer=None, bias=True, drop=0.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   MLP as used in Vision Transformer, MLP-Mixer and related networks.
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: drop1
+
+
+   .. py:attribute:: drop2
+
+
+   .. py:attribute:: fc1
+
+
+   .. py:attribute:: fc2
+
+
+   .. py:attribute:: norm
+
+
+.. py:class:: TimestepEmbedder(hidden_dim, frequency_embedding_dim=256)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Embeds scalar timesteps into vector representations.
+
+
+   .. py:method:: forward(t)
+
+
+   .. py:method:: timestep_embedding(t, dim, max_period=10000)
+      :staticmethod:
+
+
+
+   .. py:attribute:: frequency_embedding_dim
+      :value: 256
+
+
+
+   .. py:attribute:: mlp
+
+
+.. py:function:: get_pos_embedding(indices, emb_dim, max_len=2048)
+
+   Creates sine / cosine positional embeddings.
+
+
+.. py:function:: modulate(x, shift, scale)
+
+   AdaLN modulation.
+
+

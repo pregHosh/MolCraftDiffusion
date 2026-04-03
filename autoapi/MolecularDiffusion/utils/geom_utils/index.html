@@ -356,13 +356,13 @@
         <article role="main" id="furo-main-content">
           <section id="module-MolecularDiffusion.utils.geom_utils">
 <span id="moleculardiffusion-utils-geom-utils"></span><h1>MolecularDiffusion.utils.geom_utils<a class="headerlink" href="#module-MolecularDiffusion.utils.geom_utils" title="Link to this heading">¶</a></h1>
-<section id="attributes">
-<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.logger" title="MolecularDiffusion.utils.geom_utils.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator" title="MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MoleculeReconstructionEvaluator</span></code></a></p></td>
+<td><p>Evaluator for molecule reconstruction tasks.</p></td>
 </tr>
 </tbody>
 </table>
@@ -373,32 +373,44 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.assert_correctly_masked" title="MolecularDiffusion.utils.geom_utils.assert_correctly_masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assert_correctly_masked</span></code></a>(→ None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.apply_rotation_augmentation" title="MolecularDiffusion.utils.geom_utils.apply_rotation_augmentation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_rotation_augmentation</span></code></a>(→ None)</p></td>
+<td><p>Apply rotation augmentation to batch positions (in-place).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.assert_correctly_masked" title="MolecularDiffusion.utils.geom_utils.assert_correctly_masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assert_correctly_masked</span></code></a>(→ None)</p></td>
 <td><p>Asserts that the masked values in the variable are close to zero.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.assert_mean_zero" title="MolecularDiffusion.utils.geom_utils.assert_mean_zero"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assert_mean_zero</span></code></a>(→ None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.assert_mean_zero" title="MolecularDiffusion.utils.geom_utils.assert_mean_zero"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assert_mean_zero</span></code></a>(→ None)</p></td>
 <td><p>Asserts that the mean of a tensor along dimension 1 is close to zero.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.assert_mean_zero_with_mask" title="MolecularDiffusion.utils.geom_utils.assert_mean_zero_with_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assert_mean_zero_with_mask</span></code></a>(x, node_mask[, eps])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.assert_mean_zero_with_mask" title="MolecularDiffusion.utils.geom_utils.assert_mean_zero_with_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assert_mean_zero_with_mask</span></code></a>(x, node_mask[, eps])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.check_mask_correct" title="MolecularDiffusion.utils.geom_utils.check_mask_correct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_mask_correct</span></code></a>(→ None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.check_mask_correct" title="MolecularDiffusion.utils.geom_utils.check_mask_correct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_mask_correct</span></code></a>(→ None)</p></td>
 <td><p>Checks if variables are correctly masked using assert_correctly_masked.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.coord2cosine" title="MolecularDiffusion.utils.geom_utils.coord2cosine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coord2cosine</span></code></a>(x, edge_index[, epsilon])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.compute_atom_type_accuracy" title="MolecularDiffusion.utils.geom_utils.compute_atom_type_accuracy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_atom_type_accuracy</span></code></a>(→ float)</p></td>
+<td><p>Compute accuracy of atom type predictions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.compute_rmsd" title="MolecularDiffusion.utils.geom_utils.compute_rmsd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_rmsd</span></code></a>(→ float)</p></td>
+<td><p>Compute RMSD between two sets of positions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.coord2cosine" title="MolecularDiffusion.utils.geom_utils.coord2cosine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coord2cosine</span></code></a>(x, edge_index[, epsilon])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.coord2diff" title="MolecularDiffusion.utils.geom_utils.coord2diff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coord2diff</span></code></a>(→ Tuple[torch.Tensor, torch.Tensor])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.coord2diff" title="MolecularDiffusion.utils.geom_utils.coord2diff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coord2diff</span></code></a>(→ Tuple[torch.Tensor, torch.Tensor])</p></td>
 <td><p>Calculates the radial distance and normalized coordinate difference between nodes connected by edges.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.correct_edges" title="MolecularDiffusion.utils.geom_utils.correct_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">correct_edges</span></code></a>(data[, scale_factor])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.correct_edges" title="MolecularDiffusion.utils.geom_utils.correct_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">correct_edges</span></code></a>(data[, scale_factor])</p></td>
 <td><p>Corrects the edges in a molecular grapSCALE_FACTORh based on covalent radii.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.create_pyg_graph" title="MolecularDiffusion.utils.geom_utils.create_pyg_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_pyg_graph</span></code></a>(cartesian_coordinates_tensor, ...[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.create_pyg_graph" title="MolecularDiffusion.utils.geom_utils.create_pyg_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_pyg_graph</span></code></a>(cartesian_coordinates_tensor, ...[, ...])</p></td>
 <td><p>Creates a PyTorch Geometric graph from given cartesian coordinates and atomic numbers.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.random_rotation" title="MolecularDiffusion.utils.geom_utils.random_rotation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_rotation</span></code></a>(x)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.random_rotation" title="MolecularDiffusion.utils.geom_utils.random_rotation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_rotation</span></code></a>(x)</p></td>
 <td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.random_rotation_matrix" title="MolecularDiffusion.utils.geom_utils.random_rotation_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random_rotation_matrix</span></code></a>(→ torch.Tensor)</p></td>
+<td><p>Generate a random 3x3 rotation matrix from a quaternion.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.read_xyz_file" title="MolecularDiffusion.utils.geom_utils.read_xyz_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_xyz_file</span></code></a>(xyz_file)</p></td>
 <td><p>Reads an XYZ file and extracts atomic positions and atomic numbers.</p></td>
@@ -418,13 +430,16 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.sample_gaussian_with_mask" title="MolecularDiffusion.utils.geom_utils.sample_gaussian_with_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_gaussian_with_mask</span></code></a>(size, device, node_mask[, std])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_xyz_file" title="MolecularDiffusion.utils.geom_utils.save_xyz_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_xyz_file</span></code></a>(path, one_hot, positions, atom_decoder)</p></td>
-<td><p>Save XYZ files for a batch of molecules directly to the target path.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_shepherd_outputs" title="MolecularDiffusion.utils.geom_utils.save_shepherd_outputs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_shepherd_outputs</span></code></a>(output_dir, structures[, ...])</p></td>
+<td><p>Save ShEPhERD generated structures to disk.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_xyz_file_atomic_numbers" title="MolecularDiffusion.utils.geom_utils.save_xyz_file_atomic_numbers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_xyz_file_atomic_numbers</span></code></a>(path, positions, ...[, ...])</p></td>
-<td><p>Save XYZ files for a batch of molecules directly to the target path.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_xyz_file" title="MolecularDiffusion.utils.geom_utils.save_xyz_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_xyz_file</span></code></a>(path, one_hot, positions, atom_decoder)</p></td>
+<td><p>Save XYZ files for a batch of molecules, skipping atoms near (0,0,0).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.translate_to_origine" title="MolecularDiffusion.utils.geom_utils.translate_to_origine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">translate_to_origine</span></code></a>(coords, node_mask)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_xyz_file_atomic_numbers" title="MolecularDiffusion.utils.geom_utils.save_xyz_file_atomic_numbers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_xyz_file_atomic_numbers</span></code></a>(path, positions, ...[, ...])</p></td>
+<td><p>Save XYZ files for a batch of molecules, writing ATOMIC SYMBOLS in the first column.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.translate_to_origine" title="MolecularDiffusion.utils.geom_utils.translate_to_origine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">translate_to_origine</span></code></a>(coords, node_mask)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -433,6 +448,108 @@
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_utils.</span></span><span class="sig-name descname"><span class="pre">MoleculeReconstructionEvaluator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rmsd_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator" title="Link to this definition">¶</a></dt>
+<dd><p>Evaluator for molecule reconstruction tasks.</p>
+<p>Simple evaluator that computes:
+- RMSD between predicted and ground truth positions
+- Atom type accuracy
+- Match rate (molecules with RMSD below threshold and perfect atom types)</p>
+<p>Does NOT require pymatgen or openbabel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rmsd_threshold</strong> – RMSD threshold (in Angstroms) for considering a match.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.append_gt_array">
+<span class="sig-name descname"><span class="pre">append_gt_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">numpy.ndarray</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.append_gt_array" title="Link to this definition">¶</a></dt>
+<dd><p>Append a ground truth to the evaluator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.append_pred_array">
+<span class="sig-name descname"><span class="pre">append_pred_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pred</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">numpy.ndarray</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.append_pred_array" title="Link to this definition">¶</a></dt>
+<dd><p>Append a prediction to the evaluator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pred</strong> – Dict with keys:
+- ‘atom_types’: (n_atoms,) atomic numbers
+- ‘pos’: (n_atoms, 3) positions
+- ‘sample_idx’: sample index</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.clear" title="Link to this definition">¶</a></dt>
+<dd><p>Clear stored predictions and ground truths for next epoch.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.get_metrics">
+<span class="sig-name descname"><span class="pre">get_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_epoch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.get_metrics" title="Link to this definition">¶</a></dt>
+<dd><p>Compute reconstruction metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>match_rate: fraction of molecules with RMSD &lt; threshold AND perfect atom types</p></li>
+<li><p>mean_rms_dist: mean RMSD over all samples</p></li>
+<li><p>atom_type_accuracy: mean atom type accuracy over all samples</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict with</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.save_molecules">
+<span class="sig-name descname"><span class="pre">save_molecules</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.save_molecules" title="Link to this definition">¶</a></dt>
+<dd><p>Save predicted and ground truth molecules as XYZ files.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.device">
+<span class="sig-name descname"><span class="pre">device</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.device" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.gt_arrays_list">
+<span class="sig-name descname"><span class="pre">gt_arrays_list</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">numpy.ndarray</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.gt_arrays_list" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.pred_arrays_list">
+<span class="sig-name descname"><span class="pre">pred_arrays_list</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">numpy.ndarray</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.pred_arrays_list" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.rmsd_threshold">
+<span class="sig-name descname"><span class="pre">rmsd_threshold</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.5</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.rmsd_threshold" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.apply_rotation_augmentation">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_utils.</span></span><span class="sig-name descname"><span class="pre">apply_rotation_augmentation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot_mat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.11)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotate_cell</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.apply_rotation_augmentation" title="Link to this definition">¶</a></dt>
+<dd><p>Apply rotation augmentation to batch positions (in-place).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> – PyG Data/Batch with pos attribute</p></li>
+<li><p><strong>rot_mat</strong> – (3, 3) rotation matrix</p></li>
+<li><p><strong>rotate_cell</strong> – If True, also rotate cell (for crystals). Disabled for molecules.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.assert_correctly_masked">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_utils.</span></span><span class="sig-name descname"><span class="pre">assert_correctly_masked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.11)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.11)"><span class="pre">torch.Tensor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.assert_correctly_masked" title="Link to this definition">¶</a></dt>
@@ -475,6 +592,20 @@
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.compute_atom_type_accuracy">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_utils.</span></span><span class="sig-name descname"><span class="pre">compute_atom_type_accuracy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">types1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">numpy.ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">types2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">numpy.ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.compute_atom_type_accuracy" title="Link to this definition">¶</a></dt>
+<dd><p>Compute accuracy of atom type predictions.</p>
+<p>Handles different number of atoms by returning 0.0.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.compute_rmsd">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_utils.</span></span><span class="sig-name descname"><span class="pre">compute_rmsd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">numpy.ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">numpy.ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.compute_rmsd" title="Link to this definition">¶</a></dt>
+<dd><p>Compute RMSD between two sets of positions.</p>
+<p>Handles different number of atoms by returning inf.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -547,6 +678,24 @@ torch_geometric.data.Data: The corrected molecular graph data with updated edge 
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.random_rotation">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_utils.</span></span><span class="sig-name descname"><span class="pre">random_rotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.random_rotation" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.random_rotation_matrix">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_utils.</span></span><span class="sig-name descname"><span class="pre">random_rotation_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">validate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.11)"><span class="pre">torch.Tensor</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.random_rotation_matrix" title="Link to this definition">¶</a></dt>
+<dd><p>Generate a random 3x3 rotation matrix from a quaternion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>validate</strong> – If True, verify the matrix is orthogonal</p></li>
+<li><p><strong>device</strong> – Target device for the tensor</p></li>
+<li><p><strong>dtype</strong> – Target dtype for the tensor</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A (3, 3) rotation matrix</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.read_xyz_file">
@@ -639,9 +788,27 @@ torch_geometric.data.Data: The corrected molecular graph data with updated edge 
 <dd></dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.save_shepherd_outputs">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_utils.</span></span><span class="sig-name descname"><span class="pre">save_shepherd_outputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">structures</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_modalities</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.save_shepherd_outputs" title="Link to this definition">¶</a></dt>
+<dd><p>Save ShEPhERD generated structures to disk.</p>
+<dl class="simple">
+<dt>Each structure is a dict returned by _extract_generated_samples():</dt><dd><p>x1: {atoms: ndarray(N,), positions: ndarray(N,3), bonds: ndarray(E,)}
+x2: {positions: ndarray(75,3)}
+x3: {charges: ndarray(75,), positions: ndarray(75,3)}
+x4: {types: ndarray(M,), positions: ndarray(M,3), directions: ndarray(M,3)}</p>
+</dd>
+<dt>Outputs per sample (zero-padded index):</dt><dd><p>mol_{idx:04d}.xyz          x1 structure (standard XYZ)
+mol_{idx:04d}_surface.npy  x2 surface point cloud (75,3)
+mol_{idx:04d}_esp.npz      x3 electrostatics: positions(75,3) + charges(75,)
+mol_{idx:04d}_pharm.npz    x4 pharmacophores: types(M,) + positions(M,3) + directions(M,3)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.save_xyz_file">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_utils.</span></span><span class="sig-name descname"><span class="pre">save_xyz_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_hot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_decoder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'molecule'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomic_numbers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_unknown_fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.save_xyz_file" title="Link to this definition">¶</a></dt>
-<dd><p>Save XYZ files for a batch of molecules directly to the target path.</p>
+<dd><p>Save XYZ files for a batch of molecules, skipping atoms near (0,0,0).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -649,7 +816,7 @@ torch_geometric.data.Data: The corrected molecular graph data with updated edge 
 <li><p><strong>one_hot</strong> – [B, N, C] one-hot encoding</p></li>
 <li><p><strong>positions</strong> – [B, N, 3] coordinates</p></li>
 <li><p><strong>atom_decoder</strong> – List mapping indices to atom symbols</p></li>
-<li><p><strong>id_from</strong> – Starting index for filenames (if idxs is None)</p></li>
+<li><p><strong>id_from</strong> – Starting index for filenames</p></li>
 <li><p><strong>name</strong> – Filename prefix</p></li>
 <li><p><strong>node_mask</strong> – Optional [B, N] or [B, N, 1] mask</p></li>
 <li><p><strong>idxs</strong> – Optional indices for filenames</p></li>
@@ -664,7 +831,7 @@ torch_geometric.data.Data: The corrected molecular graph data with updated edge 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.save_xyz_file_atomic_numbers">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_utils.</span></span><span class="sig-name descname"><span class="pre">save_xyz_file_atomic_numbers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">positions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.11)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomic_numbers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.11)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_from</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'molecule'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.11)"><span class="pre">torch.Tensor</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.save_xyz_file_atomic_numbers" title="Link to this definition">¶</a></dt>
-<dd><p>Save XYZ files for a batch of molecules directly to the target path.</p>
+<dd><p>Save XYZ files for a batch of molecules, writing ATOMIC SYMBOLS in the first column.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -684,11 +851,6 @@ torch_geometric.data.Data: The corrected molecular graph data with updated edge 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.translate_to_origine">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_utils.</span></span><span class="sig-name descname"><span class="pre">translate_to_origine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.translate_to_origine" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.logger">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_utils.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.logger" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
@@ -767,28 +929,44 @@ torch_geometric.data.Data: The corrected molecular graph data with updated edge 
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">MolecularDiffusion.utils.geom_utils</a><ul>
-<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator"><code class="docutils literal notranslate"><span class="pre">MoleculeReconstructionEvaluator</span></code></a><ul>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.append_gt_array"><code class="docutils literal notranslate"><span class="pre">MoleculeReconstructionEvaluator.append_gt_array()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.append_pred_array"><code class="docutils literal notranslate"><span class="pre">MoleculeReconstructionEvaluator.append_pred_array()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.clear"><code class="docutils literal notranslate"><span class="pre">MoleculeReconstructionEvaluator.clear()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.get_metrics"><code class="docutils literal notranslate"><span class="pre">MoleculeReconstructionEvaluator.get_metrics()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.save_molecules"><code class="docutils literal notranslate"><span class="pre">MoleculeReconstructionEvaluator.save_molecules()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.device"><code class="docutils literal notranslate"><span class="pre">MoleculeReconstructionEvaluator.device</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.gt_arrays_list"><code class="docutils literal notranslate"><span class="pre">MoleculeReconstructionEvaluator.gt_arrays_list</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.pred_arrays_list"><code class="docutils literal notranslate"><span class="pre">MoleculeReconstructionEvaluator.pred_arrays_list</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.rmsd_threshold"><code class="docutils literal notranslate"><span class="pre">MoleculeReconstructionEvaluator.rmsd_threshold</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.apply_rotation_augmentation"><code class="docutils literal notranslate"><span class="pre">apply_rotation_augmentation()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.assert_correctly_masked"><code class="docutils literal notranslate"><span class="pre">assert_correctly_masked()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.assert_mean_zero"><code class="docutils literal notranslate"><span class="pre">assert_mean_zero()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.assert_mean_zero_with_mask"><code class="docutils literal notranslate"><span class="pre">assert_mean_zero_with_mask()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.check_mask_correct"><code class="docutils literal notranslate"><span class="pre">check_mask_correct()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.compute_atom_type_accuracy"><code class="docutils literal notranslate"><span class="pre">compute_atom_type_accuracy()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.compute_rmsd"><code class="docutils literal notranslate"><span class="pre">compute_rmsd()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.coord2cosine"><code class="docutils literal notranslate"><span class="pre">coord2cosine()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.coord2diff"><code class="docutils literal notranslate"><span class="pre">coord2diff()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.correct_edges"><code class="docutils literal notranslate"><span class="pre">correct_edges()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.create_pyg_graph"><code class="docutils literal notranslate"><span class="pre">create_pyg_graph()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.random_rotation"><code class="docutils literal notranslate"><span class="pre">random_rotation()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.random_rotation_matrix"><code class="docutils literal notranslate"><span class="pre">random_rotation_matrix()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.read_xyz_file"><code class="docutils literal notranslate"><span class="pre">read_xyz_file()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.remove_mean"><code class="docutils literal notranslate"><span class="pre">remove_mean()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.remove_mean_with_mask"><code class="docutils literal notranslate"><span class="pre">remove_mean_with_mask()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.remove_mean_with_mask_v2"><code class="docutils literal notranslate"><span class="pre">remove_mean_with_mask_v2()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.sample_center_gravity_zero_gaussian_with_mask"><code class="docutils literal notranslate"><span class="pre">sample_center_gravity_zero_gaussian_with_mask()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.sample_gaussian_with_mask"><code class="docutils literal notranslate"><span class="pre">sample_gaussian_with_mask()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_shepherd_outputs"><code class="docutils literal notranslate"><span class="pre">save_shepherd_outputs()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_xyz_file"><code class="docutils literal notranslate"><span class="pre">save_xyz_file()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_xyz_file_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">save_xyz_file_atomic_numbers()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.translate_to_origine"><code class="docutils literal notranslate"><span class="pre">translate_to_origine()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
 </ul>
 </li>
 </ul>

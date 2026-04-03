@@ -1,0 +1,229 @@
+MolecularDiffusion.modules.layers.equiformer_v2.layer_norm
+==========================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.equiformer_v2.layer_norm
+
+.. autoapi-nested-parse::
+
+   Copyright (c) Meta Platforms, Inc. and affiliates.
+
+   1. Normalize features of shape (N, sphere_basis, C),
+   with sphere_basis = (lmax + 1) ** 2.
+
+   2. The difference from `layer_norm.py` is that all type-L vectors have
+   the same number of channels and input features are of shape (N, sphere_basis, C).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.equiformer_v2.layer_norm.EquivariantDegreeLayerScale
+   MolecularDiffusion.modules.layers.equiformer_v2.layer_norm.EquivariantLayerNormArray
+   MolecularDiffusion.modules.layers.equiformer_v2.layer_norm.EquivariantLayerNormArraySphericalHarmonics
+   MolecularDiffusion.modules.layers.equiformer_v2.layer_norm.EquivariantRMSNormArraySphericalHarmonics
+   MolecularDiffusion.modules.layers.equiformer_v2.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.equiformer_v2.layer_norm.get_l_to_all_m_expand_index
+   MolecularDiffusion.modules.layers.equiformer_v2.layer_norm.get_normalization_layer
+
+
+Module Contents
+---------------
+
+.. py:class:: EquivariantDegreeLayerScale(lmax, num_channels, scale_factor=2.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   1. Similar to Layer Scale used in CaiT (Going Deeper With Image Transformers (ICCV'21)), we scale the output of both attention and FFN.
+   2. For degree L > 0, we scale down the square root of 2 * L, which is to emulate halving the number of channels when using higher L.
+
+
+   .. py:method:: forward(node_input)
+
+
+   .. py:attribute:: affine_weight
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: num_channels
+
+
+   .. py:attribute:: scale_factor
+      :value: 2.0
+
+
+
+.. py:class:: EquivariantLayerNormArray(lmax, num_channels, eps=1e-05, affine=True, normalization='component')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(node_input)
+
+      Assume input is of shape [N, sphere_basis, C]
+
+
+
+   .. py:attribute:: affine
+      :value: True
+
+
+
+   .. py:attribute:: eps
+      :value: 1e-05
+
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: normalization
+      :value: 'component'
+
+
+
+   .. py:attribute:: num_channels
+
+
+.. py:class:: EquivariantLayerNormArraySphericalHarmonics(lmax, num_channels, eps=1e-05, affine=True, normalization='component', std_balance_degrees=True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   1. Normalize over L = 0.
+   2. Normalize across all m components from degrees L > 0.
+   3. Do not normalize separately for different L (L > 0).
+
+
+   .. py:method:: forward(node_input)
+
+      Assume input is of shape [N, sphere_basis, C]
+
+
+
+   .. py:attribute:: affine
+      :value: True
+
+
+
+   .. py:attribute:: eps
+      :value: 1e-05
+
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: norm_l0
+
+
+   .. py:attribute:: normalization
+      :value: 'component'
+
+
+
+   .. py:attribute:: num_channels
+
+
+   .. py:attribute:: std_balance_degrees
+      :value: True
+
+
+
+.. py:class:: EquivariantRMSNormArraySphericalHarmonics(lmax, num_channels, eps=1e-05, affine=True, normalization='component')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   1. Normalize across all m components from degrees L >= 0.
+
+
+   .. py:method:: forward(node_input)
+
+      Assume input is of shape [N, sphere_basis, C]
+
+
+
+   .. py:attribute:: affine
+      :value: True
+
+
+
+   .. py:attribute:: eps
+      :value: 1e-05
+
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: normalization
+      :value: 'component'
+
+
+
+   .. py:attribute:: num_channels
+
+
+.. py:class:: EquivariantRMSNormArraySphericalHarmonicsV2(lmax, num_channels, eps=1e-05, affine=True, normalization='component', centering=True, std_balance_degrees=True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   1. Normalize across all m components from degrees L >= 0.
+   2. Expand weights and multiply with normalized feature to prevent slicing and concatenation.
+
+
+   .. py:method:: forward(node_input)
+
+      Assume input is of shape [N, sphere_basis, C]
+
+
+
+   .. py:attribute:: affine
+      :value: True
+
+
+
+   .. py:attribute:: centering
+      :value: True
+
+
+
+   .. py:attribute:: eps
+      :value: 1e-05
+
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: normalization
+      :value: 'component'
+
+
+
+   .. py:attribute:: num_channels
+
+
+   .. py:attribute:: std_balance_degrees
+      :value: True
+
+
+
+.. py:function:: get_l_to_all_m_expand_index(lmax)
+
+.. py:function:: get_normalization_layer(norm_type, lmax, num_channels, eps=1e-05, affine=True, normalization='component')
+

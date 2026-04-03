@@ -14,6 +14,15 @@ Attributes
    MolecularDiffusion.runmodes.train.eval.DIST_RELAX_BOND
    MolecularDiffusion.runmodes.train.eval.DIST_THRESHOLD
    MolecularDiffusion.runmodes.train.eval.SCALE_FACTOR
+   MolecularDiffusion.runmodes.train.eval.TASK_REGISTRY
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.eval.TaskEvalConfig
 
 
 Functions
@@ -28,6 +37,33 @@ Functions
 
 Module Contents
 ---------------
+
+.. py:class:: TaskEvalConfig
+
+   Declarative evaluation config for a task type.
+
+
+   .. py:attribute:: higher_is_better
+      :type:  bool
+
+
+   .. py:attribute:: mae_eval
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: metric_key
+      :type:  str
+
+
+   .. py:attribute:: needs_generative
+      :type:  bool
+
+
+   .. py:attribute:: split_reset_hook
+      :type:  Optional[str]
+
 
 .. py:function:: analyze_and_save(model, epoch: int, n_samples: int = 1000, batch_size: int = 100, logger: Literal['wandb', 'logging'] = 'logging', path_save: str = 'samples', use_posebuster: bool = False, postbuster_timeout: int = 60) -> Dict[str, Any]
 
@@ -52,30 +88,12 @@ Module Contents
 
 .. py:function:: evaluate(task: str, solver: MolecularDiffusion.core.Engine, epoch: int = 0, current_best_metric: float = torch.inf, best_checkpoints: list = None, logger: Literal['wandb', 'logging'] = 'logging', output_path: str = None, use_amp: bool = False, precision: str = 'bf16', **kwargs)
 
-   Evaluates the performance of a trained model based on the specified task.
+   Unified evaluation entry point for all task types.
 
-   For 'diffusion' tasks, it evaluates generative performance by sampling molecules,
-   saving them, and analyzing their structural validity and connectivity.
-   For 'property' or 'guidance' tasks, it evaluates predictive performance
-   by calculating Mean Absolute Error (MAE).
+   Resolves task → TaskEvalConfig via TASK_REGISTRY, runs _run_eval(),
+   then executes one shared compare-and-checkpoint block.
 
-   :param task: The type of task being evaluated ("diffusion", "property", or "guidance").
-   :type task: str
-   :param solver: The training engine containing the model and evaluation methods.
-   :type solver: Engine
-   :param epoch: The current training epoch, used for naming generated files. Defaults to 0.
-   :type epoch: int, optional
-   :param best_checkpoints: A list of tuples containing the metric and path of the best checkpoints.
-   :type best_checkpoints: list, optional
-   :param logger: The logging backend to use. Defaults to "logging".
-   :type logger: Literal["wandb", "logging"], optional
-   :param \*\*kwargs: Additional keyword arguments specific to the task, such as:
-                      - output_generated_dir (str): Directory to save generated molecules (for diffusion).
-                      - generative_analysis (bool): Whether to perform generative analysis (for diffusion).
-                      - n_samples (int): Number of samples to generate (for diffusion).
-                      - metric (str): The metric to return from generative analysis (for diffusion).
-
-   :returns: A tuple containing the best performance metric and the list of best checkpoints.
+   :returns: (current_best_metric, best_checkpoints)
    :rtype: Tuple[float, list]
 
 
@@ -111,4 +129,7 @@ Module Contents
 .. py:data:: SCALE_FACTOR
    :value: 1.2
 
+
+.. py:data:: TASK_REGISTRY
+   :type:  dict[str, TaskEvalConfig]
 

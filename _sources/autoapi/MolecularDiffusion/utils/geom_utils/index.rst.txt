@@ -4,12 +4,12 @@ MolecularDiffusion.utils.geom_utils
 .. py:module:: MolecularDiffusion.utils.geom_utils
 
 
-Attributes
-----------
+Classes
+-------
 
 .. autoapisummary::
 
-   MolecularDiffusion.utils.geom_utils.logger
+   MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator
 
 
 Functions
@@ -17,21 +17,26 @@ Functions
 
 .. autoapisummary::
 
+   MolecularDiffusion.utils.geom_utils.apply_rotation_augmentation
    MolecularDiffusion.utils.geom_utils.assert_correctly_masked
    MolecularDiffusion.utils.geom_utils.assert_mean_zero
    MolecularDiffusion.utils.geom_utils.assert_mean_zero_with_mask
    MolecularDiffusion.utils.geom_utils.check_mask_correct
+   MolecularDiffusion.utils.geom_utils.compute_atom_type_accuracy
+   MolecularDiffusion.utils.geom_utils.compute_rmsd
    MolecularDiffusion.utils.geom_utils.coord2cosine
    MolecularDiffusion.utils.geom_utils.coord2diff
    MolecularDiffusion.utils.geom_utils.correct_edges
    MolecularDiffusion.utils.geom_utils.create_pyg_graph
    MolecularDiffusion.utils.geom_utils.random_rotation
+   MolecularDiffusion.utils.geom_utils.random_rotation_matrix
    MolecularDiffusion.utils.geom_utils.read_xyz_file
    MolecularDiffusion.utils.geom_utils.remove_mean
    MolecularDiffusion.utils.geom_utils.remove_mean_with_mask
    MolecularDiffusion.utils.geom_utils.remove_mean_with_mask_v2
    MolecularDiffusion.utils.geom_utils.sample_center_gravity_zero_gaussian_with_mask
    MolecularDiffusion.utils.geom_utils.sample_gaussian_with_mask
+   MolecularDiffusion.utils.geom_utils.save_shepherd_outputs
    MolecularDiffusion.utils.geom_utils.save_xyz_file
    MolecularDiffusion.utils.geom_utils.save_xyz_file_atomic_numbers
    MolecularDiffusion.utils.geom_utils.translate_to_origine
@@ -39,6 +44,89 @@ Functions
 
 Module Contents
 ---------------
+
+.. py:class:: MoleculeReconstructionEvaluator(rmsd_threshold: float = 0.5)
+
+   Evaluator for molecule reconstruction tasks.
+
+   Simple evaluator that computes:
+   - RMSD between predicted and ground truth positions
+   - Atom type accuracy
+   - Match rate (molecules with RMSD below threshold and perfect atom types)
+
+   Does NOT require pymatgen or openbabel.
+
+   :param rmsd_threshold: RMSD threshold (in Angstroms) for considering a match.
+
+
+   .. py:method:: append_gt_array(gt: Dict[str, numpy.ndarray])
+
+      Append a ground truth to the evaluator.
+
+
+
+   .. py:method:: append_pred_array(pred: Dict[str, numpy.ndarray])
+
+      Append a prediction to the evaluator.
+
+      :param pred: Dict with keys:
+                   - 'atom_types': (n_atoms,) atomic numbers
+                   - 'pos': (n_atoms, 3) positions
+                   - 'sample_idx': sample index
+
+
+
+   .. py:method:: clear()
+
+      Clear stored predictions and ground truths for next epoch.
+
+
+
+   .. py:method:: get_metrics(current_epoch: int = 0, save: bool = False, save_dir: str = '') -> Dict[str, Any]
+
+      Compute reconstruction metrics.
+
+      :returns:     - match_rate: fraction of molecules with RMSD < threshold AND perfect atom types
+                    - mean_rms_dist: mean RMSD over all samples
+                    - atom_type_accuracy: mean atom type accuracy over all samples
+      :rtype: Dict with
+
+
+
+   .. py:method:: save_molecules(save_dir: str)
+
+      Save predicted and ground truth molecules as XYZ files.
+
+
+
+   .. py:attribute:: device
+
+
+   .. py:attribute:: gt_arrays_list
+      :type:  List[Dict[str, numpy.ndarray]]
+      :value: []
+
+
+
+   .. py:attribute:: pred_arrays_list
+      :type:  List[Dict[str, numpy.ndarray]]
+      :value: []
+
+
+
+   .. py:attribute:: rmsd_threshold
+      :value: 0.5
+
+
+
+.. py:function:: apply_rotation_augmentation(batch, rot_mat: torch.Tensor, rotate_cell: bool = False) -> None
+
+   Apply rotation augmentation to batch positions (in-place).
+
+   :param batch: PyG Data/Batch with pos attribute
+   :param rot_mat: (3, 3) rotation matrix
+   :param rotate_cell: If True, also rotate cell (for crystals). Disabled for molecules.
+
 
 .. py:function:: assert_correctly_masked(variable: torch.Tensor, node_mask: torch.Tensor) -> None
 
@@ -68,6 +156,20 @@ Module Contents
    :type variables: list
    :param node_mask: Node mask to apply.
    :type node_mask: torch.Tensor
+
+
+.. py:function:: compute_atom_type_accuracy(types1: numpy.ndarray, types2: numpy.ndarray) -> float
+
+   Compute accuracy of atom type predictions.
+
+   Handles different number of atoms by returning 0.0.
+
+
+.. py:function:: compute_rmsd(pos1: numpy.ndarray, pos2: numpy.ndarray) -> float
+
+   Compute RMSD between two sets of positions.
+
+   Handles different number of atoms by returning inf.
 
 
 .. py:function:: coord2cosine(x, edge_index, epsilon=1e-08)
@@ -121,6 +223,17 @@ Module Contents
 
 
 .. py:function:: random_rotation(x)
+
+.. py:function:: random_rotation_matrix(validate: bool = False, device=None, dtype=None) -> torch.Tensor
+
+   Generate a random 3x3 rotation matrix from a quaternion.
+
+   :param validate: If True, verify the matrix is orthogonal
+   :param device: Target device for the tensor
+   :param dtype: Target dtype for the tensor
+
+   :returns: A (3, 3) rotation matrix
+
 
 .. py:function:: read_xyz_file(xyz_file)
 
@@ -177,15 +290,32 @@ Module Contents
 
 .. py:function:: sample_gaussian_with_mask(size, device, node_mask, std=1.0)
 
+.. py:function:: save_shepherd_outputs(output_dir: str, structures: list, idx_offset: int = 0, save_modalities: bool = False)
+
+   Save ShEPhERD generated structures to disk.
+
+   Each structure is a dict returned by _extract_generated_samples():
+       x1: {atoms: ndarray(N,), positions: ndarray(N,3), bonds: ndarray(E,)}
+       x2: {positions: ndarray(75,3)}
+       x3: {charges: ndarray(75,), positions: ndarray(75,3)}
+       x4: {types: ndarray(M,), positions: ndarray(M,3), directions: ndarray(M,3)}
+
+   Outputs per sample (zero-padded index):
+       mol_{idx:04d}.xyz          x1 structure (standard XYZ)
+       mol_{idx:04d}_surface.npy  x2 surface point cloud (75,3)
+       mol_{idx:04d}_esp.npz      x3 electrostatics: positions(75,3) + charges(75,)
+       mol_{idx:04d}_pharm.npz    x4 pharmacophores: types(M,) + positions(M,3) + directions(M,3)
+
+
 .. py:function:: save_xyz_file(path, one_hot, positions, atom_decoder, id_from=0, name='molecule', node_mask=None, idxs=None, tol=0.0001, atomic_numbers=None, use_unknown_fallback=False)
 
-   Save XYZ files for a batch of molecules directly to the target path.
+   Save XYZ files for a batch of molecules, skipping atoms near (0,0,0).
 
    :param path: Output directory
    :param one_hot: [B, N, C] one-hot encoding
    :param positions: [B, N, 3] coordinates
    :param atom_decoder: List mapping indices to atom symbols
-   :param id_from: Starting index for filenames (if idxs is None)
+   :param id_from: Starting index for filenames
    :param name: Filename prefix
    :param node_mask: Optional [B, N] or [B, N, 1] mask
    :param idxs: Optional indices for filenames
@@ -196,7 +326,7 @@ Module Contents
 
 .. py:function:: save_xyz_file_atomic_numbers(path: str, positions: torch.Tensor, atomic_numbers: torch.Tensor, id_from: int = 0, name: str = 'molecule', node_mask: torch.Tensor | None = None, idxs=None, tol: float = 0.0001)
 
-   Save XYZ files for a batch of molecules directly to the target path.
+   Save XYZ files for a batch of molecules, writing ATOMIC SYMBOLS in the first column.
 
    :param path: output directory
    :param positions: (B, N, 3) tensor
@@ -209,6 +339,4 @@ Module Contents
 
 
 .. py:function:: translate_to_origine(coords, node_mask)
-
-.. py:data:: logger
 

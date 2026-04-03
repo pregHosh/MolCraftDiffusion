@@ -1,0 +1,105 @@
+MolecularDiffusion.modules.models.ldm.decoders.transformer
+==========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.ldm.decoders.transformer
+
+.. autoapi-nested-parse::
+
+   Transformer decoder for VAE.
+
+   Copyright (c) Meta Platforms, Inc. and affiliates.
+   Adapted for MolecularDiffusion.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ldm.decoders.transformer.TransformerDecoder
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ldm.decoders.transformer.get_index_embedding
+
+
+Module Contents
+---------------
+
+.. py:class:: TransformerDecoder(max_num_elements: int = 100, d_model: int = 256, nhead: int = 8, dim_feedforward: int = 1024, activation: str = 'gelu', dropout: float = 0.0, norm_first: bool = True, bias: bool = True, num_layers: int = 4)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Transformer decoder as part of VAE.
+
+   Takes encoded latent tokens and decodes to atom types and positions.
+   For molecules, lattice and frac_coords outputs are ignored.
+
+   :param max_num_elements: Maximum number of elements (atomic numbers) supported
+   :param d_model: Dimension of the model
+   :param nhead: Number of attention heads
+   :param dim_feedforward: Dimension of the feedforward network
+   :param activation: Activation function to use
+   :param dropout: Dropout rate
+   :param norm_first: Whether to use pre-normalization in Transformer blocks
+   :param bias: Whether to use bias
+   :param num_layers: Number of layers
+
+
+   .. py:method:: forward(encoded_batch: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]
+
+      :param encoded_batch: Dict with keys:
+                            x (torch.Tensor): Encoded latent tokens (n, d)
+                            num_atoms (torch.Tensor): Number of atoms per sample
+                            batch (torch.Tensor): Batch index for each atom
+                            token_idx (torch.Tensor): Token index for each atom
+
+      :returns:
+
+                atom_types (n, max_elements), pos (n, 3),
+                                frac_coords (n, 3), lattices (bsz, 6)
+      :rtype: Dict with keys
+
+
+
+   .. py:attribute:: atom_types_head
+
+
+   .. py:attribute:: d_model
+      :value: 256
+
+
+
+   .. py:attribute:: frac_coords_head
+
+
+   .. py:attribute:: lattice_head
+
+
+   .. py:attribute:: max_num_elements
+      :value: 100
+
+
+
+   .. py:attribute:: num_layers
+      :value: 4
+
+
+
+   .. py:attribute:: pos_head
+
+
+   .. py:attribute:: transformer
+
+
+.. py:function:: get_index_embedding(indices, emb_dim, max_len=2048)
+
+   Creates sine / cosine positional embeddings from a prespecified indices.
+
+

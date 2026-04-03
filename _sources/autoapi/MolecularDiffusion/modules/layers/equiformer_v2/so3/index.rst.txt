@@ -1,0 +1,244 @@
+MolecularDiffusion.modules.layers.equiformer_v2.so3
+===================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.equiformer_v2.so3
+
+.. autoapi-nested-parse::
+
+   Copyright (c) Meta Platforms, Inc. and affiliates.
+
+   This source code is licensed under the MIT license found in the
+   LICENSE file in the root directory of this source tree.
+
+
+   .. todo::
+
+      1. Simplify the case when `num_resolutions` == 1.
+      2. Remove indexing when the shape is the same.
+      3. Move some functions outside classes and to separate files.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.equiformer_v2.so3.CoefficientMappingModule
+   MolecularDiffusion.modules.layers.equiformer_v2.so3.SO3_Embedding
+   MolecularDiffusion.modules.layers.equiformer_v2.so3.SO3_Grid
+   MolecularDiffusion.modules.layers.equiformer_v2.so3.SO3_Linear
+   MolecularDiffusion.modules.layers.equiformer_v2.so3.SO3_LinearV2
+   MolecularDiffusion.modules.layers.equiformer_v2.so3.SO3_Rotation
+
+
+Module Contents
+---------------
+
+.. py:class:: CoefficientMappingModule(lmax_list, mmax_list)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Helper module for coefficients used to reshape l <--> m and to get coefficients of specific
+   degree or order.
+
+   :param lmax_list (list: int):   List of maximum degree of the spherical harmonics
+   :param mmax_list (list: int):   List of maximum order of the spherical harmonics
+
+
+   .. py:method:: coefficient_idx(lmax, mmax)
+
+
+   .. py:method:: complex_idx(m, lmax, m_complex, l_harmonic)
+
+      Add `m_complex` and `l_harmonic` to the input arguments since we cannot use
+      `self.m_complex`.
+
+
+
+   .. py:method:: get_rotate_inv_rescale(lmax, mmax)
+
+
+   .. py:attribute:: device
+      :value: 'cpu'
+
+
+
+   .. py:attribute:: lmax_list
+
+
+   .. py:attribute:: mask_indices_cache
+      :value: None
+
+
+
+   .. py:attribute:: mmax_list
+
+
+   .. py:attribute:: num_resolutions
+
+
+   .. py:attribute:: rotate_inv_rescale_cache
+      :value: None
+
+
+
+.. py:class:: SO3_Embedding(length, lmax_list, num_channels, device, dtype)
+
+   Helper functions for performing operations on irreps embedding.
+
+   :param length: Batch size
+   :type length: int
+   :param lmax_list (list: int):   List of maximum degree of the spherical harmonics
+   :param num_channels: Number of channels
+   :type num_channels: int
+   :param device: Device of the output
+   :param dtype: type of the output tensors
+
+
+   .. py:method:: clone()
+
+
+   .. py:method:: expand_edge(edge_index)
+
+
+   .. py:method:: set_embedding(embedding)
+
+
+   .. py:method:: set_lmax_mmax(lmax_list, mmax_list)
+
+
+   .. py:method:: to_grid(SO3_grid, lmax=-1)
+
+
+   .. py:attribute:: device
+
+
+   .. py:attribute:: dtype
+
+
+   .. py:attribute:: num_channels
+
+
+   .. py:attribute:: num_coefficients
+      :value: 0
+
+
+
+   .. py:attribute:: num_resolutions
+
+
+.. py:class:: SO3_Grid(lmax, mmax, normalization='integral', resolution=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Helper functions for grid representation of the irreps.
+
+   :param lmax: Maximum degree of the spherical harmonics
+   :type lmax: int
+   :param mmax: Maximum order of the spherical harmonics
+   :type mmax: int
+
+
+   .. py:method:: from_grid(grid, lmax, mmax)
+
+
+   .. py:method:: get_from_grid_mat(device)
+
+
+   .. py:method:: get_to_grid_mat(device)
+
+
+   .. py:method:: to_grid(embedding, lmax, mmax)
+
+
+   .. py:attribute:: lat_resolution
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mapping
+
+
+   .. py:attribute:: mmax
+
+
+.. py:class:: SO3_Linear(in_features, out_features, lmax, bias=True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(input_embedding, output_scale=None)
+
+
+   .. py:attribute:: in_features
+
+
+   .. py:attribute:: linear_list
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: out_features
+
+
+.. py:class:: SO3_LinearV2(in_features, out_features, lmax, bias=True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   
+   1. Use `torch.einsum` to prevent slicing and concatenation
+   2. Need to specify some behaviors in `no_weight_decay` and weight initialization.
+
+
+   .. py:method:: forward(input_embedding)
+
+
+   .. py:attribute:: bias
+
+
+   .. py:attribute:: in_features
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: out_features
+
+
+   .. py:attribute:: weight
+
+
+.. py:class:: SO3_Rotation(lmax)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Helper functions for Wigner-D rotations.
+
+   :param lmax_list (list: int):   List of maximum degree of the spherical harmonics
+
+
+   .. py:method:: RotationToWignerDMatrix(edge_rot_mat, start_lmax, end_lmax)
+
+
+   .. py:method:: rotate(embedding, out_lmax, out_mmax)
+
+
+   .. py:method:: rotate_inv(embedding, in_lmax, in_mmax)
+
+
+   .. py:method:: set_wigner(rot_mat3x3)
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mapping
+
+

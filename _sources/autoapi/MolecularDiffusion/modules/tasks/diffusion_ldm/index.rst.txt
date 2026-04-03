@@ -1,0 +1,473 @@
+MolecularDiffusion.modules.tasks.diffusion_ldm
+==============================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_ldm
+
+.. autoapi-nested-parse::
+
+   LDM (VAE + DiT) tasks for MolecularDiffusion.
+
+   This module provides:
+   - VAETaskFactory / VAETask: Variational Autoencoder for learning latent representations
+   - LDMTaskFactory / LDMTask: Latent Diffusion Model for generation
+
+   Stage 1: Train VAE to learn latent space
+   Stage 2: Train DiT on frozen VAE latents
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_ldm.DiagonalGaussianDistribution
+   MolecularDiffusion.modules.tasks.diffusion_ldm.FlowMatchingInterpolant
+   MolecularDiffusion.modules.tasks.diffusion_ldm.LDMTask
+   MolecularDiffusion.modules.tasks.diffusion_ldm.LDMTaskFactory
+   MolecularDiffusion.modules.tasks.diffusion_ldm.VAETask
+   MolecularDiffusion.modules.tasks.diffusion_ldm.VAETaskFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: DiagonalGaussianDistribution(mean, logvar)
+
+   Diagonal Gaussian distribution for VAE posterior.
+
+
+   .. py:method:: kl()
+
+      KL divergence against standard normal.
+
+
+
+   .. py:method:: mode()
+
+
+   .. py:method:: sample()
+
+
+   .. py:attribute:: logvar
+
+
+   .. py:attribute:: mean
+
+
+   .. py:attribute:: std
+
+
+.. py:class:: FlowMatchingInterpolant(min_t: float = 0.01, corrupt: bool = True, num_timesteps: int = 100, self_condition: bool = False, self_condition_prob: float = 0.5)
+
+   Flow matching interpolant for latent diffusion.
+
+   Matches reference implementation from all-atom-diffusion-transformer.
+   Key conventions:
+   - x_0 is NOISE (prior)
+   - x_1 is CLEAN DATA (target)
+   - Time flows from 0 (noise) to 1 (clean)
+
+   :param min_t: Minimum time to sample (avoids boundary singularities)
+   :param corrupt: Whether to corrupt samples during training
+   :param num_timesteps: Number of timesteps for sampling
+   :param self_condition: Whether to use self-conditioning
+   :param self_condition_prob: Probability of using self-conditioning during training
+
+
+   .. py:method:: corrupt_batch(batch)
+
+      Corrupts a batch of data for training.
+
+      :param batch: Dict with keys:
+                    - x_1: Clean data (B, N, d)
+                    - token_mask: Valid token mask (B, N)
+                    - diffuse_mask: Mask for tokens to diffuse (B, N)
+
+      :returns:     - x_t: Noisy data
+                    - t: Sampled timesteps
+      :rtype: Dict with added keys
+
+
+
+   .. py:method:: sample(batch_size, num_tokens, emb_dim, model, mask=None, num_timesteps=None, x_0=None)
+
+      Generate samples by integrating the flow ODE.
+
+      :param batch_size: Number of samples
+      :param num_tokens: Max tokens per sample
+      :param emb_dim: Latent dimension
+      :param model: Denoiser model (predicts x_1 from x_t, t)
+      :param mask: Valid token mask (B, N)
+      :param num_timesteps: Number of integration steps
+      :param x_0: Initial noise (if None, sampled)
+
+      :returns: Dict with tokens_traj and clean_traj lists
+
+
+
+   .. py:attribute:: corrupt
+      :value: True
+
+
+
+   .. py:attribute:: device
+      :value: 'cpu'
+
+
+
+   .. py:attribute:: min_t
+      :value: 0.01
+
+
+
+   .. py:attribute:: num_timesteps
+      :value: 100
+
+
+
+   .. py:attribute:: self_condition
+      :value: False
+
+
+
+   .. py:attribute:: self_condition_prob
+      :value: 0.5
+
+
+
+.. py:class:: LDMTask(autoencoder: VAETask, denoiser: torch.nn.Module, interpolant_config: dict, augment_rotation: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Latent Diffusion Model task.
+
+
+   .. py:method:: encode(batch)
+
+      Encode batch with frozen VAE.
+
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor) -> Dict[str, torch.Tensor]
+
+      Compute evaluation metrics from aggregated predictions.
+
+
+
+   .. py:method:: forward(batch)
+
+      Training forward pass.
+
+      Matches reference implementation:
+      - Model predicts clean data x_1 (not noise)
+      - Uses time-dependent loss scaling: norm_scale = 1 - min(t, 0.9)
+      - Uses corrupt_batch for proper flow matching
+
+      :param batch: PyG Data batch
+
+      :returns: Scalar denoising loss
+                stats: Dictionary of loss components
+      :rtype: loss
+
+
+
+   .. py:method:: predict_and_target(batch)
+
+      Evaluation pass for Engine compatibility.
+
+
+
+   .. py:method:: preprocess(train_set)
+
+      Compute node distribution from training set.
+
+
+
+   .. py:method:: sample(batch_size: int = 1, nodesxsample: Optional[torch.Tensor] = None, num_steps: Optional[int] = None, **kwargs)
+
+      Generate molecules by sampling from the latent diffusion model.
+
+      Uses proper flow matching ODE integration from min_t to 1.
+
+      :param batch_size: Number of molecules to generate
+      :param nodesxsample: Tensor of molecule sizes
+      :param num_steps: Number of denoising steps (defaults to self.interpolant.num_timesteps)
+
+      :returns: Tuple of (one_hot, charges, coords, node_mask)
+
+
+
+   .. py:property:: T
+
+      Diffusion steps (T) for compatibility with GenerativeFactory.
+
+
+   .. py:attribute:: augment_rotation
+      :value: False
+
+
+
+   .. py:attribute:: autoencoder
+
+
+   .. py:attribute:: denoiser
+
+
+   .. py:property:: device
+
+
+   .. py:property:: fm_num_timesteps
+
+      Flow matching steps alias for compatibility.
+
+
+   .. py:attribute:: interpolant
+
+
+   .. py:attribute:: max_n_nodes
+      :value: 100
+
+
+
+   .. py:property:: model
+
+      exposes self as the model interface.
+
+      :type: tasks_generate.py compatibility
+
+
+   .. py:attribute:: node_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'ldm'
+
+
+
+.. py:class:: LDMTaskFactory(task_type: str, autoencoder_ckpt: str, denoiser: dict, interpolant: dict, augment_rotation: bool = False, train_set: Optional[torch.utils.data.Dataset] = None, **kwargs)
+
+   Factory for building LDM (Latent Diffusion Model) task.
+
+
+   .. py:method:: build()
+
+      Instantiate and return the LDM task.
+
+
+
+   .. py:attribute:: augment_rotation
+      :value: False
+
+
+
+   .. py:attribute:: autoencoder_ckpt
+
+
+   .. py:attribute:: denoiser_config
+
+
+   .. py:attribute:: interpolant_config
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: task_type
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+.. py:class:: VAETask(encoder: torch.nn.Module, decoder: torch.nn.Module, latent_dim: int = 8, loss_weights: Optional[dict] = None, eval_reconstruction: bool = False, save_reconstruction: bool = False, output_path: str = '', augment_rotation: bool = False, augment_noise: float = 0.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Variational Autoencoder for molecular latent representation.
+
+
+   .. py:method:: decode(z, encoded)
+
+      Decode latent to reconstruction.
+
+
+
+   .. py:method:: encode(batch)
+
+      Encode batch to latent distribution.
+
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor) -> Dict[str, torch.Tensor]
+
+      Compute evaluation metrics from aggregated predictions.
+
+
+
+   .. py:method:: forward(batch)
+
+      Training forward pass.
+
+      :param batch: PyG Data batch with atom_types/atomic_numbers, pos, etc.
+
+      :returns: Scalar training loss
+                stats: Dictionary of loss components
+      :rtype: loss
+
+
+
+   .. py:method:: on_validation_epoch_end(current_epoch: int = 0) -> Dict
+
+      Compute reconstruction metrics at the end of validation epoch.
+
+      :param current_epoch: Current epoch number
+
+      :returns: Dict of reconstruction metrics (match_rate, mean_rms_dist)
+
+
+
+   .. py:method:: on_validation_epoch_start()
+
+      Clear evaluator at the start of validation epoch.
+
+
+
+   .. py:method:: predict_and_target(batch)
+
+      Evaluation pass for Engine compatibility.
+
+
+
+   .. py:method:: reconstruct(batch, sample=True)
+
+      Reconstruct input batch.
+
+
+
+   .. py:attribute:: augment_noise
+      :value: 0.0
+
+
+
+   .. py:attribute:: augment_rotation
+      :value: False
+
+
+
+   .. py:attribute:: decoder
+
+
+   .. py:attribute:: encoder
+
+
+   .. py:attribute:: eval_reconstruction
+      :value: False
+
+
+
+   .. py:attribute:: latent_dim
+      :value: 8
+
+
+
+   .. py:attribute:: loss_weights
+
+
+   .. py:attribute:: output_path
+      :value: ''
+
+
+
+   .. py:attribute:: post_quant_conv
+
+
+   .. py:attribute:: quant_conv
+
+
+   .. py:attribute:: save_reconstruction
+      :value: False
+
+
+
+   .. py:attribute:: split
+      :value: 'train'
+
+
+
+   .. py:attribute:: task_type
+      :value: 'vae'
+
+
+
+.. py:class:: VAETaskFactory(task_type: str, encoder: dict, decoder: dict, latent_dim: int = 8, loss_weights: Optional[dict] = None, eval_reconstruction: bool = False, save_reconstruction: bool = False, output_path: str = '', augment_rotation: bool = False, augment_noise: float = 0.0, train_set: Optional[torch.utils.data.Dataset] = None, **kwargs)
+
+   Factory for building VAE task.
+
+
+   .. py:method:: build()
+
+      Instantiate and return the VAE task.
+
+
+
+   .. py:attribute:: augment_noise
+      :value: 0.0
+
+
+
+   .. py:attribute:: augment_rotation
+      :value: False
+
+
+
+   .. py:attribute:: decoder_config
+
+
+   .. py:attribute:: encoder_config
+
+
+   .. py:attribute:: eval_reconstruction
+      :value: False
+
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: latent_dim
+      :value: 8
+
+
+
+   .. py:attribute:: loss_weights
+
+
+   .. py:attribute:: output_path
+      :value: ''
+
+
+
+   .. py:attribute:: save_reconstruction
+      :value: False
+
+
+
+   .. py:attribute:: task_type
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+

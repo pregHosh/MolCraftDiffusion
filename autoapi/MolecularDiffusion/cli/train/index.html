@@ -379,7 +379,7 @@
 <td><p>Training loop using original Engine.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.train.evaluate_and_save" title="MolecularDiffusion.cli.train.evaluate_and_save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate_and_save</span></code></a>(i, solver, task_module, ...)</p></td>
-<td><p>Helper to run evaluation and save checkpoints.</p></td>
+<td><p>Run evaluation for any task type — routing is handled by TASK_REGISTRY inside evaluate().</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.train.is_rank_zero" title="MolecularDiffusion.cli.train.is_rank_zero"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_rank_zero</span></code></a>()</p></td>
 <td><p>Check if current process is rank zero.</p></td>
@@ -411,7 +411,7 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.cli.train.evaluate_and_save">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.train.</span></span><span class="sig-name descname"><span class="pre">evaluate_and_save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trainer_module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">versioned_ckpt_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_amp</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.train.evaluate_and_save" title="Link to this definition">¶</a></dt>
-<dd><p>Helper to run evaluation and save checkpoints.</p>
+<dd><p>Run evaluation for any task type — routing is handled by TASK_REGISTRY inside evaluate().</p>
 </dd></dl>
 
 <dl class="py function">

@@ -43,7 +43,7 @@ Module Contents
 
 .. py:function:: evaluate_and_save(i, solver, task_module, trainer_module, logger_module, versioned_ckpt_path, use_amp, **kwargs)
 
-   Helper to run evaluation and save checkpoints.
+   Run evaluation for any task type — routing is handled by TASK_REGISTRY inside evaluate().
 
 
 .. py:function:: is_rank_zero()

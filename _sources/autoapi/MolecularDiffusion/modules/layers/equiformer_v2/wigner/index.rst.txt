@@ -1,0 +1,24 @@
+MolecularDiffusion.modules.layers.equiformer_v2.wigner
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.equiformer_v2.wigner
+
+.. autoapi-nested-parse::
+
+   Copyright (c) Meta Platforms, Inc. and affiliates.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.equiformer_v2.wigner.wigner_D
+
+
+Module Contents
+---------------
+
+.. py:function:: wigner_D(l, alpha, beta, gamma)
+

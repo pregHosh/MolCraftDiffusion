@@ -1,0 +1,16 @@
+MolecularDiffusion.modules.models.ldm.decoders
+==============================================
+
+.. py:module:: MolecularDiffusion.modules.models.ldm.decoders
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/ldm/decoders/equivariant_feedforward/index
+   /autoapi/MolecularDiffusion/modules/models/ldm/decoders/transformer/index
+
+

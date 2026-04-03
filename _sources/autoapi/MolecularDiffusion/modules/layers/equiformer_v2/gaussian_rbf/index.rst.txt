@@ -1,0 +1,79 @@
+MolecularDiffusion.modules.layers.equiformer_v2.gaussian_rbf
+============================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.equiformer_v2.gaussian_rbf
+
+.. autoapi-nested-parse::
+
+   Copyright (c) Meta Platforms, Inc. and affiliates.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.equiformer_v2.gaussian_rbf.GaussianRadialBasisLayer
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.equiformer_v2.gaussian_rbf.gaussian
+
+
+Module Contents
+---------------
+
+.. py:class:: GaussianRadialBasisLayer(num_basis, cutoff)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: forward(dist, node_atom=None, edge_src=None, edge_dst=None)
+
+
+   .. py:attribute:: bias
+
+
+   .. py:attribute:: cutoff
+
+
+   .. py:attribute:: mean
+
+
+   .. py:attribute:: mean_init_max
+      :value: 1.0
+
+
+
+   .. py:attribute:: mean_init_min
+      :value: 0
+
+
+
+   .. py:attribute:: num_basis
+
+
+   .. py:attribute:: std
+
+
+   .. py:attribute:: std_init_max
+      :value: 1.0
+
+
+
+   .. py:attribute:: std_init_min
+
+
+   .. py:attribute:: weight
+
+
+.. py:function:: gaussian(x, mean, std)
+
