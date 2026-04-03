@@ -1,0 +1,130 @@
+MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring
+===================================================================
+
+.. py:module:: MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring
+
+.. autoapi-nested-parse::
+
+   Pharmacophore scoring with PyTorch.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring.P_TYPES_LWRCASE
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring.get_overlap_pharm
+   MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring.get_pharm_combo_score
+   MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring.get_vector_volume_overlap_score
+   MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring.get_vector_volume_overlap_score_batch
+   MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring.get_volume_overlap_score
+   MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring.get_volume_overlap_score_batch
+   MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring.get_volume_overlap_score_extended_points
+   MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring.tanimoto_func
+   MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring.tversky_func
+
+
+Module Contents
+---------------
+
+.. py:function:: get_overlap_pharm(ptype_1: torch.Tensor, ptype_2: torch.Tensor, anchors_1: torch.Tensor, anchors_2: torch.Tensor, vectors_1: torch.Tensor, vectors_2: torch.Tensor, similarity: _SIM_TYPE = 'tanimoto', extended_points: bool = False, only_extended: bool = False, precomputed_self_overlaps: Optional[Tuple[torch.Tensor, torch.Tensor]] = None) -> torch.Tensor
+
+   Compute pharmacophore score.
+
+   Accepts batching, but only if they are the same two molecules (or have the same
+   number of features). Specifically used for alignment.
+
+   :param ptype_1: Indices specifying the pharmacophore type based on order of P_TYPES,
+                   shape (N,) or (B, N).
+   :type ptype_1: torch.Tensor
+   :param ptype_2: Indices specifying the pharmacophore type based on order of P_TYPES,
+                   shape (M,) or (B, M).
+   :type ptype_2: torch.Tensor
+   :param anchors_1: Coordinates for the anchor points of each pharmacophore of molecule 1,
+                     shape (N, 3) or (B, N, 3).
+   :type anchors_1: torch.Tensor
+   :param anchors_2: Coordinates for the anchor points of each pharmacophore of molecule 2,
+                     shape (M, 3) or (B, M, 3).
+   :type anchors_2: torch.Tensor
+   :param vectors_1: Relative unit vectors of each pharmacophore of molecule 1,
+                     shape (N, 3) or (B, N, 3).
+   :type vectors_1: torch.Tensor
+   :param vectors_2: Relative unit vectors of each pharmacophore of molecule 2,
+                     shape (M, 3) or (B, M, 3).
+   :type vectors_2: torch.Tensor
+   :param similarity: Specifies what similarity function to use. Options are:
+                      'tanimoto' (symmetric), 'tversky' (OpenEye's 95% normalization by mol 1),
+                      'tversky_ref' (Pharao's 100% normalization by mol 1),
+                      'tversky_fit' (Pharao's 100% normalization by mol 2). Default is 'tanimoto'.
+   :type similarity: str, optional
+   :param extended_points: Whether to score HBA/HBD with gaussian overlaps of extended points.
+                           Default is ``False``.
+   :type extended_points: bool, optional
+   :param only_extended: When ``extended_points`` is ``True``, decide whether to only score the
+                         extended points (ignore anchor overlaps). Default is ``False``.
+   :type only_extended: bool, optional
+   :param precomputed_self_overlaps: Pre-computed (total_VAA, total_VBB) self-overlaps. When provided (and
+                                     ``extended_points`` is False), the per-type self-overlap computation is
+                                     skipped and only the cross-overlap VAB is computed each call. Used to
+                                     avoid redundant self-overlap recomputation in optimization loops.
+   :type precomputed_self_overlaps: Optional[Tuple[torch.Tensor, torch.Tensor]], optional
+
+   :returns: Score(s) with shape (1,) or (B,).
+   :rtype: torch.Tensor
+
+
+.. py:function:: get_pharm_combo_score(centers_1: torch.Tensor, centers_2: torch.Tensor, ptype_1: torch.Tensor, ptype_2: torch.Tensor, anchors_1: torch.Tensor, anchors_2: torch.Tensor, vectors_1: torch.Tensor, vectors_2: torch.Tensor, alpha: float = 0.81, similarity: str = 'tanimoto', extended_points: bool = False, only_extended: bool = False) -> torch.Tensor
+
+   Compute a combined shape and pharmacophore score.
+
+
+.. py:function:: get_vector_volume_overlap_score(ptype_str: str, ptype_1: torch.Tensor, ptype_2: torch.Tensor, anchors_1: torch.Tensor, anchors_2: torch.Tensor, vectors_1: torch.Tensor, vectors_2: torch.Tensor, allow_antiparallel: bool) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+
+   Compute volumentric overlap score with cosine similarity of vectors. Handles batching.
+
+
+.. py:function:: get_vector_volume_overlap_score_batch(ptype_str: str, ptype_1: torch.Tensor, ptype_2: torch.Tensor, cdist_21: torch.Tensor, cdist_22: torch.Tensor, cdist_11: torch.Tensor, vmm_21: torch.Tensor, vmm_22: torch.Tensor, vmm_11: torch.Tensor, allow_antiparallel: bool = False) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+
+   Compute volumentric overlap score with cosine similarity of vectors. Only batching.
+
+
+.. py:function:: get_volume_overlap_score(ptype_str: str, ptype_1: torch.Tensor, ptype_2: torch.Tensor, anchors_1: torch.Tensor, anchors_2: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+
+   Computes volume overlap score single instance.
+
+
+.. py:function:: get_volume_overlap_score_batch(ptype_str: str, ptype_1: torch.Tensor, ptype_2: torch.Tensor, cdist_21: torch.Tensor, cdist_22: torch.Tensor, cdist_11: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+
+   Compute volumentric overlap score with cosine similarity of vectors. Only batching.
+
+
+.. py:function:: get_volume_overlap_score_extended_points(ptype_str: str, ptype_1: torch.Tensor, ptype_2: torch.Tensor, anchors_1: torch.Tensor, anchors_2: torch.Tensor, vectors_1: torch.Tensor, vectors_2: torch.Tensor, only_extended: bool = False) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+
+   Score both the anchor and extended point volume overlap instead of a vector similarity.
+
+
+.. py:function:: tanimoto_func(VAB: torch.Tensor, VAA: torch.Tensor, VBB: torch.Tensor) -> torch.Tensor
+
+   Computes Tanimoto similarity.
+   Similarity(Tanimoto) = Overlap{1,2} / (Overlap{1,1} + Overlap{2,2} - Overlap{1,2})
+
+
+.. py:function:: tversky_func(VAB: torch.Tensor, VAA: torch.Tensor, VBB: torch.Tensor, sigma: float) -> torch.Tensor
+
+   Computes Tversky similarity -> clamped to be max of 1.0.
+   sigma: [0,1]
+
+   Similarity(Tversky) = Overlap{1,2} / (sigma*Overlap{1,1} + (1-sigma)*Overlap{2,2})
+
+
+.. py:data:: P_TYPES_LWRCASE
+

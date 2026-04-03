@@ -1,0 +1,31 @@
+MolecularDiffusion.modules.layers.equiformer_v2_s.radial_function
+=================================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.equiformer_v2_s.radial_function
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.equiformer_v2_s.radial_function.RadialFunction
+
+
+Module Contents
+---------------
+
+.. py:class:: RadialFunction(channels_list)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Contruct a radial function (linear layers + layer normalization + SiLU) given a list of channels
+
+
+   .. py:method:: forward(inputs)
+
+
+   .. py:attribute:: net
+
+

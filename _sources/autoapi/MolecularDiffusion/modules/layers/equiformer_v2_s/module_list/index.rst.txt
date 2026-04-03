@@ -1,0 +1,27 @@
+MolecularDiffusion.modules.layers.equiformer_v2_s.module_list
+=============================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.equiformer_v2_s.module_list
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.equiformer_v2_s.module_list.ModuleListInfo
+
+
+Module Contents
+---------------
+
+.. py:class:: ModuleListInfo(info_str, modules=None)
+
+   Bases: :py:obj:`torch.nn.ModuleList`
+
+
+   .. py:attribute:: info_str
+      :value: ''
+
+
+

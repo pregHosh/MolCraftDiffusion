@@ -1,0 +1,14 @@
+MolecularDiffusion.utils.shepherd_score.score.analytical_gradients
+==================================================================
+
+.. py:module:: MolecularDiffusion.utils.shepherd_score.score.analytical_gradients
+
+.. autoapi-nested-parse::
+
+   Analytical gradients package for shape and pharmacophore alignment scoring.
+
+   Re-exports all PyTorch implementations from _torch.py for backwards compatibility.
+   JAX implementations are in _jax.py (optional dependency).
+
+
+

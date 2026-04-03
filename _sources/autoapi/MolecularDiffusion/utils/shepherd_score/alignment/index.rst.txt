@@ -1,0 +1,20 @@
+MolecularDiffusion.utils.shepherd_score.alignment
+=================================================
+
+.. py:module:: MolecularDiffusion.utils.shepherd_score.alignment
+
+.. autoapi-nested-parse::
+
+   Alignment algorithms using Torch-based scoring functions.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/utils/shepherd_score/alignment/utils/index
+
+

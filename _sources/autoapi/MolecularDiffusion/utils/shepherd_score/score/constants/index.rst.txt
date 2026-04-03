@@ -1,0 +1,41 @@
+MolecularDiffusion.utils.shepherd_score.score.constants
+=======================================================
+
+.. py:module:: MolecularDiffusion.utils.shepherd_score.score.constants
+
+.. autoapi-nested-parse::
+
+   Constants for 3D representations.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.shepherd_score.score.constants.ALPHA
+   MolecularDiffusion.utils.shepherd_score.score.constants.COULOMB_SCALING
+   MolecularDiffusion.utils.shepherd_score.score.constants.DIRECTIONAL_PTYPES
+   MolecularDiffusion.utils.shepherd_score.score.constants.LAM_SCALING
+   MolecularDiffusion.utils.shepherd_score.score.constants.P_ALPHAS
+   MolecularDiffusion.utils.shepherd_score.score.constants.P_TYPES
+
+
+Module Contents
+---------------
+
+.. py:data:: ALPHA
+
+.. py:data:: COULOMB_SCALING
+
+.. py:data:: DIRECTIONAL_PTYPES
+
+.. py:data:: LAM_SCALING
+
+.. py:data:: P_ALPHAS
+
+.. py:data:: P_TYPES
+   :value: ('Acceptor', 'Donor', 'Aromatic', 'Hydrophobe', 'Halogen', 'Cation', 'Anion', 'ZnBinder', 'Dummy')
+
+

@@ -1,0 +1,105 @@
+MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring_np
+======================================================================
+
+.. py:module:: MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring_np
+
+.. autoapi-nested-parse::
+
+   Pharmacophore scoring with NumPy.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring_np.P_TYPES_LWRCASE
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring_np.get_overlap_pharm_np
+   MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring_np.get_pharm_combo_score
+   MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring_np.get_vector_volume_overlap_score_np
+   MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring_np.get_volume_overlap_score_extended_points_np
+   MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring_np.get_volume_overlap_score_np
+   MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring_np.tanimoto_func_np
+   MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring_np.tversky_func_np
+
+
+Module Contents
+---------------
+
+.. py:function:: get_overlap_pharm_np(ptype_1: numpy.ndarray, ptype_2: numpy.ndarray, anchors_1: numpy.ndarray, anchors_2: numpy.ndarray, vectors_1: numpy.ndarray, vectors_2: numpy.ndarray, similarity: _SIM_TYPE = 'tanimoto', extended_points: bool = False, only_extended: bool = False) -> numpy.ndarray
+
+   NumPy implementation to compute pharmacophore score.
+   Single instance only
+
+   :param ptype_1: Indices specifying the pharmacophore type based on order of P_TYPES
+   :type ptype_1: np.ndarray (N,)
+   :param ptype_2: Indices specifying the pharmacophore type based on order of P_TYPES
+   :type ptype_2: np.ndarray (M,)
+   :param anchors_1: Coordinates for the anchor points of each pharmacophore of molecule 1
+   :type anchors_1: np.ndarray (N,3)
+   :param anchors_2: Coordinates for the anchor points of each pharmacophore of molecule 2
+   :type anchors_2: np.ndarray (M,3)
+   :param vectors_1: Relative unit vectors of each pharmacophore of molecule 1
+   :type vectors_1: np.ndarray (N,3)
+   :param vectors_2: Relative unit vectors of each pharmacophore of molecule 2
+   :type vectors_2: np.ndarray (M,3)
+   :param similarity: Specifies what similarity function to use.
+                      'tanimoto' -- symmetric scoring function
+                      'tversky' -- asymmetric -> Uses OpenEye's formulation 95% normalization by molec 1
+                      'tversky_ref' -- asymmetric -> Uses Pharao's formulation 100% normalization by molec 1.
+                      'tversky_fit' -- asymmetric -> Uses Pharao's formulation 100% normalization by molec 2.
+   :type similarity: str
+   :param extended_points: Whether to score HBA/HBD with gaussian overlaps of extended points.
+   :type extended_points: bool
+   :param only_extended:
+                         When `extended_points` is True, decide whether to only score the extended points (ignore
+                          anchor overlaps)
+   :type only_extended: bool
+
+   :rtype: np.ndarray (1,)
+
+
+.. py:function:: get_pharm_combo_score(centers_1: numpy.ndarray, centers_2: numpy.ndarray, ptype_1: numpy.ndarray, ptype_2: numpy.ndarray, anchors_1: numpy.ndarray, anchors_2: numpy.ndarray, vectors_1: numpy.ndarray, vectors_2: numpy.ndarray, alpha: float = 0.81, similarity: str = 'tanimoto', extended_points: bool = False, only_extended: bool = False) -> numpy.ndarray
+
+   Compute a combined shape and pharmacophore score.
+
+
+.. py:function:: get_vector_volume_overlap_score_np(ptype_str: str, ptype_1: numpy.ndarray, ptype_2: numpy.ndarray, anchors_1: numpy.ndarray, anchors_2: numpy.ndarray, vectors_1: numpy.ndarray, vectors_2: numpy.ndarray, allow_antiparallel: bool) -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
+
+   Compute volumentric overlap score with cosine similarity of vectors.
+
+
+.. py:function:: get_volume_overlap_score_extended_points_np(ptype_str: str, ptype_1: numpy.ndarray, ptype_2: numpy.ndarray, anchors_1: numpy.ndarray, anchors_2: numpy.ndarray, vectors_1: numpy.ndarray, vectors_2: numpy.ndarray, only_extended: bool = False) -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
+
+   Score both the anchor and extended point volume overlap instead of a vector similarity.
+
+
+.. py:function:: get_volume_overlap_score_np(ptype_str: str, ptype_1: numpy.ndarray, ptype_2: numpy.ndarray, anchors_1: numpy.ndarray, anchors_2: numpy.ndarray) -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
+
+   Computes volume overlap score single instance.
+
+
+.. py:function:: tanimoto_func_np(VAB: numpy.ndarray, VAA: numpy.ndarray, VBB: numpy.ndarray) -> numpy.ndarray
+
+   Computes Tanimoto similarity.
+   Similarity(Tanimoto) = Overlap{1,2} / (Overlap{1,1} + Overlap{2,2} - Overlap{1,2})
+
+
+.. py:function:: tversky_func_np(VAB: numpy.ndarray, VAA: numpy.ndarray, VBB: numpy.ndarray, sigma: float) -> numpy.ndarray
+
+   Computes Tversky similarity -> clamped to be max of 1.0.
+   sigma: [0,1]
+
+   Similarity(Tversky) = Overlap{1,2} / (sigma*Overlap{1,1} + (1-sigma)*Overlap{2,2})
+
+
+.. py:data:: P_TYPES_LWRCASE
+

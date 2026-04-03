@@ -1,0 +1,274 @@
+MolecularDiffusion.modules.models.shepherd_arch.inference.sampler
+=================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd_arch.inference.sampler
+
+.. autoapi-nested-parse::
+
+   This module contains the inference sampler for the ShEPhERD model.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd_arch.inference.sampler.generate
+   MolecularDiffusion.modules.models.shepherd_arch.inference.sampler.generate_from_intermediate_time
+
+
+Module Contents
+---------------
+
+.. py:function:: generate(model_pl, batch_size: int, N_x1: int, N_x4: int, unconditional: bool, prior_noise_scale: float = 1.0, denoising_noise_scale: float = 1.0, inject_noise_at_ts: list[int] = [], inject_noise_scales: list[int] = [], harmonize: bool = False, harmonize_ts: list[int] = [], harmonize_jumps: list[int] = [], inpaint_x1_pos: bool = False, inpaint_x1_x: bool = False, inpaint_x1_bonds: bool = False, inpaint_x2_pos: bool = False, inpaint_x3_pos: bool = False, inpaint_x3_x: bool = False, inpaint_x4_pos: bool = False, inpaint_x4_direction: bool = False, inpaint_x4_type: bool = False, stop_inpainting_at_time_x1_pos: float = 0.0, stop_inpainting_at_time_x1_x: float = 0.0, stop_inpainting_at_time_x1_bonds: float = 0.0, stop_inpainting_at_time_x2: float = 0.0, add_noise_to_inpainted_x2_pos: float = 0.0, stop_inpainting_at_time_x3: float = 0.0, add_noise_to_inpainted_x3_pos: float = 0.0, add_noise_to_inpainted_x3_x: float = 0.0, stop_inpainting_at_time_x4: float = 0.0, add_noise_to_inpainted_x4_pos: float = 0.0, add_noise_to_inpainted_x4_direction: float = 0.0, add_noise_to_inpainted_x4_type: float = 0.0, mol: Optional[rdkit.Chem.Mol] = None, atom_inds_to_inpaint: list[int] = [], atom_types: Optional[list[int]] = None, atom_pos: Optional[numpy.ndarray] = None, exit_vector_atom_inds: list[int] = [], center_of_mass: numpy.ndarray = np.zeros(3), surface: numpy.ndarray = np.zeros((75, 3)), electrostatics: numpy.ndarray = np.zeros(75), pharm_types: Optional[numpy.ndarray] = None, pharm_pos: Optional[numpy.ndarray] = None, pharm_direction: Optional[numpy.ndarray] = None, num_steps: int = 400, verbose: bool = True, store_trajectories: bool = False, store_trajectories_x0: bool = False, interruption_callback: Optional[callable] = None) -> list[dict]
+
+   Runs inference of ShEPhERD to sample `batch_size` number of molecules.
+
+   We diffuse from time T=400 to time T=0. When represented as a float,
+   this is 1.0 to 0.0.
+
+   :param model_pl:
+   :type model_pl: PyTorch Lightning module.
+   :param batch_size:
+   :type batch_size: int Number of molecules to sample in a single batch.
+   :param N_x1:
+   :type N_x1: int Number of atoms to diffuse.
+   :param N_x4: If inpainting, can be greater than len(pharm_types) for partial pharmacophore conditioning.
+   :type N_x4: int Number of pharmacophores to diffuse.
+   :param unconditional:
+   :type unconditional: bool to toggle unconditional generation.
+   :param prior_noise_scale:
+   :type prior_noise_scale: float (default = 1.0) Noise scale of the prior distribution.
+   :param denoising_noise_scale:
+   :type denoising_noise_scale: float (default = 1.0) Noise scale for each denoising step.
+   :param inject_noise_at_ts:
+   :type inject_noise_at_ts: list[int] (default = []) Time steps to inject extra noise.
+   :param inject_noise_scales:
+   :type inject_noise_scales: list[int] (default = []) Scale of noise to inject at above time steps.
+   :param harmonize:
+   :type harmonize: bool (default=False) Whether to use harmonization.
+   :param harmonize_ts:
+   :type harmonize_ts: list[int] (default = []) Time steps to to harmonization.
+   :param harmonize_jumps:
+   :type harmonize_jumps: list[int] (default = []) Length of time to harmonize (in time steps).
+   :param \*all the below options are only relevant if unconditional is False*:
+   :param inpaint_x1_pos:
+   :type inpaint_x1_pos: bool (default=False)
+   :param inpaint_x1_x:
+   :type inpaint_x1_x: bool (default=False)
+   :param inpaint_x1_bonds:
+   :type inpaint_x1_bonds: bool (default=False)
+   :param inpaint_x2_pos: Note that x2 is implicitly modeled via x3.
+   :type inpaint_x2_pos: bool (default=False) Toggle inpainting.
+   :param inpaint_x3_pos:
+   :type inpaint_x3_pos: bool (default=False)
+   :param inpaint_x3_x:
+   :type inpaint_x3_x: bool (default=False)
+   :param inpaint_x4_pos:
+   :type inpaint_x4_pos: bool (default=False)
+   :param inpaint_x4_direction:
+   :type inpaint_x4_direction: bool (default=False)
+   :param inpaint_x4_type:
+   :type inpaint_x4_type: bool (default=False)
+   :param stop_inpainting_at_time_x1_pos: Time step to stop inpainting atom positions.
+   :type stop_inpainting_at_time_x1_pos: float (default = 0.0)
+   :param stop_inpainting_at_time_x1_x: Time step to stop inpainting atom types.
+   :type stop_inpainting_at_time_x1_x: float (default = 0.0)
+   :param stop_inpainting_at_time_x1_bonds: Time step to stop inpainting bond types.
+   :type stop_inpainting_at_time_x1_bonds: float (default = 0.0)
+   :param stop_inpainting_at_time_x2:
+   :type stop_inpainting_at_time_x2: float (default = 0.0)
+   :param add_noise_to_inpainted_x2_pos: Scale of noise to add to inpainted values.
+   :type add_noise_to_inpainted_x2_pos: float (default = 0.0)
+   :param stop_inpainting_at_time_x3:
+   :type stop_inpainting_at_time_x3: float (default = 0.0)
+   :param add_noise_to_inpainted_x3_pos:
+   :type add_noise_to_inpainted_x3_pos: float (default = 0.0)
+   :param add_noise_to_inpainted_x3_x:
+   :type add_noise_to_inpainted_x3_x: float (default = 0.0)
+   :param stop_inpainting_at_time_x4:
+   :type stop_inpainting_at_time_x4: float (default = 0.0)
+   :param add_noise_to_inpainted_x4_pos:
+   :type add_noise_to_inpainted_x4_pos: float (default = 0.0)
+   :param add_noise_to_inpainted_x4_direction:
+   :type add_noise_to_inpainted_x4_direction: float (default = 0.0)
+   :param add_noise_to_inpainted_x4_type:
+   :type add_noise_to_inpainted_x4_type: float (default = 0.0)
+   :param \*these are the inpainting targets*:
+   :param mol: Target molecule specifically for *atom*-inpainting.
+               If provided, `atom_inds_to_inpaint` *must* also be provided.
+               This is required for *bond*-inpainting.
+               If `atom_pos` and `atom_types` are also provided,
+               they will override the atom types and positions extracted from `mol`.
+   :type mol: Optional[Chem.Mol] (default = None)
+   :param atom_inds_to_inpaint: Indices of atoms to inpaint.
+                                This is required for *bond*-inpainting.
+   :type atom_inds_to_inpaint: list[int] (default = [])
+   :param atom_types: Atom elements expected as a list of atomic numbers.
+                      If provided alongside `mol`, `atom_inds_to_inpaint`,
+                      it will override the atom types extracted from `mol`.
+   :type atom_types: Optional[list[int]] (default = None)
+   :param atom_pos: If provided alongside `mol`, `atom_inds_to_inpaint`,
+                    it will override the atom positions extracted from `mol`.
+   :type atom_pos: Optional[np.ndarray] (default = None) Atom positions as coordinates.
+   :param exit_vector_atom_inds: If empty and `mol` and `atom_inds_to_inpaint` are provided,
+                                 then the bonds between each of these atoms will be inpainted, but ignore other edges.
+                                 If provided, the inpainted atoms will be inpainted with bonds to all other atoms that are
+                                 diffused, (i.e., None bond-type for atoms that should not be bonded to the inpainted atoms)
+                                 However, the exit vector atom(s) will not inpaint any "None" bond-types to
+                                 non-inpainted atoms.
+                                 NOTE: Must be a subset of `atom_inds_to_inpaint`.
+   :type exit_vector_atom_inds: list[int] (default = []) Indices of atoms to use as "exit vectors".
+   :param center_of_mass: not already centered.
+   :type center_of_mass: np.ndarray (3,) (default = np.zeros(3)) Must be supplied if target molecule is
+   :param surface:
+   :type surface: np.ndarray (75,3) (default = np.zeros((75,3)) Surface point coordinates.
+   :param electrostatics:
+   :type electrostatics: np.ndarray (75,) (default = np.zeros(75)) Electrostatics at each surface point.
+   :param pharm_types:
+   :type pharm_types: np.ndarray (<=N_x4,) (default = np.zeros(5, dtype = int)) Pharmacophore types.
+   :param pharm_pos: coordinates.
+   :type pharm_pos: np.ndarray (<=N_x4,3) (default = np.zeros((5,3))) Pharmacophore positions as
+   :param pharm_direction: unit vectors.
+   :type pharm_direction: np.ndarray (<=N_x4,3) (default = np.zeros((5,3))) Pharmacophore directions as
+   :param num_steps:
+   :type num_steps: int (default = 400) Number of time steps to run the sampler for.
+   :param save_intermediate: whether to save intermediates --> not implemented
+   :type save_intermediate: bool (default=False)
+   :param start_t_ind: Index of the time step to start from (default is from pure noise).
+                       Requires xi_initial_dict to be provided.
+   :type start_t_ind: int (default = 0)
+   :param xi_initial_dict: Dictionary containing the initial states of x1, x2, x3, and x4.
+                           If None, the states are initialized randomly.
+   :type xi_initial_dict: Optional[dict] (default = None)
+   :param noise_dict: Dictionary containing the noise parameters for the *first* inference step.
+                      After the first inference step, the noise will be sampled randomly.
+                      If None, the noises will be sampled randomly.
+   :type noise_dict: Optional[dict] (default = None)
+   :param do_property_cfg:
+   :type do_property_cfg: bool (default = False) Whether to use property conditioning.
+   :param cfg_weight:
+   :type cfg_weight: float (default = 3.0) Weight of property conditioning.
+   :param sa_score: Range is 0-10: 10 is difficult to synthesize.
+   :type sa_score: float (default = 1.0) SA score of the target molecule.
+   :param verbose:
+   :type verbose: bool (default = True) Whether to print progress bar.
+   :param store_trajectories:
+   :type store_trajectories: bool (default = False) Whether to store the trajectories.
+   :param store_trajectories_x0:
+   :type store_trajectories_x0: bool (default = False) Whether to store the trajectories of the x0 predictions.
+
+   :returns: **generated_structures** -- Output dictionary is structured as:
+             'x1': {
+                 'atoms': np.ndarray (N_x1,) of ints for atomic numbers.
+                 'bonds': np.ndarray of bond types between every atom pair.
+                 'positions': np.ndarray (N_x1, 3) Coordinates of atoms.
+             },
+             'x2': {
+                 'positions': np.ndarray (75, 3) Coordinates of surface points.
+             },
+             'x3': {
+                 'charges': np.ndarray (75, 3) ESP at surface points.
+                 'positions': np.ndarray (75, 3) Coordinates of surface points.
+             },
+             'x4': {
+                 'types': np.ndarray (N_x4,) of ints for pharmacophore types.
+                 'positions': np.ndarray (N_x4, 3) Coordinates of pharmacophores.
+                 'directions': np.ndarray (N_x4, 3) Unit vectors of pharmacophores.
+             },
+             }
+   :rtype: list[dict]
+
+
+.. py:function:: generate_from_intermediate_time(model_pl, batch_size: int, start_time: float, N_x1: int, N_x4: int, mol: rdkit.Chem.Mol, atom_inds_to_inpaint: numpy.ndarray | list[int], exit_vector_atom_inds: list[int] = [], new_atom_placement_region: Optional[numpy.ndarray] = None, new_atom_placement_radius: float = 1.5, new_atom_types: list[str] = ['C', 'O', 'N', 'F', 'H'], new_atom_type_weights: list[float] = [0.3, 0.2, 0.2, 0.1, 0.2], center_of_mass: numpy.ndarray = np.zeros(3), surface: numpy.ndarray = np.zeros((75, 3)), electrostatics: numpy.ndarray = np.zeros(75), pharm_types: numpy.ndarray = np.zeros(5, dtype=int), pharm_pos: numpy.ndarray = np.zeros((5, 3)), pharm_direction: numpy.ndarray = np.zeros((5, 3)), denoising_noise_scale: float = 1.0, inject_noise_at_ts: list[int] = [], inject_noise_scales: list[int] = [], inpaint_x1_bonds: bool = False, stop_inpainting_at_time_x1_pos: float = 0.0, stop_inpainting_at_time_x1_x: float = 0.0, stop_inpainting_at_time_x1_bonds: float = 0.0, verbose: bool = True, store_trajectories: bool = False, store_trajectories_x0: bool = False, interruption_callback: Optional[callable] = None) -> list[dict]
+
+   Runs inpainting-based inference of ShEPhERD starting from an intermediate time step.
+   Requires a conformer that is assumed to partially be inpainted.
+   This function assumes that modalities x1, x3, and x4 are being inpainted.
+
+   The key features are:
+   - Starts diffusion from a specified intermediate time `start_time`.
+   - Uses a full molecule for generating inpainting trajectories.
+   - Allows for partial inpainting of atoms via `atom_inds_to_inpaint`.
+   - The number of atoms to generate (`N_x1`) can be different from the number of
+     atoms in the provided molecule, allowing for addition of atoms (N_x1 > N_atoms).
+
+   :param model_pl:
+   :param batch_size: Number of molecules to sample.
+   :type batch_size: int
+   :param start_time: The time to start diffusion from. 0 is t=0 (data distribution) and 1 is t=T (prior).
+   :type start_time: float [0, 1]
+   :param N_x1: The number of atoms to diffuse. Must be >= the number of atoms in the `mol`.
+   :type N_x1: int
+   :param N_x4: The number of pharmacophores to diffuse.
+   :type N_x4: int
+   :param mol: The molecule to inpaint. Requires a conformer.
+   :type mol: Chem.Mol
+   :param atom_inds_to_inpaint: The indices of the atoms to inpaint.
+   :type atom_inds_to_inpaint: np.ndarray | list[int]
+   :param new_atom_placement_region: Shape (3,). Position around which to place new atoms. Image it to be a cluster center.
+                                     If None, new atoms are sampled from a Gaussian distribution.
+   :type new_atom_placement_region: Optional[np.ndarray] = None
+   :param new_atom_placement_radius: The radius of the sphere to place new atoms in.
+                                     Only used if new_atom_placement_region is not None.
+   :type new_atom_placement_radius: float [default: 1.5]
+   :param new_atom_types: The types of new atoms to forward noise. Does not guarantee that these atoms will be added.
+   :type new_atom_types: list[str] [default: ['C', 'O', 'N', 'F', 'H']]
+   :param new_atom_type_weights: The weights of the new atom types.
+   :type new_atom_type_weights: list[float] [default: [0.3, 0.2, 0.2, 0.1, 0.2]]
+   :param center_of_mass: The center of mass of the molecule.
+   :type center_of_mass: np.ndarray (3,) [default: np.zeros(3)]
+   :param surface: The surface of the molecule.
+   :type surface: np.ndarray (75, 3) [default: np.zeros((75, 3))]
+   :param electrostatics: The electrostatics of the molecule.
+   :type electrostatics: np.ndarray (75,) [default: np.zeros(75)]
+   :param pharm_types: The types of pharmacophores.
+   :type pharm_types: np.ndarray (5,) [default: np.zeros(5, dtype = int)]
+   :param pharm_pos: The positions of the pharmacophores.
+   :type pharm_pos: np.ndarray (5, 3) [default: np.zeros((5, 3))]
+   :param pharm_direction: The directions of the pharmacophores.
+   :type pharm_direction: np.ndarray (5, 3) [default: np.zeros((5, 3))]
+   :param denoising_noise_scale: The scale of the denoising noise.
+   :type denoising_noise_scale: float [default: 1.0]
+   :param inject_noise_at_ts: The times to inject noise.
+   :type inject_noise_at_ts: list[int] [default: []]
+   :param inject_noise_scales: The scales of the noise to inject.
+   :type inject_noise_scales: list[int] [default: []]
+   :param inpaint_x1_bonds: Whether to inpaint bonds between atoms specified in atom_inds_to_inpaint.
+   :type inpaint_x1_bonds: bool [default: False]
+   :param stop_inpainting_at_time_x1_pos: Time step to stop inpainting atom positions.
+   :type stop_inpainting_at_time_x1_pos: float [default: 0.0]
+   :param stop_inpainting_at_time_x1_x: Time step to stop inpainting atom types.
+   :type stop_inpainting_at_time_x1_x: float [default: 0.0]
+   :param stop_inpainting_at_time_x1_bonds: Time step to stop inpainting bond types.
+   :type stop_inpainting_at_time_x1_bonds: float [default: 0.0]
+   :param verbose: Whether to print progress.
+   :type verbose: bool [default: True]
+   :param store_trajectories: Whether to store the trajectories.
+   :type store_trajectories: bool [default: False]
+   :param store_trajectories_x0: Whether to store the trajectories of the initial state.
+   :type store_trajectories_x0: bool [default: False]
+
+   :returns: **generated_structures** -- Output dictionary is structured as:
+             'x1': {
+                 'atoms': np.ndarray (N_x1,) of ints for atomic numbers.
+                 'bonds': np.ndarray of bond types between every atom pair.
+                 'positions': np.ndarray (N_x1, 3) Coordinates of atoms.
+             },
+             'x2': {
+                 'positions': np.ndarray (75, 3) Coordinates of surface points.
+             },
+             'x3': {
+                 'charges': np.ndarray (75, 3) ESP at surface points.
+                 'positions': np.ndarray (75, 3) Coordinates of surface points.
+             },
+             'x4': {
+                 'types': np.ndarray (N_x4,) of ints for pharmacophore types.
+                 'positions': np.ndarray (N_x4, 3) Coordinates of pharmacophores.
+                 'directions': np.ndarray (N_x4, 3) Unit vectors of pharmacophores.
+             },
+             }
+   :rtype: list[dict]
+
+

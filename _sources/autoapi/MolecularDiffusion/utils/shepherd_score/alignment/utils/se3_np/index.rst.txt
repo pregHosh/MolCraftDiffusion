@@ -1,0 +1,87 @@
+MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np
+==============================================================
+
+.. py:module:: MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np
+
+.. autoapi-nested-parse::
+
+   Functions used for SE(3) transformations. (NumPy implementation).
+
+   Namely, converting quaternions to rotation matrices, getting an SE(3) transform from SE(3)
+   parameters, and applying the SE(3) transformation on a set of points.
+
+   Credit to Lewis J. Martin as this was adapted from
+   https://github.com/ljmartin/align/blob/main/0.2%20aligning%20principal%20moments%20of%20inertia.ipynb
+   and PyTorch's implementations.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.apply_SE3_transform_np
+   MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.apply_SO3_transform_np
+   MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.get_SE3_transform_np
+   MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.quaternions_to_rotation_matrix_np
+
+
+Module Contents
+---------------
+
+.. py:function:: apply_SE3_transform_np(points: numpy.ndarray, SE3_transform: numpy.ndarray) -> numpy.ndarray
+
+   Takes a point cloud and transforms it according to the provided SE3 transformation matrix.
+   NumPy implementation.
+
+   :param points: Set of coordinates representing a point cloud.
+   :type points: np.ndarray (N, 3)
+   :param SE3_transform: SE(3) transformation matrix.
+   :type SE3_transform: np.ndarray (4, 4)
+
+   :returns: **transformed_points** -- Set of coordinates transformed by the corresponding SE(3) transformation.
+   :rtype: np.ndarray (N, 3)
+
+
+.. py:function:: apply_SO3_transform_np(points: numpy.ndarray, SE3_transform: numpy.ndarray) -> numpy.ndarray
+
+   Takes a point cloud and ONLY ROTATES it according to the provided SE3 transformation matrix.
+   Supports batched and non-batched inputs.
+
+   :param points: Set of coordinates representing a point cloud.
+   :type points: np.array (N, 3)
+   :param SE3_transform: SE(3) transformation matrix. If 'points' argument is batched, this one should be too.
+   :type SE3_transform: (4, 4)
+
+   :returns: **rotated_points** -- Set of coordinates rotated by the rotation component of the SE(3) transformation.
+   :rtype: torch.Tensor (batch, N, 3) or (N, 3)
+
+
+.. py:function:: get_SE3_transform_np(se3_params: numpy.ndarray) -> numpy.ndarray
+
+   Constructs an SE(3) transformtion matrix from parameters. NumPy implementation
+
+   :param se3_params: Parameters for SE(3) transformation.
+                      The first 4 values in the last dimension are quaternions of form (r,i,j,k)
+                      and the last 3 values of the last dimension are the translations in (x,y,z).
+   :type se3_params: np.ndarray (7,)
+
+   :returns: **se3_matrix** -- se3_params converted to a 4x4 SE(3) transformation matrix.
+   :rtype: np.ndarray (4, 4)
+
+
+.. py:function:: quaternions_to_rotation_matrix_np(quaternions: numpy.ndarray) -> numpy.ndarray
+
+   Converts quaternion to a rotation matrix.
+   Adapted from PyTorch3D:
+   https://pytorch3d.readthedocs.io/en/latest/_modules/pytorch3d/transforms/rotation_conversions.html#quaternion_to_matrix
+
+   :param quaternions: Quaternion parameters in (r,i,j,k) order.
+                       set.
+   :type quaternions: np.ndarray (4,)
+
+   :returns: **rotation_matrix** -- Rotation matrix converted from quaternion.
+   :rtype: np.ndarray (3,3)
+
+

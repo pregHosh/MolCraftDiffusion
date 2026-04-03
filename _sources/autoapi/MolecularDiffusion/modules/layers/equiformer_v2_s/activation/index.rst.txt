@@ -1,0 +1,201 @@
+MolecularDiffusion.modules.layers.equiformer_v2_s.activation
+============================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.equiformer_v2_s.activation
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation
+   MolecularDiffusion.modules.layers.equiformer_v2_s.activation.S2Activation
+   MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSiLU
+   MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSigmoid
+   MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSmoothLeakyReLU
+   MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU
+   MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation
+   MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SmoothLeakyReLU
+   MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU
+
+
+Module Contents
+---------------
+
+.. py:class:: GateActivation(lmax, mmax, num_channels)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(gating_scalars, input_tensors)
+
+      `gating_scalars`: shape [N, lmax * num_channels]
+      `input_tensors`: shape  [N, (lmax + 1) ** 2, num_channels]
+
+
+
+   .. py:attribute:: gate_act
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mmax
+
+
+   .. py:attribute:: num_channels
+
+
+   .. py:attribute:: scalar_act
+
+
+.. py:class:: S2Activation(lmax, mmax)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Assume we only have one resolution
+
+
+   .. py:method:: forward(inputs, SO3_grid)
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mmax
+
+
+.. py:class:: ScaledSiLU(inplace=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: forward(inputs)
+
+
+   .. py:attribute:: inplace
+      :value: False
+
+
+
+   .. py:attribute:: scale_factor
+      :value: 1.6791767923989418
+
+
+
+.. py:class:: ScaledSigmoid
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: scale_factor
+      :value: 1.8467055342154763
+
+
+
+.. py:class:: ScaledSmoothLeakyReLU
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: scale_factor
+      :value: 1.531320475574866
+
+
+
+.. py:class:: ScaledSwiGLU(in_channels, out_channels, bias=True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(inputs)
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: in_channels
+
+
+   .. py:attribute:: out_channels
+
+
+   .. py:attribute:: w
+
+
+.. py:class:: SeparableS2Activation(lmax, mmax)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(input_scalars, input_tensors, SO3_grid)
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mmax
+
+
+   .. py:attribute:: s2_act
+
+
+   .. py:attribute:: scalar_act
+
+
+.. py:class:: SmoothLeakyReLU(negative_slope=0.2)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: alpha
+      :value: 0.2
+
+
+
+.. py:class:: SwiGLU(in_channels, out_channels, bias=True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(inputs)
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: in_channels
+
+
+   .. py:attribute:: out_channels
+
+
+   .. py:attribute:: w
+
+

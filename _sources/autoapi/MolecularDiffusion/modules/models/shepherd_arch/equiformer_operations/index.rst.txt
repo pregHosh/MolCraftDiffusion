@@ -1,0 +1,505 @@
+MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations
+=====================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations
+
+.. autoapi-nested-parse::
+
+   This file contains a selection of e3nn neural network operations defined by the original Equiformer, copied from the repo:
+   https://github.com/atomicarchitects/equiformer
+
+   This file is a (partial) concatenation of:
+   equiformer/nets/graph_norm.py
+   equiformer/nets/tensor_product_rescale.py
+   equiformer/nets/fast_activation.py
+   equiformer/nets/graph_attention_transformer.py
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.Activation
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.AttnHeads2Vec
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.ConcatIrrepsTensor
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.EquivariantGraphNorm
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.EquivariantGraphNormV2
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.FeedForwardNetwork_equiformer
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.FullyConnectedTensorProductRescale
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.FullyConnectedTensorProductRescaleNorm
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.FullyConnectedTensorProductRescaleNormSwishGate
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.FullyConnectedTensorProductRescaleSwishGate
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.Gate
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.LinearRS
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.ScaledScatter
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.SeparableFCTP
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.SmoothLeakyReLU
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.TensorProductRescale
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.Vec2AttnHeads
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.DepthwiseTensorProduct
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.convert_e3nn_to_equiformerv2
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.convert_equiformerv2_to_e3nn
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.get_mul_0
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.get_norm_layer
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.irreps2gate
+   MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.sort_irreps_even_first
+
+
+Module Contents
+---------------
+
+.. py:class:: Activation(irreps_in, acts)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Directly apply activation when irreps is type-0.
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: forward(features, dim=-1)
+
+
+   .. py:attribute:: acts
+
+
+   .. py:attribute:: irreps_in
+
+
+   .. py:attribute:: irreps_out
+
+
+.. py:class:: AttnHeads2Vec(irreps_head)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Convert vectors of shape [N, num_heads, irreps_head] into
+   vectors of shape [N, irreps_head * num_heads].
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: head_indices
+      :value: []
+
+
+
+   .. py:attribute:: irreps_head
+
+
+.. py:class:: ConcatIrrepsTensor(irreps_1, irreps_2)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: check_sorted(irreps)
+
+
+   .. py:method:: forward(feature_1, feature_2)
+
+
+   .. py:method:: get_ir_index(ir, irreps)
+
+
+   .. py:method:: get_irreps_dim(irreps)
+
+
+   .. py:attribute:: ir_mul_list
+      :value: []
+
+
+
+   .. py:attribute:: irreps_1
+
+
+   .. py:attribute:: irreps_2
+
+
+   .. py:attribute:: irreps_out
+
+
+.. py:class:: EquivariantGraphNorm(irreps, eps=1e-05, affine=True, reduce='mean', normalization='component')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Instance normalization for orthonormal representations
+   It normalizes by the norm of the representations.
+   Note that the norm is invariant only for orthonormal representations.
+   Irreducible representations `wigner_D` are orthonormal.
+   :param irreps: representation
+   :type irreps: `Irreps`
+   :param eps: avoid division by zero when we normalize by the variance
+   :type eps: float
+   :param affine: do we have weight and bias parameters
+   :type affine: bool
+   :param reduce: method used to reduce
+   :type reduce: {'mean', 'max'}
+
+
+   .. py:method:: forward(node_input, batch, **kwargs)
+
+      evaluate
+      :param node_input: tensor of shape ``(batch, ..., irreps.dim)``
+      :type node_input: `torch.Tensor`
+
+      :returns: tensor of shape ``(batch, ..., irreps.dim)``
+      :rtype: `torch.Tensor`
+
+
+
+   .. py:attribute:: affine
+      :value: True
+
+
+
+   .. py:attribute:: eps
+      :value: 1e-05
+
+
+
+   .. py:attribute:: irreps
+
+
+   .. py:attribute:: mean_shift
+
+
+   .. py:attribute:: normalization
+      :value: 'component'
+
+
+
+   .. py:attribute:: reduce
+      :value: 'mean'
+
+
+
+.. py:class:: EquivariantGraphNormV2(irreps, eps=1e-05, affine=True, reduce='mean', normalization='component')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(node_input, batch, **kwargs)
+
+
+   .. py:attribute:: affine
+      :value: True
+
+
+
+   .. py:attribute:: eps
+      :value: 1e-05
+
+
+
+   .. py:attribute:: irreps
+
+
+   .. py:attribute:: mean_shift
+
+
+   .. py:attribute:: normalization
+      :value: 'component'
+
+
+
+   .. py:attribute:: reduce
+      :value: 'mean'
+
+
+
+.. py:class:: FeedForwardNetwork_equiformer(irreps_node_input, irreps_node_attr, irreps_node_output, irreps_mlp_mid=None, proj_drop=0.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Use two (FCTP + Gate)
+
+
+   .. py:method:: forward(node_input, node_attr, **kwargs)
+
+
+   .. py:attribute:: fctp_1
+
+
+   .. py:attribute:: fctp_2
+
+
+   .. py:attribute:: irreps_mlp_mid
+
+
+   .. py:attribute:: irreps_node_attr
+
+
+   .. py:attribute:: irreps_node_input
+
+
+   .. py:attribute:: irreps_node_output
+
+
+   .. py:attribute:: proj_drop
+      :value: None
+
+
+
+.. py:class:: FullyConnectedTensorProductRescale(irreps_in1, irreps_in2, irreps_out, bias=True, rescale=True, internal_weights=None, shared_weights=None, normalization=None)
+
+   Bases: :py:obj:`TensorProductRescale`
+
+
+.. py:class:: FullyConnectedTensorProductRescaleNorm(irreps_in1, irreps_in2, irreps_out, bias=True, rescale=True, internal_weights=None, shared_weights=None, normalization=None, norm_layer='graph')
+
+   Bases: :py:obj:`FullyConnectedTensorProductRescale`
+
+
+   .. py:method:: forward(x, y, batch, weight=None)
+
+
+   .. py:attribute:: norm
+
+
+.. py:class:: FullyConnectedTensorProductRescaleNormSwishGate(irreps_in1, irreps_in2, irreps_out, bias=True, rescale=True, internal_weights=None, shared_weights=None, normalization=None, norm_layer='graph')
+
+   Bases: :py:obj:`FullyConnectedTensorProductRescaleNorm`
+
+
+   .. py:method:: forward(x, y, batch, weight=None)
+
+
+   .. py:attribute:: gate
+
+
+.. py:class:: FullyConnectedTensorProductRescaleSwishGate(irreps_in1, irreps_in2, irreps_out, bias=True, rescale=True, internal_weights=None, shared_weights=None, normalization=None)
+
+   Bases: :py:obj:`FullyConnectedTensorProductRescale`
+
+
+   .. py:method:: forward(x, y, weight=None)
+
+
+   .. py:attribute:: gate
+
+
+.. py:class:: Gate(irreps_scalars, act_scalars, irreps_gates, act_gates, irreps_gated)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   1. Use `narrow` to split tensor.
+   2. Use `Activation` in this file.
+
+
+   .. py:method:: forward(features)
+
+
+   .. py:method:: irreps_in()
+
+      Input representations.
+
+
+
+   .. py:method:: irreps_out()
+
+      Output representations.
+
+
+
+   .. py:attribute:: act_gates
+
+
+   .. py:attribute:: act_scalars
+
+
+   .. py:attribute:: irreps_gated
+
+
+   .. py:attribute:: irreps_gates
+
+
+   .. py:attribute:: irreps_scalars
+
+
+   .. py:attribute:: mul
+
+
+.. py:class:: LinearRS(irreps_in, irreps_out, bias=True, rescale=True)
+
+   Bases: :py:obj:`FullyConnectedTensorProductRescale`
+
+
+   .. py:method:: forward(x)
+
+
+.. py:class:: ScaledScatter(avg_aggregate_num)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: forward(x, index, **kwargs)
+
+
+   .. py:attribute:: avg_aggregate_num
+
+
+.. py:class:: SeparableFCTP(irreps_node_input, irreps_edge_attr, irreps_node_output, fc_neurons, use_activation=False, norm_layer='graph', internal_weights=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Use separable FCTP for spatial convolution.
+
+
+   .. py:method:: forward(node_input, edge_attr, edge_scalars, batch=None, **kwargs)
+
+      Depthwise TP: `node_input` TP `edge_attr`, with TP parametrized by
+      self.dtp_rad(`edge_scalars`).
+
+
+
+   .. py:attribute:: dtp
+
+
+   .. py:attribute:: dtp_rad
+      :value: None
+
+
+
+   .. py:attribute:: gate
+      :value: None
+
+
+
+   .. py:attribute:: irreps_edge_attr
+
+
+   .. py:attribute:: irreps_node_input
+
+
+   .. py:attribute:: irreps_node_output
+
+
+   .. py:attribute:: lin
+
+
+   .. py:attribute:: norm
+      :value: None
+
+
+
+.. py:class:: SmoothLeakyReLU(negative_slope=0.2)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: alpha
+      :value: 0.2
+
+
+
+.. py:class:: TensorProductRescale(irreps_in1, irreps_in2, irreps_out, instructions, bias=True, rescale=True, internal_weights=None, shared_weights=None, normalization=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: calculate_fan_in(ins)
+
+
+   .. py:method:: forward(x, y, weight=None)
+
+
+   .. py:method:: forward_tp_rescale_bias(x, y, weight=None)
+
+
+   .. py:method:: init_rescale_bias() -> None
+
+
+   .. py:attribute:: irreps_in1
+
+
+   .. py:attribute:: irreps_in2
+
+
+   .. py:attribute:: irreps_out
+
+
+   .. py:attribute:: rescale
+      :value: True
+
+
+
+   .. py:attribute:: tp
+
+
+   .. py:attribute:: use_bias
+      :value: True
+
+
+
+.. py:class:: Vec2AttnHeads(irreps_head, num_heads)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Reshape vectors of shape [N, irreps_mid] to vectors of shape
+   [N, num_heads, irreps_head].
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: irreps_head
+
+
+   .. py:attribute:: irreps_mid_in
+      :value: []
+
+
+
+   .. py:attribute:: mid_in_indices
+      :value: []
+
+
+
+   .. py:attribute:: num_heads
+
+
+.. py:function:: DepthwiseTensorProduct(irreps_node_input, irreps_edge_attr, irreps_node_output, internal_weights=False, bias=True)
+
+   The irreps of output is pre-determined.
+   `irreps_node_output` is used to get certain types of vectors.
+
+
+.. py:function:: convert_e3nn_to_equiformerv2(input_tensor, lmax, num_channels)
+
+.. py:function:: convert_equiformerv2_to_e3nn(input_tensor, lmax)
+
+.. py:function:: get_mul_0(irreps)
+
+.. py:function:: get_norm_layer(norm_type)
+
+.. py:function:: irreps2gate(irreps)
+
+.. py:function:: sort_irreps_even_first(irreps)
+

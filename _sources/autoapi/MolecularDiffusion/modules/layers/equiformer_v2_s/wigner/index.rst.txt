@@ -1,0 +1,19 @@
+MolecularDiffusion.modules.layers.equiformer_v2_s.wigner
+========================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.equiformer_v2_s.wigner
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.equiformer_v2_s.wigner.wigner_D
+
+
+Module Contents
+---------------
+
+.. py:function:: wigner_D(l, alpha, beta, gamma)
+

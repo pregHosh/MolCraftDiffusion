@@ -1,0 +1,327 @@
+MolecularDiffusion.utils.shepherd_score.generate_point_cloud
+============================================================
+
+.. py:module:: MolecularDiffusion.utils.shepherd_score.generate_point_cloud
+
+.. autoapi-nested-parse::
+
+   Module contains functions to generate point clouds of
+   molecular surfaces.
+
+   Surface generation workflow adapted from Open Drug Discovery Toolkit:
+       https://oddt.readthedocs.io/en/latest/_modules/oddt/surface.html
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.shepherd_score.generate_point_cloud.PT
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.shepherd_score.generate_point_cloud.color_pcd_with_electrostatics
+   MolecularDiffusion.utils.shepherd_score.generate_point_cloud.get_atom_coords
+   MolecularDiffusion.utils.shepherd_score.generate_point_cloud.get_atomic_vdw_radii
+   MolecularDiffusion.utils.shepherd_score.generate_point_cloud.get_electrostatics
+   MolecularDiffusion.utils.shepherd_score.generate_point_cloud.get_electrostatics_given_point_charges
+   MolecularDiffusion.utils.shepherd_score.generate_point_cloud.get_molecular_surface
+   MolecularDiffusion.utils.shepherd_score.generate_point_cloud.get_molecular_surface_const_density
+   MolecularDiffusion.utils.shepherd_score.generate_point_cloud.get_molecular_surface_point_cloud
+   MolecularDiffusion.utils.shepherd_score.generate_point_cloud.get_molecular_surface_point_cloud_const_density
+   MolecularDiffusion.utils.shepherd_score.generate_point_cloud.get_molecular_volume
+   MolecularDiffusion.utils.shepherd_score.generate_point_cloud.get_point_cloud
+   MolecularDiffusion.utils.shepherd_score.generate_point_cloud.get_sample_atom_volume
+   MolecularDiffusion.utils.shepherd_score.generate_point_cloud.sample_molecular_surface_with_radius
+   MolecularDiffusion.utils.shepherd_score.generate_point_cloud.sample_molecular_surface_with_radius_fibonacci
+
+
+Module Contents
+---------------
+
+.. py:function:: color_pcd_with_electrostatics(pcd: open3d.geometry.PointCloud, E_pot: numpy.ndarray) -> None
+
+   Color the point cloud based on elecrostatic potential. Colors are only scaled to the molecule
+   itself (i.e., the colors are not comparable to different molecules).
+   Red is positive, blue is negative, black is neutral.
+
+
+.. py:function:: get_atom_coords(mol: rdkit.Chem.Mol, MMFF_optimize: bool = True) -> Tuple[rdkit.Chem.Mol, numpy.ndarray]
+
+   Get the coordinates of all atoms in a molecule using rdkit.
+   If the rdkit.Chem.mol object already has a conformer it just retrieves the coordinates
+   without optimizing using MMFF.
+
+   :param mol: RDKit molecule object
+   :type mol: rdkit.Chem.Mol object
+   :param MMFF_optimize: Whether or not to use MMFF to optimize geometry
+   :type MMFF_optimize: bool
+
+   :returns:
+
+             rdkit.Chem.Mol
+                 Mol object. If the input mol did not have a conformer, it uses MMFF to optimize an
+                 embeded molecule and includes hydrogens.
+             np.ndarray: shape = (N,3)
+                 Positions of each atom's center.
+   :rtype: tuple
+
+
+.. py:function:: get_atomic_vdw_radii(mol: rdkit.Chem.Mol) -> numpy.ndarray
+
+   Get the van der Waals radii of all atoms in a molecule using rdkit.
+
+   :param mol:
+   :type mol: rdkit.Chem.Mol object
+
+   :returns: **np.ndarray** -- vdW radii for each atom.
+   :rtype: shape = (N,)
+
+
+.. py:function:: get_electrostatics(mol: rdkit.Chem.Mol, points: numpy.ndarray) -> numpy.ndarray
+
+   Compute the Coulomb potential values at each point for a given molecule.
+   Assumes the input "mol" already has an optimized conformer. Gets partial charges from
+   MMFF or Gasteiger.
+
+   :param mol: RDKit molecule object with an optimized geometry in conformers.
+   :type mol: rdkit.Chem.Mol object
+   :param points: Coordinates of sampled points to compute Coulomb potential at.
+   :type points: np.ndarray (N, 3)
+
+   :returns: Electrostatic potential values corresponding to each point.
+   :rtype: np.ndarray (N)
+
+
+.. py:function:: get_electrostatics_given_point_charges(charges: numpy.ndarray, positions: numpy.ndarray, points: numpy.ndarray) -> numpy.ndarray
+
+   Compute the Coulomb potential values at each point for a given set of charges at defined positions.
+
+   :param charges: Charges, with units [V]
+   :type charges: np.ndarray (N,)
+   :param positions: Coordinates of point charges, with units of A.
+   :type positions: np.ndarray (N, 3)
+   :param points: Coordinates of point cloud at which to compute electrostatic potential, with units of A.
+   :type points: np.ndarray (M, 3)
+
+   :returns: Electrostatic potential values corresponding to each point.
+   :rtype: np.ndarray (M,)
+
+
+.. py:function:: get_molecular_surface(centers: numpy.ndarray, radii: Union[numpy.ndarray, List], num_points: Union[int, None] = None, num_samples_per_atom: int = 25, probe_radius: float = 1.2, ball_radii: List[float] = [1.2]) -> numpy.ndarray
+
+   Gets the point cloud representation of a molecule's van der Waals surface and outputs a
+   numpy array. Takes into account the vdW radii of different atoms. Removes overlapping points
+   within vdW radii of neighboring atoms.
+
+   :param centers: Cartesian coordinates of the atom centers of a molecule.
+   :type centers: np.ndarray (N, 3)
+   :param radii: van der Waals radii of each atom (in Angstrom) in the same order as the centers parameter.
+   :type radii: np.ndarray (N,)
+   :param num_points: The total number of points in the final point cloud. If None, it returns as many as what
+                      was left after cleaning up the atom-sampled surface point cloud.
+   :type num_points: int (default = None)
+   :param num_samples_per_atom: Number of points to sample from the surface of each atom. Default is 25.
+                                Note that this value is scaled by a given atom's relative vdW radius to a carbon
+                                and SQUARED. Typically choose a value between 15 and 35. For example, if set to
+                                20, a carbon atom would have 400 sampled points.
+   :type num_samples_per_atom: int, optional
+   :param probe_radius: The radius of a probe atom to act as a "solvent accessible surface".
+                        Default is 1.2 angstroms which is the radius of a Hydrogen atom.
+   :type probe_radius: float, optional
+   :param ball_radii: The radius of the ball(s) used in Open3D's ball pivoting algorithm to generate
+                      a triangle mesh. Default is [1.2].
+   :type ball_radii: list, optional
+
+   :returns: Coordinates of points representing the molecular surface.
+   :rtype: np.ndarray
+
+
+.. py:function:: get_molecular_surface_const_density(centers: numpy.ndarray, radii: Union[numpy.ndarray, List], density: float = 0.3, num_samples_per_atom: int = 25, probe_radius: float = 1.2, ball_radii: List[float] = [1.2]) -> numpy.ndarray
+
+   Gets the point cloud representation of a molecule's van der Waals surface and outputs a
+   numpy array. Takes into account the vdW radii of different atoms. Removes overlapping points
+   within vdW radii of neighboring atoms.
+
+   :param centers: Cartesian coordinates of the atom centers of a molecule.
+   :type centers: np.ndarray (N, 3)
+   :param radii: van der Waals radii of each atom (in Angstrom) in the same order as the centers parameter.
+   :type radii: np.ndarray (N,)
+   :param density: The density of points on the surface. The number of points is calculated from the solvent
+                   accessible surface area approximately computed by the surface area of the generated mesh.
+   :type density: float (default = 0.3)
+   :param num_samples_per_atom: Number of points to sample from the surface of each atom. Default is 25.
+                                Note that this value is scaled by a given atom's relative vdW radius to a carbon
+                                and SQUARED. Typically choose a value between 15 and 35. For example, if set to
+                                20, a carbon atom would have 400 sampled points.
+   :type num_samples_per_atom: int, optional
+   :param probe_radius: The radius of a probe atom to act as a "solvent accessible surface".
+                        Default is 1.2 angstroms which is the radius of a Hydrogen atom.
+   :type probe_radius: float, optional
+   :param ball_radii: The radius of the ball(s) used in Open3D's ball pivoting algorithm to generate
+                      a triangle mesh. Default is [1.2].
+   :type ball_radii: list, optional
+
+   :returns: Coordinates of points representing the molecular surface.
+   :rtype: np.ndarray
+
+
+.. py:function:: get_molecular_surface_point_cloud(centers: numpy.ndarray, radii: Union[numpy.ndarray, List], num_points: Union[int, None] = None, num_samples_per_atom: int = 25, probe_radius: float = 1.2, ball_radii: List[float] = [1.2], color: List[float] = [1.0, 0.0, 0.0]) -> open3d.geometry.PointCloud
+
+   Gets the point cloud representation of a molecule's van der Waals surface. Takes into account
+   the vdW radii of different atoms. Removes overlapping points within vdW radii of neighboring
+   atoms.
+
+   :param centers: Cartesian coordinates of the atom centers of a molecule.
+   :type centers: np.ndarray (N, 3)
+   :param radii: van der Waals radii of each atom (in Angstrom) in the same order as the centers parameter.
+   :type radii: np.ndarray (N,)
+   :param num_points: The total number of points in the final point cloud. If None, it returns as many as what
+                      was left after cleaning up the atom-sampled surface point cloud.
+   :type num_points: int (default = None)
+   :param num_samples_per_atom: Number of points to sample from the surface of each atom. Default is 25.
+                                Note that this value is scaled by a given atom's relative vdW radius to a carbon
+                                and SQUARED. Typically choose a value between 15 and 35. For example, if set to
+                                20, a carbon atom would have 400 sampled points.
+   :type num_samples_per_atom: int, optional
+   :param probe_radius: The radius of a probe atom to act as a "solvent accessible surface".
+                        Default is 1.2 angstroms which is the radius of a Hydrogen atom.
+   :type probe_radius: float, optional
+   :param ball_radii: The radius of the ball(s) used in Open3D's ball pivoting algorithm to generate
+                      a triangle mesh. Default is [1.2].
+   :type ball_radii: list, optional
+   :param color: RGB color values for the point cloud (default is [1., 0., 0.] red).
+   :type color: list, optional
+
+   :returns: Point cloud object representation of the molecular surface.
+   :rtype: o3d.geometry.PointCloud
+
+
+.. py:function:: get_molecular_surface_point_cloud_const_density(centers: numpy.ndarray, radii: Union[numpy.ndarray, List], density: float = 0.3, num_samples_per_atom: int = 25, probe_radius: float = 1.2, ball_radii: List[float] = [1.2], color: List[float] = [1.0, 0.0, 0.0]) -> open3d.geometry.PointCloud
+
+   Gets the point cloud representation of a molecule's van der Waals surface. Takes into account
+   the vdW radii of different atoms. Removes overlapping points within vdW radii of neighboring
+   atoms.
+
+   :param centers: Cartesian coordinates of the atom centers of a molecule.
+   :type centers: np.ndarray (N, 3)
+   :param radii: van der Waals radii of each atom (in Angstrom) in the same order as the centers parameter.
+   :type radii: np.ndarray (N,)
+   :param density: The density of points on the surface. The number of points is calculated from the solvent
+                   accessible surface area approximately computed by the surface area of the generated mesh.
+   :type density: float (default = 0.3)
+   :param num_samples_per_atom: Number of points to sample from the surface of each atom. Default is 25.
+                                Note that this value is scaled by a given atom's relative vdW radius to a carbon
+                                and SQUARED. Typically choose a value between 15 and 35. For example, if set to
+                                20, a carbon atom would have 400 sampled points.
+   :type num_samples_per_atom: int, optional
+   :param probe_radius: The radius of a probe atom to act as a "solvent accessible surface".
+                        Default is 1.2 angstroms which is the radius of a Hydrogen atom.
+   :type probe_radius: float, optional
+   :param ball_radii: The radius of the ball(s) used in Open3D's ball pivoting algorithm to generate
+                      a triangle mesh. Default is [1.2].
+   :type ball_radii: list, optional
+   :param color: RGB color values for the point cloud (default is [1., 0., 0.] red).
+   :type color: list, optional
+
+   :returns: Point cloud object representation of the molecular surface.
+   :rtype: o3d.geometry.PointCloud
+
+
+.. py:function:: get_molecular_volume(centers: numpy.ndarray, radii: numpy.ndarray, num_samples: int = None, num_samples_per_atom: int = 15)
+
+   Sample points uniformly from a molecule's volume. Does not include probe radius.
+   Ignores possible overlap of vdW radius of atoms when randomly sub-selecting points for the
+   volume.
+
+   :param centers: Cartesian coordinates of the atom centers of a molecule.
+   :type centers: np.ndarray (N, 3)
+   :param radii: van der Waals radii of each atom (in Angstrom) in the same order as the centers parameter.
+   :type radii: np.ndarray (N,)
+   :param num_samples_per_atom: Number of points to sample from the surface of each atom. Default is 15.
+                                Note that this value is scaled by a given atom's relative vdW radius to a carbon
+                                and CUBED. Typically choose a value between 10 and 20. For example, if set to
+                                20, a carbon atom would have 8000 sampled points.
+   :type num_samples_per_atom: int, optional
+
+   :returns: Coordinates of points representing the molecular surface.
+   :rtype: np.ndarray
+
+
+.. py:function:: get_point_cloud(points: numpy.ndarray, color: List[float] = [0.0, 0.0, 0.0]) -> open3d.geometry.PointCloud
+
+   Convert np.ndarray of points to a Open3D Point Cloud object.
+
+   :param points: Coordinates of points.
+   :type points: np.ndarray (N, 3)
+   :param color:
+   :type color: list[float] (default=[0,0,0] (black))
+
+   :rtype: open3d.geometry.PointCloud object
+
+
+.. py:function:: get_sample_atom_volume(R: float, num_samples: int) -> numpy.ndarray
+
+   Sample points uniformly from a sphere.
+   https://stackoverflow.com/questions/5408276/sampling-uniformly-distributed-random-points-inside-a-spherical-volume
+
+   :param R: Radius
+   :type R: float
+   :param num_samples: Number of samples
+   :type num_samples: int
+
+   :rtype: np.ndarray (num_samples, 3)
+
+
+.. py:function:: sample_molecular_surface_with_radius(centers: numpy.ndarray, radii: Union[numpy.ndarray, List], probe_radius: float = 1.2, num_samples_per_atom: int = 20) -> numpy.ndarray
+
+   Samples points from the surface of vdW radius of atoms and combines it into one molecule (Vectorized).
+
+   :param centers: Cartesian coordinates of the atom centers of a molecule.
+   :type centers: np.ndarray (N, 3)
+   :param radii: van der Waals radii of each atom (in Angstrom) in the same order as the centers parameter.
+   :type radii: np.ndarray (N,)
+   :param probe_radius: The radius of a probe atom to act as a "solvent accessible surface".
+                        Default = 1.2 angstroms which is the radius of a Hydrogen atom.
+   :type probe_radius: float (default = 1.2)
+   :param num_samples_per_atom: Number of points to sample from the surface of each atom. Default is 20.
+                                Note that this value is scaled by a given atom's relative vdW radius to a carbon
+                                and SQUARED. Typically choose a value between 15 and 35. For example, if set to
+                                20, a carbon atom would have 400 sampled points.
+   :type num_samples_per_atom: int, optional
+
+   :returns: Array of shape (N*num_points_per_atom, 3) containing the coordinates of each
+             point sampled from each atom.
+   :rtype: np.ndarray
+
+
+.. py:function:: sample_molecular_surface_with_radius_fibonacci(centers: numpy.ndarray, radii: Union[numpy.ndarray, List], probe_radius: float = 1.2, num_samples_per_atom: int = 20) -> numpy.ndarray
+
+   Samples points from the surface of vdW radius of atoms and combines it into one molecule (Vectorized).
+
+   :param centers: Cartesian coordinates of the atom centers of a molecule.
+   :type centers: np.ndarray (N, 3)
+   :param radii: van der Waals radii of each atom (in Angstrom) in the same order as the centers parameter.
+   :type radii: np.ndarray (N,)
+   :param probe_radius: The radius of a probe atom to act as a "solvent accessible surface".
+                        Default = 1.2 angstroms which is the radius of a Hydrogen atom.
+   :type probe_radius: float (default = 1.2)
+   :param num_samples_per_atom: Number of points to sample from the surface of each atom. Default is 20.
+                                Note that this value is scaled by a given atom's relative vdW radius to a carbon
+                                and SQUARED. Typically choose a value between 15 and 35. For example, if set to
+                                20, a carbon atom would have 400 sampled points.
+   :type num_samples_per_atom: int, optional
+
+   :returns: Array of shape (N*num_points_per_atom, 3) containing the coordinates of each
+             point sampled from each atom.
+   :rtype: np.ndarray
+
+
+.. py:data:: PT
+

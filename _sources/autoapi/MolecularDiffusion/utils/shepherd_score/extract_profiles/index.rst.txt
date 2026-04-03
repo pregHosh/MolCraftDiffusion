@@ -1,0 +1,36 @@
+MolecularDiffusion.utils.shepherd_score.extract_profiles
+========================================================
+
+.. py:module:: MolecularDiffusion.utils.shepherd_score.extract_profiles
+
+.. autoapi-nested-parse::
+
+   Convenience module to hold functions used to extract interaction profiles.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.shepherd_score.extract_profiles.get_electrostatic_potential
+
+
+Module Contents
+---------------
+
+.. py:function:: get_electrostatic_potential(mol: rdkit.Chem.Mol, partial_charges: numpy.ndarray, surf_pos: numpy.ndarray) -> numpy.ndarray
+
+   Get the electrostatic potential (ESP) at each surface point.
+
+   :param mol:
+   :type mol: rdkit.Chem.Mol object with a conformer
+   :param partial_charges:
+   :type partial_charges: np.ndarray (N,) atom-mapped to the `mol` object
+   :param surf_pos:
+   :type surf_pos: np.ndarray (M,3) sampled surface positions
+
+   :rtype: np.ndarray (M,) electrostatic potential at each surface point
+
+

@@ -1,0 +1,157 @@
+MolecularDiffusion.modules.models.shepherd_arch.ocp_compat
+==========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd_arch.ocp_compat
+
+.. autoapi-nested-parse::
+
+   Minimal OCP compatibility layer for ShEPhERD's EquiformerV2 encoder.
+
+   Provides lightweight stubs for OCP utilities that ShEPhERD depends on,
+   without requiring the full OCP (ocpmodels) package.
+
+   Ported from:
+   - shepherd/src/shepherd/model/equiformer_v2/ocpmodels/common/registry.py
+   - shepherd/src/shepherd/model/equiformer_v2/ocpmodels/common/utils.py
+   - shepherd/src/shepherd/model/equiformer_v2/ocpmodels/models/base.py
+   - shepherd/src/shepherd/model/equiformer_v2/ocpmodels/models/scn/sampling.py
+   - shepherd/src/shepherd/model/equiformer_v2/ocpmodels/models/scn/smearing.py
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd_arch.ocp_compat.registry
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd_arch.ocp_compat.BaseModel
+   MolecularDiffusion.modules.models.shepherd_arch.ocp_compat.GaussianSmearing
+   MolecularDiffusion.modules.models.shepherd_arch.ocp_compat.LinearSigmoidSmearing
+   MolecularDiffusion.modules.models.shepherd_arch.ocp_compat.SiLUSmearing
+   MolecularDiffusion.modules.models.shepherd_arch.ocp_compat.SigmoidSmearing
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd_arch.ocp_compat.CalcSpherePoints
+   MolecularDiffusion.modules.models.shepherd_arch.ocp_compat.conditional_grad
+
+
+Module Contents
+---------------
+
+.. py:class:: BaseModel(num_atoms=None, bond_feat_dim=None, num_targets=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(data)
+      :abstractmethod:
+
+
+
+   .. py:attribute:: bond_feat_dim
+      :value: None
+
+
+
+   .. py:attribute:: num_atoms
+      :value: None
+
+
+
+   .. py:property:: num_params
+
+
+   .. py:attribute:: num_targets
+      :value: None
+
+
+
+.. py:class:: GaussianSmearing(start=-5.0, stop=5.0, num_gaussians=50, basis_width_scalar=1.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(dist)
+
+
+   .. py:attribute:: coeff
+
+
+   .. py:attribute:: num_output
+      :value: 50
+
+
+
+.. py:class:: LinearSigmoidSmearing(start=-5.0, stop=5.0, num_sigmoid=50, basis_width_scalar=1.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(dist)
+
+
+   .. py:attribute:: coeff
+
+
+   .. py:attribute:: num_output
+      :value: 50
+
+
+
+.. py:class:: SiLUSmearing(start=-5.0, stop=5.0, num_output=50, basis_width_scalar=1.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(dist)
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: fc1
+
+
+   .. py:attribute:: num_output
+      :value: 50
+
+
+
+.. py:class:: SigmoidSmearing(start=-5.0, stop=5.0, num_sigmoid=50, basis_width_scalar=1.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(dist)
+
+
+   .. py:attribute:: coeff
+
+
+   .. py:attribute:: num_output
+      :value: 50
+
+
+
+.. py:function:: CalcSpherePoints(num_points, device)
+
+.. py:function:: conditional_grad(dec)
+
+   Identity decorator (conditional_grad is unused in ShEPhERD).
+
+
+.. py:data:: registry
+

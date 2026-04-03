@@ -1,0 +1,113 @@
+MolecularDiffusion.modules.tasks.pharmacophore
+==============================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.pharmacophore
+
+.. autoapi-nested-parse::
+
+   Pharmacophore Diffusion Task.
+
+   Multi-modal diffusion task for generating molecules with 4 modalities:
+   - x1: Molecular structure (atoms + bonds)
+   - x2: Shape (point cloud)
+   - x3: Electrostatics (point cloud)
+   - x4: Pharmacophores (points + directions)
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.pharmacophore.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative
+
+
+Module Contents
+---------------
+
+.. py:class:: PharmacophoreGenerative(model=None, modality_weights: Optional[Dict[str, float]] = None, loss_type: str = 'mse', model_params: Optional[Dict] = None, **kwargs)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.task.Task`, :py:obj:`MolecularDiffusion.core.Configurable`
+
+
+   Generative diffusion task for pharmacophore model.
+
+   Handles training of the 4-modal pharmacophore diffusion model
+   with per-modality loss weighting.
+
+
+   .. py:method:: build()
+
+      Build the task (no-op, model already instantiated).
+
+
+
+   .. py:method:: evaluate(pred, target)
+
+      Return empty metrics for generative models (evaluation not supported).
+
+
+
+   .. py:method:: forward(batch)
+
+      Forward pass through the model.
+
+      :param batch: HeteroData batch from pharmacophore_collate_fn
+
+      :returns: Tuple of (total_loss, metrics_dict)
+
+
+
+   .. py:method:: predict(batch: Dict[str, Any], all_loss=None, metric=None)
+
+      Return empty predictions for generative models (evaluation not supported).
+
+
+
+   .. py:method:: preprocess(train_set=None, valid_set=None, test_set=None)
+
+      Preprocess datasets.
+
+      :param train_set: Training dataset
+      :param valid_set: Validation dataset
+      :param test_set: Test dataset
+
+
+
+   .. py:method:: target(batch: Dict[str, Any])
+
+      Return empty targets for generative models (evaluation not supported).
+
+
+
+   .. py:attribute:: loss_type
+      :value: 'mse'
+
+
+
+   .. py:attribute:: modality_weights
+      :value: None
+
+
+
+   .. py:attribute:: model
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_pharmacophore'
+
+
+
+.. py:data:: logger
+

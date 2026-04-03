@@ -1,0 +1,27 @@
+MolecularDiffusion.modules.layers.equiformer_v2_s
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.equiformer_v2_s
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/layers/equiformer_v2_s/activation/index
+   /autoapi/MolecularDiffusion/modules/layers/equiformer_v2_s/drop/index
+   /autoapi/MolecularDiffusion/modules/layers/equiformer_v2_s/edge_rot_mat/index
+   /autoapi/MolecularDiffusion/modules/layers/equiformer_v2_s/equiformer_v2_oc20/index
+   /autoapi/MolecularDiffusion/modules/layers/equiformer_v2_s/gaussian_rbf/index
+   /autoapi/MolecularDiffusion/modules/layers/equiformer_v2_s/input_block/index
+   /autoapi/MolecularDiffusion/modules/layers/equiformer_v2_s/layer_norm/index
+   /autoapi/MolecularDiffusion/modules/layers/equiformer_v2_s/module_list/index
+   /autoapi/MolecularDiffusion/modules/layers/equiformer_v2_s/radial_function/index
+   /autoapi/MolecularDiffusion/modules/layers/equiformer_v2_s/so2_ops/index
+   /autoapi/MolecularDiffusion/modules/layers/equiformer_v2_s/so3/index
+   /autoapi/MolecularDiffusion/modules/layers/equiformer_v2_s/transformer_block/index
+   /autoapi/MolecularDiffusion/modules/layers/equiformer_v2_s/wigner/index
+
+

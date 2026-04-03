@@ -1,0 +1,86 @@
+MolecularDiffusion.modules.models.pharmacophore_dynamics
+========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.pharmacophore_dynamics
+
+.. autoapi-nested-parse::
+
+   Pharmacophore Model Dynamics - Wrapper for ShEPhERD model.
+
+   Builds input_dict from HeteroData batch exactly matching
+   shepherd/src/shepherd/lightning_module.py get_training_input_dict(),
+   then calls shepherd_arch.Model.forward().
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.pharmacophore_dynamics.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.pharmacophore_dynamics.PharmacophoreEnVariationalDiff
+   MolecularDiffusion.modules.models.pharmacophore_dynamics.PharmacophoreModelWrapper
+
+
+Module Contents
+---------------
+
+.. py:class:: PharmacophoreEnVariationalDiff(model_params: Optional[Dict] = None, device: Optional[torch.device] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Wrapper that makes ShEPhERD compatible with MolecularDiffusion's
+   EnVariationalDiffusion interface.
+
+
+   .. py:method:: forward(batch, device=None)
+
+
+   .. py:attribute:: device
+      :value: None
+
+
+
+   .. py:attribute:: dynamics
+
+
+.. py:class:: PharmacophoreModelWrapper(shepherd_model, params=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Wrapper around ShEPhERD Model.
+
+   Converts a batched HeteroData into the input_dict format that
+   shepherd_arch.Model.forward() expects, runs the forward pass,
+   and returns (input_dict, output_dict).
+
+
+   .. py:method:: forward(batch, device=None) -> Tuple[Dict[str, Any], Dict[str, Any]]
+
+      Build input_dict from HeteroData batch and run model.
+
+      :param batch: HeteroData batch from pharmacophore_collate_fn
+      :param device: target device
+
+      :returns: (input_dict, output_dict)
+
+
+
+   .. py:attribute:: model
+
+
+   .. py:attribute:: params
+
+
+.. py:data:: logger
+

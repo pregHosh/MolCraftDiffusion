@@ -1,0 +1,89 @@
+MolecularDiffusion.modules.models.shepherd_arch.inference.noise
+===============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd_arch.inference.noise
+
+.. autoapi-nested-parse::
+
+   This module contains the noise functions for the inference sampler.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd_arch.inference.noise.forward_jump
+   MolecularDiffusion.modules.models.shepherd_arch.inference.noise.forward_jump_parameters
+   MolecularDiffusion.modules.models.shepherd_arch.inference.noise.forward_trajectory
+   MolecularDiffusion.modules.models.shepherd_arch.inference.noise.subsample_noise_schedule
+
+
+Module Contents
+---------------
+
+.. py:function:: forward_jump(x: torch.Tensor, t_start, jump, sigma_ts, remove_COM_from_noise=False, batch=None, mask=None) -> tuple[torch.Tensor, int]
+
+   Perform a forward jump for a given timestep.
+
+   :param x:
+   :type x: The input tensor.
+   :param t_start:
+   :type t_start: The starting timestep.
+   :param jump:
+   :type jump: The number of timesteps to jump.
+
+
+.. py:function:: forward_jump_parameters(t_start_idx, jump, sigma_ts)
+
+   Compute the forward jump parameters for a given timestep.
+
+   :param t_start_idx:
+   :type t_start_idx: The starting index of the timestep.
+   :param jump:
+   :type jump: The number of timesteps to jump.
+   :param sigma_ts:
+   :type sigma_ts: The standard deviation schedule.
+
+
+.. py:function:: forward_trajectory(x, ts, alpha_ts, sigma_ts, remove_COM_from_noise=False, mask=None, deterministic=False, batch=None, batch_size: int | None = None) -> dict[int, torch.Tensor]
+
+   Simulate a forward noising trajectory.
+
+   :param x:
+   :type x: The input tensor.
+   :param ts:
+   :type ts: The timesteps.
+   :param alpha_ts:
+   :type alpha_ts: The alpha schedule.
+   :param sigma_ts:
+   :type sigma_ts: The sigma schedule.
+   :param remove_COM_from_noise:
+   :type remove_COM_from_noise: Whether to remove the center of mass from the noise.
+   :param mask:
+   :type mask: The mask tensor.
+   :param deterministic:
+   :type deterministic: Whether to use a deterministic trajectory
+   :param (i.e.:
+   :param clean structure for entire trajectory).:
+   :param batch:
+   :type batch: The batch tensor.
+   :param batch_size: will be repeated `batch_size` times to create `batch_size` independent trajectories.
+   :type batch_size: If provided and > 1, the input `x` (and corresponding `mask`/`batch` if given)
+
+
+.. py:function:: subsample_noise_schedule(num_steps: int, noise_schedule: dict)
+
+   Subsample the noise schedule to a given number of steps.
+   Keep the last step of the original schedule.
+
+   :param num_steps:
+   :type num_steps: The number of steps to subsample to.
+   :param noise_schedule:
+   :type noise_schedule: The noise schedule to subsample.
+
+   :returns: **noise_schedule**
+   :rtype: The subsampled noise schedule.
+
+

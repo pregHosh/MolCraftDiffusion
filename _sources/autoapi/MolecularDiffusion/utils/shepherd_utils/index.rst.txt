@@ -1,0 +1,221 @@
+MolecularDiffusion.utils.shepherd_utils
+=======================================
+
+.. py:module:: MolecularDiffusion.utils.shepherd_utils
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.shepherd_utils.COULOMB_SCALING
+   MolecularDiffusion.utils.shepherd_utils.PT
+   MolecularDiffusion.utils.shepherd_utils.P_TYPES
+   MolecularDiffusion.utils.shepherd_utils.SMARTS_FEATURES_FDEF
+   MolecularDiffusion.utils.shepherd_utils.logger
+   MolecularDiffusion.utils.shepherd_utils.o3d
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.shepherd_utils.GetAcceptorFeatVects
+   MolecularDiffusion.utils.shepherd_utils.GetAromaticFeatVects
+   MolecularDiffusion.utils.shepherd_utils.GetDonorFeatVects
+   MolecularDiffusion.utils.shepherd_utils.GetHalogenFeatVects
+   MolecularDiffusion.utils.shepherd_utils.find_hydrophobes
+   MolecularDiffusion.utils.shepherd_utils.get_atomic_vdw_radii
+   MolecularDiffusion.utils.shepherd_utils.get_electrostatics_given_point_charges
+   MolecularDiffusion.utils.shepherd_utils.get_molecular_surface
+   MolecularDiffusion.utils.shepherd_utils.get_pharmacophores
+   MolecularDiffusion.utils.shepherd_utils.sample_molecular_surface_with_radius_fibonacci
+   MolecularDiffusion.utils.shepherd_utils.update_mol_coordinates
+
+
+Module Contents
+---------------
+
+.. py:function:: GetAcceptorFeatVects(conf, featAtoms, scale=1.0)
+
+.. py:function:: GetAromaticFeatVects(conf, featAtoms, featLoc, return_both: bool = False, scale=1.0)
+
+.. py:function:: GetDonorFeatVects(conf, featAtoms, scale=1.0, exclude=[])
+
+.. py:function:: GetHalogenFeatVects(conf, featAtoms, scale=1.0)
+
+.. py:function:: find_hydrophobes(mol, cluster_hydrophobic: bool = True)
+
+.. py:function:: get_atomic_vdw_radii(mol) -> numpy.ndarray
+
+.. py:function:: get_electrostatics_given_point_charges(charges: numpy.ndarray, positions: numpy.ndarray, points: numpy.ndarray) -> numpy.ndarray
+
+.. py:function:: get_molecular_surface(centers: numpy.ndarray, radii: numpy.ndarray, num_points: Optional[int] = None, num_samples_per_atom: int = 25, probe_radius: float = 1.2) -> numpy.ndarray
+
+.. py:function:: get_pharmacophores(mol, multi_vector: bool = True, exclude: List[int] = [], check_access: bool = False, scale: float = 1.0) -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
+
+.. py:function:: sample_molecular_surface_with_radius_fibonacci(centers: numpy.ndarray, radii: numpy.ndarray, probe_radius: float = 1.2, num_samples_per_atom: int = 20) -> numpy.ndarray
+
+.. py:function:: update_mol_coordinates(mol, pos)
+
+.. py:data:: COULOMB_SCALING
+
+.. py:data:: PT
+
+.. py:data:: P_TYPES
+   :value: ('Acceptor', 'Donor', 'Aromatic', 'Hydrophobe', 'Halogen', 'Cation', 'Anion', 'ZnBinder', 'Dummy')
+
+
+.. py:data:: SMARTS_FEATURES_FDEF
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """
+      AtomType AromR4 [a;r4,!R1&r3]
+      DefineFeature Arom4 [{AromR4}]1:[{AromR4}]:[{AromR4}]:[{AromR4}]:1
+       Family Aromatic
+       Weights 1,1,1,1
+      EndFeature
+      AtomType AromR5 [a;r5,!R1&r4,!R1&r3]
+      DefineFeature Arom5 [{AromR5}]1:[{AromR5}]:[{AromR5}]:[{AromR5}]:[{AromR5}]:1
+       Family Aromatic
+       Weights 1,1,1,1,1
+      EndFeature
+      AtomType AromR6 [a;r6,!R1&r5,!R1&r4,!R1&r3]
+      DefineFeature Arom6 [{AromR6}]1:[{AromR6}]:[{AromR6}]:[{AromR6}]:[{AromR6}]:[{AromR6}]:1
+       Family Aromatic
+       Weights 1,1,1,1,1,1
+      EndFeature
+      AtomType AromR7 [a;r7,!R1&r6,!R1&r5,!R1&r4,!R1&r3]
+      DefineFeature Arom7 [{AromR7}]1:[{AromR7}]:[{AromR7}]:[{AromR7}]:[{AromR7}]:[{AromR7}]:[{AromR7}]:1
+       Family Aromatic
+       Weights 1,1,1,1,1,1,1
+      EndFeature
+      AtomType AromR8 [a;r8,!R1&r7,!R1&r6,!R1&r5,!R1&r4,!R1&r3]
+      DefineFeature Arom8 [{AromR8}]1:[{AromR8}]:[{AromR8}]:[{AromR8}]:[{AromR8}]:[{AromR8}]:[{AromR8}]:[{AromR8}]:1
+       Family Aromatic
+       Weights 1,1,1,1,1,1,1,1
+      EndFeature
+      DefineFeature ZnBinder1 [S;D1]-[#6]
+        Family ZnBinder
+        Weights 1,0
+      EndFeature
+      DefineFeature ZnBinder2 [#6]-C(=O)-C-[S;D1]
+        Family ZnBinder
+        Weights 0,0,1,0,1
+      EndFeature
+      DefineFeature ZnBinder3 [#6]-C(=O)-C-C-[S;D1]
+        Family ZnBinder
+        Weights 0,0,1,0,0,1
+      EndFeature
+      DefineFeature ZnBinder4 [#6]-C(=O)-N-[O;D1]
+        Family ZnBinder
+        Weights 0,0,1,0,1
+      EndFeature
+      DefineFeature ZnBinder5 [#6]-C(=O)-[O;D1]
+        Family ZnBinder
+        Weights 0,0,1,1
+      EndFeature
+      DefineFeature ZnBinder6 [#6]-P(=O)(-O)-[C,O,N]-[C,H]
+        Family ZnBinder
+        Weights 0,0,1,1,0,0
+      EndFeature
+      DefineFeature N_HBD [#7!H0&!$(N-[SX4](=O)(=O)[CX4](F)(F)F)]
+        Family Donor
+        Weights 1
+      EndFeature
+      DefineFeature O_HBD [#8!H0&!$([OH][C,S,P]=O)]
+        Family Donor
+        Weights 1
+      EndFeature
+      DefineFeature S_HBD [#16!H0]
+        Family Donor
+        Weights 1
+      EndFeature
+      DefineFeature ChalcDonor [O,S;H1;+0]
+        Family Donor
+        Weights 1
+      EndFeature
+      AtomType N_HBA [#7&!$([nX3])&!$([NX3]-*=[!#6])&!$([NX3]-[a])&!$([NX4])&!$(N=C([C,N])N)]
+      AtomType O_HBA [$([O])&!$([OX2](C)C=O)&!$(*(~a)~a)]
+      AtomType ChalcAcceptor [O;H0;v2;!$(O=N-*)]
+      Atomtype ChalcAcceptor [O;-;!$(*-N=O)]
+      Atomtype ChalcAcceptor [o;+0]
+      AtomType Hydroxyl [O;H1;v2]
+      DefineFeature HBA [{Hydroxyl},{ChalcAcceptor},{O_HBA},{N_HBA}]
+        Family Acceptor
+        Weights 1
+      EndFeature
+      DefineFeature N_positive [$([NX3+]([CX4])([CX4,#1])[CX4,#1])&!$([NX3]-*=[!#6])]
+        Family Cation
+        Weights 1
+      EndFeature
+      DefineFeature amidino_positive1 [CX3](=[N+])(-N)[!N]
+        Family Cation
+        Weights 1,1,1,1
+      EndFeature
+      DefineFeature amidino_positive2 [CX3](=N)(-[N+])[!N]
+        Family Cation
+        Weights 1,1,1,1
+      EndFeature
+      DefineFeature guanidino_positive1 [N+]=[CX3](N)-N
+        Family Cation
+        Weights 1,1,1,1
+      EndFeature
+      DefineFeature guanidino_positive2 [N+]=[CX3](N)-N
+        Family Cation
+        Weights 1,1,1,1
+      EndFeature
+      DefineFeature guanidino_positive3 N=[CX3]([N+])-N
+        Family Cation
+        Weights 1,1,1,1
+      EndFeature
+      DefineFeature charged_positive [$([+,+2,+3])&!$(*[-,-2,-3])]
+        Family Cation
+        Weights 1
+      EndFeature
+      DefineFeature tetrazole_negative c1nn[nH1]n1
+        Family Anion
+        Weights 1,1,1,1,1
+      EndFeature
+      DefineFeature SP_v4_negative [$([SX4,PX4](=O)(=O)[O-])](=O)(=O)[O-]
+        Family Anion
+        Weights 1,1,1,1
+      EndFeature
+      DefineFeature CSP_v3_negative [$([CX3,SX3,PX3](=O)[O-])](=O)[O-]
+        Family Anion
+        Weights 1,1,1
+      EndFeature
+      DefineFeature charged_negative [$([-,-2,-3])&!$(*[+,+2,+3])]
+        Family Anion
+        Weights 1
+      EndFeature
+      AtomType Fluorine [F;$(F-[#6]);!$(FC[F,Cl,Br,I])]
+      AtomType Chlorine [Cl;$(Cl-[#6]);!$(FC[F,Cl,Br,I])]
+      AtomType Bromine [Br;$(Br-[#6]);!$(FC[F,Cl,Br,I])]
+      AtomType Iodine [I;$(I-[#6]);!$(FC[F,Cl,Br,I])]
+      DefineFeature Halogen [{Fluorine},{Chlorine},{Bromine},{Iodine}]
+        Family Halogen
+        Weights 1
+      EndFeature
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+.. py:data:: logger
+
+.. py:data:: o3d
+   :value: None
+
+

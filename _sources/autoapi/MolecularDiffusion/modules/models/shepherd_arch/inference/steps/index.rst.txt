@@ -1,0 +1,11 @@
+MolecularDiffusion.modules.models.shepherd_arch.inference.steps
+===============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd_arch.inference.steps
+
+.. autoapi-nested-parse::
+
+   Contains the process to perform one step of reverse denoising.
+
+
+

@@ -1,0 +1,364 @@
+MolecularDiffusion.data.component.pharmacophore
+===============================================
+
+.. py:module:: MolecularDiffusion.data.component.pharmacophore
+
+.. autoapi-nested-parse::
+
+   Pharmacophore Dataset for ShEPhERD integration.
+
+   Faithful port of shepherd/src/shepherd/datasets.py HeteroDataset.
+   Handles loading, processing, and forward-noising of 4 molecular modalities:
+   - x1: Molecular structure (atoms + bonds)
+   - x2: Shape (surface point cloud)
+   - x3: Electrostatics (surface point cloud + ESP)
+   - x4: Pharmacophores (points + directions)
+
+   Forward-noising is applied per-sample in __getitem__ using the noise schedule
+   from the ShEPhERD checkpoint hyperparameters.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.pharmacophore.Chem
+   MolecularDiffusion.data.component.pharmacophore.logger
+   MolecularDiffusion.data.component.pharmacophore.o3d
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule
+   MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.pharmacophore.build_default_noise_schedule
+   MolecularDiffusion.data.component.pharmacophore.pharmacophore_collate_fn
+   MolecularDiffusion.data.component.pharmacophore.sample_timestep_biased
+
+
+Module Contents
+---------------
+
+.. py:class:: PharmacophoreDataModule(pkl_files: List[str], root: str = 'data/pharmacophore_cache', dataset_name: str = 'pharmacophore', num_samples: Optional[int] = None, data_fraction: float = 1.0, batch_size: int = 32, num_workers: int = 0, train_ratio: float = 0.8, task_type: str = 'diffusion_pharmacophore', checkpoint_path: Optional[str] = None, **kwargs)
+
+   DataModule wrapper for PharmacophoreDataset.
+
+   Loads molblocks+charges from pkl files, builds noise schedule
+   (from checkpoint or default), and creates train/val/test splits.
+
+
+   .. py:method:: load()
+
+      Load pkl data and create dataset with proper noise schedule.
+
+
+
+   .. py:attribute:: batch_size
+      :value: 32
+
+
+
+   .. py:attribute:: checkpoint_path
+      :value: None
+
+
+
+   .. py:attribute:: collate_fn
+
+
+   .. py:attribute:: data_fraction
+      :value: 1.0
+
+
+
+   .. py:attribute:: dataset_name
+      :value: 'pharmacophore'
+
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: num_samples
+      :value: None
+
+
+
+   .. py:attribute:: num_workers
+      :value: 0
+
+
+
+   .. py:attribute:: pkl_files
+
+
+   .. py:attribute:: root
+      :value: 'data/pharmacophore_cache'
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_pharmacophore'
+
+
+
+   .. py:attribute:: test_set
+      :value: None
+
+
+
+   .. py:attribute:: train_ratio
+      :value: 0.8
+
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+   .. py:attribute:: valid_set
+      :value: None
+
+
+
+.. py:class:: PharmacophoreDataset(molblocks_and_charges: List, noise_schedule_dict: Dict[str, Dict], compute_x1: bool = True, compute_x2: bool = False, compute_x3: bool = True, compute_x4: bool = True, recenter_x1: bool = True, add_virtual_node_x1: bool = True, remove_noise_COM_x1: bool = True, atom_types_x1: List = None, charge_types_x1: List = None, bond_types_x1: List = None, scale_atom_features_x1: float = 0.25, scale_bond_features_x1: float = 1.0, formal_charge_diffusion: bool = True, independent_timesteps_x2: bool = False, recenter_x2: bool = False, add_virtual_node_x2: bool = True, remove_noise_COM_x2: bool = False, num_points_x2: int = 75, independent_timesteps_x3: bool = False, recenter_x3: bool = False, add_virtual_node_x3: bool = True, remove_noise_COM_x3: bool = False, num_points_x3: int = 75, scale_node_features_x3: float = 2.0, independent_timesteps_x4: bool = False, recenter_x4: bool = False, add_virtual_node_x4: bool = True, remove_noise_COM_x4: bool = False, max_node_types_x4: int = 10, scale_node_features_x4: float = 2.0, scale_vector_features_x4: float = 2.0, multivectors: bool = False, check_accessibility: bool = False, probe_radius: float = 0.6)
+
+   Bases: :py:obj:`torch.utils.data.Dataset`
+
+
+   Dataset for ShEPhERD pharmacophore diffusion.
+
+   Each __getitem__ returns a torch_geometric.data.HeteroData with
+   forward-noised fields for x1, x2, x3, x4 — exactly matching
+   shepherd/src/shepherd/datasets.py HeteroDataset.
+
+
+   .. py:method:: get_x1_data(mol, t, alpha_dash_t, sigma_dash_t)
+
+
+   .. py:method:: get_x2_data(radii, atom_centers, num_points, recenter, add_virtual_node, remove_noise_COM, t, alpha_dash_t, sigma_dash_t, virtual_node_pos=None)
+
+
+   .. py:method:: get_x3_data_electrostatics_only(charges, charge_centers, data, pos, virtual_node_mask, t, alpha_dash_t, sigma_dash_t)
+
+
+   .. py:method:: get_x4_data(mol, recenter, add_virtual_node, remove_noise_COM, t, alpha_dash_t, sigma_dash_t, virtual_node_pos=None)
+
+
+   .. py:attribute:: add_virtual_node_x1
+      :value: True
+
+
+
+   .. py:attribute:: add_virtual_node_x2
+      :value: True
+
+
+
+   .. py:attribute:: add_virtual_node_x3
+      :value: True
+
+
+
+   .. py:attribute:: add_virtual_node_x4
+      :value: True
+
+
+
+   .. py:attribute:: atom_types_x1
+      :value: [None, 'H', 'C', 'N', 'O', 'F', 'Cl', 'Br', 'I', 'S', 'P', 'Si']
+
+
+
+   .. py:attribute:: bond_types_x1
+      :value: [None, 'SINGLE', 'DOUBLE', 'TRIPLE', 'AROMATIC']
+
+
+
+   .. py:attribute:: charge_types_x1
+
+
+   .. py:attribute:: check_accessibility
+      :value: False
+
+
+
+   .. py:attribute:: compute_x1
+      :value: True
+
+
+
+   .. py:attribute:: compute_x2
+      :value: False
+
+
+
+   .. py:attribute:: compute_x3
+      :value: True
+
+
+
+   .. py:attribute:: compute_x4
+      :value: True
+
+
+
+   .. py:attribute:: formal_charge_diffusion
+      :value: True
+
+
+
+   .. py:attribute:: independent_timesteps_x2
+      :value: False
+
+
+
+   .. py:attribute:: independent_timesteps_x3
+      :value: False
+
+
+
+   .. py:attribute:: independent_timesteps_x4
+      :value: False
+
+
+
+   .. py:attribute:: max_node_types_x4
+      :value: 10
+
+
+
+   .. py:attribute:: molblocks_and_charges
+
+
+   .. py:attribute:: multivectors
+      :value: False
+
+
+
+   .. py:attribute:: noise_schedule_dict
+
+
+   .. py:attribute:: num_points_x2
+      :value: 75
+
+
+
+   .. py:attribute:: num_points_x3
+      :value: 75
+
+
+
+   .. py:attribute:: probe_radius
+      :value: 0.6
+
+
+
+   .. py:attribute:: recenter_x1
+      :value: True
+
+
+
+   .. py:attribute:: recenter_x2
+      :value: False
+
+
+
+   .. py:attribute:: recenter_x3
+      :value: False
+
+
+
+   .. py:attribute:: recenter_x4
+      :value: False
+
+
+
+   .. py:attribute:: remove_noise_COM_x1
+      :value: True
+
+
+
+   .. py:attribute:: remove_noise_COM_x2
+      :value: False
+
+
+
+   .. py:attribute:: remove_noise_COM_x3
+      :value: False
+
+
+
+   .. py:attribute:: remove_noise_COM_x4
+      :value: False
+
+
+
+   .. py:attribute:: scale_atom_features_x1
+      :value: 0.25
+
+
+
+   .. py:attribute:: scale_bond_features_x1
+      :value: 1.0
+
+
+
+   .. py:attribute:: scale_node_features_x3
+      :value: 2.0
+
+
+
+   .. py:attribute:: scale_node_features_x4
+      :value: 2.0
+
+
+
+   .. py:attribute:: scale_vector_features_x4
+      :value: 2.0
+
+
+
+.. py:function:: build_default_noise_schedule(T=400)
+
+   Build the default ShEPhERD cosine+linear noise schedule.
+   Matches shepherd/training/parameters/params_x1x3x4_diffusion_mosesaq_20240824.py
+
+
+.. py:function:: pharmacophore_collate_fn(batch: List[torch_geometric.data.HeteroData]) -> torch_geometric.data.HeteroData
+
+   Collate HeteroData samples into a batch.
+   Uses torch_geometric's built-in Batch.from_data_list for HeteroData.
+
+
+.. py:function:: sample_timestep_biased(ts)
+
+   Biased timestep sampling matching ShEPhERD:
+   - 7.5% from high-noise end (t=1..50)
+   - 75% from middle (t=50..250)
+   - 17.5% from low-noise start (t=250..400)
+
+
+.. py:data:: Chem
+   :value: None
+
+
+.. py:data:: logger
+
+.. py:data:: o3d
+   :value: None
+
+

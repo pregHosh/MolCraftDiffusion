@@ -1,0 +1,906 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../search.html">
+        <link rel="canonical" href="https://preghosh.github.io/MolCraftDiffusion/autoapi/MolecularDiffusion/modules/layers/equiformer_v2_s/transformer_block/index.html">
+        <link rel="prefetch" href="../../../../../../_static/logo.png" as="image">
+
+    <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+        <title>MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block - MolCraftDiffusion</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=fbb7725e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  --color-brand-primary: #4A90D9;
+  --color-brand-content: #4A90D9;
+  --font-stack: Inter, sans-serif;
+  --font-stack--monospace: JetBrains Mono, monospace;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #6BAAD9;
+  --color-brand-content: #6BAAD9;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #6BAAD9;
+  --color-brand-content: #6BAAD9;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../../../../index.html"><div class="brand">MolCraftDiffusion</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../../../../_static/logo.png" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../../../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../tutorials/00_data_preparation.html">Tutorial 0: Data Preparation &amp; Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../tutorials/01_training_diffusion.html">Tutorial 1: Training a Diffusion Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../tutorials/02_training_regressor.html">Tutorial 2: Training a Regressor Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../tutorials/03_training_guidance.html">Tutorial 3: Training a Time-Aware Guidance Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../tutorials/04_finetuning.html">Tutorial 4: Fine-Tuning a Diffusion Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../tutorials/05_generation_overview.html">Tutorial 5: Molecule Generation Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../tutorials/06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../tutorials/07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../tutorials/08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../tutorials/09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../../api.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../index.html">MolecularDiffusion</a><input aria-label="Toggle navigation of MolecularDiffusion" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../callbacks/index.html">MolecularDiffusion.callbacks</a><input aria-label="Toggle navigation of MolecularDiffusion.callbacks" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../callbacks/train_helper/index.html">MolecularDiffusion.callbacks.train_helper</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../cli/index.html">MolecularDiffusion.cli</a><input aria-label="Toggle navigation of MolecularDiffusion.cli" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/analyze/index.html">MolecularDiffusion.cli.analyze</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/data/index.html">MolecularDiffusion.cli.data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/eval_predict/index.html">MolecularDiffusion.cli.eval_predict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/generate/index.html">MolecularDiffusion.cli.generate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/main/index.html">MolecularDiffusion.cli.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/predict/index.html">MolecularDiffusion.cli.predict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/train/index.html">MolecularDiffusion.cli.train</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/core/index.html">MolecularDiffusion.core.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/engine/index.html">MolecularDiffusion.core.engine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/logger/index.html">MolecularDiffusion.core.logger</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/meter/index.html">MolecularDiffusion.core.meter</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../data/index.html">MolecularDiffusion.data</a><input aria-label="Toggle navigation of MolecularDiffusion.data" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../data/component/index.html">MolecularDiffusion.data.component</a><input aria-label="Toggle navigation of MolecularDiffusion.data.component" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/dataset/index.html">MolecularDiffusion.data.component.dataset</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/feature/index.html">MolecularDiffusion.data.component.feature</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/pharmacophore/index.html">MolecularDiffusion.data.component.pharmacophore</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/pointcloud/index.html">MolecularDiffusion.data.component.pointcloud</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../data/dataloader/index.html">MolecularDiffusion.data.dataloader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../data/dataset/index.html">MolecularDiffusion.data.dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../data/valency_tables/index.html">MolecularDiffusion.data.valency_tables</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../molcraftdiff/index.html">MolecularDiffusion.molcraftdiff</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../runmodes/index.html">MolecularDiffusion.runmodes</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../runmodes/analyze/index.html">MolecularDiffusion.runmodes.analyze</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.analyze" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/analyze/compare_to_optimized/index.html">MolecularDiffusion.runmodes.analyze.compare_to_optimized</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/analyze/compute_metrics/index.html">MolecularDiffusion.runmodes.analyze.compute_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/analyze/xtb_electronic/index.html">MolecularDiffusion.runmodes.analyze.xtb_electronic</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/analyze/xtb_optimization/index.html">MolecularDiffusion.runmodes.analyze.xtb_optimization</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/analyze/xyz2mol/index.html">MolecularDiffusion.runmodes.analyze.xyz2mol</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../runmodes/generate/index.html">MolecularDiffusion.runmodes.generate</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.generate" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/generate/tasks_generate/index.html">MolecularDiffusion.runmodes.generate.tasks_generate</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../runmodes/train/index.html">MolecularDiffusion.runmodes.train</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.train" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/train/data/index.html">MolecularDiffusion.runmodes.train.data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/train/eval/index.html">MolecularDiffusion.runmodes.train.eval</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/train/logger/index.html">MolecularDiffusion.runmodes.train.logger</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/train/tasks_egcl/index.html">MolecularDiffusion.runmodes.train.tasks_egcl</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/train/tasks_egt/index.html">MolecularDiffusion.runmodes.train.tasks_egt</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/train/trainer/index.html">MolecularDiffusion.runmodes.train.trainer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../utils/index.html">MolecularDiffusion.utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/comm/index.html">MolecularDiffusion.utils.comm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/diffusion_utils/index.html">MolecularDiffusion.utils.diffusion_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/file/index.html">MolecularDiffusion.utils.file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/geom_analyzer/index.html">MolecularDiffusion.utils.geom_analyzer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/geom_constant/index.html">MolecularDiffusion.utils.geom_constant</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/geom_constraint/index.html">MolecularDiffusion.utils.geom_constraint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/geom_metrics/index.html">MolecularDiffusion.utils.geom_metrics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/geom_stability/index.html">MolecularDiffusion.utils.geom_stability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/geom_utils/index.html">MolecularDiffusion.utils.geom_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/io/index.html">MolecularDiffusion.utils.io</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/molgraph_utils/index.html">MolecularDiffusion.utils.molgraph_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/plot_function/index.html">MolecularDiffusion.utils.plot_function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/pretty/index.html">MolecularDiffusion.utils.pretty</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/sascore/index.html">MolecularDiffusion.utils.sascore</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../utils/shepherd_score/index.html">MolecularDiffusion.utils.shepherd_score</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../utils/shepherd_score/alignment/index.html">MolecularDiffusion.utils.shepherd_score.alignment</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.alignment" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../utils/shepherd_score/alignment/utils/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.alignment.utils" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../utils/shepherd_score/alignment/utils/pca/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils.pca</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../utils/shepherd_score/alignment/utils/pca_np/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils.pca_np</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../utils/shepherd_score/alignment/utils/se3/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils.se3</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../utils/shepherd_score/alignment/utils/se3_np/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../utils/shepherd_score/extract_profiles/index.html">MolecularDiffusion.utils.shepherd_score.extract_profiles</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../utils/shepherd_score/generate_point_cloud/index.html">MolecularDiffusion.utils.shepherd_score.generate_point_cloud</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../utils/shepherd_score/pharm_utils/index.html">MolecularDiffusion.utils.shepherd_score.pharm_utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.pharm_utils" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../utils/shepherd_score/pharm_utils/pharmacophore/index.html">MolecularDiffusion.utils.shepherd_score.pharm_utils.pharmacophore</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../utils/shepherd_score/pharm_utils/pharmvec/index.html">MolecularDiffusion.utils.shepherd_score.pharm_utils.pharmvec</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../utils/shepherd_score/score/index.html">MolecularDiffusion.utils.shepherd_score.score</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.score" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../utils/shepherd_score/score/analytical_gradients/index.html">MolecularDiffusion.utils.shepherd_score.score.analytical_gradients</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../utils/shepherd_score/score/constants/index.html">MolecularDiffusion.utils.shepherd_score.score.constants</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../utils/shepherd_score/score/electrostatic_scoring/index.html">MolecularDiffusion.utils.shepherd_score.score.electrostatic_scoring</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../utils/shepherd_score/score/electrostatic_scoring_np/index.html">MolecularDiffusion.utils.shepherd_score.score.electrostatic_scoring_np</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../utils/shepherd_score/score/gaussian_overlap/index.html">MolecularDiffusion.utils.shepherd_score.score.gaussian_overlap</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../utils/shepherd_score/score/gaussian_overlap_np/index.html">MolecularDiffusion.utils.shepherd_score.score.gaussian_overlap_np</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../utils/shepherd_score/score/pharmacophore_scoring/index.html">MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../utils/shepherd_score/score/pharmacophore_scoring_np/index.html">MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring_np</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/shepherd_utils/index.html">MolecularDiffusion.utils.shepherd_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/smilify/index.html">MolecularDiffusion.utils.smilify</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/torch/index.html">MolecularDiffusion.utils.torch</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../utils/xyz2mol/index.html">MolecularDiffusion.utils.xyz2mol</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.xyz2mol" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../utils/xyz2mol/converter/index.html">MolecularDiffusion.utils.xyz2mol.converter</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../utils/xyz2mol/elements/index.html">MolecularDiffusion.utils.xyz2mol.elements</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/pregHosh/MolCraftDiffusion/blob/main/docs/autoapi/MolecularDiffusion/modules/layers/equiformer_v2_s/transformer_block/index.rst?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/pregHosh/MolCraftDiffusion/edit/main/docs/autoapi/MolecularDiffusion/modules/layers/equiformer_v2_s/transformer_block/index.rst" rel="edit" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block">
+<span id="moleculardiffusion-modules-layers-equiformer-v2-s-transformer-block"></span><h1>MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block<a class="headerlink" href="#module-MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block" title="Link to this heading">¶</a></h1>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork" title="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FeedForwardNetwork</span></code></a></p></td>
+<td><p>FeedForwardNetwork: Perform feedforward network with S2 activation or gate activation</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention" title="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention</span></code></a></p></td>
+<td><p>SO2EquivariantGraphAttention: Perform MLP attention + non-linear message passing</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2" title="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TransBlockV2</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.</span></span><span class="sig-name descname"><span class="pre">FeedForwardNetwork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sphere_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lmax_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mmax_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SO3_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'scaled_silu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_gate_act</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_grid_mlp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_sep_s2_act</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
+<p>FeedForwardNetwork: Perform feedforward network with S2 activation or gate activation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sphere_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of spherical channels</p></li>
+<li><p><strong>hidden_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of hidden channels used during feedforward network</p></li>
+<li><p><strong>output_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of output channels</p></li>
+<li><p><strong>(</strong><strong>list</strong> (<a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.mmax_list" title="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.mmax_list"><em>mmax_list</em></a>) – int):       List of degrees (l) for each resolution</p></li>
+<li><p><strong>(</strong><strong>list</strong> – int):       List of orders (m) for each resolution</p></li>
+<li><p><strong>SO3_grid</strong> (<a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.SO3_grid" title="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.SO3_grid"><em>SO3_grid</em></a>) – Class used to convert from grid the spherical harmonic representations</p></li>
+<li><p><strong>activation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Type of activation function</p></li>
+<li><p><strong>use_gate_act</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use gate activation. Otherwise, use S2 activation</p></li>
+<li><p><strong>use_grid_mlp</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use projecting to grids and performing MLPs.</p></li>
+<li><p><strong>use_sep_s2_act</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use separable grid MLP when <cite>use_grid_mlp</cite> is True.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_embedding</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.forward" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.SO3_grid">
+<span class="sig-name descname"><span class="pre">SO3_grid</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.SO3_grid" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.hidden_channels">
+<span class="sig-name descname"><span class="pre">hidden_channels</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.hidden_channels" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.lmax_list">
+<span class="sig-name descname"><span class="pre">lmax_list</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.lmax_list" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.max_lmax">
+<span class="sig-name descname"><span class="pre">max_lmax</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.max_lmax" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.mmax_list">
+<span class="sig-name descname"><span class="pre">mmax_list</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.mmax_list" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.num_resolutions">
+<span class="sig-name descname"><span class="pre">num_resolutions</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.num_resolutions" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.output_channels">
+<span class="sig-name descname"><span class="pre">output_channels</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.output_channels" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.so3_linear_1">
+<span class="sig-name descname"><span class="pre">so3_linear_1</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.so3_linear_1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.so3_linear_2">
+<span class="sig-name descname"><span class="pre">so3_linear_2</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.so3_linear_2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.sphere_channels">
+<span class="sig-name descname"><span class="pre">sphere_channels</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.sphere_channels" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.sphere_channels_all">
+<span class="sig-name descname"><span class="pre">sphere_channels_all</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.sphere_channels_all" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.use_gate_act">
+<span class="sig-name descname"><span class="pre">use_gate_act</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.use_gate_act" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.use_grid_mlp">
+<span class="sig-name descname"><span class="pre">use_grid_mlp</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.use_grid_mlp" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.use_sep_s2_act">
+<span class="sig-name descname"><span class="pre">use_sep_s2_act</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.use_sep_s2_act" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.</span></span><span class="sig-name descname"><span class="pre">SO2EquivariantGraphAttention</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_sphere_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sphere_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_heads</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attn_alpha_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attn_value_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lmax_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mmax_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SO3_rotation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mappingReduced</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SO3_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_channels_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_atom_edge_embedding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_m_share_rad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'scaled_silu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_s2_act_attn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_attn_renorm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_gate_act</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_sep_s2_act</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
+<dl class="simple">
+<dt>SO2EquivariantGraphAttention: Perform MLP attention + non-linear message passing</dt><dd><p>SO(2) Convolution with radial function -&gt; S2 Activation -&gt; SO(2) Convolution -&gt; attention weights and non-linear messages
+attention weights * non-linear messages -&gt; Linear</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sphere_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of spherical channels</p></li>
+<li><p><strong>hidden_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of hidden channels used during the SO(2) conv</p></li>
+<li><p><strong>num_heads</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of attention heads</p></li>
+<li><p><strong>attn_alpha_head</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of channels for alpha vector in each attention head</p></li>
+<li><p><strong>attn_value_head</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of channels for value vector in each attention head</p></li>
+<li><p><strong>output_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of output channels</p></li>
+<li><p><strong>(</strong><strong>list</strong> (<a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.edge_channels_list" title="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.edge_channels_list"><em>edge_channels_list</em></a>) – int):       List of degrees (l) for each resolution</p></li>
+<li><p><strong>(</strong><strong>list</strong> – int):       List of orders (m) for each resolution</p></li>
+<li><p><strong>(</strong><strong>list</strong> – SO3_Rotation): Class to calculate Wigner-D matrices and rotate embeddings</p></li>
+<li><p><strong>mappingReduced</strong> (<a class="reference internal" href="../../equiformer_v2/so3/index.html#MolecularDiffusion.modules.layers.equiformer_v2.so3.CoefficientMappingModule" title="MolecularDiffusion.modules.layers.equiformer_v2.so3.CoefficientMappingModule"><em>CoefficientMappingModule</em></a>) – Class to convert l and m indices once node embedding is rotated</p></li>
+<li><p><strong>SO3_grid</strong> (<a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.SO3_grid" title="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.SO3_grid"><em>SO3_grid</em></a>) – Class used to convert from grid the spherical harmonic representations</p></li>
+<li><p><strong>max_num_elements</strong> (<em>#</em>) – Maximum number of atomic numbers</p></li>
+<li><p><strong>(</strong><strong>list</strong> – int):  List of sizes of invariant edge embedding. For example, [input_channels, hidden_channels, hidden_channels].
+The last one will be used as hidden size when <cite>use_atom_edge_embedding</cite> is <cite>True</cite>.</p></li>
+<li><p><strong>use_atom_edge_embedding</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use atomic embedding along with relative distance for edge scalar features</p></li>
+<li><p><strong>use_m_share_rad</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether all m components within a type-L vector of one channel share radial function weights</p></li>
+<li><p><strong>activation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Type of activation function</p></li>
+<li><p><strong>use_s2_act_attn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use attention after S2 activation. Otherwise, use the same attention as Equiformer</p></li>
+<li><p><strong>use_attn_renorm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to re-normalize attention weights</p></li>
+<li><p><strong>use_gate_act</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use gate activation. Otherwise, use S2 activation.</p></li>
+<li><p><strong>use_sep_s2_act</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use separable S2 activation when <cite>use_gate_act</cite> is False.</p></li>
+<li><p><strong>alpha_drop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Dropout rate for attention weights</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.forward" title="Link to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>if self.use_atom_edge_embedding:</dt><dd><p>source_element = atomic_numbers[edge_index[0]]  # Source atom atomic number
+target_element = atomic_numbers[edge_index[1]]  # Target atom atomic number
+source_embedding = self.source_embedding(source_element)
+target_embedding = self.target_embedding(target_element)
+x_edge = torch.cat((edge_distance, source_embedding, target_embedding), dim=1)</p>
+</dd>
+<dt>else:</dt><dd><p>x_edge = edge_distance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.SO3_grid">
+<span class="sig-name descname"><span class="pre">SO3_grid</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.SO3_grid" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.SO3_rotation">
+<span class="sig-name descname"><span class="pre">SO3_rotation</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.SO3_rotation" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.alpha_dropout">
+<span class="sig-name descname"><span class="pre">alpha_dropout</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.alpha_dropout" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.attn_alpha_channels">
+<span class="sig-name descname"><span class="pre">attn_alpha_channels</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.attn_alpha_channels" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.attn_value_channels">
+<span class="sig-name descname"><span class="pre">attn_value_channels</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.attn_value_channels" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.edge_channels_list">
+<span class="sig-name descname"><span class="pre">edge_channels_list</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.edge_channels_list" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.hidden_channels">
+<span class="sig-name descname"><span class="pre">hidden_channels</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.hidden_channels" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.input_sphere_channels">
+<span class="sig-name descname"><span class="pre">input_sphere_channels</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.input_sphere_channels" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.lmax_list">
+<span class="sig-name descname"><span class="pre">lmax_list</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.lmax_list" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.mappingReduced">
+<span class="sig-name descname"><span class="pre">mappingReduced</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.mappingReduced" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.mmax_list">
+<span class="sig-name descname"><span class="pre">mmax_list</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.mmax_list" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.num_heads">
+<span class="sig-name descname"><span class="pre">num_heads</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.num_heads" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.num_resolutions">
+<span class="sig-name descname"><span class="pre">num_resolutions</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.num_resolutions" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.output_channels">
+<span class="sig-name descname"><span class="pre">output_channels</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.output_channels" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.proj">
+<span class="sig-name descname"><span class="pre">proj</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.proj" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.so2_conv_1">
+<span class="sig-name descname"><span class="pre">so2_conv_1</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.so2_conv_1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.so2_conv_2">
+<span class="sig-name descname"><span class="pre">so2_conv_2</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.so2_conv_2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.sphere_channels">
+<span class="sig-name descname"><span class="pre">sphere_channels</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.sphere_channels" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.use_atom_edge_embedding">
+<span class="sig-name descname"><span class="pre">use_atom_edge_embedding</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.use_atom_edge_embedding" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.use_attn_renorm">
+<span class="sig-name descname"><span class="pre">use_attn_renorm</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.use_attn_renorm" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.use_gate_act">
+<span class="sig-name descname"><span class="pre">use_gate_act</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.use_gate_act" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.use_m_share_rad">
+<span class="sig-name descname"><span class="pre">use_m_share_rad</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.use_m_share_rad" title="Link to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>if self.use_atom_edge_embedding:</dt><dd><p>self.source_embedding = nn.Embedding(self.max_num_elements, self.edge_channels_list[-1])
+self.target_embedding = nn.Embedding(self.max_num_elements, self.edge_channels_list[-1])
+nn.init.uniform_(self.source_embedding.weight.data, -0.001, 0.001)
+nn.init.uniform_(self.target_embedding.weight.data, -0.001, 0.001)
+self.edge_channels_list[0] = self.edge_channels_list[0] + 2 * self.edge_channels_list[-1]</p>
+</dd>
+<dt>else:</dt><dd><p>self.source_embedding, self.target_embedding = None, None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.use_s2_act_attn">
+<span class="sig-name descname"><span class="pre">use_s2_act_attn</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.use_s2_act_attn" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.use_sep_s2_act">
+<span class="sig-name descname"><span class="pre">use_sep_s2_act</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.use_sep_s2_act" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.</span></span><span class="sig-name descname"><span class="pre">TransBlockV2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_sphere_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sphere_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attn_hidden_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_heads</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attn_alpha_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attn_value_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ffn_hidden_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lmax_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mmax_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SO3_rotation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mappingReduced</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SO3_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_channels_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_atom_edge_embedding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_m_share_rad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attn_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'silu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_s2_act_attn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_attn_renorm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ffn_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'silu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_gate_act</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_grid_mlp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_sep_s2_act</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rms_norm_sh'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_path_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proj_drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_sphere_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of spherical channels in input x embedding (used for edge embeddings)</p></li>
+<li><p><strong>sphere_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of spherical channels</p></li>
+<li><p><strong>attn_hidden_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of hidden channels used during SO(2) graph attention</p></li>
+<li><p><strong>num_heads</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of attention heads</p></li>
+<li><p><strong>attn_alpha_head</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of channels for alpha vector in each attention head</p></li>
+<li><p><strong>attn_value_head</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of channels for value vector in each attention head</p></li>
+<li><p><strong>ffn_hidden_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of hidden channels used during feedforward network</p></li>
+<li><p><strong>output_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of output channels</p></li>
+<li><p><strong>(</strong><strong>list</strong> (<a class="reference internal" href="../../equiformer_v2/equiformer_v2_oc20/index.html#MolecularDiffusion.modules.layers.equiformer_v2.equiformer_v2_oc20.EquiformerV2_OC20.edge_channels_list" title="MolecularDiffusion.modules.layers.equiformer_v2.equiformer_v2_oc20.EquiformerV2_OC20.edge_channels_list"><em>edge_channels_list</em></a>) – int):       List of degrees (l) for each resolution</p></li>
+<li><p><strong>(</strong><strong>list</strong> – int):       List of orders (m) for each resolution</p></li>
+<li><p><strong>(</strong><strong>list</strong> – SO3_Rotation): Class to calculate Wigner-D matrices and rotate embeddings</p></li>
+<li><p><strong>mappingReduced</strong> (<a class="reference internal" href="../../equiformer_v2/so3/index.html#MolecularDiffusion.modules.layers.equiformer_v2.so3.CoefficientMappingModule" title="MolecularDiffusion.modules.layers.equiformer_v2.so3.CoefficientMappingModule"><em>CoefficientMappingModule</em></a>) – Class to convert l and m indices once node embedding is rotated</p></li>
+<li><p><strong>SO3_grid</strong> (<a class="reference internal" href="../../equiformer_v2/equiformer_v2_oc20/index.html#MolecularDiffusion.modules.layers.equiformer_v2.equiformer_v2_oc20.EquiformerV2_OC20.SO3_grid" title="MolecularDiffusion.modules.layers.equiformer_v2.equiformer_v2_oc20.EquiformerV2_OC20.SO3_grid"><em>SO3_grid</em></a>) – Class used to convert from grid the spherical harmonic representations</p></li>
+<li><p><strong>max_num_elements</strong> (<em>#</em>) – Maximum number of atomic numbers</p></li>
+<li><p><strong>(</strong><strong>list</strong> – int):  List of sizes of invariant edge embedding. For example, [input_channels, hidden_channels, hidden_channels].
+The last one will be used as hidden size when <cite>use_atom_edge_embedding</cite> is <cite>True</cite>.</p></li>
+<li><p><strong>use_atom_edge_embedding</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use atomic embedding along with relative distance for edge scalar features</p></li>
+<li><p><strong>use_m_share_rad</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether all m components within a type-L vector of one channel share radial function weights</p></li>
+<li><p><strong>attn_activation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Type of activation function for SO(2) graph attention</p></li>
+<li><p><strong>use_s2_act_attn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use attention after S2 activation. Otherwise, use the same attention as Equiformer</p></li>
+<li><p><strong>use_attn_renorm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to re-normalize attention weights</p></li>
+<li><p><strong>ffn_activation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Type of activation function for feedforward network</p></li>
+<li><p><strong>use_gate_act</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use gate activation. Otherwise, use S2 activation</p></li>
+<li><p><strong>use_grid_mlp</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use projecting to grids and performing MLPs for FFN.</p></li>
+<li><p><strong>use_sep_s2_act</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use separable S2 activation when <cite>use_gate_act</cite> is False.</p></li>
+<li><p><strong>norm_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Type of normalization layer ([‘layer_norm’, ‘layer_norm_sh’])</p></li>
+<li><p><strong>alpha_drop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Dropout rate for attention weights</p></li>
+<li><p><strong>drop_path_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Drop path rate</p></li>
+<li><p><strong>proj_drop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Dropout rate for outputs of attention and FFN</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.forward" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.drop_path">
+<span class="sig-name descname"><span class="pre">drop_path</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.drop_path" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.ffn">
+<span class="sig-name descname"><span class="pre">ffn</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.ffn" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.ga">
+<span class="sig-name descname"><span class="pre">ga</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.ga" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.norm_1">
+<span class="sig-name descname"><span class="pre">norm_1</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.norm_1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.norm_2">
+<span class="sig-name descname"><span class="pre">norm_2</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.norm_2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.proj_drop">
+<span class="sig-name descname"><span class="pre">proj_drop</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.proj_drop" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, pregHosh
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/pregHosh/MolCraftDiffusion" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0"
+                     viewBox="0 0 16 16" height="1em" width="1em">
+                    <path fill-rule="evenodd"
+                          d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                          0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                          -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+                          .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+                          -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0
+                          1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82
+                          1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01
+                          1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+                    />
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork"><code class="docutils literal notranslate"><span class="pre">FeedForwardNetwork</span></code></a><ul>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.forward"><code class="docutils literal notranslate"><span class="pre">FeedForwardNetwork.forward()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.SO3_grid"><code class="docutils literal notranslate"><span class="pre">FeedForwardNetwork.SO3_grid</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.hidden_channels"><code class="docutils literal notranslate"><span class="pre">FeedForwardNetwork.hidden_channels</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.lmax_list"><code class="docutils literal notranslate"><span class="pre">FeedForwardNetwork.lmax_list</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.max_lmax"><code class="docutils literal notranslate"><span class="pre">FeedForwardNetwork.max_lmax</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.mmax_list"><code class="docutils literal notranslate"><span class="pre">FeedForwardNetwork.mmax_list</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.num_resolutions"><code class="docutils literal notranslate"><span class="pre">FeedForwardNetwork.num_resolutions</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.output_channels"><code class="docutils literal notranslate"><span class="pre">FeedForwardNetwork.output_channels</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.so3_linear_1"><code class="docutils literal notranslate"><span class="pre">FeedForwardNetwork.so3_linear_1</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.so3_linear_2"><code class="docutils literal notranslate"><span class="pre">FeedForwardNetwork.so3_linear_2</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.sphere_channels"><code class="docutils literal notranslate"><span class="pre">FeedForwardNetwork.sphere_channels</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.sphere_channels_all"><code class="docutils literal notranslate"><span class="pre">FeedForwardNetwork.sphere_channels_all</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.use_gate_act"><code class="docutils literal notranslate"><span class="pre">FeedForwardNetwork.use_gate_act</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.use_grid_mlp"><code class="docutils literal notranslate"><span class="pre">FeedForwardNetwork.use_grid_mlp</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.use_sep_s2_act"><code class="docutils literal notranslate"><span class="pre">FeedForwardNetwork.use_sep_s2_act</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention</span></code></a><ul>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.forward"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.forward()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.SO3_grid"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.SO3_grid</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.SO3_rotation"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.SO3_rotation</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.alpha_dropout"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.alpha_dropout</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.attn_alpha_channels"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.attn_alpha_channels</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.attn_value_channels"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.attn_value_channels</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.edge_channels_list"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.edge_channels_list</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.hidden_channels"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.hidden_channels</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.input_sphere_channels"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.input_sphere_channels</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.lmax_list"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.lmax_list</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.mappingReduced"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.mappingReduced</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.mmax_list"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.mmax_list</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.num_heads"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.num_heads</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.num_resolutions"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.num_resolutions</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.output_channels"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.output_channels</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.proj"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.proj</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.so2_conv_1"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.so2_conv_1</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.so2_conv_2"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.so2_conv_2</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.sphere_channels"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.sphere_channels</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.use_atom_edge_embedding"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.use_atom_edge_embedding</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.use_attn_renorm"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.use_attn_renorm</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.use_gate_act"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.use_gate_act</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.use_m_share_rad"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.use_m_share_rad</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.use_s2_act_attn"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.use_s2_act_attn</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.use_sep_s2_act"><code class="docutils literal notranslate"><span class="pre">SO2EquivariantGraphAttention.use_sep_s2_act</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2"><code class="docutils literal notranslate"><span class="pre">TransBlockV2</span></code></a><ul>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.forward"><code class="docutils literal notranslate"><span class="pre">TransBlockV2.forward()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.drop_path"><code class="docutils literal notranslate"><span class="pre">TransBlockV2.drop_path</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.ffn"><code class="docutils literal notranslate"><span class="pre">TransBlockV2.ffn</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.ga"><code class="docutils literal notranslate"><span class="pre">TransBlockV2.ga</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.norm_1"><code class="docutils literal notranslate"><span class="pre">TransBlockV2.norm_1</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.norm_2"><code class="docutils literal notranslate"><span class="pre">TransBlockV2.norm_2</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.TransBlockV2.proj_drop"><code class="docutils literal notranslate"><span class="pre">TransBlockV2.proj_drop</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../../_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>

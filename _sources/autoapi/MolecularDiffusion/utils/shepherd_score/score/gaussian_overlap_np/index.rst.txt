@@ -1,0 +1,73 @@
+MolecularDiffusion.utils.shepherd_score.score.gaussian_overlap_np
+=================================================================
+
+.. py:module:: MolecularDiffusion.utils.shepherd_score.score.gaussian_overlap_np
+
+.. autoapi-nested-parse::
+
+   Gaussian volume overlap scoring functions -- Shape-only (i.e., not color)
+   NUMPY VERSION
+
+   Single instance functionality only.
+
+   Reference math:
+   https://doi.org/10.1002/(SICI)1096-987X(19961115)17:14<1653::AID-JCC7>3.0.CO;2-K
+   https://doi.org/10.1021/j100011a016
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.shepherd_score.score.gaussian_overlap_np.VAB_2nd_order_cosine_np
+   MolecularDiffusion.utils.shepherd_score.score.gaussian_overlap_np.VAB_2nd_order_np
+   MolecularDiffusion.utils.shepherd_score.score.gaussian_overlap_np.get_linear_hard_sphere_overlap_np
+   MolecularDiffusion.utils.shepherd_score.score.gaussian_overlap_np.get_max_overlap_np
+   MolecularDiffusion.utils.shepherd_score.score.gaussian_overlap_np.get_overlap_np
+   MolecularDiffusion.utils.shepherd_score.score.gaussian_overlap_np.shape_tanimoto_np
+
+
+Module Contents
+---------------
+
+.. py:function:: VAB_2nd_order_cosine_np(centers_1: numpy.ndarray, centers_2: numpy.ndarray, vectors_1: numpy.ndarray, vectors_2: numpy.ndarray, alpha: float, allow_antiparallel: bool) -> numpy.ndarray
+
+   2nd order volume overlap of AB weighted by cosine similarity.
+   NumPy implementation with single instance functionality.
+
+
+.. py:function:: VAB_2nd_order_np(centers_1, centers_2, alpha) -> numpy.ndarray
+
+   2nd order volume overlap of AB
+
+
+.. py:function:: get_linear_hard_sphere_overlap_np(centers_1: numpy.ndarray, centers_2: numpy.ndarray, min_dist: float) -> numpy.ndarray
+
+   Compute linear hard sphere overlap.
+
+   This function is linear based on the distance between centers
+   For distance d
+   d > min_dist: 0
+   0 < d < min_dist: linear from 0 to 1
+   d == 0: 1
+
+   :returns: np.ndarray shape (1,) with the sum of hard sphere overlaps between)
+
+
+.. py:function:: get_max_overlap_np(centers_1: numpy.ndarray, centers_2: numpy.ndarray, alpha: float = 0.81) -> numpy.ndarray
+
+   Maximum overlap volume among any pair of centers (always in [0, 1] range).
+
+
+.. py:function:: get_overlap_np(centers_1: numpy.ndarray, centers_2: numpy.ndarray, alpha: float = 0.81) -> numpy.ndarray
+
+   NumPy implementation of shape similarity via gaussian overlaps (single instance)
+
+
+.. py:function:: shape_tanimoto_np(centers_1, centers_2, alpha) -> numpy.ndarray
+
+   Compute Tanimoto shape similarity
+
+

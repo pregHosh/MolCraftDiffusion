@@ -1,0 +1,30 @@
+MolecularDiffusion.modules.models.shepherd_arch
+===============================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd_arch
+
+.. autoapi-nested-parse::
+
+   ShEPhERD model architecture ported into MolecularDiffusion.
+
+   This package contains the ShEPhERD (Shape, Electrostatics, and Pharmacophores
+   for Drug Design) multi-modal denoiser architecture, adapted to use
+   MolecularDiffusion's own equiformer_v2 layers.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/shepherd_arch/egnn/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd_arch/equiformer_operations/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd_arch/equiformer_v2_encoder/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd_arch/inference/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd_arch/model/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd_arch/ocp_compat/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd_arch/utils/index
+
+

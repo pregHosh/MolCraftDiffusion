@@ -1,0 +1,106 @@
+MolecularDiffusion.utils.shepherd_score.alignment.utils.pca_np
+==============================================================
+
+.. py:module:: MolecularDiffusion.utils.shepherd_score.alignment.utils.pca_np
+
+.. autoapi-nested-parse::
+
+   Numpy Implementations for principal component alignment (pca).
+   Using the numpy version of quaternions_for_principal_component_alignment is faster than
+   the torch implementation (~2.5ms vs ~5ms).
+
+   Credit to Lewis J. Martin as this was adapted from
+   https://github.com/ljmartin/align/blob/main/0.2%20aligning%20principal%20moments%20of%20inertia.ipynb
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.shepherd_score.alignment.utils.pca_np.angle_between_vecs_np
+   MolecularDiffusion.utils.shepherd_score.alignment.utils.pca_np.compute_moment_of_inertia_np
+   MolecularDiffusion.utils.shepherd_score.alignment.utils.pca_np.compute_principal_moments_of_interia_np
+   MolecularDiffusion.utils.shepherd_score.alignment.utils.pca_np.quaternion_from_axis_angle_np
+   MolecularDiffusion.utils.shepherd_score.alignment.utils.pca_np.quaternion_mult_np
+   MolecularDiffusion.utils.shepherd_score.alignment.utils.pca_np.quaternions_for_principal_component_alignment_np
+   MolecularDiffusion.utils.shepherd_score.alignment.utils.pca_np.rotation_axis_np
+
+
+Module Contents
+---------------
+
+.. py:function:: angle_between_vecs_np(v1: numpy.ndarray, v2: numpy.ndarray) -> numpy.ndarray
+
+   Compute the angle in radians between two vectors. Numpy implementation.
+
+
+.. py:function:: compute_moment_of_inertia_np(points: numpy.ndarray) -> numpy.ndarray
+
+   Computes the moment of inertia tensor for a set of points. Numpy implementation.
+   A = x^2 + y^2 + z^2
+   B = X^T X
+
+
+.. py:function:: compute_principal_moments_of_interia_np(points: numpy.ndarray) -> numpy.ndarray
+
+   Calculate principal moment of inertia. Numpy implementation.
+
+
+.. py:function:: quaternion_from_axis_angle_np(axis: numpy.ndarray, angle: numpy.ndarray) -> numpy.ndarray
+
+   Create a Quaternion from a rotation axis and an angle in radians.
+   Numpy implementation.
+
+   :param axis: Axis to rotate about.
+   :type axis: np.ndarray (3,)
+   :param angle: Angle in radians.
+   :type angle: np.ndarray (1,)
+
+   :returns: **quaternion**
+   :rtype: np.ndarray (4,)
+
+
+.. py:function:: quaternion_mult_np(p: numpy.ndarray, q: numpy.ndarray) -> numpy.ndarray
+
+   Multiplication of quaternions p and q. Numpy implementation.
+
+   Reference: https://academicflight.com/articles/kinematics/rotation-formalisms/quaternions/
+
+   General use case: The consecutive rotations of q_1 then q_2 is equivalent
+   to q_3 = q_2*q_1. (order matters)
+
+   :param p: The first quaternion with shape (4,).
+   :type p: np.ndarray
+   :param q: The second quaternion with shape (4,).
+   :type q: np.ndarray
+
+   :returns: The product of the two quaternions with shape (4,).
+   :rtype: np.ndarray
+
+
+.. py:function:: quaternions_for_principal_component_alignment_np(ref_points: numpy.ndarray, fit_points: numpy.ndarray) -> numpy.ndarray
+
+   Computes the 4 quaternions required for alignment of the fit mol along the
+   principal components of the reference mol.
+   NumPy implementation.
+
+   The computed quaternions assumes that fit_points will be rotated after being centered at COM.
+
+   :param ref_points: Set of reference points that fit_points will be aligned to.
+   :type ref_points: np.ndarray (N, 3)
+   :param fit_points: Set of points that will be aligned to ref_points.
+   :type fit_points: np.ndarray (M, 3)
+
+   :returns: **quaternions** -- Set of four quaternions corresponding to the alignment of fit_points to ref_points in the
+             four possible principal component combinations.
+   :rtype: np.ndarray (4, 4)
+
+
+.. py:function:: rotation_axis_np(v1: numpy.ndarray, v2: numpy.ndarray) -> numpy.ndarray
+
+   Calculate the vector about which to order to rotate `a` to align with `b` (cross product).
+   Numpy implementation.
+
+

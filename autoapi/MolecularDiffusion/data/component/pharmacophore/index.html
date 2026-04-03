@@ -1,0 +1,959 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../search.html"><link rel="next" title="MolecularDiffusion.data.component.pointcloud" href="../pointcloud/index.html"><link rel="prev" title="MolecularDiffusion.data.component.feature" href="../feature/index.html">
+        <link rel="canonical" href="https://preghosh.github.io/MolCraftDiffusion/autoapi/MolecularDiffusion/data/component/pharmacophore/index.html">
+        <link rel="prefetch" href="../../../../../_static/logo.png" as="image">
+
+    <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+        <title>MolecularDiffusion.data.component.pharmacophore - MolCraftDiffusion</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=fbb7725e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  --color-brand-primary: #4A90D9;
+  --color-brand-content: #4A90D9;
+  --font-stack: Inter, sans-serif;
+  --font-stack--monospace: JetBrains Mono, monospace;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #6BAAD9;
+  --color-brand-content: #6BAAD9;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #6BAAD9;
+  --color-brand-content: #6BAAD9;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../../../index.html"><div class="brand">MolCraftDiffusion</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../../../_static/logo.png" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorials/00_data_preparation.html">Tutorial 0: Data Preparation &amp; Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorials/01_training_diffusion.html">Tutorial 1: Training a Diffusion Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorials/02_training_regressor.html">Tutorial 2: Training a Regressor Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorials/03_training_guidance.html">Tutorial 3: Training a Time-Aware Guidance Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorials/04_finetuning.html">Tutorial 4: Fine-Tuning a Diffusion Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorials/05_generation_overview.html">Tutorial 5: Molecule Generation Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorials/06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorials/07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorials/08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorials/09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../../../../api.html">API Reference</a><input aria-label="Toggle navigation of API Reference" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../../../index.html">MolecularDiffusion</a><input aria-label="Toggle navigation of MolecularDiffusion" checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../callbacks/index.html">MolecularDiffusion.callbacks</a><input aria-label="Toggle navigation of MolecularDiffusion.callbacks" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../callbacks/train_helper/index.html">MolecularDiffusion.callbacks.train_helper</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../cli/index.html">MolecularDiffusion.cli</a><input aria-label="Toggle navigation of MolecularDiffusion.cli" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../cli/analyze/index.html">MolecularDiffusion.cli.analyze</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../cli/data/index.html">MolecularDiffusion.cli.data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../cli/eval_predict/index.html">MolecularDiffusion.cli.eval_predict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../cli/generate/index.html">MolecularDiffusion.cli.generate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../cli/main/index.html">MolecularDiffusion.cli.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../cli/predict/index.html">MolecularDiffusion.cli.predict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../cli/train/index.html">MolecularDiffusion.cli.train</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../core/core/index.html">MolecularDiffusion.core.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../core/engine/index.html">MolecularDiffusion.core.engine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../core/logger/index.html">MolecularDiffusion.core.logger</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../core/meter/index.html">MolecularDiffusion.core.meter</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current has-children"><a class="reference internal" href="../../index.html">MolecularDiffusion.data</a><input aria-label="Toggle navigation of MolecularDiffusion.data" checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l4 current has-children"><a class="reference internal" href="../index.html">MolecularDiffusion.data.component</a><input aria-label="Toggle navigation of MolecularDiffusion.data.component" checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l5"><a class="reference internal" href="../dataset/index.html">MolecularDiffusion.data.component.dataset</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../feature/index.html">MolecularDiffusion.data.component.feature</a></li>
+<li class="toctree-l5 current current-page"><a class="current reference internal" href="#">MolecularDiffusion.data.component.pharmacophore</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../pointcloud/index.html">MolecularDiffusion.data.component.pointcloud</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../dataloader/index.html">MolecularDiffusion.data.dataloader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dataset/index.html">MolecularDiffusion.data.dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../valency_tables/index.html">MolecularDiffusion.data.valency_tables</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../molcraftdiff/index.html">MolecularDiffusion.molcraftdiff</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../runmodes/index.html">MolecularDiffusion.runmodes</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../runmodes/analyze/index.html">MolecularDiffusion.runmodes.analyze</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.analyze" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../runmodes/analyze/compare_to_optimized/index.html">MolecularDiffusion.runmodes.analyze.compare_to_optimized</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../runmodes/analyze/compute_metrics/index.html">MolecularDiffusion.runmodes.analyze.compute_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../runmodes/analyze/xtb_electronic/index.html">MolecularDiffusion.runmodes.analyze.xtb_electronic</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../runmodes/analyze/xtb_optimization/index.html">MolecularDiffusion.runmodes.analyze.xtb_optimization</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../runmodes/analyze/xyz2mol/index.html">MolecularDiffusion.runmodes.analyze.xyz2mol</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../runmodes/generate/index.html">MolecularDiffusion.runmodes.generate</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.generate" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../runmodes/generate/tasks_generate/index.html">MolecularDiffusion.runmodes.generate.tasks_generate</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../runmodes/train/index.html">MolecularDiffusion.runmodes.train</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.train" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../runmodes/train/data/index.html">MolecularDiffusion.runmodes.train.data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../runmodes/train/eval/index.html">MolecularDiffusion.runmodes.train.eval</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../runmodes/train/logger/index.html">MolecularDiffusion.runmodes.train.logger</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../runmodes/train/tasks_egcl/index.html">MolecularDiffusion.runmodes.train.tasks_egcl</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../runmodes/train/tasks_egt/index.html">MolecularDiffusion.runmodes.train.tasks_egt</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../runmodes/train/trainer/index.html">MolecularDiffusion.runmodes.train.trainer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../utils/index.html">MolecularDiffusion.utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/comm/index.html">MolecularDiffusion.utils.comm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/diffusion_utils/index.html">MolecularDiffusion.utils.diffusion_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/file/index.html">MolecularDiffusion.utils.file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/geom_analyzer/index.html">MolecularDiffusion.utils.geom_analyzer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/geom_constant/index.html">MolecularDiffusion.utils.geom_constant</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/geom_constraint/index.html">MolecularDiffusion.utils.geom_constraint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/geom_metrics/index.html">MolecularDiffusion.utils.geom_metrics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/geom_stability/index.html">MolecularDiffusion.utils.geom_stability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/geom_utils/index.html">MolecularDiffusion.utils.geom_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/io/index.html">MolecularDiffusion.utils.io</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/molgraph_utils/index.html">MolecularDiffusion.utils.molgraph_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/plot_function/index.html">MolecularDiffusion.utils.plot_function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/pretty/index.html">MolecularDiffusion.utils.pretty</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/sascore/index.html">MolecularDiffusion.utils.sascore</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../utils/shepherd_score/index.html">MolecularDiffusion.utils.shepherd_score</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../utils/shepherd_score/alignment/index.html">MolecularDiffusion.utils.shepherd_score.alignment</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.alignment" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../utils/shepherd_score/alignment/utils/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.alignment.utils" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../utils/shepherd_score/alignment/utils/pca/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils.pca</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../utils/shepherd_score/alignment/utils/pca_np/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils.pca_np</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../utils/shepherd_score/alignment/utils/se3/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils.se3</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../utils/shepherd_score/alignment/utils/se3_np/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../utils/shepherd_score/extract_profiles/index.html">MolecularDiffusion.utils.shepherd_score.extract_profiles</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../utils/shepherd_score/generate_point_cloud/index.html">MolecularDiffusion.utils.shepherd_score.generate_point_cloud</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../utils/shepherd_score/pharm_utils/index.html">MolecularDiffusion.utils.shepherd_score.pharm_utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.pharm_utils" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../utils/shepherd_score/pharm_utils/pharmacophore/index.html">MolecularDiffusion.utils.shepherd_score.pharm_utils.pharmacophore</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../utils/shepherd_score/pharm_utils/pharmvec/index.html">MolecularDiffusion.utils.shepherd_score.pharm_utils.pharmvec</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../utils/shepherd_score/score/index.html">MolecularDiffusion.utils.shepherd_score.score</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.score" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../utils/shepherd_score/score/analytical_gradients/index.html">MolecularDiffusion.utils.shepherd_score.score.analytical_gradients</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../utils/shepherd_score/score/constants/index.html">MolecularDiffusion.utils.shepherd_score.score.constants</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../utils/shepherd_score/score/electrostatic_scoring/index.html">MolecularDiffusion.utils.shepherd_score.score.electrostatic_scoring</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../utils/shepherd_score/score/electrostatic_scoring_np/index.html">MolecularDiffusion.utils.shepherd_score.score.electrostatic_scoring_np</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../utils/shepherd_score/score/gaussian_overlap/index.html">MolecularDiffusion.utils.shepherd_score.score.gaussian_overlap</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../utils/shepherd_score/score/gaussian_overlap_np/index.html">MolecularDiffusion.utils.shepherd_score.score.gaussian_overlap_np</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../utils/shepherd_score/score/pharmacophore_scoring/index.html">MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../utils/shepherd_score/score/pharmacophore_scoring_np/index.html">MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring_np</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/shepherd_utils/index.html">MolecularDiffusion.utils.shepherd_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/smilify/index.html">MolecularDiffusion.utils.smilify</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/torch/index.html">MolecularDiffusion.utils.torch</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../utils/xyz2mol/index.html">MolecularDiffusion.utils.xyz2mol</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.xyz2mol" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../utils/xyz2mol/converter/index.html">MolecularDiffusion.utils.xyz2mol.converter</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../utils/xyz2mol/elements/index.html">MolecularDiffusion.utils.xyz2mol.elements</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/pregHosh/MolCraftDiffusion/blob/main/docs/autoapi/MolecularDiffusion/data/component/pharmacophore/index.rst?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/pregHosh/MolCraftDiffusion/edit/main/docs/autoapi/MolecularDiffusion/data/component/pharmacophore/index.rst" rel="edit" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-MolecularDiffusion.data.component.pharmacophore">
+<span id="moleculardiffusion-data-component-pharmacophore"></span><h1>MolecularDiffusion.data.component.pharmacophore<a class="headerlink" href="#module-MolecularDiffusion.data.component.pharmacophore" title="Link to this heading">¶</a></h1>
+<p>Pharmacophore Dataset for ShEPhERD integration.</p>
+<p>Faithful port of shepherd/src/shepherd/datasets.py HeteroDataset.
+Handles loading, processing, and forward-noising of 4 molecular modalities:
+- x1: Molecular structure (atoms + bonds)
+- x2: Shape (surface point cloud)
+- x3: Electrostatics (surface point cloud + ESP)
+- x4: Pharmacophores (points + directions)</p>
+<p>Forward-noising is applied per-sample in __getitem__ using the noise schedule
+from the ShEPhERD checkpoint hyperparameters.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.Chem" title="MolecularDiffusion.data.component.pharmacophore.Chem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Chem</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.logger" title="MolecularDiffusion.data.component.pharmacophore.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.o3d" title="MolecularDiffusion.data.component.pharmacophore.o3d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">o3d</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule" title="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PharmacophoreDataModule</span></code></a></p></td>
+<td><p>DataModule wrapper for PharmacophoreDataset.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset" title="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PharmacophoreDataset</span></code></a></p></td>
+<td><p>Dataset for ShEPhERD pharmacophore diffusion.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.build_default_noise_schedule" title="MolecularDiffusion.data.component.pharmacophore.build_default_noise_schedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_default_noise_schedule</span></code></a>([T])</p></td>
+<td><p>Build the default ShEPhERD cosine+linear noise schedule.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.pharmacophore_collate_fn" title="MolecularDiffusion.data.component.pharmacophore.pharmacophore_collate_fn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pharmacophore_collate_fn</span></code></a>(→ torch_geometric.data.HeteroData)</p></td>
+<td><p>Collate HeteroData samples into a batch.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.sample_timestep_biased" title="MolecularDiffusion.data.component.pharmacophore.sample_timestep_biased"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_timestep_biased</span></code></a>(ts)</p></td>
+<td><p>Biased timestep sampling matching ShEPhERD:</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.data.component.pharmacophore.</span></span><span class="sig-name descname"><span class="pre">PharmacophoreDataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pkl_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'data/pharmacophore_cache'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pharmacophore'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_fraction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'diffusion_pharmacophore'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkpoint_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule" title="Link to this definition">¶</a></dt>
+<dd><p>DataModule wrapper for PharmacophoreDataset.</p>
+<p>Loads molblocks+charges from pkl files, builds noise schedule
+(from checkpoint or default), and creates train/val/test splits.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.load" title="Link to this definition">¶</a></dt>
+<dd><p>Load pkl data and create dataset with proper noise schedule.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.batch_size">
+<span class="sig-name descname"><span class="pre">batch_size</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.batch_size" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.checkpoint_path">
+<span class="sig-name descname"><span class="pre">checkpoint_path</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.checkpoint_path" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.collate_fn">
+<span class="sig-name descname"><span class="pre">collate_fn</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.collate_fn" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.data_fraction">
+<span class="sig-name descname"><span class="pre">data_fraction</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.data_fraction" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.dataset_name">
+<span class="sig-name descname"><span class="pre">dataset_name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pharmacophore'</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.dataset_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.kwargs">
+<span class="sig-name descname"><span class="pre">kwargs</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.kwargs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.num_samples">
+<span class="sig-name descname"><span class="pre">num_samples</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.num_samples" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.num_workers">
+<span class="sig-name descname"><span class="pre">num_workers</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.num_workers" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.pkl_files">
+<span class="sig-name descname"><span class="pre">pkl_files</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.pkl_files" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.root">
+<span class="sig-name descname"><span class="pre">root</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'data/pharmacophore_cache'</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.root" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.task_type">
+<span class="sig-name descname"><span class="pre">task_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'diffusion_pharmacophore'</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.task_type" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.test_set">
+<span class="sig-name descname"><span class="pre">test_set</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.test_set" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.train_ratio">
+<span class="sig-name descname"><span class="pre">train_ratio</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.8</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.train_ratio" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.train_set">
+<span class="sig-name descname"><span class="pre">train_set</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.train_set" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.valid_set">
+<span class="sig-name descname"><span class="pre">valid_set</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.valid_set" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.data.component.pharmacophore.</span></span><span class="sig-name descname"><span class="pre">PharmacophoreDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">molblocks_and_charges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_schedule_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_x1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_x2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_x3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_x4</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recenter_x1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_virtual_node_x1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_noise_COM_x1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_types_x1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge_types_x1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bond_types_x1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_atom_features_x1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_bond_features_x1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formal_charge_diffusion</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">independent_timesteps_x2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recenter_x2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_virtual_node_x2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_noise_COM_x2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_points_x2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">independent_timesteps_x3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recenter_x3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_virtual_node_x3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_noise_COM_x3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_points_x3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_node_features_x3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">independent_timesteps_x4</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recenter_x4</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_virtual_node_x4</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_noise_COM_x4</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_node_types_x4</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_node_features_x4</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_vector_features_x4</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multivectors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_accessibility</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probe_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.6</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/data.html#torch.utils.data.Dataset" title="(in PyTorch v2.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code></a></p>
+<p>Dataset for ShEPhERD pharmacophore diffusion.</p>
+<p>Each __getitem__ returns a torch_geometric.data.HeteroData with
+forward-noised fields for x1, x2, x3, x4 — exactly matching
+shepherd/src/shepherd/datasets.py HeteroDataset.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.get_x1_data">
+<span class="sig-name descname"><span class="pre">get_x1_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_dash_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_dash_t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.get_x1_data" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.get_x2_data">
+<span class="sig-name descname"><span class="pre">get_x2_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radii</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_centers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recenter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_virtual_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_noise_COM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_dash_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_dash_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">virtual_node_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.get_x2_data" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.get_x3_data_electrostatics_only">
+<span class="sig-name descname"><span class="pre">get_x3_data_electrostatics_only</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">charges</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge_centers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">virtual_node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_dash_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_dash_t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.get_x3_data_electrostatics_only" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.get_x4_data">
+<span class="sig-name descname"><span class="pre">get_x4_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recenter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_virtual_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_noise_COM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_dash_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_dash_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">virtual_node_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.get_x4_data" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.add_virtual_node_x1">
+<span class="sig-name descname"><span class="pre">add_virtual_node_x1</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.add_virtual_node_x1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.add_virtual_node_x2">
+<span class="sig-name descname"><span class="pre">add_virtual_node_x2</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.add_virtual_node_x2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.add_virtual_node_x3">
+<span class="sig-name descname"><span class="pre">add_virtual_node_x3</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.add_virtual_node_x3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.add_virtual_node_x4">
+<span class="sig-name descname"><span class="pre">add_virtual_node_x4</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.add_virtual_node_x4" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.atom_types_x1">
+<span class="sig-name descname"><span class="pre">atom_types_x1</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[None,</span> <span class="pre">'H',</span> <span class="pre">'C',</span> <span class="pre">'N',</span> <span class="pre">'O',</span> <span class="pre">'F',</span> <span class="pre">'Cl',</span> <span class="pre">'Br',</span> <span class="pre">'I',</span> <span class="pre">'S',</span> <span class="pre">'P',</span> <span class="pre">'Si']</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.atom_types_x1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.bond_types_x1">
+<span class="sig-name descname"><span class="pre">bond_types_x1</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[None,</span> <span class="pre">'SINGLE',</span> <span class="pre">'DOUBLE',</span> <span class="pre">'TRIPLE',</span> <span class="pre">'AROMATIC']</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.bond_types_x1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.charge_types_x1">
+<span class="sig-name descname"><span class="pre">charge_types_x1</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.charge_types_x1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.check_accessibility">
+<span class="sig-name descname"><span class="pre">check_accessibility</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.check_accessibility" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.compute_x1">
+<span class="sig-name descname"><span class="pre">compute_x1</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.compute_x1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.compute_x2">
+<span class="sig-name descname"><span class="pre">compute_x2</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.compute_x2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.compute_x3">
+<span class="sig-name descname"><span class="pre">compute_x3</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.compute_x3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.compute_x4">
+<span class="sig-name descname"><span class="pre">compute_x4</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.compute_x4" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.formal_charge_diffusion">
+<span class="sig-name descname"><span class="pre">formal_charge_diffusion</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.formal_charge_diffusion" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.independent_timesteps_x2">
+<span class="sig-name descname"><span class="pre">independent_timesteps_x2</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.independent_timesteps_x2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.independent_timesteps_x3">
+<span class="sig-name descname"><span class="pre">independent_timesteps_x3</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.independent_timesteps_x3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.independent_timesteps_x4">
+<span class="sig-name descname"><span class="pre">independent_timesteps_x4</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.independent_timesteps_x4" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.max_node_types_x4">
+<span class="sig-name descname"><span class="pre">max_node_types_x4</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.max_node_types_x4" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.molblocks_and_charges">
+<span class="sig-name descname"><span class="pre">molblocks_and_charges</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.molblocks_and_charges" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.multivectors">
+<span class="sig-name descname"><span class="pre">multivectors</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.multivectors" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.noise_schedule_dict">
+<span class="sig-name descname"><span class="pre">noise_schedule_dict</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.noise_schedule_dict" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.num_points_x2">
+<span class="sig-name descname"><span class="pre">num_points_x2</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">75</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.num_points_x2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.num_points_x3">
+<span class="sig-name descname"><span class="pre">num_points_x3</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">75</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.num_points_x3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.probe_radius">
+<span class="sig-name descname"><span class="pre">probe_radius</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.6</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.probe_radius" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.recenter_x1">
+<span class="sig-name descname"><span class="pre">recenter_x1</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.recenter_x1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.recenter_x2">
+<span class="sig-name descname"><span class="pre">recenter_x2</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.recenter_x2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.recenter_x3">
+<span class="sig-name descname"><span class="pre">recenter_x3</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.recenter_x3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.recenter_x4">
+<span class="sig-name descname"><span class="pre">recenter_x4</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.recenter_x4" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.remove_noise_COM_x1">
+<span class="sig-name descname"><span class="pre">remove_noise_COM_x1</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.remove_noise_COM_x1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.remove_noise_COM_x2">
+<span class="sig-name descname"><span class="pre">remove_noise_COM_x2</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.remove_noise_COM_x2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.remove_noise_COM_x3">
+<span class="sig-name descname"><span class="pre">remove_noise_COM_x3</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.remove_noise_COM_x3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.remove_noise_COM_x4">
+<span class="sig-name descname"><span class="pre">remove_noise_COM_x4</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.remove_noise_COM_x4" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.scale_atom_features_x1">
+<span class="sig-name descname"><span class="pre">scale_atom_features_x1</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.25</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.scale_atom_features_x1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.scale_bond_features_x1">
+<span class="sig-name descname"><span class="pre">scale_bond_features_x1</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.scale_bond_features_x1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.scale_node_features_x3">
+<span class="sig-name descname"><span class="pre">scale_node_features_x3</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2.0</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.scale_node_features_x3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.scale_node_features_x4">
+<span class="sig-name descname"><span class="pre">scale_node_features_x4</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2.0</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.scale_node_features_x4" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.scale_vector_features_x4">
+<span class="sig-name descname"><span class="pre">scale_vector_features_x4</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2.0</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.scale_vector_features_x4" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.build_default_noise_schedule">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.data.component.pharmacophore.</span></span><span class="sig-name descname"><span class="pre">build_default_noise_schedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.build_default_noise_schedule" title="Link to this definition">¶</a></dt>
+<dd><p>Build the default ShEPhERD cosine+linear noise schedule.
+Matches shepherd/training/parameters/params_x1x3x4_diffusion_mosesaq_20240824.py</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.pharmacophore_collate_fn">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.data.component.pharmacophore.</span></span><span class="sig-name descname"><span class="pre">pharmacophore_collate_fn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">torch_geometric.data.HeteroData</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch_geometric.data.HeteroData</span></span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.pharmacophore_collate_fn" title="Link to this definition">¶</a></dt>
+<dd><p>Collate HeteroData samples into a batch.
+Uses torch_geometric’s built-in Batch.from_data_list for HeteroData.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.sample_timestep_biased">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.data.component.pharmacophore.</span></span><span class="sig-name descname"><span class="pre">sample_timestep_biased</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.sample_timestep_biased" title="Link to this definition">¶</a></dt>
+<dd><p>Biased timestep sampling matching ShEPhERD:
+- 7.5% from high-noise end (t=1..50)
+- 75% from middle (t=50..250)
+- 17.5% from low-noise start (t=250..400)</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.Chem">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.data.component.pharmacophore.</span></span><span class="sig-name descname"><span class="pre">Chem</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.Chem" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.logger">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.data.component.pharmacophore.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.logger" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pharmacophore.o3d">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.data.component.pharmacophore.</span></span><span class="sig-name descname"><span class="pre">o3d</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pharmacophore.o3d" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../pointcloud/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">MolecularDiffusion.data.component.pointcloud</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../feature/index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">MolecularDiffusion.data.component.feature</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, pregHosh
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/pregHosh/MolCraftDiffusion" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0"
+                     viewBox="0 0 16 16" height="1em" width="1em">
+                    <path fill-rule="evenodd"
+                          d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                          0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                          -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+                          .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+                          -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0
+                          1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82
+                          1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01
+                          1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+                    />
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">MolecularDiffusion.data.component.pharmacophore</a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataModule</span></code></a><ul>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.load"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataModule.load()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.batch_size"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataModule.batch_size</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.checkpoint_path"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataModule.checkpoint_path</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.collate_fn"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataModule.collate_fn</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.data_fraction"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataModule.data_fraction</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.dataset_name"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataModule.dataset_name</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.kwargs"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataModule.kwargs</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.num_samples"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataModule.num_samples</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.num_workers"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataModule.num_workers</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.pkl_files"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataModule.pkl_files</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.root"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataModule.root</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.task_type"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataModule.task_type</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.test_set"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataModule.test_set</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.train_ratio"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataModule.train_ratio</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.train_set"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataModule.train_set</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.valid_set"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataModule.valid_set</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset</span></code></a><ul>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.get_x1_data"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.get_x1_data()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.get_x2_data"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.get_x2_data()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.get_x3_data_electrostatics_only"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.get_x3_data_electrostatics_only()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.get_x4_data"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.get_x4_data()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.add_virtual_node_x1"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.add_virtual_node_x1</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.add_virtual_node_x2"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.add_virtual_node_x2</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.add_virtual_node_x3"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.add_virtual_node_x3</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.add_virtual_node_x4"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.add_virtual_node_x4</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.atom_types_x1"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.atom_types_x1</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.bond_types_x1"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.bond_types_x1</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.charge_types_x1"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.charge_types_x1</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.check_accessibility"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.check_accessibility</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.compute_x1"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.compute_x1</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.compute_x2"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.compute_x2</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.compute_x3"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.compute_x3</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.compute_x4"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.compute_x4</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.formal_charge_diffusion"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.formal_charge_diffusion</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.independent_timesteps_x2"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.independent_timesteps_x2</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.independent_timesteps_x3"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.independent_timesteps_x3</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.independent_timesteps_x4"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.independent_timesteps_x4</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.max_node_types_x4"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.max_node_types_x4</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.molblocks_and_charges"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.molblocks_and_charges</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.multivectors"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.multivectors</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.noise_schedule_dict"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.noise_schedule_dict</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.num_points_x2"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.num_points_x2</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.num_points_x3"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.num_points_x3</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.probe_radius"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.probe_radius</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.recenter_x1"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.recenter_x1</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.recenter_x2"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.recenter_x2</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.recenter_x3"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.recenter_x3</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.recenter_x4"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.recenter_x4</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.remove_noise_COM_x1"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.remove_noise_COM_x1</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.remove_noise_COM_x2"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.remove_noise_COM_x2</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.remove_noise_COM_x3"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.remove_noise_COM_x3</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.remove_noise_COM_x4"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.remove_noise_COM_x4</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.scale_atom_features_x1"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.scale_atom_features_x1</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.scale_bond_features_x1"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.scale_bond_features_x1</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.scale_node_features_x3"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.scale_node_features_x3</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.scale_node_features_x4"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.scale_node_features_x4</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.scale_vector_features_x4"><code class="docutils literal notranslate"><span class="pre">PharmacophoreDataset.scale_vector_features_x4</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.build_default_noise_schedule"><code class="docutils literal notranslate"><span class="pre">build_default_noise_schedule()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.pharmacophore_collate_fn"><code class="docutils literal notranslate"><span class="pre">pharmacophore_collate_fn()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.sample_timestep_biased"><code class="docutils literal notranslate"><span class="pre">sample_timestep_biased()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.Chem"><code class="docutils literal notranslate"><span class="pre">Chem</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pharmacophore.o3d"><code class="docutils literal notranslate"><span class="pre">o3d</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>

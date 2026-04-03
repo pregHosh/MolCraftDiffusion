@@ -9,7 +9,12 @@ Attributes
 
 .. autoapisummary::
 
+   MolecularDiffusion.utils.geom_metrics.ALPHA_DEFAULT
+   MolecularDiffusion.utils.geom_metrics.COULOMB_SCALING
    MolecularDiffusion.utils.geom_metrics.EDGE_THRESHOLD
+   MolecularDiffusion.utils.geom_metrics.LAM_SCALING
+   MolecularDiffusion.utils.geom_metrics.P_ALPHAS
+   MolecularDiffusion.utils.geom_metrics.P_TYPES
    MolecularDiffusion.utils.geom_metrics.SCALE_FACTOR
    MolecularDiffusion.utils.geom_metrics.SCORES_THRESHOLD
    MolecularDiffusion.utils.geom_metrics.is_cosymlib_available
@@ -26,12 +31,23 @@ Functions
    MolecularDiffusion.utils.geom_metrics.check_validity_v0
    MolecularDiffusion.utils.geom_metrics.check_validity_v1
    MolecularDiffusion.utils.geom_metrics.compare_graph_topology
+   MolecularDiffusion.utils.geom_metrics.compute_drug_likeness
+   MolecularDiffusion.utils.geom_metrics.compute_esp_similarity
+   MolecularDiffusion.utils.geom_metrics.compute_mol_esp_values
+   MolecularDiffusion.utils.geom_metrics.compute_mol_pharmacophores
+   MolecularDiffusion.utils.geom_metrics.compute_mol_surface_pts
+   MolecularDiffusion.utils.geom_metrics.compute_pharm_similarity
+   MolecularDiffusion.utils.geom_metrics.compute_shape_similarity
    MolecularDiffusion.utils.geom_metrics.is_fully_connected
+   MolecularDiffusion.utils.geom_metrics.kabsch_align
    MolecularDiffusion.utils.geom_metrics.load_molecules_from_xyz
+   MolecularDiffusion.utils.geom_metrics.optimize_shape_alignment
+   MolecularDiffusion.utils.geom_metrics.pca_align
    MolecularDiffusion.utils.geom_metrics.run_postbuster
    MolecularDiffusion.utils.geom_metrics.runner
    MolecularDiffusion.utils.geom_metrics.smilify_wrapper
    MolecularDiffusion.utils.geom_metrics.xyz_to_pdb
+   MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol
 
 
 Module Contents
@@ -171,6 +187,96 @@ Module Contents
    :rtype: bool
 
 
+.. py:function:: compute_drug_likeness(mol: rdkit.Chem.Mol) -> dict
+
+   Compute RDKit-based drug-likeness metrics including SAScore and QED.
+
+
+.. py:function:: compute_esp_similarity(pts_gen, esp_gen, pts_ref, esp_ref, center=True, align=True) -> float
+
+   Compute ESP similarity using Gaussian-weighted overlap (ESP Tanimoto).
+
+
+.. py:function:: compute_mol_esp_values(mol, surf_pts: numpy.ndarray = None) -> numpy.ndarray
+
+   Compute electrostatic potential (ESP) at surface points or per-atom charges.
+
+   Matches shepherd-score implementation: computes Coulomb potential at surface points
+   if provided, otherwise returns per-atom Gasteiger charges.
+
+   :param mol: RDKit molecule with conformer.
+   :type mol: rdkit.Chem.Mol
+   :param surf_pts: Surface point coordinates (M, 3). If provided, computes ESP at these points.
+                    If None, returns per-atom Gasteiger charges.
+   :type surf_pts: np.ndarray, optional
+
+   :returns: ESP values. If surf_pts provided: (M,) potential at surface points.
+             If surf_pts is None: (N,) charges for each atom.
+   :rtype: np.ndarray
+
+
+.. py:function:: compute_mol_pharmacophores(mol, multi_vector: bool = True, exclude: list = [], check_access: bool = False, scale: float = 1.0) -> tuple
+
+   Extract pharmacophore points and vectors using shepherd-score implementation.
+
+   Returns (pharm_pos, pharm_types, pharm_vecs):
+       - pharm_pos: (M, 3) float32 anchor positions
+       - pharm_types: (M,) int32 type indices
+       - pharm_vecs: (M, 3) float32 direction vectors (optional)
+
+   Pharmacophore types:
+       0: Acceptor, 1: Donor, 2: Aromatic, 3: Hydrophobe,
+       4: Halogen, 5: Cation, 6: Anion, 7: ZnBinder, 8: Dummy
+
+   :param mol: RDKit molecule with conformer.
+   :type mol: rdkit.Chem.Mol
+   :param multi_vector: Whether to represent pharmacophores with multiple vectors.
+   :type multi_vector: bool (default = True)
+   :param exclude: List of hydrogen indices to exclude from HBD detection.
+   :type exclude: list (default = [])
+   :param check_access: Check if HBD/HBA are accessible to molecular surface.
+   :type check_access: bool (default = False)
+   :param scale: Length of pharmacophore vector in Angstroms.
+   :type scale: float (default = 1.0)
+
+   :returns: (pharm_positions, pharm_types, pharm_vectors) where:
+             - pharm_positions: (M, 3) anchor positions
+             - pharm_types: (M,) type indices (matching P_TYPES)
+             - pharm_vectors: (M, 3) direction vectors
+   :rtype: tuple
+
+
+.. py:function:: compute_mol_surface_pts(mol, num_pts: int = 75, probe_radius: float = 1.2) -> numpy.ndarray
+
+   Gets the point cloud representation of a molecule's van der Waals surface using
+   mesh-based surface generation (matching shepherd-score implementation).
+
+   Uses Open3D's ball-pivoting algorithm for accurate surface mesh generation.
+   Takes into account the vdW radii of different atoms. Removes overlapping points
+   within vdW radii of neighboring atoms.
+
+   :param mol: RDKit molecule object with a conformer.
+   :type mol: rdkit.Chem.Mol object
+   :param num_pts: The total number of points in the final point cloud.
+   :type num_pts: int (default = 75)
+   :param probe_radius: The radius of a probe atom to act as a "solvent accessible surface".
+                        Default = 1.2 angstroms which is the radius of a Hydrogen atom.
+   :type probe_radius: float (default = 1.2)
+
+   :returns: Coordinates of points representing the molecular surface, shape (num_pts, 3).
+   :rtype: np.ndarray
+
+
+.. py:function:: compute_pharm_similarity(pts_gen, types_gen, pts_ref, types_ref, vecs_gen=None, vecs_ref=None, center=True, align=True) -> float
+
+   Direction-aware Gaussian overlap Tanimoto for pharmacophores.
+
+
+.. py:function:: compute_shape_similarity(pts_gen, pts_ref, center=True, align=True) -> float
+
+   Compute shape similarity using Gaussian-weighted volume overlap (Tanimoto).
+
+
 .. py:function:: is_fully_connected(edge_index, num_nodes)
 
    Determines if the graph is fully connected.
@@ -188,6 +294,12 @@ Module Contents
    :rtype: tuple
 
 
+.. py:function:: kabsch_align(pts_fit: numpy.ndarray, pts_ref: numpy.ndarray) -> numpy.ndarray
+
+   Standard Kabsch alignment for 1:1 corresponding point sets.
+   Returns pts_fit rotated and translated to align with pts_ref.
+
+
 .. py:function:: load_molecules_from_xyz(xyz_dir)
 
    Converts all XYZ files in a directory to RDKit Mol objects.
@@ -203,6 +315,32 @@ Module Contents
                  - valid_molecules (list of RDKit Mol): Successfully loaded molecules.
                  - pass_xyz_files (list of str): Filenames of the successfully loaded molecules.
    :rtype: tuple
+
+
+.. py:function:: optimize_shape_alignment(pts_gen: numpy.ndarray, pts_ref: numpy.ndarray, alpha=ALPHA_DEFAULT, max_steps=100)
+
+   Optimize alignment of non-corresponding point clouds to maximize Gaussian overlap.
+   Matches the ShEPhERD-score ROCS-style optimization logic.
+   Returns (aligned_points, rotation_matrix).
+
+
+.. py:function:: pca_align(pts_fit: numpy.ndarray, pts_ref: numpy.ndarray) -> numpy.ndarray
+
+   Rotate pts_fit to align its principal axes with those of pts_ref.
+
+   Works for point clouds of **different sizes** (no correspondence required).
+   Tries all 4 axis-flip combinations and returns the rotation that maximises
+   the sum of dot products between corresponding principal axes (best sign match).
+
+   Both inputs must already be centered at the origin.
+
+   :param pts_fit:
+   :type pts_fit: np.ndarray (N, 3)  — points to rotate (pre-centered)
+   :param pts_ref:
+   :type pts_ref: np.ndarray (M, 3)  — reference points (pre-centered)
+
+   :returns: **pts_fit_rotated**
+   :rtype: np.ndarray (N, 3)
 
 
 .. py:function:: run_postbuster(mols, timeout=60, batch_size=1)
@@ -271,8 +409,28 @@ Module Contents
    :type pdb_file_path: str
 
 
+.. py:function:: xyz_to_rdkit_mol(xyz_path: str) -> rdkit.Chem.Mol
+
+   Convert an XYZ file to an RDKit molecule with perceived bonds.
+   Tries multiple charges to find a valid structure without radicals.
+
+
+.. py:data:: ALPHA_DEFAULT
+   :value: 0.81
+
+
+.. py:data:: COULOMB_SCALING
+
 .. py:data:: EDGE_THRESHOLD
    :value: 4
+
+
+.. py:data:: LAM_SCALING
+
+.. py:data:: P_ALPHAS
+
+.. py:data:: P_TYPES
+   :value: ['Acceptor', 'Donor', 'Aromatic', 'Hydrophobe', 'Halogen', 'Cation', 'Anion', 'ZnBinder', 'Dummy']
 
 
 .. py:data:: SCALE_FACTOR

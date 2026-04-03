@@ -1,0 +1,19 @@
+MolecularDiffusion.modules.layers.equiformer_v2_s.edge_rot_mat
+==============================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.equiformer_v2_s.edge_rot_mat
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.equiformer_v2_s.edge_rot_mat.init_edge_rot_mat
+
+
+Module Contents
+---------------
+
+.. py:function:: init_edge_rot_mat(edge_distance_vec)
+

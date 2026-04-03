@@ -1,0 +1,146 @@
+MolecularDiffusion.modules.layers.equiformer_v2_s.drop
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.equiformer_v2_s.drop
+
+.. autoapi-nested-parse::
+
+   Add `extra_repr` into DropPath implemented by timm
+   for displaying more info.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.equiformer_v2_s.drop.DropPath
+   MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout
+   MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics
+   MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantScalarsDropout
+   MolecularDiffusion.modules.layers.equiformer_v2_s.drop.GraphDropPath
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.equiformer_v2_s.drop.drop_path
+
+
+Module Contents
+---------------
+
+.. py:class:: DropPath(drop_prob=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Drop paths (Stochastic Depth) per sample  (when applied in main path of residual blocks).
+
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: drop_prob
+      :value: None
+
+
+
+.. py:class:: EquivariantDropout(irreps, drop_prob)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: drop
+
+
+   .. py:attribute:: drop_prob
+
+
+   .. py:attribute:: irreps
+
+
+   .. py:attribute:: mul
+
+
+   .. py:attribute:: num_irreps
+
+
+.. py:class:: EquivariantDropoutArraySphericalHarmonics(drop_prob, drop_graph=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: forward(x, batch=None)
+
+
+   .. py:attribute:: drop
+
+
+   .. py:attribute:: drop_graph
+      :value: False
+
+
+
+   .. py:attribute:: drop_prob
+
+
+.. py:class:: EquivariantScalarsDropout(irreps, drop_prob)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: drop_prob
+
+
+   .. py:attribute:: irreps
+
+
+.. py:class:: GraphDropPath(drop_prob=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Consider batch for graph data when dropping paths.
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: forward(x, batch)
+
+
+   .. py:attribute:: drop_prob
+      :value: None
+
+
+
+.. py:function:: drop_path(x, drop_prob: float = 0.0, training: bool = False)
+
+   Drop paths (Stochastic Depth) per sample (when applied in main path of residual blocks).
+   This is the same as the DropConnect impl I created for EfficientNet, etc networks, however,
+   the original name is misleading as 'Drop Connect' is a different form of dropout in a separate paper...
+   See discussion: https://github.com/tensorflow/tpu/issues/494#issuecomment-532968956 ... I've opted for
+   changing the layer and argument names to 'drop path' rather than mix DropConnect as a layer name and use
+   'survival rate' as the argument.
+
+

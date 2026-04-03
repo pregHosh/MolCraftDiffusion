@@ -1,0 +1,97 @@
+MolecularDiffusion.utils.shepherd_score.alignment.utils.pca
+===========================================================
+
+.. py:module:: MolecularDiffusion.utils.shepherd_score.alignment.utils.pca
+
+.. autoapi-nested-parse::
+
+   Torch implementations for principal component alignment (pca). Written to handle batching.
+
+   IT IS RECOMMENDED TO USE THE NUMPY VERSION.
+   Using the numpy version of quaternions_for_principal_component_alignment is faster
+   (~2.5ms vs ~5ms). Further, the parallel GPU version is slightly slower (50us) than the serial,
+   CPU version.
+
+   Credit to Lewis J. Martin as this was adapted from
+   https://github.com/ljmartin/align/blob/main/0.2%20aligning%20principal%20moments%20of%20inertia.ipynb
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.shepherd_score.alignment.utils.pca.angle_between_vecs
+   MolecularDiffusion.utils.shepherd_score.alignment.utils.pca.compute_moment_of_inertia
+   MolecularDiffusion.utils.shepherd_score.alignment.utils.pca.compute_principal_moments_of_interia
+   MolecularDiffusion.utils.shepherd_score.alignment.utils.pca.quaternion_from_axis_angle
+   MolecularDiffusion.utils.shepherd_score.alignment.utils.pca.quaternion_mult
+   MolecularDiffusion.utils.shepherd_score.alignment.utils.pca.quaternions_for_principal_component_alignment
+   MolecularDiffusion.utils.shepherd_score.alignment.utils.pca.rotation_axis
+
+
+Module Contents
+---------------
+
+.. py:function:: angle_between_vecs(v1, v2)
+
+   Compute the angle in radians between two vectors (already normalized).
+
+
+.. py:function:: compute_moment_of_inertia(points: torch.Tensor) -> torch.Tensor
+
+   Computes the moment of inertia of a set of points.
+   A = x^2 + y^2 + z^2
+   B = X^T X
+
+
+.. py:function:: compute_principal_moments_of_interia(points: torch.Tensor) -> torch.Tensor
+
+   Compute the principal moments of inertia of a set of points.
+
+
+.. py:function:: quaternion_from_axis_angle(axis, angle)
+
+   Create a Quaternion from a rotation axis and an angle in radians.
+
+   :param axis: Axis to rotate about.
+   :type axis: torch.Tensor (3,)
+   :param angle: Angle in radians.
+   :type angle: torch.Tensor (1,)
+
+   :returns: **quaternion**
+   :rtype: torch.Tensor (4,)
+
+
+.. py:function:: quaternion_mult(p: torch.Tensor, q: torch.Tensor) -> torch.Tensor
+
+   Multiplication of quaternions p and q.
+
+   Reference: https://academicflight.com/articles/kinematics/rotation-formalisms/quaternions/
+
+   General use case: The consecutive rotations of q_1 then q_2 is equivalent
+   to q_3 = q_2*q_1. (order matters)
+
+   :param p: The first quaternion with shape (4,) or (batch, 4).
+   :type p: torch.Tensor
+   :param q: The second quaternion with shape (4,) or (batch, 4).
+   :type q: torch.Tensor
+
+   :returns: The product of the two quaternions with shape (4,) or (batch, 4).
+   :rtype: torch.Tensor
+
+
+.. py:function:: quaternions_for_principal_component_alignment(ref_points: torch.Tensor, fit_points: torch.Tensor) -> torch.Tensor
+
+   Computes the 4 quaternions required for alignment of the fit mol along the
+   principal components of the reference mol.
+
+   The computed quaternions assumes that fit_points will be rotated after being centered at COM.
+
+
+.. py:function:: rotation_axis(v1, v2)
+
+   Calculate the vector about which to order to rotate `a` to align with `b` (cross product).
+
+
