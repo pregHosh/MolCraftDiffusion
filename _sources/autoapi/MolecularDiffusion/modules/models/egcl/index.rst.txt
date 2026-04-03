@@ -16,9 +16,9 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: EGNN(in_node_nf, hidden_nf, act_fn=nn.SiLU(), in_context_nf=0, n_layers=3, n_mlp_layers=2, attention=False, norm_diff=True, out_node_nf=None, tanh=False, coords_range=15, norm_constant=1, inv_sublayers=2, sin_embedding=False, include_cosine=False, normalization_factor=100, aggregation_method='sum', dropout=0.0, normalization=False, adapter_module=False)
+.. py:class:: EGNN(in_node_nf, hidden_nf, act_fn=nn.SiLU(), in_context_nf=0, n_layers=3, n_mlp_layers=2, attention=False, norm_diff=True, out_node_nf=None, tanh=False, coords_range=15, norm_constant=1, inv_sublayers=2, sin_embedding=False, include_cosine=False, normalization_factor=100, aggregation_method='sum', dropout=0.0, normalization=False, adapter_module=False, n_adapter_context=0, n_concat_context=0)
 
-   Bases: :py:obj:`torch.nn.Module`
+   Bases: :py:obj:`torch.nn.Module`, :py:obj:`MolecularDiffusion.core.Configurable`
 
 
    Equivariant Graph Neural Network (EGNN) module for processing graph-structured data with node features and coordinates.
@@ -64,16 +64,24 @@ Module Contents
    :type dropout: float
    :param normalization: Whether to use batch normalization in MLPs.
    :type normalization: bool
-   :param adapter_module: Whether to use adapter modules for context.
+   :param adapter_module: Whether to use adapter modules for context. (Legacy, prefer n_adapter_context.)
    :type adapter_module: bool
+
+   n_adapter_context (int): Number of context features routed through adapter MLPs.
+   n_concat_context (int): Number of context features concatenated to input. (Informational; caller must widen in_node_nf.)
 
 
    .. py:method:: forward(h, x, edge_index, node_mask=None, edge_mask=None, context=None, use_embed=False)
 
+      Forward pass.
+
+      :param context: For adapter mode, this should contain ONLY the adapter-routed
+                      columns (n_adapter_context dims). Concat-routed columns should
+                      already be part of h before calling this method.
+
+
 
    .. py:attribute:: adapter_module
-      :value: False
-
 
 
    .. py:attribute:: aggregation_method
@@ -101,6 +109,16 @@ Module Contents
 
 
 
+   .. py:attribute:: n_adapter_context
+      :value: 0
+
+
+
+   .. py:attribute:: n_concat_context
+      :value: 0
+
+
+
    .. py:attribute:: n_layers
       :value: 3
 
@@ -116,9 +134,9 @@ Module Contents
 
 
 
-.. py:class:: EGNN_dynamics(in_node_nf, context_node_nf, n_dims, hidden_nf=64, act_fn=torch.nn.SiLU(), n_layers=4, attention=False, condition_time=True, tanh=False, norm_constant=0, inv_sublayers=2, sin_embedding=False, include_cosine=False, normalization_factor=100, aggregation_method='sum', dropout=0.0, normalization=False, use_adapter_module=False)
+.. py:class:: EGNN_dynamics(in_node_nf, context_node_nf, n_dims, hidden_nf=64, act_fn=torch.nn.SiLU(), n_layers=4, attention=False, condition_time=True, tanh=False, norm_constant=0, inv_sublayers=2, sin_embedding=False, include_cosine=False, normalization_factor=100, aggregation_method='sum', dropout=0.0, normalization=False, use_adapter_module=False, adapter_indices=None, concat_indices=None)
 
-   Bases: :py:obj:`torch.nn.Module`
+   Bases: :py:obj:`torch.nn.Module`, :py:obj:`MolecularDiffusion.core.Configurable`
 
 
    Dynamics model for Equivariant Diffusion Models (EDMs) using EGNNs.
@@ -160,8 +178,11 @@ Module Contents
    :type dropout: float
    :param normalization: Whether to use normalization in the EGNN.
    :type normalization: bool
-   :param use_adapter_module: Whether to use adapter module for context.
+   :param use_adapter_module: Whether to use adapter module for context. (Legacy, prefer adapter_indices.)
    :type use_adapter_module: bool
+
+   adapter_indices (list): Column indices of context tensor routed through adapter MLPs.
+   concat_indices (list): Column indices of context tensor concatenated to input features.
 
    Dynamics model for EDMs using EGNNs.
    in_node_nf: int -- number of ALL input features per node (including time)
@@ -181,7 +202,9 @@ Module Contents
    aggregation_method: str -- aggregation method for the EGNN
    dropout: float -- dropout probability
    normalization: bool -- whether to use normalization in the EGNN
-   use_adapter_module: bool -- whether to use adapter module for context
+   use_adapter_module: bool -- (legacy) whether to use adapter for ALL context
+   adapter_indices: list -- indices of context columns for adapter routing
+   concat_indices: list -- indices of context columns for concatenation routing
 
 
    .. py:method:: forward(t, xh, node_mask, edge_mask, context=None)
@@ -198,6 +221,19 @@ Module Contents
    .. py:method:: wrap_forward(node_mask, edge_mask, context)
 
 
+   .. py:attribute:: act_fn_obj
+
+
+   .. py:attribute:: aggregation_method
+      :value: 'sum'
+
+
+
+   .. py:attribute:: attention
+      :value: False
+
+
+
    .. py:attribute:: condition_time
       :value: True
 
@@ -206,17 +242,71 @@ Module Contents
    .. py:attribute:: context_node_nf
 
 
+   .. py:attribute:: dropout
+      :value: 0.0
+
+
+
    .. py:attribute:: egnn
+
+
+   .. py:attribute:: hidden_nf
+      :value: 64
+
 
 
    .. py:attribute:: in_node_nf
 
 
+   .. py:attribute:: include_cosine
+      :value: False
+
+
+
+   .. py:attribute:: inv_sublayers
+      :value: 2
+
+
+
+   .. py:attribute:: n_adapter_context
+
+
+   .. py:attribute:: n_concat_context
+
+
    .. py:attribute:: n_dims
 
 
-   .. py:attribute:: use_adapter_module
+   .. py:attribute:: n_layers
+      :value: 4
+
+
+
+   .. py:attribute:: norm_constant
+      :value: 0
+
+
+
+   .. py:attribute:: normalization
       :value: False
 
+
+
+   .. py:attribute:: normalization_factor
+      :value: 100
+
+
+
+   .. py:attribute:: sin_embedding
+      :value: False
+
+
+
+   .. py:attribute:: tanh
+      :value: False
+
+
+
+   .. py:attribute:: use_adapter_module
 
 

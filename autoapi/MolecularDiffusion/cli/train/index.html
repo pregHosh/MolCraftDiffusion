@@ -378,19 +378,22 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.train.engine_wrapper" title="MolecularDiffusion.cli.train.engine_wrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">engine_wrapper</span></code></a>(task_module, data_module, ...[, ...])</p></td>
 <td><p>Training loop using original Engine.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.train.is_rank_zero" title="MolecularDiffusion.cli.train.is_rank_zero"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_rank_zero</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.train.evaluate_and_save" title="MolecularDiffusion.cli.train.evaluate_and_save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate_and_save</span></code></a>(i, solver, task_module, ...)</p></td>
+<td><p>Helper to run evaluation and save checkpoints.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.train.is_rank_zero" title="MolecularDiffusion.cli.train.is_rank_zero"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_rank_zero</span></code></a>()</p></td>
 <td><p>Check if current process is rank zero.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.train.load_weights" title="MolecularDiffusion.cli.train.load_weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_weights</span></code></a>(task, ckpt_path)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.train.load_weights" title="MolecularDiffusion.cli.train.load_weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_weights</span></code></a>(task, ckpt_path[, task_module])</p></td>
 <td><p>Load model weights from a checkpoint file (weights only).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.train.log_hyperparameters" title="MolecularDiffusion.cli.train.log_hyperparameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_hyperparameters</span></code></a>(object_dict)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.train.log_hyperparameters" title="MolecularDiffusion.cli.train.log_hyperparameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_hyperparameters</span></code></a>(object_dict)</p></td>
 <td><p>Log hyperparameters for debugging.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.train.train" title="MolecularDiffusion.cli.train.train"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train</span></code></a>(→ Tuple[Dict[str, Any], Dict[str, Any]])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.train.train" title="MolecularDiffusion.cli.train.train"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train</span></code></a>(→ Tuple[Dict[str, Any], Dict[str, Any]])</p></td>
 <td><p>Main training function.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.train.train_main" title="MolecularDiffusion.cli.train.train_main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train_main</span></code></a>(cfg)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.train.train_main" title="MolecularDiffusion.cli.train.train_main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train_main</span></code></a>(cfg)</p></td>
 <td><p>Entry point for CLI train command.</p></td>
 </tr>
 </tbody>
@@ -401,8 +404,14 @@
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.cli.train.engine_wrapper">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.train.</span></span><span class="sig-name descname"><span class="pre">engine_wrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trainer_module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resume_from_checkpoint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.train.engine_wrapper" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.train.</span></span><span class="sig-name descname"><span class="pre">engine_wrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trainer_module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resume_from_checkpoint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.train.engine_wrapper" title="Link to this definition">¶</a></dt>
 <dd><p>Training loop using original Engine.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.cli.train.evaluate_and_save">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.train.</span></span><span class="sig-name descname"><span class="pre">evaluate_and_save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trainer_module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">versioned_ckpt_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_amp</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.train.evaluate_and_save" title="Link to this definition">¶</a></dt>
+<dd><p>Helper to run evaluation and save checkpoints.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -413,11 +422,24 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.cli.train.load_weights">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.train.</span></span><span class="sig-name descname"><span class="pre">load_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ckpt_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.train.load_weights" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.train.</span></span><span class="sig-name descname"><span class="pre">load_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ckpt_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.train.load_weights" title="Link to this definition">¶</a></dt>
 <dd><p>Load model weights from a checkpoint file (weights only).</p>
 <p>This loads the state_dict from the checkpoint into the task model,
 ignoring optimizer/scheduler states and other metadata.
 Useful for fine-tuning or starting from a pre-trained model.</p>
+<p>If a RuntimeError occurs due to size mismatches (e.g., from adding
+new conditions), delegates to task_module.adjust_state_dict() for
+model-specific dimension adjustment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task</strong> – The task model to load weights into.</p></li>
+<li><p><strong>ckpt_path</strong> – Path to the checkpoint file.</p></li>
+<li><p><strong>task_module</strong> – Optional task factory with adjust_state_dict() method
+for handling dimension mismatches.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -523,6 +545,7 @@ Useful for fine-tuning or starting from a pre-trained model.</p>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.train.engine_wrapper"><code class="docutils literal notranslate"><span class="pre">engine_wrapper()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.cli.train.evaluate_and_save"><code class="docutils literal notranslate"><span class="pre">evaluate_and_save()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.train.is_rank_zero"><code class="docutils literal notranslate"><span class="pre">is_rank_zero()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.train.load_weights"><code class="docutils literal notranslate"><span class="pre">load_weights()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.train.log_hyperparameters"><code class="docutils literal notranslate"><span class="pre">log_hyperparameters()</span></code></a></li>

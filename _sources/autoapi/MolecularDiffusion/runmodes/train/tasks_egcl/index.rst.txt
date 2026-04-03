@@ -90,6 +90,22 @@ Module Contents
            t_max (float)
 
 
+   .. py:method:: adjust_state_dict(state_dict, task)
+
+      Adjust checkpoint state dict dimensions to match the current model.
+
+      Handles size mismatches from added conditions by resizing EGCL
+      embedding layers and adapter context embeddings. Uses suffix-based
+      key matching on BOTH checkpoint and model state dicts to handle
+      cross-prefix scenarios (e.g. PyGAdapter wrapping).
+
+      :param state_dict: The checkpoint state dict to adjust.
+      :param task: The task model (used to get expected dimensions).
+
+      :returns: The adjusted state dict.
+
+
+
    .. py:method:: build()
 
       Build and return (model, task) based on task_type.
@@ -151,6 +167,12 @@ Module Contents
 
 
    .. py:attribute:: kwargs
+
+
+   .. py:attribute:: n_adapter_context
+
+
+   .. py:attribute:: n_concat_context
 
 
    .. py:attribute:: norm_constant

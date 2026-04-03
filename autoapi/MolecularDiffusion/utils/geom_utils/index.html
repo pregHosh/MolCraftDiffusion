@@ -356,6 +356,18 @@
         <article role="main" id="furo-main-content">
           <section id="module-MolecularDiffusion.utils.geom_utils">
 <span id="moleculardiffusion-utils-geom-utils"></span><h1>MolecularDiffusion.utils.geom_utils<a class="headerlink" href="#module-MolecularDiffusion.utils.geom_utils" title="Link to this heading">¶</a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.logger" title="MolecularDiffusion.utils.geom_utils.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -407,10 +419,10 @@
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_xyz_file" title="MolecularDiffusion.utils.geom_utils.save_xyz_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_xyz_file</span></code></a>(path, one_hot, positions, atom_decoder)</p></td>
-<td><p>Save XYZ files for a batch of molecules, skipping atoms near (0,0,0).</p></td>
+<td><p>Save XYZ files for a batch of molecules directly to the target path.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_xyz_file_atomic_numbers" title="MolecularDiffusion.utils.geom_utils.save_xyz_file_atomic_numbers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_xyz_file_atomic_numbers</span></code></a>(path, positions, ...[, ...])</p></td>
-<td><p>Save XYZ files for a batch of molecules, writing ATOMIC SYMBOLS in the first column.</p></td>
+<td><p>Save XYZ files for a batch of molecules directly to the target path.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.translate_to_origine" title="MolecularDiffusion.utils.geom_utils.translate_to_origine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">translate_to_origine</span></code></a>(coords, node_mask)</p></td>
 <td><p></p></td>
@@ -629,7 +641,7 @@ torch_geometric.data.Data: The corrected molecular graph data with updated edge 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.save_xyz_file">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_utils.</span></span><span class="sig-name descname"><span class="pre">save_xyz_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_hot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_decoder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'molecule'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomic_numbers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_unknown_fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.save_xyz_file" title="Link to this definition">¶</a></dt>
-<dd><p>Save XYZ files for a batch of molecules, skipping atoms near (0,0,0).</p>
+<dd><p>Save XYZ files for a batch of molecules directly to the target path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -637,7 +649,7 @@ torch_geometric.data.Data: The corrected molecular graph data with updated edge 
 <li><p><strong>one_hot</strong> – [B, N, C] one-hot encoding</p></li>
 <li><p><strong>positions</strong> – [B, N, 3] coordinates</p></li>
 <li><p><strong>atom_decoder</strong> – List mapping indices to atom symbols</p></li>
-<li><p><strong>id_from</strong> – Starting index for filenames</p></li>
+<li><p><strong>id_from</strong> – Starting index for filenames (if idxs is None)</p></li>
 <li><p><strong>name</strong> – Filename prefix</p></li>
 <li><p><strong>node_mask</strong> – Optional [B, N] or [B, N, 1] mask</p></li>
 <li><p><strong>idxs</strong> – Optional indices for filenames</p></li>
@@ -652,7 +664,7 @@ torch_geometric.data.Data: The corrected molecular graph data with updated edge 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.save_xyz_file_atomic_numbers">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_utils.</span></span><span class="sig-name descname"><span class="pre">save_xyz_file_atomic_numbers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">positions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.11)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomic_numbers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.11)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_from</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'molecule'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.11)"><span class="pre">torch.Tensor</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idxs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.save_xyz_file_atomic_numbers" title="Link to this definition">¶</a></dt>
-<dd><p>Save XYZ files for a batch of molecules, writing ATOMIC SYMBOLS in the first column.</p>
+<dd><p>Save XYZ files for a batch of molecules directly to the target path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -672,6 +684,11 @@ torch_geometric.data.Data: The corrected molecular graph data with updated edge 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.translate_to_origine">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_utils.</span></span><span class="sig-name descname"><span class="pre">translate_to_origine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.translate_to_origine" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.logger">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_utils.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.logger" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
@@ -750,6 +767,7 @@ torch_geometric.data.Data: The corrected molecular graph data with updated edge 
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">MolecularDiffusion.utils.geom_utils</a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.assert_correctly_masked"><code class="docutils literal notranslate"><span class="pre">assert_correctly_masked()</span></code></a></li>
@@ -770,6 +788,7 @@ torch_geometric.data.Data: The corrected molecular graph data with updated edge 
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_xyz_file"><code class="docutils literal notranslate"><span class="pre">save_xyz_file()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_xyz_file_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">save_xyz_file_atomic_numbers()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.translate_to_origine"><code class="docutils literal notranslate"><span class="pre">translate_to_origine()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
 </ul>
 </li>
 </ul>

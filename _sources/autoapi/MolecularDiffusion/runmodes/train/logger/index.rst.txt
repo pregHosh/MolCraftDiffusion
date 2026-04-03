@@ -15,7 +15,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: Logger(logger, log_interval, name_wandb, project_wandb, dir_wandb)
+.. py:class:: Logger(logger, log_interval, name_wandb, project_wandb, dir_wandb, tags=None)
 
    .. py:attribute:: dir_wandb
 
@@ -30,5 +30,10 @@ Module Contents
 
 
    .. py:attribute:: project_wandb
+
+
+   .. py:attribute:: tags
+      :value: None
+
 
 

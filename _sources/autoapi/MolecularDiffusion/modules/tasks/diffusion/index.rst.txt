@@ -351,7 +351,7 @@ Module Contents
 
 
 
-.. py:class:: GuidanceModelPrediction(model, noisemodel, task=(), include_charge=True, metric=('mae', 'rmse'), num_mlp_layer=1, normalization=True, num_class=None, mlp_batch_norm=True, readout='mean', mlp_dropout=0, std_mean=None, load_mlps_layer=0, nextra_nf=0, norm_values=(1.0, 1.0, 1.0), extra_norm_values=(), norm_biases=(None, 0.0, 0.0), weight_classes=None, t_max=1, verbose=0)
+.. py:class:: GuidanceModelPrediction(model, noisemodel, task=(), include_charge=True, metric=('mae', 'rmse'), num_mlp_layer=1, normalization=True, num_class=None, mlp_batch_norm=None, readout='mean', mlp_dropout=0, std_mean=None, load_mlps_layer=0, nextra_nf=0, norm_values=(1.0, 1.0, 1.0), extra_norm_values=(), norm_biases=(None, 0.0, 0.0), weight_classes=None, t_max=1, verbose=0, prediction_mlp_type='pernode', prediction_activation='relu', loss_weighting='none', **kwargs)
 
    Bases: :py:obj:`MolecularDiffusion.modules.tasks.task.Task`, :py:obj:`MolecularDiffusion.core.Configurable`
 
@@ -394,6 +394,17 @@ Module Contents
 
 
    .. py:method:: get_adj_matrix(_edges_dict, n_nodes, batch_size)
+
+
+   .. py:method:: get_loss_weight(t)
+
+      Compute importance weights for the loss based on the timestep t.
+
+      :param t: Tensor of shape (B, 1) or (B,) containing normalized timesteps in [0, 1].
+
+      :returns: Tensor of importance weights.
+      :rtype: w
+
 
 
    .. py:method:: normalize(x, h, node_mask)
@@ -447,10 +458,18 @@ Module Contents
    .. py:method:: target(batch)
 
 
+   .. py:attribute:: SNR_CLAMP_MAX
+      :value: 5.0
+
+
+
    .. py:attribute:: T
 
 
    .. py:attribute:: criterion
+
+
+   .. py:property:: device
 
 
    .. py:attribute:: eps
@@ -466,9 +485,6 @@ Module Contents
    .. py:attribute:: gamma
 
 
-   .. py:attribute:: in_node_nf
-
-
    .. py:attribute:: include_charge
       :value: True
 
@@ -476,6 +492,11 @@ Module Contents
 
    .. py:attribute:: load_mlps_layer
       :value: 0
+
+
+
+   .. py:attribute:: loss_weighting
+      :value: 'none'
 
 
 
@@ -490,7 +511,7 @@ Module Contents
 
 
    .. py:attribute:: mlp_batch_norm
-      :value: True
+      :value: None
 
 
 
@@ -541,6 +562,16 @@ Module Contents
 
 
    .. py:attribute:: num_targets
+
+
+   .. py:attribute:: prediction_activation
+      :value: 'relu'
+
+
+
+   .. py:attribute:: prediction_mlp_type
+      :value: 'pernode'
+
 
 
    .. py:attribute:: readout

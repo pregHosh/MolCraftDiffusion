@@ -23,7 +23,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: GenerativeFactory(task: MolecularDiffusion.modules.tasks.task.Task, task_type: str = 'unconditional', sampling_mode: str = 'ddpm', num_generate: int = 100, mol_size: List[int] = [0, 0], target_values: List[float] = [], property_names: List[str] = [], negative_target_values: List[float] = [], batch_size: int = 1, seed: int = 86, n_frames: int = 0, output_path: str = 'generated_mol', condition_configs={})
+.. py:class:: GenerativeFactory(task: MolecularDiffusion.modules.tasks.task.Task, task_type: str = 'unconditional', sampling_mode: str = 'ddpm', num_generate: int = 100, mol_size: List[int] = [0, 0], target_values: List[float] = [], property_names: List[str] = [], negative_target_values: List[float] = [], batch_size: int = 1, seed: int = 86, n_frames: int = 0, output_path: str = 'generated_mol', condition_configs={}, max_mol_size: int = 0)
 
    .. py:method:: conditional_generation()
 
@@ -37,12 +37,14 @@ Module Contents
 
       This function reads an XYZ file, encodes atomic features, normalizes
       coordinates and features, and returns a tensor combining positions
-      and processed features.
+      and processed features.  When the model uses extra node features
+      (ndim_extra > 0), they are either computed from the reference
+      structure or zero-padded.
 
       :returns:
 
-                Tensor of shape (1, n_atoms, 3 + n_features + 1) containing:
-                            [normalized_coords | normalized_onehot_features | normalized_charges].
+                Tensor of shape (1, n_atoms, 3 + n_features + ndim_extra + 1)
+                            containing [normalized_coords | normalized_onehot | normalized_extra | normalized_charges].
       :rtype: torch.Tensor
 
       :raises FileNotFoundError: If the reference structure file is not found.
@@ -71,6 +73,11 @@ Module Contents
 
 
    .. py:attribute:: condition_configs
+
+
+   .. py:attribute:: max_mol_size
+      :value: 0
+
 
 
    .. py:attribute:: mol_size

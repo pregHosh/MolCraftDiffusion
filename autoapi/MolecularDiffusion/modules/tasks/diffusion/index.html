@@ -769,7 +769,7 @@ Tuple[Tensor, Tensor, Tensor, Tensor]: Positions, one-hot encoding of atoms, nod
 
 <dl class="py class">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.diffusion.</span></span><span class="sig-name descname"><span class="pre">GuidanceModelPrediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noisemodel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('mae',</span> <span class="pre">'rmse')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_mlp_layer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_class</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mlp_batch_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mlp_dropout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std_mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_mlps_layer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nextra_nf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1.0,</span> <span class="pre">1.0,</span> <span class="pre">1.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_norm_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_biases</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(None,</span> <span class="pre">0.0,</span> <span class="pre">0.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.diffusion.</span></span><span class="sig-name descname"><span class="pre">GuidanceModelPrediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noisemodel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('mae',</span> <span class="pre">'rmse')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_mlp_layer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_class</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mlp_batch_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mlp_dropout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std_mean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_mlps_layer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nextra_nf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1.0,</span> <span class="pre">1.0,</span> <span class="pre">1.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_norm_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_biases</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(None,</span> <span class="pre">0.0,</span> <span class="pre">0.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_mlp_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pernode'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'relu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weighting</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../task/index.html#MolecularDiffusion.modules.tasks.task.Task" title="MolecularDiffusion.modules.tasks.task.Task"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MolecularDiffusion.modules.tasks.task.Task</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">MolecularDiffusion.core.Configurable</span></code></p>
 <p>Class for load/save configuration.
 It will automatically record every argument passed to the <code class="docutils literal notranslate"><span class="pre">__init__</span></code> function.</p>
@@ -812,6 +812,23 @@ This is convenient for building models from configuration files.</p>
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.get_adj_matrix">
 <span class="sig-name descname"><span class="pre">get_adj_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_edges_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.get_adj_matrix" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.get_loss_weight">
+<span class="sig-name descname"><span class="pre">get_loss_weight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.get_loss_weight" title="Link to this definition">¶</a></dt>
+<dd><p>Compute importance weights for the loss based on the timestep t.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> – Tensor of shape (B, 1) or (B,) containing normalized timesteps in [0, 1].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tensor of importance weights.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>w</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.normalize">
@@ -867,6 +884,11 @@ torch.Tensor: Aggregated tensor of size (x, z).</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.SNR_CLAMP_MAX">
+<span class="sig-name descname"><span class="pre">SNR_CLAMP_MAX</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5.0</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.SNR_CLAMP_MAX" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.T">
 <span class="sig-name descname"><span class="pre">T</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.T" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -874,6 +896,11 @@ torch.Tensor: Aggregated tensor of size (x, z).</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.criterion">
 <span class="sig-name descname"><span class="pre">criterion</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.criterion" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.device">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">device</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.device" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -892,11 +919,6 @@ torch.Tensor: Aggregated tensor of size (x, z).</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.in_node_nf">
-<span class="sig-name descname"><span class="pre">in_node_nf</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.in_node_nf" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.include_charge">
 <span class="sig-name descname"><span class="pre">include_charge</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.include_charge" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -904,6 +926,11 @@ torch.Tensor: Aggregated tensor of size (x, z).</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.load_mlps_layer">
 <span class="sig-name descname"><span class="pre">load_mlps_layer</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.load_mlps_layer" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.loss_weighting">
+<span class="sig-name descname"><span class="pre">loss_weighting</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'none'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.loss_weighting" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -918,7 +945,7 @@ torch.Tensor: Aggregated tensor of size (x, z).</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.mlp_batch_norm">
-<span class="sig-name descname"><span class="pre">mlp_batch_norm</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.mlp_batch_norm" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">mlp_batch_norm</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.mlp_batch_norm" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -974,6 +1001,16 @@ torch.Tensor: Aggregated tensor of size (x, z).</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.num_targets">
 <span class="sig-name descname"><span class="pre">num_targets</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.num_targets" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.prediction_activation">
+<span class="sig-name descname"><span class="pre">prediction_activation</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'relu'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.prediction_activation" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.prediction_mlp_type">
+<span class="sig-name descname"><span class="pre">prediction_mlp_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pernode'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.prediction_mlp_type" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1107,6 +1144,7 @@ torch.Tensor: Aggregated tensor of size (x, z).</p>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.evaluate"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.evaluate()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.forward"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.forward()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.get_adj_matrix"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.get_adj_matrix()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.get_loss_weight"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.get_loss_weight()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.normalize"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.normalize()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.pad_data"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.pad_data()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.predict"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.predict()</span></code></a></li>
@@ -1115,14 +1153,16 @@ torch.Tensor: Aggregated tensor of size (x, z).</p>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.sample_combined_position_feature_noise"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.sample_combined_position_feature_noise()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.subspace_dimensionality"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.subspace_dimensionality()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.target"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.target()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.SNR_CLAMP_MAX"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.SNR_CLAMP_MAX</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.T"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.T</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.criterion"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.criterion</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.device"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.device</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.eps"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.eps</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.extra_norm_values"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.extra_norm_values</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.gamma"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.gamma</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.in_node_nf"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.in_node_nf</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.include_charge"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.include_charge</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.load_mlps_layer"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.load_mlps_layer</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.loss_weighting"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.loss_weighting</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.metric"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.metric</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.mlp"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.mlp</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.mlp_batch_norm"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.mlp_batch_norm</span></code></a></li>
@@ -1137,6 +1177,8 @@ torch.Tensor: Aggregated tensor of size (x, z).</p>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.num_class"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.num_class</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.num_mlp_layer"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.num_mlp_layer</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.num_targets"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.num_targets</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.prediction_activation"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.prediction_activation</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.prediction_mlp_type"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.prediction_mlp_type</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.readout"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.readout</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.std_mean"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.std_mean</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.t_max"><code class="docutils literal notranslate"><span class="pre">GuidanceModelPrediction.t_max</span></code></a></li>

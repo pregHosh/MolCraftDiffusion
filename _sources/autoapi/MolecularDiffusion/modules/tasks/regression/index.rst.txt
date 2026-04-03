@@ -9,13 +9,57 @@ Classes
 
 .. autoapisummary::
 
+   MolecularDiffusion.modules.tasks.regression.MLPRegressor_padded
+   MolecularDiffusion.modules.tasks.regression.MLPRegressor_pernode
    MolecularDiffusion.modules.tasks.regression.ProperyPrediction
 
 
 Module Contents
 ---------------
 
-.. py:class:: ProperyPrediction(model, task=(), include_charge=False, criterion='mse', metric=('mae', 'rmse'), loss_param=None, num_mlp_layer=1, normalization=True, num_class=None, mlp_batch_norm=False, condition_time=False, readout='mean', mlp_dropout=0, std_mean=None, load_mlps_layer=0, verbose=0)
+.. py:class:: MLPRegressor_padded(latent_dim, out_dim, hidden_dim=128, num_layers=2, normalization=None, dropout=0, activation='relu', prediction_level: str = 'graph', readout_method: str = 'mean')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(latent, batch_indices)
+
+
+   .. py:attribute:: mlp
+
+
+   .. py:attribute:: prediction_level
+      :value: 'graph'
+
+
+
+   .. py:attribute:: readout_method
+      :value: 'mean'
+
+
+
+.. py:class:: MLPRegressor_pernode(latent_dim, out_dim, hidden_dim=128, num_layers=2, normalization=None, dropout=0, activation='relu', prediction_level: str = 'graph', readout_method: str = 'mean')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(latent, batch_indices)
+
+
+   .. py:attribute:: mlp
+
+
+   .. py:attribute:: prediction_level
+      :value: 'graph'
+
+
+
+   .. py:attribute:: readout_method
+      :value: 'mean'
+
+
+
+.. py:class:: ProperyPrediction(model, task=(), include_charge=False, criterion='mse', metric=('mae', 'rmse'), loss_param=None, num_mlp_layer=1, normalization=True, num_class=None, mlp_batch_norm=False, condition_time=False, prediction_mlp_type='pernode', prediction_activation='relu', readout='mean', mlp_dropout=0, std_mean=None, verbose=0, load_mlps_layer=0)
 
    Bases: :py:obj:`MolecularDiffusion.modules.tasks.task.Task`, :py:obj:`MolecularDiffusion.core.Configurable`
 
@@ -92,11 +136,6 @@ Module Contents
    .. py:method:: target(batch)
 
 
-   .. py:attribute:: THESHOLD
-      :value: 4.5
-
-
-
    .. py:attribute:: condition_time
       :value: False
 
@@ -114,11 +153,6 @@ Module Contents
 
    .. py:attribute:: include_charge
       :value: False
-
-
-
-   .. py:attribute:: load_mlps_layer
-      :value: 0
 
 
 
@@ -165,6 +199,16 @@ Module Contents
 
    .. py:attribute:: num_mlp_layer
       :value: 1
+
+
+
+   .. py:attribute:: prediction_activation
+      :value: 'relu'
+
+
+
+   .. py:attribute:: prediction_mlp_type
+      :value: 'pernode'
 
 
 

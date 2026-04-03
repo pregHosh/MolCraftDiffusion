@@ -4,6 +4,14 @@ MolecularDiffusion.utils.geom_utils
 .. py:module:: MolecularDiffusion.utils.geom_utils
 
 
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.geom_utils.logger
+
+
 Functions
 ---------
 
@@ -171,13 +179,13 @@ Module Contents
 
 .. py:function:: save_xyz_file(path, one_hot, positions, atom_decoder, id_from=0, name='molecule', node_mask=None, idxs=None, tol=0.0001, atomic_numbers=None, use_unknown_fallback=False)
 
-   Save XYZ files for a batch of molecules, skipping atoms near (0,0,0).
+   Save XYZ files for a batch of molecules directly to the target path.
 
    :param path: Output directory
    :param one_hot: [B, N, C] one-hot encoding
    :param positions: [B, N, 3] coordinates
    :param atom_decoder: List mapping indices to atom symbols
-   :param id_from: Starting index for filenames
+   :param id_from: Starting index for filenames (if idxs is None)
    :param name: Filename prefix
    :param node_mask: Optional [B, N] or [B, N, 1] mask
    :param idxs: Optional indices for filenames
@@ -188,7 +196,7 @@ Module Contents
 
 .. py:function:: save_xyz_file_atomic_numbers(path: str, positions: torch.Tensor, atomic_numbers: torch.Tensor, id_from: int = 0, name: str = 'molecule', node_mask: torch.Tensor | None = None, idxs=None, tol: float = 0.0001)
 
-   Save XYZ files for a batch of molecules, writing ATOMIC SYMBOLS in the first column.
+   Save XYZ files for a batch of molecules directly to the target path.
 
    :param path: output directory
    :param positions: (B, N, 3) tensor
@@ -201,4 +209,6 @@ Module Contents
 
 
 .. py:function:: translate_to_origine(coords, node_mask)
+
+.. py:data:: logger
 

@@ -375,8 +375,8 @@
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.egcl.</span></span><span class="sig-name descname"><span class="pre">EGNN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_node_nf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_nf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">act_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nn.SiLU()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_context_nf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_mlp_layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_diff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_node_nf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tanh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_constant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inv_sublayers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sin_embedding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_cosine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregation_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sum'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adapter_module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.egcl.</span></span><span class="sig-name descname"><span class="pre">EGNN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_node_nf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_nf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">act_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nn.SiLU()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_context_nf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_mlp_layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_diff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_node_nf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tanh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_constant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inv_sublayers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sin_embedding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_cosine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregation_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sum'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adapter_module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_adapter_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_concat_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">MolecularDiffusion.core.Configurable</span></code></p>
 <p>Equivariant Graph Neural Network (EGNN) module for processing graph-structured data with node features and coordinates.</p>
 <p>This model supports optional context conditioning, sinusoidal embeddings, cosine edge features, and adapter modules for context.
 It is designed for tasks where equivariance to geometric transformations is important, such as molecular modeling.</p>
@@ -402,18 +402,28 @@ It is designed for tasks where equivariance to geometric transformations is impo
 <li><p><strong>aggregation_method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Aggregation method (‘sum’ or ‘mean’).</p></li>
 <li><p><strong>dropout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Dropout probability.</p></li>
 <li><p><strong>normalization</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use batch normalization in MLPs.</p></li>
-<li><p><strong>adapter_module</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use adapter modules for context.</p></li>
+<li><p><strong>adapter_module</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use adapter modules for context. (Legacy, prefer n_adapter_context.)</p></li>
 </ul>
 </dd>
 </dl>
+<p>n_adapter_context (int): Number of context features routed through adapter MLPs.
+n_concat_context (int): Number of context features concatenated to input. (Informational; caller must widen in_node_nf.)</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_embed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN.forward" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Forward pass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong> – For adapter mode, this should contain ONLY the adapter-routed
+columns (n_adapter_context dims). Concat-routed columns should
+already be part of h before calling this method.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN.adapter_module">
-<span class="sig-name descname"><span class="pre">adapter_module</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN.adapter_module" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">adapter_module</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN.adapter_module" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -452,6 +462,16 @@ It is designed for tasks where equivariance to geometric transformations is impo
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN.n_adapter_context">
+<span class="sig-name descname"><span class="pre">n_adapter_context</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN.n_adapter_context" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN.n_concat_context">
+<span class="sig-name descname"><span class="pre">n_concat_context</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN.n_concat_context" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN.n_layers">
 <span class="sig-name descname"><span class="pre">n_layers</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN.n_layers" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -470,8 +490,8 @@ It is designed for tasks where equivariance to geometric transformations is impo
 
 <dl class="py class">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.egcl.</span></span><span class="sig-name descname"><span class="pre">EGNN_dynamics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_node_nf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_node_nf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_dims</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_nf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">act_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.nn.SiLU()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tanh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_constant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inv_sublayers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sin_embedding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_cosine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregation_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sum'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_adapter_module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.egcl.</span></span><span class="sig-name descname"><span class="pre">EGNN_dynamics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_node_nf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_node_nf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_dims</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_nf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">act_fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.nn.SiLU()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tanh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_constant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inv_sublayers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sin_embedding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_cosine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregation_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sum'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_adapter_module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adapter_indices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">concat_indices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">MolecularDiffusion.core.Configurable</span></code></p>
 <p>Dynamics model for Equivariant Diffusion Models (EDMs) using EGNNs.</p>
 <p>This class wraps an EGNN to model the time evolution of node features and coordinates, supporting context conditioning, time conditioning, and adapter modules.
 It is suitable for molecular dynamics, generative modeling, and other tasks requiring equivariant dynamics on graphs.</p>
@@ -495,10 +515,12 @@ It is suitable for molecular dynamics, generative modeling, and other tasks requ
 <li><p><strong>aggregation_method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Aggregation method for the EGNN.</p></li>
 <li><p><strong>dropout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Dropout probability.</p></li>
 <li><p><strong>normalization</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use normalization in the EGNN.</p></li>
-<li><p><strong>use_adapter_module</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use adapter module for context.</p></li>
+<li><p><strong>use_adapter_module</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use adapter module for context. (Legacy, prefer adapter_indices.)</p></li>
 </ul>
 </dd>
 </dl>
+<p>adapter_indices (list): Column indices of context tensor routed through adapter MLPs.
+concat_indices (list): Column indices of context tensor concatenated to input features.</p>
 <p>Dynamics model for EDMs using EGNNs.
 in_node_nf: int – number of ALL input features per node (including time)
 context_node_nf: int – number of context features per node
@@ -517,7 +539,9 @@ normalization_factor: float – normalization factor for the EGNN
 aggregation_method: str – aggregation method for the EGNN
 dropout: float – dropout probability
 normalization: bool – whether to use normalization in the EGNN
-use_adapter_module: bool – whether to use adapter module for context</p>
+use_adapter_module: bool – (legacy) whether to use adapter for ALL context
+adapter_indices: list – indices of context columns for adapter routing
+concat_indices: list – indices of context columns for concatenation routing</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics.forward">
 <span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.forward" title="Link to this definition">¶</a></dt>
@@ -539,6 +563,21 @@ use_adapter_module: bool – whether to use adapter module for context</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics.act_fn_obj">
+<span class="sig-name descname"><span class="pre">act_fn_obj</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.act_fn_obj" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics.aggregation_method">
+<span class="sig-name descname"><span class="pre">aggregation_method</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sum'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.aggregation_method" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics.attention">
+<span class="sig-name descname"><span class="pre">attention</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.attention" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics.condition_time">
 <span class="sig-name descname"><span class="pre">condition_time</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.condition_time" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -549,8 +588,18 @@ use_adapter_module: bool – whether to use adapter module for context</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics.dropout">
+<span class="sig-name descname"><span class="pre">dropout</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.dropout" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics.egnn">
 <span class="sig-name descname"><span class="pre">egnn</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.egnn" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics.hidden_nf">
+<span class="sig-name descname"><span class="pre">hidden_nf</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">64</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.hidden_nf" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -559,13 +608,63 @@ use_adapter_module: bool – whether to use adapter module for context</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics.include_cosine">
+<span class="sig-name descname"><span class="pre">include_cosine</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.include_cosine" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics.inv_sublayers">
+<span class="sig-name descname"><span class="pre">inv_sublayers</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.inv_sublayers" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics.n_adapter_context">
+<span class="sig-name descname"><span class="pre">n_adapter_context</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.n_adapter_context" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics.n_concat_context">
+<span class="sig-name descname"><span class="pre">n_concat_context</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.n_concat_context" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics.n_dims">
 <span class="sig-name descname"><span class="pre">n_dims</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.n_dims" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics.n_layers">
+<span class="sig-name descname"><span class="pre">n_layers</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.n_layers" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics.norm_constant">
+<span class="sig-name descname"><span class="pre">norm_constant</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.norm_constant" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics.normalization">
+<span class="sig-name descname"><span class="pre">normalization</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.normalization" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics.normalization_factor">
+<span class="sig-name descname"><span class="pre">normalization_factor</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.normalization_factor" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics.sin_embedding">
+<span class="sig-name descname"><span class="pre">sin_embedding</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.sin_embedding" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics.tanh">
+<span class="sig-name descname"><span class="pre">tanh</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.tanh" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.egcl.EGNN_dynamics.use_adapter_module">
-<span class="sig-name descname"><span class="pre">use_adapter_module</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.use_adapter_module" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">use_adapter_module</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.use_adapter_module" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -640,6 +739,8 @@ use_adapter_module: bool – whether to use adapter module for context</p>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN.hidden_nf"><code class="docutils literal notranslate"><span class="pre">EGNN.hidden_nf</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN.in_node_nf"><code class="docutils literal notranslate"><span class="pre">EGNN.in_node_nf</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN.include_cosine"><code class="docutils literal notranslate"><span class="pre">EGNN.include_cosine</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN.n_adapter_context"><code class="docutils literal notranslate"><span class="pre">EGNN.n_adapter_context</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN.n_concat_context"><code class="docutils literal notranslate"><span class="pre">EGNN.n_concat_context</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN.n_layers"><code class="docutils literal notranslate"><span class="pre">EGNN.n_layers</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN.norm_diff"><code class="docutils literal notranslate"><span class="pre">EGNN.norm_diff</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN.normalization_factor"><code class="docutils literal notranslate"><span class="pre">EGNN.normalization_factor</span></code></a></li>
@@ -650,11 +751,26 @@ use_adapter_module: bool – whether to use adapter module for context</p>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.get_adj_matrix"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.get_adj_matrix()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.unwrap_forward"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.unwrap_forward()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.wrap_forward"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.wrap_forward()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.act_fn_obj"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.act_fn_obj</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.aggregation_method"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.aggregation_method</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.attention"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.attention</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.condition_time"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.condition_time</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.context_node_nf"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.context_node_nf</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.dropout"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.dropout</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.egnn"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.egnn</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.hidden_nf"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.hidden_nf</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.in_node_nf"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.in_node_nf</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.include_cosine"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.include_cosine</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.inv_sublayers"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.inv_sublayers</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.n_adapter_context"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.n_adapter_context</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.n_concat_context"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.n_concat_context</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.n_dims"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.n_dims</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.n_layers"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.n_layers</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.norm_constant"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.norm_constant</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.normalization"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.normalization</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.normalization_factor"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.normalization_factor</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.sin_embedding"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.sin_embedding</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.tanh"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.tanh</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.use_adapter_module"><code class="docutils literal notranslate"><span class="pre">EGNN_dynamics.use_adapter_module</span></code></a></li>
 </ul>
 </li>

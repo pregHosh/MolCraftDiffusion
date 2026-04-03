@@ -24,7 +24,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: Engine(task, train_set, valid_set, test_set, optimizer=None, collate_fn=None, scheduler=None, batch_size=1, gradient_interval=1, clipping_gradient=None, clip_value=1, ema_decay=0.0, num_worker=0, pin_memory=True, logger='logging', log_interval=100, project_wandb=None, name_wandb=None, dir_wandb=None, debug=False)
+.. py:class:: Engine(task, train_set, valid_set, test_set, optimizer=None, collate_fn=None, scheduler=None, batch_size=1, gradient_interval=1, clipping_gradient=None, clip_value=1, ema_decay=0.0, num_worker=0, pin_memory=True, logger='logging', log_interval=100, project_wandb=None, name_wandb=None, dir_wandb=None, tags_wandb=None, debug=False, progress_bar_metrics='all')
 
    Bases: :py:obj:`MolecularDiffusion.core.Configurable`
 
@@ -167,14 +167,17 @@ Module Contents
 
 
 
-   .. py:method:: train(num_epoch=1, batch_per_epoch=1, use_amp=False, precision='bf16')
+   .. py:method:: train(num_epoch=1, num_step=None, batch_per_epoch=1, use_amp=False, precision='bf16')
 
       Train the model.
 
-      Iterates over the WHOLE dataset for each epoch.
+      Iterates over the WHOLE dataset for each epoch unless num_step is provided.
 
       :param num_epoch: number of epochs.
       :type num_epoch: int, optional
+      :param num_step: total number of optimizer steps to perform.
+                       If provided, training stops after this many updates.
+      :type num_step: int, optional
       :param batch_per_epoch: Gradient Accumulation Steps.
                               The number of batches to accumulate gradients
                               for before performing an optimizer step.
@@ -266,12 +269,22 @@ Module Contents
 
 
 
+   .. py:attribute:: progress_bar_metrics
+      :value: 'all'
+
+
+
    .. py:attribute:: project_wandb
       :value: None
 
 
 
    .. py:attribute:: scheduler
+      :value: None
+
+
+
+   .. py:attribute:: tags_wandb
       :value: None
 
 

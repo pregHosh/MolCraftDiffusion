@@ -449,6 +449,27 @@ t_max (float)</p>
 </dd>
 </dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.adjust_state_dict">
+<span class="sig-name descname"><span class="pre">adjust_state_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.adjust_state_dict" title="Link to this definition">¶</a></dt>
+<dd><p>Adjust checkpoint state dict dimensions to match the current model.</p>
+<p>Handles size mismatches from added conditions by resizing EGCL
+embedding layers and adapter context embeddings. Uses suffix-based
+key matching on BOTH checkpoint and model state dicts to handle
+cross-prefix scenarios (e.g. PyGAdapter wrapping).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state_dict</strong> – The checkpoint state dict to adjust.</p></li>
+<li><p><strong>task</strong> – The task model (used to get expected dimensions).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The adjusted state dict.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.build">
 <span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.build" title="Link to this definition">¶</a></dt>
 <dd><p>Build and return (model, task) based on task_type.</p>
@@ -525,6 +546,16 @@ t_max (float)</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.kwargs">
 <span class="sig-name descname"><span class="pre">kwargs</span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.kwargs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.n_adapter_context">
+<span class="sig-name descname"><span class="pre">n_adapter_context</span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.n_adapter_context" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.n_concat_context">
+<span class="sig-name descname"><span class="pre">n_concat_context</span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.n_concat_context" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -654,6 +685,7 @@ t_max (float)</p>
 <li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory</span></code></a><ul>
+<li><a class="reference internal" href="#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.adjust_state_dict"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory.adjust_state_dict()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.build"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory.build()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.act_fn"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory.act_fn</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.aggregation_method"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory.aggregation_method</span></code></a></li>
@@ -668,6 +700,8 @@ t_max (float)</p>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.in_node_nf"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory.in_node_nf</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.include_cosine"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory.include_cosine</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.kwargs"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory.kwargs</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.n_adapter_context"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory.n_adapter_context</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.n_concat_context"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory.n_concat_context</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.norm_constant"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory.norm_constant</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.normalization"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory.normalization</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.normalization_factor"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory.normalization_factor</span></code></a></li>

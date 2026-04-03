@@ -25,6 +25,7 @@ Functions
 .. autoapisummary::
 
    MolecularDiffusion.cli.train.engine_wrapper
+   MolecularDiffusion.cli.train.evaluate_and_save
    MolecularDiffusion.cli.train.is_rank_zero
    MolecularDiffusion.cli.train.load_weights
    MolecularDiffusion.cli.train.log_hyperparameters
@@ -35,9 +36,14 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: engine_wrapper(task_module, data_module, trainer_module, logger_module, resume_from_checkpoint=None, **kwargs)
+.. py:function:: engine_wrapper(task_module, data_module, trainer_module, logger_module, resume_from_checkpoint=None, tags=None, **kwargs)
 
    Training loop using original Engine.
+
+
+.. py:function:: evaluate_and_save(i, solver, task_module, trainer_module, logger_module, versioned_ckpt_path, use_amp, **kwargs)
+
+   Helper to run evaluation and save checkpoints.
 
 
 .. py:function:: is_rank_zero()
@@ -45,13 +51,22 @@ Module Contents
    Check if current process is rank zero.
 
 
-.. py:function:: load_weights(task, ckpt_path)
+.. py:function:: load_weights(task, ckpt_path, task_module=None)
 
    Load model weights from a checkpoint file (weights only).
 
    This loads the state_dict from the checkpoint into the task model,
    ignoring optimizer/scheduler states and other metadata.
    Useful for fine-tuning or starting from a pre-trained model.
+
+   If a RuntimeError occurs due to size mismatches (e.g., from adding
+   new conditions), delegates to task_module.adjust_state_dict() for
+   model-specific dimension adjustment.
+
+   :param task: The task model to load weights into.
+   :param ckpt_path: Path to the checkpoint file.
+   :param task_module: Optional task factory with adjust_state_dict() method
+                       for handling dimension mismatches.
 
 
 .. py:function:: log_hyperparameters(object_dict: dict)

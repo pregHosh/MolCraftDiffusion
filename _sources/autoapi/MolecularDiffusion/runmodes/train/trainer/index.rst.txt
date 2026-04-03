@@ -15,7 +15,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: OptimSchedulerFactory(parameters, optimizer_choice: str = 'adam', lr: float = 0.001, eps: float = 1e-08, weight_decay: float = 0, betas: tuple = (0.9, 0.999), foreach: bool = False, scheduler: str = None, scheduler_kwargs: dict = None, num_epochs: int = None, validation_interval: int = 3, train_set=None, batch_size: int = None, queue_size: int = 100, init_grad_norm: float = 3000, ema_decay: float = 0.9999, gradient_clip_mode: str = 'value', gradient_clip_algorithm: str = 'adaptive', grad_clip_value: float = 1.0, chkpt_path: str = None, output_path: str = None, precision: int | str = 32, save_top_k: int = 3, save_every_val_epoch: bool = False, **kwargs)
+.. py:class:: OptimSchedulerFactory(parameters, optimizer_choice: str = 'adam', lr: float = 0.001, eps: float = 1e-08, weight_decay: float = 0, betas: tuple = (0.9, 0.999), foreach: bool = False, scheduler: str = None, scheduler_kwargs: dict = None, num_epochs: int = None, num_steps: int = None, validation_interval: int = 3, train_set=None, batch_size: int = None, queue_size: int = 100, init_grad_norm: float = 3000, ema_decay: float = 0.9999, gradient_clip_mode: str = 'value', gradient_clip_algorithm: str = 'adaptive', grad_clip_value: float = 1.0, chkpt_path: str = None, output_path: str = None, precision: int | str = 32, save_top_k: int = 3, save_every_val_epoch: bool = False, **kwargs)
 
    Factory to build optimizer, scheduler, and gradient-norm queue for training.
 
@@ -107,6 +107,11 @@ Module Contents
 
 
    .. py:attribute:: num_epochs
+      :value: None
+
+
+
+   .. py:attribute:: num_steps
       :value: None
 
 
