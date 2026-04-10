@@ -430,6 +430,13 @@ MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_gen_confi
 MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>metrics<span class="w"> </span>-i<span class="w"> </span>generated_molecules/
 </pre></div>
 </div>
+<p>Ready-to-use template configuration files for every workflow are provided in <a class="reference internal" href="#cfg_examples/"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">docs/cfg_examples/</span></code></span></a>. Copy the relevant file, fill in your paths, and run:</p></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example: unconditional generation with the template</span>
+cp<span class="w"> </span>docs/cfg_examples/gen_unconditional.yaml<span class="w"> </span>my_gen.yaml
+<span class="c1"># edit my_gen.yaml → set chkpt_directory</span>
+MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_gen
+</pre></div>
+</div>
 </section>
 <hr class="docutils" />
 <section id="contents">
@@ -454,6 +461,8 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>metrics<span 
 <li class="toctree-l1"><a class="reference internal" href="tutorials/08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
 </ul>
+</div>
+<div class="toctree-wrapper compound">
 </div>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>

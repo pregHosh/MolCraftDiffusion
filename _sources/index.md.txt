@@ -45,6 +45,15 @@ MolCraftDiff generate my_gen_config
 MolCraftDiff analyze metrics -i generated_molecules/
 ```
 
+Ready-to-use template configuration files for every workflow are provided in [`docs/cfg_examples/`](cfg_examples/). Copy the relevant file, fill in your paths, and run:</p>
+
+```bash
+# Example: unconditional generation with the template
+cp docs/cfg_examples/gen_unconditional.yaml my_gen.yaml
+# edit my_gen.yaml → set chkpt_directory
+MolCraftDiff generate my_gen
+```
+
 ---
 
 ## Contents
@@ -70,6 +79,22 @@ tutorials/06_structure_guided
 tutorials/07_property_directed
 tutorials/08_eval_predict
 tutorials/09_analyze
+```
+
+```{toctree}
+:maxdepth: 1
+:caption: Configuration Templates
+
+cfg_examples/train_diffusion
+cfg_examples/train_regressor
+cfg_examples/train_guidance
+cfg_examples/finetune_diffusion
+cfg_examples/gen_unconditional
+cfg_examples/gen_inpaint
+cfg_examples/gen_outpaint
+cfg_examples/gen_cfg
+cfg_examples/gen_gradient_guidance
+cfg_examples/gen_hybrid_cfg_gg
 ```
 
 ```{toctree}
