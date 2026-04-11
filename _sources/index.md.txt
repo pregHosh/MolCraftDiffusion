@@ -11,7 +11,7 @@ By combining modular training pipelines, flexible guidance strategies, and integ
 [![GitHub](https://img.shields.io/badge/GitHub-Repo-black?logo=github)](https://github.com/pregHosh/MolCraftDiffusion)
 [![PyPI](https://img.shields.io/pypi/v/molcraftdiffusion)](https://pypi.org/project/molcraftdiffusion/)
 [![arXiv](https://img.shields.io/badge/PDF-arXiv-blue)](https://chemrxiv.org/engage/chemrxiv/article-details/6909e50fef936fb4a23df237)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18121166.svg)](https://zenodo.org/records/18121166)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19511401.svg)](https://zenodo.org/records/19511401)
 [![Weights](https://img.shields.io/badge/Weights-HuggingFace-yellow)](https://huggingface.co/pregH/MolecularDiffusion)
 [![Dataset](https://img.shields.io/badge/Dataset-HuggingFace-yellow)](https://huggingface.co/pregH/MolecularDiffusion)
 [![Demo](https://img.shields.io/badge/Demo-HuggingFace%20Spaces-orange)](https://huggingface.co/spaces/pregH/MolCraftDiffusion-demo)
@@ -45,7 +45,7 @@ MolCraftDiff generate my_gen_config
 MolCraftDiff analyze metrics -i generated_molecules/
 ```
 
-Ready-to-use template configuration files for every workflow are provided in [`docs/cfg_examples/`](cfg_examples/). Copy the relevant file, fill in your paths, and run:</p>
+Ready-to-use template configuration files for every workflow are provided in [`docs/cfg_examples/`](https://github.com/pregHosh/MolCraftDiffusion/tree/main/docs/cfg_examples). Copy the relevant file, fill in your paths, and run:</p>
 
 ```bash
 # Example: unconditional generation with the template
