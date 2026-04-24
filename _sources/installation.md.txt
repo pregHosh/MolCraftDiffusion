@@ -12,35 +12,56 @@
 conda create -n molcraft python=3.11 -y
 conda activate molcraft
 
-# 2. Install conda-only tools (xtb, openbabel)
-conda install -c conda-forge xtb==6.7.1 openbabel -y
-
-# 3. Install MolCraftDiffusion with PyTorch + PyG + sparse extensions
+# 2. Install MolCraftDiffusion with a compute backend
+# GPU/CUDA:
 pip install molcraftdiffusion[gpu] \
     --find-links https://data.pyg.org/whl/torch-2.6.0+cu124.html
 
-# or CPU-only:
+# CPU-only:
 pip install molcraftdiffusion[cpu] \
     --extra-index-url https://download.pytorch.org/whl/cpu \
     --find-links https://data.pyg.org/whl/torch-2.6.0+cpu.html
-
 ```
+
+The base package does not install every data-processing or analysis dependency. Add the feature groups you need:
+
+```bash
+# Data preparation, augmentation, and featurization commands
+pip install 'molcraftdiffusion[data]'
+
+# Analysis and post-processing commands
+pip install 'molcraftdiffusion[analyze]'
+
+# Some analyze commands shell out to xTB.
+conda install -c conda-forge xtb==6.7.1 -y
+```
+
+If an optional command is called without its dependencies, MolCraftDiffusion exits with a warning and an install hint such as `pip install 'molcraftdiffusion[analyze]'`.
 
 ### Development / editable install
 
 ```bash
 git clone https://github.com/pregHosh/MolCraftDiffusion
 cd MolCraftDiffusion
-conda install -c conda-forge xtb==6.7.1 openbabel -y
 pip install -e .[gpu] \
     --find-links https://data.pyg.org/whl/torch-2.6.0+cu124.html
+
+# Add optional groups for editable development when needed:
+pip install -e '.[data]'
+pip install -e '.[analyze]'
 ```
 
 ## Optional dependencies
 
 ```bash
-# Symmetry analysis (requires numpy==1.24.*)
-pip install cosymlib
+# Data utilities
+pip install 'molcraftdiffusion[data]'
+
+# Analyze utilities, including PoseBusters/RDKit/OpenBabel Python bindings/cosymlib
+pip install 'molcraftdiffusion[analyze]'
+
+# xTB executable for xTB-backed analysis
+conda install -c conda-forge xtb==6.7.1 -y
 ```
 
 ## Verifying the installation
