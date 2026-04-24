@@ -261,6 +261,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../molcraftdiff/index.html">MolecularDiffusion.molcraftdiff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../optional/index.html">MolecularDiffusion.optional</a></li>
 <li class="toctree-l3 current has-children"><a class="reference internal" href="../../index.html">MolecularDiffusion.runmodes</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes" checked="" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l4 current has-children"><a class="reference internal" href="../index.html">MolecularDiffusion.runmodes.analyze</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.analyze" checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l5"><a class="reference internal" href="../compare_to_optimized/index.html">MolecularDiffusion.runmodes.analyze.compare_to_optimized</a></li>
@@ -397,13 +398,16 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compute_metrics.EDGE_THRESHOLD" title="MolecularDiffusion.runmodes.analyze.compute_metrics.EDGE_THRESHOLD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EDGE_THRESHOLD</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compute_metrics.SCALE_FACTOR" title="MolecularDiffusion.runmodes.analyze.compute_metrics.SCALE_FACTOR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCALE_FACTOR</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compute_metrics.RDLogger" title="MolecularDiffusion.runmodes.analyze.compute_metrics.RDLogger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RDLogger</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compute_metrics.SCORES_THRESHOLD" title="MolecularDiffusion.runmodes.analyze.compute_metrics.SCORES_THRESHOLD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCORES_THRESHOLD</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compute_metrics.SCALE_FACTOR" title="MolecularDiffusion.runmodes.analyze.compute_metrics.SCALE_FACTOR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCALE_FACTOR</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compute_metrics.parser" title="MolecularDiffusion.runmodes.analyze.compute_metrics.parser"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parser</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compute_metrics.SCORES_THRESHOLD" title="MolecularDiffusion.runmodes.analyze.compute_metrics.SCORES_THRESHOLD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCORES_THRESHOLD</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compute_metrics.parser" title="MolecularDiffusion.runmodes.analyze.compute_metrics.parser"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parser</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -432,6 +436,11 @@
 <dl class="py data">
 <dt class="sig sig-object py" id="MolecularDiffusion.runmodes.analyze.compute_metrics.EDGE_THRESHOLD">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.analyze.compute_metrics.</span></span><span class="sig-name descname"><span class="pre">EDGE_THRESHOLD</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.analyze.compute_metrics.EDGE_THRESHOLD" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.runmodes.analyze.compute_metrics.RDLogger">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.analyze.compute_metrics.</span></span><span class="sig-name descname"><span class="pre">RDLogger</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.analyze.compute_metrics.RDLogger" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
@@ -530,6 +539,7 @@
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compute_metrics.runner"><code class="docutils literal notranslate"><span class="pre">runner()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compute_metrics.EDGE_THRESHOLD"><code class="docutils literal notranslate"><span class="pre">EDGE_THRESHOLD</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compute_metrics.RDLogger"><code class="docutils literal notranslate"><span class="pre">RDLogger</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compute_metrics.SCALE_FACTOR"><code class="docutils literal notranslate"><span class="pre">SCALE_FACTOR</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compute_metrics.SCORES_THRESHOLD"><code class="docutils literal notranslate"><span class="pre">SCORES_THRESHOLD</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compute_metrics.parser"><code class="docutils literal notranslate"><span class="pre">parser</span></code></a></li>

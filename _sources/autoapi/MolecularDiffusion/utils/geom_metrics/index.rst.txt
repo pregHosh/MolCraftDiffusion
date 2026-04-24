@@ -11,14 +11,19 @@ Attributes
 
    MolecularDiffusion.utils.geom_metrics.ALPHA_DEFAULT
    MolecularDiffusion.utils.geom_metrics.COULOMB_SCALING
+   MolecularDiffusion.utils.geom_metrics.Chem
+   MolecularDiffusion.utils.geom_metrics.Data
    MolecularDiffusion.utils.geom_metrics.EDGE_THRESHOLD
    MolecularDiffusion.utils.geom_metrics.LAM_SCALING
    MolecularDiffusion.utils.geom_metrics.P_ALPHAS
    MolecularDiffusion.utils.geom_metrics.P_TYPES
+   MolecularDiffusion.utils.geom_metrics.PoseBusters
    MolecularDiffusion.utils.geom_metrics.SCALE_FACTOR
    MolecularDiffusion.utils.geom_metrics.SCORES_THRESHOLD
+   MolecularDiffusion.utils.geom_metrics.covalent_radii
    MolecularDiffusion.utils.geom_metrics.is_cosymlib_available
    MolecularDiffusion.utils.geom_metrics.logger
+   MolecularDiffusion.utils.geom_metrics.pybel
 
 
 Functions
@@ -54,47 +59,6 @@ Module Contents
 ---------------
 
 .. py:function:: check_chem_validity(mol_list, skip_idx=[], verbose=0)
-
-   Analyze a list of RDKit molecules for chemical validity based on atom valencies
-   and identify broken or disconnected fragments.
-
-   :param mol_list: A list of RDKit Mol objects to be checked.
-   :type mol_list: list of rdkit.Chem.Mol
-   :param skip_idx: Atom indices to skip when counting and checking (currently unused in logic;
-                    provided for future extension). Default is None.
-   :type skip_idx: list of int, optional
-   :param verbose: If > 0, prints detailed information about each valency violation as:
-                   "<SMILES> has invalid valency: <AtomSymbol> <TotalValence> <FormalCharge>".
-   :type verbose: int, default=0
-
-   :returns: * **natom_stability_dicts** (*dict[str, int]*) -- Counts of atoms whose total electron count (valence minus formal charge)
-               matches a known valid valency (i.e. “stable” atoms), keyed by atom symbol.
-             * **natom_tot_dicts** (*dict[str, int]*) -- Total counts of atoms encountered, keyed by atom symbol.
-             * **good_smiles** (*list of str*) -- Canonical SMILES strings for molecules deemed chemically valid and not
-               containing disconnected fragments (".").
-             * **bad_smiles_broken** (*list of str*) -- Canonical SMILES for molecules that are chemically valid but contain
-               disconnected fragments (i.e. salts or mixtures with "." in the SMILES).
-             * **bad_smiles_chem** (*list of str*) -- Canonical SMILES for molecules that failed the valency checks.
-
-   .. rubric:: Notes
-
-   - This function relies on a pre-defined mapping `valid_valencies`:
-       >>> valid_valencies = {
-       ...     'H': {1}, 'C': {4}, 'N': {3, 5}, 'O': {2}, ...
-       ... }
-     which maps each element symbol to the set of permitted electron counts.
-   - The `skip_idx` argument is currently not applied in the loop; if you wish
-     to ignore certain atoms (for example, metals or explicit hydrogens), you
-     could uncomment and adapt the skip logic.
-
-   .. rubric:: Example
-
-   >>> from rdkit.Chem import MolFromSmiles
-   >>> smiles_list = ['CCO', 'C[N+](C)(C)C', 'C.C']  # ethanol, tetramethylammonium, disconnected C and C
-   >>> mols = [MolFromSmiles(s) for s in smiles_list]
-   >>> valid, total, good, broken, bad = check_chem_validity(mols, verbose=1)
-    # would print any valency errors if present
-
 
 .. py:function:: check_neutrality(filename)
 
@@ -187,7 +151,7 @@ Module Contents
    :rtype: bool
 
 
-.. py:function:: compute_drug_likeness(mol: rdkit.Chem.Mol) -> dict
+.. py:function:: compute_drug_likeness(mol) -> dict
 
    Compute RDKit-based drug-likeness metrics including SAScore and QED.
 
@@ -409,7 +373,7 @@ Module Contents
    :type pdb_file_path: str
 
 
-.. py:function:: xyz_to_rdkit_mol(xyz_path: str) -> rdkit.Chem.Mol
+.. py:function:: xyz_to_rdkit_mol(xyz_path: str)
 
    Convert an XYZ file to an RDKit molecule with perceived bonds.
    Tries multiple charges to find a valid structure without radicals.
@@ -420,6 +384,14 @@ Module Contents
 
 
 .. py:data:: COULOMB_SCALING
+
+.. py:data:: Chem
+   :value: None
+
+
+.. py:data:: Data
+   :value: None
+
 
 .. py:data:: EDGE_THRESHOLD
    :value: 4
@@ -433,6 +405,10 @@ Module Contents
    :value: ['Acceptor', 'Donor', 'Aromatic', 'Hydrophobe', 'Halogen', 'Cation', 'Anion', 'ZnBinder', 'Dummy']
 
 
+.. py:data:: PoseBusters
+   :value: None
+
+
 .. py:data:: SCALE_FACTOR
    :value: 1.2
 
@@ -441,9 +417,17 @@ Module Contents
    :value: 3.0
 
 
+.. py:data:: covalent_radii
+   :value: None
+
+
 .. py:data:: is_cosymlib_available
    :value: True
 
 
 .. py:data:: logger
+
+.. py:data:: pybel
+   :value: None
+
 

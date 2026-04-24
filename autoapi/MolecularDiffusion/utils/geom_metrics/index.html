@@ -261,6 +261,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../molcraftdiff/index.html">MolecularDiffusion.molcraftdiff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../optional/index.html">MolecularDiffusion.optional</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../runmodes/index.html">MolecularDiffusion.runmodes</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../runmodes/analyze/index.html">MolecularDiffusion.runmodes.analyze</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.analyze" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/compare_to_optimized/index.html">MolecularDiffusion.runmodes.analyze.compare_to_optimized</a></li>
@@ -400,6 +401,12 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.COULOMB_SCALING" title="MolecularDiffusion.utils.geom_metrics.COULOMB_SCALING"><code class="xref py py-obj docutils literal notranslate"><span class="pre">COULOMB_SCALING</span></code></a></p></td>
 <td><p></p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.Chem" title="MolecularDiffusion.utils.geom_metrics.Chem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Chem</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.Data" title="MolecularDiffusion.utils.geom_metrics.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></p></td>
+<td><p></p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.EDGE_THRESHOLD" title="MolecularDiffusion.utils.geom_metrics.EDGE_THRESHOLD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EDGE_THRESHOLD</span></code></a></p></td>
 <td><p></p></td>
 </tr>
@@ -412,16 +419,25 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.P_TYPES" title="MolecularDiffusion.utils.geom_metrics.P_TYPES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">P_TYPES</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.SCALE_FACTOR" title="MolecularDiffusion.utils.geom_metrics.SCALE_FACTOR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCALE_FACTOR</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.PoseBusters" title="MolecularDiffusion.utils.geom_metrics.PoseBusters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PoseBusters</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.SCORES_THRESHOLD" title="MolecularDiffusion.utils.geom_metrics.SCORES_THRESHOLD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCORES_THRESHOLD</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.SCALE_FACTOR" title="MolecularDiffusion.utils.geom_metrics.SCALE_FACTOR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCALE_FACTOR</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.SCORES_THRESHOLD" title="MolecularDiffusion.utils.geom_metrics.SCORES_THRESHOLD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCORES_THRESHOLD</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.covalent_radii" title="MolecularDiffusion.utils.geom_metrics.covalent_radii"><code class="xref py py-obj docutils literal notranslate"><span class="pre">covalent_radii</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.is_cosymlib_available" title="MolecularDiffusion.utils.geom_metrics.is_cosymlib_available"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_cosymlib_available</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.logger" title="MolecularDiffusion.utils.geom_metrics.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.pybel" title="MolecularDiffusion.utils.geom_metrics.pybel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pybel</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -434,7 +450,7 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.check_chem_validity" title="MolecularDiffusion.utils.geom_metrics.check_chem_validity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_chem_validity</span></code></a>(mol_list[, skip_idx, verbose])</p></td>
-<td><p>Analyze a list of RDKit molecules for chemical validity based on atom valencies</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.check_neutrality" title="MolecularDiffusion.utils.geom_metrics.check_neutrality"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_neutrality</span></code></a>(filename)</p></td>
 <td><p>Checks if a molecule (specified by an XYZ file) is neutral by running an xTB calculation.</p></td>
@@ -496,7 +512,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.xyz_to_pdb" title="MolecularDiffusion.utils.geom_metrics.xyz_to_pdb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz_to_pdb</span></code></a>(xyz_file_path, pdb_file_path)</p></td>
 <td><p>Converts an XYZ file to a PDB file using OpenBabel (via pybel).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol" title="MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz_to_rdkit_mol</span></code></a>(→ rdkit.Chem.Mol)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol" title="MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz_to_rdkit_mol</span></code></a>(xyz_path)</p></td>
 <td><p>Convert an XYZ file to an RDKit molecule with perceived bonds.</p></td>
 </tr>
 </tbody>
@@ -508,57 +524,7 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.check_chem_validity">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">check_chem_validity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.check_chem_validity" title="Link to this definition">¶</a></dt>
-<dd><p>Analyze a list of RDKit molecules for chemical validity based on atom valencies
-and identify broken or disconnected fragments.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>mol_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>rdkit.Chem.Mol</em>) – A list of RDKit Mol objects to be checked.</p></li>
-<li><p><strong>skip_idx</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Atom indices to skip when counting and checking (currently unused in logic;
-provided for future extension). Default is None.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>default=0</em>) – If &gt; 0, prints detailed information about each valency violation as:
-“&lt;SMILES&gt; has invalid valency: &lt;AtomSymbol&gt; &lt;TotalValence&gt; &lt;FormalCharge&gt;”.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>natom_stability_dicts</strong> (<em>dict[str, int]</em>) – Counts of atoms whose total electron count (valence minus formal charge)
-matches a known valid valency (i.e. “stable” atoms), keyed by atom symbol.</p></li>
-<li><p><strong>natom_tot_dicts</strong> (<em>dict[str, int]</em>) – Total counts of atoms encountered, keyed by atom symbol.</p></li>
-<li><p><strong>good_smiles</strong> (<em>list of str</em>) – Canonical SMILES strings for molecules deemed chemically valid and not
-containing disconnected fragments (“.”).</p></li>
-<li><p><strong>bad_smiles_broken</strong> (<em>list of str</em>) – Canonical SMILES for molecules that are chemically valid but contain
-disconnected fragments (i.e. salts or mixtures with “.” in the SMILES).</p></li>
-<li><p><strong>bad_smiles_chem</strong> (<em>list of str</em>) – Canonical SMILES for molecules that failed the valency checks.</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<ul>
-<li><dl>
-<dt>This function relies on a pre-defined mapping <cite>valid_valencies</cite>:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">valid_valencies</span> <span class="o">=</span> <span class="p">{</span>
-<span class="gp">... </span>    <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="p">{</span><span class="mi">1</span><span class="p">},</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="p">{</span><span class="mi">4</span><span class="p">},</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="p">{</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">},</span> <span class="s1">&#39;O&#39;</span><span class="p">:</span> <span class="p">{</span><span class="mi">2</span><span class="p">},</span> <span class="o">...</span>
-<span class="gp">... </span><span class="p">}</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-<p>which maps each element symbol to the set of permitted electron counts.</p>
-</li>
-<li><p>The <cite>skip_idx</cite> argument is currently not applied in the loop; if you wish
-to ignore certain atoms (for example, metals or explicit hydrogens), you
-could uncomment and adapt the skip logic.</p></li>
-</ul>
-<p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">rdkit.Chem</span><span class="w"> </span><span class="kn">import</span> <span class="n">MolFromSmiles</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">smiles_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CCO&#39;</span><span class="p">,</span> <span class="s1">&#39;C[N+](C)(C)C&#39;</span><span class="p">,</span> <span class="s1">&#39;C.C&#39;</span><span class="p">]</span>  <span class="c1"># ethanol, tetramethylammonium, disconnected C and C</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mols</span> <span class="o">=</span> <span class="p">[</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">smiles_list</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">valid</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">broken</span><span class="p">,</span> <span class="n">bad</span> <span class="o">=</span> <span class="n">check_chem_validity</span><span class="p">(</span><span class="n">mols</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="go"> # would print any valency errors if present</span>
-</pre></div>
-</div>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.check_neutrality">
@@ -678,7 +644,7 @@ Special handling is applied for atoms with certain atomic numbers, such as carbo
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.compute_drug_likeness">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">compute_drug_likeness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">rdkit.Chem.Mol</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.compute_drug_likeness" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">compute_drug_likeness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.compute_drug_likeness" title="Link to this definition">¶</a></dt>
 <dd><p>Compute RDKit-based drug-likeness metrics including SAScore and QED.</p>
 </dd></dl>
 
@@ -969,7 +935,7 @@ check validity, and optionally run strain and diversity checks.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">xyz_to_rdkit_mol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">rdkit.Chem.Mol</span></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">xyz_to_rdkit_mol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol" title="Link to this definition">¶</a></dt>
 <dd><p>Convert an XYZ file to an RDKit molecule with perceived bonds.
 Tries multiple charges to find a valid structure without radicals.</p>
 </dd></dl>
@@ -982,6 +948,16 @@ Tries multiple charges to find a valid structure without radicals.</p>
 <dl class="py data">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.COULOMB_SCALING">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">COULOMB_SCALING</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.COULOMB_SCALING" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.Chem">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">Chem</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.Chem" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.Data">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">Data</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.Data" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
@@ -1005,6 +981,11 @@ Tries multiple charges to find a valid structure without radicals.</p>
 <dd></dd></dl>
 
 <dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.PoseBusters">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">PoseBusters</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.PoseBusters" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.SCALE_FACTOR">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">SCALE_FACTOR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.2</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.SCALE_FACTOR" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1015,6 +996,11 @@ Tries multiple charges to find a valid structure without radicals.</p>
 <dd></dd></dl>
 
 <dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.covalent_radii">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">covalent_radii</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.covalent_radii" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.is_cosymlib_available">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">is_cosymlib_available</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.is_cosymlib_available" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1022,6 +1008,11 @@ Tries multiple charges to find a valid structure without radicals.</p>
 <dl class="py data">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.logger">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.logger" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.pybel">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">pybel</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.pybel" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
@@ -1127,14 +1118,19 @@ Tries multiple charges to find a valid structure without radicals.</p>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol"><code class="docutils literal notranslate"><span class="pre">xyz_to_rdkit_mol()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.ALPHA_DEFAULT"><code class="docutils literal notranslate"><span class="pre">ALPHA_DEFAULT</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.COULOMB_SCALING"><code class="docutils literal notranslate"><span class="pre">COULOMB_SCALING</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.Chem"><code class="docutils literal notranslate"><span class="pre">Chem</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.Data"><code class="docutils literal notranslate"><span class="pre">Data</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.EDGE_THRESHOLD"><code class="docutils literal notranslate"><span class="pre">EDGE_THRESHOLD</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.LAM_SCALING"><code class="docutils literal notranslate"><span class="pre">LAM_SCALING</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.P_ALPHAS"><code class="docutils literal notranslate"><span class="pre">P_ALPHAS</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.P_TYPES"><code class="docutils literal notranslate"><span class="pre">P_TYPES</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.PoseBusters"><code class="docutils literal notranslate"><span class="pre">PoseBusters</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.SCALE_FACTOR"><code class="docutils literal notranslate"><span class="pre">SCALE_FACTOR</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.SCORES_THRESHOLD"><code class="docutils literal notranslate"><span class="pre">SCORES_THRESHOLD</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.covalent_radii"><code class="docutils literal notranslate"><span class="pre">covalent_radii</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.is_cosymlib_available"><code class="docutils literal notranslate"><span class="pre">is_cosymlib_available</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.pybel"><code class="docutils literal notranslate"><span class="pre">pybel</span></code></a></li>
 </ul>
 </li>
 </ul>

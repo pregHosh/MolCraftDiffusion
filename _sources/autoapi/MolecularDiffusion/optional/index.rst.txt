@@ -1,0 +1,57 @@
+MolecularDiffusion.optional
+===========================
+
+.. py:module:: MolecularDiffusion.optional
+
+.. autoapi-nested-parse::
+
+   Helpers for optional dependency error messages.
+
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.optional.OptionalDependencyError
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.optional.install_hint
+   MolecularDiffusion.optional.optional_import_error
+   MolecularDiffusion.optional.require_modules
+
+
+Module Contents
+---------------
+
+.. py:exception:: OptionalDependencyError
+
+   Bases: :py:obj:`ImportError`
+
+
+   Raised when an optional dependency group is required but unavailable.
+
+   Initialize self.  See help(type(self)) for accurate signature.
+
+
+.. py:function:: install_hint(extra: str, missing: collections.abc.Iterable[str] | None = None) -> str
+
+   Build a concise installation hint for an optional dependency group.
+
+
+.. py:function:: optional_import_error(extra: str, error: ImportError) -> OptionalDependencyError
+
+   Convert an import error into an actionable optional-extra message.
+
+
+.. py:function:: require_modules(extra: str, modules: collections.abc.Iterable[str]) -> None
+
+   Import-check modules and raise a grouped optional dependency error.
+
+

@@ -47,7 +47,7 @@ Module Contents
    Verifies that the atom order in ASE atoms and RDKit mol from mol_block are identical.
 
 
-.. py:function:: merge_dbs(input_dir: pathlib.Path, output_db: pathlib.Path, recursive: bool = False, pattern: str = '*.db')
+.. py:function:: merge_dbs(input_dir: pathlib.Path, output_db: pathlib.Path, recursive: bool = False, pattern: str = '*.db', verify: bool = True)
 
    Merges multiple ASE databases into one.
 

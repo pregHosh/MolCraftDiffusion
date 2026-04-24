@@ -10,6 +10,7 @@ Attributes
 .. autoapisummary::
 
    MolecularDiffusion.runmodes.analyze.compute_metrics.EDGE_THRESHOLD
+   MolecularDiffusion.runmodes.analyze.compute_metrics.RDLogger
    MolecularDiffusion.runmodes.analyze.compute_metrics.SCALE_FACTOR
    MolecularDiffusion.runmodes.analyze.compute_metrics.SCORES_THRESHOLD
    MolecularDiffusion.runmodes.analyze.compute_metrics.parser
@@ -30,6 +31,10 @@ Module Contents
 
 .. py:data:: EDGE_THRESHOLD
    :value: 4
+
+
+.. py:data:: RDLogger
+   :value: None
 
 
 .. py:data:: SCALE_FACTOR
