@@ -108,12 +108,12 @@ Module Contents
    Generate Mol Blocks, SMILES, and properties (SA, SC).
 
 
-.. py:function:: inspect_cmd(db, output, keys, sample_size, limit)
+.. py:function:: inspect_cmd(db, output, keys, sample_size, limit, check_nan, nan_key, discard_nan, detect_outliers, outlier_threshold, discard_outliers, outlier_key, clean_db)
 
    Inspect an ASE database and optionally plot statistics.
 
 
-.. py:function:: merge_cmd(input, output, recursive)
+.. py:function:: merge_cmd(input, output, recursive, verify)
 
    Merge multiple ASE databases.
 

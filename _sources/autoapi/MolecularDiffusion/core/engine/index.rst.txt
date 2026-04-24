@@ -109,8 +109,6 @@ Module Contents
 
 
    .. py:method:: load_config_dict(config)
-      :classmethod:
-
 
       Construct an instance from the configuration dict.
 

@@ -36,9 +36,10 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: inspect_db(db_path: pathlib.Path, output_dir: pathlib.Path = None, keys_to_plot: List[str] = None, sample_size: int = 5000, limit_print: int = 10)
+.. py:function:: inspect_db(db_path: pathlib.Path, output_dir: pathlib.Path = None, keys_to_plot: List[str] = None, sample_size: int = 5000, limit_print: int = 10, check_nan: bool = False, nan_key: str = None, discard_nan: bool = False, detect_outliers: bool = False, outlier_threshold: float = 3.0, discard_outliers: bool = False, outlier_key: str = None, clean_db_path: pathlib.Path = None)
 
    Inspects an ASE DB, printing stats and optionally plotting distributions.
+   Allows identifying NaNs and outliers, and optionally saving a cleaned DB.
 
 
 .. py:function:: is_clean(row)
