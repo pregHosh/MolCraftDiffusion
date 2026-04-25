@@ -1,0 +1,56 @@
+MolecularDiffusion.runmodes.analyze.uma_embeddings
+==================================================
+
+.. py:module:: MolecularDiffusion.runmodes.analyze.uma_embeddings
+
+.. autoapi-nested-parse::
+
+   UMA backbone embedding extraction — package-native implementation.
+
+   fairchem is NOT installed as a pip package. The vendored source tree at
+   ``<repo_root>/fairchem/src`` is prepended to ``sys.path`` at import time.
+
+   The repo root is resolved in this order:
+   1. ``MOLCRAFT_REPO_ROOT`` environment variable (explicit override).
+   2. Walk up from ``cwd`` until a directory containing ``fairchem/src`` is found.
+
+   Import stubs for ``ray``, ``torchtnt``, and ``monty`` are installed into
+   ``sys.modules`` so that fairchem's module-level imports succeed without those
+   packages being present.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.uma_embeddings.DEFAULT_UMA_CHECKPOINT
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.uma_embeddings.get_uma_molecule_embeddings
+
+
+Module Contents
+---------------
+
+.. py:function:: get_uma_molecule_embeddings(source: str | pathlib.Path | list[ase.Atoms], checkpoint_path: str | pathlib.Path = DEFAULT_UMA_CHECKPOINT, output_path: str | pathlib.Path | None = None, task_name: str = 'omol', device: Literal['cuda', 'cpu'] | None = None, batch_size: int = 8, pooling: Literal['mean', 'sum'] = 'mean', scalar_only: bool = True, read_all_frames: bool = False, recursive: bool = False, extensions: collections.abc.Sequence[str] = DEFAULT_STRUCTURE_EXTENSIONS, charge: int = 0, spin: int = 1) -> list[dict[str, object]]
+
+   Extract UMA backbone embeddings.
+
+   :param source: Directory of structure files **or** a pre-loaded ``list[Atoms]``.
+                  When a list is passed, file discovery and ase_read are skipped;
+                  ``path`` and ``frame`` in each result are ``None``.
+   :param charge: Total molecular charge applied to all structures (default: 0).
+   :param spin: Spin multiplicity applied to all structures (default: 1).
+
+
+.. py:data:: DEFAULT_UMA_CHECKPOINT
+   :value: 'training_outputs/uma-s-1p2.pt'
+
+

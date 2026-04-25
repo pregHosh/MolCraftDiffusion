@@ -1,0 +1,117 @@
+MolecularDiffusion.runmodes.analyze.featurize
+=============================================
+
+.. py:module:: MolecularDiffusion.runmodes.analyze.featurize
+
+.. autoapi-nested-parse::
+
+   Molecular featurization backends for 3D XYZ structures.
+
+   Backends
+   --------
+   soap  SOAP descriptor via dscribe — CPU, no external model needed.
+   uma   UMA backbone embeddings — requires vendored fairchem/src + checkpoint.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.featurize.DEFAULT_SOAP_SPECIES
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.featurize.BaseFeaturizer
+   MolecularDiffusion.runmodes.analyze.featurize.SOAPFeaturizer
+   MolecularDiffusion.runmodes.analyze.featurize.UMAFeaturizer
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.featurize.run_featurize
+
+
+Module Contents
+---------------
+
+.. py:class:: BaseFeaturizer
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:method:: featurize(atoms_list: list[ase.Atoms]) -> numpy.ndarray
+      :abstractmethod:
+
+
+      Return float32 array of shape (N, D).
+
+
+
+.. py:class:: SOAPFeaturizer(species: list[str], r_cut: float = 6.0, n_max: int = 8, l_max: int = 6, sigma: float = 0.1, pooling: str = 'mean', n_jobs: int = 1)
+
+   Bases: :py:obj:`BaseFeaturizer`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:method:: featurize(atoms_list: list[ase.Atoms]) -> numpy.ndarray
+
+      Return float32 array of shape (N, D).
+
+
+
+   .. py:attribute:: desc
+
+
+   .. py:attribute:: n_jobs
+      :value: 1
+
+
+
+   .. py:attribute:: pooling
+      :value: 'mean'
+
+
+
+.. py:class:: UMAFeaturizer(checkpoint: str | pathlib.Path, task_name: str = 'omol', device: str | None = None, batch_size: int = 8, pooling: str = 'mean', scalar_only: bool = True, charge: int = 0, spin: int = 1)
+
+   Bases: :py:obj:`BaseFeaturizer`
+
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+
+   .. py:method:: featurize(atoms_list: list[ase.Atoms]) -> numpy.ndarray
+
+      Return float32 array of shape (N, D).
+
+
+
+   .. py:attribute:: kwargs
+
+
+.. py:function:: run_featurize(input_dir: str | pathlib.Path, backend: str = 'soap', output_path: str | pathlib.Path | None = None, extensions: collections.abc.Sequence[str] = DEFAULT_STRUCTURE_EXTENSIONS, recursive: bool = False, species: list[str] | None = None, autodetect_species: bool = False, r_cut: float = 6.0, n_max: int = 8, l_max: int = 6, sigma: float = 0.1, pooling: str = 'mean', n_jobs: int = 1, checkpoint: str | pathlib.Path = 'training_outputs/uma-s-1p2.pt', task_name: str = 'omol', device: str | None = None, batch_size: int = 8, scalar_only: bool = True, charge: int = 0, spin: int = 1) -> numpy.ndarray
+
+   Discover XYZ files, featurize, save outputs, return (N, D) array.
+
+
+.. py:data:: DEFAULT_SOAP_SPECIES
+   :value: ['H', 'B', 'C', 'N', 'O', 'F', 'Al', 'Si', 'P', 'S', 'Cl', 'As', 'Se', 'Br', 'I', 'Hg', 'Bi']
+
+

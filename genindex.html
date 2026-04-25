@@ -264,6 +264,8 @@
 <li class="toctree-l4 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/index.html">MolecularDiffusion.runmodes.analyze</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.analyze" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/compare_to_optimized/index.html">MolecularDiffusion.runmodes.analyze.compare_to_optimized</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/compute_metrics/index.html">MolecularDiffusion.runmodes.analyze.compute_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html">MolecularDiffusion.runmodes.analyze.featurize</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/uma_embeddings/index.html">MolecularDiffusion.runmodes.analyze.uma_embeddings</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/xtb_electronic/index.html">MolecularDiffusion.runmodes.analyze.xtb_electronic</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/xtb_optimization/index.html">MolecularDiffusion.runmodes.analyze.xtb_optimization</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/xyz2mol/index.html">MolecularDiffusion.runmodes.analyze.xyz2mol</a></li>
@@ -838,6 +840,8 @@
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/data/component/dataset/index.html#MolecularDiffusion.data.component.dataset.BASE_ATOM_VOCAB">BASE_ATOM_VOCAB (in module MolecularDiffusion.data.component.dataset)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html#MolecularDiffusion.runmodes.analyze.featurize.BaseFeaturizer">BaseFeaturizer (class in MolecularDiffusion.runmodes.analyze.featurize)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/shepherd_arch/ocp_compat/index.html#MolecularDiffusion.modules.models.shepherd_arch.ocp_compat.BaseModel">BaseModel (class in MolecularDiffusion.modules.models.shepherd_arch.ocp_compat)</a>
 </li>
@@ -1555,6 +1559,10 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/shepherd_arch/model/index.html#MolecularDiffusion.modules.models.shepherd_arch.model.Model.decoder_joint_heterogeneous_graph_encoder">decoder_joint_heterogeneous_graph_encoder (MolecularDiffusion.modules.models.shepherd_arch.model.Model attribute)</a>
 </li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html#MolecularDiffusion.runmodes.analyze.featurize.DEFAULT_SOAP_SPECIES">DEFAULT_SOAP_SPECIES (in module MolecularDiffusion.runmodes.analyze.featurize)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/uma_embeddings/index.html#MolecularDiffusion.runmodes.analyze.uma_embeddings.DEFAULT_UMA_CHECKPOINT">DEFAULT_UMA_CHECKPOINT (in module MolecularDiffusion.runmodes.analyze.uma_embeddings)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/utils/geom_constant/index.html#MolecularDiffusion.utils.geom_constant.degree_angles_ref">degree_angles_ref (in module MolecularDiffusion.utils.geom_constant)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_ldm/index.html#MolecularDiffusion.modules.tasks.diffusion_ldm.LDMTask.denoiser">denoiser (MolecularDiffusion.modules.tasks.diffusion_ldm.LDMTask attribute)</a>
@@ -1566,6 +1574,8 @@
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion/index.html#MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative.density_estimation">density_estimation() (MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative method)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/shepherd_arch/equiformer_operations/index.html#MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.DepthwiseTensorProduct">DepthwiseTensorProduct() (in module MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html#MolecularDiffusion.runmodes.analyze.featurize.SOAPFeaturizer.desc">desc (MolecularDiffusion.runmodes.analyze.featurize.SOAPFeaturizer attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/torch/index.html#MolecularDiffusion.utils.torch.detach">detach() (in module MolecularDiffusion.utils.torch)</a>
 </li>
@@ -1631,12 +1641,12 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/pretty/index.html#MolecularDiffusion.utils.pretty.PrettyPrinter.display">display (MolecularDiffusion.utils.pretty.PrettyPrinter attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/models/shepherd_arch/model/index.html#MolecularDiffusion.modules.models.shepherd_arch.model.display_dict">display_dict() (in module MolecularDiffusion.modules.models.shepherd_arch.model)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/conv/index.html#MolecularDiffusion.modules.layers.conv.NodeEdgeBlock.dist_add_e">dist_add_e (MolecularDiffusion.modules.layers.conv.NodeEdgeBlock attribute)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/conv/index.html#MolecularDiffusion.modules.layers.conv.NodeEdgeBlock.dist_mul_e">dist_mul_e (MolecularDiffusion.modules.layers.conv.NodeEdgeBlock attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/runmodes/train/eval/index.html#MolecularDiffusion.runmodes.train.eval.DIST_RELAX_BOND">DIST_RELAX_BOND (in module MolecularDiffusion.runmodes.train.eval)</a>
@@ -2269,10 +2279,18 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/shepherd_score/pharm_utils/pharmacophore/index.html#MolecularDiffusion.utils.shepherd_score.pharm_utils.pharmacophore.feature_colors">feature_colors (in module MolecularDiffusion.utils.shepherd_score.pharm_utils.pharmacophore)</a>
 </li>
-        <li><a href="autoapi/MolecularDiffusion/runmodes/data/featurization/index.html#MolecularDiffusion.runmodes.data.featurization.featurize">featurize() (in module MolecularDiffusion.runmodes.data.featurization)</a>
+        <li><a href="autoapi/MolecularDiffusion/cli/analyze/index.html#MolecularDiffusion.cli.analyze.featurize">featurize() (in module MolecularDiffusion.cli.analyze)</a>
 
         <ul>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/data/featurization/index.html#MolecularDiffusion.runmodes.data.featurization.featurize">(in module MolecularDiffusion.runmodes.data.featurization)</a>
+</li>
           <li><a href="autoapi/MolecularDiffusion/data/component/feature/index.html#MolecularDiffusion.data.component.feature.NodeFeaturizer.featurize">(MolecularDiffusion.data.component.feature.NodeFeaturizer method)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html#MolecularDiffusion.runmodes.analyze.featurize.BaseFeaturizer.featurize">(MolecularDiffusion.runmodes.analyze.featurize.BaseFeaturizer method)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html#MolecularDiffusion.runmodes.analyze.featurize.SOAPFeaturizer.featurize">(MolecularDiffusion.runmodes.analyze.featurize.SOAPFeaturizer method)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html#MolecularDiffusion.runmodes.analyze.featurize.UMAFeaturizer.featurize">(MolecularDiffusion.runmodes.analyze.featurize.UMAFeaturizer method)</a>
 </li>
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/data/component/feature/index.html#MolecularDiffusion.data.component.feature.NodeFeaturizer.featurize_all">featurize_all() (MolecularDiffusion.data.component.feature.NodeFeaturizer method)</a>
@@ -3009,10 +3027,10 @@
           <li><a href="autoapi/MolecularDiffusion/modules/layers/equiformer_v2_s/layer_norm/index.html#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.get_normalization_layer">(in module MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/runmodes/data/augmentation/index.html#MolecularDiffusion.runmodes.data.augmentation.get_num_graphs">get_num_graphs() (in module MolecularDiffusion.runmodes.data.augmentation)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/runmodes/train/trainer/index.html#MolecularDiffusion.runmodes.train.trainer.OptimSchedulerFactory.get_optimizer">get_optimizer() (MolecularDiffusion.runmodes.train.trainer.OptimSchedulerFactory method)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/shepherd_score/score/gaussian_overlap/index.html#MolecularDiffusion.utils.shepherd_score.score.gaussian_overlap.get_overlap">get_overlap() (in module MolecularDiffusion.utils.shepherd_score.score.gaussian_overlap)</a>
@@ -3096,6 +3114,8 @@
         <li><a href="autoapi/MolecularDiffusion/utils/xyz2mol/converter/index.html#MolecularDiffusion.utils.xyz2mol.converter.get_UA">get_UA() (in module MolecularDiffusion.utils.xyz2mol.converter)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/xyz2mol/converter/index.html#MolecularDiffusion.utils.xyz2mol.converter.get_UA_pairs">get_UA_pairs() (in module MolecularDiffusion.utils.xyz2mol.converter)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/uma_embeddings/index.html#MolecularDiffusion.runmodes.analyze.uma_embeddings.get_uma_molecule_embeddings">get_uma_molecule_embeddings() (in module MolecularDiffusion.runmodes.analyze.uma_embeddings)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/shepherd_score/score/pharmacophore_scoring/index.html#MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring.get_vector_volume_overlap_score">get_vector_volume_overlap_score() (in module MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring)</a>
 </li>
@@ -3627,10 +3647,10 @@
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/en_diffusion/index.html#MolecularDiffusion.modules.models.en_diffusion.DistributionNodes.keys">keys (MolecularDiffusion.modules.models.en_diffusion.DistributionNodes attribute)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_ldm/index.html#MolecularDiffusion.modules.tasks.diffusion_ldm.DiagonalGaussianDistribution.kl">kl() (MolecularDiffusion.modules.tasks.diffusion_ldm.DiagonalGaussianDistribution method)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/models/en_diffusion/index.html#MolecularDiffusion.modules.models.en_diffusion.EnVariationalDiffusion.kl_prior">kl_prior() (MolecularDiffusion.modules.models.en_diffusion.EnVariationalDiffusion method)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/data/component/pharmacophore/index.html#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule.kwargs">kwargs (MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataModule attribute)</a>
@@ -3641,6 +3661,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_ldm/index.html#MolecularDiffusion.modules.tasks.diffusion_ldm.VAETaskFactory.kwargs">(MolecularDiffusion.modules.tasks.diffusion_ldm.VAETaskFactory attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_tabasco/index.html#MolecularDiffusion.modules.tasks.diffusion_tabasco.ModelTaskFactory.kwargs">(MolecularDiffusion.modules.tasks.diffusion_tabasco.ModelTaskFactory attribute)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html#MolecularDiffusion.runmodes.analyze.featurize.UMAFeaturizer.kwargs">(MolecularDiffusion.runmodes.analyze.featurize.UMAFeaturizer attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_egcl/index.html#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.kwargs">(MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory attribute)</a>
 </li>
@@ -4841,6 +4863,10 @@
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/compute_metrics/index.html#module-MolecularDiffusion.runmodes.analyze.compute_metrics">MolecularDiffusion.runmodes.analyze.compute_metrics</a>
 </li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html#module-MolecularDiffusion.runmodes.analyze.featurize">MolecularDiffusion.runmodes.analyze.featurize</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/uma_embeddings/index.html#module-MolecularDiffusion.runmodes.analyze.uma_embeddings">MolecularDiffusion.runmodes.analyze.uma_embeddings</a>
+</li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/xtb_electronic/index.html#module-MolecularDiffusion.runmodes.analyze.xtb_electronic">MolecularDiffusion.runmodes.analyze.xtb_electronic</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/xtb_optimization/index.html#module-MolecularDiffusion.runmodes.analyze.xtb_optimization">MolecularDiffusion.runmodes.analyze.xtb_optimization</a>
@@ -5946,6 +5972,20 @@
 </li>
         </ul></li>
         <li>
+    MolecularDiffusion.runmodes.analyze.featurize
+
+        <ul>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html#module-MolecularDiffusion.runmodes.analyze.featurize">module</a>
+</li>
+        </ul></li>
+        <li>
+    MolecularDiffusion.runmodes.analyze.uma_embeddings
+
+        <ul>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/uma_embeddings/index.html#module-MolecularDiffusion.runmodes.analyze.uma_embeddings">module</a>
+</li>
+        </ul></li>
+        <li>
     MolecularDiffusion.runmodes.analyze.xtb_electronic
 
         <ul>
@@ -6450,6 +6490,8 @@
         <li><a href="autoapi/MolecularDiffusion/modules/layers/common/index.html#MolecularDiffusion.modules.layers.common.SinusoidsEmbeddingNew.n_frequencies">n_frequencies (MolecularDiffusion.modules.layers.common.SinusoidsEmbeddingNew attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/conv/index.html#MolecularDiffusion.modules.layers.conv.NodeEdgeBlock.n_head">n_head (MolecularDiffusion.modules.layers.conv.NodeEdgeBlock attribute)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html#MolecularDiffusion.runmodes.analyze.featurize.SOAPFeaturizer.n_jobs">n_jobs (MolecularDiffusion.runmodes.analyze.featurize.SOAPFeaturizer attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/conv/index.html#MolecularDiffusion.modules.layers.conv.EquivariantBlock.n_layers">n_layers (MolecularDiffusion.modules.layers.conv.EquivariantBlock attribute)</a>
 
@@ -7337,6 +7379,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/noisemodel/index.html#MolecularDiffusion.modules.models.noisemodel.polynomial_schedule">(in module MolecularDiffusion.modules.models.noisemodel)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html#MolecularDiffusion.runmodes.analyze.featurize.SOAPFeaturizer.pooling">pooling (MolecularDiffusion.runmodes.analyze.featurize.SOAPFeaturizer attribute)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/data/dataloader/index.html#MolecularDiffusion.data.dataloader.DataQueue.pop">pop() (MolecularDiffusion.data.dataloader.DataQueue method)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/conv/index.html#MolecularDiffusion.modules.layers.conv.NodeEdgeBlock.pos_att_mul">pos_att_mul (MolecularDiffusion.modules.layers.conv.NodeEdgeBlock attribute)</a>
@@ -7705,10 +7749,10 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion/index.html#MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative.reference_indices">reference_indices (MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative attribute)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/runmodes/generate/tasks_generate/index.html#MolecularDiffusion.runmodes.generate.tasks_generate.PharmacophoreConditionGenerator.reference_mol">reference_mol (MolecularDiffusion.runmodes.generate.tasks_generate.PharmacophoreConditionGenerator attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/core/core/index.html#MolecularDiffusion.core.core.Registry.register">register() (MolecularDiffusion.core.core.Registry class method)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/core/core/index.html#MolecularDiffusion.core.core.Registry">Registry (class in MolecularDiffusion.core.core)</a>
@@ -7822,6 +7866,8 @@
         <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/compare_to_optimized/index.html#MolecularDiffusion.runmodes.analyze.compare_to_optimized.run_compare_analysis">run_compare_analysis() (in module MolecularDiffusion.runmodes.analyze.compare_to_optimized)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/tabasco/callbacks/ema/index.html#MolecularDiffusion.modules.models.tabasco.callbacks.ema.run_ema_update_cpu">run_ema_update_cpu() (in module MolecularDiffusion.modules.models.tabasco.callbacks.ema)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html#MolecularDiffusion.runmodes.analyze.featurize.run_featurize">run_featurize() (in module MolecularDiffusion.runmodes.analyze.featurize)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/geom_metrics/index.html#MolecularDiffusion.utils.geom_metrics.run_postbuster">run_postbuster() (in module MolecularDiffusion.utils.geom_metrics)</a>
 </li>
@@ -8415,6 +8461,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/shepherd_arch/equiformer_v2_encoder/index.html#MolecularDiffusion.modules.models.shepherd_arch.equiformer_v2_encoder.EquiformerV2.SO3_rotation">(MolecularDiffusion.modules.models.shepherd_arch.equiformer_v2_encoder.EquiformerV2 attribute)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html#MolecularDiffusion.runmodes.analyze.featurize.SOAPFeaturizer">SOAPFeaturizer (class in MolecularDiffusion.runmodes.analyze.featurize)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/en_diffusion/index.html#MolecularDiffusion.modules.models.en_diffusion.softplus">softplus() (in module MolecularDiffusion.modules.models.en_diffusion)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/shepherd_arch/equiformer_operations/index.html#MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.sort_irreps_even_first">sort_irreps_even_first() (in module MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations)</a>
@@ -8908,6 +8956,8 @@
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/models/tabasco/sample/interpolant_guidance/index.html#MolecularDiffusion.modules.models.tabasco.sample.interpolant_guidance.UFFBoundGuidance">UFFBoundGuidance (class in MolecularDiffusion.modules.models.tabasco.sample.interpolant_guidance)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html#MolecularDiffusion.runmodes.analyze.featurize.UMAFeaturizer">UMAFeaturizer (class in MolecularDiffusion.runmodes.analyze.featurize)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/runmodes/generate/tasks_generate/index.html#MolecularDiffusion.runmodes.generate.tasks_generate.GenerativeFactory.unconditional_generation">unconditional_generation() (MolecularDiffusion.runmodes.generate.tasks_generate.GenerativeFactory method)</a>
 </li>

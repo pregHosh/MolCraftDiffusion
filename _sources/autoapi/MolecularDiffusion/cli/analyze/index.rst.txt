@@ -30,6 +30,7 @@ Functions
 
    MolecularDiffusion.cli.analyze.analyze
    MolecularDiffusion.cli.analyze.compare
+   MolecularDiffusion.cli.analyze.featurize
    MolecularDiffusion.cli.analyze.metrics
    MolecularDiffusion.cli.analyze.optimize
    MolecularDiffusion.cli.analyze.xtb_electronic
@@ -61,7 +62,26 @@ Module Contents
    Requires 'optimized_xyz' subdirectory with *_opt.xyz files.
 
 
-.. py:function:: metrics(input_dir, output, metrics_type, recheck_topo, check_strain, portion, mol_converter, skip_atoms, n_subsets, timeout)
+.. py:function:: featurize(input_dir, backend, output, recursive, r_cut, n_max, l_max, sigma, autodetect_species, species, pooling, soap_jobs, checkpoint, task_name, device, batch_size, all_components, charge, spin)
+
+   Featurize 3D XYZ molecules into fixed-size feature vectors.
+
+   
+   Backends:
+     soap  SOAP descriptor via dscribe — no GPU required
+     uma   UMA backbone embeddings — requires vendored fairchem/src + checkpoint
+
+   
+   .. rubric:: Examples
+
+   MolCraftDiff analyze featurize gen_xyz/
+   MolCraftDiff analyze featurize gen_xyz/ --autodetect
+   MolCraftDiff analyze featurize gen_xyz/ --species C --species H --species N --species O
+   MolCraftDiff analyze featurize gen_xyz/ --backend soap --n-max 12 --l-max 9
+   MolCraftDiff analyze featurize gen_xyz/ --backend uma --device cuda
+
+
+.. py:function:: metrics(input_dir, output, metrics_type, recheck_topo, check_strain, portion, mol_converter, skip_atoms, n_subsets, timeout, reference_mol, mol_idx)
 
    Compute validity and connectivity metrics for XYZ files.
 
@@ -78,11 +98,16 @@ Module Contents
    MolCraftDiff analyze metrics gen_xyz/
    MolCraftDiff analyze metrics gen_xyz/ --metrics posebuster
    MolCraftDiff analyze metrics gen_xyz/ --metrics geom_revised --mol-converter openbabel
+   MolCraftDiff analyze metrics gen_xyz/ --metrics shepherd
+   MolCraftDiff analyze metrics gen_xyz/ --metrics shepherd -r data/shepherd_data/gdb/molblock_charges_9_test100.pkl --mol-idx 0
 
 
-.. py:function:: optimize(input_dir, output_dir, charge, level, timeout, scale_factor, csv_path, filter_column)
+.. py:function:: optimize(input_path, output_path, charge, level, timeout, scale_factor, csv_path, filter_column, inherit_attributes)
 
-   Optimize XYZ geometries using xTB.
+   Optimize molecular geometries (XYZ or ASE DB).
+
+   If input is a directory, it processes all XYZ files.
+   If input is a .db file, it processes all rows in the ASE database.
 
    
    .. rubric:: Examples

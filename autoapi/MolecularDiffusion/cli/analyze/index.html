@@ -266,6 +266,8 @@
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../runmodes/analyze/index.html">MolecularDiffusion.runmodes.analyze</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.analyze" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/compare_to_optimized/index.html">MolecularDiffusion.runmodes.analyze.compare_to_optimized</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/compute_metrics/index.html">MolecularDiffusion.runmodes.analyze.compute_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/featurize/index.html">MolecularDiffusion.runmodes.analyze.featurize</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/uma_embeddings/index.html">MolecularDiffusion.runmodes.analyze.uma_embeddings</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/xtb_electronic/index.html">MolecularDiffusion.runmodes.analyze.xtb_electronic</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/xtb_optimization/index.html">MolecularDiffusion.runmodes.analyze.xtb_optimization</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/xyz2mol/index.html">MolecularDiffusion.runmodes.analyze.xyz2mol</a></li>
@@ -419,16 +421,19 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.compare" title="MolecularDiffusion.cli.analyze.compare"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compare</span></code></a>(directory, mol_converter, n_subsets, csv_path, ...)</p></td>
 <td><p>Compare XYZ files with their optimized counterparts.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.metrics" title="MolecularDiffusion.cli.analyze.metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">metrics</span></code></a>(input_dir, output, metrics_type, recheck_topo, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.featurize" title="MolecularDiffusion.cli.analyze.featurize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">featurize</span></code></a>(input_dir, backend, output, recursive, ...)</p></td>
+<td><p>Featurize 3D XYZ molecules into fixed-size feature vectors.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.metrics" title="MolecularDiffusion.cli.analyze.metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">metrics</span></code></a>(input_dir, output, metrics_type, recheck_topo, ...)</p></td>
 <td><p>Compute validity and connectivity metrics for XYZ files.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.optimize" title="MolecularDiffusion.cli.analyze.optimize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimize</span></code></a>(input_dir, output_dir, charge, level, ...)</p></td>
-<td><p>Optimize XYZ geometries using xTB.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.optimize" title="MolecularDiffusion.cli.analyze.optimize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimize</span></code></a>(input_path, output_path, charge, level, ...)</p></td>
+<td><p>Optimize molecular geometries (XYZ or ASE DB).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.xtb_electronic" title="MolecularDiffusion.cli.analyze.xtb_electronic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xtb_electronic</span></code></a>(input_dir, output, method, charge, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.xtb_electronic" title="MolecularDiffusion.cli.analyze.xtb_electronic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xtb_electronic</span></code></a>(input_dir, output, method, charge, ...)</p></td>
 <td><p>Compute XTB electronic properties for XYZ files.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.xyz2mol" title="MolecularDiffusion.cli.analyze.xyz2mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz2mol</span></code></a>(xyz_dir, input_csv, label, timeout, bits, verbose)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.xyz2mol" title="MolecularDiffusion.cli.analyze.xyz2mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz2mol</span></code></a>(xyz_dir, input_csv, label, timeout, bits, verbose)</p></td>
 <td><p>Convert XYZ files to SMILES and extract fingerprints/scaffolds.</p></td>
 </tr>
 </tbody>
@@ -461,8 +466,27 @@ Enforces strict connectivity checks.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.cli.analyze.featurize">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.analyze.</span></span><span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_cut</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autodetect_species</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pooling</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soap_jobs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkpoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_components</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.analyze.featurize" title="Link to this definition">¶</a></dt>
+<dd><p>Featurize 3D XYZ molecules into fixed-size feature vectors.</p>
+<p>
+Backends:</p>
+<blockquote>
+<div><p>soap  SOAP descriptor via dscribe — no GPU required
+uma   UMA backbone embeddings — requires vendored fairchem/src + checkpoint</p>
+</div></blockquote>
+<p>
+.. rubric:: Examples</p>
+<p>MolCraftDiff analyze featurize gen_xyz/
+MolCraftDiff analyze featurize gen_xyz/ –autodetect
+MolCraftDiff analyze featurize gen_xyz/ –species C –species H –species N –species O
+MolCraftDiff analyze featurize gen_xyz/ –backend soap –n-max 12 –l-max 9
+MolCraftDiff analyze featurize gen_xyz/ –backend uma –device cuda</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.cli.analyze.metrics">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.analyze.</span></span><span class="sig-name descname"><span class="pre">metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recheck_topo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_strain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">portion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mol_converter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_subsets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.analyze.metrics" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.analyze.</span></span><span class="sig-name descname"><span class="pre">metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recheck_topo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_strain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">portion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mol_converter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_subsets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_mol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mol_idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.analyze.metrics" title="Link to this definition">¶</a></dt>
 <dd><p>Compute validity and connectivity metrics for XYZ files.</p>
 <p>
 Metrics types:</p>
@@ -476,13 +500,17 @@ geom_revised Aromatic-aware stability metrics</p>
 .. rubric:: Examples</p>
 <p>MolCraftDiff analyze metrics gen_xyz/
 MolCraftDiff analyze metrics gen_xyz/ –metrics posebuster
-MolCraftDiff analyze metrics gen_xyz/ –metrics geom_revised –mol-converter openbabel</p>
+MolCraftDiff analyze metrics gen_xyz/ –metrics geom_revised –mol-converter openbabel
+MolCraftDiff analyze metrics gen_xyz/ –metrics shepherd
+MolCraftDiff analyze metrics gen_xyz/ –metrics shepherd -r data/shepherd_data/gdb/molblock_charges_9_test100.pkl –mol-idx 0</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.cli.analyze.optimize">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.analyze.</span></span><span class="sig-name descname"><span class="pre">optimize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csv_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_column</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.analyze.optimize" title="Link to this definition">¶</a></dt>
-<dd><p>Optimize XYZ geometries using xTB.</p>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.analyze.</span></span><span class="sig-name descname"><span class="pre">optimize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csv_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inherit_attributes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.analyze.optimize" title="Link to this definition">¶</a></dt>
+<dd><p>Optimize molecular geometries (XYZ or ASE DB).</p>
+<p>If input is a directory, it processes all XYZ files.
+If input is a .db file, it processes all rows in the ASE database.</p>
 <p>
 .. rubric:: Examples</p>
 <p>MolCraftDiff analyze optimize gen_xyz/
@@ -631,6 +659,7 @@ MolCraftDiff analyze xyz2mol gen_xyz/ –bits 1024 -v</p>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.analyze.analyze"><code class="docutils literal notranslate"><span class="pre">analyze()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.analyze.compare"><code class="docutils literal notranslate"><span class="pre">compare()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.cli.analyze.featurize"><code class="docutils literal notranslate"><span class="pre">featurize()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.analyze.metrics"><code class="docutils literal notranslate"><span class="pre">metrics()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.analyze.optimize"><code class="docutils literal notranslate"><span class="pre">optimize()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.analyze.xtb_electronic"><code class="docutils literal notranslate"><span class="pre">xtb_electronic()</span></code></a></li>
