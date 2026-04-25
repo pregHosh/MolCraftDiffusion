@@ -29,10 +29,10 @@ The base package does not install every data-processing or analysis dependency. 
 # Data preparation, augmentation, and featurization commands
 pip install 'molcraftdiffusion[data]'
 
-# Analysis and post-processing commands
+# Analysis and post-processing commands (metrics, compare, xyz2mol, xtb-electronic, featurize SOAP)
 pip install 'molcraftdiffusion[analyze]'
 
-# Some analyze commands shell out to xTB.
+# xTB is used by optimize, compare, and xtb-electronic — best installed from conda-forge:
 conda install -c conda-forge xtb==6.7.1 -y
 ```
 
@@ -54,7 +54,7 @@ pip install -e '.[analyze]'
 ## Optional dependencies
 
 ```bash
-# Data utilities
+# Data utilities (includes dscribe for SOAP featurization)
 pip install 'molcraftdiffusion[data]'
 
 # Analyze utilities, including PoseBusters/RDKit/OpenBabel Python bindings/cosymlib
@@ -63,6 +63,37 @@ pip install 'molcraftdiffusion[analyze]'
 # xTB executable for xTB-backed analysis
 conda install -c conda-forge xtb==6.7.1 -y
 ```
+
+### UMA featurization backend
+
+The `featurize --backend uma` command uses a pretrained UMA model from fairchem.
+fairchem is **not** installed as a pip package — the source tree is vendored into
+the repository and loaded at runtime.
+
+Clone it into the repo root before using the UMA backend:
+
+```bash
+# from the MolCraftDiffusion repo root
+git clone https://github.com/pregHosh/fairchem fairchem
+```
+
+A pretrained UMA checkpoint is also required. Download `uma-s-1p2.pt` from
+[Hugging Face](https://huggingface.co/pregH/MolecularDiffusion) and place it at:
+
+```
+training_outputs/uma-s-1p2.pt
+```
+
+or pass a custom path with `--checkpoint /path/to/checkpoint.pt`.
+
+If the fairchem source tree is not found at runtime, MolCraftDiffusion will print
+an explicit error with the clone instruction above. You can also set:
+
+```bash
+export MOLCRAFT_REPO_ROOT=/path/to/MolCraftDiffusion
+```
+
+to point to the repo root when running from a different working directory.
 
 ## Verifying the installation
 

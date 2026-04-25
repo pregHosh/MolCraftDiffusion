@@ -83,6 +83,28 @@ tutorials/09_analyze
 
 ```{toctree}
 :maxdepth: 1
+:caption: Applications
+
+applications/index
+applications/local_chemical_space
+applications/library_design
+applications/inverse_design
+```
+
+```{toctree}
+:maxdepth: 1
+:caption: Workflows
+
+workflows/index
+workflows/generate_and_filter
+workflows/transfer_learning
+workflows/conditioned_generation
+workflows/end_to_end
+workflows/visualization
+```
+
+```{toctree}
+:maxdepth: 1
 :caption: Configuration Templates
 
 cfg_examples/train_diffusion

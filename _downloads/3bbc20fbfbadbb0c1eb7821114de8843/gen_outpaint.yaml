@@ -1,0 +1,41 @@
+# Tutorial 6: Structure-Guided Generation — Outpainting (Fragment Extension)
+# Usage: MolCraftDiff generate docs/cfg_examples/gen_outpaint
+#
+# Grow a molecule from a given fragment. The reference XYZ provides
+# the fixed scaffold; the model appends new atoms according to the
+# connector_dicts geometry constraints.
+
+defaults:
+  - tasks: diffusion
+  - interference: gen_outpaint
+  - _self_
+
+chkpt_directory: "training_outputs/benchmark/EDM_geom/"  # <-- path to your trained model
+atom_vocab: [H, B, C, N, O, F, Al, Si, P, S, Cl, As, Se, Br, I, Hg, Bi]
+diffusion_steps: 900
+
+interference:
+  _target_: MolecularDiffusion.runmodes.generate.GenerativeFactory
+  task_type: outpaint
+  sampling_mode: "ddpm"
+  num_generate: 100
+  batch_size: 12
+  max_mol_size: 100
+  mol_size: [0, 0]
+  target_values: []
+  property_names: []
+  seed: 86
+  output_path: "${chkpt_directory}/output_outpaint"
+
+  condition_configs:
+    reference_structure_path: "data/my_fragment.xyz"  # <-- your fragment XYZ
+    outpaint_cfgs:
+      t_start: 0.75         # diffusion timestep to start outpainting
+      t_critical: 0.0
+      # connector_dicts: maps scaffold atom index → [number of new atoms to attach]
+      connector_dicts:
+        0: [2]              # <-- replace with your atom indices and valencies
+        1: [2]
+      spread: 1.25          # spatial spread of newly seeded atoms (Å)
+      seed_dist: 1.25       # distance from connector atom for new atom seeding (Å)
+      min_dist: 2.5         # minimum distance between new atoms (Å)

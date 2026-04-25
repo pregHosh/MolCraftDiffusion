@@ -1,0 +1,36 @@
+# Tutorial 6: Structure-Guided Generation — Inpainting (Scaffold Decoration)
+# Usage: MolCraftDiff generate docs/cfg_examples/gen_inpaint
+#
+# Provide a reference XYZ structure and specify which atoms (0-indexed)
+# to mask. The model regenerates the masked region while preserving
+# the rest of the molecule.
+
+defaults:
+  - tasks: diffusion
+  - interference: gen_inpaint
+  - _self_
+
+chkpt_directory: "training_outputs/benchmark/EDM_geom/"  # <-- path to your trained model
+atom_vocab: [H, B, C, N, O, F, Al, Si, P, S, Cl, As, Se, Br, I, Hg, Bi]
+diffusion_steps: 900
+
+interference:
+  _target_: MolecularDiffusion.runmodes.generate.GenerativeFactory
+  task_type: inpaint
+  sampling_mode: "ddpm"
+  num_generate: 100
+  batch_size: 1             # inpainting typically requires batch_size: 1
+  max_mol_size: 100
+  mol_size: [0, 0]
+  target_values: []
+  property_names: []
+  seed: 86
+  output_path: "${chkpt_directory}/output_inpaint"
+
+  condition_configs:
+    reference_structure_path: "data/my_molecule.xyz"  # <-- your reference XYZ
+    inpaint_cfgs:
+      denoising_strength: 0.5    # higher → more creative freedom for masked region
+      # 0-indexed atom indices to mask and regenerate:
+      mask_node_index: [5, 6, 7, 8, 9]   # <-- replace with your target indices
+      noise_initial_mask: True
