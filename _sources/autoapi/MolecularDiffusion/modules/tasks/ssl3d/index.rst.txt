@@ -1,0 +1,316 @@
+MolecularDiffusion.modules.tasks.ssl3d
+======================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.ssl3d
+
+.. autoapi-nested-parse::
+
+   SSL3D — unified self-supervised pretraining task for 3D molecules.
+
+   Provides:
+     - SSL3DObjective (abstract base)
+     - CoordDenoiseObjective
+     - MaskedAtomTypeObjective
+     - PairwiseDistObjective
+     - SSL3D (task orchestrator)
+
+   Architecture dispatch mirrors ProperyPrediction (regression.py) so that
+   backbone weights transfer cleanly between SSL pretraining and downstream tasks.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.ssl3d.CoordDenoiseObjective
+   MolecularDiffusion.modules.tasks.ssl3d.MaskedAtomTypeObjective
+   MolecularDiffusion.modules.tasks.ssl3d.PairwiseDistObjective
+   MolecularDiffusion.modules.tasks.ssl3d.SSL3D
+   MolecularDiffusion.modules.tasks.ssl3d.SSL3DObjective
+
+
+Module Contents
+---------------
+
+.. py:class:: CoordDenoiseObjective(weight: float = 1.0, sigma_min: float = 0.01, sigma_max: float = 1.0, sigma_schedule: str = 'uniform')
+
+   Bases: :py:obj:`SSL3DObjective`, :py:obj:`MolecularDiffusion.core.Configurable`
+
+
+   Predict the Gaussian noise added to atom positions.
+
+   For equivariant backbones that return updated coords (x_pred != None),
+   we recover epsilon from the displacement: eps_hat = (x_noisy - x_pred) / sigma.
+   For invariant backbones we use a learned per-node MLP head on h.
+
+
+   .. py:method:: build_head(hidden_nf: int)
+
+      Called by SSL3D after the backbone is known. Override if needed.
+
+
+
+   .. py:method:: compute_loss(h, x_pred, batch_orig, batch_work, aux)
+
+      Compute loss from backbone outputs.
+
+      :param h: per-node hidden features (N, hidden_nf)
+      :param x_pred: updated coords from backbone (N, 3) or None for invariant nets
+      :param batch_orig: original uncorrupted batch
+      :param batch_work: corrupted batch passed to backbone
+      :param aux: dict returned by corrupt()
+
+      :returns: (scalar loss tensor, metrics dict)
+
+
+
+   .. py:method:: corrupt(batch_work: dict, device) -> dict
+
+      Perturb batch_work in-place and return aux info needed by compute_loss.
+
+
+
+   .. py:attribute:: coord_head
+      :value: None
+
+
+
+   .. py:attribute:: sigma_max
+      :value: 1.0
+
+
+
+   .. py:attribute:: sigma_min
+      :value: 0.01
+
+
+
+   .. py:attribute:: sigma_schedule
+      :value: 'uniform'
+
+
+
+.. py:class:: MaskedAtomTypeObjective(weight: float = 0.5, mask_rate: float = 0.15, atom_vocab_size: int = 5)
+
+   Bases: :py:obj:`SSL3DObjective`, :py:obj:`MolecularDiffusion.core.Configurable`
+
+
+   Mask a fraction of atom one-hot features and predict the masked types.
+
+   A learned [MASK] token replaces the masked rows in graph.x.
+   The head predicts logits over atom_vocab_size categories.
+
+
+   .. py:method:: build_head(hidden_nf: int)
+
+      Called by SSL3D after the backbone is known. Override if needed.
+
+
+
+   .. py:method:: compute_loss(h, x_pred, batch_orig, batch_work, aux)
+
+      Compute loss from backbone outputs.
+
+      :param h: per-node hidden features (N, hidden_nf)
+      :param x_pred: updated coords from backbone (N, 3) or None for invariant nets
+      :param batch_orig: original uncorrupted batch
+      :param batch_work: corrupted batch passed to backbone
+      :param aux: dict returned by corrupt()
+
+      :returns: (scalar loss tensor, metrics dict)
+
+
+
+   .. py:method:: corrupt(batch_work: dict, device) -> dict
+
+      Perturb batch_work in-place and return aux info needed by compute_loss.
+
+
+
+   .. py:attribute:: atom_vocab_size
+      :value: 5
+
+
+
+   .. py:attribute:: mask_rate
+      :value: 0.15
+
+
+
+   .. py:attribute:: mask_token
+
+
+   .. py:attribute:: type_head
+      :value: None
+
+
+
+.. py:class:: PairwiseDistObjective(weight: float = 0.0, k_pairs: int = 16, n_dist_basis: int = 16, dist_cutoff: float = 10.0)
+
+   Bases: :py:obj:`SSL3DObjective`, :py:obj:`MolecularDiffusion.core.Configurable`
+
+
+   Predict clean pairwise distances from noisy node features.
+
+   Samples k_pairs random edges per batch and regresses their clean distances.
+   Default weight is 0 (disabled); enable by setting weight > 0 in config.
+
+
+   .. py:method:: build_head(hidden_nf: int)
+
+      Called by SSL3D after the backbone is known. Override if needed.
+
+
+
+   .. py:method:: compute_loss(h, x_pred, batch_orig, batch_work, aux)
+
+      Compute loss from backbone outputs.
+
+      :param h: per-node hidden features (N, hidden_nf)
+      :param x_pred: updated coords from backbone (N, 3) or None for invariant nets
+      :param batch_orig: original uncorrupted batch
+      :param batch_work: corrupted batch passed to backbone
+      :param aux: dict returned by corrupt()
+
+      :returns: (scalar loss tensor, metrics dict)
+
+
+
+   .. py:method:: corrupt(batch_work: dict, device) -> dict
+
+      Perturb batch_work in-place and return aux info needed by compute_loss.
+
+
+
+   .. py:attribute:: dist_cutoff
+      :value: 10.0
+
+
+
+   .. py:attribute:: dist_head
+      :value: None
+
+
+
+   .. py:attribute:: k_pairs
+      :value: 16
+
+
+
+   .. py:attribute:: n_dist_basis
+      :value: 16
+
+
+
+.. py:class:: SSL3D(model: torch.nn.Module, objectives: list, include_charge: bool = True, t_embedding: str = 'sinusoidal')
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.task.Task`, :py:obj:`MolecularDiffusion.core.Configurable`
+
+
+   Self-supervised 3D molecular pretraining task.
+
+   :param model: backbone (EGNN, GraphTransformer, eSEN_Backbone, or
+                 EquiformerV2_dynamics).
+   :param objectives: list of SSL3DObjective instances. Their corrupt() methods
+                      are applied in order; losses are summed weighted by
+                      obj.weight.
+   :param include_charge: prepend atomic-number feature to node features.
+   :param t_embedding: "sinusoidal" (default) — how sigma is embedded before
+                       being appended as a time channel.
+
+
+   .. py:method:: evaluate(pred, target)
+
+      Aggregate per-batch losses → metric dict for eval.py TASK_REGISTRY.
+
+
+
+   .. py:method:: forward(batch: dict)
+
+
+   .. py:method:: predict(batch, all_loss=None, metric=None)
+      :abstractmethod:
+
+
+
+   .. py:method:: predict_and_target(batch)
+
+      Called by both Engine and EngineLightning during validation/test.
+
+
+
+   .. py:method:: preprocess(train_set=None, valid_set=None, test_set=None)
+
+
+   .. py:method:: target(batch)
+      :abstractmethod:
+
+
+
+   .. py:property:: device
+
+
+   .. py:attribute:: include_charge
+      :value: True
+
+
+
+   .. py:attribute:: model
+
+
+   .. py:attribute:: objectives
+
+
+   .. py:attribute:: t_embedding
+      :value: 'sinusoidal'
+
+
+
+.. py:class:: SSL3DObjective(weight: float = 1.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Base class for a single SSL pretext objective.
+
+   Subclasses must implement corrupt() and compute_loss().
+   The weight attribute controls this objective's contribution to the total loss.
+
+
+   .. py:method:: build_head(hidden_nf: int)
+
+      Called by SSL3D after the backbone is known. Override if needed.
+
+
+
+   .. py:method:: compute_loss(h, x_pred, batch_orig, batch_work, aux)
+      :abstractmethod:
+
+
+      Compute loss from backbone outputs.
+
+      :param h: per-node hidden features (N, hidden_nf)
+      :param x_pred: updated coords from backbone (N, 3) or None for invariant nets
+      :param batch_orig: original uncorrupted batch
+      :param batch_work: corrupted batch passed to backbone
+      :param aux: dict returned by corrupt()
+
+      :returns: (scalar loss tensor, metrics dict)
+
+
+
+   .. py:method:: corrupt(batch_work: dict, device) -> dict
+      :abstractmethod:
+
+
+      Perturb batch_work in-place and return aux info needed by compute_loss.
+
+
+
+   .. py:attribute:: weight
+      :value: 1.0
+
+
+

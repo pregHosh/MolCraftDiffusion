@@ -295,6 +295,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/compare_to_optimized/index.html">MolecularDiffusion.runmodes.analyze.compare_to_optimized</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/compute_metrics/index.html">MolecularDiffusion.runmodes.analyze.compute_metrics</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/featurize/index.html">MolecularDiffusion.runmodes.analyze.featurize</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/ssl3d_embed/index.html">MolecularDiffusion.runmodes.analyze.ssl3d_embed</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/uma_embeddings/index.html">MolecularDiffusion.runmodes.analyze.uma_embeddings</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/xtb_electronic/index.html">MolecularDiffusion.runmodes.analyze.xtb_electronic</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/xtb_optimization/index.html">MolecularDiffusion.runmodes.analyze.xtb_optimization</a></li>
@@ -495,13 +496,14 @@ Enforces strict connectivity checks.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.cli.analyze.featurize">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.analyze.</span></span><span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_cut</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autodetect_species</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pooling</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soap_jobs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkpoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_components</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.analyze.featurize" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.analyze.</span></span><span class="sig-name descname"><span class="pre">featurize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_cut</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autodetect_species</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pooling</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">soap_jobs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkpoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_components</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ssl3d_checkpoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.analyze.featurize" title="Link to this definition">¶</a></dt>
 <dd><p>Featurize 3D XYZ molecules into fixed-size feature vectors.</p>
 <p>
 Backends:</p>
 <blockquote>
-<div><p>soap  SOAP descriptor via dscribe — no GPU required
-uma   UMA backbone embeddings — requires vendored fairchem/src + checkpoint</p>
+<div><p>soap   SOAP descriptor via dscribe — no GPU required
+uma    UMA backbone embeddings — requires vendored fairchem/src + checkpoint
+ssl3d  SSL3D backbone embeddings — requires a trained SSL3D .ckpt or .pkl</p>
 </div></blockquote>
 <p>
 .. rubric:: Examples</p>
@@ -509,7 +511,9 @@ uma   UMA backbone embeddings — requires vendored fairchem/src + checkpoint</p
 MolCraftDiff analyze featurize gen_xyz/ –autodetect
 MolCraftDiff analyze featurize gen_xyz/ –species C –species H –species N –species O
 MolCraftDiff analyze featurize gen_xyz/ –backend soap –n-max 12 –l-max 9
-MolCraftDiff analyze featurize gen_xyz/ –backend uma –device cuda</p>
+MolCraftDiff analyze featurize gen_xyz/ –backend uma –device cuda
+MolCraftDiff analyze featurize gen_xyz/ –backend ssl3d –ssl3d-checkpoint runs/last.ckpt
+MolCraftDiff analyze featurize gen_xyz/ –backend ssl3d –ssl3d-checkpoint runs/last.ckpt –device cuda</p>
 </dd></dl>
 
 <dl class="py function">

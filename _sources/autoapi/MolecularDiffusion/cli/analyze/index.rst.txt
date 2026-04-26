@@ -62,14 +62,15 @@ Module Contents
    Requires 'optimized_xyz' subdirectory with *_opt.xyz files.
 
 
-.. py:function:: featurize(input_dir, backend, output, recursive, r_cut, n_max, l_max, sigma, autodetect_species, species, pooling, soap_jobs, checkpoint, task_name, device, batch_size, all_components, charge, spin)
+.. py:function:: featurize(input_dir, backend, output, recursive, r_cut, n_max, l_max, sigma, autodetect_species, species, pooling, soap_jobs, checkpoint, task_name, device, batch_size, all_components, charge, spin, ssl3d_checkpoint, edge_radius)
 
    Featurize 3D XYZ molecules into fixed-size feature vectors.
 
    
    Backends:
-     soap  SOAP descriptor via dscribe — no GPU required
-     uma   UMA backbone embeddings — requires vendored fairchem/src + checkpoint
+     soap   SOAP descriptor via dscribe — no GPU required
+     uma    UMA backbone embeddings — requires vendored fairchem/src + checkpoint
+     ssl3d  SSL3D backbone embeddings — requires a trained SSL3D .ckpt or .pkl
 
    
    .. rubric:: Examples
@@ -79,6 +80,8 @@ Module Contents
    MolCraftDiff analyze featurize gen_xyz/ --species C --species H --species N --species O
    MolCraftDiff analyze featurize gen_xyz/ --backend soap --n-max 12 --l-max 9
    MolCraftDiff analyze featurize gen_xyz/ --backend uma --device cuda
+   MolCraftDiff analyze featurize gen_xyz/ --backend ssl3d --ssl3d-checkpoint runs/last.ckpt
+   MolCraftDiff analyze featurize gen_xyz/ --backend ssl3d --ssl3d-checkpoint runs/last.ckpt --device cuda
 
 
 .. py:function:: metrics(input_dir, output, metrics_type, recheck_topo, check_strain, portion, mol_converter, skip_atoms, n_subsets, timeout, reference_mol, mol_idx)
