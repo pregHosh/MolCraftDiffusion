@@ -429,6 +429,9 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.train.data.DataModule" title="MolecularDiffusion.runmodes.train.data.DataModule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataModule</span></code></a></p></td>
 <td><p>DataModule to load, optionally save/load pickle, and split datasets for diffusion or predictive tasks.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.train.data.DatasetConfigDict" title="MolecularDiffusion.runmodes.train.data.DatasetConfigDict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DatasetConfigDict</span></code></a></p></td>
+<td><p>Picklable callable wrapper for dataset metadata.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -621,6 +624,17 @@ train_ds, valid_ds, test_ds = module.train_set, module.valid_set, module.test_se
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="MolecularDiffusion.runmodes.train.data.DatasetConfigDict">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.train.data.</span></span><span class="sig-name descname"><span class="pre">DatasetConfigDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with_hydrogen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_feature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_atom</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.runmodes.train.data.DatasetConfigDict" title="Link to this definition">¶</a></dt>
+<dd><p>Picklable callable wrapper for dataset metadata.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.runmodes.train.data.DatasetConfigDict.config_dict">
+<span class="sig-name descname"><span class="pre">config_dict</span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.train.data.DatasetConfigDict.config_dict" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
@@ -731,6 +745,10 @@ train_ds, valid_ds, test_ds = module.train_set, module.valid_set, module.test_se
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.train.data.DataModule.valid_set"><code class="docutils literal notranslate"><span class="pre">DataModule.valid_set</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.train.data.DataModule.with_hydrogen"><code class="docutils literal notranslate"><span class="pre">DataModule.with_hydrogen</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.train.data.DataModule.xyz_dir"><code class="docutils literal notranslate"><span class="pre">DataModule.xyz_dir</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#MolecularDiffusion.runmodes.train.data.DatasetConfigDict"><code class="docutils literal notranslate"><span class="pre">DatasetConfigDict</span></code></a><ul>
+<li><a class="reference internal" href="#MolecularDiffusion.runmodes.train.data.DatasetConfigDict.config_dict"><code class="docutils literal notranslate"><span class="pre">DatasetConfigDict.config_dict</span></code></a></li>
 </ul>
 </li>
 </ul>

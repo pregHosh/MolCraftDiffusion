@@ -24,7 +24,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: pointcloud_dataset(root, df_path=None, xyz_dir=None, ase_db_path=None, coord_file=None, natoms_file=None, max_atom=0, with_hydrogen=True, forbidden_atoms=[], verbose=1, node_feature_choice=None, target_fields=None, pad_data=False, dataset_name='suisei', allow_unknown=False, **kwargs)
+.. py:class:: pointcloud_dataset(root, df_path=None, xyz_dir=None, ase_db_path=None, coord_file=None, natoms_file=None, max_atom=0, with_hydrogen=True, forbidden_atoms=[], verbose=1, node_feature_choice=None, target_fields=None, pad_data=False, dataset_name='suisei', allow_unknown=False, chunk_size=None, chunk_dir=None, **kwargs)
 
    Bases: :py:obj:`MolecularDiffusion.data.component.dataset.PointCloudDataset`
 
@@ -38,7 +38,7 @@ Module Contents
    :param \*\*kwargs:
 
 
-.. py:class:: pointcloud_dataset_pyG(root, df_path=None, xyz_dir=None, ase_db_path=None, coord_file=None, natoms_file=None, max_atom=0, with_hydrogen=True, forbidden_atoms=[], verbose=1, node_feature_choice=None, target_fields=None, pad_data=False, dataset_name='suisei', edge_type='fully_connected', radius=4.0, n_neigh=5, allow_unknown=False, **kwargs)
+.. py:class:: pointcloud_dataset_pyG(root, df_path=None, xyz_dir=None, ase_db_path=None, coord_file=None, natoms_file=None, max_atom=0, with_hydrogen=True, forbidden_atoms=[], verbose=1, node_feature_choice=None, target_fields=None, pad_data=False, dataset_name='suisei', edge_type='fully_connected', radius=4.0, n_neigh=5, allow_unknown=False, chunk_size=None, chunk_dir=None, compact=None, **kwargs)
 
    Bases: :py:obj:`MolecularDiffusion.data.component.dataset.GraphDataset`
 

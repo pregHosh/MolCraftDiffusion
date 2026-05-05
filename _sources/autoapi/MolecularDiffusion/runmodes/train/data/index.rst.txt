@@ -10,6 +10,7 @@ Classes
 .. autoapisummary::
 
    MolecularDiffusion.runmodes.train.data.DataModule
+   MolecularDiffusion.runmodes.train.data.DatasetConfigDict
 
 
 Module Contents
@@ -183,5 +184,13 @@ Module Contents
    .. py:attribute:: xyz_dir
       :value: None
 
+
+
+.. py:class:: DatasetConfigDict(with_hydrogen, node_feature, max_atom)
+
+   Picklable callable wrapper for dataset metadata.
+
+
+   .. py:attribute:: config_dict
 
 

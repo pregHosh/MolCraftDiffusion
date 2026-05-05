@@ -12,6 +12,7 @@ Attributes
    MolecularDiffusion.data.component.dataset.BASE_ATOM_VOCAB
    MolecularDiffusion.data.component.dataset.Chem
    MolecularDiffusion.data.component.dataset.hybiridization_map
+   MolecularDiffusion.data.component.dataset.lmdb
    MolecularDiffusion.data.component.dataset.logger
 
 
@@ -21,6 +22,8 @@ Classes
 .. autoapisummary::
 
    MolecularDiffusion.data.component.dataset.GraphDataset
+   MolecularDiffusion.data.component.dataset.LazyChunkedDataset
+   MolecularDiffusion.data.component.dataset.LazyChunkedGraphDataset
    MolecularDiffusion.data.component.dataset.PointCloudDataset
 
 
@@ -72,7 +75,7 @@ Module Contents
 
 
 
-   .. py:method:: load_db(db_path: str, atom_vocab: List[str] = [], node_feature_choice: Optional[List[str]] = None, target_fields: Optional[List[str]] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], edge_type: str = 'distance', radius: float = 4.0, n_neigh: int = 5, verbose: int = 0, allow_unknown: bool = False, use_ohe_feature: bool = True, **kwargs: Any)
+   .. py:method:: load_db(db_path: str, atom_vocab: List[str] = [], node_feature_choice: Optional[List[str]] = None, target_fields: Optional[List[str]] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], edge_type: str = 'distance', radius: float = 4.0, n_neigh: int = 5, verbose: int = 0, allow_unknown: bool = False, use_ohe_feature: bool = True, chunk_size: Optional[int] = None, chunk_dir: Optional[str] = None, compact: Optional[Dict[str, bool]] = None, **kwargs: Any)
 
       Load the dataset from an ASE db file.
 
@@ -106,7 +109,7 @@ Module Contents
 
 
 
-   .. py:method:: load_npy(coords: torch.Tensor, natoms: torch.Tensor, smiles_list: List[str], targets: Dict[str, List[Union[float, int]]], atom_vocab: List[str] = [], node_feature_choice: Optional[str] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], edge_type: str = 'distance', radius: float = 4.0, n_neigh: int = 5, verbose: int = 0, allow_unknown: bool = False, use_ohe_feature: bool = True, **kwargs: Any)
+   .. py:method:: load_npy(coords: torch.Tensor, natoms: torch.Tensor, smiles_list: List[str], targets: Dict[str, List[Union[float, int]]], atom_vocab: List[str] = [], node_feature_choice: Optional[str] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], edge_type: str = 'distance', radius: float = 4.0, n_neigh: int = 5, verbose: int = 0, allow_unknown: bool = False, use_ohe_feature: bool = True, chunk_size: Optional[int] = None, chunk_dir: Optional[str] = None, compact: Optional[Dict[str, bool]] = None, **kwargs: Any)
 
       Load the dataset from npy tensors.
 
@@ -138,6 +141,10 @@ Module Contents
       :type n_neigh: int, optional
       :param verbose: output verbose level
       :type verbose: int, optional
+      :param chunk_size: flush to disk every N molecules to limit RAM.
+      :type chunk_size: int, optional
+      :param chunk_dir: directory to write chunk files.
+      :type chunk_dir: str, optional
       :param \*\*kwargs:
 
 
@@ -156,7 +163,7 @@ Module Contents
    .. py:method:: load_smiles()
 
 
-   .. py:method:: load_xyz(xyz_list: List[str], smiles_list: List[str], targets: Dict[str, List[Union[float, int]]], atom_vocab: List[str] = [], node_feature_choice: Optional[str] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], edge_type: str = 'distance', radius: float = 4.0, n_neigh: int = 5, verbose: int = 0, allow_unknown: bool = False, use_ohe_feature: bool = True, **kwargs: Any)
+   .. py:method:: load_xyz(xyz_list: List[str], smiles_list: List[str], targets: Dict[str, List[Union[float, int]]], atom_vocab: List[str] = [], node_feature_choice: Optional[str] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], edge_type: str = 'distance', radius: float = 4.0, n_neigh: int = 5, verbose: int = 0, allow_unknown: bool = False, use_ohe_feature: bool = True, chunk_size: Optional[int] = None, chunk_dir: Optional[str] = None, compact: Optional[Dict[str, bool]] = None, **kwargs: Any)
 
       Load the dataset from XYZ and targets.
 
@@ -186,6 +193,10 @@ Module Contents
       :type n_neigh: int, optional
       :param verbose: output verbose level
       :type verbose: int, optional
+      :param chunk_size: flush to disk every N molecules to limit RAM.
+      :type chunk_size: int, optional
+      :param chunk_dir: directory to write chunk files.
+      :type chunk_dir: str, optional
       :param \*\*kwargs:
 
 
@@ -214,6 +225,146 @@ Module Contents
    .. py:property:: tasks
 
       List of tasks.
+
+
+.. py:class:: LazyChunkedDataset(chunk_dir: str, cache_chunks: int = 2)
+
+   Bases: :py:obj:`torch.utils.data.Dataset`
+
+
+   Drop-in replacement for PointCloudDataset that never loads the full
+   dataset into RAM.  Chunks are loaded from disk on demand with a small
+   LRU cache.
+
+   :param chunk_dir: directory containing chunk_*.pt files and meta.pt
+   :param cache_chunks: how many chunks to keep in memory at once (default 2)
+
+
+   .. py:method:: atom_types() -> List[int]
+
+
+   .. py:method:: get_item(index: int)
+
+
+   .. py:method:: get_property(task: str) -> torch.Tensor
+
+
+   .. py:attribute:: atom_vocab
+      :type:  List[str]
+
+
+   .. py:attribute:: chunk_dir
+
+
+   .. py:attribute:: chunk_paths
+      :type:  List[str]
+
+
+   .. py:attribute:: chunk_sizes
+      :type:  List[int]
+
+
+   .. py:attribute:: n_atoms
+      :type:  List[int]
+
+
+   .. py:property:: num_atoms
+      :type: torch.Tensor
+
+
+
+   .. py:attribute:: smiles_list
+      :type:  List[str]
+
+
+   .. py:property:: targets
+      :type: dict
+
+
+
+   .. py:property:: tasks
+      :type: List[str]
+
+
+
+   .. py:attribute:: with_hydrogen
+      :type:  bool
+
+
+.. py:class:: LazyChunkedGraphDataset(chunk_dir: str, cache_chunks: int = 2)
+
+   Bases: :py:obj:`torch.utils.data.Dataset`
+
+
+   Drop-in replacement for GraphDataset that streams pyG `Data` objects
+   from disk on demand.
+
+   Each chunk file is a dict with keys:
+     graph_data_list: List[torch_geometric.data.Data]
+     n_atoms:         List[int]
+     smiles_list:     List[str]
+     targets:         Dict[str, List[float]]
+
+
+   .. py:method:: atom_types() -> List[int]
+
+
+   .. py:method:: get_item(index: int)
+
+
+   .. py:method:: get_property(task: str) -> Optional[torch.Tensor]
+
+
+   .. py:attribute:: atom_vocab
+      :type:  List[str]
+
+
+   .. py:attribute:: chunk_dir
+
+
+   .. py:attribute:: chunk_paths
+      :type:  List[str]
+
+
+   .. py:attribute:: chunk_sizes
+      :type:  List[int]
+
+
+   .. py:attribute:: n_atoms
+      :type:  List[int]
+
+
+   .. py:property:: num_atom_type
+      :type: int
+
+
+
+   .. py:property:: num_atoms
+      :type: torch.Tensor
+
+
+
+   .. py:attribute:: smiles_list
+      :type:  List[str]
+
+
+   .. py:property:: targets
+      :type: dict
+
+
+
+   .. py:property:: tasks
+      :type: List[str]
+
+
+
+   .. py:attribute:: transform
+      :value: None
+
+
+
+   .. py:attribute:: with_hydrogen
+      :type:  bool
 
 
 .. py:class:: PointCloudDataset
@@ -275,7 +426,7 @@ Module Contents
 
 
 
-   .. py:method:: load_db(db_path: str, atom_vocab: List[str] = [], node_feature_choice: Optional[List[str]] = None, target_fields: Optional[List[str]] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], pad_data: bool = False, verbose: int = 0, null_value=math.nan, allow_unknown: bool = False, use_ohe_feature: bool = True, **kwargs: Any)
+   .. py:method:: load_db(db_path: str, atom_vocab: List[str] = [], node_feature_choice: Optional[List[str]] = None, target_fields: Optional[List[str]] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], pad_data: bool = False, verbose: int = 0, null_value=math.nan, allow_unknown: bool = False, use_ohe_feature: bool = True, chunk_size: Optional[int] = None, chunk_dir: Optional[str] = None, **kwargs: Any)
 
       Load the dataset from an ASE db file.
 
@@ -301,11 +452,15 @@ Module Contents
       :type verbose: int, optional
       :param null_value: null value for missing context data
       :type null_value: float, optional
+      :param chunk_size: flush to disk every N molecules to limit RAM.
+      :type chunk_size: int, optional
+      :param chunk_dir: directory to write chunk files.
+      :type chunk_dir: str, optional
       :param \*\*kwargs:
 
 
 
-   .. py:method:: load_npy(coords: torch.Tensor, natoms: torch.Tensor, smiles_list: List[str], targets: Dict[str, List[Union[float, int]]], atom_vocab: List[str] = [], node_feature_choice: Optional[str] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], pad_data: bool = False, verbose: int = 0, allow_unknown: bool = False, use_ohe_feature: bool = True, **kwargs: Any)
+   .. py:method:: load_npy(coords: torch.Tensor, natoms: torch.Tensor, smiles_list: List[str], targets: Dict[str, List[Union[float, int]]], atom_vocab: List[str] = [], node_feature_choice: Optional[str] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], pad_data: bool = False, verbose: int = 0, allow_unknown: bool = False, use_ohe_feature: bool = True, chunk_size: Optional[int] = None, chunk_dir: Optional[str] = None, **kwargs: Any)
 
       Load the dataset from npy and targets.
 
@@ -333,6 +488,10 @@ Module Contents
       :type pad_data: bool, optional
       :param verbose: output verbose level
       :type verbose: int, optional
+      :param chunk_size: flush to disk every N molecules to limit RAM.
+      :type chunk_size: int, optional
+      :param chunk_dir: directory to write chunk files.
+      :type chunk_dir: str, optional
       :param \*\*kwargs:
 
 
@@ -348,7 +507,7 @@ Module Contents
 
 
 
-   .. py:method:: load_xyz(xyz_list: List[str], smiles_list: List[str], targets: Dict[str, List[Union[float, int]]], atom_vocab: List[str] = [], node_feature_choice: Optional[str] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], pad_data: bool = False, verbose: int = 0, allow_unknown: bool = False, use_ohe_feature: bool = True, **kwargs: Any)
+   .. py:method:: load_xyz(xyz_list: List[str], smiles_list: List[str], targets: Dict[str, List[Union[float, int]]], atom_vocab: List[str] = [], node_feature_choice: Optional[str] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], pad_data: bool = False, verbose: int = 0, allow_unknown: bool = False, use_ohe_feature: bool = True, chunk_size: Optional[int] = None, chunk_dir: Optional[str] = None, compact: Optional[Dict[str, bool]] = None, **kwargs: Any)
 
       Load the dataset from XYZ and targets.
 
@@ -374,6 +533,10 @@ Module Contents
       :type forbidden_atoms: list of str, optional
       :param verbose: output verbose level
       :type verbose: int, optional
+      :param chunk_size: flush to disk every N molecules to limit RAM.
+      :type chunk_size: int, optional
+      :param chunk_dir: directory to write chunk files.
+      :type chunk_dir: str, optional
       :param \*\*kwargs:
 
 
@@ -413,6 +576,10 @@ Module Contents
 
 
 .. py:data:: hybiridization_map
+
+.. py:data:: lmdb
+   :value: None
+
 
 .. py:data:: logger
 
