@@ -24,7 +24,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: GenerativeFactory(task: MolecularDiffusion.modules.tasks.task.Task, task_type: str = 'unconditional', sampling_mode: str = 'ddpm', num_generate: int = 100, mol_size: List[int] = [0, 0], target_values: List[float] = [], property_names: List[str] = [], negative_target_values: List[float] = [], batch_size: int = 1, seed: int = 86, n_frames: int = 0, output_path: str = 'generated_mol', condition_configs={}, max_mol_size: int = 0)
+.. py:class:: GenerativeFactory(task: MolecularDiffusion.modules.tasks.task.Task, task_type: str = 'unconditional', sampling_mode: str = 'ddpm', num_generate: int = 100, mol_size: List[int] = [0, 0], target_values: List[float] = [], property_names: List[str] = [], negative_target_values: List[float] = [], batch_size: int = 1, seed: int = 86, n_frames: int = 0, output_path: str = 'generated_mol', save_xyzrender_figures: bool = False, condition_configs={}, max_mol_size: int = 0, **kwargs)
 
    .. py:method:: conditional_generation()
 
@@ -116,6 +116,11 @@ Module Contents
 
 
 
+   .. py:attribute:: save_xyzrender_figures
+      :value: False
+
+
+
    .. py:attribute:: seed
       :value: 86
 
@@ -134,7 +139,7 @@ Module Contents
 
 
 
-.. py:class:: PharmacophoreConditionGenerator(task, task_type: str = 'pharmacophore_condition', num_generate: int = 10, batch_size: int = 1, N_x1: list = [20], N_x4: int = 5, N_x1_sampling: str = 'uniform', distributions_path: str = None, distributions_key: str = 'gdb', num_steps: int = 400, prior_noise_scale: float = 1.0, denoising_noise_scale: float = 1.0, output_path: str = 'generated_pharmacophore', seed: int = 42, verbose: bool = True, reference_mol: str = None, mol_idx: int = 0, scaffold_smarts: str = None, inpaint_x1_pos: bool = True, inpaint_x1_x: bool = True, inpaint_x1_bonds: bool = True, stop_inpainting_at_time_x1_pos: float = 0.0, stop_inpainting_at_time_x1_x: float = 0.0, stop_inpainting_at_time_x1_bonds: float = 0.0, stop_inpainting_at_time_x4: float = 0.0, save_modalities: bool = False, compute_x1: bool = True, compute_x2: bool = True, compute_x3: bool = True, compute_x4: bool = True, start_time: float = 0.5, condition_configs: dict = {})
+.. py:class:: PharmacophoreConditionGenerator(task, task_type: str = 'pharmacophore_condition', num_generate: int = 10, batch_size: int = 1, N_x1: list = [20], N_x4: int = 5, N_x1_sampling: str = 'uniform', distributions_path: str = None, distributions_key: str = 'gdb', num_steps: int = 400, prior_noise_scale: float = 1.0, denoising_noise_scale: float = 1.0, output_path: str = 'generated_pharmacophore', save_xyzrender_figures: bool = False, seed: int = 42, verbose: bool = True, reference_mol: str = None, mol_idx: int = 0, scaffold_smarts: str = None, inpaint_x1_pos: bool = True, inpaint_x1_x: bool = True, inpaint_x1_bonds: bool = True, stop_inpainting_at_time_x1_pos: float = 0.0, stop_inpainting_at_time_x1_x: float = 0.0, stop_inpainting_at_time_x1_bonds: float = 0.0, stop_inpainting_at_time_x4: float = 0.0, save_modalities: bool = False, compute_x1: bool = True, compute_x2: bool = True, compute_x3: bool = True, compute_x4: bool = True, start_time: float = 0.5, use_noised_conditioning: bool = False, condition_configs: dict = {})
 
    Entry point for all ShEPhERD pharmacophore generation modes.
 
@@ -255,6 +260,11 @@ Module Contents
 
 
 
+   .. py:attribute:: save_xyzrender_figures
+      :value: False
+
+
+
    .. py:attribute:: scaffold_smarts
       :value: None
 
@@ -296,6 +306,9 @@ Module Contents
    .. py:attribute:: task_type
       :value: 'pharmacophore_condition'
 
+
+
+   .. py:attribute:: use_noised_conditioning
 
 
    .. py:attribute:: verbose
