@@ -459,10 +459,10 @@ MolCraftDiff<span class="w"> </span>train<span class="w"> </span>my_config
 MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_gen_config
 
 <span class="c1"># Analyse outputs</span>
-MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>metrics<span class="w"> </span>-i<span class="w"> </span>generated_molecules/
+MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>metrics<span class="w"> </span>generated_molecules/
 </pre></div>
 </div>
-<p>Ready-to-use template configuration files for every workflow are provided in <a class="reference external" href="https://github.com/pregHosh/MolCraftDiffusion/tree/main/docs/cfg_examples"><code class="docutils literal notranslate"><span class="pre">docs/cfg_examples/</span></code></a>. Copy the relevant file, fill in your paths, and run:</p></p>
+<p>Ready-to-use template configuration files for common workflows are listed in <a class="reference internal" href="#config_templates.md"><span class="xref myst">Configuration Templates</span></a>, with the full packaged Hydra defaults under <code class="docutils literal notranslate"><span class="pre">src/MolecularDiffusion/configs/</span></code>. Copy the relevant file, fill in your paths, and run:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example: unconditional generation with the template</span>
 cp<span class="w"> </span>docs/cfg_examples/gen_unconditional.yaml<span class="w"> </span>my_gen.yaml
 <span class="c1"># edit my_gen.yaml → set chkpt_directory</span>
@@ -604,7 +604,7 @@ MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_gen
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=f2a433a1"></script>
+</div><script src="_static/documentation_options.js?v=6efca38a"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>

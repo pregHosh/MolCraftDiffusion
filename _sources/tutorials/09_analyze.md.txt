@@ -15,7 +15,7 @@ The analyze module includes six subcommands:
 | `compare` | RMSD and energy comparison |
 | `xyz2mol` | XYZ to SMILES + fingerprints |
 | `xtb-electronic` | XTB electronic properties |
-| `featurize` | Fixed-size molecular feature vectors (SOAP / UMA) |
+| `featurize` | Fixed-size molecular feature vectors (SOAP / UMA / SSL3D) |
 
 Access the CLI with:
 ```bash
@@ -38,7 +38,7 @@ MolCraftDiff analyze optimize gen_xyz/ --level gfn2 --charge 0
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| `-o, --output-dir` | `input_dir/optimized_xyz` | Output directory |
+| `-o, --output-path` | `input_dir/optimized_xyz` | Output directory |
 | `-l, --level` | `gfn1` | Optimization level: gfn1, gfn2, gfn-ff, mmff94 |
 | `-c, --charge` | `0` | Molecular charge |
 | `-t, --timeout` | `240` | Timeout per molecule (seconds) |
@@ -192,12 +192,13 @@ MolCraftDiff analyze xtb-electronic gen_xyz/ -p all -f ase -o results.db
 Convert a directory of XYZ files into a fixed-size feature matrix for downstream
 machine learning (clustering, regression, dimensionality reduction, etc.).
 
-Two backends are available:
+Three backends are available:
 
 | Backend | Description | GPU needed |
 |---------|-------------|-----------|
 | `soap` | SOAP descriptor via dscribe | No |
 | `uma` | UMA backbone embeddings from pretrained fairchem model | Optional |
+| `ssl3d` | Embeddings from a trained SSL3D checkpoint | Optional |
 
 ### Usage
 
@@ -223,6 +224,10 @@ MolCraftDiff analyze featurize gen_xyz/ --backend uma --device cuda \
 
 # UMA — all spherical components (higher-dimensional embedding)
 MolCraftDiff analyze featurize gen_xyz/ --backend uma --all-components
+
+# SSL3D — use a trained SSL3D checkpoint
+MolCraftDiff analyze featurize gen_xyz/ --backend ssl3d \
+    --ssl3d-checkpoint runs/last.ckpt --device cuda
 ```
 
 ### SOAP Options
@@ -268,6 +273,16 @@ Then run from the repository root, or set:
 ```bash
 export MOLCRAFT_REPO_ROOT=/path/to/MolCraftDiffusion
 ```
+
+### SSL3D Options
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--ssl3d-checkpoint` | None | Required path to a trained SSL3D `.ckpt` or `.pkl` checkpoint |
+| `--edge-radius` | `5.0` | Radius graph cutoff in Å |
+| `--device` | auto | `cuda` or `cpu` |
+| `--batch-size` | `8` | Molecules per SSL3D forward pass |
+| `--pooling` | `mean` | Atom pooling mode: `mean` or `sum` |
 
 ### Output Files
 
@@ -358,6 +373,10 @@ MolCraftDiff analyze featurize gen_xyz/optimized_xyz -o gen_xyz/soap_features
 # 7b. Or use UMA embeddings (requires fairchem checkout + checkpoint)
 MolCraftDiff analyze featurize gen_xyz/optimized_xyz --backend uma --device cuda \
     -o gen_xyz/uma_features
+
+# 7c. Or use SSL3D embeddings from a trained SSL3D checkpoint
+MolCraftDiff analyze featurize gen_xyz/optimized_xyz --backend ssl3d \
+    --ssl3d-checkpoint runs/last.ckpt -o gen_xyz/ssl3d_features
 ```
 
 ---

@@ -42,10 +42,10 @@ MolCraftDiff train my_config
 MolCraftDiff generate my_gen_config
 
 # Analyse outputs
-MolCraftDiff analyze metrics -i generated_molecules/
+MolCraftDiff analyze metrics generated_molecules/
 ```
 
-Ready-to-use template configuration files for every workflow are provided in [`docs/cfg_examples/`](https://github.com/pregHosh/MolCraftDiffusion/tree/main/docs/cfg_examples). Copy the relevant file, fill in your paths, and run:</p>
+Ready-to-use template configuration files for common workflows are listed in [Configuration Templates](config_templates.md), with the full packaged Hydra defaults under `src/MolecularDiffusion/configs/`. Copy the relevant file, fill in your paths, and run:
 
 ```bash
 # Example: unconditional generation with the template
@@ -107,16 +107,7 @@ workflows/visualization
 :maxdepth: 1
 :caption: Configuration Templates
 
-cfg_examples/train_diffusion
-cfg_examples/train_regressor
-cfg_examples/train_guidance
-cfg_examples/finetune_diffusion
-cfg_examples/gen_unconditional
-cfg_examples/gen_inpaint
-cfg_examples/gen_outpaint
-cfg_examples/gen_cfg
-cfg_examples/gen_gradient_guidance
-cfg_examples/gen_hybrid_cfg_gg
+config_templates
 ```
 
 ```{toctree}

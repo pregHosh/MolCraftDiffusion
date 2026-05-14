@@ -429,10 +429,10 @@
 <hr class="docutils" />
 <section id="part-1-data-preparation-via-cli">
 <h2>Part 1: Data Preparation via CLI<a class="headerlink" href="#part-1-data-preparation-via-cli" title="Link to this heading">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">data</span></code> command group provides utilities for managing raw <code class="docutils literal notranslate"><span class="pre">.xyz</span></code> files and converting them into unified <code class="docutils literal notranslate"><span class="pre">.db</span></code> (ASE Database) files.</p>
-<section id="compilation-annotation">
-<h3>1. Compilation &amp; Annotation<a class="headerlink" href="#compilation-annotation" title="Link to this heading">¶</a></h3>
-<p>First, compile your raw XYZ files or NumPy arrays into a single ASE database:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">data</span></code> command group provides utilities for managing raw <code class="docutils literal notranslate"><span class="pre">.xyz</span></code> files, ASE databases, molecular descriptors, and dataset subsets. The top-level groups are <code class="docutils literal notranslate"><span class="pre">prepare</span></code>, <code class="docutils literal notranslate"><span class="pre">featurize</span></code>, <code class="docutils literal notranslate"><span class="pre">augment</span></code>, and <code class="docutils literal notranslate"><span class="pre">ase-ops</span></code>.</p>
+<section id="preparation">
+<h3>1. Preparation<a class="headerlink" href="#preparation" title="Link to this heading">¶</a></h3>
+<p>Compile raw XYZ files or NumPy arrays into a single ASE database:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># From a directory of .xyz files</span>
 MolCraftDiff<span class="w"> </span>data<span class="w"> </span>prepare<span class="w"> </span>compile<span class="w"> </span>-s<span class="w"> </span>xyz_dir/<span class="w"> </span>-d<span class="w"> </span>dataset.db
 
@@ -440,8 +440,16 @@ MolCraftDiff<span class="w"> </span>data<span class="w"> </span>prepare<span cla
 MolCraftDiff<span class="w"> </span>data<span class="w"> </span>prepare<span class="w"> </span>compile<span class="w"> </span>-s<span class="w"> </span>coords.npy<span class="w"> </span>-n<span class="w"> </span>natoms.npy<span class="w"> </span>-c<span class="w"> </span>metadata.csv<span class="w"> </span>-d<span class="w"> </span>dataset.db
 </pre></div>
 </div>
-<p>Add custom metadata tags (like project or subset labels) to your new database:</p>
+<p>Add custom metadata tags, such as project or subset labels, to an ASE database:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>data<span class="w"> </span>prepare<span class="w"> </span>annotate<span class="w"> </span>-d<span class="w"> </span>dataset.db<span class="w"> </span>-t<span class="w"> </span>group<span class="w"> </span>-v<span class="w"> </span>training
+</pre></div>
+</div>
+<p>Generate RDKit mol blocks, SMILES, SDF output, and SA/SC properties for downstream featurization or filtering:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># From an ASE database</span>
+MolCraftDiff<span class="w"> </span>data<span class="w"> </span>prepare<span class="w"> </span>generate-blocks<span class="w"> </span>-s<span class="w"> </span>dataset.db<span class="w"> </span>--method<span class="w"> </span>hybrid
+
+<span class="c1"># From XYZ or NPY sources, provide an SDF output path</span>
+MolCraftDiff<span class="w"> </span>data<span class="w"> </span>prepare<span class="w"> </span>generate-blocks<span class="w"> </span>-s<span class="w"> </span>xyz_dir/<span class="w"> </span>--sdf<span class="w"> </span>molecules.sdf<span class="w"> </span>--method<span class="w"> </span>xyz2mol
 </pre></div>
 </div>
 </section>
@@ -459,27 +467,41 @@ MolCraftDiff<span class="w"> </span>data<span class="w"> </span>featurize<span c
 <section id="data-augmentation">
 <h3>3. Data Augmentation<a class="headerlink" href="#data-augmentation" title="Link to this heading">¶</a></h3>
 <p>Increase dataset diversity via structural transformations:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Charge Augmentation: Randomly add/remove hydrogens</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Charge augmentation: randomly add/remove hydrogens</span>
 MolCraftDiff<span class="w"> </span>data<span class="w"> </span>augment<span class="w"> </span>charge<span class="w"> </span>-i<span class="w"> </span>dataset.db<span class="w"> </span>-o<span class="w"> </span>augmented.db<span class="w"> </span>--max-h<span class="w"> </span><span class="m">1</span><span class="w"> </span>--db
 
-<span class="c1"># Coordinate Distortion: Apply random Gaussian noise to atomic coordinates</span>
+<span class="c1"># Coordinate distortion: apply random Gaussian noise to atomic coordinates</span>
 MolCraftDiff<span class="w"> </span>data<span class="w"> </span>augment<span class="w"> </span>distortion<span class="w"> </span>-i<span class="w"> </span>xyz_dir/<span class="w"> </span>-o<span class="w"> </span>noisy_xyz/<span class="w"> </span>--sigma<span class="w"> </span><span class="m">0</span>.1
+
+<span class="c1"># Size balancing: augment an ASE database toward a target size distribution</span>
+MolCraftDiff<span class="w"> </span>data<span class="w"> </span>augment<span class="w"> </span>size<span class="w"> </span>-i<span class="w"> </span>dataset.db<span class="w"> </span>-o<span class="w"> </span>size_balanced.db<span class="w"> </span>--s-start<span class="w"> </span><span class="m">60</span><span class="w"> </span>--s-end<span class="w"> </span><span class="m">120</span>
 </pre></div>
 </div>
 </section>
 <section id="ase-database-operations">
 <h3>4. ASE Database Operations<a class="headerlink" href="#ase-database-operations" title="Link to this heading">¶</a></h3>
-<p>Manage and inspect your compiled datasets:</p>
+<p>Manage, inspect, split, sample, and rename compiled datasets:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Merge multiple DBs</span>
 MolCraftDiff<span class="w"> </span>data<span class="w"> </span>ase-ops<span class="w"> </span>merge<span class="w"> </span>-i<span class="w"> </span>db_dir/<span class="w"> </span>-o<span class="w"> </span>merged.db
+
+<span class="c1"># Inspect property distributions and generate plots</span>
+MolCraftDiff<span class="w"> </span>data<span class="w"> </span>ase-ops<span class="w"> </span>inspect<span class="w"> </span>-d<span class="w"> </span>dataset.db<span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span><span class="w"> </span>--output<span class="w"> </span>plots/
+
+<span class="c1"># Split a DB into multiple shards</span>
+MolCraftDiff<span class="w"> </span>data<span class="w"> </span>ase-ops<span class="w"> </span>split<span class="w"> </span>-d<span class="w"> </span>dataset.db<span class="w"> </span>-o<span class="w"> </span>splits/<span class="w"> </span>--n<span class="w"> </span><span class="m">5</span>
 
 <span class="c1"># Sample 10% of entries for a quick test</span>
 MolCraftDiff<span class="w"> </span>data<span class="w"> </span>ase-ops<span class="w"> </span>sample<span class="w"> </span>-i<span class="w"> </span>dataset.db<span class="w"> </span>-o<span class="w"> </span>subset.db<span class="w"> </span>--fraction<span class="w"> </span><span class="m">0</span>.1
 
-<span class="c1"># Inspect property distributions and generate plots</span>
-MolCraftDiff<span class="w"> </span>data<span class="w"> </span>ase-ops<span class="w"> </span>inspect<span class="w"> </span>-d<span class="w"> </span>dataset.db<span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span><span class="w"> </span>--output<span class="w"> </span>plots/
+<span class="c1"># Export a sampled subset as XYZ files or padded NPY arrays</span>
+MolCraftDiff<span class="w"> </span>data<span class="w"> </span>ase-ops<span class="w"> </span>sample<span class="w"> </span>-i<span class="w"> </span>dataset.db<span class="w"> </span>-o<span class="w"> </span>subset_xyz/<span class="w"> </span>--format<span class="w"> </span>xyz<span class="w"> </span>--number<span class="w"> </span><span class="m">100</span>
+MolCraftDiff<span class="w"> </span>data<span class="w"> </span>ase-ops<span class="w"> </span>sample<span class="w"> </span>-i<span class="w"> </span>dataset.db<span class="w"> </span>-o<span class="w"> </span>subset_npy/<span class="w"> </span>--format<span class="w"> </span>npy<span class="w"> </span>--number<span class="w"> </span><span class="m">100</span>
+
+<span class="c1"># Rename a stored row attribute</span>
+MolCraftDiff<span class="w"> </span>data<span class="w"> </span>ase-ops<span class="w"> </span>rename<span class="w"> </span>-d<span class="w"> </span>dataset.db<span class="w"> </span>--old<span class="w"> </span>old_property<span class="w"> </span>--new<span class="w"> </span>new_property
 </pre></div>
 </div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">data</span> <span class="pre">&lt;group&gt;</span> <span class="pre">--help</span></code> and <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">data</span> <span class="pre">&lt;group&gt;</span> <span class="pre">&lt;command&gt;</span> <span class="pre">--help</span></code> for the full option list.</p>
 </section>
 </section>
 <hr class="docutils" />
@@ -633,7 +655,7 @@ MolCraftDiff<span class="w"> </span>data<span class="w"> </span>ase-ops<span cla
             <ul>
 <li><a class="reference internal" href="#">Tutorial 0: Data Preparation &amp; Management</a><ul>
 <li><a class="reference internal" href="#part-1-data-preparation-via-cli">Part 1: Data Preparation via CLI</a><ul>
-<li><a class="reference internal" href="#compilation-annotation">1. Compilation &amp; Annotation</a></li>
+<li><a class="reference internal" href="#preparation">1. Preparation</a></li>
 <li><a class="reference internal" href="#featurization">2. Featurization</a></li>
 <li><a class="reference internal" href="#data-augmentation">3. Data Augmentation</a></li>
 <li><a class="reference internal" href="#ase-database-operations">4. ASE Database Operations</a></li>
@@ -657,7 +679,7 @@ MolCraftDiff<span class="w"> </span>data<span class="w"> </span>ase-ops<span cla
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=f2a433a1"></script>
+</div><script src="../_static/documentation_options.js?v=6efca38a"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

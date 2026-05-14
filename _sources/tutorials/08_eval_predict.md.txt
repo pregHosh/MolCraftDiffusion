@@ -3,7 +3,7 @@
 This tutorial explains how to use the inference capabilities of the MolecularDiffusion package. There are two main modes for inference:
 
 1.  **Prediction (`predict`)**: For generating predictions on a set of new molecules (XYZ files) without ground truth labels.
-2.  **Evaluation (`eval_predict`)**: For benchmarking a model against a labeled dataset to calculate error metrics.
+2.  **Evaluation (`eval-predict`)**: For benchmarking a model against a labeled dataset to calculate error metrics.
 
 ---
 
@@ -70,7 +70,7 @@ The script will process each XYZ file in the directory and output the results to
 
 ---
 
-## Part 2: Evaluation Mode (`eval_predict`)
+## Part 2: Evaluation Mode (`eval-predict`)
 
 Use this mode when you have a labeled dataset (ground truth) and want to quantify how well your model performs (e.g., calculating Mean Absolute Error, plotting Correlation).
 
@@ -129,7 +129,7 @@ seed: 9
 Execute the evaluation using the `MolCraftDiff` CLI, pointing to your config file:
 
 ```bash
-MolCraftDiff eval_predict my_evaluation
+MolCraftDiff eval-predict my_evaluation
 ```
 
 ### 3. Output
@@ -143,13 +143,13 @@ The script calculates predictions and matches them with the ground truth from yo
 
 > **⚠️ Important Notice on Data Formats:**
 > 
-> The `eval_predict` command currently **only supports `.csv` files** for ground truth labels. It does **not** natively support extracting ground truth data directly from ASE `.db` files. Ensure you have a generated CSV containing the `"filename"` and property columns.
+> The `eval-predict` command currently **only supports `.csv` files** for ground truth labels. It does **not** natively support extracting ground truth data directly from ASE `.db` files. Ensure you have a generated CSV containing the `"filename"` and property columns.
 
 ---
 
 ## Summary of Differences
 
-| Feature | Prediction Mode (`predict`) | Evaluation Mode (`eval_predict`) |
+| Feature | Prediction Mode (`predict`) | Evaluation Mode (`eval-predict`) |
 | :--- | :--- | :--- |
 | **Input** | Folder of XYZ files | CSV file + Folder of XYZ files |
 | **Ground Truth** | Not required | Required (in CSV) |

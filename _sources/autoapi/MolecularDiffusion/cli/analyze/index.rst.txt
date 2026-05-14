@@ -84,7 +84,7 @@ Module Contents
    MolCraftDiff analyze featurize gen_xyz/ --backend ssl3d --ssl3d-checkpoint runs/last.ckpt --device cuda
 
 
-.. py:function:: metrics(input_dir, output, metrics_type, recheck_topo, check_strain, portion, mol_converter, skip_atoms, n_subsets, timeout, reference_mol, mol_idx)
+.. py:function:: metrics(input_dir, output, metrics_type, recheck_topo, check_strain, portion, mol_converter, skip_atoms, split, timeout, reference_mol, mol_idx)
 
    Compute validity and connectivity metrics for XYZ files.
 
@@ -102,6 +102,7 @@ Module Contents
    MolCraftDiff analyze metrics gen_xyz/ --metrics posebuster
    MolCraftDiff analyze metrics gen_xyz/ --metrics geom_revised --mol-converter openbabel
    MolCraftDiff analyze metrics gen_xyz/ --metrics shepherd
+   MolCraftDiff analyze metrics gen_xyz/ --split 4
    MolCraftDiff analyze metrics gen_xyz/ --metrics shepherd -r data/shepherd_data/gdb/molblock_charges_9_test100.pkl --mol-idx 0
 
 

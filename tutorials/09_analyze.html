@@ -450,7 +450,7 @@
 <td><p>XTB electronic properties</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">featurize</span></code></p></td>
-<td><p>Fixed-size molecular feature vectors (SOAP / UMA)</p></td>
+<td><p>Fixed-size molecular feature vectors (SOAP / UMA / SSL3D)</p></td>
 </tr>
 </tbody>
 </table>
@@ -481,7 +481,7 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output-dir</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output-path</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">input_dir/optimized_xyz</span></code></p></td>
 <td><p>Output directory</p></td>
 </tr>
@@ -785,7 +785,7 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>xtb-electroni
 <h2>Part 6: Featurize — Fixed-Size Molecular Vectors<a class="headerlink" href="#part-6-featurize-fixed-size-molecular-vectors" title="Link to this heading">¶</a></h2>
 <p>Convert a directory of XYZ files into a fixed-size feature matrix for downstream
 machine learning (clustering, regression, dimensionality reduction, etc.).</p>
-<p>Two backends are available:</p>
+<p>Three backends are available:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -801,6 +801,10 @@ machine learning (clustering, regression, dimensionality reduction, etc.).</p>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">uma</span></code></p></td>
 <td><p>UMA backbone embeddings from pretrained fairchem model</p></td>
+<td><p>Optional</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ssl3d</span></code></p></td>
+<td><p>Embeddings from a trained SSL3D checkpoint</p></td>
 <td><p>Optional</p></td>
 </tr>
 </tbody>
@@ -829,6 +833,10 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 
 <span class="c1"># UMA — all spherical components (higher-dimensional embedding)</span>
 MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<span class="w"> </span>gen_xyz/<span class="w"> </span>--backend<span class="w"> </span>uma<span class="w"> </span>--all-components
+
+<span class="c1"># SSL3D — use a trained SSL3D checkpoint</span>
+MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<span class="w"> </span>gen_xyz/<span class="w"> </span>--backend<span class="w"> </span>ssl3d<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--ssl3d-checkpoint<span class="w"> </span>runs/last.ckpt<span class="w"> </span>--device<span class="w"> </span>cuda
 </pre></div>
 </div>
 </section>
@@ -939,6 +947,41 @@ If it is not found, clone it with:</p>
 </pre></div>
 </div>
 </section>
+<section id="ssl3d-options">
+<h3>SSL3D Options<a class="headerlink" href="#ssl3d-options" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--ssl3d-checkpoint</span></code></p></td>
+<td><p>None</p></td>
+<td><p>Required path to a trained SSL3D <code class="docutils literal notranslate"><span class="pre">.ckpt</span></code> or <code class="docutils literal notranslate"><span class="pre">.pkl</span></code> checkpoint</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--edge-radius</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">5.0</span></code></p></td>
+<td><p>Radius graph cutoff in Å</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--device</span></code></p></td>
+<td><p>auto</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cuda</span></code> or <code class="docutils literal notranslate"><span class="pre">cpu</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--batch-size</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">8</span></code></p></td>
+<td><p>Molecules per SSL3D forward pass</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--pooling</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mean</span></code></p></td>
+<td><p>Atom pooling mode: <code class="docutils literal notranslate"><span class="pre">mean</span></code> or <code class="docutils literal notranslate"><span class="pre">sum</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="output-files">
 <h3>Output Files<a class="headerlink" href="#output-files" title="Link to this heading">¶</a></h3>
 <p>Three files are written to the output stem (default: <code class="docutils literal notranslate"><span class="pre">input_dir/features</span></code>):</p>
@@ -1039,6 +1082,10 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 <span class="c1"># 7b. Or use UMA embeddings (requires fairchem checkout + checkpoint)</span>
 MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<span class="w"> </span>gen_xyz/optimized_xyz<span class="w"> </span>--backend<span class="w"> </span>uma<span class="w"> </span>--device<span class="w"> </span>cuda<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>-o<span class="w"> </span>gen_xyz/uma_features
+
+<span class="c1"># 7c. Or use SSL3D embeddings from a trained SSL3D checkpoint</span>
+MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<span class="w"> </span>gen_xyz/optimized_xyz<span class="w"> </span>--backend<span class="w"> </span>ssl3d<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--ssl3d-checkpoint<span class="w"> </span>runs/last.ckpt<span class="w"> </span>-o<span class="w"> </span>gen_xyz/ssl3d_features
 </pre></div>
 </div>
 </section>
@@ -1186,6 +1233,7 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 <li><a class="reference internal" href="#id8">Usage</a></li>
 <li><a class="reference internal" href="#soap-options">SOAP Options</a></li>
 <li><a class="reference internal" href="#uma-options">UMA Options</a></li>
+<li><a class="reference internal" href="#ssl3d-options">SSL3D Options</a></li>
 <li><a class="reference internal" href="#output-files">Output Files</a></li>
 <li><a class="reference internal" href="#loading-the-output">Loading the Output</a></li>
 <li><a class="reference internal" href="#python-api">Python API</a></li>
@@ -1204,7 +1252,7 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=f2a433a1"></script>
+</div><script src="../_static/documentation_options.js?v=6efca38a"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

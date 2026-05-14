@@ -57,8 +57,12 @@ pip install -e '.[analyze]'
 # Data utilities (includes dscribe for SOAP featurization)
 pip install 'molcraftdiffusion[data]'
 
-# Analyze utilities, including PoseBusters/RDKit/OpenBabel Python bindings/cosymlib
+# Analyze utilities (PoseBusters/RDKit/OpenBabel Python bindings)
 pip install 'molcraftdiffusion[analyze]'
+
+# Optional: needed for geometric-shape metrics in
+# `MolCraftDiff analyze metrics --metrics {core,geom_revised,all}`
+pip install cosymlib
 
 # xTB executable for xTB-backed analysis
 conda install -c conda-forge xtb==6.7.1 -y
@@ -101,7 +105,7 @@ to point to the repo root when running from a different working directory.
 MolCraftDiff --help
 ```
 
-You should see a list of all available commands: `train`, `generate`, `predict`, `eval_predict`, `analyze`, `data`.
+You should see a list of all available commands: `train`, `generate`, `predict`, `eval-predict`, `analyze`, `data`.
 
 ## Pre-trained models
 

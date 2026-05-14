@@ -9,11 +9,11 @@ This tutorial covers the complete data pipeline in `MolecularDiffusion`—from r
 
 ## Part 1: Data Preparation via CLI
 
-The `MolCraftDiff data` command group provides utilities for managing raw `.xyz` files and converting them into unified `.db` (ASE Database) files.
+The `MolCraftDiff data` command group provides utilities for managing raw `.xyz` files, ASE databases, molecular descriptors, and dataset subsets. The top-level groups are `prepare`, `featurize`, `augment`, and `ase-ops`.
 
-### 1. Compilation & Annotation
+### 1. Preparation
 
-First, compile your raw XYZ files or NumPy arrays into a single ASE database:
+Compile raw XYZ files or NumPy arrays into a single ASE database:
 
 ```bash
 # From a directory of .xyz files
@@ -23,10 +23,20 @@ MolCraftDiff data prepare compile -s xyz_dir/ -d dataset.db
 MolCraftDiff data prepare compile -s coords.npy -n natoms.npy -c metadata.csv -d dataset.db
 ```
 
-Add custom metadata tags (like project or subset labels) to your new database:
+Add custom metadata tags, such as project or subset labels, to an ASE database:
 
 ```bash
 MolCraftDiff data prepare annotate -d dataset.db -t group -v training
+```
+
+Generate RDKit mol blocks, SMILES, SDF output, and SA/SC properties for downstream featurization or filtering:
+
+```bash
+# From an ASE database
+MolCraftDiff data prepare generate-blocks -s dataset.db --method hybrid
+
+# From XYZ or NPY sources, provide an SDF output path
+MolCraftDiff data prepare generate-blocks -s xyz_dir/ --sdf molecules.sdf --method xyz2mol
 ```
 
 ### 2. Featurization
@@ -47,27 +57,42 @@ MolCraftDiff data featurize -m soap -i xyz_dir/ -o features/ --rcut 5.0 --nmax 8
 Increase dataset diversity via structural transformations:
 
 ```bash
-# Charge Augmentation: Randomly add/remove hydrogens
+# Charge augmentation: randomly add/remove hydrogens
 MolCraftDiff data augment charge -i dataset.db -o augmented.db --max-h 1 --db
 
-# Coordinate Distortion: Apply random Gaussian noise to atomic coordinates
+# Coordinate distortion: apply random Gaussian noise to atomic coordinates
 MolCraftDiff data augment distortion -i xyz_dir/ -o noisy_xyz/ --sigma 0.1
+
+# Size balancing: augment an ASE database toward a target size distribution
+MolCraftDiff data augment size -i dataset.db -o size_balanced.db --s-start 60 --s-end 120
 ```
 
 ### 4. ASE Database Operations
 
-Manage and inspect your compiled datasets:
+Manage, inspect, split, sample, and rename compiled datasets:
 
 ```bash
 # Merge multiple DBs
 MolCraftDiff data ase-ops merge -i db_dir/ -o merged.db
 
+# Inspect property distributions and generate plots
+MolCraftDiff data ase-ops inspect -d dataset.db --limit 10 --output plots/
+
+# Split a DB into multiple shards
+MolCraftDiff data ase-ops split -d dataset.db -o splits/ --n 5
+
 # Sample 10% of entries for a quick test
 MolCraftDiff data ase-ops sample -i dataset.db -o subset.db --fraction 0.1
 
-# Inspect property distributions and generate plots
-MolCraftDiff data ase-ops inspect -d dataset.db --limit 10 --output plots/
+# Export a sampled subset as XYZ files or padded NPY arrays
+MolCraftDiff data ase-ops sample -i dataset.db -o subset_xyz/ --format xyz --number 100
+MolCraftDiff data ase-ops sample -i dataset.db -o subset_npy/ --format npy --number 100
+
+# Rename a stored row attribute
+MolCraftDiff data ase-ops rename -d dataset.db --old old_property --new new_property
 ```
+
+Use `MolCraftDiff data <group> --help` and `MolCraftDiff data <group> <command> --help` for the full option list.
 
 ---
 

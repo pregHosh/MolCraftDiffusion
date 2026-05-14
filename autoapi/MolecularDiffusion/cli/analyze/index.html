@@ -518,7 +518,7 @@ MolCraftDiff analyze featurize gen_xyz/ –backend ssl3d –ssl3d-checkpoint run
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.cli.analyze.metrics">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.analyze.</span></span><span class="sig-name descname"><span class="pre">metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recheck_topo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_strain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">portion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mol_converter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_subsets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_mol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mol_idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.analyze.metrics" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.analyze.</span></span><span class="sig-name descname"><span class="pre">metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recheck_topo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_strain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">portion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mol_converter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_mol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mol_idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.analyze.metrics" title="Link to this definition">¶</a></dt>
 <dd><p>Compute validity and connectivity metrics for XYZ files.</p>
 <p>
 Metrics types:</p>
@@ -534,6 +534,7 @@ geom_revised Aromatic-aware stability metrics</p>
 MolCraftDiff analyze metrics gen_xyz/ –metrics posebuster
 MolCraftDiff analyze metrics gen_xyz/ –metrics geom_revised –mol-converter openbabel
 MolCraftDiff analyze metrics gen_xyz/ –metrics shepherd
+MolCraftDiff analyze metrics gen_xyz/ –split 4
 MolCraftDiff analyze metrics gen_xyz/ –metrics shepherd -r data/shepherd_data/gdb/molblock_charges_9_test100.pkl –mol-idx 0</p>
 </dd></dl>
 
@@ -710,7 +711,7 @@ MolCraftDiff analyze xyz2mol gen_xyz/ –bits 1024 -v</p>
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=f2a433a1"></script>
+</div><script src="../../../../_static/documentation_options.js?v=6efca38a"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>
