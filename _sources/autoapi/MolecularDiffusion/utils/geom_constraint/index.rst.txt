@@ -59,7 +59,7 @@ Module Contents
 
 .. py:function:: enforce_min_nodes_per_connector(ref: torch.Tensor, tgt: torch.Tensor, connector_indices: torch.Tensor, N: List[int], d_threshold_c: List[float], debug: bool = False) -> torch.Tensor
 
-.. py:function:: ensure_intact(ref: torch.Tensor, tgt: torch.Tensor, connector_indices: torch.Tensor = None, d_threshold: float = 1.0, d_threshold_e: float = 1.8, d_fixed_move: Optional[float] = None, steps: int = 40, debug: bool = False)
+.. py:function:: ensure_intact(ref: torch.Tensor, tgt: torch.Tensor, connector_indices: torch.Tensor = None, d_threshold: float = 1.0, d_threshold_e: float = EDGE_THRESHOLD, d_fixed_move: Optional[float] = None, steps: int = 40, debug: bool = False)
 
    Identifies subgraphs of target nodes, detects outlier subgraphs based on their distance to connector nodes,
    and moves them toward the closest non-outlier subgraph.

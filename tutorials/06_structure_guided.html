@@ -428,7 +428,7 @@
 <li><p><strong>Introduction</strong>: The concept of guiding generation with a structural template.</p></li>
 <li><p><strong>Inpainting</strong>: How to configure and run generation to fill in a missing portion of a molecule.</p></li>
 <li><p><strong>Outpainting</strong>: How to grow a molecule from a given substructure.</p></li>
-<li><p><strong>3D Geometric Constraints</strong>: How to tune the geometric constraints.</p></li>
+<li><p><strong>Tuning Parameters</strong>: Intuitive guide to tuning all parameters for both tasks.</p></li>
 </ol>
 </section>
 <section id="introduction">
@@ -441,6 +441,7 @@
 <p><img alt="Workflow overview" src="../_images/ip_op.png" /></p>
 <p>The process involves providing a reference structure in an XYZ file and specifying which parts of the structure to modify or keep fixed. <strong>Note that all atom indices are 0-indexed.</strong> You can create your experiment configuration files in any directory, as the base templates are bundled with the package.</p>
 </section>
+<hr class="docutils" />
 <section id="inpainting">
 <h2>2. Inpainting<a class="headerlink" href="#inpainting" title="Link to this heading">¶</a></h2>
 <p>Inpainting allows you to vary initial structures. You provide a template molecule and specify which atoms to “mask”. The diffusion model will then generate new structures for the masked atoms and connect them to the rest of the molecule, allowing you to vary specific parts or the entire structure.</p>
@@ -466,31 +467,47 @@
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_component</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
-<td class="text-left"><p>Component to inpaint (available choice: x, h, xh).</p></td>
+<td class="text-left"><p>Component to inpaint (<code class="docutils literal notranslate"><span class="pre">x</span></code> positions only, <code class="docutils literal notranslate"><span class="pre">h</span></code> features only, <code class="docutils literal notranslate"><span class="pre">xh</span></code> both).</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">center_saved_scaffold</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
+<td class="text-left"><p>Translate scaffold so its centre of mass is at the origin before generation.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">use_noised_conditioning</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
+<td class="text-left"><p>Add noise to the scaffold at each denoising step. Set <code class="docutils literal notranslate"><span class="pre">True</span></code> if the model was trained with noised conditioning.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">n_retrys</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
-<td class="text-left"><p>Number of retry attempts in case of bad molecules.</p></td>
+<td class="text-left"><p>Number of retry attempts if a generated molecule is invalid.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">t_retry</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
-<td class="text-left"><p>Timestep to start retrying.</p></td>
+<td class="text-left"><p>Timestep (0–T) to restart from on retry.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">n_frames</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
-<td class="text-left"><p>Number of frames to keep for trajectory visualization.</p></td>
+<td class="text-left"><p>Number of trajectory frames to save for visualisation (0 = disabled).</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">inpaint_cfgs</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
-<td class="text-left"><p><strong>CRITICAL:</strong> A sub-dictionary containing all settings specific to the inpainting algorithm, including <code class="docutils literal notranslate"><span class="pre">mask_node_index</span></code> and <code class="docutils literal notranslate"><span class="pre">denoising_strength</span></code>.</p></td>
-</tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">mask_node_index</span></code></p></td>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">mask_node_index</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">inpaint_cfgs</span></code></p></td>
-<td class="text-left"><p><strong>CRITICAL:</strong> A list of <strong>0-indexed</strong> atom indices from your XYZ file that you want to remove and have the model regenerate.</p></td>
+<td class="text-left"><p><strong>CRITICAL:</strong> 0-indexed list of atom indices to remove and regenerate.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">denoising_strength</span></code></p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">denoising_strength</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">inpaint_cfgs</span></code></p></td>
-<td class="text-left"><p>Controls how much noise is added to the masked region before generation. Higher values give the model more creative freedom.</p></td>
+<td class="text-left"><p>How much noise is added to the masked region (0–1). Higher = more creative freedom, lower = stays closer to the original.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">noise_initial_mask</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">inpaint_cfgs</span></code></p></td>
+<td class="text-left"><p>Add noise to the initial masked positions before denoising starts.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">inpaint_cfgs</span></code></p></td>
+<td class="text-left"><p>Fraction of denoising during which overlap-push constraints are active (<code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">&lt;</span> <span class="pre">constraint_strength</span></code>). Default: <code class="docutils literal notranslate"><span class="pre">0.8</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">inpaint_cfgs</span></code></p></td>
+<td class="text-left"><p>Multiplier on covalent radii for bond-distance tolerance. Default: <code class="docutils literal notranslate"><span class="pre">1.1</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -498,7 +515,6 @@
 </section>
 <section id="configuration">
 <h3>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">¶</a></h3>
-<p>Here is an example of a complete configuration file for inpainting, which you can save as <code class="docutils literal notranslate"><span class="pre">my_inpaint.yaml</span></code> in your working directory:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># my_inpaint.yaml</span>
 <span class="nt">defaults</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diffusion</span>
@@ -513,26 +529,27 @@
 
 <span class="nt">interference</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">num_generate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
-<span class="w">  </span><span class="nt">mol_size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">50</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">60</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># Target size of the generated molecule</span>
+<span class="w">  </span><span class="nt">mol_size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">50</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">60</span><span class="p p-Indicator">]</span>
 <span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;results/my_inpainting_run&quot;</span>
 <span class="w">  </span><span class="nt">condition_configs</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">reference_structure_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;assets/BINOLCpHHH.xyz&quot;</span>
 <span class="w">    </span><span class="nt">condition_component</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">xh</span>
 <span class="w">    </span><span class="nt">inpaint_cfgs</span><span class="p">:</span>
-<span class="w">      </span><span class="c1"># To vary the BINOL part of the molecule, we mask the following 0-indexed atoms:</span>
 <span class="w">      </span><span class="nt">mask_node_index</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">30</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">31</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">6</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">7</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">45</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">8</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">32</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">10</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">33</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">11</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">34</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">12</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">35</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">13</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">36</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">14</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">15</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">16</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">17</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">18</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">37</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">19</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">38</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">20</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">39</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">21</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">40</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">22</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">23</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">41</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">24</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">44</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">25</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">26</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">43</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">42</span><span class="p p-Indicator">]</span>
 <span class="w">      </span><span class="nt">denoising_strength</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.8</span>
+<span class="w">      </span><span class="nt">constraint_strength</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.8</span>
+<span class="w">      </span><span class="nt">scale_factor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.1</span>
 </pre></div>
 </div>
 </section>
 <section id="running-inpainting">
 <h3>Running Inpainting<a class="headerlink" href="#running-inpainting" title="Link to this heading">¶</a></h3>
-<p>Use the <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">generate</span></code> command with your configuration file:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_inpaint
 </pre></div>
 </div>
 </section>
 </section>
+<hr class="docutils" />
 <section id="outpainting">
 <h2>3. Outpainting<a class="headerlink" href="#outpainting" title="Link to this heading">¶</a></h2>
 <p>Outpainting is the process of growing a molecule from a given fragment. You provide a starting fragment, and the model will add new atoms to it.</p>
@@ -558,60 +575,66 @@
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_component</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
-<td class="text-left"><p>Component to outpaint (available choice: x, h, xh).</p></td>
+<td class="text-left"><p>Component to outpaint (<code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">h</span></code>, or <code class="docutils literal notranslate"><span class="pre">xh</span></code>).</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">center_saved_scaffold</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
+<td class="text-left"><p>Translate scaffold so its CoM is at the origin before generation.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">use_noised_conditioning</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
+<td class="text-left"><p>Add noise to the scaffold at each denoising step.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">n_retrys</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
-<td class="text-left"><p>Number of retry attempts in case of bad molecules.</p></td>
+<td class="text-left"><p>Number of retry attempts if a generated molecule is invalid.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">t_retry</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
-<td class="text-left"><p>Timestep to start retrying.</p></td>
-</tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">n_frames</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
-<td class="text-left"><p>Number of frames to keep for trajectory visualization.</p></td>
-</tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
-<td class="text-left"><p><strong>CRITICAL:</strong> A sub-dictionary containing all settings specific to the outpainting algorithm, including <code class="docutils literal notranslate"><span class="pre">connector_dicts</span></code> and new node initialization settings.</p></td>
+<td class="text-left"><p>Timestep (0–T) to restart from on retry.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">connector_dicts</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p><strong>CRITICAL:</strong> A dictionary where keys are the <strong>0-indexed</strong> indices of atoms in your fragment, and values are the number of new connections to grow from that atom.</p></td>
+<td class="text-left"><p><strong>CRITICAL:</strong> <code class="docutils literal notranslate"><span class="pre">{atom_index:</span> <span class="pre">[n_bonds]}</span></code> — which scaffold atoms to grow from and how many bonds each should form.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">t_start</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p>Timestep to start the generation.</p></td>
+<td class="text-left"><p>Fraction of T to start denoising from (e.g. <code class="docutils literal notranslate"><span class="pre">0.9</span></code> → 90% of steps).</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p>The distance (in Å) from the connector atom to initially place the new seed nodes. Default is 2.0.</p></td>
+<td class="text-left"><p>Distance (Å) from connector to place initial seed atoms. Default: <code class="docutils literal notranslate"><span class="pre">2.0</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">min_dist</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p>Minimum allowed initial distance between the new node and any existing atoms in the template to avoid clashes. Default is 1.0.</p></td>
+<td class="text-left"><p>Minimum distance (Å) new atoms must be from all non-connector scaffold atoms at initialisation. Default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">spread</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p>The standard deviation for the normal distribution when sampling the positions of the new extra nodes around the seed location. Default is 1.0.</p></td>
+<td class="text-left"><p>Std dev (Å) of the Gaussian used to scatter seed atoms around the seed position. Default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">n_bq_atom</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p>Number of “boundary/query” atoms at the end of the template strictly used for seeding positions. Default is 0.</p></td>
+<td class="text-left"><p>Number of atoms at the end of the scaffold used only for seeding positions, not included in conditioning. Default: <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">noise_initial_mask</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
+<td class="text-left"><p>Add noise to the initial seed positions before denoising starts.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
+<td class="text-left"><p>Fraction of denoising during which constraints are active. Default: <code class="docutils literal notranslate"><span class="pre">0.7</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
+<td class="text-left"><p>Multiplier on covalent radii for bond-distance tolerance. Default: <code class="docutils literal notranslate"><span class="pre">1.1</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<blockquote>
-<div><p><strong>Tuning Outpainting Outcomes</strong></p>
-<p>You can explicitly control how the new atoms are initially placed in 3D space. By tuning the geometric parameters (<code class="docutils literal notranslate"><span class="pre">seed_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">min_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">spread</span></code>), you dictate where the diffusion process <em>starts</em> adding the new fragment.</p>
-<p>For example, increasing the <code class="docutils literal notranslate"><span class="pre">seed_dist</span></code> forces the model to generate the new atoms further away from the connector atom, while decreasing the <code class="docutils literal notranslate"><span class="pre">spread</span></code> tightly clusters the new generated atoms together. Adjusting these initialization settings gives you fine-grained control over the final shape and direction of the outpainted molecule.</p>
-</div></blockquote>
 </section>
 <section id="id1">
 <h3>Configuration<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
-<p>Here is an example of a complete configuration file for outpainting, which you can save as <code class="docutils literal notranslate"><span class="pre">my_outpaint.yaml</span></code> in your working directory:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># my_outpaint.yaml</span>
 <span class="nt">defaults</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diffusion</span>
@@ -626,27 +649,261 @@
 
 <span class="nt">interference</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">num_generate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
-<span class="w">  </span><span class="nt">mol_size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">30</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">40</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># Target size of the generated molecule</span>
+<span class="w">  </span><span class="nt">mol_size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">30</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">40</span><span class="p p-Indicator">]</span>
 <span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;results/my_outpainting_run&quot;</span>
 <span class="w">  </span><span class="nt">condition_configs</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">reference_structure_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;assets/BINOLCp.xyz&quot;</span>
 <span class="w">    </span><span class="nt">condition_component</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">xh</span>
 <span class="w">    </span><span class="nt">outpaint_cfgs</span><span class="p">:</span>
-<span class="w">      </span><span class="c1"># To decorate BINOL-Cp with substituents at 0-indexed atoms 1, 2, and 3, each with 3 bonds:</span>
 <span class="w">      </span><span class="nt">connector_dicts</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">1</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">3</span><span class="p p-Indicator">]</span>
 <span class="w">        </span><span class="nt">2</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">3</span><span class="p p-Indicator">]</span>
 <span class="w">        </span><span class="nt">3</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">3</span><span class="p p-Indicator">]</span>
 <span class="w">      </span><span class="nt">t_start</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.8</span>
+<span class="w">      </span><span class="nt">constraint_strength</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.7</span>
+<span class="w">      </span><span class="nt">scale_factor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.1</span>
+<span class="w">      </span><span class="nt">seed_dist</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.0</span>
+<span class="w">      </span><span class="nt">min_dist</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
+<span class="w">      </span><span class="nt">spread</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
 </pre></div>
 </div>
 </section>
 <section id="running-outpainting">
 <h3>Running Outpainting<a class="headerlink" href="#running-outpainting" title="Link to this heading">¶</a></h3>
-<p>Use the <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">generate</span></code> command with your configuration file:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_outpaint
 </pre></div>
 </div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="tuning-parameters">
+<h2>4. Tuning Parameters<a class="headerlink" href="#tuning-parameters" title="Link to this heading">¶</a></h2>
+<p>This section explains the intuition behind every tunable parameter so you can diagnose and fix generation problems without trial-and-error guessing.</p>
+<hr class="docutils" />
+<section id="inpainting-parameters">
+<h3>4.1 Inpainting Parameters<a class="headerlink" href="#inpainting-parameters" title="Link to this heading">¶</a></h3>
+<section id="denoising-strength-how-much-to-vary-the-masked-region">
+<h4><code class="docutils literal notranslate"><span class="pre">denoising_strength</span></code> — how much to vary the masked region<a class="headerlink" href="#denoising-strength-how-much-to-vary-the-masked-region" title="Link to this heading">¶</a></h4>
+<p>This is the most important parameter for inpainting. It controls how far the masked atoms are scrambled before the model regenerates them. Think of it as a “creativity dial”:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>denoising_strength = 0.3   →  mild perturbation, output stays close to original
+denoising_strength = 0.7   →  moderate variation, recommended starting point
+denoising_strength = 1.0   →  full noise, model generates freely with no memory of original
+</pre></div>
+</div>
+<p><strong>Use a low value</strong> (<code class="docutils literal notranslate"><span class="pre">0.3–0.5</span></code>) when you want to explore small variations around a known structure — e.g., swapping a substituent while keeping the overall shape.</p>
+<p><strong>Use a high value</strong> (<code class="docutils literal notranslate"><span class="pre">0.8–1.0</span></code>) when you want the model to generate genuinely new chemistry in the masked region, or when the masked atoms are many and structurally diverse.</p>
+</section>
+<section id="mask-node-index-which-atoms-to-regenerate">
+<h4><code class="docutils literal notranslate"><span class="pre">mask_node_index</span></code> — which atoms to regenerate<a class="headerlink" href="#mask-node-index-which-atoms-to-regenerate" title="Link to this heading">¶</a></h4>
+<p>Choose atoms that form a chemically coherent region: a ring system, a substituent, a linker. The atoms you do <strong>not</strong> mask become the frozen scaffold — make sure the unmasked atoms include all the atoms that define the shape you want to preserve.</p>
+<p><strong>Tip:</strong> The connector atoms (atoms at the boundary between masked and unmasked regions) are automatically detected from the molecular graph. You do not need to declare them separately.</p>
+</section>
+<section id="constraint-strength-inpainting">
+<h4><code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code> (inpainting)<a class="headerlink" href="#constraint-strength-inpainting" title="Link to this heading">¶</a></h4>
+<p>Controls when the overlap-push constraint is active during denoising. The constraint prevents generated atoms from crashing into the frozen scaffold.</p>
+<p><strong>Leave at the default</strong> (<code class="docutils literal notranslate"><span class="pre">0.8</span></code>) in most cases. Only reduce it if the scaffold is very small and the constraints are visibly over-correcting the trajectory.</p>
+<blockquote>
+<div><p><strong>Note:</strong> The bonding sub-constraints (enforce + ensure_intact) are intentionally disabled for inpainting. Connector topology is determined from the molecular graph, so proximity-pull logic is not needed.</p>
+</div></blockquote>
+</section>
+<section id="scale-factor-inpainting">
+<h4><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code> (inpainting)<a class="headerlink" href="#scale-factor-inpainting" title="Link to this heading">¶</a></h4>
+<p>Tolerance on bond distances. The overlap threshold for each atom pair is <code class="docutils literal notranslate"><span class="pre">(cov_radius_A</span> <span class="pre">+</span> <span class="pre">cov_radius_B)</span> <span class="pre">×</span> <span class="pre">scale_factor</span></code>.</p>
+<p><strong>Raise to <code class="docutils literal notranslate"><span class="pre">1.2</span></code></strong> if generated atoms are clashing into the scaffold in the final structure. <strong>Lower toward <code class="docutils literal notranslate"><span class="pre">1.0</span></code></strong> if bonds to the scaffold are consistently too long.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="outpainting-parameters">
+<h3>4.2 Outpainting Parameters<a class="headerlink" href="#outpainting-parameters" title="Link to this heading">¶</a></h3>
+<section id="connector-dicts-where-and-how-to-grow">
+<h4><code class="docutils literal notranslate"><span class="pre">connector_dicts</span></code> — where and how to grow<a class="headerlink" href="#connector-dicts-where-and-how-to-grow" title="Link to this heading">¶</a></h4>
+<p>This is the only required parameter. Each entry <code class="docutils literal notranslate"><span class="pre">{atom_index:</span> <span class="pre">[n_bonds]}</span></code> says: <em>“from this scaffold atom, grow exactly n new bonds.”</em></p>
+<p><strong>Choosing the connector atom:</strong> Pick the atom at the growth point — usually an atom that is under-valenced in the scaffold (e.g., a carbon with a free valence after cleaving a bond).</p>
+<p><strong>Choosing <code class="docutils literal notranslate"><span class="pre">n_bonds</span></code>:</strong> Set this to the number of new bonds you want the connector atom to form with the generated fragment. For a single chain, use <code class="docutils literal notranslate"><span class="pre">[1]</span></code>. For a branching point, use <code class="docutils literal notranslate"><span class="pre">[2]</span></code> or <code class="docutils literal notranslate"><span class="pre">[3]</span></code>. The model is guided to place at least this many generated atoms within bonding distance of the connector.</p>
+</section>
+<section id="t-start-how-many-denoising-steps-to-run">
+<h4><code class="docutils literal notranslate"><span class="pre">t_start</span></code> — how many denoising steps to run<a class="headerlink" href="#t-start-how-many-denoising-steps-to-run" title="Link to this heading">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">t_start</span></code> is the fraction of the total diffusion steps used for generation. It controls the quality–speed tradeoff:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>t_start = 1.0   →  full denoising (all T steps), highest quality
+t_start = 0.8   →  80% of steps, good quality, recommended default
+t_start = 0.5   →  50% of steps, faster but coarser structures
+</pre></div>
+</div>
+<p><strong>Use <code class="docutils literal notranslate"><span class="pre">0.8–0.9</span></code></strong> for most experiments. Only lower it for rapid screening where speed matters more than quality.</p>
+</section>
+<section id="seed-dist-min-dist-spread-where-new-atoms-start">
+<h4><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">min_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">spread</span></code> — where new atoms start<a class="headerlink" href="#seed-dist-min-dist-spread-where-new-atoms-start" title="Link to this heading">¶</a></h4>
+<p>These three parameters control the <strong>initial placement</strong> of the generated atoms before denoising begins. They shape the starting geometry that the model then refines.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>connector atom (scaffold)
+        │
+        │← seed_dist (e.g. 1.5 Å) →●  ← seed point
+                                   ╱│╲
+                         spread (std dev of Gaussian)
+                         atoms scattered around seed point
+</pre></div>
+</div>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Parameter</p></th>
+<th class="head text-left"><p>What it controls</p></th>
+<th class="head text-left"><p>Increase when…</p></th>
+<th class="head text-left"><p>Decrease when…</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code></p></td>
+<td class="text-left"><p>Distance from connector to the centre of the seed cloud</p></td>
+<td class="text-left"><p>You want the fragment to grow outward and away from the scaffold</p></td>
+<td class="text-left"><p>Fragment needs to start close to the connector (short bonds, rings)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">min_dist</span></code></p></td>
+<td class="text-left"><p>Minimum distance new atoms must be from all non-connector scaffold atoms at init</p></td>
+<td class="text-left"><p>— (usually left at default)</p></td>
+<td class="text-left"><p>Scaffold is large and seed atoms can’t find valid positions far enough away</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">spread</span></code></p></td>
+<td class="text-left"><p>How tightly the seed atoms are clustered around the seed point</p></td>
+<td class="text-left"><p>You want a dispersed fragment exploring a wide area</p></td>
+<td class="text-left"><p>You want a compact, directed fragment; high spread causes atoms to scatter and drift</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Practical starting point:</strong> <code class="docutils literal notranslate"><span class="pre">seed_dist=1.5,</span> <span class="pre">min_dist=1.5,</span> <span class="pre">spread=0.75</span></code> for a compact fragment growing from a single connector. Use <code class="docutils literal notranslate"><span class="pre">seed_dist=2.0,</span> <span class="pre">spread=1.0</span></code> for a more open-ended growth.</p>
+</section>
+<section id="n-bq-atom-boundary-atoms-for-seeding-only">
+<h4><code class="docutils literal notranslate"><span class="pre">n_bq_atom</span></code> — boundary atoms for seeding only<a class="headerlink" href="#n-bq-atom-boundary-atoms-for-seeding-only" title="Link to this heading">¶</a></h4>
+<p>Adds phantom atoms at the end of the scaffold that are used only to compute seed positions, not passed to the model as conditioning. Useful when the scaffold’s connector region is geometrically ambiguous and you want to steer the seed placement toward a specific spatial direction without altering the conditioning.</p>
+<p><strong>Leave at <code class="docutils literal notranslate"><span class="pre">0</span></code></strong> unless you have a specific spatial steering need.</p>
+</section>
+<section id="constraint-strength-outpainting">
+<h4><code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code> (outpainting)<a class="headerlink" href="#constraint-strength-outpainting" title="Link to this heading">¶</a></h4>
+<p>Controls the denoising window during which geometric constraints are active:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>s = 1.0  ──── generation starts (full noise)
+             │  no constraints
+s = constraint_strength  ──── overlap-push activates
+             │  generated atoms pushed away from scaffold overlaps
+s = constraint_strength / 2  ──── bonding sub-constraints activate
+             │  atoms pulled toward connectors; disconnected clusters merged
+s = 0.0  ──── generation ends (clean structure)
+</pre></div>
+</div>
+<p><strong>Increase toward <code class="docutils literal notranslate"><span class="pre">0.9</span></code></strong> if generated atoms drift away from the connector or the final structure shows the fragment disconnected from the scaffold.</p>
+<p><strong>Decrease toward <code class="docutils literal notranslate"><span class="pre">0.5</span></code></strong> if the fragment is too rigid, diversity is low, or you are generating a large fragment that needs space to explore.</p>
+<p><strong>Default <code class="docutils literal notranslate"><span class="pre">0.7</span></code></strong> works well for typical fragment sizes (5–15 atoms). For very small fragments (1–3 atoms), try <code class="docutils literal notranslate"><span class="pre">0.8–0.9</span></code>. For large fragments (&gt;20 atoms), try <code class="docutils literal notranslate"><span class="pre">0.5–0.6</span></code>.</p>
+</section>
+<section id="scale-factor-outpainting">
+<h4><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code> (outpainting)<a class="headerlink" href="#scale-factor-outpainting" title="Link to this heading">¶</a></h4>
+<p>Scales the per-atom-type covalent bond length threshold used by all three constraint layers:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code></p></th>
+<th class="head text-left"><p>Bond tolerance</p></th>
+<th class="head text-left"><p>When to use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">0.9</span></code></p></td>
+<td class="text-left"><p>Tighter than covalent — atoms must be very close to connector</p></td>
+<td class="text-left"><p>Connector is a light atom (N, O) and you want a tight bond</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">1.0</span></code></p></td>
+<td class="text-left"><p>Exact covalent bond length</p></td>
+<td class="text-left"><p>Reference bond lengths</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">1.1</span></code> <em>(default)</em></p></td>
+<td class="text-left"><p>10% slack</p></td>
+<td class="text-left"><p>Good general-purpose starting point</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">1.2–1.3</span></code></p></td>
+<td class="text-left"><p>Loose — allows more spacing</p></td>
+<td class="text-left"><p>Heavy atoms around connector; prevents pile-up</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Note:</strong> <code class="docutils literal notranslate"><span class="pre">scale_factor</span></code> also affects the overlap-push constraint. A higher value means the push-away boundary is further from the scaffold surface, giving generated atoms more room to manoeuvre around heavy atoms.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="quick-diagnostics">
+<h3>4.3 Quick Diagnostics<a class="headerlink" href="#quick-diagnostics" title="Link to this heading">¶</a></h3>
+<section id="id2">
+<h4>Inpainting<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h4>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Symptom</p></th>
+<th class="head text-left"><p>Most likely cause</p></th>
+<th class="head text-left"><p>Fix</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Output too similar to input</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">denoising_strength</span></code> too low</p></td>
+<td class="text-left"><p>Raise to <code class="docutils literal notranslate"><span class="pre">0.7–0.9</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Output unrecognisable, ignores scaffold shape</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">denoising_strength</span></code> too high</p></td>
+<td class="text-left"><p>Lower to <code class="docutils literal notranslate"><span class="pre">0.5–0.7</span></code></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Generated atoms crash into scaffold</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code> too low</p></td>
+<td class="text-left"><p>Raise to <code class="docutils literal notranslate"><span class="pre">1.2</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Generated atoms hover far from scaffold</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code> too high</p></td>
+<td class="text-left"><p>Lower to <code class="docutils literal notranslate"><span class="pre">1.0–1.05</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id3">
+<h4>Outpainting<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h4>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Symptom</p></th>
+<th class="head text-left"><p>Most likely cause</p></th>
+<th class="head text-left"><p>Fix</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Fragment disconnected from scaffold in output</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code> too low or <code class="docutils literal notranslate"><span class="pre">seed_dist</span></code> too large</p></td>
+<td class="text-left"><p>Raise <code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code> to <code class="docutils literal notranslate"><span class="pre">0.8–0.9</span></code>; lower <code class="docutils literal notranslate"><span class="pre">seed_dist</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Fragment fuses into scaffold, overlapping atoms</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code> too low</p></td>
+<td class="text-left"><p>Raise <code class="docutils literal notranslate"><span class="pre">scale_factor</span></code> to <code class="docutils literal notranslate"><span class="pre">1.2–1.3</span></code></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Fragment is compact blob, no diversity</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">spread</span></code> too low or <code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code> too high</p></td>
+<td class="text-left"><p>Raise <code class="docutils literal notranslate"><span class="pre">spread</span></code>; lower <code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Atoms pile up at connector</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code> too small; all atoms init at same point</p></td>
+<td class="text-left"><p>Raise <code class="docutils literal notranslate"><span class="pre">seed_dist</span></code>; raise <code class="docutils literal notranslate"><span class="pre">spread</span></code> slightly</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Fragment grows in the wrong direction</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code> too large, seed cloud too dispersed</p></td>
+<td class="text-left"><p>Lower <code class="docutils literal notranslate"><span class="pre">seed_dist</span></code>; lower <code class="docutils literal notranslate"><span class="pre">spread</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Bonds to connector consistently too long</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code> too high</p></td>
+<td class="text-left"><p>Lower to <code class="docutils literal notranslate"><span class="pre">1.0–1.05</span></code></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Generation is slow / low throughput</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">t_start</span></code> too high</p></td>
+<td class="text-left"><p>Lower to <code class="docutils literal notranslate"><span class="pre">0.7–0.8</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 </section>
 </section>
 </section>
@@ -736,6 +993,30 @@
 <li><a class="reference internal" href="#key-outpainting-parameters">Key Outpainting Parameters</a></li>
 <li><a class="reference internal" href="#id1">Configuration</a></li>
 <li><a class="reference internal" href="#running-outpainting">Running Outpainting</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tuning-parameters">4. Tuning Parameters</a><ul>
+<li><a class="reference internal" href="#inpainting-parameters">4.1 Inpainting Parameters</a><ul>
+<li><a class="reference internal" href="#denoising-strength-how-much-to-vary-the-masked-region"><code class="docutils literal notranslate"><span class="pre">denoising_strength</span></code> — how much to vary the masked region</a></li>
+<li><a class="reference internal" href="#mask-node-index-which-atoms-to-regenerate"><code class="docutils literal notranslate"><span class="pre">mask_node_index</span></code> — which atoms to regenerate</a></li>
+<li><a class="reference internal" href="#constraint-strength-inpainting"><code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code> (inpainting)</a></li>
+<li><a class="reference internal" href="#scale-factor-inpainting"><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code> (inpainting)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#outpainting-parameters">4.2 Outpainting Parameters</a><ul>
+<li><a class="reference internal" href="#connector-dicts-where-and-how-to-grow"><code class="docutils literal notranslate"><span class="pre">connector_dicts</span></code> — where and how to grow</a></li>
+<li><a class="reference internal" href="#t-start-how-many-denoising-steps-to-run"><code class="docutils literal notranslate"><span class="pre">t_start</span></code> — how many denoising steps to run</a></li>
+<li><a class="reference internal" href="#seed-dist-min-dist-spread-where-new-atoms-start"><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">min_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">spread</span></code> — where new atoms start</a></li>
+<li><a class="reference internal" href="#n-bq-atom-boundary-atoms-for-seeding-only"><code class="docutils literal notranslate"><span class="pre">n_bq_atom</span></code> — boundary atoms for seeding only</a></li>
+<li><a class="reference internal" href="#constraint-strength-outpainting"><code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code> (outpainting)</a></li>
+<li><a class="reference internal" href="#scale-factor-outpainting"><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code> (outpainting)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#quick-diagnostics">4.3 Quick Diagnostics</a><ul>
+<li><a class="reference internal" href="#id2">Inpainting</a></li>
+<li><a class="reference internal" href="#id3">Outpainting</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

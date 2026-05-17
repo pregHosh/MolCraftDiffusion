@@ -678,7 +678,7 @@ Module Contents
 
 
 
-   .. py:method:: sample_p_zs_given_zt_ip(s, t, zt, node_mask, edge_mask, context, mask_node_index, connector_dicts, t_critical_1=0.8, t_critical_2=0.3, d_threshold_f=1.8, w_b=2, all_frozen=False, use_covalent_radii=True, scale_factor=1.1, fix_noise=False)
+   .. py:method:: sample_p_zs_given_zt_ip(s, t, zt, node_mask, edge_mask, context, mask_node_index, connector_dicts, constraint_strength=0.8, scale_factor=1.1, fix_noise=False)
 
       Performs inpainting on a molecular structure.
 
@@ -702,19 +702,13 @@ Module Contents
       :type mask_node_index: torch.Tensor
       :param connector_dicts: A dictionary defining the connector atoms and their degrees.
       :type connector_dicts: dict
-      :param t_critical_1: Critical timestep for applying the first set of geometric constraints. Defaults to 0.8.
-      :type t_critical_1: float, optional
-      :param t_critical_2: Critical timestep for applying the second set of geometric constraints. Defaults to 0.3.
-      :type t_critical_2: float, optional
-      :param d_threshold_f: Distance threshold for finding close points. Defaults to 1.8.
-      :type d_threshold_f: float, optional
-      :param w_b: Weight for the bond term in the geometric constraints. Defaults to 2.
-      :type w_b: int, optional
-      :param all_frozen: If True, all atoms in the reference fragment are frozen. Defaults to False.
-      :type all_frozen: bool, optional
-      :param use_covalent_radii: If True, uses covalent radii for distance checks. Defaults to True.
-      :type use_covalent_radii: bool, optional
-      :param scale_factor: Scale factor for covalent radii. Defaults to 1.1.
+      :param constraint_strength: Controls when geometric constraints are
+                                  applied. Constraints activate for diffusion steps s < constraint_strength.
+                                  Higher values apply constraints over a wider window. Defaults to 0.8.
+      :type constraint_strength: float, optional
+      :param scale_factor: Scale factor applied to covalent radii when
+                           computing bond-distance tolerances. Increase to allow more spacing between
+                           generated and scaffold atoms. Defaults to 1.1.
       :type scale_factor: float, optional
       :param fix_noise: If True, uses fixed noise for sampling. Defaults to False.
       :type fix_noise: bool, optional
@@ -724,7 +718,7 @@ Module Contents
 
 
 
-   .. py:method:: sample_p_zs_given_zt_op(s, t, zt, node_mask, edge_mask, context, mask_bools, connector_dicts, t_critical_1=0.8, t_critical_2=0.4, d_threshold_f=1.8, w_b=2, all_frozen=False, use_covalent_radii=True, scale_factor=1.1, fix_noise=False)
+   .. py:method:: sample_p_zs_given_zt_op(s, t, zt, node_mask, edge_mask, context, mask_bools, connector_dicts, constraint_strength=0.8, scale_factor=1.1, fix_noise=False)
 
       Performs outpainting on a molecular structure.
 
@@ -747,19 +741,14 @@ Module Contents
       :type mask_bools: torch.Tensor
       :param connector_dicts: A dictionary defining the connector atoms and their degrees.
       :type connector_dicts: dict
-      :param t_critical_1: Critical timestep for applying the first set of geometric constraints. Defaults to 0.8.
-      :type t_critical_1: float, optional
-      :param t_critical_2: Critical timestep for applying the second set of geometric constraints. Defaults to 0.4.
-      :type t_critical_2: float, optional
-      :param d_threshold_f: Distance threshold for finding close points. Defaults to 1.8.
-      :type d_threshold_f: float, optional
-      :param w_b: Weight for the bond term in the geometric constraints. Defaults to 2.
-      :type w_b: int, optional
-      :param all_frozen: If True, all atoms in the reference fragment are frozen. Defaults to False.
-      :type all_frozen: bool, optional
-      :param use_covalent_radii: If True, uses covalent radii for distance checks. Defaults to True.
-      :type use_covalent_radii: bool, optional
-      :param scale_factor: Scale factor for covalent radii. Defaults to 1.1.
+      :param constraint_strength: Controls when geometric constraints are
+                                  applied. Constraints activate for diffusion steps s < constraint_strength.
+                                  Bonding constraints (enforce + ensure_intact) are additionally restricted to
+                                  the upper half of the window (s > constraint_strength / 2). Defaults to 0.8.
+      :type constraint_strength: float, optional
+      :param scale_factor: Scale factor applied to covalent radii when
+                           computing bond-distance tolerances. Increase to allow more spacing between
+                           generated and scaffold atoms. Defaults to 1.1.
       :type scale_factor: float, optional
       :param fix_noise: If True, uses fixed noise for sampling. Defaults to False.
       :type fix_noise: bool, optional
