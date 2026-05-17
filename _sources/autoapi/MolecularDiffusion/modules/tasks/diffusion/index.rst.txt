@@ -346,6 +346,9 @@ Module Contents
 
 
 
+   .. py:property:: reference_scaffold
+
+
    .. py:attribute:: sp_regularizer
       :value: None
 
