@@ -1,0 +1,238 @@
+MolecularDiffusion.core.engine_lightning
+========================================
+
+.. py:module:: MolecularDiffusion.core.engine_lightning
+
+.. autoapi-nested-parse::
+
+   PyTorch Lightning wrapper for MolecularDiffusion Task classes.
+
+   This module provides a LightningModule that wraps existing Task classes
+   (from tasks_esen.py, tasks_egt.py, tasks_egcl.py) to enable training
+   with PyTorch Lightning infrastructure.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.core.engine_lightning.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.core.engine_lightning.EngineLightning
+
+
+Module Contents
+---------------
+
+.. py:class:: EngineLightning(optimizer_config: Dict[str, Any], task: Optional[torch.nn.Module] = None, scheduler_config: Optional[Dict[str, Any]] = None, monitor_metric: Optional[Any] = None, model_config: Optional[Dict[str, Any]] = None, ema_decay: float = 0.0, gradnorm_queue: Optional[MolecularDiffusion.callbacks.Queue] = None, gradient_clip_algorithm: str = 'adaptive', sleep_every_N: int = 0, sleep_time: float = 60.0)
+
+   Bases: :py:obj:`pytorch_lightning.LightningModule`, :py:obj:`MolecularDiffusion.core.Configurable`
+
+
+   Lightning wrapper for MolecularDiffusion Task classes.
+
+   This wraps any task (regression, guidance, diffusion) and adapts it
+   to Lightning's training interface.
+
+   :param task: The task module (e.g., PropertyPrediction, GeomMolecularGenerative)
+   :type task: nn.Module
+   :param optimizer_config: Configuration for optimizer
+                            - optimizer_choice: str, one of ["adam", "adamw", "amsgrad", "radam"]
+                            - lr: float
+                            - weight_decay: float
+                            - betas: tuple
+                            - eps: float
+   :type optimizer_config: dict
+   :param scheduler_config: Configuration for learning rate scheduler
+                            - scheduler: str or None
+                            - scheduler_kwargs: dict
+   :type scheduler_config: dict
+
+
+   .. py:method:: configure_gradient_clipping(optimizer, gradient_clip_val, gradient_clip_algorithm)
+
+      Override gradient clipping to support adaptive Queue-based clipping.
+
+      :param optimizer: The optimizer being used
+      :param gradient_clip_val: Value from Trainer config (used for 'lightning' mode)
+      :param gradient_clip_algorithm: Algorithm from Trainer config ('norm' or 'value')
+
+
+
+   .. py:method:: configure_optimizers()
+
+      Configure optimizer and learning rate scheduler.
+
+
+
+   .. py:method:: forward(batch)
+
+      Forward pass through the task.
+
+
+
+   .. py:method:: on_load_checkpoint(checkpoint)
+
+      Load EMA model state and distribution models from checkpoint.
+
+      Handles:
+      1. EMA state (new format: 'ema_model_state_dict' or old format: 'ema_model.*' keys)
+      2. Distribution models: node_dist_model, prop_dist_model, n_node_dist
+      3. Tabasco data_stats
+
+
+
+   .. py:method:: on_save_checkpoint(checkpoint)
+
+      Save task-specific distribution data to checkpoint.
+
+      This saves:
+      - For Tabasco: data_stats dictionary containing num_atoms_histogram
+      - For other diffusion models: node_dist_model and prop_dist_model
+      - EMA model state if enabled
+
+      This ensures all data needed for generation is embedded in the checkpoint.
+
+
+
+   .. py:method:: on_test_batch_end(outputs, batch, batch_idx)
+
+      Store test outputs for epoch end aggregation.
+
+
+
+   .. py:method:: on_test_epoch_end()
+
+      Same as on_validation_epoch_end for test set.
+
+
+
+   .. py:method:: on_test_start()
+
+      Ensure device is correct after model transfer.
+
+
+
+   .. py:method:: on_train_batch_end(outputs, batch, batch_idx)
+
+      Update EMA model after each training batch.
+
+
+
+   .. py:method:: on_train_start()
+
+      Ensure device is correct after model transfer and initialize EMA.
+
+
+
+   .. py:method:: on_validation_batch_end(outputs, batch, batch_idx)
+
+      Store validation outputs for epoch end aggregation.
+
+
+
+   .. py:method:: on_validation_epoch_end()
+
+      Aggregate predictions from all validation batches and compute metrics.
+
+      Note: In Lightning v2.0+, outputs are accessed via trainer.validation_step_outputs
+
+
+
+   .. py:method:: on_validation_start()
+
+      Ensure device is correct after model transfer.
+
+
+
+   .. py:method:: setup(stage: str)
+
+      Called at the beginning of fit, validate, test, or predict.
+
+
+
+   .. py:method:: test_step(batch, batch_idx)
+
+      Test step. Uses EMA model if available.
+
+
+
+   .. py:method:: training_step(batch, batch_idx)
+
+      Training step.
+
+      Calls task(batch) which returns (loss, metrics).
+
+
+
+   .. py:method:: validation_step(batch, batch_idx)
+
+      Validation step.
+
+      Uses EMA model if available, otherwise uses the main task.
+      Checks for task.predict_and_target(batch). If available, returns pred/target for aggregation.
+      Otherwise, runs standard forward pass and logs metrics.
+
+
+
+   .. py:attribute:: ema_decay
+      :value: 0.0
+
+
+
+   .. py:property:: ema_model
+
+      Access EMA model from list wrapper.
+
+
+   .. py:attribute:: gradient_clip_algorithm
+      :value: 'adaptive'
+
+
+
+   .. py:attribute:: gradnorm_queue
+      :value: None
+
+
+
+   .. py:attribute:: model_config
+      :value: None
+
+
+
+   .. py:attribute:: monitor_metric
+      :value: None
+
+
+
+   .. py:attribute:: optimizer_config
+
+
+   .. py:attribute:: scheduler_config
+
+
+   .. py:attribute:: sleep_every_N
+      :value: 0
+
+
+
+   .. py:attribute:: sleep_time
+      :value: 60.0
+
+
+
+   .. py:attribute:: task
+      :value: None
+
+
+
+.. py:data:: logger
+

@@ -1,0 +1,109 @@
+MolecularDiffusion.core.lightning_callbacks.ema_callback
+========================================================
+
+.. py:module:: MolecularDiffusion.core.lightning_callbacks.ema_callback
+
+.. autoapi-nested-parse::
+
+   EMA (Exponential Moving Average) callback for PyTorch Lightning.
+
+   Maintains an EMA copy of the model and swaps it in for validation/testing.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.core.lightning_callbacks.ema_callback.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.core.lightning_callbacks.ema_callback.EMACallback
+
+
+Module Contents
+---------------
+
+.. py:class:: EMACallback(decay: float = 0.9999)
+
+   Bases: :py:obj:`pytorch_lightning.callbacks.Callback`
+
+
+   Exponential Moving Average callback.
+
+   Maintains an EMA copy of the model weights and uses it during validation/testing.
+   This is commonly used in diffusion models to stabilize generation.
+
+   :param decay: EMA decay rate (default: 0.9999)
+   :type decay: float
+
+
+   .. py:method:: on_fit_start(trainer: pytorch_lightning.Trainer, pl_module: pytorch_lightning.LightningModule)
+
+      Create EMA model at the start of training.
+
+
+
+   .. py:method:: on_load_checkpoint(trainer: pytorch_lightning.Trainer, pl_module: pytorch_lightning.LightningModule, checkpoint: dict)
+
+      Load EMA model state from checkpoint.
+
+
+
+   .. py:method:: on_save_checkpoint(trainer: pytorch_lightning.Trainer, pl_module: pytorch_lightning.LightningModule, checkpoint: dict)
+
+      Save EMA model state in checkpoint.
+
+
+
+   .. py:method:: on_test_end(trainer: pytorch_lightning.Trainer, pl_module: pytorch_lightning.LightningModule)
+
+      Swap back to original model after testing.
+
+
+
+   .. py:method:: on_test_start(trainer: pytorch_lightning.Trainer, pl_module: pytorch_lightning.LightningModule)
+
+      Swap to EMA model before testing.
+
+
+
+   .. py:method:: on_train_batch_end(trainer: pytorch_lightning.Trainer, pl_module: pytorch_lightning.LightningModule, outputs, batch, batch_idx: int)
+
+      Update EMA model after each training batch.
+
+
+
+   .. py:method:: on_validation_end(trainer: pytorch_lightning.Trainer, pl_module: pytorch_lightning.LightningModule)
+
+      Swap back to original model after validation.
+
+
+
+   .. py:method:: on_validation_start(trainer: pytorch_lightning.Trainer, pl_module: pytorch_lightning.LightningModule)
+
+      Swap to EMA model before validation.
+
+
+
+   .. py:attribute:: decay
+      :value: 0.9999
+
+
+
+   .. py:attribute:: ema
+
+
+   .. py:attribute:: ema_model
+      :value: None
+
+
+
+.. py:data:: logger
+

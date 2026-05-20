@@ -1,0 +1,102 @@
+MolecularDiffusion.data.lightning_data_module
+=============================================
+
+.. py:module:: MolecularDiffusion.data.lightning_data_module
+
+.. autoapi-nested-parse::
+
+   PyTorch Lightning DataModule wrapper for MolecularDiffusion.
+
+   Wraps the existing DataModule to conform to Lightning's LightningDataModule interface.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.lightning_data_module.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.lightning_data_module.MolecularDiffusionDataModule
+
+
+Module Contents
+---------------
+
+.. py:class:: MolecularDiffusionDataModule(data_module, batch_size: int = 1, num_workers: int = 0, pin_memory: bool = True, persistent_workers: bool = False)
+
+   Bases: :py:obj:`pytorch_lightning.LightningDataModule`
+
+
+   Lightning DataModule wrapper for MolecularDiffusion.
+
+   This wraps the existing DataModule class and provides train/val/test dataloaders
+   that work with Lightning's training loop.
+
+   :param data_module: The existing MolecularDiffusion DataModule instance
+   :param batch_size: Batch size for dataloaders
+   :type batch_size: int
+   :param num_workers: Number of workers for data loading
+   :type num_workers: int
+   :param pin_memory: Whether to pin memory for faster GPU transfer
+   :type pin_memory: bool
+
+
+   .. py:method:: setup(stage: Optional[str] = None)
+
+      Load datasets if not already loaded.
+
+      This is called on every GPU in distributed training.
+      Note: In the current workflow, data is already loaded in train.py before
+      creating this DataModule, so we check if datasets exist first.
+
+
+
+   .. py:method:: test_dataloader()
+
+      Return test dataloader.
+
+
+
+   .. py:method:: train_dataloader()
+
+      Return training dataloader.
+
+
+
+   .. py:method:: val_dataloader()
+
+      Return validation dataloader.
+
+
+
+   .. py:attribute:: batch_size
+      :value: 1
+
+
+
+   .. py:attribute:: data_module
+
+
+   .. py:attribute:: num_workers
+      :value: 0
+
+
+
+   .. py:attribute:: persistent_workers
+
+
+   .. py:attribute:: pin_memory
+      :value: True
+
+
+
+.. py:data:: logger
+

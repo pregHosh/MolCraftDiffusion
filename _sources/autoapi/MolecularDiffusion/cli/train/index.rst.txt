@@ -16,6 +16,7 @@ Attributes
 
 .. autoapisummary::
 
+   MolecularDiffusion.cli.train.LIGHTNING_AVAILABLE
    MolecularDiffusion.cli.train.log
 
 
@@ -27,6 +28,7 @@ Functions
    MolecularDiffusion.cli.train.engine_wrapper
    MolecularDiffusion.cli.train.evaluate_and_save
    MolecularDiffusion.cli.train.is_rank_zero
+   MolecularDiffusion.cli.train.lightning_wrapper
    MolecularDiffusion.cli.train.load_weights
    MolecularDiffusion.cli.train.log_hyperparameters
    MolecularDiffusion.cli.train.train
@@ -49,6 +51,11 @@ Module Contents
 .. py:function:: is_rank_zero()
 
    Check if current process is rank zero.
+
+
+.. py:function:: lightning_wrapper(task_module, data_module, trainer_module, logger_module, engine_cfg, ckpt_path=None, monitor_metric=None, monitor_mode=None, model_config=None, load_weights_from=None, **kwargs)
+
+   Training using PyTorch Lightning Trainer.
 
 
 .. py:function:: load_weights(task, ckpt_path, task_module=None)
@@ -82,6 +89,10 @@ Module Contents
 .. py:function:: train_main(cfg: omegaconf.DictConfig)
 
    Entry point for CLI train command.
+
+
+.. py:data:: LIGHTNING_AVAILABLE
+   :value: True
 
 
 .. py:data:: log

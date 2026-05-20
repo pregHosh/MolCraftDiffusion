@@ -1,0 +1,101 @@
+MolecularDiffusion.core.lightning_callbacks.generative_eval_callback
+====================================================================
+
+.. py:module:: MolecularDiffusion.core.lightning_callbacks.generative_eval_callback
+
+.. autoapi-nested-parse::
+
+   Generative evaluation callback for diffusion models.
+
+   Performs molecule generation and validity checking during validation.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.core.lightning_callbacks.generative_eval_callback.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.core.lightning_callbacks.generative_eval_callback.GenerativeEvalCallback
+
+
+Module Contents
+---------------
+
+.. py:class:: GenerativeEvalCallback(n_samples: int = 100, batch_size: int = 100, metric: str = 'Validity Relax and connected', output_dir: str = 'generated_molecules', use_posebuster: bool = False, posebuster_timeout: int = 60, monitor_metric: Any = None)
+
+   Bases: :py:obj:`pytorch_lightning.callbacks.Callback`
+
+
+   Generative evaluation callback for diffusion models.
+
+   Generates molecules during validation and computes validity metrics.
+   This callback runs the generative analysis from eval.py.
+
+   :param n_samples: Number of molecules to generate
+   :type n_samples: int
+   :param batch_size: Batch size for generation
+   :type batch_size: int
+   :param metric: Primary metric to monitor
+   :type metric: str
+   :param output_dir: Directory to save generated molecules
+   :type output_dir: str
+   :param use_posebuster: Whether to use posebuster for validation
+   :type use_posebuster: bool
+   :param posebuster_timeout: Timeout for posebuster validation
+   :type posebuster_timeout: int
+
+
+   .. py:method:: on_validation_epoch_end(trainer: pytorch_lightning.Trainer, pl_module: pytorch_lightning.LightningModule)
+
+      Run generative evaluation at the end of validation epoch.
+
+      Only runs if this is a validation epoch (respects check_val_every_n_epoch).
+
+
+
+   .. py:attribute:: batch_size
+      :value: 100
+
+
+
+   .. py:attribute:: metric
+      :value: 'Validity Relax and connected'
+
+
+
+   .. py:attribute:: monitor_metric
+      :value: None
+
+
+
+   .. py:attribute:: n_samples
+      :value: 100
+
+
+
+   .. py:attribute:: output_dir
+      :value: 'generated_molecules'
+
+
+
+   .. py:attribute:: posebuster_timeout
+      :value: 60
+
+
+
+   .. py:attribute:: use_posebuster
+      :value: False
+
+
+
+.. py:data:: logger
+
