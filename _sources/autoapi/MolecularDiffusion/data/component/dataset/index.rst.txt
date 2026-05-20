@@ -75,7 +75,7 @@ Module Contents
 
 
 
-   .. py:method:: load_db(db_path: str, atom_vocab: List[str] = [], node_feature_choice: Optional[List[str]] = None, target_fields: Optional[List[str]] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], edge_type: str = 'distance', radius: float = 4.0, n_neigh: int = 5, verbose: int = 0, allow_unknown: bool = False, use_ohe_feature: bool = True, chunk_size: Optional[int] = None, chunk_dir: Optional[str] = None, compact: Optional[Dict[str, bool]] = None, **kwargs: Any)
+   .. py:method:: load_db(db_path: str, atom_vocab: List[str] = [], node_feature_choice: Optional[List[str]] = None, target_fields: Optional[List[str]] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], edge_type: str = 'distance', radius: float = 4.0, n_neigh: int = 5, verbose: int = 0, allow_unknown: bool = False, use_ohe_feature: bool = True, chunk_size: Optional[int] = None, chunk_dir: Optional[str] = None, compact: Optional[Dict[str, bool]] = None, use_row_data_features: bool = False, **kwargs: Any)
 
       Load the dataset from an ASE db file.
 
@@ -426,7 +426,7 @@ Module Contents
 
 
 
-   .. py:method:: load_db(db_path: str, atom_vocab: List[str] = [], node_feature_choice: Optional[List[str]] = None, target_fields: Optional[List[str]] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], pad_data: bool = False, verbose: int = 0, null_value=math.nan, allow_unknown: bool = False, use_ohe_feature: bool = True, chunk_size: Optional[int] = None, chunk_dir: Optional[str] = None, **kwargs: Any)
+   .. py:method:: load_db(db_path: str, atom_vocab: List[str] = [], node_feature_choice: Optional[List[str]] = None, target_fields: Optional[List[str]] = None, transform: Optional[Callable] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: List[str] = [], pad_data: bool = False, verbose: int = 0, null_value=math.nan, allow_unknown: bool = False, use_ohe_feature: bool = True, chunk_size: Optional[int] = None, chunk_dir: Optional[str] = None, use_row_data_features: bool = False, **kwargs: Any)
 
       Load the dataset from an ASE db file.
 

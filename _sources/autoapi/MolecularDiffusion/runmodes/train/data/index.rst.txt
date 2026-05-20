@@ -4,6 +4,14 @@ MolecularDiffusion.runmodes.train.data
 .. py:module:: MolecularDiffusion.runmodes.train.data
 
 
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.data.logger
+
+
 Classes
 -------
 
@@ -16,7 +24,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: DataModule(root: str, filename: str, task_type: str, atom_vocab: list, with_hydrogen: bool, node_feature_choice=None, max_atom: int = 200, target_fields: list = None, xyz_dir: str = None, coord_file: str = None, natoms_file: str = None, ase_db_path: str = None, forbidden_atom: list = None, data_efficient_collator: bool = False, train_ratio: float = 0.8, load_pkl: str = None, save_pkl: str = None, data_type: str = 'pointcloud', allow_unknown: bool = False, batch_size: int = 32, num_workers: int = 0, dataset_name: str = 'suisei', edge_type: str = 'fully_connected', radius: float = 4.0, n_neigh: int = 5, use_ohe_feature: bool = True)
+.. py:class:: DataModule(root: str, filename: str, task_type: str, atom_vocab: list, with_hydrogen: bool, node_feature_choice=None, max_atom: int = 200, target_fields: list = None, xyz_dir: str = None, coord_file: str = None, natoms_file: str = None, ase_db_path: str = None, forbidden_atom: list = None, data_efficient_collator: bool = False, train_ratio: float = 0.8, load_pkl: str = None, save_pkl: str = None, data_type: str = 'pointcloud', allow_unknown: bool = False, batch_size: int = 32, num_workers: int = 0, dataset_name: str = 'suisei', edge_type: str = 'fully_connected', radius: float = 4.0, n_neigh: int = 5, use_ohe_feature: bool = True, chunk_size: int = None, compact_drop_edge_index: bool = False, compact_drop_tags: bool = False, compact_pack_ohe: bool = False, compact_int8_z: bool = False, use_row_data_features: bool = False)
 
    DataModule to load, optionally save/load pickle, and split datasets for diffusion or predictive tasks.
 
@@ -64,6 +72,17 @@ Module Contents
    .. py:attribute:: batch_size
       :value: 32
 
+
+
+   .. py:attribute:: chunk_dir
+
+
+   .. py:attribute:: chunk_size
+      :value: None
+
+
+
+   .. py:attribute:: compact
 
 
    .. py:attribute:: coord_file
@@ -173,6 +192,11 @@ Module Contents
 
 
 
+   .. py:attribute:: use_row_data_features
+      :value: False
+
+
+
    .. py:attribute:: valid_set
       :value: None
 
@@ -193,4 +217,6 @@ Module Contents
 
    .. py:attribute:: config_dict
 
+
+.. py:data:: logger
 
