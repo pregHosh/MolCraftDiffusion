@@ -310,6 +310,7 @@
 </ul>
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../runmodes/generate/index.html">MolecularDiffusion.runmodes.generate</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.generate" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/generate/sweep/index.html">MolecularDiffusion.runmodes.generate.sweep</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/generate/tasks_generate/index.html">MolecularDiffusion.runmodes.generate.tasks_generate</a></li>
 </ul>
 </li>
@@ -464,16 +465,19 @@ molcraft predict config.yaml [overrides…]</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.main.generate" title="MolecularDiffusion.cli.main.generate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate</span></code></a>(config, overrides)</p></td>
 <td><p>Generate molecules using a trained model.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.main.log_system_info" title="MolecularDiffusion.cli.main.log_system_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_system_info</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.main.generate_sweep" title="MolecularDiffusion.cli.main.generate_sweep"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_sweep</span></code></a>(sweep_config, dry_run, skip_gen, ...)</p></td>
+<td><p>Run a generation parameter sweep from a sweep YAML config.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.main.log_system_info" title="MolecularDiffusion.cli.main.log_system_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_system_info</span></code></a>()</p></td>
 <td><p>Log basic system information.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.main.main" title="MolecularDiffusion.cli.main.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.main.main" title="MolecularDiffusion.cli.main.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>()</p></td>
 <td><p>Entry point.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.main.predict" title="MolecularDiffusion.cli.main.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(config, overrides)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.main.predict" title="MolecularDiffusion.cli.main.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(config, overrides)</p></td>
 <td><p>Run property prediction on molecules.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.main.train" title="MolecularDiffusion.cli.main.train"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train</span></code></a>(config, overrides)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.main.train" title="MolecularDiffusion.cli.main.train"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train</span></code></a>(config, overrides)</p></td>
 <td><p>Train a molecular diffusion model.</p></td>
 </tr>
 </tbody>
@@ -520,6 +524,12 @@ molcraft predict configs/my_pred_config.yaml</p>
 .. rubric:: Examples</p>
 <p>molcraft generate configs/gen_config.yaml
 molcraft generate configs/gen_config.yaml interference.n_samples=1000</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.cli.main.generate_sweep">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.main.</span></span><span class="sig-name descname"><span class="pre">generate_sweep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sweep_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_gen</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_eval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_runs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">retry_failed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.main.generate_sweep" title="Link to this definition">¶</a></dt>
+<dd><p>Run a generation parameter sweep from a sweep YAML config.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -655,6 +665,7 @@ molcraft train configs/my_config.yaml trainer.num_epochs=50 seed=42</p>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.main.cli"><code class="docutils literal notranslate"><span class="pre">cli()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.main.eval_predict"><code class="docutils literal notranslate"><span class="pre">eval_predict()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.main.generate"><code class="docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.cli.main.generate_sweep"><code class="docutils literal notranslate"><span class="pre">generate_sweep()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.main.log_system_info"><code class="docutils literal notranslate"><span class="pre">log_system_info()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.main.predict"><code class="docutils literal notranslate"><span class="pre">predict()</span></code></a></li>

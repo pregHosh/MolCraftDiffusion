@@ -1,0 +1,70 @@
+MolecularDiffusion.runmodes.generate.sweep
+==========================================
+
+.. py:module:: MolecularDiffusion.runmodes.generate.sweep
+
+.. autoapi-nested-parse::
+
+   Parameter sweep tool for MolCraftDiffusion generation experiments.
+
+   Usage:
+       python sweep.py <sweep_config.yaml> [--dry-run] [--skip-gen] [--skip-eval]
+
+   Sweep YAML keys
+   ---------------
+   base_config     : path to base generation YAML (required)
+   eval_script     : path to eval script, or list of scripts run in sequence (required)
+   sweep_dir       : root directory for all run outputs (required)
+   name            : prefix for per-run subdirectory names (default: "sweep")
+   parameters      : dict of {hydra.override.key: [v1, v2, ...]} — full Cartesian product (required)
+   extra_overrides : list of extra Hydra overrides applied to every run (optional)
+   search          : search settings (optional). Defaults to grid search.
+   collect         : list of {path, metrics} blocks describing which CSVs to read and how
+                     to aggregate their columns (optional — falls back to built-in defaults)
+
+   search format
+   -------------
+   search:
+     method: grid              # grid or bayesian
+     include_base_config: true # try the base_config parameter values first
+     objective:
+       metric: hit_rate_both   # metric collected into summary.csv
+       mode: max               # max or min
+     bayesian:
+       n_initial: 5            # Optuna warm-up trials before GP/TPE uses surrogate
+       random_state: 0
+       sampler: gp             # gp (default, requires optuna>=3.6) or tpe
+
+   collect format
+   --------------
+   collect:
+     - path: optimized_xyz/merged_hits.csv   # relative to the run output dir
+       metrics:
+         n_total:       {agg: len}                              # total rows
+         hit_rate_both: {column: both_hit,    agg: mean}
+         n_both_hit:    {column: both_hit,    agg: sum}
+         mean_dihedral: {column: eff_dihedral, agg: mean, exclude_value: -1.0}
+     - path: postbuster_metrics.csv
+       metrics:
+         validity_rate: {column: valid_posebuster, agg: mean}
+
+   Supported agg values: mean, sum, count (non-null rows), len (total rows).
+   Values accept a list or a range string "start:stop:step" (stop inclusive).
+   eval_script can be a string (single script) or a list (run in sequence, each
+   receiving the output directory as its only argument).
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.generate.sweep.main
+
+
+Module Contents
+---------------
+
+.. py:function:: main(argv: list[str] | None = None) -> None
+
