@@ -79,6 +79,7 @@ tutorials/06_structure_guided
 tutorials/07_property_directed
 tutorials/08_eval_predict
 tutorials/09_analyze
+tutorials/10_generation_sweeps
 ```
 
 ```{toctree}

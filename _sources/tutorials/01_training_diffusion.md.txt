@@ -16,7 +16,38 @@ cp configs/example_diffusion_config.yaml my_first_run.yaml
 
 Now, open `my_first_run.yaml`. This is the only file you'll need to edit.
 
-### Step 2: Understand the `defaults` List
+### Step 2: Choose a Training Engine
+
+MolCraftDiffusion offers two training engines. Add one `engine:` entry to your `defaults` list to select it:
+
+| Engine key | Class | Description |
+| :--- | :--- | :--- |
+| `engine: original` | `Engine` | Custom training loop (`core/engine.py`). Full control over gradient accumulation, mixed-precision AMP, distributed training via `torch.distributed`, and detailed progress-bar metrics. Preferred when you need fine-grained control or are running on SLURM clusters. |
+| `engine: lightning` | `EngineLightning` | PyTorch Lightning wrapper (`core/engine_lightning.py`). Handles multi-GPU/TPU strategy selection, built-in checkpointing callbacks, and W&B integration automatically. Preferred for rapid experimentation and multi-node Lightning-native setups. |
+
+```yaml
+defaults:
+  - data: mol_dataset
+  - tasks: diffusion
+  - engine: lightning   # or: engine: original
+  - logger: default
+  - trainer: default
+  - _self_
+```
+
+If `engine:` is omitted the framework falls back to the original engine.
+
+**When to pick Lightning:**
+- You want automatic multi-GPU strategy selection (`ddp`, `ddp_spawn`, …).
+- You prefer Lightning callbacks (e.g. `ModelCheckpoint`, `EarlyStopping`).
+- You are already familiar with the Lightning ecosystem.
+
+**When to stick with the original engine:**
+- You need explicit control over gradient accumulation steps (`batch_per_epoch`) or the AMP scaler.
+- You are running in a SLURM environment where `SLURM_PROCID` / `SLURM_GPUS_ON_NODE` are used for device assignment.
+- You need step-based termination (`num_steps`).
+
+### Step 3: Understand the `defaults` List
 
 The `defaults` list at the top of the file loads a set of pre-defined "templates" for each part of your experiment (data, model, trainer, etc.) that are bundled with the package.
 
@@ -24,6 +55,7 @@ The `defaults` list at the top of the file loads a set of pre-defined "templates
 defaults:
   - data: mol_dataset
   - tasks: diffusion
+  - engine: lightning   # choose: lightning or original
   - logger: default
   - trainer: default
   - _self_
@@ -31,7 +63,7 @@ defaults:
 
 **Think of these default files as a reference manual.** You can find the original base configurations in the `configs/` directory of the repository (e.g., in `configs/data/`, `configs/tasks/`) to see what parameters are available, but you should not edit them directly. All changes are made in your local `my_first_run.yaml`.
 
-### Step 3: Set Your Key Parameters
+### Step 4: Set Your Key Parameters
 
 This is the most important step. You will override the default parameters to configure your specific experiment. Below are the most common parameters you will want to set.
 
@@ -108,7 +140,7 @@ You can control how results are logged by overriding parameters under the `logge
 | `logger.project_wandb` | `logger: {project_wandb: "My_Project"}` | (W&B only) The name of the project on your W&B dashboard. |
 | `name` | `name: "complex_mols_run_1"` | The top-level `name` parameter is used as the **run name** for both local logs and W&B. |
 
-### Step 4: Putting It All Together
+### Step 5: Putting It All Together
 
 Here is what a complete `my_first_run.yaml` for a **CFG-ready conditional model** might look like:
 
@@ -117,6 +149,7 @@ Here is what a complete `my_first_run.yaml` for a **CFG-ready conditional model*
 defaults:
   - data: mol_dataset
   - tasks: diffusion
+  - engine: lightning   # or: engine: original
   - logger: wandb
   - trainer: default
   - _self_
@@ -143,7 +176,7 @@ tasks:
   hidden_size: 256
 ```
 
-### Step 5: Run Your Training
+### Step 6: Run Your Training
 
 Launch the training using the `MolCraftDiff` command-line tool. Provide the `train` command followed by the name of your configuration file.
 

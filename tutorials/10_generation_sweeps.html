@@ -3,12 +3,12 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Tutorial 5: Molecule Generation Overview" href="05_generation_overview.html"><link rel="prev" title="Tutorial 3: Training a Time-Aware Guidance Model" href="03_training_guidance.html">
-        <link rel="canonical" href="https://preghosh.github.io/MolCraftDiffusion/tutorials/04_finetuning.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Applications" href="../applications/index.html"><link rel="prev" title="Tutorial 9: Analyze Module - 3D Molecular Structure Analysis" href="09_analyze.html">
+        <link rel="canonical" href="https://preghosh.github.io/MolCraftDiffusion/tutorials/10_generation_sweeps.html">
         <link rel="prefetch" href="../_static/logo.png" as="image">
 
     <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
-        <title>Tutorial 4: Fine-Tuning a Diffusion Model - MolCraftDiffusion</title>
+        <title>Tutorial 10: Generation Parameter Sweeps - MolCraftDiffusion</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -215,13 +215,13 @@
 <li class="toctree-l1"><a class="reference internal" href="01_training_diffusion.html">Tutorial 1: Training a Diffusion Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="02_training_regressor.html">Tutorial 2: Training a Regressor Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="03_training_guidance.html">Tutorial 3: Training a Time-Aware Guidance Model</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Tutorial 4: Fine-Tuning a Diffusion Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_finetuning.html">Tutorial 4: Fine-Tuning a Diffusion Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="05_generation_overview.html">Tutorial 5: Molecule Generation Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="10_generation_sweeps.html">Tutorial 10: Generation Parameter Sweeps</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Tutorial 10: Generation Parameter Sweeps</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Applications</span></p>
 <ul>
@@ -406,12 +406,12 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="https://github.com/pregHosh/MolCraftDiffusion/blob/main/docs/tutorials/04_finetuning.md?plain=true" title="View this page">
+  <a class="muted-link" href="https://github.com/pregHosh/MolCraftDiffusion/blob/main/docs/tutorials/10_generation_sweeps.md?plain=true" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
 </div><div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/pregHosh/MolCraftDiffusion/edit/main/docs/tutorials/04_finetuning.md" rel="edit" title="Edit this page">
+  <a class="muted-link" href="https://github.com/pregHosh/MolCraftDiffusion/edit/main/docs/tutorials/10_generation_sweeps.md" rel="edit" title="Edit this page">
     <svg><use href="#svg-pencil"></use></svg>
     <span class="visually-hidden">Edit this page</span>
   </a>
@@ -428,187 +428,412 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="tutorial-4-fine-tuning-a-diffusion-model">
-<h1>Tutorial 4: Fine-Tuning a Diffusion Model<a class="headerlink" href="#tutorial-4-fine-tuning-a-diffusion-model" title="Link to this heading">¶</a></h1>
-<p>Fine-tuning adapts a pre-trained model to a specific chemical space or teaches it new capabilities, like conditional generation.</p>
-<p><strong>This tutorial assumes you are familiar with the override-only configuration workflow from <a class="reference internal" href="01_training_diffusion.html"><span class="std std-doc">Tutorial 1</span></a>.</strong></p>
-<section id="core-fine-tuning-principles">
-<h2>Core Fine-Tuning Principles<a class="headerlink" href="#core-fine-tuning-principles" title="Link to this heading">¶</a></h2>
+          <section id="tutorial-10-generation-parameter-sweeps">
+<h1>Tutorial 10: Generation Parameter Sweeps<a class="headerlink" href="#tutorial-10-generation-parameter-sweeps" title="Link to this heading">¶</a></h1>
+<p>This tutorial explains how to run generation sweeps with the packaged sweep module:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MolecularDiffusion.runmodes.generate.sweep
+</pre></div>
+</div>
+<p>The command-line entry point is:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>&lt;sweep_config.yaml&gt;
+</pre></div>
+</div>
+<p>The repository root also keeps a compatibility shim:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>sweep.py<span class="w"> </span>&lt;sweep_config.yaml&gt;
+</pre></div>
+</div>
+<p>Both commands call the same implementation.</p>
+<p>Use sweeps when you want to optimize controlled generation settings for <strong>inpainting</strong>, <strong>outpainting</strong>, <strong>classifier-free guidance (CFG)</strong>, <strong>gradient guidance (GG)</strong>, or <strong>hybrid CFG/GG</strong> without manually launching each run.</p>
+<hr class="docutils" />
+<section id="what-a-sweep-does">
+<h2>1. What a Sweep Does<a class="headerlink" href="#what-a-sweep-does" title="Link to this heading">¶</a></h2>
+<p>A sweep repeatedly runs:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>&lt;base_config&gt;<span class="w"> </span>&lt;Hydra<span class="w"> </span>overrides...&gt;
+</pre></div>
+</div>
+<p>For each parameter combination, the sweep creates a run-specific output directory and then calls your evaluation workflow:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bash<span class="w"> </span>&lt;eval_script&gt;<span class="w"> </span>&lt;run_output_dir&gt;
+</pre></div>
+</div>
+<p>After the workflow finishes, the sweep reads registered CSV files from the run output directory and appends one row to:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&lt;sweep_dir&gt;/summary.csv
+</pre></div>
+</div>
+<p>This gives you a single table containing the generation parameters and the metrics for each run.</p>
+</section>
+<hr class="docutils" />
+<section id="minimal-command">
+<h2>2. Minimal Command<a class="headerlink" href="#minimal-command" title="Link to this heading">¶</a></h2>
+<p>Start with a dry-run. This prints the exact generation and evaluation commands without writing files:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>configs/sweep_example.yaml<span class="w"> </span>--dry-run<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">1</span>
+</pre></div>
+</div>
+<p>Equivalent legacy command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>sweep.py<span class="w"> </span>configs/sweep_example.yaml<span class="w"> </span>--dry-run<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">1</span>
+</pre></div>
+</div>
+<p>Then launch real runs:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>configs/sweep_example.yaml<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">5</span>
+</pre></div>
+</div>
+<p>Useful options:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Option</p></th>
+<th class="head text-left"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">--dry-run</span></code></p></td>
+<td class="text-left"><p>Print commands only; no generation, eval, logs, summary, or copied config.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">--max-runs</span> <span class="pre">N</span></code></p></td>
+<td class="text-left"><p>Run at most <code class="docutils literal notranslate"><span class="pre">N</span></code> new parameter combinations.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">--skip-gen</span></code></p></td>
+<td class="text-left"><p>Skip generation and only run evaluation/collection.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">--skip-eval</span></code></p></td>
+<td class="text-left"><p>Skip evaluation and only run generation/collection.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">--retry-failed</span></code></p></td>
+<td class="text-left"><p>Retry rows marked failed or interrupted in <code class="docutils literal notranslate"><span class="pre">summary.csv</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="sweep-config-anatomy">
+<h2>3. Sweep Config Anatomy<a class="headerlink" href="#sweep-config-anatomy" title="Link to this heading">¶</a></h2>
+<p>A complete commented template is available at:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>configs/sweep_example.yaml
+</pre></div>
+</div>
+<p>The main fields are:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">base_config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">configs/lilas_cfg/gen_3_nto_op_cfg_2.yaml</span>
+<span class="nt">eval_script</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">workflow_hybrid_sf_a3_2.sh</span>
+<span class="nt">sweep_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sweep_results/example_sweep</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example_sweep</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">base_config</span></code> is the normal generation YAML you would pass to <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">generate</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">eval_script</span></code> is a shell workflow that receives the run output directory as its only argument:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bash<span class="w"> </span>workflow_hybrid_sf_a3_2.sh<span class="w"> </span>sweep_results/example_sweep/&lt;run_name&gt;
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">sweep_dir</span></code> contains:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sweep_results/example_sweep/
+├── sweep_config.yaml
+├── summary.csv
+└── example_sweep_&lt;parameter_tag&gt;/
+</pre></div>
+</div>
+<p>Each run directory is also passed to generation as:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>interference.output_path=&lt;run_output_dir&gt;
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="varying-parameters">
+<h2>4. Varying Parameters<a class="headerlink" href="#varying-parameters" title="Link to this heading">¶</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">parameters</span></code> for scalar Hydra overrides:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.cfg_scale</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2.5</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.outpaint_cfgs.t_start</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0.55:0.95:0.20&quot;</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.outpaint_cfgs.spread</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.5</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">diffusion_steps</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">50</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">300</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>The range string is inclusive. This:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="s">&quot;0.55:0.95:0.20&quot;</span>
+</pre></div>
+</div>
+<p>expands to:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>0.55, 0.75, 0.95
+</pre></div>
+</div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">list_parameters</span></code> when the Hydra value itself is a list:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">list_parameters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">interference.mol_size</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">23</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">45</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">23</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">55</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">23</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">65</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">interference.negative_target_values</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-10</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-1</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-15</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-1</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>Every scalar value and every list-valued choice is combined by Cartesian product.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">extra_overrides</span></code> for settings applied to every run:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">extra_overrides</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;interference.num_generate=60&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;interference.batch_size=2&quot;</span>
+</pre></div>
+</div>
+<p>Override order is:</p>
 <ol class="arabic simple">
-<li><p><strong>Matching Architecture is Critical</strong>: Your config file’s model architecture (<code class="docutils literal notranslate"><span class="pre">hidden_size</span></code>, <code class="docutils literal notranslate"><span class="pre">num_layers</span></code>, etc.) <strong>must exactly match</strong> the pre-trained checkpoint, or loading will fail. Use the <code class="docutils literal notranslate"><span class="pre">diffusion_pretrained</span></code> task template when adapting our provided models.</p></li>
-<li><p><strong>Use a Low Learning Rate</strong>: The model is already trained; you only need small adjustments. Start with a learning rate around <code class="docutils literal notranslate"><span class="pre">1e-5</span></code> to <code class="docutils literal notranslate"><span class="pre">2e-5</span></code>.</p></li>
-<li><p><strong>Unique Dataset Names</strong>: Always use a unique <code class="docutils literal notranslate"><span class="pre">data.dataset_name</span></code> so you don’t corrupt the cached <code class="docutils literal notranslate"><span class="pre">.pt</span></code> files from your broader pre-training runs.</p></li>
+<li><p>varied sweep parameters,</p></li>
+<li><p>generated <code class="docutils literal notranslate"><span class="pre">interference.output_path</span></code>,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">extra_overrides</span></code>.</p></li>
 </ol>
-<p>Fine-tuning is activated by a single parameter: <code class="docutils literal notranslate"><span class="pre">tasks.chkpt_path</span></code>.</p>
-<p>Below are three common scenarios.</p>
-<hr class="docutils" />
-<section id="scenario-1-continue-training-on-a-new-dataset">
-<h3>Scenario 1: Continue Training on a New Dataset<a class="headerlink" href="#scenario-1-continue-training-on-a-new-dataset" title="Link to this heading">¶</a></h3>
-<p><strong>Goal:</strong> To adapt a general, pre-trained model to a new, more specific dataset.</p>
-<p><strong>Configuration:</strong> This is the simplest case. You load the pre-trained model and point the trainer to your new data.</p>
-<p><strong>Example <code class="docutils literal notranslate"><span class="pre">finetune_new_data.yaml</span></code>:</strong></p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">defaults</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_new_dataset</span><span class="w"> </span><span class="c1"># Use your new dataset configuration</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diffusion_pretrained</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">logger</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wandb</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">trainer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">_self_</span>
-
-<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;finetune_on_new_data&quot;</span>
-<span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">42</span>
-
-<span class="nt">trainer</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;training_outputs/finetuned_new_data&quot;</span>
-<span class="w">  </span><span class="nt">num_epochs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span><span class="w"> </span><span class="c1"># Fine-tuning often requires fewer epochs</span>
-<span class="w">  </span><span class="nt">lr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1e-5</span><span class="w">       </span><span class="c1"># Use a very small learning rate</span>
-
-<span class="nt">tasks</span><span class="p">:</span>
-<span class="w">  </span><span class="c1"># CRITICAL: Path to the pre-trained model to start from</span>
-<span class="w">  </span><span class="nt">chkpt_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/downloaded_model.ckpt&quot;</span>
-</pre></div>
-</div>
+<p>Later overrides win if the same Hydra key appears more than once.</p>
 </section>
 <hr class="docutils" />
-<section id="scenario-2-fine-tune-to-add-a-condition">
-<h3>Scenario 2: Fine-Tune to Add a Condition<a class="headerlink" href="#scenario-2-fine-tune-to-add-a-condition" title="Link to this heading">¶</a></h3>
-<p><strong>Goal:</strong> To teach a pre-trained unconditional model to generate molecules based on specific properties (e.g., for conditional generation or CFG).</p>
-<p><strong>Configuration:</strong> You load the unconditional model but provide it with conditional data and settings during fine-tuning.</p>
-<p><strong>Key Parameters for Adding a Condition:</strong></p>
+<section id="controlled-generation-parameters-to-sweep">
+<h2>5. Controlled Generation Parameters to Sweep<a class="headerlink" href="#controlled-generation-parameters-to-sweep" title="Link to this heading">¶</a></h2>
+<section id="inpainting">
+<h3>Inpainting<a class="headerlink" href="#inpainting" title="Link to this heading">¶</a></h3>
+<p>For inpainting, sweep the parameters that control how much of the masked region changes and how strongly it is constrained:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">base_config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">configs/my_inpaint.yaml</span>
+
+<span class="nt">parameters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.inpaint_cfgs.denoising_strength</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.4</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.6</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.8</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.inpaint_cfgs.constraint_strength</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.6</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.8</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.inpaint_cfgs.scale_factor</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.2</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">diffusion_steps</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">300</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">600</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>Use this when you want to find the best balance between scaffold retention and novelty.</p>
+</section>
+<section id="outpainting">
+<h3>Outpainting<a class="headerlink" href="#outpainting" title="Link to this heading">¶</a></h3>
+<p>For outpainting, sweep seed placement and denoising length:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">base_config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">configs/my_outpaint.yaml</span>
+
+<span class="nt">parameters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.outpaint_cfgs.t_start</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.55</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.75</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.95</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.outpaint_cfgs.seed_dist</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2.0</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.outpaint_cfgs.min_dist</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2.5</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.outpaint_cfgs.spread</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.5</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.outpaint_cfgs.constraint_strength</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.6</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.8</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>Use this when some runs clash with the scaffold, fail to connect, or generate too little diversity.</p>
+</section>
+<section id="cfg">
+<h3>CFG<a class="headerlink" href="#cfg" title="Link to this heading">¶</a></h3>
+<p>For classifier-free guidance, the central parameter is <code class="docutils literal notranslate"><span class="pre">cfg_scale</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">base_config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docs/cfg_examples/gen_cfg.yaml</span>
+
+<span class="nt">parameters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.cfg_scale</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3.0</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">diffusion_steps</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">300</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">600</span><span class="p p-Indicator">]</span>
+
+<span class="nt">list_parameters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">interference.target_values</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">3.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.5</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">3.2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.4</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">interference.negative_target_values</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3.0</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3.5</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>Use this to tune how strongly the conditional model is pushed toward the desired property regime.</p>
+</section>
+<section id="gradient-guidance">
+<h3>Gradient Guidance<a class="headerlink" href="#gradient-guidance" title="Link to this heading">¶</a></h3>
+<p>For GG, sweep the gradient scale, clipping, and guidance window:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">base_config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docs/cfg_examples/gen_gradient_guidance.yaml</span>
+
+<span class="nt">parameters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.gg_scale</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0001</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.0005</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.001</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.max_norm</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0005</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.001</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.005</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.guidance_at</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">50</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">100</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.guidance_stop</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">50</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.n_backwards</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>Use this when guidance is too weak, unstable, or over-optimizes at the cost of molecular quality.</p>
+</section>
+<section id="hybrid-cfg-gg">
+<h3>Hybrid CFG/GG<a class="headerlink" href="#hybrid-cfg-gg" title="Link to this heading">¶</a></h3>
+<p>For hybrid guidance, sweep both CFG and GG strengths:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">base_config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docs/cfg_examples/gen_hybrid_cfg_gg.yaml</span>
+
+<span class="nt">parameters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.cfg_scale</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.5</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.gg_scale</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0001</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.0005</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.001</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.max_norm</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0005</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.001</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">interference.condition_configs.n_backwards</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>This is useful when CFG gives the correct broad direction but GG is needed to sharpen a numeric objective.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="registering-workflow-csvs">
+<h2>6. Registering Workflow CSVs<a class="headerlink" href="#registering-workflow-csvs" title="Link to this heading">¶</a></h2>
+<p>Your evaluation workflow should write CSVs under the run output directory:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&lt;run_output_dir&gt;/optimized_xyz/merged_hits.csv
+&lt;run_output_dir&gt;/postbuster_metrics.csv
+&lt;run_output_dir&gt;/custom_metrics.csv
+</pre></div>
+</div>
+<p>Register those files in <code class="docutils literal notranslate"><span class="pre">collect</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">collect</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">optimized_xyz/merged_hits.csv</span>
+<span class="w">    </span><span class="nt">metrics</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">n_total</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">agg</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">len</span>
+<span class="w">      </span><span class="nt">hit_rate_both</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">column</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">both_hit</span>
+<span class="w">        </span><span class="nt">agg</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mean</span>
+<span class="w">        </span><span class="nt">round</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">      </span><span class="nt">n_both_hit</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">column</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">both_hit</span>
+<span class="w">        </span><span class="nt">agg</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sum</span>
+
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custom_metrics.csv</span>
+<span class="w">    </span><span class="nt">metrics</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">mean_custom_score</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">column</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">score</span>
+<span class="w">        </span><span class="nt">agg</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mean</span>
+<span class="w">        </span><span class="nt">round</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">      </span><span class="nt">n_custom_pass</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">column</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
+<span class="w">        </span><span class="nt">agg</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sum</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">path</span></code> is always relative to the individual run output directory.</p>
+<p>Supported aggregations:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
-<tr class="row-odd"><th class="head text-left"><p>Parameter</p></th>
-<th class="head text-left"><p>Example</p></th>
-<th class="head text-left"><p>Description</p></th>
+<tr class="row-odd"><th class="head text-left"><p>Aggregation</p></th>
+<th class="head text-left"><p>Meaning</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">tasks.condition_names</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[&quot;S1_exc&quot;,</span> <span class="pre">&quot;T1_exc&quot;]</span></code></p></td>
-<td class="text-left"><p>A list of property names from your dataset that the model should learn to associate with the molecules.</p></td>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">len</span></code></p></td>
+<td class="text-left"><p>Total number of rows. <code class="docutils literal notranslate"><span class="pre">column</span></code> is optional.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">tasks.context_mask_rate</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">0.1</span></code></p></td>
-<td class="text-left"><p>The probability of hiding the condition during training. A value greater than 0 is required to enable Classifier-Free Guidance (CFG) during generation. A common value is 0.1 (10% of the time).</p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">mean</span></code></p></td>
+<td class="text-left"><p>Mean of a column after dropping missing values.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">tasks.mask_value</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">0]</span></code></p></td>
-<td class="text-left"><p>The value to use when a condition is masked. This should be a list with the same length as <code class="docutils literal notranslate"><span class="pre">condition_names</span></code>. Typically, this is <code class="docutils literal notranslate"><span class="pre">0</span></code> or the mean value of the property in the dataset.</p></td>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">sum</span></code></p></td>
+<td class="text-left"><p>Sum of a column after dropping missing values.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">tasks.normalization_method</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">&quot;maxmin&quot;</span></code></p></td>
-<td class="text-left"><p>The method to normalize conditional properties. Options are: <code class="docutils literal notranslate"><span class="pre">&quot;maxmin&quot;</span></code> (scales to [-1, 1]), <code class="docutils literal notranslate"><span class="pre">&quot;mad&quot;</span></code> (mean absolute deviation), <code class="docutils literal notranslate"><span class="pre">&quot;value_N&quot;</span></code> (divides by a specific value N), or <code class="docutils literal notranslate"><span class="pre">null</span></code> for no normalization.</p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">count</span></code></p></td>
+<td class="text-left"><p>Non-null count of a column.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p><strong>Concatenation vs. Adapter Conditioning:</strong></p>
-<p>By default, the model injects conditional properties by naively <strong>concatenating</strong> them to the input node features.
-Alternatively, you can use <strong>Adapters</strong> (MLP networks) to project the conditions into the model’s hidden dimension before adding them to the node features. This can be more expressive.
-To use an adapter for a specific condition, list its name in <code class="docutils literal notranslate"><span class="pre">tasks.adapter_conditions</span></code>.</p>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head text-left"><p>Parameter</p></th>
-<th class="head text-left"><p>Example</p></th>
-<th class="head text-left"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">tasks.adapter_conditions</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[&quot;S1_exc&quot;]</span></code></p></td>
-<td class="text-left"><p>A list of condition names (must be a subset of <code class="docutils literal notranslate"><span class="pre">condition_names</span></code>) that should be routed through Adapter MLPs instead of being concatenated.</p></td>
-</tr>
-</tbody>
-</table>
+<p>You can drop sentinel values before aggregation:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">mean_eff_dihedral</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">column</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eff_dihedral</span>
+<span class="w">  </span><span class="nt">agg</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mean</span>
+<span class="w">  </span><span class="nt">exclude_value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-1.0</span>
+<span class="w">  </span><span class="nt">round</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+</pre></div>
 </div>
-<p><strong>Example <code class="docutils literal notranslate"><span class="pre">finetune_add_condition.yaml</span></code>:</strong></p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">defaults</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_conditional_dataset</span><span class="w"> </span><span class="c1"># A dataset with property labels</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diffusion_pretrained</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">logger</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wandb</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">trainer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">_self_</span>
-
-<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;finetune_for_cfg&quot;</span>
-<span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">42</span>
-
-<span class="nt">trainer</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;training_outputs/finetuned_cfg_model&quot;</span>
-<span class="w">  </span><span class="nt">num_epochs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
-<span class="w">  </span><span class="nt">lr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1e-5</span>
-
-<span class="nt">tasks</span><span class="p">:</span>
-<span class="w">  </span><span class="c1"># CRITICAL: Path to the pre-trained unconditional model</span>
-<span class="w">  </span><span class="nt">chkpt_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/downloaded_unconditional_model.ckpt&quot;</span>
-
-<span class="w">  </span><span class="c1"># KEY CHANGE: Add the conditions to learn</span>
-<span class="w">  </span><span class="nt">condition_names</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;S1_exc&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;T1_exc&quot;</span><span class="p p-Indicator">]</span>
-<span class="w">  </span><span class="nt">adapter_conditions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;S1_exc&quot;</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># Process S1_exc through an adapter, T1_exc is concatenated</span>
-<span class="w">  </span><span class="nt">context_mask_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span><span class="w"> </span><span class="c1"># Make it CFG-ready</span>
-<span class="w">  </span><span class="nt">normalization_method</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value_10</span>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">collect</span></code> is omitted, the sweep uses built-in defaults for:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">optimized_xyz/merged_hits.csv</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">postbuster_metrics.csv</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">xyz_analysis.csv</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scscore_results.csv</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">u.csv</span></code></p></li>
+</ul>
+<p>If <code class="docutils literal notranslate"><span class="pre">collect</span></code> is present, it replaces the built-in defaults. Include every metric you want in <code class="docutils literal notranslate"><span class="pre">summary.csv</span></code>.</p>
+</div>
+</section>
+<hr class="docutils" />
+<section id="bayesian-optimization-objective">
+<h2>7. Bayesian Optimization Objective<a class="headerlink" href="#bayesian-optimization-objective" title="Link to this heading">¶</a></h2>
+<p>Grid search evaluates combinations in deterministic order. Bayesian search chooses from the same candidate grid using previous rows in <code class="docutils literal notranslate"><span class="pre">summary.csv</span></code>.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">search</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">method</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bayesian</span>
+<span class="w">  </span><span class="nt">include_base_config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">objective</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metric</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hit_rate_both</span>
+<span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">max</span>
+<span class="w">  </span><span class="nt">bayesian</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">n_initial</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">random_state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+</pre></div>
+</div>
+<p>The objective metric must be collected into <code class="docutils literal notranslate"><span class="pre">summary.csv</span></code>. For example, this objective:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">objective</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">metric</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hit_rate_both</span>
+<span class="w">  </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">max</span>
+</pre></div>
+</div>
+<p>requires:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">collect</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">optimized_xyz/merged_hits.csv</span>
+<span class="w">    </span><span class="nt">metrics</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">hit_rate_both</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">column</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">both_hit</span>
+<span class="w">        </span><span class="nt">agg</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mean</span>
+</pre></div>
+</div>
+<p>For minimization:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">objective</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">metric</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mean_rmsd</span>
+<span class="w">  </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">min</span>
+</pre></div>
+</div>
+<p>Bayesian mode requires Optuna. If Optuna is unavailable, install it or switch to:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">search</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">method</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">grid</span>
 </pre></div>
 </div>
 </section>
 <hr class="docutils" />
-<section id="scenario-3-fine-tune-for-outpainting">
-<h3>Scenario 3: Fine-Tune for Outpainting<a class="headerlink" href="#scenario-3-fine-tune-for-outpainting" title="Link to this heading">¶</a></h3>
-<p><strong>Goal:</strong> To specialize a model to become an expert at “growing” new functional groups from a common scaffold.</p>
-<p><strong>Configuration:</strong> You load a pre-trained model and fine-tune it on a dataset of molecules, telling it which atoms belong to the core scaffold.</p>
-<p><strong>Key Parameter for Outpainting:</strong></p>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head text-left"><p>Parameter</p></th>
-<th class="head text-left"><p>Example</p></th>
-<th class="head text-left"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">tasks.reference_indices</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5]</span></code></p></td>
-<td class="text-left"><p>A list of 0-indexed atom indices that define the common scaffold (the “core”) of the molecules in your dataset. These atoms will be treated as the fixed part of the molecule during training.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<blockquote>
-<div><p><strong>Important Data Preprocessing Note:</strong>
-For this fine-tuning scenario to work correctly, you <strong>must</strong> preprocess your dataset to ensure that the core atom indices are consistent across all molecules. For example, if your scaffold is a benzene ring, the atoms of the ring should have the same indices (e.g., 0 through 5) in every molecule’s coordinate file in your training set.</p>
-</div></blockquote>
-<p><strong>Example <code class="docutils literal notranslate"><span class="pre">finetune_outpainting.yaml</span></code>:</strong></p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">defaults</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_scaffold_dataset</span><span class="w"> </span><span class="c1"># A dataset of molecules with the same core</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diffusion_pretrained</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">logger</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wandb</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">trainer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">_self_</span>
-
-<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;finetune_for_outpainting&quot;</span>
-<span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">42</span>
-
-<span class="nt">trainer</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;training_outputs/finetuned_outpainting_model&quot;</span>
-<span class="w">  </span><span class="nt">num_epochs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">25</span><span class="w"> </span><span class="c1"># This can be a very short fine-tuning task</span>
-<span class="w">  </span><span class="nt">lr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2e-5</span>
-
-<span class="nt">tasks</span><span class="p">:</span>
-<span class="w">  </span><span class="c1"># CRITICAL: Path to a pre-trained model</span>
-<span class="w">  </span><span class="nt">chkpt_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/downloaded_model.ckpt&quot;</span>
-
-<span class="w">  </span><span class="c1"># KEY CHANGE: Define the scaffold atoms</span>
-<span class="w">  </span><span class="nt">reference_indices</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">4</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">5</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># The indices of the core atoms</span>
+<section id="resume-behavior">
+<h2>8. Resume Behavior<a class="headerlink" href="#resume-behavior" title="Link to this heading">¶</a></h2>
+<p>Each completed or failed run is recorded in:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&lt;sweep_dir&gt;/summary.csv
 </pre></div>
 </div>
-</section>
-<section id="run-your-fine-tuning-job">
-<h3>Run Your Fine-Tuning Job<a class="headerlink" href="#run-your-fine-tuning-job" title="Link to this heading">¶</a></h3>
-<p>For any of these scenarios, you launch the training with the same <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">train</span></code> command, pointing to your experiment config file:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example for Scenario 2</span>
-MolCraftDiff<span class="w"> </span>train<span class="w"> </span>finetune_add_condition
+<p>By default, any recorded configuration is skipped on the next launch:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>configs/sweep_example.yaml<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">10</span>
 </pre></div>
 </div>
+<p>To retry failed or interrupted rows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>configs/sweep_example.yaml<span class="w"> </span>--retry-failed<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">10</span>
+</pre></div>
+</div>
+<p>The configuration identity is based on the swept parameter values, not the output directory name.</p>
 </section>
+<hr class="docutils" />
+<section id="practical-workflow">
+<h2>9. Practical Workflow<a class="headerlink" href="#practical-workflow" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Create a normal generation config for the controlled generation mode.</p></li>
+<li><p>Create a sweep config that points to it as <code class="docutils literal notranslate"><span class="pre">base_config</span></code>.</p></li>
+<li><p>Add only the parameters you actually want to vary.</p></li>
+<li><p>Make the eval workflow write CSV files under <code class="docutils literal notranslate"><span class="pre">&lt;run_output_dir&gt;</span></code>.</p></li>
+<li><p>Register those CSV files and metrics under <code class="docutils literal notranslate"><span class="pre">collect</span></code>.</p></li>
+<li><p>Start with:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>configs/sweep_example.yaml<span class="w"> </span>--dry-run<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">1</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="7">
+<li><p>Launch a small batch:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>configs/sweep_example.yaml<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">3</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="8">
+<li><p>Inspect:</p></li>
+</ol>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sweep_results/example_sweep/summary.csv
+</pre></div>
+</div>
+<ol class="arabic simple" start="9">
+<li><p>Continue the sweep when ready:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>configs/sweep_example.yaml<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">20</span>
+</pre></div>
+</div>
+<p>The sweep will skip configurations already present in <code class="docutils literal notranslate"><span class="pre">summary.csv</span></code>.</p>
 </section>
 </section>
 
@@ -617,23 +842,23 @@ MolCraftDiff<span class="w"> </span>train<span class="w"> </span>finetune_add_co
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="05_generation_overview.html">
+          <a class="next-page" href="../applications/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Tutorial 5: Molecule Generation Overview</div>
+                <div class="title">Applications</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="03_training_guidance.html">
+          <a class="prev-page" href="09_analyze.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Tutorial 3: Training a Time-Aware Guidance Model</div>
+                <div class="title">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</div>
                 
               </div>
             </a>
@@ -684,14 +909,23 @@ MolCraftDiff<span class="w"> </span>train<span class="w"> </span>finetune_add_co
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Tutorial 4: Fine-Tuning a Diffusion Model</a><ul>
-<li><a class="reference internal" href="#core-fine-tuning-principles">Core Fine-Tuning Principles</a><ul>
-<li><a class="reference internal" href="#scenario-1-continue-training-on-a-new-dataset">Scenario 1: Continue Training on a New Dataset</a></li>
-<li><a class="reference internal" href="#scenario-2-fine-tune-to-add-a-condition">Scenario 2: Fine-Tune to Add a Condition</a></li>
-<li><a class="reference internal" href="#scenario-3-fine-tune-for-outpainting">Scenario 3: Fine-Tune for Outpainting</a></li>
-<li><a class="reference internal" href="#run-your-fine-tuning-job">Run Your Fine-Tuning Job</a></li>
+<li><a class="reference internal" href="#">Tutorial 10: Generation Parameter Sweeps</a><ul>
+<li><a class="reference internal" href="#what-a-sweep-does">1. What a Sweep Does</a></li>
+<li><a class="reference internal" href="#minimal-command">2. Minimal Command</a></li>
+<li><a class="reference internal" href="#sweep-config-anatomy">3. Sweep Config Anatomy</a></li>
+<li><a class="reference internal" href="#varying-parameters">4. Varying Parameters</a></li>
+<li><a class="reference internal" href="#controlled-generation-parameters-to-sweep">5. Controlled Generation Parameters to Sweep</a><ul>
+<li><a class="reference internal" href="#inpainting">Inpainting</a></li>
+<li><a class="reference internal" href="#outpainting">Outpainting</a></li>
+<li><a class="reference internal" href="#cfg">CFG</a></li>
+<li><a class="reference internal" href="#gradient-guidance">Gradient Guidance</a></li>
+<li><a class="reference internal" href="#hybrid-cfg-gg">Hybrid CFG/GG</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#registering-workflow-csvs">6. Registering Workflow CSVs</a></li>
+<li><a class="reference internal" href="#bayesian-optimization-objective">7. Bayesian Optimization Objective</a></li>
+<li><a class="reference internal" href="#resume-behavior">8. Resume Behavior</a></li>
+<li><a class="reference internal" href="#practical-workflow">9. Practical Workflow</a></li>
 </ul>
 </li>
 </ul>

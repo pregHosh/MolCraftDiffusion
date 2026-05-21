@@ -221,6 +221,7 @@
 <li class="toctree-l1"><a class="reference internal" href="07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_generation_sweeps.html">Tutorial 10: Generation Parameter Sweeps</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Applications</span></p>
 <ul>
@@ -441,12 +442,59 @@
 </div>
 <p>Now, open <code class="docutils literal notranslate"><span class="pre">my_first_run.yaml</span></code>. This is the only file you’ll need to edit.</p>
 </section>
-<section id="step-2-understand-the-defaults-list">
-<h3>Step 2: Understand the <code class="docutils literal notranslate"><span class="pre">defaults</span></code> List<a class="headerlink" href="#step-2-understand-the-defaults-list" title="Link to this heading">¶</a></h3>
+<section id="step-2-choose-a-training-engine">
+<h3>Step 2: Choose a Training Engine<a class="headerlink" href="#step-2-choose-a-training-engine" title="Link to this heading">¶</a></h3>
+<p>MolCraftDiffusion offers two training engines. Add one <code class="docutils literal notranslate"><span class="pre">engine:</span></code> entry to your <code class="docutils literal notranslate"><span class="pre">defaults</span></code> list to select it:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Engine key</p></th>
+<th class="head text-left"><p>Class</p></th>
+<th class="head text-left"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">engine:</span> <span class="pre">original</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">Engine</span></code></p></td>
+<td class="text-left"><p>Custom training loop (<code class="docutils literal notranslate"><span class="pre">core/engine.py</span></code>). Full control over gradient accumulation, mixed-precision AMP, distributed training via <code class="docutils literal notranslate"><span class="pre">torch.distributed</span></code>, and detailed progress-bar metrics. Preferred when you need fine-grained control or are running on SLURM clusters.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">engine:</span> <span class="pre">lightning</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">EngineLightning</span></code></p></td>
+<td class="text-left"><p>PyTorch Lightning wrapper (<code class="docutils literal notranslate"><span class="pre">core/engine_lightning.py</span></code>). Handles multi-GPU/TPU strategy selection, built-in checkpointing callbacks, and W&amp;B integration automatically. Preferred for rapid experimentation and multi-node Lightning-native setups.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">defaults</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mol_dataset</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diffusion</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">engine</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lightning</span><span class="w">   </span><span class="c1"># or: engine: original</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">logger</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">trainer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">_self_</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">engine:</span></code> is omitted the framework falls back to the original engine.</p>
+<p><strong>When to pick Lightning:</strong></p>
+<ul class="simple">
+<li><p>You want automatic multi-GPU strategy selection (<code class="docutils literal notranslate"><span class="pre">ddp</span></code>, <code class="docutils literal notranslate"><span class="pre">ddp_spawn</span></code>, …).</p></li>
+<li><p>You prefer Lightning callbacks (e.g. <code class="docutils literal notranslate"><span class="pre">ModelCheckpoint</span></code>, <code class="docutils literal notranslate"><span class="pre">EarlyStopping</span></code>).</p></li>
+<li><p>You are already familiar with the Lightning ecosystem.</p></li>
+</ul>
+<p><strong>When to stick with the original engine:</strong></p>
+<ul class="simple">
+<li><p>You need explicit control over gradient accumulation steps (<code class="docutils literal notranslate"><span class="pre">batch_per_epoch</span></code>) or the AMP scaler.</p></li>
+<li><p>You are running in a SLURM environment where <code class="docutils literal notranslate"><span class="pre">SLURM_PROCID</span></code> / <code class="docutils literal notranslate"><span class="pre">SLURM_GPUS_ON_NODE</span></code> are used for device assignment.</p></li>
+<li><p>You need step-based termination (<code class="docutils literal notranslate"><span class="pre">num_steps</span></code>).</p></li>
+</ul>
+</section>
+<section id="step-3-understand-the-defaults-list">
+<h3>Step 3: Understand the <code class="docutils literal notranslate"><span class="pre">defaults</span></code> List<a class="headerlink" href="#step-3-understand-the-defaults-list" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">defaults</span></code> list at the top of the file loads a set of pre-defined “templates” for each part of your experiment (data, model, trainer, etc.) that are bundled with the package.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">defaults</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mol_dataset</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diffusion</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">engine</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lightning</span><span class="w">   </span><span class="c1"># choose: lightning or original</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">logger</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">trainer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">_self_</span>
@@ -454,8 +502,8 @@
 </div>
 <p><strong>Think of these default files as a reference manual.</strong> You can find the original base configurations in the <code class="docutils literal notranslate"><span class="pre">configs/</span></code> directory of the repository (e.g., in <code class="docutils literal notranslate"><span class="pre">configs/data/</span></code>, <code class="docutils literal notranslate"><span class="pre">configs/tasks/</span></code>) to see what parameters are available, but you should not edit them directly. All changes are made in your local <code class="docutils literal notranslate"><span class="pre">my_first_run.yaml</span></code>.</p>
 </section>
-<section id="step-3-set-your-key-parameters">
-<h3>Step 3: Set Your Key Parameters<a class="headerlink" href="#step-3-set-your-key-parameters" title="Link to this heading">¶</a></h3>
+<section id="step-4-set-your-key-parameters">
+<h3>Step 4: Set Your Key Parameters<a class="headerlink" href="#step-4-set-your-key-parameters" title="Link to this heading">¶</a></h3>
 <p>This is the most important step. You will override the default parameters to configure your specific experiment. Below are the most common parameters you will want to set.</p>
 <section id="essential-paths">
 <h4><strong>Essential Paths</strong><a class="headerlink" href="#essential-paths" title="Link to this heading">¶</a></h4>
@@ -642,13 +690,14 @@
 </div>
 </section>
 </section>
-<section id="step-4-putting-it-all-together">
-<h3>Step 4: Putting It All Together<a class="headerlink" href="#step-4-putting-it-all-together" title="Link to this heading">¶</a></h3>
+<section id="step-5-putting-it-all-together">
+<h3>Step 5: Putting It All Together<a class="headerlink" href="#step-5-putting-it-all-together" title="Link to this heading">¶</a></h3>
 <p>Here is what a complete <code class="docutils literal notranslate"><span class="pre">my_first_run.yaml</span></code> for a <strong>CFG-ready conditional model</strong> might look like:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Inherit from the default templates</span>
 <span class="nt">defaults</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mol_dataset</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diffusion</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">engine</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lightning</span><span class="w">   </span><span class="c1"># or: engine: original</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">logger</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wandb</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">trainer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">_self_</span>
@@ -676,8 +725,8 @@
 </pre></div>
 </div>
 </section>
-<section id="step-5-run-your-training">
-<h3>Step 5: Run Your Training<a class="headerlink" href="#step-5-run-your-training" title="Link to this heading">¶</a></h3>
+<section id="step-6-run-your-training">
+<h3>Step 6: Run Your Training<a class="headerlink" href="#step-6-run-your-training" title="Link to this heading">¶</a></h3>
 <p>Launch the training using the <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span></code> command-line tool. Provide the <code class="docutils literal notranslate"><span class="pre">train</span></code> command followed by the name of your configuration file.</p>
 <p><strong>Command:</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>train<span class="w"> </span>my_first_run
@@ -774,8 +823,9 @@
 <li><a class="reference internal" href="#">Tutorial 1: Training a Diffusion Model</a><ul>
 <li><a class="reference internal" href="#the-override-only-workflow">The “Override-Only” Workflow</a><ul>
 <li><a class="reference internal" href="#step-1-create-your-experiment-file">Step 1: Create Your Experiment File</a></li>
-<li><a class="reference internal" href="#step-2-understand-the-defaults-list">Step 2: Understand the <code class="docutils literal notranslate"><span class="pre">defaults</span></code> List</a></li>
-<li><a class="reference internal" href="#step-3-set-your-key-parameters">Step 3: Set Your Key Parameters</a><ul>
+<li><a class="reference internal" href="#step-2-choose-a-training-engine">Step 2: Choose a Training Engine</a></li>
+<li><a class="reference internal" href="#step-3-understand-the-defaults-list">Step 3: Understand the <code class="docutils literal notranslate"><span class="pre">defaults</span></code> List</a></li>
+<li><a class="reference internal" href="#step-4-set-your-key-parameters">Step 4: Set Your Key Parameters</a><ul>
 <li><a class="reference internal" href="#essential-paths"><strong>Essential Paths</strong></a></li>
 <li><a class="reference internal" href="#data-processing-and-caching">Data Processing and Caching</a></li>
 <li><a class="reference internal" href="#core-training-hyperparameters"><strong>Core Training Hyperparameters</strong></a></li>
@@ -783,8 +833,8 @@
 <li><a class="reference internal" href="#experiment-logging"><strong>Experiment Logging</strong></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#step-4-putting-it-all-together">Step 4: Putting It All Together</a></li>
-<li><a class="reference internal" href="#step-5-run-your-training">Step 5: Run Your Training</a></li>
+<li><a class="reference internal" href="#step-5-putting-it-all-together">Step 5: Putting It All Together</a></li>
+<li><a class="reference internal" href="#step-6-run-your-training">Step 6: Run Your Training</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#next-steps-generation">Next Steps: Generation</a></li>

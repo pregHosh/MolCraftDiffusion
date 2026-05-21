@@ -221,6 +221,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/10_generation_sweeps.html">Tutorial 10: Generation Parameter Sweeps</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Applications</span></p>
 <ul>
@@ -460,7 +461,10 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.generate.load_model" title="MolecularDiffusion.cli.generate.load_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_model</span></code></a>(chkpt_directory[, task_config, atom_vocab, ...])</p></td>
 <td><p>Load model from checkpoint directory with auto-detection.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.generate.log_hyperparameters" title="MolecularDiffusion.cli.generate.log_hyperparameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_hyperparameters</span></code></a>(object_dict)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.generate.load_model_lightning" title="MolecularDiffusion.cli.generate.load_model_lightning"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_model_lightning</span></code></a>(chkpt_directory[, task_config, ...])</p></td>
+<td><p>Load a task from a PyTorch Lightning checkpoint (.ckpt).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.generate.log_hyperparameters" title="MolecularDiffusion.cli.generate.log_hyperparameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_hyperparameters</span></code></a>(object_dict)</p></td>
 <td><p>Log hyperparameters for debugging.</p></td>
 </tr>
 </tbody>
@@ -491,6 +495,18 @@
 <dt class="sig sig-object py" id="MolecularDiffusion.cli.generate.load_model">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.generate.</span></span><span class="sig-name descname"><span class="pre">load_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chkpt_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_vocab</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.generate.load_model" title="Link to this definition">¶</a></dt>
 <dd><p>Load model from checkpoint directory with auto-detection.</p>
+<p>Tries Lightning (.ckpt) format first; falls back to original engine (.pkl).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.cli.generate.load_model_lightning">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.generate.</span></span><span class="sig-name descname"><span class="pre">load_model_lightning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chkpt_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.generate.load_model_lightning" title="Link to this definition">¶</a></dt>
+<dd><p>Load a task from a PyTorch Lightning checkpoint (.ckpt).</p>
+<p>Uses EngineLightning.load_from_checkpoint which rebuilds the task from the
+model_config stored in hyper_parameters, then applies on_load_checkpoint to
+restore distribution models.  The EMA model is initialised manually here
+because on_train_start (where Lightning normally does it) is never called
+during inference.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -587,6 +603,7 @@
 <li><a class="reference internal" href="#MolecularDiffusion.cli.generate.generate_main"><code class="docutils literal notranslate"><span class="pre">generate_main()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.generate.is_rank_zero"><code class="docutils literal notranslate"><span class="pre">is_rank_zero()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.generate.load_model"><code class="docutils literal notranslate"><span class="pre">load_model()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.cli.generate.load_model_lightning"><code class="docutils literal notranslate"><span class="pre">load_model_lightning()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.generate.log_hyperparameters"><code class="docutils literal notranslate"><span class="pre">log_hyperparameters()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.generate.log"><code class="docutils literal notranslate"><span class="pre">log</span></code></a></li>
 </ul>
