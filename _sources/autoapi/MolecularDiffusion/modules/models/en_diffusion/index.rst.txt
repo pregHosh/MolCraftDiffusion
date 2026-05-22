@@ -117,7 +117,7 @@ Module Contents
    .. py:attribute:: property_names
 
 
-.. py:class:: EnVariationalDiffusion(dynamics: torch.nn.Module, dynamics_teacher: Optional[torch.nn.Module] = None, in_node_nf: int = 12, n_dims: int = 3, timesteps: int = 1000, parametrization: str = 'eps', noise_schedule: str = 'learned', noise_precision: float = 0.0001, loss_type: str = 'vlb', norm_values: Tuple[float, float, float] = (1.0, 1.0, 1.0), extra_norm_values: Sequence[float] = (), norm_biases: Tuple[Optional[float], float, float] = (None, 0.0, 0.0), include_charges: bool = True, context_mask_rate: float = 0.0, mask_value: float = 0.0, eval_mode: bool = False, debug: bool = False)
+.. py:class:: EnVariationalDiffusion(dynamics: torch.nn.Module, dynamics_teacher: Optional[torch.nn.Module] = None, in_node_nf: int = 12, n_dims: int = 3, timesteps: int = 1000, parametrization: str = 'eps', noise_schedule: str = 'learned', noise_precision: float = 0.0001, loss_type: str = 'vlb', norm_values: Tuple[float, float, float] = (1.0, 1.0, 1.0), extra_norm_values: Sequence[float] = (), norm_biases: Tuple[Optional[float], float, float] = (None, 0.0, 0.0), include_charges: bool = True, context_mask_rate: float = 0.0, mask_value: float = 0.0, eval_mode: bool = False, debug: bool = False, use_noised_conditioning: bool = False)
 
    Bases: :py:obj:`torch.nn.Module`
 
@@ -400,7 +400,7 @@ Module Contents
 
 
 
-   .. py:method:: sample_guidance(n_samples, target_function, node_mask, edge_mask, context=None, context_negative=None, gg_scale=1, cfg_scale=1, cfg_scale_schedule=None, max_norm=10, fix_noise=False, std=1.0, scheduler=None, guidance_at=1, guidance_stop=0, guidance_ver=1, n_backwards=0, h_weight=1, x_weight=1, condition_tensor=None, condition_mode=None, inpaint_cfgs={}, outpaint_cfgs={}, n_frames=0, debug=False)
+   .. py:method:: sample_guidance(n_samples, target_function, node_mask, edge_mask, context=None, context_negative=None, gg_scale=1, cfg_scale=1, cfg_scale_schedule=None, max_norm=10, fix_noise=False, std=1.0, scheduler=None, guidance_at=1, guidance_stop=0, guidance_ver=1, n_backwards=0, h_weight=1, x_weight=1, condition_tensor=None, condition_mode=None, inpaint_cfgs={}, outpaint_cfgs={}, n_frames=0, debug=False, use_noised_conditioning=False)
 
               Guided sampling from the generative model.
 
@@ -430,6 +430,7 @@ Module Contents
                   Save gradient norms, max gradients, clipping coefficients, and energies to files.
               - condition_tensor (torch.Tensor, optional): Tensor for conditional guidance. Defaults to None.
               - condition_mode (str, optional): Mode for conditional guidance. Defaults to None.
+              - use_noised_conditioning (bool): Use noised condition tensor for structure guidance.
               - inpaint_cfgs (dict, optional): Configuration for inpainting.
                   The dictionary must contains:
                       - mask_node_index (torch.Tensor, optional): Indices of nodes to be inpainted. Defaults to an empty tensor.
@@ -511,7 +512,7 @@ Module Contents
 
 
 
-   .. py:method:: sample_p_zs_given_zt_guidance_cfg_gg(s, t, zt, node_mask, edge_mask, context, target_function, cfg_scale, gg_scale, max_norm=20, n_backward=0, h_weight=1, x_weight=1, fix_noise=False, structure_guidance=False, t_critical=0, mask_node_index=[])
+   .. py:method:: sample_p_zs_given_zt_guidance_cfg_gg(s, t, zt, node_mask, edge_mask, context, target_function, cfg_scale, gg_scale, max_norm=20, n_backward=0, h_weight=1, x_weight=1, fix_noise=False, context_negative=None, structure_guidance=False, t_critical=0, mask_node_index=[], scale_schedule_type=None)
 
       Combines Classifier-Free Guidance (CFG) with Gradient-Based Guidance (GG).
 
@@ -546,15 +547,21 @@ Module Contents
       :type x_weight: int, optional
       :param fix_noise: If True, uses fixed noise for sampling. Defaults to False.
       :type fix_noise: bool, optional
+      :param context_negative: Negative conditional information for guidance.
+                               If None, unconditional generation is used as the negative target. Defaults to None.
+      :type context_negative: torch.Tensor, optional
       :param structure_guidance: If inpaint or outpaint, applies structure guidance. Defaults to False.
       :type structure_guidance: bool, optional
       :param t_critical: Timestep threshold for applying reference tensor constraints. Defaults to None.
       :type t_critical: float, optional
       :param mask_node_index: List of node indices to mask during inpaiting. Defaults to [].
       :type mask_node_index: list, optional
+      :param scale_schedule_type: Type of scheduler for CFG scale. [Available: 'linear', 'cosine']. Defaults to None.
+      :type scale_schedule_type: str, optional
 
-      :returns: The guided sample zs.
-      :rtype: torch.Tensor
+      :returns: The guided sample zs and an opt_info dict
+                with keys mu0_norm, mu1_norm, grad_norms, energies, z_norm.
+      :rtype: Tuple[torch.Tensor, dict]
 
 
 
@@ -861,6 +868,11 @@ Module Contents
 
 
 
+   .. py:attribute:: clean_condition_tensor
+      :value: None
+
+
+
    .. py:attribute:: condition_tensor
       :value: None
 
@@ -939,6 +951,11 @@ Module Contents
 
    .. py:attribute:: parametrization
       :value: 'eps'
+
+
+
+   .. py:attribute:: use_noised_conditioning
+      :value: False
 
 
 

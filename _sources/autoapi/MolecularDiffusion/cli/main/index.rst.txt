@@ -87,7 +87,7 @@ Module Contents
    molcraft generate configs/gen_config.yaml interference.n_samples=1000
 
 
-.. py:function:: generate_sweep(sweep_config: str, dry_run: bool, skip_gen: bool, skip_eval: bool, max_runs: int | None, retry_failed: bool)
+.. py:function:: generate_sweep(sweep_config: str, dry_run: bool, skip_gen: bool, skip_eval: bool, max_runs: int | None, retry_failed: bool, early_fail_batches: int | None)
 
    Run a generation parameter sweep from a sweep YAML config.
 
