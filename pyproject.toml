@@ -54,7 +54,7 @@ data = [
     "mendeleev",
     "safetensors",
     "dscribe",
-    "openbabel-wheel",
+    "openbabel>=3.2.0",
 ]
 analyze = [
     "ase",
@@ -63,7 +63,7 @@ analyze = [
     "morfeus-ml",
     "rmsd",
     "open3d",
-    "openbabel-wheel",
+    "openbabel>=3.2.0",
     "posecheck",
 ]
 # GPU install (CUDA-capable torch wheels, auto-detected by pip on Linux/Windows):
