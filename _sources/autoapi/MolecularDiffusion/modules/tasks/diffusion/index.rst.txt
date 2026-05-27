@@ -95,7 +95,7 @@ Module Contents
    .. py:method:: preprocess(train_set=None)
 
 
-   .. py:method:: sample(nodesxsample=torch.tensor([10]), context=None, condition_tensor=None, condition_mode=None, fix_noise=False, n_frames=0, n_retrys=0, t_retry=180, mode='ddpm', **kwargs)
+   .. py:method:: sample(nodesxsample=torch.tensor([10]), context=None, condition_tensor=None, condition_mode=None, fix_noise=False, n_frames=0, n_retrys=0, t_retry=180, mode='ddpm', use_noised_conditioning=False, **kwargs)
 
       Sample molecular structures.
 

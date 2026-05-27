@@ -368,7 +368,7 @@ Module Contents
 
 
 
-   .. py:method:: sample(n_samples, n_nodes, node_mask, edge_mask, context, condition_tensor=None, condition_mode=None, inpaint_cfgs={}, outpaint_cfgs={}, fix_noise=False, n_frames=0, t_retry=180, n_retrys=0)
+   .. py:method:: sample(n_samples, n_nodes, node_mask, edge_mask, context, condition_tensor=None, condition_mode=None, inpaint_cfgs={}, outpaint_cfgs={}, use_noised_conditioning=False, fix_noise=False, n_frames=0, t_retry=180, n_retrys=0)
 
       Draw samples from the generative model.
 
