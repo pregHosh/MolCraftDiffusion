@@ -32,7 +32,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:class:: GeomMolecularGenerative(diffusion_model, node_dist_model=None, prop_dist_model=None, n_node_dist: Dict = {}, augment_noise: float = 0, data_augmentation: bool = False, condition: List = [], normalize_condition: str = None, sp_regularizer: MolecularDiffusion.callbacks.SP_regularizer = None, reference_indices: List = None)
+.. py:class:: GeomMolecularGenerative(diffusion_model, node_dist_model=None, prop_dist_model=None, n_node_dist: Dict = {}, augment_noise: float = 0, data_augmentation: bool = False, condition: List = [], normalize_condition: str = None, sp_regularizer: MolecularDiffusion.callbacks.SP_regularizer = None, reference_indices: List = None, reference_freeze_mode: str = 'all')
 
    Bases: :py:obj:`MolecularDiffusion.modules.tasks.task.Task`, :py:obj:`MolecularDiffusion.core.Configurable`
 
@@ -338,6 +338,16 @@ Module Contents
 
    .. py:attribute:: prop_dist_model
       :value: None
+
+
+
+   .. py:attribute:: reference_feature_stats
+      :value: None
+
+
+
+   .. py:attribute:: reference_freeze_mode
+      :value: 'all'
 
 
 

@@ -27,6 +27,7 @@ Functions
 
    MolecularDiffusion.cli.train.engine_wrapper
    MolecularDiffusion.cli.train.evaluate_and_save
+   MolecularDiffusion.cli.train.evaluate_and_save
    MolecularDiffusion.cli.train.is_rank_zero
    MolecularDiffusion.cli.train.lightning_wrapper
    MolecularDiffusion.cli.train.load_weights
@@ -41,6 +42,11 @@ Module Contents
 .. py:function:: engine_wrapper(task_module, data_module, trainer_module, logger_module, resume_from_checkpoint=None, tags=None, **kwargs)
 
    Training loop using original Engine.
+
+
+.. py:function:: evaluate_and_save(i, solver, task_module, trainer_module, logger_module, versioned_ckpt_path, use_amp, **kwargs)
+
+   Helper to run evaluation and save checkpoints.
 
 
 .. py:function:: evaluate_and_save(i, solver, task_module, trainer_module, logger_module, versioned_ckpt_path, use_amp, **kwargs)

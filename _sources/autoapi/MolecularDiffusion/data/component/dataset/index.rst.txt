@@ -246,7 +246,7 @@ Module Contents
    .. py:method:: get_item(index: int)
 
 
-   .. py:method:: get_property(task: str) -> torch.Tensor
+   .. py:method:: get_property(task: str, indices=None) -> torch.Tensor
 
 
    .. py:attribute:: atom_vocab
@@ -312,7 +312,7 @@ Module Contents
    .. py:method:: get_item(index: int)
 
 
-   .. py:method:: get_property(task: str) -> Optional[torch.Tensor]
+   .. py:method:: get_property(task: str, indices=None) -> Optional[torch.Tensor]
 
 
    .. py:attribute:: atom_vocab

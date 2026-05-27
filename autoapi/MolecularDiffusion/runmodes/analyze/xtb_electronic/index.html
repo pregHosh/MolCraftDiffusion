@@ -430,16 +430,22 @@
         <article role="main" id="furo-main-content">
           <section id="module-MolecularDiffusion.runmodes.analyze.xtb_electronic">
 <span id="moleculardiffusion-runmodes-analyze-xtb-electronic"></span><h1>MolecularDiffusion.runmodes.analyze.xtb_electronic<a class="headerlink" href="#module-MolecularDiffusion.runmodes.analyze.xtb_electronic" title="Link to this heading">¶</a></h1>
-<p>XTB Electronic Property Computation using morfeus.</p>
+<p>XTB Electronic Property Computation using xtb-python.</p>
 <p>Provides functions to compute electronic properties for XYZ files using
-the morfeus XTB interface, with support for batch processing and multiple
-output formats (CSV, JSON, ASE database).</p>
+the xtb-python interface directly, with support for batch processing and
+multiple output formats (CSV, JSON, ASE database).</p>
 <section id="attributes">
 <h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_electronic.ATOMIC_LEVEL_GROUPS" title="MolecularDiffusion.runmodes.analyze.xtb_electronic.ATOMIC_LEVEL_GROUPS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ATOMIC_LEVEL_GROUPS</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_electronic.ANGSTROM_TO_BOHR" title="MolecularDiffusion.runmodes.analyze.xtb_electronic.ANGSTROM_TO_BOHR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ANGSTROM_TO_BOHR</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_electronic.ATOMIC_LEVEL_GROUPS" title="MolecularDiffusion.runmodes.analyze.xtb_electronic.ATOMIC_LEVEL_GROUPS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ATOMIC_LEVEL_GROUPS</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_electronic.BOHR_DEBYE" title="MolecularDiffusion.runmodes.analyze.xtb_electronic.BOHR_DEBYE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BOHR_DEBYE</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_electronic.HARTREE_TO_EV" title="MolecularDiffusion.runmodes.analyze.xtb_electronic.HARTREE_TO_EV"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HARTREE_TO_EV</span></code></a></p></td>
@@ -482,21 +488,21 @@ output formats (CSV, JSON, ASE database).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_dir</strong> – Directory containing XYZ files</p></li>
-<li><p><strong>output_path</strong> – Output file path (without extension for ‘all’ format)</p></li>
-<li><p><strong>output_format</strong> – Output format (“csv”, “json”, “ase”, or “all”)</p></li>
-<li><p><strong>method</strong> – XTB method (1=GFN1, 2=GFN2, “ptb”=PTB)</p></li>
-<li><p><strong>charge</strong> – Molecular charge</p></li>
-<li><p><strong>n_unpaired</strong> – Number of unpaired electrons</p></li>
-<li><p><strong>solvent</strong> – Solvent name for implicit solvation</p></li>
-<li><p><strong>properties</strong> – List of property groups to compute</p></li>
-<li><p><strong>corrected</strong> – Whether to apply empirical IP/EA correction</p></li>
-<li><p><strong>timeout</strong> – Timeout per molecule in seconds</p></li>
-<li><p><strong>n_jobs</strong> – Number of parallel jobs</p></li>
+<li><p><strong>input_dir</strong> – Directory containing XYZ files.</p></li>
+<li><p><strong>output_path</strong> – Output file path (without extension for ‘all’ format).</p></li>
+<li><p><strong>output_format</strong> – Output format (“csv”, “json”, “ase”, or “all”).</p></li>
+<li><p><strong>method</strong> – XTB method (1=GFN1, 2=GFN2).</p></li>
+<li><p><strong>charge</strong> – Molecular charge.</p></li>
+<li><p><strong>n_unpaired</strong> – Number of unpaired electrons.</p></li>
+<li><p><strong>solvent</strong> – Solvent name for ALPB implicit solvation.</p></li>
+<li><p><strong>properties</strong> – Property groups to compute.</p></li>
+<li><p><strong>corrected</strong> – Kept for API compatibility; has no effect.</p></li>
+<li><p><strong>timeout</strong> – Timeout per molecule in seconds.</p></li>
+<li><p><strong>n_jobs</strong> – Number of parallel jobs.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>DataFrame with results</p>
+<dd class="field-even"><p>DataFrame with molecular-level results.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -508,24 +514,49 @@ output formats (CSV, JSON, ASE database).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xyz_path</strong> – Path to XYZ file</p></li>
-<li><p><strong>method</strong> – XTB method (1=GFN1, 2=GFN2, “ptb”=PTB)</p></li>
-<li><p><strong>charge</strong> – Molecular charge</p></li>
-<li><p><strong>n_unpaired</strong> – Number of unpaired electrons</p></li>
-<li><p><strong>solvent</strong> – Solvent name for implicit solvation (e.g., “water”, “thf”)</p></li>
-<li><p><strong>properties</strong> – List of property groups to compute. If None, computes “energy”</p></li>
-<li><p><strong>corrected</strong> – Whether to apply empirical IP/EA correction</p></li>
+<li><p><strong>xyz_path</strong> – Path to XYZ file.</p></li>
+<li><p><strong>method</strong> – XTB method (1=GFN1, 2=GFN2, “ptb”=PTB via xtb binary).</p></li>
+<li><p><strong>charge</strong> – Molecular charge.</p></li>
+<li><p><strong>n_unpaired</strong> – Number of unpaired electrons.</p></li>
+<li><p><strong>solvent</strong> – Solvent name for ALPB implicit solvation (e.g. “water”, “thf”).</p></li>
+<li><p><strong>properties</strong> – Property groups to compute. Defaults to [“energy”].
+Available: energy, dipole, reactivity, global, charges, fukui,
+bond_orders, all.  PTB supports energy/dipole/charges/bond_orders
+only (no reactivity/global/fukui — PTB gives no total energy).</p></li>
+<li><p><strong>corrected</strong> – Kept for API compatibility. Previously applied morfeus
+empirical IP/EA corrections; now has no effect (raw ΔE values
+are returned).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Dictionary containing computed properties and metadata</p>
+<dd class="field-even"><p>Dictionary with computed properties and metadata.</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>IP = E(cation) - E(neutral); EA = E(neutral) - E(anion). Both in eV.
+Fukui condensed indices use the finite-difference approximation:</p>
+<blockquote>
+<div><p>f+(k) = q_k(N) - q_k(N+1)  [electrophilicity, electron addition]
+f-(k) = q_k(N-1) - q_k(N)  [nucleophilicity, electron removal]
+f0(k) = (f+ + f-) / 2
+dual(k) = f+(k) - f-(k)</p>
+</div></blockquote>
+<p>Global descriptors follow Parr/Mayr-Ofial DFT reactivity theory.</p>
 </dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.runmodes.analyze.xtb_electronic.ANGSTROM_TO_BOHR">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.analyze.xtb_electronic.</span></span><span class="sig-name descname"><span class="pre">ANGSTROM_TO_BOHR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.8897259886</span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.analyze.xtb_electronic.ANGSTROM_TO_BOHR" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="MolecularDiffusion.runmodes.analyze.xtb_electronic.ATOMIC_LEVEL_GROUPS">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.analyze.xtb_electronic.</span></span><span class="sig-name descname"><span class="pre">ATOMIC_LEVEL_GROUPS</span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.analyze.xtb_electronic.ATOMIC_LEVEL_GROUPS" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.runmodes.analyze.xtb_electronic.BOHR_DEBYE">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.analyze.xtb_electronic.</span></span><span class="sig-name descname"><span class="pre">BOHR_DEBYE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2.5417464519</span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.analyze.xtb_electronic.BOHR_DEBYE" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
@@ -629,7 +660,9 @@ output formats (CSV, JSON, ASE database).</p>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_electronic.batch_xtb_electronic"><code class="docutils literal notranslate"><span class="pre">batch_xtb_electronic()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_electronic.compute_xtb_electronic"><code class="docutils literal notranslate"><span class="pre">compute_xtb_electronic()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_electronic.ANGSTROM_TO_BOHR"><code class="docutils literal notranslate"><span class="pre">ANGSTROM_TO_BOHR</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_electronic.ATOMIC_LEVEL_GROUPS"><code class="docutils literal notranslate"><span class="pre">ATOMIC_LEVEL_GROUPS</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_electronic.BOHR_DEBYE"><code class="docutils literal notranslate"><span class="pre">BOHR_DEBYE</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_electronic.HARTREE_TO_EV"><code class="docutils literal notranslate"><span class="pre">HARTREE_TO_EV</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_electronic.MOLECULAR_LEVEL_GROUPS"><code class="docutils literal notranslate"><span class="pre">MOLECULAR_LEVEL_GROUPS</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_electronic.PROPERTY_GROUPS"><code class="docutils literal notranslate"><span class="pre">PROPERTY_GROUPS</span></code></a></li>

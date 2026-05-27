@@ -5,11 +5,11 @@ MolecularDiffusion.runmodes.analyze.xtb_electronic
 
 .. autoapi-nested-parse::
 
-   XTB Electronic Property Computation using morfeus.
+   XTB Electronic Property Computation using xtb-python.
 
    Provides functions to compute electronic properties for XYZ files using
-   the morfeus XTB interface, with support for batch processing and multiple
-   output formats (CSV, JSON, ASE database).
+   the xtb-python interface directly, with support for batch processing and
+   multiple output formats (CSV, JSON, ASE database).
 
 
 
@@ -18,7 +18,9 @@ Attributes
 
 .. autoapisummary::
 
+   MolecularDiffusion.runmodes.analyze.xtb_electronic.ANGSTROM_TO_BOHR
    MolecularDiffusion.runmodes.analyze.xtb_electronic.ATOMIC_LEVEL_GROUPS
+   MolecularDiffusion.runmodes.analyze.xtb_electronic.BOHR_DEBYE
    MolecularDiffusion.runmodes.analyze.xtb_electronic.HARTREE_TO_EV
    MolecularDiffusion.runmodes.analyze.xtb_electronic.MOLECULAR_LEVEL_GROUPS
    MolecularDiffusion.runmodes.analyze.xtb_electronic.PROPERTY_GROUPS
@@ -41,37 +43,60 @@ Module Contents
 
    Batch compute XTB electronic properties for XYZ files in a directory.
 
-   :param input_dir: Directory containing XYZ files
-   :param output_path: Output file path (without extension for 'all' format)
-   :param output_format: Output format ("csv", "json", "ase", or "all")
-   :param method: XTB method (1=GFN1, 2=GFN2, "ptb"=PTB)
-   :param charge: Molecular charge
-   :param n_unpaired: Number of unpaired electrons
-   :param solvent: Solvent name for implicit solvation
-   :param properties: List of property groups to compute
-   :param corrected: Whether to apply empirical IP/EA correction
-   :param timeout: Timeout per molecule in seconds
-   :param n_jobs: Number of parallel jobs
+   :param input_dir: Directory containing XYZ files.
+   :param output_path: Output file path (without extension for 'all' format).
+   :param output_format: Output format ("csv", "json", "ase", or "all").
+   :param method: XTB method (1=GFN1, 2=GFN2).
+   :param charge: Molecular charge.
+   :param n_unpaired: Number of unpaired electrons.
+   :param solvent: Solvent name for ALPB implicit solvation.
+   :param properties: Property groups to compute.
+   :param corrected: Kept for API compatibility; has no effect.
+   :param timeout: Timeout per molecule in seconds.
+   :param n_jobs: Number of parallel jobs.
 
-   :returns: DataFrame with results
+   :returns: DataFrame with molecular-level results.
 
 
 .. py:function:: compute_xtb_electronic(xyz_path: str, method: int | str = 2, charge: int = 0, n_unpaired: int = 0, solvent: str | None = None, properties: list[str] | None = None, corrected: bool = True) -> dict[str, Any]
 
    Compute XTB electronic properties for a single XYZ file.
 
-   :param xyz_path: Path to XYZ file
-   :param method: XTB method (1=GFN1, 2=GFN2, "ptb"=PTB)
-   :param charge: Molecular charge
-   :param n_unpaired: Number of unpaired electrons
-   :param solvent: Solvent name for implicit solvation (e.g., "water", "thf")
-   :param properties: List of property groups to compute. If None, computes "energy"
-   :param corrected: Whether to apply empirical IP/EA correction
+   :param xyz_path: Path to XYZ file.
+   :param method: XTB method (1=GFN1, 2=GFN2, "ptb"=PTB via xtb binary).
+   :param charge: Molecular charge.
+   :param n_unpaired: Number of unpaired electrons.
+   :param solvent: Solvent name for ALPB implicit solvation (e.g. "water", "thf").
+   :param properties: Property groups to compute. Defaults to ["energy"].
+                      Available: energy, dipole, reactivity, global, charges, fukui,
+                      bond_orders, all.  PTB supports energy/dipole/charges/bond_orders
+                      only (no reactivity/global/fukui — PTB gives no total energy).
+   :param corrected: Kept for API compatibility. Previously applied morfeus
+                     empirical IP/EA corrections; now has no effect (raw ΔE values
+                     are returned).
 
-   :returns: Dictionary containing computed properties and metadata
+   :returns: Dictionary with computed properties and metadata.
+
+   .. rubric:: Notes
+
+   IP = E(cation) - E(neutral); EA = E(neutral) - E(anion). Both in eV.
+   Fukui condensed indices use the finite-difference approximation:
+       f+(k) = q_k(N) - q_k(N+1)  [electrophilicity, electron addition]
+       f-(k) = q_k(N-1) - q_k(N)  [nucleophilicity, electron removal]
+       f0(k) = (f+ + f-) / 2
+       dual(k) = f+(k) - f-(k)
+   Global descriptors follow Parr/Mayr-Ofial DFT reactivity theory.
+
+
+.. py:data:: ANGSTROM_TO_BOHR
+   :value: 1.8897259886
 
 
 .. py:data:: ATOMIC_LEVEL_GROUPS
+
+.. py:data:: BOHR_DEBYE
+   :value: 2.5417464519
+
 
 .. py:data:: HARTREE_TO_EV
    :value: 27.211386245988

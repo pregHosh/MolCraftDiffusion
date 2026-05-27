@@ -175,6 +175,15 @@ Module Contents
    .. py:attribute:: n_concat_context
 
 
+   .. py:attribute:: node_feature
+
+
+   .. py:attribute:: node_feature_choice
+
+
+   .. py:attribute:: node_feature_dim
+
+
    .. py:attribute:: norm_constant
       :value: 1.0
 

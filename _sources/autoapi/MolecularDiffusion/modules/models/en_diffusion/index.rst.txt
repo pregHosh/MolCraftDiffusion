@@ -117,7 +117,7 @@ Module Contents
    .. py:attribute:: property_names
 
 
-.. py:class:: EnVariationalDiffusion(dynamics: torch.nn.Module, dynamics_teacher: Optional[torch.nn.Module] = None, in_node_nf: int = 12, n_dims: int = 3, timesteps: int = 1000, parametrization: str = 'eps', noise_schedule: str = 'learned', noise_precision: float = 0.0001, loss_type: str = 'vlb', norm_values: Tuple[float, float, float] = (1.0, 1.0, 1.0), extra_norm_values: Sequence[float] = (), norm_biases: Tuple[Optional[float], float, float] = (None, 0.0, 0.0), include_charges: bool = True, context_mask_rate: float = 0.0, mask_value: float = 0.0, eval_mode: bool = False, debug: bool = False, use_noised_conditioning: bool = False)
+.. py:class:: EnVariationalDiffusion(dynamics: torch.nn.Module, dynamics_teacher: Optional[torch.nn.Module] = None, in_node_nf: int = 12, n_dims: int = 3, timesteps: int = 1000, parametrization: str = 'eps', noise_schedule: str = 'learned', noise_precision: float = 0.0001, loss_type: str = 'vlb', norm_values: Tuple[float, float, float] = (1.0, 1.0, 1.0), extra_norm_values: Sequence[float] = (), norm_biases: Tuple[Optional[float], float, float] = (None, 0.0, 0.0), include_charges: bool = True, context_mask_rate: float = 0.0, mask_value: float = 0.0, eval_mode: bool = False, debug: bool = False, use_noised_conditioning: bool = False, reference_freeze_mode: str = 'all')
 
    Bases: :py:obj:`torch.nn.Module`
 
@@ -224,7 +224,7 @@ Module Contents
 
 
 
-   .. py:method:: compute_loss(x: torch.Tensor, h: dict, node_mask: torch.Tensor, edge_mask: torch.Tensor, context: Optional[torch.Tensor], t0_always: bool, reference_indices: Optional[Union[list, torch.Tensor]] = None) -> Tuple[torch.Tensor, dict]
+   .. py:method:: compute_loss(x: torch.Tensor, h: dict, node_mask: torch.Tensor, edge_mask: torch.Tensor, context: Optional[torch.Tensor], t0_always: bool, reference_indices: Optional[Union[list, torch.Tensor]] = None, reference_freeze_mode: str = 'all') -> Tuple[torch.Tensor, dict]
 
       Computes the total training loss (VLB or L2) based on a randomly sampled timestep t.
 
@@ -254,7 +254,7 @@ Module Contents
 
 
 
-   .. py:method:: compute_loss_pyG(mol_graph, context, t0_always, reference_indices=None)
+   .. py:method:: compute_loss_pyG(mol_graph, context, t0_always, reference_indices=None, reference_freeze_mode='all')
 
       Computes an estimator for the variational lower bound, or the simple loss (MSE).
 
@@ -279,7 +279,7 @@ Module Contents
 
 
 
-   .. py:method:: forward(x, h, node_mask=None, edge_mask=None, context=None, reference_indices=None, mol_graph=None)
+   .. py:method:: forward(x, h, node_mask=None, edge_mask=None, context=None, reference_indices=None, reference_freeze_mode='all', mol_graph=None)
 
       Computes the loss (type l2 or NLL) if training. And if eval then always computes NLL.
 
@@ -951,6 +951,11 @@ Module Contents
 
    .. py:attribute:: parametrization
       :value: 'eps'
+
+
+
+   .. py:attribute:: reference_freeze_mode
+      :value: 'all'
 
 
 
