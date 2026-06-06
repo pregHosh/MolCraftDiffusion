@@ -84,21 +84,23 @@ Module Contents
    MolCraftDiff analyze featurize gen_xyz/ --backend ssl3d --ssl3d-checkpoint runs/last.ckpt --device cuda
 
 
-.. py:function:: metrics(input_dir, output, metrics_type, recheck_topo, check_strain, portion, mol_converter, skip_atoms, split, timeout, reference_mol, mol_idx)
+.. py:function:: metrics(input_path, output, filter_column, filtered_output, metrics_type, recheck_topo, check_strain, portion, mol_converter, skip_atoms, split, timeout, reference_mol, mol_idx)
 
-   Compute validity and connectivity metrics for XYZ files.
+   Compute validity and connectivity metrics for XYZ files or ASE DB rows.
 
    
    Metrics types:
-     all          Run all metrics (core + posebuster + geom_revised)
+     all          Run all metrics (core + posebuster + geom_revised + shepherd)
      core         Basic validity checks (connectivity, atom stability)
      posebuster   PoseBusters checks (bond lengths, angles, clashes)
      geom_revised Aromatic-aware stability metrics
+     shepherd     Drug-likeness and conditional similarity metrics
 
    
    .. rubric:: Examples
 
    MolCraftDiff analyze metrics gen_xyz/
+   MolCraftDiff analyze metrics molecules.db --metrics core --filter valid_connected
    MolCraftDiff analyze metrics gen_xyz/ --metrics posebuster
    MolCraftDiff analyze metrics gen_xyz/ --metrics geom_revised --mol-converter openbabel
    MolCraftDiff analyze metrics gen_xyz/ --metrics shepherd
@@ -120,9 +122,9 @@ Module Contents
    MolCraftDiff analyze optimize gen_xyz/ --o optimized/ --level gfn2
 
 
-.. py:function:: xtb_electronic(input_dir, output, method, charge, n_unpaired, solvent, properties, corrected, timeout, n_jobs, output_format)
+.. py:function:: xtb_electronic(input_path, output, method, charge, n_unpaired, auto_charge, solvent, properties, corrected, timeout, n_jobs, output_format, annotate_db, verbose)
 
-   Compute XTB electronic properties for XYZ files.
+   Compute XTB electronic properties for XYZ files or ASE DB rows.
 
    Uses morfeus to calculate quantum-chemical descriptors at the GFN-xTB level.
 
@@ -151,8 +153,11 @@ Module Contents
    .. rubric:: Examples
 
    MolCraftDiff analyze xtb-electronic gen_xyz/
+   MolCraftDiff analyze xtb-electronic molecules.db -p all
+   MolCraftDiff analyze xtb-electronic molecules.db -p all --annotate-db
    MolCraftDiff analyze xtb-electronic gen_xyz/ -p energy -p reactivity
    MolCraftDiff analyze xtb-electronic gen_xyz/ -s water -p solvation
+   MolCraftDiff analyze xtb-electronic gen_xyz/ --method ptb --auto-charge
    MolCraftDiff analyze xtb-electronic gen_xyz/ -p all -f ase -o results.db
 
 

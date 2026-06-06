@@ -39,26 +39,12 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: batch_xtb_electronic(input_dir: str, output_path: str | None = None, output_format: str = 'csv', method: int | str = 2, charge: int = 0, n_unpaired: int = 0, solvent: str | None = None, properties: list[str] | None = None, corrected: bool = True, timeout: int = 120, n_jobs: int = 1) -> pandas.DataFrame
+.. py:function:: batch_xtb_electronic(input_dir: str, output_path: str | None = None, output_format: str = 'csv', method: int | str = 2, charge: int = 0, n_unpaired: int = 0, solvent: str | None = None, properties: list[str] | None = None, corrected: bool = True, timeout: int = 120, n_jobs: int = 1, auto_charge: bool = False, annotate_db: bool = False) -> pandas.DataFrame
 
-   Batch compute XTB electronic properties for XYZ files in a directory.
-
-   :param input_dir: Directory containing XYZ files.
-   :param output_path: Output file path (without extension for 'all' format).
-   :param output_format: Output format ("csv", "json", "ase", or "all").
-   :param method: XTB method (1=GFN1, 2=GFN2).
-   :param charge: Molecular charge.
-   :param n_unpaired: Number of unpaired electrons.
-   :param solvent: Solvent name for ALPB implicit solvation.
-   :param properties: Property groups to compute.
-   :param corrected: Kept for API compatibility; has no effect.
-   :param timeout: Timeout per molecule in seconds.
-   :param n_jobs: Number of parallel jobs.
-
-   :returns: DataFrame with molecular-level results.
+   Batch compute XTB electronic properties for XYZ files or ASE DB rows.
 
 
-.. py:function:: compute_xtb_electronic(xyz_path: str, method: int | str = 2, charge: int = 0, n_unpaired: int = 0, solvent: str | None = None, properties: list[str] | None = None, corrected: bool = True) -> dict[str, Any]
+.. py:function:: compute_xtb_electronic(xyz_path: str, method: int | str = 2, charge: int = 0, n_unpaired: int = 0, solvent: str | None = None, properties: list[str] | None = None, corrected: bool = True, auto_charge: bool = False) -> dict[str, Any]
 
    Compute XTB electronic properties for a single XYZ file.
 
@@ -74,6 +60,8 @@ Module Contents
    :param corrected: Kept for API compatibility. Previously applied morfeus
                      empirical IP/EA corrections; now has no effect (raw ΔE values
                      are returned).
+   :param auto_charge: For PTB only, infer +1/-1 from XYZ chemistry when a
+                       neutral singlet request has parity-incompatible electron count.
 
    :returns: Dictionary with computed properties and metadata.
 

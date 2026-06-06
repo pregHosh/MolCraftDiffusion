@@ -27,8 +27,8 @@ Functions
    MolecularDiffusion.cli.generate.generate
    MolecularDiffusion.cli.generate.generate_main
    MolecularDiffusion.cli.generate.is_rank_zero
+   MolecularDiffusion.cli.generate.load_lightning_model
    MolecularDiffusion.cli.generate.load_model
-   MolecularDiffusion.cli.generate.load_model_lightning
    MolecularDiffusion.cli.generate.log_hyperparameters
 
 
@@ -50,22 +50,18 @@ Module Contents
    Check if current process is rank zero.
 
 
-.. py:function:: load_model(chkpt_directory, task_config=None, atom_vocab=None, total_step=0)
+.. py:function:: load_lightning_model(chkpt_path, task_config, atom_vocab=None, total_step=0)
+
+   Load model from Lightning checkpoint (.ckpt).
+
+
+.. py:function:: load_model(chkpt_directory, task_config=None, atom_vocab=None, total_step=0, base_chkpt_path=None)
 
    Load model from checkpoint directory with auto-detection.
 
-   Tries Lightning (.ckpt) format first; falls back to original engine (.pkl).
-
-
-.. py:function:: load_model_lightning(chkpt_directory: str, task_config=None, total_step: int = 0)
-
-   Load a task from a PyTorch Lightning checkpoint (.ckpt).
-
-   Uses EngineLightning.load_from_checkpoint which rebuilds the task from the
-   model_config stored in hyper_parameters, then applies on_load_checkpoint to
-   restore distribution models.  The EMA model is initialised manually here
-   because on_train_start (where Lightning normally does it) is never called
-   during inference.
+   If the selected checkpoint is a LoRA-only delta (marked `lora_only`), `base_chkpt_path`
+   (the pretrained checkpoint, file or directory) is required and the model is
+   reconstructed as base weights + LoRA delta.
 
 
 .. py:function:: log_hyperparameters(object_dict: dict)

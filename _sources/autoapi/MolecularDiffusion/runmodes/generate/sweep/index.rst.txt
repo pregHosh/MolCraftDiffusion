@@ -34,6 +34,7 @@ MolecularDiffusion.runmodes.generate.sweep
        n_initial: 5            # Optuna warm-up trials before GP/TPE uses surrogate
        random_state: 0
        sampler: gp             # gp (default, requires optuna>=3.6) or tpe
+     early_fail_batches: 3      # optional: stop generation after N failed batches before any success
 
    collect format
    --------------
@@ -55,6 +56,14 @@ MolecularDiffusion.runmodes.generate.sweep
 
 
 
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.generate.sweep.RunResult
+
+
 Functions
 ---------
 
@@ -65,6 +74,24 @@ Functions
 
 Module Contents
 ---------------
+
+.. py:class:: RunResult
+
+   .. py:attribute:: early_stopped
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: ok
+      :type:  bool
+
+
+   .. py:attribute:: reason
+      :type:  str
+      :value: ''
+
+
 
 .. py:function:: main(argv: list[str] | None = None) -> None
 

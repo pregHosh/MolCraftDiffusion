@@ -462,14 +462,14 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.featurize" title="MolecularDiffusion.cli.analyze.featurize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">featurize</span></code></a>(input_dir, backend, output, recursive, ...)</p></td>
 <td><p>Featurize 3D XYZ molecules into fixed-size feature vectors.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.metrics" title="MolecularDiffusion.cli.analyze.metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">metrics</span></code></a>(input_dir, output, metrics_type, recheck_topo, ...)</p></td>
-<td><p>Compute validity and connectivity metrics for XYZ files.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.metrics" title="MolecularDiffusion.cli.analyze.metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">metrics</span></code></a>(input_path, output, filter_column, ...)</p></td>
+<td><p>Compute validity and connectivity metrics for XYZ files or ASE DB rows.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.optimize" title="MolecularDiffusion.cli.analyze.optimize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimize</span></code></a>(input_path, output_path, charge, level, ...)</p></td>
 <td><p>Optimize molecular geometries (XYZ or ASE DB).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.xtb_electronic" title="MolecularDiffusion.cli.analyze.xtb_electronic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xtb_electronic</span></code></a>(input_dir, output, method, charge, ...)</p></td>
-<td><p>Compute XTB electronic properties for XYZ files.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.xtb_electronic" title="MolecularDiffusion.cli.analyze.xtb_electronic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xtb_electronic</span></code></a>(input_path, output, method, charge, ...)</p></td>
+<td><p>Compute XTB electronic properties for XYZ files or ASE DB rows.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.xyz2mol" title="MolecularDiffusion.cli.analyze.xyz2mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz2mol</span></code></a>(xyz_dir, input_csv, label, timeout, bits, verbose)</p></td>
 <td><p>Convert XYZ files to SMILES and extract fingerprints/scaffolds.</p></td>
@@ -527,19 +527,21 @@ MolCraftDiff analyze featurize gen_xyz/ –backend ssl3d –ssl3d-checkpoint run
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.cli.analyze.metrics">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.analyze.</span></span><span class="sig-name descname"><span class="pre">metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recheck_topo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_strain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">portion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mol_converter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_mol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mol_idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.analyze.metrics" title="Link to this definition">¶</a></dt>
-<dd><p>Compute validity and connectivity metrics for XYZ files.</p>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.analyze.</span></span><span class="sig-name descname"><span class="pre">metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filtered_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recheck_topo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_strain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">portion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mol_converter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_mol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mol_idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.analyze.metrics" title="Link to this definition">¶</a></dt>
+<dd><p>Compute validity and connectivity metrics for XYZ files or ASE DB rows.</p>
 <p>
 Metrics types:</p>
 <blockquote>
-<div><p>all          Run all metrics (core + posebuster + geom_revised)
+<div><p>all          Run all metrics (core + posebuster + geom_revised + shepherd)
 core         Basic validity checks (connectivity, atom stability)
 posebuster   PoseBusters checks (bond lengths, angles, clashes)
-geom_revised Aromatic-aware stability metrics</p>
+geom_revised Aromatic-aware stability metrics
+shepherd     Drug-likeness and conditional similarity metrics</p>
 </div></blockquote>
 <p>
 .. rubric:: Examples</p>
 <p>MolCraftDiff analyze metrics gen_xyz/
+MolCraftDiff analyze metrics molecules.db –metrics core –filter valid_connected
 MolCraftDiff analyze metrics gen_xyz/ –metrics posebuster
 MolCraftDiff analyze metrics gen_xyz/ –metrics geom_revised –mol-converter openbabel
 MolCraftDiff analyze metrics gen_xyz/ –metrics shepherd
@@ -561,8 +563,8 @@ MolCraftDiff analyze optimize gen_xyz/ –o optimized/ –level gfn2</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.cli.analyze.xtb_electronic">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.analyze.</span></span><span class="sig-name descname"><span class="pre">xtb_electronic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_unpaired</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solvent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrected</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_format</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.analyze.xtb_electronic" title="Link to this definition">¶</a></dt>
-<dd><p>Compute XTB electronic properties for XYZ files.</p>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.analyze.</span></span><span class="sig-name descname"><span class="pre">xtb_electronic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_unpaired</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_charge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solvent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrected</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_format</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotate_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.analyze.xtb_electronic" title="Link to this definition">¶</a></dt>
+<dd><p>Compute XTB electronic properties for XYZ files or ASE DB rows.</p>
 <p>Uses morfeus to calculate quantum-chemical descriptors at the GFN-xTB level.</p>
 <p>
 Property groups (molecular-level):</p>
@@ -591,8 +593,11 @@ all   Generate all three formats</p>
 <p>
 .. rubric:: Examples</p>
 <p>MolCraftDiff analyze xtb-electronic gen_xyz/
+MolCraftDiff analyze xtb-electronic molecules.db -p all
+MolCraftDiff analyze xtb-electronic molecules.db -p all –annotate-db
 MolCraftDiff analyze xtb-electronic gen_xyz/ -p energy -p reactivity
 MolCraftDiff analyze xtb-electronic gen_xyz/ -s water -p solvation
+MolCraftDiff analyze xtb-electronic gen_xyz/ –method ptb –auto-charge
 MolCraftDiff analyze xtb-electronic gen_xyz/ -p all -f ase -o results.db</p>
 </dd></dl>
 

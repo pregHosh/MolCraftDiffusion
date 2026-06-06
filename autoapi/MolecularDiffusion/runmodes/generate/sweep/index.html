@@ -465,6 +465,7 @@ random_state: 0
 sampler: gp             # gp (default, requires optuna&gt;=3.6) or tpe</p>
 </dd>
 </dl>
+<p>early_fail_batches: 3      # optional: stop generation after N failed batches before any success</p>
 </dd>
 </dl>
 </section>
@@ -495,6 +496,18 @@ Values accept a list or a range string “start:stop:step” (stop inclusive).
 eval_script can be a string (single script) or a list (run in sequence, each
 receiving the output directory as its only argument).</p>
 </section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.generate.sweep.RunResult" title="MolecularDiffusion.runmodes.generate.sweep.RunResult"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RunResult</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -509,6 +522,26 @@ receiving the output directory as its only argument).</p>
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="MolecularDiffusion.runmodes.generate.sweep.RunResult">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.generate.sweep.</span></span><span class="sig-name descname"><span class="pre">RunResult</span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.generate.sweep.RunResult" title="Link to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.runmodes.generate.sweep.RunResult.early_stopped">
+<span class="sig-name descname"><span class="pre">early_stopped</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.generate.sweep.RunResult.early_stopped" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.runmodes.generate.sweep.RunResult.ok">
+<span class="sig-name descname"><span class="pre">ok</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><a class="headerlink" href="#MolecularDiffusion.runmodes.generate.sweep.RunResult.ok" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.runmodes.generate.sweep.RunResult.reason">
+<span class="sig-name descname"><span class="pre">reason</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.generate.sweep.RunResult.reason" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.runmodes.generate.sweep.main">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.generate.sweep.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.generate.sweep.main" title="Link to this definition">¶</a></dt>
@@ -593,8 +626,15 @@ receiving the output directory as its only argument).</p>
 <li><a class="reference internal" href="#sweep-yaml-keys">Sweep YAML keys</a></li>
 <li><a class="reference internal" href="#search-format">search format</a></li>
 <li><a class="reference internal" href="#collect-format">collect format</a></li>
+<li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#MolecularDiffusion.runmodes.generate.sweep.RunResult"><code class="docutils literal notranslate"><span class="pre">RunResult</span></code></a><ul>
+<li><a class="reference internal" href="#MolecularDiffusion.runmodes.generate.sweep.RunResult.early_stopped"><code class="docutils literal notranslate"><span class="pre">RunResult.early_stopped</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.runmodes.generate.sweep.RunResult.ok"><code class="docutils literal notranslate"><span class="pre">RunResult.ok</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.runmodes.generate.sweep.RunResult.reason"><code class="docutils literal notranslate"><span class="pre">RunResult.reason</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.generate.sweep.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 </ul>
 </li>

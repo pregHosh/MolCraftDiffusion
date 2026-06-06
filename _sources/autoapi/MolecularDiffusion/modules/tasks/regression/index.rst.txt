@@ -59,7 +59,7 @@ Module Contents
 
 
 
-.. py:class:: ProperyPrediction(model, task=(), include_charge=False, criterion='mse', metric=('mae', 'rmse'), loss_param=None, num_mlp_layer=1, normalization=True, num_class=None, mlp_batch_norm=False, condition_time=False, prediction_mlp_type='pernode', prediction_activation='relu', readout='mean', mlp_dropout=0, std_mean=None, verbose=0, load_mlps_layer=0)
+.. py:class:: ProperyPrediction(model, task=(), include_charge=False, criterion='mse', metric=('mae', 'rmse'), loss_param=None, num_mlp_layer=1, normalization=True, num_class=None, mlp_batch_norm=False, condition_time=False, prediction_mlp_type='pernode', prediction_activation='relu', readout='mean', mlp_dropout=0, mlp_hidden_dim=None, std_mean=None, verbose=0, load_mlps_layer=0)
 
    Bases: :py:obj:`MolecularDiffusion.modules.tasks.task.Task`, :py:obj:`MolecularDiffusion.core.Configurable`
 
@@ -182,6 +182,11 @@ Module Contents
 
 
    .. py:attribute:: mlp_final
+      :value: None
+
+
+
+   .. py:attribute:: mlp_hidden_dim
       :value: None
 
 

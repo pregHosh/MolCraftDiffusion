@@ -19,6 +19,7 @@ Classes
 
    MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative
    MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction
+   MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPredictionPointCloud
 
 
 Functions
@@ -250,7 +251,7 @@ Module Contents
 
 
 
-   .. py:method:: sample_hybrid_guidance(target_function, target_value=[0], negative_target_value=[], nodesxsample=torch.tensor([10]), gg_scale=1, cfg_scale=1, cfg_scale_schedule=None, max_norm=10, std=1.0, fix_noise=False, scheduler=None, guidance_at=1, guidance_stop=0, guidance_ver=1, n_backwards=0, h_weight=1, x_weight=1, condition_tensor=None, condition_mode=None, inpaint_cfgs={}, outpaint_cfgs={}, n_frames=0, debug=False)
+   .. py:method:: sample_hybrid_guidance(target_function, target_value=[0], negative_target_value=[], nodesxsample=torch.tensor([10]), gg_scale=1, cfg_scale=1, cfg_scale_schedule=None, max_norm=10, std=1.0, fix_noise=False, scheduler=None, guidance_at=1, guidance_stop=0, guidance_ver=1, n_backwards=0, h_weight=1, x_weight=1, condition_tensor=None, condition_mode=None, inpaint_cfgs={}, outpaint_cfgs={}, use_noised_conditioning=False, n_frames=0, debug=False)
 
               Sample molecular structures with guidance from target function and conditional property.
 
@@ -356,7 +357,9 @@ Module Contents
 
 
 
-   .. py:property:: reference_scaffold
+   .. py:attribute:: reference_scaffold
+      :value: None
+
 
 
    .. py:attribute:: sp_regularizer
@@ -609,6 +612,47 @@ Module Contents
 
    .. py:attribute:: verbose
       :value: 0
+
+
+
+.. py:class:: GuidanceModelPredictionPointCloud(*args, **kwargs)
+
+   Bases: :py:obj:`GuidanceModelPrediction`
+
+
+   PointCloud-optimized subclass of GuidanceModelPrediction for EGCL/EGNN.
+
+   Accepts dense tensor inputs (B, N, D) directly without requiring PyG Data objects.
+   Generates fully-connected edge indices on-the-fly for the EGNN backbone.
+
+   Works with both pointcloud batch format (training) and raw tensors (inference).
+
+
+   .. py:method:: predict(batch, all_loss=None, metric=None, evaluate=False)
+
+      Prediction for pointcloud batch format.
+
+      Batch format: {coords, node_feature, charges, node_mask, edge_mask, natoms, ...}
+
+
+
+   .. py:method:: predict_dense(x, h, node_mask, t)
+
+      Dense tensor prediction for gradient guidance.
+
+      :param x: Coordinates (B, N, 3)
+      :param h: Node features (B, N, F) - should include atom types, charges, etc.
+      :param node_mask: Valid node mask (B, N, 1) or (B, N)
+      :param t: Timestep (B, 1) or scalar - normalized float in [0, 1]
+
+      :returns: Model predictions (B, num_targets)
+      :rtype: pred
+
+
+
+   .. py:method:: target(batch)
+
+      Override target extraction for pointcloud batch format.
 
 
 
