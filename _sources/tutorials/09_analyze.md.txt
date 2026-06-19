@@ -1,5 +1,7 @@
 # Tutorial 9: Analyze Module - 3D Molecular Structure Analysis
 
+> **Prerequisites:** [Tutorial 5 — Generation Overview](05_generation_overview.md) · **You'll learn:** optimizing, validating, comparing, and featurizing generated structures · **Next:** [Tutorial 10 — Generation Sweeps](10_generation_sweeps.md)
+
 This tutorial covers the **analyze** module, which provides tools for post-generation analysis and validation of 3D molecular structures.
 
 ---

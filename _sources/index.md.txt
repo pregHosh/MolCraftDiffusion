@@ -63,23 +63,15 @@ MolCraftDiff generate my_gen
 :caption: Getting Started
 
 installation
+compute_guide
+glossary
 ```
 
 ```{toctree}
 :maxdepth: 1
 :caption: Tutorials
 
-tutorials/00_data_preparation
-tutorials/01_training_diffusion
-tutorials/02_training_regressor
-tutorials/03_training_guidance
-tutorials/04_finetuning
-tutorials/05_generation_overview
-tutorials/06_structure_guided
-tutorials/07_property_directed
-tutorials/08_eval_predict
-tutorials/09_analyze
-tutorials/10_generation_sweeps
+tutorials/index
 ```
 
 ```{toctree}

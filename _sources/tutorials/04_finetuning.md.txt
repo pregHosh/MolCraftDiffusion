@@ -1,8 +1,14 @@
 # Tutorial 4: Fine-Tuning a Diffusion Model
 
-Fine-tuning adapts a pre-trained model to a specific chemical space or teaches it new capabilities, like conditional generation. 
+> **Prerequisites:** [Tutorial 1 — Training a Diffusion Model](01_training_diffusion.md) · **You'll learn:** adapting a pretrained model to new data, adding conditions, or specializing for outpainting · **Next:** [Tutorial 5 — Generation Overview](05_generation_overview.md)
+
+Fine-tuning adapts a pre-trained model to a specific chemical space or teaches it new capabilities, like conditional generation.
 
 **This tutorial assumes you are familiar with the override-only configuration workflow from [Tutorial 1](01_training_diffusion.md).**
+
+:::{warning}
+**Architecture must match exactly.** The model architecture in your config (`hidden_size`, `num_layers`, attention heads, etc.) must be identical to the checkpoint you are loading. A mismatch causes a hard failure at checkpoint load time — not during training. Always start from the `diffusion_pretrained` task template when fine-tuning one of the provided pretrained models, and do not change model-size parameters between runs.
+:::
 
 ## Core Fine-Tuning Principles
 
@@ -115,8 +121,9 @@ tasks:
 | :--- | :--- | :--- |
 | `tasks.reference_indices` | `[0, 1, 2, 3, 4, 5]` | A list of 0-indexed atom indices that define the common scaffold (the "core") of the molecules in your dataset. These atoms will be treated as the fixed part of the molecule during training. |
 
-> **Important Data Preprocessing Note:**
-> For this fine-tuning scenario to work correctly, you **must** preprocess your dataset to ensure that the core atom indices are consistent across all molecules. For example, if your scaffold is a benzene ring, the atoms of the ring should have the same indices (e.g., 0 through 5) in every molecule's coordinate file in your training set.
+:::{important}
+**Data preprocessing.** For this fine-tuning scenario to work correctly, you **must** preprocess your dataset to ensure that the core atom indices are consistent across all molecules. For example, if your scaffold is a benzene ring, the atoms of the ring should have the same indices (e.g., 0 through 5) in every molecule's coordinate file in your training set.
+:::
 
 **Example `finetune_outpainting.yaml`:**
 

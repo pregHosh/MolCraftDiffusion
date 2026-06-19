@@ -1,5 +1,7 @@
 # Tutorial 5: Molecule Generation Overview
 
+> **Prerequisites:** [Tutorial 1 — Training a Diffusion Model](01_training_diffusion.md) · **You'll learn:** unconditional sampling and the three generation modes · **Next:** [Tutorial 6 — Structure-Guided Generation](06_structure_guided.md)
+
 This tutorial provides an overview of the different ways you can generate molecules using a trained model. The generation process is controlled via the `MolCraftDiff generate` command, which relies on a configuration file to specify the desired behavior.
 
 There are three primary modes for generating molecules:

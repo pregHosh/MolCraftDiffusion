@@ -1,5 +1,7 @@
 # Tutorial 10: Generation Parameter Sweeps
 
+> **Prerequisites:** [Tutorial 6 — Structure-Guided](06_structure_guided.md) / [Tutorial 7 — Property-Directed](07_property_directed.md) · **You'll learn:** automating grid and Bayesian sweeps over controlled-generation parameters with automatic metric collection · **Next:** [Workflows](../workflows/index.md)
+
 This tutorial explains how to run generation sweeps with the packaged sweep module:
 
 ```text

@@ -1,5 +1,7 @@
 # Tutorial 3: Training a Time-Aware Guidance Model
 
+> **Prerequisites:** [Tutorial 2 — Training a Regressor](02_training_regressor.md) · **You'll learn:** training a time-aware regressor on noisy data for gradient guidance · **Next:** [Tutorial 4 — Fine-Tuning](04_finetuning.md)
+
 Training a guidance model is very similar to training a standard regressor (Tutorial 02), with one key difference: **the model is trained on noisy data.**
 
 This process makes the model "time-aware," meaning it learns to predict properties of a molecule at various stages of the diffusion denoising process (from noisy to clean). This is the crucial feature that allows it to effectively guide a generative model.
@@ -22,7 +24,7 @@ defaults:
 
 Most settings are identical to the regressor setup. The main difference is the addition of "Noise Injection" parameters.
 
-#### **Essential Paths**
+#### Essential Paths
 
 | Parameter | Example Override | Description |
 | :--- | :--- | :--- |
@@ -31,13 +33,14 @@ Most settings are identical to the regressor setup. The main difference is the a
 
 *(Note: Data caching and preparation work identically to the standard diffusion and regression pipelines. See [Tutorial 0](00_data_preparation.md) and [Tutorial 1](01_training_diffusion.md).)*
 
-#### **Data Settings**
+#### Data Settings
+
 | Parameter | Example Override | Notes / Recommendations |
 | :--- | :--- | :--- |
 | `data.batch_size` | `data: {batch_size: 128}` | A larger batch size can often be used for this task. |
 | `data.data_type` | `data: {data_type: "pyg"}` | **CRITICAL:** For regression and guidance tasks, the data type must be set to `pyg`. |
 
-#### **Guidance Task Hyperparameters**
+#### Guidance Task Hyperparameters
 
 | Parameter | Example Override | Notes / Recommendations |
 | :--- | :--- | :--- |
@@ -46,7 +49,8 @@ Most settings are identical to the regressor setup. The main difference is the a
 | `tasks.num_layers` | `tasks: {num_layers: 1}` | For property prediction, it is preferred to have just one block of EGCL. |
 | `tasks.num_sublayers`| `tasks: {num_sublayers: 4}` | Inside the single EGCL block, use multiple sublayers for a deeper model. |
 
-#### **Noise Injection Settings (The Key Difference)**
+#### Noise Injection Settings (The Key Difference)
+
 These parameters control how noise is added to the molecules during training.
 
 | Parameter | Example Override | Notes / Recommendations |

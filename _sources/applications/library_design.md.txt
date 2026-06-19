@@ -16,7 +16,7 @@ Use library design when you want to:
 
 The BINOL-Cp example from the manuscript follows this pattern: a fixed ligand scaffold is expanded into a broader virtual library, then analyzed with downstream steric descriptors.
 
-![Library design workflow](../asset/applications/library_design_fig.png)
+![Library design workflow](../asset/virlib_gen.png)
 
 *Conceptual view of the library-design workflow from the paper: scaffold-based generation is used to create Cp ligand variants, which are then optimized and analyzed in descriptor space.*
 

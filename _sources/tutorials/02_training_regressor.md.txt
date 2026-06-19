@@ -1,5 +1,7 @@
 # Tutorial 2: Training a Regressor Model
 
+> **Prerequisites:** [Tutorial 1 — Training a Diffusion Model](01_training_diffusion.md) · **You'll learn:** training a property-prediction model (standalone or as a guidance backbone) · **Next:** [Tutorial 3 — Training a Guidance Model](03_training_guidance.md)
+
 This tutorial explains how to train a model to predict specific molecular properties (e.g., energy, solubility). This regressor model can be used as a standalone predictor or, more powerfully, as a guidance model to steer molecule generation towards desired property values (as we will see in Tutorial 07).
 
 ## Configuration
@@ -27,13 +29,14 @@ Below are the key parameters and recommended settings to override when training 
 
 *(Note: Ensure you have prepared your database as described in [Tutorial 0: Data Preparation & Management](00_data_preparation.md).)*
 
-#### **Data Settings**
+#### Data Settings
+
 | Parameter | Example Override | Notes / Recommendations |
 | :--- | :--- | :--- |
 | `data.batch_size` | `data: {batch_size: 128}` | A larger batch size can often be used for this task. |
 | `data.data_type` | `data: {data_type: "pyg"}` | **CRITICAL:** For regression and guidance tasks, the data type must be set to `pyg`. |
 
-#### **Regression Task Hyperparameters**
+#### Regression Task Hyperparameters
 
 | Parameter | Example Override | Notes / Recommendations |
 | :--- | :--- | :--- |
@@ -43,7 +46,7 @@ Below are the key parameters and recommended settings to override when training 
 | `tasks.num_layers` | `tasks: {num_layers: 1}` | For property prediction, it is preferred to have just one block of EGCL. |
 | `tasks.num_sublayers`| `tasks: {num_sublayers: 4}` | Inside the single EGCL block, use multiple sublayers for a deeper model. |
 
-#### **Trainer Settings for Regression**
+#### Trainer Settings for Regression
 
 | Parameter | Example Override | Notes / Recommendations |
 | :--- | :--- | :--- |
@@ -52,7 +55,7 @@ Below are the key parameters and recommended settings to override when training 
 | `trainer.scheduler` | `trainer: {scheduler: "reducelronplateau"}` | `reducelronplateau` is highly recommended. It automatically lowers the learning rate when validation loss stops improving. |
 | `trainer.ema_decay` | `trainer: {ema_decay: 0.0}` | **Important:** Exponential Moving Average (EMA) is typically disabled for regressor training by setting the decay to `0.0`. |
 
-#### **Experiment Logging**
+#### Experiment Logging
 
 | Parameter | Example Override | Description |
 | :--- | :--- | :--- |

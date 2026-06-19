@@ -1,6 +1,12 @@
 # Tutorial 7: Property-Directed Generation
 
+> **Prerequisites:** [Tutorial 5 — Generation Overview](05_generation_overview.md) (plus a guidance model from [Tutorial 2](02_training_regressor.md)/[Tutorial 3](03_training_guidance.md) for GG) · **You'll learn:** CFG, Gradient Guidance, and hybrid guidance · **Next:** [Tutorial 8 — Predict & Evaluate](08_eval_predict.md)
+
 This tutorial covers advanced generation techniques that steer the process towards desired chemical properties.
+
+:::{warning}
+**Guidance models must match the base diffusion model.** For Gradient Guidance (GG) and hybrid CFG/GG, the regressor and guidance model must be trained with the **same `diffusion_steps` and noise schedule** as the base diffusion model. A mismatch means the guidance model receives noise levels it was never trained on, producing erratic or broken gradients. Check that `diffusion_steps` and `noise_schedule` in your guidance config match the base model's training config exactly.
+:::
 
 ## Contents
 

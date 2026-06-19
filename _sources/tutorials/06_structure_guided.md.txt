@@ -1,6 +1,12 @@
 # Tutorial 6: Structure-Guided Generation
 
+> **Prerequisites:** [Tutorial 5 — Generation Overview](05_generation_overview.md) · **You'll learn:** inpainting and outpainting with 3D geometric constraints, and how to tune every parameter · **Next:** [Tutorial 7 — Property-Directed Generation](07_property_directed.md)
+
 This tutorial explains how to guide molecule generation using structural constraints, such as filling in a missing piece (inpainting) or growing a molecule from a fragment (outpainting).
+
+:::{warning}
+**Atom indices are tied to graph construction.** `mask_node_index` values are 0-indexed positions in the atom list of your XYZ file. If you preprocess the molecule (reorder atoms, remove hydrogens, add atoms) the indices will shift and the mask will apply to the wrong atoms — silently. Always double-check indices against the exact XYZ file passed to `reference_structure_path`, and set `use_noised_conditioning: true` only if the base model was trained with noised conditioning (check the training config).
+:::
 
 ## Contents
 
@@ -188,7 +194,9 @@ Controls when the overlap-push constraint is active during denoising. The constr
 
 **Leave at the default** (`0.8`) in most cases. Only reduce it if the scaffold is very small and the constraints are visibly over-correcting the trajectory.
 
-> **Note:** The bonding sub-constraints (enforce + ensure_intact) are intentionally disabled for inpainting. Connector topology is determined from the molecular graph, so proximity-pull logic is not needed.
+:::{note}
+The bonding sub-constraints (enforce + ensure_intact) are intentionally disabled for inpainting. Connector topology is determined from the molecular graph, so proximity-pull logic is not needed.
+:::
 
 #### `scale_factor` (inpainting)
 

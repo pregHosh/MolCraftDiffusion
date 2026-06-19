@@ -13,7 +13,7 @@ Inverse design uses MolCraftDiffusion to generate molecules that **satisfy a pre
 
 Use this route when you want to **bias generation toward a numerical target** such as an energy score, excitation-related objective, or another learned molecular property.
 
-![Property-directed inverse design workflow](../asset/applications/inverse_design_property_fig.png)
+![Property-directed inverse design workflow](../asset/prop_gen_wf.png)
 
 *Conceptual view: the diffusion model is combined with guidance models so generation is biased toward molecules with the desired target profile, followed by ranking and computational validation.*
 
@@ -58,7 +58,7 @@ MolCraftDiffusion supports this through **classifier-free guidance (CFG)**, **gr
 
 Use this route when the design objective is primarily **structural** — for example a target distance, angle, or spatial arrangement between functional groups.
 
-![Geometry-targeted inverse design workflow](../asset/applications/inverse_design_geom_fig.png)
+![Geometry-targeted inverse design workflow](../asset/geom_target_gen.png)
 
 *Conceptual view: a core motif is preserved while structure-guided generation builds candidates that satisfy a target 3D arrangement.*
 

@@ -1,5 +1,7 @@
 # Tutorial 1: Training a Diffusion Model
 
+> **Prerequisites:** [Tutorial 0 — Data Preparation](00_data_preparation.md) · **You'll learn:** configuring and launching a diffusion training run with the override-only workflow · **Next:** [Tutorial 2 — Training a Regressor](02_training_regressor.md)
+
 This tutorial explains how to configure and run a training job for a diffusion model from scratch. We will focus on using a single configuration file for your experiment to override the project's default settings.
 
 ## The "Override-Only" Workflow
@@ -67,7 +69,7 @@ defaults:
 
 This is the most important step. You will override the default parameters to configure your specific experiment. Below are the most common parameters you will want to set.
 
-#### **Essential Paths**
+#### Essential Paths
 
 | Parameter | Example Override in `my_first_run.yaml` | Description |
 | :--- | :--- | :--- |
@@ -90,7 +92,7 @@ The first time you run a training job, the script processes your raw dataset (`.
 - Set a descriptive `dataset_name` for each new dataset you work with.
 - This ensures that you can easily manage and reuse your processed data without accidentally overwriting or loading the wrong file.
 
-#### **Core Training Hyperparameters**
+#### Core Training Hyperparameters
 
 | Parameter | Example Override | Description |
 | :--- | :--- | :--- |
@@ -99,7 +101,7 @@ The first time you run a training job, the script processes your raw dataset (`.
 | `data.batch_size` | `data: {batch_size: 64}` | Number of molecules per batch. |
 | `seed` | `seed: 42` | Top-level parameter for reproducibility. |
 
-#### **Model & Task Hyperparameters**
+#### Model & Task Hyperparameters
 
 This section defines the model architecture and the specifics of the diffusion task. You can configure several training modes:
 
@@ -124,7 +126,7 @@ This section defines the model architecture and the specifics of the diffusion t
 | `tasks.sp_regularizer_regularizer` | `tasks: {sp_regularizer_regularizer: 'logaritmic'}` | The pacing function. Options: `hard` (default), `linear`, `logaritmic`, `logistic`. |
 | `tasks.sp_regularizer_lambda_` | `tasks: {sp_regularizer_lambda_: 1}` | A key parameter that controls the learning pace. |
 
-#### **Experiment Logging**
+#### Experiment Logging
 
 You can control how results are logged by overriding parameters under the `logger:` key. The most important choice is whether to log to local files or to [Weights & Biases](https://wandb.ai/) (`wandb`).
 

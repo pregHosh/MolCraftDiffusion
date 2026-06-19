@@ -1,0 +1,129 @@
+# Tutorials
+
+A hands-on walkthrough of MolCraftDiffusion, ordered as a learning path: **prepare data → train → generate → evaluate**. Each tutorial is self-contained, but they build on one another, so first-time users should follow them in order.
+
+:::{tip}
+New here? Start with [Installation](../installation.md), then work through **Data Preparation → Training a Diffusion Model → Generation Overview**. The rest are optional deep-dives you can reach for when you need them.
+:::
+
+## 1 · Prepare
+
+:::{grid} 1 2 2 2
+:gutter: 3
+
+:::{grid-item-card} 0 · Data Preparation
+:link: 00_data_preparation
+:link-type: doc
+
+Compile raw `.xyz` files into ASE databases, featurize, augment, and wire them into the `DataModule`.
+:::
+
+:::
+
+## 2 · Train
+
+:::{grid} 1 2 2 3
+:gutter: 3
+
+:::{grid-item-card} 1 · Diffusion Model
+:link: 01_training_diffusion
+:link-type: doc
+
+Train a 3D molecular diffusion model from scratch with the override-only config workflow.
+:::
+
+:::{grid-item-card} 2 · Regressor
+:link: 02_training_regressor
+:link-type: doc
+
+Train a property predictor — a standalone model and the basis for gradient guidance.
+:::
+
+:::{grid-item-card} 3 · Guidance Model
+:link: 03_training_guidance
+:link-type: doc
+
+Train a time-aware regressor on noisy data to steer generation toward target properties.
+:::
+
+:::{grid-item-card} 4 · Fine-Tuning
+:link: 04_finetuning
+:link-type: doc
+
+Adapt a pretrained model to a new chemical space, add conditions, or specialize for outpainting.
+:::
+
+:::
+
+## 3 · Generate
+
+:::{grid} 1 2 2 3
+:gutter: 3
+
+:::{grid-item-card} 5 · Generation Overview
+:link: 05_generation_overview
+:link-type: doc
+
+Unconditional sampling and the three generation modes at a glance.
+:::
+
+:::{grid-item-card} 6 · Structure-Guided
+:link: 06_structure_guided
+:link-type: doc
+
+Inpainting and outpainting with 3D geometric constraints, plus a full parameter-tuning guide.
+:::
+
+:::{grid-item-card} 7 · Property-Directed
+:link: 07_property_directed
+:link-type: doc
+
+Steer generation with Classifier-Free Guidance, Gradient Guidance, or a hybrid of both.
+:::
+
+:::
+
+## 4 · Evaluate & Scale
+
+:::{grid} 1 2 2 3
+:gutter: 3
+
+:::{grid-item-card} 8 · Predict & Evaluate
+:link: 08_eval_predict
+:link-type: doc
+
+Predict properties for new molecules and benchmark a model against a labeled set.
+:::
+
+:::{grid-item-card} 9 · Analyze
+:link: 09_analyze
+:link-type: doc
+
+Post-generation analysis: xTB optimization, validity metrics, RMSD, electronic properties, featurization.
+:::
+
+:::{grid-item-card} 10 · Generation Sweeps
+:link: 10_generation_sweeps
+:link-type: doc
+
+Grid and Bayesian sweeps over controlled-generation parameters with automatic metric collection.
+:::
+
+:::
+
+```{toctree}
+:hidden:
+:maxdepth: 1
+
+00_data_preparation
+01_training_diffusion
+02_training_regressor
+03_training_guidance
+04_finetuning
+05_generation_overview
+06_structure_guided
+07_property_directed
+08_eval_predict
+09_analyze
+10_generation_sweeps
+```

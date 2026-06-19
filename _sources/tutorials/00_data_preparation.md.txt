@@ -1,5 +1,7 @@
 # Tutorial 0: Data Preparation & Management
 
+> **Prerequisites:** [Installation](../installation.md) · **You'll learn:** compiling, featurizing, and augmenting datasets, then loading them into the training engine · **Next:** [Tutorial 1 — Training a Diffusion Model](01_training_diffusion.md)
+
 This tutorial covers the complete data pipeline in `MolecularDiffusion`—from raw 3D structures to training-ready PyTorch datasets. It is divided into two main parts:
 
 1. **The CLI Data Operations (`MolCraftDiff data`)**: How to compile, augment, and featurize your datasets into unified ASE databases.
@@ -152,4 +154,6 @@ data:
   train_ratio: 0.8
 ```
 
-> **Note on Caching**: The first time the engine runs, it parses your DB and caches the PyTorch tensors as `data/processed_data_my_augmented_dataset.pt`. To force a re-parse, simply delete this `.pt` file.
+:::{note}
+**On caching:** The first time the engine runs, it parses your DB and caches the PyTorch tensors as `data/processed_data_my_augmented_dataset.pt`. To force a re-parse, simply delete this `.pt` file.
+:::

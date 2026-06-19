@@ -1,6 +1,8 @@
 # Tutorial 8: Prediction and Evaluation Modes
 
-This tutorial explains how to use the inference capabilities of the MolecularDiffusion package. There are two main modes for inference:
+> **Prerequisites:** [Tutorial 2 — Training a Regressor](02_training_regressor.md) · **You'll learn:** predicting properties for new molecules and benchmarking a model against a labeled set · **Next:** [Tutorial 9 — Analyze](09_analyze.md)
+
+This tutorial explains how to use the inference capabilities of MolCraftDiffusion. There are two main modes for inference:
 
 1.  **Prediction (`predict`)**: For generating predictions on a set of new molecules (XYZ files) without ground truth labels.
 2.  **Evaluation (`eval-predict`)**: For benchmarking a model against a labeled dataset to calculate error metrics.
@@ -141,9 +143,9 @@ The script calculates predictions and matches them with the ground truth from yo
 *   **`*_kde.png` / `*_hist.png`**: Distribution plots.
 *   **Console Output**: Summary statistics (Mean, Std, Min, Max) for the predictions.
 
-> **⚠️ Important Notice on Data Formats:**
-> 
-> The `eval-predict` command currently **only supports `.csv` files** for ground truth labels. It does **not** natively support extracting ground truth data directly from ASE `.db` files. Ensure you have a generated CSV containing the `"filename"` and property columns.
+:::{important}
+**Data formats.** The `eval-predict` command currently **only supports `.csv` files** for ground truth labels. It does **not** natively support extracting ground truth data directly from ASE `.db` files. Ensure you have a generated CSV containing the `"filename"` and property columns.
+:::
 
 ---
 

@@ -29,3 +29,23 @@ button.copybtn {
 dl.py dd {
     margin-top: 0.25em;
 }
+
+/* Brand: logo is red + blue. Blue is the primary accent (conf.py);
+   reuse the red for warning admonitions so callouts match the wordmark. */
+.admonition.warning,
+.admonition.caution,
+.admonition.danger {
+    border-left-color: #f0524a;
+}
+
+/* sphinx-design cards on the tutorials landing page */
+.sd-card {
+    transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.sd-card:hover {
+    border-color: var(--color-brand-primary);
+    transform: translateY(-2px);
+}
+.sd-card .sd-card-title {
+    font-weight: 600;
+}
