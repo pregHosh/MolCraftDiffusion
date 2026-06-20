@@ -246,14 +246,14 @@
 <li class="toctree-l2"><a class="reference internal" href="workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/visualization.html">Workflow Example: Visualize the Generated Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="workflows/generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/visualization.html">Workflow Example: Visualize the Generated Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -467,6 +467,7 @@ pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;
 
 <span class="c1"># xTB is used by optimize, compare, and xtb-electronic — best installed from conda-forge:</span>
 conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="nv">xtb</span><span class="o">==</span><span class="m">6</span>.7.1<span class="w"> </span>-y
+conda<span class="w"> </span>install<span class="w"> </span>xtb-python<span class="w"> </span>-y
 </pre></div>
 </div>
 <p>If an optional command is called without its dependencies, MolCraftDiffusion exits with a warning and an install hint such as <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">'molcraftdiffusion[analyze]'</span></code>.</p>
@@ -483,6 +484,45 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 </pre></div>
 </div>
 </section>
+</section>
+<section id="which-extras-do-i-need">
+<h2>Which extras do I need?<a class="headerlink" href="#which-extras-do-i-need" title="Link to this heading">¶</a></h2>
+<p>Use this table to decide which optional groups to install before you start:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>What you want to do</p></th>
+<th class="head text-left"><p>Install</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Train or generate only (no data prep, no analysis)</p></td>
+<td class="text-left"><p><em>(base <code class="docutils literal notranslate"><span class="pre">[gpu]</span></code> or <code class="docutils literal notranslate"><span class="pre">[cpu]</span></code> is enough)</em></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Compile raw XYZ files into an ASE database</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[data]</span></code></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Featurize molecules with SOAP descriptors</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[data]</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Run validity/connectivity metrics, xyz2mol, RMSD compare</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[analyze]</span></code></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Run <code class="docutils literal notranslate"><span class="pre">analyze</span> <span class="pre">optimize</span></code> or <code class="docutils literal notranslate"><span class="pre">xtb-electronic</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[analyze]</span></code> + conda <code class="docutils literal notranslate"><span class="pre">xtb</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Run geometric-shape metrics (<code class="docutils literal notranslate"><span class="pre">--metrics</span> <span class="pre">geom_revised</span></code> or <code class="docutils literal notranslate"><span class="pre">all</span></code>)</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[analyze]</span></code> + <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">cosymlib</span></code></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Featurize with UMA neural-network embeddings</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[analyze]</span></code> + fairchem clone (see below)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Pharmacophore-conditioned training/generation</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">open3d</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
 <section id="optional-dependencies">
 <h2>Optional dependencies<a class="headerlink" href="#optional-dependencies" title="Link to this heading">¶</a></h2>
@@ -535,6 +575,57 @@ an explicit error with the clone instruction above. You can also set:</p>
 <h2>Pre-trained models<a class="headerlink" href="#pre-trained-models" title="Link to this heading">¶</a></h2>
 <p>Pre-trained checkpoints are available on <a class="reference external" href="https://huggingface.co/pregH/MolecularDiffusion">Hugging Face</a>.
 We recommend starting from these for any downstream application.</p>
+</section>
+<hr class="docutils" />
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
+<section id="torch-scatter-torch-sparse-import-errors">
+<h3><code class="docutils literal notranslate"><span class="pre">torch_scatter</span></code> / <code class="docutils literal notranslate"><span class="pre">torch_sparse</span></code> import errors<a class="headerlink" href="#torch-scatter-torch-sparse-import-errors" title="Link to this heading">¶</a></h3>
+<p>PyTorch Geometric sparse extensions must be compiled against your <strong>exact</strong> PyTorch + CUDA version. If you see <code class="docutils literal notranslate"><span class="pre">ImportError:</span> <span class="pre">…</span> <span class="pre">torch_scatter</span></code>, rebuild from the correct wheel:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check your torch version first</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import torch; print(torch.__version__, torch.version.cuda)&quot;</span>
+
+<span class="c1"># Then install matching wheels (replace cu124/torch-2.6.0 as needed)</span>
+pip<span class="w"> </span>install<span class="w"> </span>torch-scatter<span class="w"> </span>torch-sparse<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--find-links<span class="w"> </span>https://data.pyg.org/whl/torch-2.6.0+cu124.html
+</pre></div>
+</div>
+<p>If the PyG wheel server does not have a prebuilt wheel for your exact version, you may need to build from source or use a matching Docker image.</p>
+</section>
+<hr class="docutils" />
+<section id="xtb-or-openbabel-not-found-at-runtime">
+<h3>xTB or OpenBabel not found at runtime<a class="headerlink" href="#xtb-or-openbabel-not-found-at-runtime" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">xtb</span></code> and <code class="docutils literal notranslate"><span class="pre">openbabel</span></code> are <strong>not pip-installable</strong> in a way that exposes the executables and shared libraries MolCraftDiffusion relies on. Installing them via pip creates a broken partial install that fails silently during optimization or xyz2mol conversion.</p>
+<p>Always install from conda-forge <strong>before</strong> the pip install:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="nv">xtb</span><span class="o">==</span><span class="m">6</span>.7.1<span class="w"> </span>openbabel<span class="w"> </span>-y
+conda<span class="w"> </span>install<span class="w"> </span>xtb-python<span class="w"> </span>-y
+</pre></div>
+</div>
+<p>If you already have a broken pip install, uninstall it first: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">uninstall</span> <span class="pre">xtb</span> <span class="pre">openbabel</span></code>.</p>
+</section>
+<hr class="docutils" />
+<section id="open3d-import-errors-on-headless-servers">
+<h3><code class="docutils literal notranslate"><span class="pre">open3d</span></code> import errors on headless servers<a class="headerlink" href="#open3d-import-errors-on-headless-servers" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">open3d</span></code> requires an OpenGL context for some of its initialization paths. On headless HPC nodes you may see errors like <code class="docutils literal notranslate"><span class="pre">libGL.so.1:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code>.</p>
+<p>Install the headless variant:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>open3d-cpu
+</pre></div>
+</div>
+<p>or set the environment variable before running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">OPEN3D_CPU_RENDERING</span><span class="o">=</span><span class="nb">true</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="molcraftdiff-command-not-found">
+<h3><code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span></code> command not found<a class="headerlink" href="#molcraftdiff-command-not-found" title="Link to this heading">¶</a></h3>
+<p>Ensure the package is installed in the active conda environment and the environment is activated:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>activate<span class="w"> </span>molcraft
+MolCraftDiff<span class="w"> </span>--help
+</pre></div>
+</div>
+<p>If installed in editable mode, run from the repository root where <code class="docutils literal notranslate"><span class="pre">.project-root</span></code> is visible.</p>
+</section>
 </section>
 </section>
 
@@ -616,12 +707,20 @@ We recommend starting from these for any downstream application.</p>
 <li><a class="reference internal" href="#development-editable-install">Development / editable install</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#which-extras-do-i-need">Which extras do I need?</a></li>
 <li><a class="reference internal" href="#optional-dependencies">Optional dependencies</a><ul>
 <li><a class="reference internal" href="#uma-featurization-backend">UMA featurization backend</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#verifying-the-installation">Verifying the installation</a></li>
 <li><a class="reference internal" href="#pre-trained-models">Pre-trained models</a></li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a><ul>
+<li><a class="reference internal" href="#torch-scatter-torch-sparse-import-errors"><code class="docutils literal notranslate"><span class="pre">torch_scatter</span></code> / <code class="docutils literal notranslate"><span class="pre">torch_sparse</span></code> import errors</a></li>
+<li><a class="reference internal" href="#xtb-or-openbabel-not-found-at-runtime">xTB or OpenBabel not found at runtime</a></li>
+<li><a class="reference internal" href="#open3d-import-errors-on-headless-servers"><code class="docutils literal notranslate"><span class="pre">open3d</span></code> import errors on headless servers</a></li>
+<li><a class="reference internal" href="#molcraftdiff-command-not-found"><code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span></code> command not found</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

@@ -8,7 +8,7 @@
         <link rel="prefetch" href="../_static/logo.png" as="image">
 
     <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
-        <title>Workflow Example: Visualize the Generated Space - MolCraftDiffusion</title>
+        <title>Workflow: Visualize the Generated Chemical Space - MolCraftDiffusion</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -246,14 +246,14 @@
 <li class="toctree-l2"><a class="reference internal" href="transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Workflow Example: Visualize the Generated Space</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Workflow: Visualize the Generated Chemical Space</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
 <li class="toctree-l1"><a class="reference internal" href="transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Workflow Example: Visualize the Generated Space</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Workflow: Visualize the Generated Chemical Space</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -432,48 +432,157 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="workflow-example-visualize-the-generated-space">
-<h1>Workflow Example: Visualize the Generated Space<a class="headerlink" href="#workflow-example-visualize-the-generated-space" title="Link to this heading">¶</a></h1>
-<p>This workflow focuses on understanding the generated molecule set as a distribution rather than only as individual samples. After generation, molecules are featurized and projected into a lower-dimensional representation for interpretation.</p>
+          <section id="workflow-visualize-the-generated-chemical-space">
+<h1>Workflow: Visualize the Generated Chemical Space<a class="headerlink" href="#workflow-visualize-the-generated-chemical-space" title="Link to this heading">¶</a></h1>
+<p>Understanding a set of generated molecules as a <em>distribution</em> — not just as individual samples — is often the most important quality-control step before downstream use. This workflow featurizes your molecules into fixed-size vectors and projects them into a 2D space for visual inspection.</p>
 <section id="conceptual-flow">
 <h2>Conceptual Flow<a class="headerlink" href="#conceptual-flow" title="Link to this heading">¶</a></h2>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span> [Generated 3D molecules]
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span> [Generated 3D molecules]          [Reference / training set]
+            |                                  |
+            v                                  v
+        [Featurize]  ←─────────── same featurizer ────────────┘
             |
             v
-        [Featurize]
+  [Stack feature matrix]
             |
             v
-[Project to low-dimensional space]
+  [UMAP / t-SNE projection]
             |
             v
-[Visualize clusters, spread, and outliers]
+  [Scatter plot — color by source, property, or cluster]
 </pre></div>
 </div>
 </section>
-<section id="what-visualization-helps-you-see">
-<h2>What Visualization Helps You See<a class="headerlink" href="#what-visualization-helps-you-see" title="Link to this heading">¶</a></h2>
-<p>Visualization helps answer questions that summary metrics cannot show clearly:</p>
+<section id="what-visualization-tells-you">
+<h2>What Visualization Tells You<a class="headerlink" href="#what-visualization-tells-you" title="Link to this heading">¶</a></h2>
+<p>Visualization answers questions that scalar metrics cannot:</p>
 <ul class="simple">
-<li><p>Is the generated set concentrated or broadly distributed?</p></li>
-<li><p>Are there distinct structural clusters?</p></li>
-<li><p>Do generated molecules overlap with or extend beyond the reference set?</p></li>
-</ul>
-<p>This is especially useful when comparing:</p>
-<ul class="simple">
-<li><p>a base model versus a transfer-learned model,</p></li>
-<li><p>unconditional versus guided generation,</p></li>
-<li><p>different filtering or ranking strategies.</p></li>
+<li><p><strong>Is the generated set concentrated or broadly distributed?</strong> A tight cluster suggests the model collapsed to a small region of chemical space; broad spread indicates diversity.</p></li>
+<li><p><strong>Are there distinct structural clusters?</strong> Clusters often correspond to recognizable chemical families — useful for identifying privileged scaffolds in the output.</p></li>
+<li><p><strong>Do generated molecules overlap with or extend beyond the reference set?</strong> Overlap = the model reproduces known chemistry; extension = the model is genuinely exploring.</p></li>
+<li><p><strong>How does guided generation shift the distribution?</strong> Plot unconditional vs. property-directed outputs side-by-side to measure the shift.</p></li>
 </ul>
 </section>
-<section id="common-projection-ideas">
-<h2>Common Projection Ideas<a class="headerlink" href="#common-projection-ideas" title="Link to this heading">¶</a></h2>
-<p>The draft mentions feature representations such as SOAP or learned embeddings, followed by low-dimensional projections such as UMAP or t-SNE. The exact representation is less important than the goal: building an interpretable picture of the generated chemical space.</p>
-</section>
-<section id="where-to-go-next">
-<h2>Where to Go Next<a class="headerlink" href="#where-to-go-next" title="Link to this heading">¶</a></h2>
+<hr class="docutils" />
+<section id="step-1-featurize">
+<h2>Step 1: Featurize<a class="headerlink" href="#step-1-featurize" title="Link to this heading">¶</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">analyze</span> <span class="pre">featurize</span></code> to convert XYZ files into a numpy matrix of fixed-size vectors. The default <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">soap</span></code> requires no additional setup beyond <code class="docutils literal notranslate"><span class="pre">[data]</span></code>; the <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">uma</span></code> backend produces richer embeddings but requires the fairchem clone (see <a class="reference internal" href="../installation.html"><span class="std std-doc">Installation</span></a>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># SOAP features (default) — one vector per molecule, fast, no GPU needed</span>
+MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<span class="w"> </span>generated_molecules/<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--backend<span class="w"> </span>soap<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output<span class="w"> </span>features_generated.npz
+
+<span class="c1"># Featurize the reference/training set with the same settings</span>
+MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<span class="w"> </span>training_data/<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--backend<span class="w"> </span>soap<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output<span class="w"> </span>features_reference.npz
+</pre></div>
+</div>
+<p>Each <code class="docutils literal notranslate"><span class="pre">.npz</span></code> file contains:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="../tutorials/09_analyze.html"><span class="std std-doc">Tutorial 9: Analysis</span></a></p></li>
-<li><p><a class="reference internal" href="../applications/index.html"><span class="std std-doc">Applications</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">features</span></code>: array of shape <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">D)</span></code> — one row per molecule</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">labels</span></code> (if <code class="docutils literal notranslate"><span class="pre">--labels</span></code> was passed): array of shape <code class="docutils literal notranslate"><span class="pre">(N,)</span></code> with property values for coloring</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="step-2-project-to-2d">
+<h2>Step 2: Project to 2D<a class="headerlink" href="#step-2-project-to-2d" title="Link to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">umap</span><span class="w"> </span><span class="kn">import</span> <span class="n">UMAP</span>  <span class="c1"># pip install umap-learn</span>
+
+<span class="c1"># Load features</span>
+<span class="n">gen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;features_generated.npz&quot;</span><span class="p">)</span>
+<span class="n">ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;features_reference.npz&quot;</span><span class="p">)</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">ref</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">],</span> <span class="n">gen</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">]])</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s2">&quot;reference&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">])</span> <span class="o">+</span>
+                  <span class="p">[</span><span class="s2">&quot;generated&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">gen</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">]))</span>
+
+<span class="c1"># Fit UMAP on the combined set so both share the same projection</span>
+<span class="n">reducer</span> <span class="o">=</span> <span class="n">UMAP</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">min_dist</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">embedding</span> <span class="o">=</span> <span class="n">reducer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="c1"># Split back</span>
+<span class="n">n_ref</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">])</span>
+<span class="n">emb_ref</span><span class="p">,</span> <span class="n">emb_gen</span> <span class="o">=</span> <span class="n">embedding</span><span class="p">[:</span><span class="n">n_ref</span><span class="p">],</span> <span class="n">embedding</span><span class="p">[</span><span class="n">n_ref</span><span class="p">:]</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="o">*</span><span class="n">emb_ref</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Reference&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;steelblue&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="o">*</span><span class="n">emb_gen</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Generated&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;coral&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;UMAP 1&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;UMAP 2&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;chemical_space.png&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Replace <code class="docutils literal notranslate"><span class="pre">UMAP</span></code> with <code class="docutils literal notranslate"><span class="pre">sklearn.manifold.TSNE</span></code> for t-SNE if preferred. t-SNE is slower and does not support <code class="docutils literal notranslate"><span class="pre">transform()</span></code>, so fit on the combined matrix as shown above.</p>
+</section>
+<hr class="docutils" />
+<section id="step-3-interpret-the-plot">
+<h2>Step 3: Interpret the Plot<a class="headerlink" href="#step-3-interpret-the-plot" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>What you see</p></th>
+<th class="head text-left"><p>What it means</p></th>
+<th class="head text-left"><p>What to do</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Generated points fully inside reference cloud</p></td>
+<td class="text-left"><p>Model reproduces training data; no novel exploration</p></td>
+<td class="text-left"><p>Lower temperature, try unconditional generation from scratch, or use outpainting</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Generated points extending beyond reference cloud</p></td>
+<td class="text-left"><p>Model is extrapolating — potentially novel chemistry</p></td>
+<td class="text-left"><p>Run <code class="docutils literal notranslate"><span class="pre">analyze</span> <span class="pre">metrics</span></code> to check validity; filter before downstream use</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Tight cluster of generated points, reference scattered</p></td>
+<td class="text-left"><p>Mode collapse or over-conditioning</p></td>
+<td class="text-left"><p>Reduce <code class="docutils literal notranslate"><span class="pre">cfg_scale</span></code>, increase <code class="docutils literal notranslate"><span class="pre">diffusion_steps</span></code>, check <code class="docutils literal notranslate"><span class="pre">denoising_strength</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Two or more distinct clusters in generated set</p></td>
+<td class="text-left"><p>Structural families in output</p></td>
+<td class="text-left"><p>Inspect representative members from each cluster manually</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="soap-vs-uma-features">
+<h2>SOAP vs UMA Features<a class="headerlink" href="#soap-vs-uma-features" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Feature type</p></th>
+<th class="head text-left"><p>Strengths</p></th>
+<th class="head text-left"><p>When to prefer</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>SOAP</p></td>
+<td class="text-left"><p>Fast (CPU), no pretrained model needed, well-understood</p></td>
+<td class="text-left"><p>Quick QC, large sets (&gt;10 000 molecules), when UMA is unavailable</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>UMA</p></td>
+<td class="text-left"><p>Richer semantic encoding, better at distinguishing subtly different scaffolds</p></td>
+<td class="text-left"><p>Final analysis, small–medium sets, when fairchem clone is available</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For SOAP, the projection quality depends on the <code class="docutils literal notranslate"><span class="pre">species</span></code> list passed to the featurizer. Use the same species list for both generated and reference sets, and include all atomic species present in either.</p>
+</section>
+<hr class="docutils" />
+<section id="see-also">
+<h2>See Also<a class="headerlink" href="#see-also" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="../tutorials/09_analyze.html"><span class="std std-doc">Tutorial 9: Analysis</span></a> — <code class="docutils literal notranslate"><span class="pre">featurize</span></code> subcommand reference</p></li>
+<li><p><a class="reference internal" href="end_to_end.html"><span class="std std-doc">Workflow: End-to-End</span></a> — where visualization fits in the full pipeline</p></li>
+<li><p><a class="reference internal" href="../applications/index.html"><span class="std std-doc">Applications</span></a> — research-level use cases</p></li>
 </ul>
 </section>
 </section>
@@ -550,11 +659,14 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Workflow Example: Visualize the Generated Space</a><ul>
+<li><a class="reference internal" href="#">Workflow: Visualize the Generated Chemical Space</a><ul>
 <li><a class="reference internal" href="#conceptual-flow">Conceptual Flow</a></li>
-<li><a class="reference internal" href="#what-visualization-helps-you-see">What Visualization Helps You See</a></li>
-<li><a class="reference internal" href="#common-projection-ideas">Common Projection Ideas</a></li>
-<li><a class="reference internal" href="#where-to-go-next">Where to Go Next</a></li>
+<li><a class="reference internal" href="#what-visualization-tells-you">What Visualization Tells You</a></li>
+<li><a class="reference internal" href="#step-1-featurize">Step 1: Featurize</a></li>
+<li><a class="reference internal" href="#step-2-project-to-2d">Step 2: Project to 2D</a></li>
+<li><a class="reference internal" href="#step-3-interpret-the-plot">Step 3: Interpret the Plot</a></li>
+<li><a class="reference internal" href="#soap-vs-uma-features">SOAP vs UMA Features</a></li>
+<li><a class="reference internal" href="#see-also">See Also</a></li>
 </ul>
 </li>
 </ul>

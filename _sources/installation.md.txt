@@ -34,6 +34,7 @@ pip install 'molcraftdiffusion[analyze]'
 
 # xTB is used by optimize, compare, and xtb-electronic — best installed from conda-forge:
 conda install -c conda-forge xtb==6.7.1 -y
+conda install xtb-python -y
 ```
 
 If an optional command is called without its dependencies, MolCraftDiffusion exits with a warning and an install hint such as `pip install 'molcraftdiffusion[analyze]'`.
@@ -50,6 +51,21 @@ pip install -e .[gpu] \
 pip install -e '.[data]'
 pip install -e '.[analyze]'
 ```
+
+## Which extras do I need?
+
+Use this table to decide which optional groups to install before you start:
+
+| What you want to do | Install |
+| :--- | :--- |
+| Train or generate only (no data prep, no analysis) | *(base `[gpu]` or `[cpu]` is enough)* |
+| Compile raw XYZ files into an ASE database | `[data]` |
+| Featurize molecules with SOAP descriptors | `[data]` |
+| Run validity/connectivity metrics, xyz2mol, RMSD compare | `[analyze]` |
+| Run `analyze optimize` or `xtb-electronic` | `[analyze]` + conda `xtb` |
+| Run geometric-shape metrics (`--metrics geom_revised` or `all`) | `[analyze]` + `pip install cosymlib` |
+| Featurize with UMA neural-network embeddings | `[analyze]` + fairchem clone (see below) |
+| Pharmacophore-conditioned training/generation | `pip install open3d` |
 
 ## Optional dependencies
 
@@ -111,3 +127,68 @@ You should see a list of all available commands: `train`, `generate`, `predict`,
 
 Pre-trained checkpoints are available on [Hugging Face](https://huggingface.co/pregH/MolecularDiffusion).
 We recommend starting from these for any downstream application.
+
+---
+
+## Troubleshooting
+
+### `torch_scatter` / `torch_sparse` import errors
+
+PyTorch Geometric sparse extensions must be compiled against your **exact** PyTorch + CUDA version. If you see `ImportError: … torch_scatter`, rebuild from the correct wheel:
+
+```bash
+# Check your torch version first
+python -c "import torch; print(torch.__version__, torch.version.cuda)"
+
+# Then install matching wheels (replace cu124/torch-2.6.0 as needed)
+pip install torch-scatter torch-sparse \
+    --find-links https://data.pyg.org/whl/torch-2.6.0+cu124.html
+```
+
+If the PyG wheel server does not have a prebuilt wheel for your exact version, you may need to build from source or use a matching Docker image.
+
+---
+
+### xTB or OpenBabel not found at runtime
+
+`xtb` and `openbabel` are **not pip-installable** in a way that exposes the executables and shared libraries MolCraftDiffusion relies on. Installing them via pip creates a broken partial install that fails silently during optimization or xyz2mol conversion.
+
+Always install from conda-forge **before** the pip install:
+
+```bash
+conda install -c conda-forge xtb==6.7.1 openbabel -y
+conda install xtb-python -y
+```
+
+If you already have a broken pip install, uninstall it first: `pip uninstall xtb openbabel`.
+
+---
+
+### `open3d` import errors on headless servers
+
+`open3d` requires an OpenGL context for some of its initialization paths. On headless HPC nodes you may see errors like `libGL.so.1: cannot open shared object file`.
+
+Install the headless variant:
+
+```bash
+pip install open3d-cpu
+```
+
+or set the environment variable before running:
+
+```bash
+export OPEN3D_CPU_RENDERING=true
+```
+
+---
+
+### `MolCraftDiff` command not found
+
+Ensure the package is installed in the active conda environment and the environment is activated:
+
+```bash
+conda activate molcraft
+MolCraftDiff --help
+```
+
+If installed in editable mode, run from the repository root where `.project-root` is visible.
