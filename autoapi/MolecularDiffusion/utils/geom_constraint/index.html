@@ -442,7 +442,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.EDGE_THRESHOLD" title="MolecularDiffusion.utils.geom_constraint.EDGE_THRESHOLD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EDGE_THRESHOLD</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.WEIGHT_FACTOR" title="MolecularDiffusion.utils.geom_constraint.WEIGHT_FACTOR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WEIGHT_FACTOR</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.SKELETON_BUILDERS" title="MolecularDiffusion.utils.geom_constraint.SKELETON_BUILDERS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SKELETON_BUILDERS</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.WEIGHT_FACTOR" title="MolecularDiffusion.utils.geom_constraint.WEIGHT_FACTOR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WEIGHT_FACTOR</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -456,6 +459,12 @@
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.align_target_with_reference" title="MolecularDiffusion.utils.geom_constraint.align_target_with_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">align_target_with_reference</span></code></a>(→ torch.Tensor)</p></td>
 <td><p>Aligns the target coordinates to the reference coordinates by applying</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.build_extra_node_template" title="MolecularDiffusion.utils.geom_constraint.build_extra_node_template"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_extra_node_template</span></code></a>(xh_cond, connector_indices, ...)</p></td>
+<td><p>Build clean extra-node coordinates for outpaint latent initialization.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.derive_connectors_from_scaffold" title="MolecularDiffusion.utils.geom_constraint.derive_connectors_from_scaffold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">derive_connectors_from_scaffold</span></code></a>(pos, atomic_numbers[, ...])</p></td>
+<td><p>Heuristically locate open attachment sites on a bare scaffold.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.enforce_min_nodes_per_connector" title="MolecularDiffusion.utils.geom_constraint.enforce_min_nodes_per_connector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">enforce_min_nodes_per_connector</span></code></a>(→ torch.Tensor)</p></td>
 <td><p></p></td>
@@ -523,6 +532,61 @@ corresponding to the reference nodes, in a different coordinate system.</p>
 </dd>
 </dl>
 </section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_constraint.build_extra_node_template">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_constraint.</span></span><span class="sig-name descname"><span class="pre">build_extra_node_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xh_cond</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connector_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_extra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'skeleton'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skeleton_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'random_walk'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_bq_atom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bond_len</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_constraint.build_extra_node_template" title="Link to this definition">¶</a></dt>
+<dd><p>Build clean extra-node coordinates for outpaint latent initialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xh_cond</strong> – (B, N_ref, D) scaffold tensor [coords(3) | features(D-3)].</p></li>
+<li><p><strong>connector_indices</strong> – indices of connector atoms in the scaffold.</p></li>
+<li><p><strong>n_extra</strong> – number of extra nodes to create per batch item.</p></li>
+<li><p><strong>method</strong> – “skeleton” (procedural family) or “fragment” (bundled
+substituent family) — both dispatch via skeleton_type; “seed”
+(legacy blob). “data” is handled by the caller (model).</p></li>
+<li><p><strong>skeleton_type</strong> – family name when method in {“skeleton”, “fragment”} (see
+SKELETON_BUILDERS). For “fragment”, default to an aromatic ring when
+left at the procedural default.</p></li>
+<li><p><strong>seed_dist</strong> – geometry knobs.</p></li>
+<li><p><strong>min_dist</strong> – geometry knobs.</p></li>
+<li><p><strong>spread</strong> – geometry knobs.</p></li>
+<li><p><strong>n_bq_atom</strong> – geometry knobs.</p></li>
+<li><p><strong>bond_len</strong> – geometry knobs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(B, n_extra, D) clean coordinates + randomized features.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_constraint.derive_connectors_from_scaffold">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_constraint.</span></span><span class="sig-name descname"><span class="pre">derive_connectors_from_scaffold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomic_numbers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valence_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_constraint.derive_connectors_from_scaffold" title="Link to this definition">¶</a></dt>
+<dd><p>Heuristically locate open attachment sites on a bare scaffold.</p>
+<p>Builds a covalent-bond graph over the scaffold atoms (radius graph filtered
+by summed covalent radii) and returns the under-coordinated heavy atoms
+(nominal valence &gt; current bond degree) as outpaint connectors, with each
+value being the number of free valences. Falls back to the atom farthest
+from the centroid when the scaffold is fully saturated, so outpaint growth
+always has at least one anchor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pos</strong> – (N, 3) atom coordinates (physical Angstrom units).</p></li>
+<li><p><strong>atomic_numbers</strong> – (N,) integer atomic numbers.</p></li>
+<li><p><strong>scale_factor</strong> – covalent-radii relaxation factor for bond detection.</p></li>
+<li><p><strong>valence_map</strong> – optional {atomic_number: nominal_valence} override.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict <code class="docutils literal notranslate"><span class="pre">{atom_index:</span> <span class="pre">[n_free_valence]}</span></code> suitable for
+<code class="docutils literal notranslate"><span class="pre">outpaint_cfgs['connector_dicts']</span></code>.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -904,6 +968,11 @@ If &gt; 0, connector_indices and seed_dist are ignored for seed location determi
 <dd></dd></dl>
 
 <dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_constraint.SKELETON_BUILDERS">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_constraint.</span></span><span class="sig-name descname"><span class="pre">SKELETON_BUILDERS</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_constraint.SKELETON_BUILDERS" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_constraint.WEIGHT_FACTOR">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_constraint.</span></span><span class="sig-name descname"><span class="pre">WEIGHT_FACTOR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_constraint.WEIGHT_FACTOR" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -988,6 +1057,8 @@ If &gt; 0, connector_indices and seed_dist are ignored for seed location determi
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.align_target_with_reference"><code class="docutils literal notranslate"><span class="pre">align_target_with_reference()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.build_extra_node_template"><code class="docutils literal notranslate"><span class="pre">build_extra_node_template()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.derive_connectors_from_scaffold"><code class="docutils literal notranslate"><span class="pre">derive_connectors_from_scaffold()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.enforce_min_nodes_per_connector"><code class="docutils literal notranslate"><span class="pre">enforce_min_nodes_per_connector()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.ensure_intact"><code class="docutils literal notranslate"><span class="pre">ensure_intact()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.find_close_points_torch"><code class="docutils literal notranslate"><span class="pre">find_close_points_torch()</span></code></a></li>
@@ -1001,6 +1072,7 @@ If &gt; 0, connector_indices and seed_dist are ignored for seed location determi
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.initialize_extra_nodes_seed"><code class="docutils literal notranslate"><span class="pre">initialize_extra_nodes_seed()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.translate_to_origine"><code class="docutils literal notranslate"><span class="pre">translate_to_origine()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.EDGE_THRESHOLD"><code class="docutils literal notranslate"><span class="pre">EDGE_THRESHOLD</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.SKELETON_BUILDERS"><code class="docutils literal notranslate"><span class="pre">SKELETON_BUILDERS</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.WEIGHT_FACTOR"><code class="docutils literal notranslate"><span class="pre">WEIGHT_FACTOR</span></code></a></li>
 </ul>
 </li>

@@ -117,7 +117,7 @@ Module Contents
    .. py:attribute:: property_names
 
 
-.. py:class:: EnVariationalDiffusion(dynamics: torch.nn.Module, dynamics_teacher: Optional[torch.nn.Module] = None, in_node_nf: int = 12, n_dims: int = 3, timesteps: int = 1000, parametrization: str = 'eps', noise_schedule: str = 'learned', noise_precision: float = 0.0001, loss_type: str = 'vlb', norm_values: Tuple[float, float, float] = (1.0, 1.0, 1.0), extra_norm_values: Sequence[float] = (), norm_biases: Tuple[Optional[float], float, float] = (None, 0.0, 0.0), include_charges: bool = True, context_mask_rate: float = 0.0, mask_value: float = 0.0, eval_mode: bool = False, debug: bool = False, use_noised_conditioning: bool = False, reference_freeze_mode: str = 'all')
+.. py:class:: EnVariationalDiffusion(dynamics: torch.nn.Module, dynamics_teacher: Optional[torch.nn.Module] = None, in_node_nf: int = 12, n_dims: int = 3, timesteps: int = 1000, parametrization: str = 'eps', noise_schedule: str = 'learned', noise_precision: float = 0.0001, loss_type: str = 'vlb', norm_values: Tuple[float, float, float] = (1.0, 1.0, 1.0), extra_norm_values: Sequence[float] = (), norm_biases: Tuple[Optional[float], float, float] = (None, 0.0, 0.0), include_charges: bool = True, context_mask_rate: float = 0.0, mask_value: float = 0.0, eval_mode: bool = False, debug: bool = False, atom_vocab: Optional[Sequence[str]] = None, use_noised_conditioning: bool = False)
 
    Bases: :py:obj:`torch.nn.Module`
 
@@ -251,6 +251,16 @@ Module Contents
    .. py:method:: compute_loss_distillation(x, h, node_mask, edge_mask, context, t0_always, masked_context=0)
 
       Computes an estimator for the variational lower bound, or the simple loss (MSE).
+
+
+
+   .. py:method:: compute_loss_per_graph(mol_graph, context=None, reference_indices=None, reference_freeze_mode='all')
+
+      Returns raw per-graph error for sp_regularizer filtering (PyG path).
+
+      Returns loss_t (the per-graph prediction error before T multiplication
+      and neg_log_constants), so the scale is comparable to FM's per-graph MSE.
+      Only valid when batch uses PyG format ('graph' key).
 
 
 
@@ -400,7 +410,7 @@ Module Contents
 
 
 
-   .. py:method:: sample_guidance(n_samples, target_function, node_mask, edge_mask, context=None, context_negative=None, gg_scale=1, cfg_scale=1, cfg_scale_schedule=None, max_norm=10, fix_noise=False, std=1.0, scheduler=None, guidance_at=1, guidance_stop=0, guidance_ver=1, n_backwards=0, h_weight=1, x_weight=1, condition_tensor=None, condition_mode=None, inpaint_cfgs={}, outpaint_cfgs={}, n_frames=0, debug=False, use_noised_conditioning=False)
+   .. py:method:: sample_guidance(n_samples, target_function, node_mask, edge_mask, context=None, context_negative=None, gg_scale=1, cfg_scale=1, cfg_scale_schedule=None, max_norm=10, fix_noise=False, std=1.0, scheduler=None, guidance_at=1, guidance_stop=0, guidance_ver=1, n_backwards=0, h_weight=1, x_weight=1, condition_tensor=None, condition_mode=None, inpaint_cfgs={}, outpaint_cfgs={}, use_noised_conditioning=False, n_frames=0, debug=False)
 
               Guided sampling from the generative model.
 
@@ -430,7 +440,6 @@ Module Contents
                   Save gradient norms, max gradients, clipping coefficients, and energies to files.
               - condition_tensor (torch.Tensor, optional): Tensor for conditional guidance. Defaults to None.
               - condition_mode (str, optional): Mode for conditional guidance. Defaults to None.
-              - use_noised_conditioning (bool): Use noised condition tensor for structure guidance.
               - inpaint_cfgs (dict, optional): Configuration for inpainting.
                   The dictionary must contains:
                       - mask_node_index (torch.Tensor, optional): Indices of nodes to be inpainted. Defaults to an empty tensor.
@@ -863,6 +872,9 @@ Module Contents
 
 
 
+   .. py:attribute:: atom_vocab
+
+
    .. py:attribute:: call
       :value: 0
 
@@ -951,11 +963,6 @@ Module Contents
 
    .. py:attribute:: parametrization
       :value: 'eps'
-
-
-
-   .. py:attribute:: reference_freeze_mode
-      :value: 'all'
 
 
 

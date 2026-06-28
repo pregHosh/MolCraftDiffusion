@@ -10,6 +10,7 @@ Attributes
 .. autoapisummary::
 
    MolecularDiffusion.utils.geom_constraint.EDGE_THRESHOLD
+   MolecularDiffusion.utils.geom_constraint.SKELETON_BUILDERS
    MolecularDiffusion.utils.geom_constraint.WEIGHT_FACTOR
 
 
@@ -19,6 +20,8 @@ Functions
 .. autoapisummary::
 
    MolecularDiffusion.utils.geom_constraint.align_target_with_reference
+   MolecularDiffusion.utils.geom_constraint.build_extra_node_template
+   MolecularDiffusion.utils.geom_constraint.derive_connectors_from_scaffold
    MolecularDiffusion.utils.geom_constraint.enforce_min_nodes_per_connector
    MolecularDiffusion.utils.geom_constraint.ensure_intact
    MolecularDiffusion.utils.geom_constraint.find_close_points_torch
@@ -55,6 +58,48 @@ Module Contents
    --------
    torch.Tensor
        A translated version of 'target' whose first Nr rows align with 'reference'.
+
+
+.. py:function:: build_extra_node_template(xh_cond, connector_indices, n_extra, method='skeleton', skeleton_type='random_walk', seed_dist=1.5, min_dist=1.0, spread=0.5, n_bq_atom=0, bond_len=1.5)
+
+   Build clean extra-node coordinates for outpaint latent initialization.
+
+   :param xh_cond: (B, N_ref, D) scaffold tensor [coords(3) | features(D-3)].
+   :param connector_indices: indices of connector atoms in the scaffold.
+   :param n_extra: number of extra nodes to create per batch item.
+   :param method: "skeleton" (procedural family) or "fragment" (bundled
+                  substituent family) — both dispatch via skeleton_type; "seed"
+                  (legacy blob). "data" is handled by the caller (model).
+   :param skeleton_type: family name when method in {"skeleton", "fragment"} (see
+                         SKELETON_BUILDERS). For "fragment", default to an aromatic ring when
+                         left at the procedural default.
+   :param seed_dist: geometry knobs.
+   :param min_dist: geometry knobs.
+   :param spread: geometry knobs.
+   :param n_bq_atom: geometry knobs.
+   :param bond_len: geometry knobs.
+
+   :returns: (B, n_extra, D) clean coordinates + randomized features.
+
+
+.. py:function:: derive_connectors_from_scaffold(pos, atomic_numbers, scale_factor=1.3, valence_map=None)
+
+   Heuristically locate open attachment sites on a bare scaffold.
+
+   Builds a covalent-bond graph over the scaffold atoms (radius graph filtered
+   by summed covalent radii) and returns the under-coordinated heavy atoms
+   (nominal valence > current bond degree) as outpaint connectors, with each
+   value being the number of free valences. Falls back to the atom farthest
+   from the centroid when the scaffold is fully saturated, so outpaint growth
+   always has at least one anchor.
+
+   :param pos: (N, 3) atom coordinates (physical Angstrom units).
+   :param atomic_numbers: (N,) integer atomic numbers.
+   :param scale_factor: covalent-radii relaxation factor for bond detection.
+   :param valence_map: optional {atomic_number: nominal_valence} override.
+
+   :returns: dict ``{atom_index: [n_free_valence]}`` suitable for
+             ``outpaint_cfgs['connector_dicts']``.
 
 
 .. py:function:: enforce_min_nodes_per_connector(ref: torch.Tensor, tgt: torch.Tensor, connector_indices: torch.Tensor, N: List[int], d_threshold_c: List[float], debug: bool = False) -> torch.Tensor
@@ -357,6 +402,8 @@ Module Contents
 .. py:data:: EDGE_THRESHOLD
    :value: 2
 
+
+.. py:data:: SKELETON_BUILDERS
 
 .. py:data:: WEIGHT_FACTOR
    :value: 2
