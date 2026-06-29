@@ -1,0 +1,48 @@
+MolecularDiffusion.utils.substituent_builder
+============================================
+
+.. py:module:: MolecularDiffusion.utils.substituent_builder
+
+.. autoapi-nested-parse::
+
+   Self-contained substituent-fragment placement for outpaint skeleton init.
+
+   Uses the bundled idealized fragment geometries in ``substituent_geometries.py``
+   (attachment atom = row 0, bond pointing along local +x) to build clean,
+   connector-anchored placeholder coordinates for the to-be-generated atoms. Only
+   coordinates are used (a geometry prior); node features are randomized and
+   denoised. No external dependency.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.substituent_builder.place_fragment
+   MolecularDiffusion.utils.substituent_builder.select_fragment
+
+
+Module Contents
+---------------
+
+.. py:function:: place_fragment(frag_coords, connector_pos, direction, roll_angle=None)
+
+   Align a local fragment so its bond points along ``direction`` at the connector.
+
+   The fragment's attachment atom (row 0, local ~(bond, 0, 0)) lands at
+   ``connector_pos + bond * direction``; an optional roll about ``direction``
+   adds orientational diversity. Returns placed coords ``(M, 3)``.
+
+
+.. py:function:: select_fragment(tags_all, n_extra)
+
+   Pick the bundled fragment matching all ``tags_all`` closest to n_extra.
+
+   Among fragments whose ``tags`` include every tag in ``tags_all`` (empty
+   ``tags_all`` matches any), prefer the one whose atom count is >= n_extra and
+   closest to it (so we subset rather than extend); otherwise the largest
+   available. Returns ``(name, coords_tensor (M, 3))`` or ``(None, None)``.
+
+

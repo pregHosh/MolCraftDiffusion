@@ -1,0 +1,31 @@
+MolecularDiffusion.utils.substituent_geometries
+===============================================
+
+.. py:module:: MolecularDiffusion.utils.substituent_geometries
+
+.. autoapi-nested-parse::
+
+   Bundled idealized substituent geometries for outpaint skeleton init.
+
+   Each entry is a clean fragment in a local frame where the *attachment
+   atom* is row 0, positioned ~one bond length along +x from an implicit
+   connector at the origin (so the outward bond points along +x). Only the
+   coordinates are used as a geometry prior for the to-be-generated atoms;
+   element symbols are kept for family/size selection, not for atom typing
+   (node features are randomized and denoised).
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.substituent_geometries.SUBSTITUENT_GEOMETRIES
+
+
+Module Contents
+---------------
+
+.. py:data:: SUBSTITUENT_GEOMETRIES
+
