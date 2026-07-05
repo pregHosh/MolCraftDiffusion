@@ -1,0 +1,112 @@
+MolecularDiffusion.modules.models.gfmdiff.equignn
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.models.gfmdiff.equignn
+
+.. autoapi-nested-parse::
+
+   GFMDiff Dual-Track Transformer network body.
+
+   Near-verbatim port of ``GFMDiff/models/diff/dtn.py::EquiGNN``. Only the
+   import paths changed (blocks now live under
+   ``MolecularDiffusion.modules.layers.gfmdiff.blocks``); the math/forward
+   logic is unchanged from the source repo.
+
+   Per the approved integration plan, the diffused "degree" (valence) channel
+   and the Geometric-Facilitated Loss are out of scope for this integration:
+   ``include_de`` is hardcoded to ``False`` below (the constructor no longer
+   reads it from ``model_config``), while ``include_an`` (atomic-number
+   channel) is kept, matching every other backbone already integrated in this
+   repo (`in_node_nf = len(atom_vocab) + n_dim_extra + 1`).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.gfmdiff.equignn.EquiGNN
+
+
+Module Contents
+---------------
+
+.. py:class:: EquiGNN(model_config, data_config)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(z_t, t, node_mask, pair_mask, context=None)
+      :abstractmethod:
+
+
+
+   .. py:method:: unwrap_forward()
+
+
+   .. py:method:: wrap_forward(node_mask, edge_mask, context)
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: activate
+
+
+   .. py:attribute:: add_time
+
+
+   .. py:attribute:: angle_emb
+
+
+   .. py:attribute:: block_calc
+
+
+   .. py:attribute:: context_dim
+
+
+   .. py:attribute:: convs
+
+
+   .. py:attribute:: dropout
+
+
+   .. py:attribute:: edge_emb
+
+
+   .. py:attribute:: emb_dim
+
+
+   .. py:attribute:: hidden_dim
+
+
+   .. py:attribute:: include_an
+
+
+   .. py:attribute:: include_de
+      :value: False
+
+
+
+   .. py:attribute:: node_nf
+
+
+   .. py:attribute:: node_pair_fuse
+
+
+   .. py:attribute:: num_heads
+
+
+   .. py:attribute:: num_layers
+
+
+   .. py:attribute:: pair_scale
+
+
+   .. py:attribute:: xh_embedding
+
+
+   .. py:attribute:: xh_embedding_out
+
+

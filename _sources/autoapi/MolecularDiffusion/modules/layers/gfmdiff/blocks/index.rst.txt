@@ -1,0 +1,401 @@
+MolecularDiffusion.modules.layers.gfmdiff.blocks
+================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.gfmdiff.blocks
+
+.. autoapi-nested-parse::
+
+   GFMDiff Dual-Track Transformer building blocks.
+
+   Ported from ``GFMDiff/models/diff/layers.py`` (``InterBlock``, ``DistEncoder``
+   and their private helper layers) and ``GFMDiff/models/diff/utils.py``
+   (``RBF_Emb`` and the geometry helpers ``atom_pos_to_pair_dist``,
+   ``local_geometry_calc``, ``remove_mean_with_mask``, ``create_mask``).
+
+   Only import paths were adjusted for this repo's layout; the math is
+   unchanged from the source repo.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.gfmdiff.blocks.DistEncoder
+   MolecularDiffusion.modules.layers.gfmdiff.blocks.FeedForwardNetwork
+   MolecularDiffusion.modules.layers.gfmdiff.blocks.InterBlock
+   MolecularDiffusion.modules.layers.gfmdiff.blocks.Low2High
+   MolecularDiffusion.modules.layers.gfmdiff.blocks.NodeTransformerLayer
+   MolecularDiffusion.modules.layers.gfmdiff.blocks.PosUpdate
+   MolecularDiffusion.modules.layers.gfmdiff.blocks.RBF
+   MolecularDiffusion.modules.layers.gfmdiff.blocks.RBF_Emb
+   MolecularDiffusion.modules.layers.gfmdiff.blocks.SimLow2High
+   MolecularDiffusion.modules.layers.gfmdiff.blocks.TriTransLayer
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.gfmdiff.blocks.atom_pos_to_pair_dist
+   MolecularDiffusion.modules.layers.gfmdiff.blocks.create_mask
+   MolecularDiffusion.modules.layers.gfmdiff.blocks.get_angle
+   MolecularDiffusion.modules.layers.gfmdiff.blocks.local_geometry_calc
+   MolecularDiffusion.modules.layers.gfmdiff.blocks.remove_mean_with_mask
+
+
+Module Contents
+---------------
+
+.. py:class:: DistEncoder(emb_dim, add_time=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x, time=None)
+
+
+   .. py:attribute:: linear
+
+
+   .. py:attribute:: rbf
+
+
+   .. py:attribute:: rbf_param
+
+
+.. py:class:: FeedForwardNetwork(emb_dim, hidden_dim, dropout=0.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: dropout
+
+
+   .. py:attribute:: emb_dim
+
+
+   .. py:attribute:: hidden_dim
+
+
+   .. py:attribute:: lin1
+
+
+   .. py:attribute:: lin2
+
+
+.. py:class:: InterBlock(emb_dim, hidden_dim, num_heads, dropout, node_dropout=None, pair_dropout=None, dataset_name='qm9')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(atom_emb, pair_emb, pos, coord_diff, node_mask, pair_mask, batch_size, n_nodes, tri_emb=None)
+
+
+   .. py:attribute:: data_name
+      :value: 'qm9'
+
+
+
+   .. py:attribute:: dropout
+
+
+   .. py:attribute:: emb_dim
+
+
+   .. py:attribute:: ffn_dim
+
+
+   .. py:attribute:: head_dim
+
+
+   .. py:attribute:: low2high_dropout
+
+
+   .. py:attribute:: node_attn
+
+
+   .. py:attribute:: node_attn_dropout
+
+
+   .. py:attribute:: node_dropout
+
+
+   .. py:attribute:: node_ffn
+
+
+   .. py:attribute:: node_ffn_dropout
+
+
+   .. py:attribute:: num_heads
+
+
+   .. py:attribute:: pair_attn
+
+
+   .. py:attribute:: pair_attn_dropout
+
+
+   .. py:attribute:: pair_dropout
+
+
+   .. py:attribute:: pair_ffn
+
+
+   .. py:attribute:: pair_ffn_dropout
+
+
+   .. py:attribute:: pair_ln
+
+
+   .. py:attribute:: pos_update
+
+
+.. py:class:: Low2High(emb_dim)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(node_emb, node_mask)
+
+
+   .. py:attribute:: emb_dim
+
+
+   .. py:attribute:: lin_cat
+
+
+   .. py:attribute:: linear1
+
+
+   .. py:attribute:: linear2
+
+
+   .. py:attribute:: ln
+
+
+.. py:class:: NodeTransformerLayer(emb_dim, ffn_dim, num_heads, dropout, act_dropout=None, attn_dropout=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: attention(atom_emb, pair_emb, pair_mask, batch_size, n_nodes)
+
+
+   .. py:method:: attn_update(atom_emb, pair_emb, attn_prob, node_mask, batch_size, n_nodes)
+
+
+   .. py:method:: forward(atom_emb, pair_emb, node_mask, pair_mask, batch_size, n_nodes)
+
+
+   .. py:attribute:: act_dropout
+      :value: None
+
+
+
+   .. py:attribute:: attn_dropout
+      :value: None
+
+
+
+   .. py:attribute:: dropout
+
+
+   .. py:attribute:: emb_dim
+
+
+   .. py:attribute:: ffn_emb_dim
+
+
+   .. py:attribute:: head_dim
+
+
+   .. py:attribute:: k_e_proj
+
+
+   .. py:attribute:: k_proj
+
+
+   .. py:attribute:: node_ln
+
+
+   .. py:attribute:: num_heads
+
+
+   .. py:attribute:: pair_ln
+
+
+   .. py:attribute:: q_proj
+
+
+   .. py:attribute:: v_add
+
+
+   .. py:attribute:: v_e_proj
+
+
+   .. py:attribute:: v_proj
+
+
+.. py:class:: PosUpdate(hidden_dim, act=nn.SiLU(), tanh=False, coord_range=15.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x_emb, pair_emb, pos, coord_diff, node_mask, pair_mask)
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: coord_mlp
+
+
+   .. py:attribute:: coord_range
+      :value: 15.0
+
+
+
+   .. py:attribute:: dist_decoder
+
+
+   .. py:attribute:: tanh
+      :value: False
+
+
+
+.. py:class:: RBF(centers, gamma)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: centers
+
+
+   .. py:attribute:: gamma
+
+
+.. py:class:: RBF_Emb(emb_dim, rbf_param, add_time=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(feats, time=None)
+
+
+   .. py:attribute:: center
+
+
+   .. py:attribute:: gamma
+
+
+   .. py:attribute:: linear
+
+
+   .. py:attribute:: rbf
+
+
+.. py:class:: SimLow2High(emb_dim)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(node_emb, pair_mask)
+
+
+   .. py:attribute:: emb_dim
+
+
+   .. py:attribute:: lin_cat
+
+
+   .. py:attribute:: linear1
+
+
+   .. py:attribute:: linear2
+
+
+   .. py:attribute:: ln
+
+
+.. py:class:: TriTransLayer(emb_dim, ffn_dim, num_heads, dropout, act_dropout=None, attn_dropout=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(pair_emb, tri_emb, pair_mask, batch_size, n_nodes)
+
+
+   .. py:attribute:: act_dropout
+      :value: None
+
+
+
+   .. py:attribute:: attn_dropout
+      :value: None
+
+
+
+   .. py:attribute:: dropout
+
+
+   .. py:attribute:: emb_dim
+
+
+   .. py:attribute:: ffn_emb_dim
+
+
+   .. py:attribute:: head_dim
+
+
+   .. py:attribute:: k_a_proj
+
+
+   .. py:attribute:: k_e_proj
+
+
+   .. py:attribute:: ln
+
+
+   .. py:attribute:: num_heads
+
+
+   .. py:attribute:: out_gate
+
+
+   .. py:attribute:: out_proj
+
+
+   .. py:attribute:: q_proj
+
+
+   .. py:attribute:: tri_dim
+
+
+   .. py:attribute:: v_a_proj
+
+
+   .. py:attribute:: v_proj
+
+
+.. py:function:: atom_pos_to_pair_dist(pos)
+
+.. py:function:: create_mask(x)
+
+.. py:function:: get_angle(vec1, vec2, keepdim=False)
+
+.. py:function:: local_geometry_calc(pos, pair_mask)
+
+.. py:function:: remove_mean_with_mask(x, node_mask)
+

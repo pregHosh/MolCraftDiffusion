@@ -1,0 +1,96 @@
+MolecularDiffusion.modules.models.gfmdiff.dynamics
+==================================================
+
+.. py:module:: MolecularDiffusion.modules.models.gfmdiff.dynamics
+
+.. autoapi-nested-parse::
+
+   Adapter binding the ported GFMDiff ``EquiGNN`` backbone to the
+   ``dynamics._forward(t, xh, node_mask, edge_mask, context)`` contract that
+   ``EnVariationalDiffusion.phi`` (``modules/models/en_diffusion.py``) calls,
+   mirroring the existing ``EGT_dynamics`` wrapper
+   (``modules/models/egt.py::EGT_dynamics._forward``).
+
+   ``EquiGNN._forward(z_t, t, node_mask, pair_mask, context)`` already expects
+   the same conceptual shapes: ``z_t``/``xh`` is ``(B, N, 3 + in_node_nf)``
+   (position + feature channels concatenated), ``node_mask`` is ``(B, N, 1)``,
+   and ``pair_mask``/``edge_mask`` is the same dense ``(B, N, N, 1)`` tensor
+   family — so this wrapper only reorders the ``t``/state args and renames
+   ``edge_mask`` -> ``pair_mask``; no reshaping/data-model translation is
+   needed.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.gfmdiff.dynamics.GFMDiffDynamics
+
+
+Module Contents
+---------------
+
+.. py:class:: GFMDiffDynamics(in_node_nf: int, context_node_nf: int = 0, n_dims: int = 3, num_layers: int = 5, emb_dim: int = 256, hidden_dim: int = 512, num_heads: int = 8, dropout: float = 0.1, pair_loss_scale: float = 0.0, add_time: bool = False, block_calc: bool = True, dataset_name: str = 'qm9')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Thin wrapper constructing the ported ``EquiGNN`` internally.
+
+   :param in_node_nf: Number of node feature channels consumed by
+                      ``EnVariationalDiffusion`` (atom-type one-hot + atomic number
+                      [+ extra normalized values]), *not* including diffusion time or
+                      context — ``EquiGNN`` concatenates both internally.
+   :type in_node_nf: int
+   :param context_node_nf: Number of context/conditioning channels.
+   :type context_node_nf: int
+   :param n_dims: Number of spatial dimensions (3 for 3D coordinates).
+   :type n_dims: int
+   :param num_layers: Dual-Track
+                      Transformer backbone hyperparameters (see ``EquiGNN``).
+   :param emb_dim: Dual-Track
+                   Transformer backbone hyperparameters (see ``EquiGNN``).
+   :param hidden_dim: Dual-Track
+                      Transformer backbone hyperparameters (see ``EquiGNN``).
+   :param num_heads: Dual-Track
+                     Transformer backbone hyperparameters (see ``EquiGNN``).
+   :param dropout: Dual-Track
+                   Transformer backbone hyperparameters (see ``EquiGNN``).
+   :param add_time: Whether distance/angle embeddings are also time
+                    conditioned (GFMDiff's own ``add_time`` flag).
+   :type add_time: bool
+   :param block_calc: Whether pairwise/triplet embeddings are
+                      recomputed after every layer (GFMDiff's own ``block_calc`` flag).
+   :type block_calc: bool
+   :param dataset_name: Selects the ``InterBlock`` low-to-high pair
+                        update variant ("qm9" or "drugs"); unrelated to which dataset is
+                        actually trained on in this repo.
+   :type dataset_name: str
+
+
+   .. py:method:: forward(t, xh, node_mask, edge_mask, context=None)
+      :abstractmethod:
+
+
+
+   .. py:method:: unwrap_forward()
+
+
+   .. py:method:: wrap_forward(node_mask, edge_mask, context)
+
+
+   .. py:attribute:: context_node_nf
+      :value: 0
+
+
+
+   .. py:attribute:: equignn
+
+
+   .. py:attribute:: n_dims
+      :value: 3
+
+
+

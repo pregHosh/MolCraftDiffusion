@@ -1,0 +1,121 @@
+MolecularDiffusion.runmodes.train.tasks_gfmdiff
+===============================================
+
+.. py:module:: MolecularDiffusion.runmodes.train.tasks_gfmdiff
+
+.. autoapi-nested-parse::
+
+   Factory wiring the ported GFMDiff Dual-Track Transformer backbone into
+   the existing, unmodified diffusion task -- structured like
+   ``runmodes/train/tasks_egt.py::ModelTaskFactory`` (a new dynamics network
+   dropped into ``EnVariationalDiffusion`` + ``GeomMolecularGenerative``, zero
+   edits to either).
+
+   Per the approved integration plan (revision 2), this is a §1 backbone swap:
+   GFMDiff's own noise schedule/VLB loss/sampler and the Geometric-Facilitated
+   Loss (+ diffused "degree" channel) are out of scope -- only the Dual-Track
+   Transformer architecture (``GFMDiffDynamics`` / ``EquiGNN``) is ported, and
+   ``modules.models.en_diffusion.EnVariationalDiffusion`` /
+   ``modules.tasks.diffusion.GeomMolecularGenerative`` are reused unmodified.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.tasks_gfmdiff.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: ModelTaskFactory(task_type: str, train_set=None, atom_vocab=None, task_names: list = [], condition_names: list = [], num_layers: int = 5, hidden_dims: dict = {}, chkpt_path: str = None, **kwargs)
+
+   Factory to build the GFMDiff-backbone diffusion model + task.
+
+   :param task_type: must be "diffusion".
+   :type task_type: str
+   :param train_set: Training dataset, used to infer input node feature
+                     dimensions (kept for interface parity with other factories;
+                     unused directly here).
+   :param atom_vocab: List of atom vocabulary used for encoding.
+   :type atom_vocab: list
+   :param task_names: List of conditional labels (context columns).
+   :type task_names: list
+   :param condition_names: List of condition names for conditional
+                           generation.
+   :type condition_names: list
+   :param num_layers: Number of Dual-Track Transformer blocks.
+   :type num_layers: int
+   :param hidden_dims: expects keys "emb_dim", "hidden_dim",
+                       "num_heads" for the GFMDiff backbone.
+   :type hidden_dims: dict
+   :param chkpt_path: Optional path to model checkpoint.
+   :type chkpt_path: str
+   :param \*\*kwargs: diffusion + backbone-specific keyword arguments (see
+                      ``diffusion_gfmdiff.yaml``).
+
+
+   .. py:method:: build()
+
+      Build and return the GeomMolecularGenerative task.
+
+
+
+   .. py:attribute:: atom_vocab
+      :value: None
+
+
+
+   .. py:attribute:: chkpt_path
+      :value: None
+
+
+
+   .. py:attribute:: condition_names
+      :value: []
+
+
+
+   .. py:attribute:: context_node_nf
+
+
+   .. py:attribute:: hidden_dims
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: num_layers
+      :value: 5
+
+
+
+   .. py:attribute:: task_names
+      :value: []
+
+
+
+   .. py:attribute:: task_type
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+.. py:data:: logger
+
