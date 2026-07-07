@@ -1,0 +1,124 @@
+MolecularDiffusion.modules.models.difflinker.noise
+==================================================
+
+.. py:module:: MolecularDiffusion.modules.models.difflinker.noise
+
+.. autoapi-nested-parse::
+
+   Noise schedules, ported verbatim from DiffLinker's ``src/noise.py``.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.difflinker.noise.GammaNetwork
+   MolecularDiffusion.modules.models.difflinker.noise.PositiveLinear
+   MolecularDiffusion.modules.models.difflinker.noise.PredefinedNoiseSchedule
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.difflinker.noise.clip_noise_schedule
+   MolecularDiffusion.modules.models.difflinker.noise.cosine_beta_schedule
+   MolecularDiffusion.modules.models.difflinker.noise.polynomial_schedule
+
+
+Module Contents
+---------------
+
+.. py:class:: GammaNetwork
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Models a monotonic increasing function, construction as in the VDM paper.
+
+
+   .. py:method:: forward(t)
+
+
+   .. py:method:: gamma_tilde(t)
+
+
+   .. py:attribute:: gamma_0
+
+
+   .. py:attribute:: gamma_1
+
+
+   .. py:attribute:: l1
+
+
+   .. py:attribute:: l2
+
+
+   .. py:attribute:: l3
+
+
+.. py:class:: PositiveLinear(in_features: int, out_features: int, bias: bool = True, weight_init_offset: int = -2)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Linear layer with weights forced to be positive.
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: in_features
+
+
+   .. py:attribute:: out_features
+
+
+   .. py:attribute:: weight
+
+
+   .. py:attribute:: weight_init_offset
+      :value: -2
+
+
+
+.. py:class:: PredefinedNoiseSchedule(noise_schedule, timesteps, precision)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Lookup array for predefined (non-learned) noise schedules.
+
+
+   .. py:method:: forward(t)
+
+
+   .. py:attribute:: gamma
+
+
+   .. py:attribute:: timesteps
+
+
+.. py:function:: clip_noise_schedule(alphas2, clip_value=0.001)
+
+   For a noise schedule given by alpha^2, clip alpha_t / alpha_t-1 to
+   help improve stability during sampling.
+
+
+.. py:function:: cosine_beta_schedule(timesteps, s=0.008, raise_to_power: float = 1)
+
+   Cosine schedule as proposed in https://openreview.net/forum?id=-NEXDKk8gZ
+
+
+.. py:function:: polynomial_schedule(timesteps: int, s=0.0001, power=3.0)
+
+   A noise schedule based on a simple polynomial equation: 1 - x^power.
+
+

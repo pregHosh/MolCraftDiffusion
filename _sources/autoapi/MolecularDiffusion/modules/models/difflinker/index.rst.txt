@@ -1,0 +1,27 @@
+MolecularDiffusion.modules.models.difflinker
+============================================
+
+.. py:module:: MolecularDiffusion.modules.models.difflinker
+
+.. autoapi-nested-parse::
+
+   DiffLinker model code, ported from the DiffLinker repo (fragment/linker
+   mask-conditioned E(n)-equivariant diffusion). See
+   docs/model_integrations/difflinker/INTEGRATION_PLAN.md for the integration
+   plan this package implements.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/difflinker/edm/index
+   /autoapi/MolecularDiffusion/modules/models/difflinker/egnn/index
+   /autoapi/MolecularDiffusion/modules/models/difflinker/linker_size/index
+   /autoapi/MolecularDiffusion/modules/models/difflinker/noise/index
+   /autoapi/MolecularDiffusion/modules/models/difflinker/utils/index
+
+

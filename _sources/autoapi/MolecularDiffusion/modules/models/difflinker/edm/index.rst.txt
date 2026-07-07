@@ -1,0 +1,203 @@
+MolecularDiffusion.modules.models.difflinker.edm
+================================================
+
+.. py:module:: MolecularDiffusion.modules.models.difflinker.edm
+
+.. autoapi-nested-parse::
+
+   E(n)-equivariant fragment/linker diffusion model, ported near-verbatim from
+   DiffLinker's ``src/edm.py``.
+
+   Only ``EDM``'s non-inpainting path is exercised in this integration —
+   ``InpaintingEDM`` ports as-is but stays unexercised (out of scope, see
+   docs/model_integrations/difflinker/INTEGRATION_PLAN.md).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.difflinker.edm.EDM
+   MolecularDiffusion.modules.models.difflinker.edm.InpaintingEDM
+
+
+Module Contents
+---------------
+
+.. py:class:: EDM(dynamics: Union[MolecularDiffusion.modules.models.difflinker.egnn.Dynamics], in_node_nf: int, n_dims: int, timesteps: int = 1000, noise_schedule='learned', noise_precision=0.0001, loss_type='vlb', norm_values=(1.0, 1.0, 1.0), norm_biases=(None, 0.0, 0.0))
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: SNR(gamma)
+
+
+   .. py:method:: alpha(gamma, target_tensor)
+
+
+   .. py:method:: cdf_standard_gaussian(x)
+      :staticmethod:
+
+
+
+   .. py:method:: compute_x_pred(eps_t, z_t, gamma_t)
+
+      Computes the most likely prediction of x.
+
+
+
+   .. py:method:: delta_log_px(mask)
+
+
+   .. py:method:: dimensionality(mask)
+
+
+   .. py:method:: expm1(x: torch.Tensor) -> torch.Tensor
+      :staticmethod:
+
+
+
+   .. py:method:: forward(x, h, node_mask, fragment_mask, linker_mask, edge_mask, context=None)
+
+
+   .. py:method:: gaussian_kl(q_mu, q_sigma, p_mu, p_sigma)
+      :staticmethod:
+
+
+
+   .. py:method:: gaussian_kl_for_dimension(q_mu, q_sigma, p_mu, p_sigma, d)
+      :staticmethod:
+
+
+
+   .. py:method:: inflate_batch_array(array, target)
+      :staticmethod:
+
+
+
+   .. py:method:: kl_prior(xh, mask)
+
+      KL between q(z1 | x) and the prior p(z1) = Normal(0, 1).
+
+
+
+   .. py:method:: log_constant_of_p_x_given_z0(x, mask)
+
+
+   .. py:method:: log_p_xh_given_z0_without_constants(h, z_0, gamma_0, eps, eps_hat, mask, epsilon=1e-10)
+
+
+   .. py:method:: normalize(x, h)
+
+
+   .. py:method:: numbers_of_nodes(mask)
+      :staticmethod:
+
+
+
+   .. py:method:: sample_chain(x, h, node_mask, fragment_mask, linker_mask, edge_mask, context, keep_frames=None)
+
+
+   .. py:method:: sample_combined_position_feature_noise(n_samples, n_nodes, mask)
+
+
+   .. py:method:: sample_normal(mu, sigma, node_mask)
+
+
+   .. py:method:: sample_p_xh_given_z0_only_linker(z_0, node_mask, fragment_mask, linker_mask, edge_mask, context)
+
+      Samples x ~ p(x|z0). Samples only linker features and coords.
+
+
+
+   .. py:method:: sample_p_zs_given_zt_only_linker(s, t, z_t, node_mask, fragment_mask, linker_mask, edge_mask, context)
+
+      Samples zs ~ p(zs | zt). Only used during sampling. Samples only linker features and coords.
+
+
+
+   .. py:method:: sigma(gamma, target_tensor)
+
+
+   .. py:method:: sigma_and_alpha_t_given_s(gamma_t: torch.Tensor, gamma_s: torch.Tensor, target_tensor: torch.Tensor)
+
+      alpha t given s = alpha t / alpha s
+      sigma t given s = sqrt(1 - (alpha t given s)^2)
+
+
+
+   .. py:method:: softplus(x: torch.Tensor) -> torch.Tensor
+      :staticmethod:
+
+
+
+   .. py:method:: sum_except_batch(x)
+      :staticmethod:
+
+
+
+   .. py:method:: unnormalize(x, h)
+
+
+   .. py:method:: unnormalize_z(z)
+
+
+   .. py:attribute:: T
+      :value: 1000
+
+
+
+   .. py:attribute:: dynamics
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: n_dims
+
+
+   .. py:attribute:: norm_biases
+      :value: (None, 0.0, 0.0)
+
+
+
+   .. py:attribute:: norm_values
+      :value: (1.0, 1.0, 1.0)
+
+
+
+.. py:class:: InpaintingEDM(dynamics: Union[MolecularDiffusion.modules.models.difflinker.egnn.Dynamics], in_node_nf: int, n_dims: int, timesteps: int = 1000, noise_schedule='learned', noise_precision=0.0001, loss_type='vlb', norm_values=(1.0, 1.0, 1.0), norm_biases=(None, 0.0, 0.0))
+
+   Bases: :py:obj:`EDM`
+
+
+   Soft/probabilistic inpainting variant — ports as-is but stays
+   unexercised this pass (out of scope, see INTEGRATION_PLAN.md).
+
+
+   .. py:method:: dimensionality(mask)
+
+
+   .. py:method:: forward(x, h, node_mask, fragment_mask, linker_mask, edge_mask, context=None)
+
+
+   .. py:method:: sample_chain(x, h, node_mask, edge_mask, fragment_mask, linker_mask, context, keep_frames=None)
+
+
+   .. py:method:: sample_combined_position_feature_noise(n_samples, n_nodes, mask)
+
+
+   .. py:method:: sample_p_xh_given_z0(z_0, node_mask, edge_mask, context)
+
+
+   .. py:method:: sample_p_zs_given_zt(s, t, z_t, node_mask, edge_mask, context)
+
+
+   .. py:method:: sample_q_xh_given_z0_and_x(z_0, node_mask)
+
+
+   .. py:method:: sample_q_zs_given_zt_and_x(s, t, z_t, x, node_mask)
+
+

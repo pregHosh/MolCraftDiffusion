@@ -1,0 +1,293 @@
+MolecularDiffusion.modules.tasks.diffusion_difflinker
+=====================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_difflinker
+
+.. autoapi-nested-parse::
+
+   DiffLinker integration with the MolecularDiffusion data pipeline.
+
+   DiffLinker (https://github.com/igashov/DiffLinker) is a fragment/linker
+   mask-conditioned E(n)-equivariant diffusion model: given a set of fixed
+   "fragment" atoms, it diffuses only a "linker" subset of atoms that connects
+   them. See docs/model_integrations/difflinker/INTEGRATION_PLAN.md for the
+   full integration plan (data adapters, task-contract mapping, scope) this
+   module implements.
+
+   Ported model code lives under
+   ``MolecularDiffusion.modules.models.difflinker`` (``edm.py``, ``egnn.py``,
+   ``noise.py``, ``linker_size.py``).
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_difflinker.DIFFLINKER_ROW_DATA_COLUMNS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask
+   MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTaskFactory
+   MolecularDiffusion.modules.tasks.diffusion_difflinker.PointCloudToDiffLinkerBatch
+
+
+Module Contents
+---------------
+
+.. py:class:: DiffLinkerTask(in_node_nf: int, n_dims: int, hidden_nf: int, activation: str, tanh: bool, n_layers: int, attention: bool, norm_constant: float, inv_sublayers: int, sin_embedding: bool, normalization_factor: float, aggregation_method: str, model: str, normalization: Optional[str], condition_time: bool, anchors_context: bool, diffusion_steps: int, diffusion_noise_schedule: str, diffusion_noise_precision: float, diffusion_loss_type: str, normalize_factors: tuple, center_of_mass: str, atom_vocab: Optional[list] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Plain ``nn.Module`` task wrapper (TABASCO-style, no ``Task``/
+   ``core.Configurable`` base needed -- see docs/adding_new_models.md §2.6)
+   implementing the §2.1 contract around DiffLinker's ``EDM``.
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor) -> dict
+
+
+   .. py:method:: forward(batch: dict)
+
+
+   .. py:method:: predict_and_target(batch: dict)
+
+
+   .. py:method:: sample(nodesxsample: Optional[torch.Tensor] = None, batch_size: Optional[int] = None, num_steps: Optional[int] = None, batch: Optional[dict] = None, condition_tensor: Optional[torch.Tensor] = None, condition_mode: Optional[str] = None, outpaint_cfgs: Optional[dict] = None, use_noised_conditioning: bool = False, n_frames: int = 0, n_retrys: int = 0, t_retry: Optional[int] = None, context: Optional[torch.Tensor] = None, **kwargs)
+
+      Generate molecules by diffusing a linker between fixed fragment
+      atoms. Dispatched via the generic "outpaint" `GenerativeFactory`
+      path (`runmodes/generate/tasks_generate.py::structural_guidance`) --
+      see INTEGRATION_PLAN.md's Task-contract mapping section for the
+      exact kwarg contract this method mirrors.
+
+      Several kwargs accepted here are explicitly out of scope this pass
+      (inert, not implemented with real behavior): `batch`, `num_steps`,
+      `condition_mode`, `outpaint_cfgs`, `use_noised_conditioning`,
+      `n_frames` (no trajectory export), `n_retrys`/`t_retry` (no
+      bond-distance retry loop), `context` (property-conditioning value --
+      DiffLinker has no `prop_dist_model`, so this is always None here).
+
+
+
+   .. py:attribute:: anchors_context
+
+
+   .. py:attribute:: atom_vocab
+      :value: None
+
+
+
+   .. py:attribute:: center_of_mass
+
+
+   .. py:property:: device
+      :type: torch.device
+
+
+
+   .. py:attribute:: edm
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:property:: linker_size_histogram
+      :type: dict
+
+
+
+   .. py:attribute:: loss_type
+
+
+   .. py:property:: model
+
+
+   .. py:attribute:: n_dims
+
+
+   .. py:property:: n_node_dist
+      :type: dict
+
+
+
+   .. py:attribute:: ndim_extra
+      :value: 0
+
+
+
+   .. py:property:: node_dist_model
+      :type: MolecularDiffusion.modules.models.difflinker.linker_size.DistributionNodes
+
+
+
+   .. py:attribute:: norm_values
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+.. py:class:: DiffLinkerTaskFactory(task_type: str, in_node_nf: int, n_dims: int = 3, hidden_nf: int = 128, activation: str = 'silu', tanh: bool = False, n_layers: int = 6, attention: bool = False, norm_constant: float = 1e-06, inv_sublayers: int = 2, sin_embedding: bool = False, normalization_factor: float = 100, aggregation_method: str = 'sum', model: str = 'egnn_dynamics', normalization: Optional[str] = 'batch_norm', condition_time: bool = True, anchors_context: bool = True, diffusion_steps: int = 500, diffusion_noise_schedule: str = 'polynomial_2', diffusion_noise_precision: float = 1e-05, diffusion_loss_type: str = 'l2', normalize_factors: tuple = (1, 4, 10), center_of_mass: str = 'fragments', atom_vocab: Optional[list] = None, **kwargs)
+
+   Factory matching ``train.py``'s ``task_module.build()`` /
+   ``task_module.task`` instantiation pattern (see
+   ``diffusion_tabasco.py::ModelTaskFactory`` for the precedent).
+
+
+   .. py:method:: build() -> DiffLinkerTask
+
+
+   .. py:attribute:: activation
+      :value: 'silu'
+
+
+
+   .. py:attribute:: aggregation_method
+      :value: 'sum'
+
+
+
+   .. py:attribute:: anchors_context
+      :value: True
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: attention
+      :value: False
+
+
+
+   .. py:attribute:: center_of_mass
+      :value: 'fragments'
+
+
+
+   .. py:attribute:: condition_time
+      :value: True
+
+
+
+   .. py:attribute:: diffusion_loss_type
+      :value: 'l2'
+
+
+
+   .. py:attribute:: diffusion_noise_precision
+      :value: 1e-05
+
+
+
+   .. py:attribute:: diffusion_noise_schedule
+      :value: 'polynomial_2'
+
+
+
+   .. py:attribute:: diffusion_steps
+      :value: 500
+
+
+
+   .. py:attribute:: hidden_nf
+      :value: 128
+
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: inv_sublayers
+      :value: 2
+
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: model
+      :value: 'egnn_dynamics'
+
+
+
+   .. py:attribute:: n_dims
+      :value: 3
+
+
+
+   .. py:attribute:: n_layers
+      :value: 6
+
+
+
+   .. py:attribute:: norm_constant
+      :value: 1e-06
+
+
+
+   .. py:attribute:: normalization
+      :value: 'batch_norm'
+
+
+
+   .. py:attribute:: normalization_factor
+      :value: 100
+
+
+
+   .. py:attribute:: normalize_factors
+      :value: (1, 4, 10)
+
+
+
+   .. py:attribute:: sin_embedding
+      :value: False
+
+
+
+   .. py:attribute:: tanh
+      :value: False
+
+
+
+   .. py:attribute:: task_type
+
+
+.. py:class:: PointCloudToDiffLinkerBatch(atom_vocab: list)
+
+   Converts a MolCraftDiffusion PointCloud batch dict into DiffLinker's
+   native per-atom field layout.
+
+   Two data paths share this one adapter (see INTEGRATION_PLAN.md's Data
+   adapters section):
+
+   - **Path A** (real ZINC data, converted via
+     ``convert_zinc_pt_to_asedb.py`` + ``use_row_data_features: true``):
+     ``linker_mask``/``anchors`` are sliced straight out of
+     ``node_feature``'s trailing two columns.
+   - **Path B** (synthetic fallback, any ordinary single-molecule dataset):
+     when those trailing columns aren't present, a random contiguous slice
+     of each molecule is fabricated as the "linker", with the fragment
+     atoms bordering the cut tagged as anchors.
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: n_vocab
+
+
+.. py:data:: DIFFLINKER_ROW_DATA_COLUMNS
+   :value: ('linker_mask', 'anchors')
+
+

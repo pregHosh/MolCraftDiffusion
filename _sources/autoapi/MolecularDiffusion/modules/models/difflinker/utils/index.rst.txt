@@ -1,0 +1,85 @@
+MolecularDiffusion.modules.models.difflinker.utils
+==================================================
+
+.. py:module:: MolecularDiffusion.modules.models.difflinker.utils
+
+.. autoapi-nested-parse::
+
+   Small numerical helpers ported near-verbatim from DiffLinker's
+   ``src/utils.py`` (only the subset actually used by ``edm.py``/``egnn.py`` in
+   this integration; visualization/logging/EMA helpers were dropped as unused).
+
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.difflinker.utils.FoundNaNException
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.difflinker.utils.assert_correctly_masked
+   MolecularDiffusion.modules.models.difflinker.utils.assert_mean_zero_with_mask
+   MolecularDiffusion.modules.models.difflinker.utils.assert_partial_mean_zero_with_mask
+   MolecularDiffusion.modules.models.difflinker.utils.remove_mean_with_mask
+   MolecularDiffusion.modules.models.difflinker.utils.remove_partial_mean_with_mask
+   MolecularDiffusion.modules.models.difflinker.utils.sample_center_gravity_zero_gaussian_with_mask
+   MolecularDiffusion.modules.models.difflinker.utils.sample_gaussian_with_mask
+   MolecularDiffusion.modules.models.difflinker.utils.split_features
+   MolecularDiffusion.modules.models.difflinker.utils.sum_except_batch
+
+
+Module Contents
+---------------
+
+.. py:exception:: FoundNaNException(x, h)
+
+   Bases: :py:obj:`Exception`
+
+
+   Common base class for all non-exit exceptions.
+
+   Initialize self.  See help(type(self)) for accurate signature.
+
+
+   .. py:method:: find_nan_idx(z)
+      :staticmethod:
+
+
+
+   .. py:attribute:: only_h_nan_idx
+
+
+   .. py:attribute:: only_x_nan_idx
+
+
+   .. py:attribute:: x_h_nan_idx
+
+
+.. py:function:: assert_correctly_masked(variable: torch.Tensor, node_mask: torch.Tensor) -> None
+
+.. py:function:: assert_mean_zero_with_mask(x: torch.Tensor, node_mask: torch.Tensor, eps: float = 1e-10) -> None
+
+.. py:function:: assert_partial_mean_zero_with_mask(x: torch.Tensor, node_mask: torch.Tensor, center_of_mass_mask: torch.Tensor, eps: float = 1e-10) -> None
+
+.. py:function:: remove_mean_with_mask(x: torch.Tensor, node_mask: torch.Tensor) -> torch.Tensor
+
+.. py:function:: remove_partial_mean_with_mask(x: torch.Tensor, node_mask: torch.Tensor, center_of_mass_mask: torch.Tensor) -> torch.Tensor
+
+   Subtract center of mass of fragments from coordinates of all atoms.
+
+
+.. py:function:: sample_center_gravity_zero_gaussian_with_mask(size, device, node_mask) -> torch.Tensor
+
+.. py:function:: sample_gaussian_with_mask(size, device, node_mask) -> torch.Tensor
+
+.. py:function:: split_features(z, n_dims, num_classes, include_charges)
+
+.. py:function:: sum_except_batch(x: torch.Tensor) -> torch.Tensor
+

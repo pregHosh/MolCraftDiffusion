@@ -1,0 +1,322 @@
+MolecularDiffusion.modules.models.difflinker.egnn
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.models.difflinker.egnn
+
+.. autoapi-nested-parse::
+
+   EGNN backbone + DiffLinker's ``Dynamics``/``DynamicsWithPockets`` wrapper,
+   ported near-verbatim from DiffLinker's ``src/egnn.py``.
+
+   ``DynamicsWithPockets`` and the pocket-distance-graph helpers port as-is but
+   are unused/untested this pass — pocket/protein conditioning is explicitly out
+   of scope (see docs/model_integrations/difflinker/INTEGRATION_PLAN.md).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.difflinker.egnn.Dynamics
+   MolecularDiffusion.modules.models.difflinker.egnn.DynamicsWithPockets
+   MolecularDiffusion.modules.models.difflinker.egnn.EGNN
+   MolecularDiffusion.modules.models.difflinker.egnn.EquivariantBlock
+   MolecularDiffusion.modules.models.difflinker.egnn.EquivariantUpdate
+   MolecularDiffusion.modules.models.difflinker.egnn.GCL
+   MolecularDiffusion.modules.models.difflinker.egnn.GNN
+   MolecularDiffusion.modules.models.difflinker.egnn.SinusoidsEmbeddingNew
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.difflinker.egnn.coord2diff
+   MolecularDiffusion.modules.models.difflinker.egnn.unsorted_segment_sum
+
+
+Module Contents
+---------------
+
+.. py:class:: Dynamics(n_dims, in_node_nf, context_node_nf, hidden_nf=64, device='cpu', activation=nn.SiLU(), n_layers=4, attention=False, condition_time=True, tanh=False, norm_constant=0, inv_sublayers=2, sin_embedding=False, normalization_factor=100, aggregation_method='sum', model='egnn_dynamics', normalization=None, centering=False, graph_type='FC')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(t, xh, node_mask, linker_mask, edge_mask, context)
+
+      - t: (B)
+      - xh: (B, N, D), where D = 3 + nf
+      - node_mask: (B, N, 1)
+      - edge_mask: (B*N*N, 1)
+      - context: (B, N, C)
+
+
+
+   .. py:method:: get_edges(n_nodes, batch_size)
+
+
+   .. py:attribute:: centering
+      :value: False
+
+
+
+   .. py:attribute:: condition_time
+      :value: True
+
+
+
+   .. py:attribute:: context_node_nf
+
+
+   .. py:attribute:: edge_cache
+      :type:  dict
+
+
+   .. py:attribute:: graph_type
+      :value: 'FC'
+
+
+
+   .. py:attribute:: model
+      :value: 'egnn_dynamics'
+
+
+
+   .. py:attribute:: n_dims
+
+
+.. py:class:: DynamicsWithPockets(n_dims, in_node_nf, context_node_nf, hidden_nf=64, device='cpu', activation=nn.SiLU(), n_layers=4, attention=False, condition_time=True, tanh=False, norm_constant=0, inv_sublayers=2, sin_embedding=False, normalization_factor=100, aggregation_method='sum', model='egnn_dynamics', normalization=None, centering=False, graph_type='FC')
+
+   Bases: :py:obj:`Dynamics`
+
+
+   Ports as-is; pocket/protein conditioning is out of scope this pass, so
+   this class is unused/untested — see INTEGRATION_PLAN.md.
+
+
+   .. py:method:: forward(t, xh, node_mask, linker_mask, edge_mask, context)
+
+      - t: (B)
+      - xh: (B, N, D), where D = 3 + nf
+      - node_mask: (B, N, 1)
+      - edge_mask: (B*N*N, 1)
+      - context: (B, N, C)
+
+
+
+   .. py:method:: get_dist_edges(x, node_mask, batch_mask, linker_mask, fragment_only_mask, pocket_only_mask)
+
+
+   .. py:method:: get_dist_edges_4A(x, node_mask, batch_mask)
+      :staticmethod:
+
+
+
+.. py:class:: EGNN(in_node_nf, in_edge_nf, hidden_nf, device='cpu', activation=nn.SiLU(), n_layers=3, attention=False, norm_diff=True, out_node_nf=None, tanh=False, coords_range=15, norm_constant=1, inv_sublayers=2, sin_embedding=False, normalization_factor=100, aggregation_method='sum')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(h, x, edge_index, node_mask=None, linker_mask=None, edge_mask=None)
+
+
+   .. py:attribute:: aggregation_method
+      :value: 'sum'
+
+
+
+   .. py:attribute:: coords_range_layer
+
+
+   .. py:attribute:: device
+      :value: 'cpu'
+
+
+
+   .. py:attribute:: embedding
+
+
+   .. py:attribute:: embedding_out
+
+
+   .. py:attribute:: hidden_nf
+
+
+   .. py:attribute:: n_layers
+      :value: 3
+
+
+
+   .. py:attribute:: norm_diff
+      :value: True
+
+
+
+   .. py:attribute:: normalization_factor
+      :value: 100
+
+
+
+.. py:class:: EquivariantBlock(hidden_nf, edge_feat_nf=2, device='cpu', activation=nn.SiLU(), n_layers=2, attention=True, norm_diff=True, tanh=False, coords_range=15, norm_constant=1, sin_embedding=None, normalization_factor=100, aggregation_method='sum')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(h, x, edge_index, node_mask=None, linker_mask=None, edge_mask=None, edge_attr=None)
+
+
+   .. py:attribute:: aggregation_method
+      :value: 'sum'
+
+
+
+   .. py:attribute:: coords_range_layer
+
+
+   .. py:attribute:: device
+      :value: 'cpu'
+
+
+
+   .. py:attribute:: hidden_nf
+
+
+   .. py:attribute:: n_layers
+      :value: 2
+
+
+
+   .. py:attribute:: norm_constant
+      :value: 1
+
+
+
+   .. py:attribute:: norm_diff
+      :value: True
+
+
+
+   .. py:attribute:: normalization_factor
+      :value: 100
+
+
+
+   .. py:attribute:: sin_embedding
+      :value: None
+
+
+
+.. py:class:: EquivariantUpdate(hidden_nf, normalization_factor, aggregation_method, edges_in_d=1, activation=nn.SiLU(), tanh=False, coords_range=10.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: coord_model(h, coord, edge_index, coord_diff, edge_attr, edge_mask, linker_mask)
+
+
+   .. py:method:: forward(h, coord, edge_index, coord_diff, edge_attr=None, linker_mask=None, node_mask=None, edge_mask=None)
+
+
+   .. py:attribute:: aggregation_method
+
+
+   .. py:attribute:: coord_mlp
+
+
+   .. py:attribute:: coords_range
+      :value: 10.0
+
+
+
+   .. py:attribute:: normalization_factor
+
+
+   .. py:attribute:: tanh
+      :value: False
+
+
+
+.. py:class:: GCL(input_nf, output_nf, hidden_nf, normalization_factor, aggregation_method, activation, edges_in_d=0, nodes_att_dim=0, attention=False, normalization=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: edge_model(source, target, edge_attr, edge_mask)
+
+
+   .. py:method:: forward(h, edge_index, edge_attr=None, node_attr=None, node_mask=None, edge_mask=None)
+
+
+   .. py:method:: node_model(x, edge_index, edge_attr, node_attr)
+
+
+   .. py:attribute:: aggregation_method
+
+
+   .. py:attribute:: attention
+      :value: False
+
+
+
+   .. py:attribute:: edge_mlp
+
+
+   .. py:attribute:: normalization_factor
+
+
+.. py:class:: GNN(in_node_nf, in_edge_nf, hidden_nf, aggregation_method='sum', device='cpu', activation=nn.SiLU(), n_layers=4, attention=False, normalization_factor=1, out_node_nf=None, normalization=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(h, edges, edge_attr=None, node_mask=None, edge_mask=None)
+
+
+   .. py:attribute:: device
+      :value: 'cpu'
+
+
+
+   .. py:attribute:: embedding
+
+
+   .. py:attribute:: embedding_out
+
+
+   .. py:attribute:: hidden_nf
+
+
+   .. py:attribute:: n_layers
+      :value: 4
+
+
+
+.. py:class:: SinusoidsEmbeddingNew(max_res=15.0, min_res=15.0 / 2000.0, div_factor=4)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: dim
+
+
+   .. py:attribute:: frequencies
+
+
+   .. py:attribute:: n_frequencies
+
+
+.. py:function:: coord2diff(x, edge_index, norm_constant=1)
+
+.. py:function:: unsorted_segment_sum(data, segment_ids, num_segments, normalization_factor, aggregation_method: str)
+
+   Replicates TensorFlow's ``unsorted_segment_sum``. ``aggregation_method``
+   is 'sum' or 'mean'.
+
+

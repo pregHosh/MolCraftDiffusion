@@ -1,0 +1,51 @@
+MolecularDiffusion.modules.models.difflinker.linker_size
+========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.difflinker.linker_size
+
+.. autoapi-nested-parse::
+
+   Linker-size distribution, ported verbatim from DiffLinker's
+   ``src/linker_size.py``. ``SizeGNN`` (a separate auxiliary linker-size
+   predictor) is explicitly out of scope for this integration — see
+   docs/model_integrations/difflinker/INTEGRATION_PLAN.md — so only
+   ``DistributionNodes`` is ported here.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.difflinker.linker_size.DistributionNodes
+
+
+Module Contents
+---------------
+
+.. py:class:: DistributionNodes(histogram: dict)
+
+   Samples/scores discrete sizes (here: linker sizes) from a histogram.
+
+
+   .. py:method:: log_prob(batch_n_nodes: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: sample(n_samples: int = 1) -> torch.Tensor
+
+
+   .. py:attribute:: keys
+
+
+   .. py:attribute:: m
+
+
+   .. py:attribute:: n_nodes
+      :value: []
+
+
+
+   .. py:attribute:: prob
+
+
