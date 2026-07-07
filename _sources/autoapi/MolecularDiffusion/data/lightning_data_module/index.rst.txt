@@ -30,7 +30,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: MolecularDiffusionDataModule(data_module, batch_size: int = 1, num_workers: int = 0, pin_memory: bool = True, persistent_workers: bool = False)
+.. py:class:: MolecularDiffusionDataModule(data_module, batch_size: int = 1, num_workers: int = 0, pin_memory: bool = True, persistent_workers: bool = False, prefetch_factor: int = 2)
 
    Bases: :py:obj:`pytorch_lightning.LightningDataModule`
 
@@ -47,6 +47,8 @@ Module Contents
    :type num_workers: int
    :param pin_memory: Whether to pin memory for faster GPU transfer
    :type pin_memory: bool
+   :param prefetch_factor: Batches preloaded per worker (only valid when num_workers > 0)
+   :type prefetch_factor: int
 
 
    .. py:method:: setup(stage: Optional[str] = None)
@@ -95,6 +97,11 @@ Module Contents
 
    .. py:attribute:: pin_memory
       :value: True
+
+
+
+   .. py:attribute:: prefetch_factor
+      :value: 2
 
 
 
