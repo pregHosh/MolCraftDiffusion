@@ -497,6 +497,11 @@ implementing the §2.1 contract around DiffLinker’s <code class="docutils lite
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.get_extra_state">
+<span class="sig-name descname"><span class="pre">get_extra_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.get_extra_state" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.predict_and_target">
 <span class="sig-name descname"><span class="pre">predict_and_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.predict_and_target" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -517,9 +522,19 @@ bond-distance retry loop), <cite>context</cite> (property-conditioning value –
 DiffLinker has no <cite>prop_dist_model</cite>, so this is always None here).</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.set_extra_state">
+<span class="sig-name descname"><span class="pre">set_extra_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.set_extra_state" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.anchors_context">
 <span class="sig-name descname"><span class="pre">anchors_context</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.anchors_context" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.atom_count_histogram">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">atom_count_histogram</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.atom_count_histogram" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -547,11 +562,6 @@ DiffLinker has no <cite>prop_dist_model</cite>, so this is always None here).</p
 <span class="sig-name descname"><span class="pre">in_node_nf</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.in_node_nf" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.linker_size_histogram">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">linker_size_histogram</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.linker_size_histogram" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.loss_type">
 <span class="sig-name descname"><span class="pre">loss_type</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.loss_type" title="Link to this definition">¶</a></dt>
@@ -569,7 +579,7 @@ DiffLinker has no <cite>prop_dist_model</cite>, so this is always None here).</p
 
 <dl class="py property">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.n_node_dist">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_node_dist</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.n_node_dist" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_node_dist</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.n_node_dist" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -579,7 +589,7 @@ DiffLinker has no <cite>prop_dist_model</cite>, so this is always None here).</p
 
 <dl class="py property">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.node_dist_model">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">node_dist_model</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../models/difflinker/linker_size/index.html#MolecularDiffusion.modules.models.difflinker.linker_size.DistributionNodes" title="MolecularDiffusion.modules.models.difflinker.linker_size.DistributionNodes"><span class="pre">MolecularDiffusion.modules.models.difflinker.linker_size.DistributionNodes</span></a></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.node_dist_model" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">node_dist_model</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../models/difflinker/linker_size/index.html#MolecularDiffusion.modules.models.difflinker.linker_size.DistributionNodes" title="MolecularDiffusion.modules.models.difflinker.linker_size.DistributionNodes"><span class="pre">MolecularDiffusion.modules.models.difflinker.linker_size.DistributionNodes</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.node_dist_model" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -830,15 +840,17 @@ atoms bordering the cut tagged as anchors.</p></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask"><code class="docutils literal notranslate"><span class="pre">DiffLinkerTask</span></code></a><ul>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.evaluate"><code class="docutils literal notranslate"><span class="pre">DiffLinkerTask.evaluate()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.forward"><code class="docutils literal notranslate"><span class="pre">DiffLinkerTask.forward()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.get_extra_state"><code class="docutils literal notranslate"><span class="pre">DiffLinkerTask.get_extra_state()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.predict_and_target"><code class="docutils literal notranslate"><span class="pre">DiffLinkerTask.predict_and_target()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.sample"><code class="docutils literal notranslate"><span class="pre">DiffLinkerTask.sample()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.set_extra_state"><code class="docutils literal notranslate"><span class="pre">DiffLinkerTask.set_extra_state()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.anchors_context"><code class="docutils literal notranslate"><span class="pre">DiffLinkerTask.anchors_context</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.atom_count_histogram"><code class="docutils literal notranslate"><span class="pre">DiffLinkerTask.atom_count_histogram</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.atom_vocab"><code class="docutils literal notranslate"><span class="pre">DiffLinkerTask.atom_vocab</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.center_of_mass"><code class="docutils literal notranslate"><span class="pre">DiffLinkerTask.center_of_mass</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.device"><code class="docutils literal notranslate"><span class="pre">DiffLinkerTask.device</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.edm"><code class="docutils literal notranslate"><span class="pre">DiffLinkerTask.edm</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.in_node_nf"><code class="docutils literal notranslate"><span class="pre">DiffLinkerTask.in_node_nf</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.linker_size_histogram"><code class="docutils literal notranslate"><span class="pre">DiffLinkerTask.linker_size_histogram</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.loss_type"><code class="docutils literal notranslate"><span class="pre">DiffLinkerTask.loss_type</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.model"><code class="docutils literal notranslate"><span class="pre">DiffLinkerTask.model</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.n_dims"><code class="docutils literal notranslate"><span class="pre">DiffLinkerTask.n_dims</span></code></a></li>
