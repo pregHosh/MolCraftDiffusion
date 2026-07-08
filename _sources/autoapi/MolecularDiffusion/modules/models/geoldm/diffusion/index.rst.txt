@@ -1,0 +1,317 @@
+MolecularDiffusion.modules.models.geoldm.diffusion
+==================================================
+
+.. py:module:: MolecularDiffusion.modules.models.geoldm.diffusion
+
+.. autoapi-nested-parse::
+
+   E(n) hierarchical VAE + latent diffusion, ported from GeoLDM's
+   `equivariant_diffusion/en_diffusion.py`
+   (commit 03ae2031c712a1a6c1678e747bdcdc7a7560e00b), lines 34-1243.
+
+   `DistributionNodes`, `gaussian_KL`, `gaussian_KL_for_dimension`,
+   `PredefinedNoiseSchedule`, `GammaNetwork` are reused from
+   `MolecularDiffusion.modules.models.en_diffusion` (that fork already carries
+   the exact same implementations) instead of being re-ported. Mean-zero /
+   Gaussian sampling utilities come from `MolecularDiffusion.utils`.
+
+   Two compatibility shims (not present upstream) are added directly on these
+   ported classes so `modules.tasks.diffusion.GeomMolecularGenerative`'s
+   inherited `__init__`/`density_estimation`/`sample_chain` machinery works
+   without raising, per the integration plan (revision 2):
+     - `self.extra_norm_values = ()` / `self.ndim_extra = 0` in
+       `EnVariationalDiffusion.__init__` / `EnHierarchicalVAE.__init__`.
+     - `forward(...)` on all three classes accepts and ignores
+       `reference_indices=None, reference_freeze_mode="all"` (no-op
+       passthrough; scaffold-freezing is out of scope for this integration).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.geoldm.diffusion.EnHierarchicalVAE
+   MolecularDiffusion.modules.models.geoldm.diffusion.EnLatentDiffusion
+   MolecularDiffusion.modules.models.geoldm.diffusion.EnVariationalDiffusion
+
+
+Module Contents
+---------------
+
+.. py:class:: EnHierarchicalVAE(encoder: MolecularDiffusion.modules.models.geoldm.networks.EGNN_encoder_QM9, decoder: MolecularDiffusion.modules.models.geoldm.networks.EGNN_decoder_QM9, in_node_nf: int, n_dims: int, latent_node_nf: int, kl_weight: float, norm_values=(1.0, 1.0, 1.0), norm_biases=(None, 0.0, 0.0), include_charges=True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   The E(n) Hierarchical VAE Module.
+
+
+   .. py:method:: compute_loss(x, h, node_mask, edge_mask, context)
+
+
+   .. py:method:: compute_reconstruction_error(xh_rec, xh)
+
+
+   .. py:method:: decode(z_xh, node_mask=None, edge_mask=None, context=None)
+
+      Computes p(x|z).
+
+
+
+   .. py:method:: encode(x, h, node_mask=None, edge_mask=None, context=None)
+
+      Computes q(z|x).
+
+
+
+   .. py:method:: forward(x, h, node_mask=None, edge_mask=None, context=None, reference_indices=None, reference_freeze_mode='all')
+
+      Computes the ELBO. `reference_indices`/`reference_freeze_mode`
+      are accepted and ignored -- see module docstring.
+
+
+
+   .. py:method:: log_info()
+
+
+   .. py:method:: reconstruct(x, h, node_mask=None, edge_mask=None, context=None)
+
+
+   .. py:method:: sample_combined_position_feature_noise(n_samples, n_nodes, node_mask)
+
+
+   .. py:method:: sample_normal(mu, sigma, node_mask, fix_noise=False)
+
+
+   .. py:method:: subspace_dimensionality(node_mask)
+
+
+   .. py:attribute:: decoder
+
+
+   .. py:attribute:: encoder
+
+
+   .. py:attribute:: extra_norm_values
+      :value: ()
+
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: include_charges
+      :value: True
+
+
+
+   .. py:attribute:: kl_weight
+
+
+   .. py:attribute:: latent_node_nf
+
+
+   .. py:attribute:: n_dims
+
+
+   .. py:attribute:: ndim_extra
+      :value: 0
+
+
+
+   .. py:attribute:: norm_biases
+      :value: (None, 0.0, 0.0)
+
+
+
+   .. py:attribute:: norm_values
+      :value: (1.0, 1.0, 1.0)
+
+
+
+   .. py:attribute:: num_classes
+
+
+.. py:class:: EnLatentDiffusion(**kwargs)
+
+   Bases: :py:obj:`EnVariationalDiffusion`
+
+
+   The E(n) Latent Diffusion Module.
+
+
+   .. py:method:: forward(x, h, node_mask=None, edge_mask=None, context=None, reference_indices=None, reference_freeze_mode='all')
+
+      `reference_indices`/`reference_freeze_mode` are accepted and
+      ignored -- see module docstring.
+
+
+
+   .. py:method:: instantiate_first_stage(vae: EnHierarchicalVAE)
+
+
+   .. py:method:: log_constants_p_h_given_z0(h, node_mask)
+
+
+   .. py:method:: log_pxh_given_z0_without_constants(x, h, z_t, gamma_0, eps, net_out, node_mask, epsilon=1e-10)
+
+
+   .. py:method:: sample(n_samples, n_nodes, node_mask, edge_mask, context, fix_noise=False)
+
+
+   .. py:method:: sample_chain(n_samples, n_nodes, node_mask, edge_mask, context, keep_frames=None)
+
+
+   .. py:method:: sample_p_xh_given_z0(z0, node_mask, edge_mask, context, fix_noise=False)
+
+
+   .. py:method:: unnormalize_z(z, node_mask)
+
+
+   .. py:attribute:: trainable_ae
+
+
+.. py:class:: EnVariationalDiffusion(dynamics, in_node_nf: int, n_dims: int, timesteps: int = 1000, parametrization='eps', noise_schedule='learned', noise_precision=0.0001, loss_type='vlb', norm_values=(1.0, 1.0, 1.0), norm_biases=(None, 0.0, 0.0), include_charges=True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   The E(n) Diffusion Module.
+
+
+   .. py:method:: SNR(gamma)
+
+
+   .. py:method:: alpha(gamma, target_tensor)
+
+
+   .. py:method:: check_issues_norm_values(num_stdevs=8)
+
+
+   .. py:method:: compute_error(net_out, gamma_t, eps)
+
+
+   .. py:method:: compute_loss(x, h, node_mask, edge_mask, context, t0_always)
+
+
+   .. py:method:: compute_x_pred(net_out, zt, gamma_t)
+
+
+   .. py:method:: forward(x, h, node_mask=None, edge_mask=None, context=None, reference_indices=None, reference_freeze_mode='all')
+
+      Computes the loss (type l2 or NLL) if training. And if eval then always computes NLL.
+
+      `reference_indices`/`reference_freeze_mode` are accepted and ignored
+      -- see module docstring; scaffold-freezing is out of scope for this
+      integration.
+
+
+
+   .. py:method:: inflate_batch_array(array, target)
+
+
+   .. py:method:: kl_prior(xh, node_mask)
+
+
+   .. py:method:: log_constants_p_x_given_z0(x, node_mask)
+
+
+   .. py:method:: log_info()
+
+
+   .. py:method:: log_pxh_given_z0_without_constants(x, h, z_t, gamma_0, eps, net_out, node_mask, epsilon=1e-10)
+
+
+   .. py:method:: normalize(x, h, node_mask)
+
+
+   .. py:method:: phi(x, t, node_mask, edge_mask, context)
+
+
+   .. py:method:: sample(n_samples, n_nodes, node_mask, edge_mask, context, fix_noise=False)
+
+
+   .. py:method:: sample_chain(n_samples, n_nodes, node_mask, edge_mask, context, keep_frames=None)
+
+
+   .. py:method:: sample_combined_position_feature_noise(n_samples, n_nodes, node_mask)
+
+
+   .. py:method:: sample_normal(mu, sigma, node_mask, fix_noise=False)
+
+
+   .. py:method:: sample_p_xh_given_z0(z0, node_mask, edge_mask, context, fix_noise=False)
+
+
+   .. py:method:: sample_p_zs_given_zt(s, t, zt, node_mask, edge_mask, context, fix_noise=False)
+
+
+   .. py:method:: sigma(gamma, target_tensor)
+
+
+   .. py:method:: sigma_and_alpha_t_given_s(gamma_t: torch.Tensor, gamma_s: torch.Tensor, target_tensor: torch.Tensor)
+
+
+   .. py:method:: subspace_dimensionality(node_mask)
+
+
+   .. py:method:: unnormalize(x, h_cat, h_int, node_mask)
+
+
+   .. py:method:: unnormalize_z(z, node_mask)
+
+
+   .. py:attribute:: T
+      :value: 1000
+
+
+
+   .. py:attribute:: dynamics
+
+
+   .. py:attribute:: extra_norm_values
+      :value: ()
+
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: include_charges
+      :value: True
+
+
+
+   .. py:attribute:: loss_type
+      :value: 'vlb'
+
+
+
+   .. py:attribute:: n_dims
+
+
+   .. py:attribute:: ndim_extra
+      :value: 0
+
+
+
+   .. py:attribute:: norm_biases
+      :value: (None, 0.0, 0.0)
+
+
+
+   .. py:attribute:: norm_values
+      :value: (1.0, 1.0, 1.0)
+
+
+
+   .. py:attribute:: num_classes
+
+
+   .. py:attribute:: parametrization
+      :value: 'eps'
+
+
+

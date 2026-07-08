@@ -1,0 +1,25 @@
+MolecularDiffusion.modules.models.geoldm
+========================================
+
+.. py:module:: MolecularDiffusion.modules.models.geoldm
+
+.. autoapi-nested-parse::
+
+   GeoLDM model code, ported from the GeoLDM repo (E(n)-equivariant
+   hierarchical-VAE + latent diffusion). See
+   docs/model_integrations/geoldm/INTEGRATION_PLAN.md for the integration plan
+   this package implements.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/geoldm/diffusion/index
+   /autoapi/MolecularDiffusion/modules/models/geoldm/egnn/index
+   /autoapi/MolecularDiffusion/modules/models/geoldm/networks/index
+
+

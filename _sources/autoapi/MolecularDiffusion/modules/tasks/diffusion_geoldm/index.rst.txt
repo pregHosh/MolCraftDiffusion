@@ -1,0 +1,208 @@
+MolecularDiffusion.modules.tasks.diffusion_geoldm
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_geoldm
+
+.. autoapi-nested-parse::
+
+   GeoLDM stage 2: E(n) latent diffusion task.
+
+   Thin subclass of `MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative`
+   wrapping the ported `EnLatentDiffusion` (`modules/models/geoldm/diffusion.py`)
+   as `self.model`. See docs/model_integrations/geoldm/INTEGRATION_PLAN.md for
+   the full integration plan (revision 2).
+
+   `__init__`/`preprocess`/`forward`/`density_estimation`/`predict_and_target`/
+   `evaluate` are all inherited unmodified -- once the ported `EnLatentDiffusion`
+   accepts (and ignores) `reference_indices`/`reference_freeze_mode` (see
+   `modules/models/geoldm/diffusion.py`'s shim), the base class's non-graph
+   `density_estimation` branch works as-is, including the `-log_pN` node-count
+   correction (semantically correct here: this is a real NLL over p(x,h,N)).
+
+   `sample` is overridden: vanilla `EnLatentDiffusion.sample`'s signature
+   (`n_samples, n_nodes, node_mask, edge_mask, context, fix_noise=False`) and
+   2-tuple `(x, h)` return do not match the base class's `sample()` call site
+   (which expects `condition_tensor`/`condition_mode`/`n_frames`/`n_retrys`/
+   `t_retry`/`use_noised_conditioning` and a 3-tuple `(x, h, chain)` return) --
+   see plan's feasibility findings. `sample_chain`/`sample_guidance`/
+   `sample_conditonal`/etc. are left inherited but unsupported (out of scope).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_geoldm.GeoLDMTask
+   MolecularDiffusion.modules.tasks.diffusion_geoldm.GeoLDMTaskFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: GeoLDMTask(diffusion_model, node_dist_model=None, prop_dist_model=None, n_node_dist: Dict = {}, augment_noise: float = 0, data_augmentation: bool = False, condition: List = [], normalize_condition: str = None, sp_regularizer: MolecularDiffusion.callbacks.SP_regularizer = None, reference_indices: List = None, reference_freeze_mode: str = 'all')
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative`
+
+
+   GeoLDM's `EnLatentDiffusion` wrapped in the platform's `Task` contract.
+
+   Generative Diffusion model for molecular structures.
+   Parameters:
+   - diffusion_model: The dynamic functional model for diffusion.
+   - node_dist_model (Optional[NodeDistributionModel]): The model for number of node distribution. Default is None.
+   - prop_dist_model (Optional[PropertyDistributionModel]): The model for property distribution. Default is None.
+   - n_node_dist (Dict): The distribution of number of nodes. Default is {}.
+   - augment_noise (float): The amount of noise to add to the coordinates for data augmentation. Default is 0.
+   - data_augmentation (bool): Whether to apply data augmentation by symmetry operations. Default is False.
+   - condition (List): The list of conditions for the model. Default is [].
+   - normalize_condition (str): The normalization method for the condition. Default is None. [None, "maxmin", "mad"]
+   - sp_regularizer (SP_regularizer): The self-pace learning regularizer for the model. Default is None.
+
+
+   .. py:method:: sample(nodesxsample: torch.Tensor = torch.tensor([10]), context: Optional[torch.Tensor] = None, condition_tensor: Optional[torch.Tensor] = None, condition_mode: Optional[str] = None, fix_noise: bool = False, n_frames: int = 0, n_retrys: int = 0, t_retry: int = 180, mode: str = 'ddpm', use_noised_conditioning: bool = False, **kwargs)
+
+      Sample molecular structures from vanilla GeoLDM's 2-stage sampler.
+
+      `condition_tensor`/`condition_mode`/`n_retrys`/`t_retry`/
+      `use_noised_conditioning` have no vanilla-GeoLDM equivalent and raise
+      `NotImplementedError` if set to a non-default value. `n_frames` is
+      accepted and ignored (no trajectory export -- see plan's "explicitly
+      out of scope"). `mode` must be "ddpm" (vanilla GeoLDM has no DDIM
+      sampler).
+
+
+
+.. py:class:: GeoLDMTaskFactory(task_type: str, vae_ckpt: str, vae_config: Dict, n_dims: int = 3, hidden_nf: int = 64, n_layers: int = 4, attention: bool = False, tanh: bool = False, model: str = 'egnn_dynamics', norm_constant: float = 0, inv_sublayers: int = 2, sin_embedding: bool = False, normalization_factor: float = 100, aggregation_method: str = 'sum', condition_time: bool = True, include_charges: bool = True, diffusion_steps: int = 1000, diffusion_noise_schedule: str = 'polynomial_2', diffusion_noise_precision: float = 1e-05, diffusion_loss_type: str = 'l2', normalize_factors: tuple = (1.0, 4.0, 10.0), trainable_ae: bool = False, augment_noise: float = 0.0, data_augmentation: bool = False, atom_vocab: Optional[List] = None, **kwargs)
+
+   Factory matching `train.py`'s `task_module.build()` /
+   `task_module.task` instantiation pattern. Loads a frozen VAE checkpoint
+   (trained via `GeoLDMVAETaskFactory`/`configs/tasks/vae_geoldm.yaml`) the
+   same way `diffusion_ldm.py::LDMTaskFactory.build()` loads its
+   `autoencoder_ckpt` -- see plan's Core-Change-Requirement note.
+
+
+   .. py:method:: build() -> GeoLDMTask
+
+
+   .. py:attribute:: aggregation_method
+      :value: 'sum'
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: attention
+      :value: False
+
+
+
+   .. py:attribute:: augment_noise
+      :value: 0.0
+
+
+
+   .. py:attribute:: condition_time
+      :value: True
+
+
+
+   .. py:attribute:: data_augmentation
+      :value: False
+
+
+
+   .. py:attribute:: diffusion_loss_type
+      :value: 'l2'
+
+
+
+   .. py:attribute:: diffusion_noise_precision
+      :value: 1e-05
+
+
+
+   .. py:attribute:: diffusion_noise_schedule
+      :value: 'polynomial_2'
+
+
+
+   .. py:attribute:: diffusion_steps
+      :value: 1000
+
+
+
+   .. py:attribute:: hidden_nf
+      :value: 64
+
+
+
+   .. py:attribute:: include_charges
+      :value: True
+
+
+
+   .. py:attribute:: inv_sublayers
+      :value: 2
+
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: model_mode
+      :value: 'egnn_dynamics'
+
+
+
+   .. py:attribute:: n_dims
+      :value: 3
+
+
+
+   .. py:attribute:: n_layers
+      :value: 4
+
+
+
+   .. py:attribute:: norm_constant
+      :value: 0
+
+
+
+   .. py:attribute:: normalization_factor
+      :value: 100
+
+
+
+   .. py:attribute:: normalize_factors
+      :value: (1.0, 4.0, 10.0)
+
+
+
+   .. py:attribute:: sin_embedding
+      :value: False
+
+
+
+   .. py:attribute:: tanh
+      :value: False
+
+
+
+   .. py:attribute:: task_type
+
+
+   .. py:attribute:: trainable_ae
+      :value: False
+
+
+
+   .. py:attribute:: vae_ckpt
+
+
+   .. py:attribute:: vae_config
+
+

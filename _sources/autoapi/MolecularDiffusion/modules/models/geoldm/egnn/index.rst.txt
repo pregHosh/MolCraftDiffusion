@@ -1,0 +1,249 @@
+MolecularDiffusion.modules.models.geoldm.egnn
+=============================================
+
+.. py:module:: MolecularDiffusion.modules.models.geoldm.egnn
+
+.. autoapi-nested-parse::
+
+   E(n)-equivariant graph conv layers, ported from GeoLDM's
+   `egnn/egnn_new.py` (commit 03ae2031c712a1a6c1678e747bdcdc7a7560e00b).
+
+   Self-contained per repo precedent (`modules/models/difflinker/egnn.py`,
+   `modules/models/shepherd_arch`'s own EGNN) -- not shared with
+   `modules/models/en_diffusion.py`'s own `EnVariationalDiffusion` machinery.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.geoldm.egnn.EGNN
+   MolecularDiffusion.modules.models.geoldm.egnn.EquivariantBlock
+   MolecularDiffusion.modules.models.geoldm.egnn.EquivariantUpdate
+   MolecularDiffusion.modules.models.geoldm.egnn.GCL
+   MolecularDiffusion.modules.models.geoldm.egnn.GNN
+   MolecularDiffusion.modules.models.geoldm.egnn.SinusoidsEmbeddingNew
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.geoldm.egnn.coord2diff
+   MolecularDiffusion.modules.models.geoldm.egnn.unsorted_segment_sum
+
+
+Module Contents
+---------------
+
+.. py:class:: EGNN(in_node_nf, in_edge_nf, hidden_nf, device='cpu', act_fn=nn.SiLU(), n_layers=3, attention=False, norm_diff=True, out_node_nf=None, tanh=False, coords_range=15, norm_constant=1, inv_sublayers=2, sin_embedding=False, normalization_factor=100, aggregation_method='sum')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(h, x, edge_index, node_mask=None, edge_mask=None)
+
+
+   .. py:attribute:: aggregation_method
+      :value: 'sum'
+
+
+
+   .. py:attribute:: coords_range_layer
+
+
+   .. py:attribute:: device
+      :value: 'cpu'
+
+
+
+   .. py:attribute:: embedding
+
+
+   .. py:attribute:: embedding_out
+
+
+   .. py:attribute:: hidden_nf
+
+
+   .. py:attribute:: n_layers
+      :value: 3
+
+
+
+   .. py:attribute:: norm_diff
+      :value: True
+
+
+
+   .. py:attribute:: normalization_factor
+      :value: 100
+
+
+
+.. py:class:: EquivariantBlock(hidden_nf, edge_feat_nf=2, device='cpu', act_fn=nn.SiLU(), n_layers=2, attention=True, norm_diff=True, tanh=False, coords_range=15, norm_constant=1, sin_embedding=None, normalization_factor=100, aggregation_method='sum')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(h, x, edge_index, node_mask=None, edge_mask=None, edge_attr=None)
+
+
+   .. py:attribute:: aggregation_method
+      :value: 'sum'
+
+
+
+   .. py:attribute:: coords_range_layer
+
+
+   .. py:attribute:: device
+      :value: 'cpu'
+
+
+
+   .. py:attribute:: hidden_nf
+
+
+   .. py:attribute:: n_layers
+      :value: 2
+
+
+
+   .. py:attribute:: norm_constant
+      :value: 1
+
+
+
+   .. py:attribute:: norm_diff
+      :value: True
+
+
+
+   .. py:attribute:: normalization_factor
+      :value: 100
+
+
+
+   .. py:attribute:: sin_embedding
+      :value: None
+
+
+
+.. py:class:: EquivariantUpdate(hidden_nf, normalization_factor, aggregation_method, edges_in_d=1, act_fn=nn.SiLU(), tanh=False, coords_range=10.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: coord_model(h, coord, edge_index, coord_diff, edge_attr, edge_mask)
+
+
+   .. py:method:: forward(h, coord, edge_index, coord_diff, edge_attr=None, node_mask=None, edge_mask=None)
+
+
+   .. py:attribute:: aggregation_method
+
+
+   .. py:attribute:: coord_mlp
+
+
+   .. py:attribute:: coords_range
+      :value: 10.0
+
+
+
+   .. py:attribute:: normalization_factor
+
+
+   .. py:attribute:: tanh
+      :value: False
+
+
+
+.. py:class:: GCL(input_nf, output_nf, hidden_nf, normalization_factor, aggregation_method, edges_in_d=0, nodes_att_dim=0, act_fn=nn.SiLU(), attention=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: edge_model(source, target, edge_attr, edge_mask)
+
+
+   .. py:method:: forward(h, edge_index, edge_attr=None, node_attr=None, node_mask=None, edge_mask=None)
+
+
+   .. py:method:: node_model(x, edge_index, edge_attr, node_attr)
+
+
+   .. py:attribute:: aggregation_method
+
+
+   .. py:attribute:: attention
+      :value: False
+
+
+
+   .. py:attribute:: edge_mlp
+
+
+   .. py:attribute:: node_mlp
+
+
+   .. py:attribute:: normalization_factor
+
+
+.. py:class:: GNN(in_node_nf, in_edge_nf, hidden_nf, aggregation_method='sum', device='cpu', act_fn=nn.SiLU(), n_layers=4, attention=False, normalization_factor=1, out_node_nf=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(h, edges, edge_attr=None, node_mask=None, edge_mask=None)
+
+
+   .. py:attribute:: device
+      :value: 'cpu'
+
+
+
+   .. py:attribute:: embedding
+
+
+   .. py:attribute:: embedding_out
+
+
+   .. py:attribute:: hidden_nf
+
+
+   .. py:attribute:: n_layers
+      :value: 4
+
+
+
+.. py:class:: SinusoidsEmbeddingNew(max_res=15.0, min_res=15.0 / 2000.0, div_factor=4)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: dim
+
+
+   .. py:attribute:: frequencies
+
+
+   .. py:attribute:: n_frequencies
+
+
+.. py:function:: coord2diff(x, edge_index, norm_constant=1)
+
+.. py:function:: unsorted_segment_sum(data, segment_ids, num_segments, normalization_factor, aggregation_method: str)
+
+   Custom PyTorch op to replicate TensorFlow's `unsorted_segment_sum`.
+
+   Normalization: 'sum' or 'mean'.
+
+

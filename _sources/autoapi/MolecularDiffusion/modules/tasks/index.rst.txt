@@ -12,6 +12,7 @@ Submodules
 
    /autoapi/MolecularDiffusion/modules/tasks/diffusion/index
    /autoapi/MolecularDiffusion/modules/tasks/diffusion_difflinker/index
+   /autoapi/MolecularDiffusion/modules/tasks/diffusion_geoldm/index
    /autoapi/MolecularDiffusion/modules/tasks/diffusion_ldm/index
    /autoapi/MolecularDiffusion/modules/tasks/diffusion_tabasco/index
    /autoapi/MolecularDiffusion/modules/tasks/metrics/index
@@ -19,5 +20,6 @@ Submodules
    /autoapi/MolecularDiffusion/modules/tasks/regression/index
    /autoapi/MolecularDiffusion/modules/tasks/ssl3d/index
    /autoapi/MolecularDiffusion/modules/tasks/task/index
+   /autoapi/MolecularDiffusion/modules/tasks/vae_geoldm/index
 
 

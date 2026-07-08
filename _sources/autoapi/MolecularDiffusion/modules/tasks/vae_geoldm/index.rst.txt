@@ -1,0 +1,224 @@
+MolecularDiffusion.modules.tasks.vae_geoldm
+===========================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.vae_geoldm
+
+.. autoapi-nested-parse::
+
+   GeoLDM stage 1: E(n) hierarchical VAE task.
+
+   Thin subclass of `MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative`
+   wrapping the ported `EnHierarchicalVAE` (`modules/models/geoldm/diffusion.py`)
+   as `self.model`. See docs/model_integrations/geoldm/INTEGRATION_PLAN.md for
+   the full integration plan (revision 2).
+
+   Everything except `density_estimation`/`sample`/`predict_and_target`/
+   `evaluate` is inherited unmodified from `GeomMolecularGenerative` --
+   `__init__`, `preprocess`. `density_estimation` is overridden because the
+   base class's version subtracts a `-log_pN` node-count correction that
+   converts a density into an NLL over (x, h, N) jointly; that correction
+   doesn't apply to a VAE ELBO over (x, h) alone (see plan). `forward` needs no
+   separate override -- the base class's `forward` just calls
+   `self.density_estimation(batch)`, so overriding `density_estimation` alone
+   is enough (polymorphic dispatch). `sample` raises `NotImplementedError`: a
+   VAE alone has no cardinality-varying unconditional prior over (x, h),
+   matching vanilla GeoLDM where a VAE-only run never calls `sample()`.
+
+   `predict_and_target`/`evaluate` are overridden (attempt 2 fix, see
+   INTEGRATION_PLAN.md Tester attempt_1 diagnosis and Executor attempt 2 log):
+   `task_type='vae_geoldm'` prefix-matches `TASK_REGISTRY['vae']` in
+   `runmodes/train/eval.py`, which hardcodes `metric_key='match_rate'`. The
+   base class's inherited `evaluate()` only returns
+   `{'val_negative_log_likelihood': ...}`, so `val_metric_dict['match_rate']`
+   KeyErrors after validation. Fix: `predict_and_target` additionally computes
+   a real per-atom reconstruction match rate (encode to the latent mode, decode
+   back, compare argmax categorical atom types against the input, masked by
+   `node_mask`) using `EnHierarchicalVAE.encode`/`decode` -- both already
+   implemented on the ported model, so this needs no new model-side plumbing --
+   and packs it as a second column alongside the NLL so `evaluate()` can emit
+   both `val_negative_log_likelihood` and `match_rate` from one aggregated
+   tensor (matching the `Engine.evaluate` pred/target cat-then-evaluate
+   contract in `core/engine.py:530-567`).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETask
+   MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: GeoLDMVAETask(diffusion_model, node_dist_model=None, prop_dist_model=None, n_node_dist: Dict = {}, augment_noise: float = 0, data_augmentation: bool = False, condition: List = [], normalize_condition: str = None, sp_regularizer: MolecularDiffusion.callbacks.SP_regularizer = None, reference_indices: List = None, reference_freeze_mode: str = 'all')
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative`
+
+
+   GeoLDM's `EnHierarchicalVAE` wrapped in the platform's `Task` contract.
+
+   Generative Diffusion model for molecular structures.
+   Parameters:
+   - diffusion_model: The dynamic functional model for diffusion.
+   - node_dist_model (Optional[NodeDistributionModel]): The model for number of node distribution. Default is None.
+   - prop_dist_model (Optional[PropertyDistributionModel]): The model for property distribution. Default is None.
+   - n_node_dist (Dict): The distribution of number of nodes. Default is {}.
+   - augment_noise (float): The amount of noise to add to the coordinates for data augmentation. Default is 0.
+   - data_augmentation (bool): Whether to apply data augmentation by symmetry operations. Default is False.
+   - condition (List): The list of conditions for the model. Default is [].
+   - normalize_condition (str): The normalization method for the condition. Default is None. [None, "maxmin", "mad"]
+   - sp_regularizer (SP_regularizer): The self-pace learning regularizer for the model. Default is None.
+
+
+   .. py:method:: density_estimation(batch)
+
+
+   .. py:method:: evaluate(pred, target)
+
+      Emits `val_negative_log_likelihood` (unchanged) plus `match_rate`
+      (attempt 2 fix -- see module docstring).
+
+
+
+   .. py:method:: predict_and_target(batch)
+
+      See module docstring -- packs `match_rate` as a second column
+      alongside the base class's NLL so `evaluate()` can emit both.
+
+
+
+   .. py:method:: sample(*args, **kwargs)
+      :abstractmethod:
+
+
+      Sample molecular structures.
+
+      Parameters:
+      - nodesxsample (Tensor): Number of nodes per sample.
+      - context (Optional[Tensor]): Context tensor for sampling. Default is None.
+      - condition_tensor (Optional[Tensor]): Condition tensor for sampling. Default is None.
+          Note that it has to be normalized the same way as the training set.
+          Size = [batch size, n_atom, n_features]
+      - condition_mode (Optional[str]): Mode for conditioning. Default is None.
+          Format: [condition_name]_[component_alg]
+          component name can be x, h, or xh
+          component_alg: SSGD, ...
+      - fix_noise (bool): Fix noise for visualization purposes. Default is False.
+      - n_frames (int): Number of frames to keep. Default is 0.
+      - n_retrys (int): Number of retry attempts in the event of bad molecules . Default is 0.
+      - t_retrys (int): Timestep to start retrying. Default is 180.
+      - mode (str): Mode for sampling. Default is "ddpm ["ddpm", "ddim"].
+
+      Returns:
+      Tuple[Tensor, Tensor, Tensor, Tensor]: One-hot encoding of atoms, charges, positions, and node mask.
+
+
+
+.. py:class:: GeoLDMVAETaskFactory(task_type: str, n_dims: int = 3, hidden_nf: int = 64, latent_nf: int = 1, n_layers: int = 4, attention: bool = False, tanh: bool = False, model: str = 'egnn_dynamics', norm_constant: float = 0, inv_sublayers: int = 2, sin_embedding: bool = False, normalization_factor: float = 100, aggregation_method: str = 'sum', include_charges: bool = True, kl_weight: float = 0.01, normalize_factors: tuple = (1.0, 4.0, 10.0), augment_noise: float = 0.0, data_augmentation: bool = False, atom_vocab: Optional[List] = None, **kwargs)
+
+   Factory matching `train.py`'s `task_module.build()` /
+   `task_module.task` instantiation pattern (see
+   `diffusion_difflinker.py::DiffLinkerTaskFactory` for the precedent).
+
+
+   .. py:method:: build() -> GeoLDMVAETask
+
+
+   .. py:attribute:: aggregation_method
+      :value: 'sum'
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: attention
+      :value: False
+
+
+
+   .. py:attribute:: augment_noise
+      :value: 0.0
+
+
+
+   .. py:attribute:: data_augmentation
+      :value: False
+
+
+
+   .. py:attribute:: hidden_nf
+      :value: 64
+
+
+
+   .. py:attribute:: include_charges
+      :value: True
+
+
+
+   .. py:attribute:: inv_sublayers
+      :value: 2
+
+
+
+   .. py:attribute:: kl_weight
+      :value: 0.01
+
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: latent_nf
+      :value: 1
+
+
+
+   .. py:attribute:: model_mode
+      :value: 'egnn_dynamics'
+
+
+
+   .. py:attribute:: n_dims
+      :value: 3
+
+
+
+   .. py:attribute:: n_layers
+      :value: 4
+
+
+
+   .. py:attribute:: norm_constant
+      :value: 0
+
+
+
+   .. py:attribute:: normalization_factor
+      :value: 100
+
+
+
+   .. py:attribute:: normalize_factors
+      :value: (1.0, 4.0, 10.0)
+
+
+
+   .. py:attribute:: sin_embedding
+      :value: False
+
+
+
+   .. py:attribute:: tanh
+      :value: False
+
+
+
+   .. py:attribute:: task_type
+
+

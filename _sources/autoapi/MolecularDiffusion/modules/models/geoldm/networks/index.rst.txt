@@ -1,0 +1,166 @@
+MolecularDiffusion.modules.models.geoldm.networks
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.models.geoldm.networks
+
+.. autoapi-nested-parse::
+
+   EGNN wrapper networks, ported from GeoLDM's `egnn/models.py`
+   (commit 03ae2031c712a1a6c1678e747bdcdc7a7560e00b).
+
+   `remove_mean` / `remove_mean_with_mask` are reused from
+   `MolecularDiffusion.utils` (same implementations, no need to re-port
+   GeoLDM's own `equivariant_diffusion/utils.py` copies) per the integration
+   plan.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.geoldm.networks.EGNN_decoder_QM9
+   MolecularDiffusion.modules.models.geoldm.networks.EGNN_dynamics_QM9
+   MolecularDiffusion.modules.models.geoldm.networks.EGNN_encoder_QM9
+
+
+Module Contents
+---------------
+
+.. py:class:: EGNN_decoder_QM9(in_node_nf, context_node_nf, out_node_nf, n_dims, hidden_nf=64, device='cpu', act_fn=torch.nn.SiLU(), n_layers=4, attention=False, tanh=False, mode='egnn_dynamics', norm_constant=0, inv_sublayers=2, sin_embedding=False, normalization_factor=100, aggregation_method='sum', include_charges=True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(t, xh, node_mask, edge_mask, context=None)
+      :abstractmethod:
+
+
+
+   .. py:method:: get_adj_matrix(n_nodes, batch_size, device)
+
+
+   .. py:method:: unwrap_forward()
+
+
+   .. py:method:: wrap_forward(node_mask, edge_mask, context)
+
+
+   .. py:attribute:: context_node_nf
+
+
+   .. py:attribute:: device
+      :value: 'cpu'
+
+
+
+   .. py:attribute:: include_charges
+      :value: 1
+
+
+
+   .. py:attribute:: mode
+      :value: 'egnn_dynamics'
+
+
+
+   .. py:attribute:: n_dims
+
+
+   .. py:attribute:: num_classes
+
+
+.. py:class:: EGNN_dynamics_QM9(in_node_nf, context_node_nf, n_dims, hidden_nf=64, device='cpu', act_fn=torch.nn.SiLU(), n_layers=4, attention=False, condition_time=True, tanh=False, mode='egnn_dynamics', norm_constant=0, inv_sublayers=2, sin_embedding=False, normalization_factor=100, aggregation_method='sum')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(t, xh, node_mask, edge_mask, context=None)
+      :abstractmethod:
+
+
+
+   .. py:method:: get_adj_matrix(n_nodes, batch_size, device)
+
+
+   .. py:method:: unwrap_forward()
+
+
+   .. py:method:: wrap_forward(node_mask, edge_mask, context)
+
+
+   .. py:attribute:: condition_time
+      :value: True
+
+
+
+   .. py:attribute:: context_node_nf
+
+
+   .. py:attribute:: device
+      :value: 'cpu'
+
+
+
+   .. py:attribute:: mode
+      :value: 'egnn_dynamics'
+
+
+
+   .. py:attribute:: n_dims
+
+
+.. py:class:: EGNN_encoder_QM9(in_node_nf, context_node_nf, out_node_nf, n_dims, hidden_nf=64, device='cpu', act_fn=torch.nn.SiLU(), n_layers=4, attention=False, tanh=False, mode='egnn_dynamics', norm_constant=0, inv_sublayers=2, sin_embedding=False, normalization_factor=100, aggregation_method='sum', include_charges=True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   
+   :param in_node_nf: Number of invariant features for input nodes.
+
+
+   .. py:method:: forward(t, xh, node_mask, edge_mask, context=None)
+      :abstractmethod:
+
+
+
+   .. py:method:: get_adj_matrix(n_nodes, batch_size, device)
+
+
+   .. py:method:: unwrap_forward()
+
+
+   .. py:method:: wrap_forward(node_mask, edge_mask, context)
+
+
+   .. py:attribute:: context_node_nf
+
+
+   .. py:attribute:: device
+      :value: 'cpu'
+
+
+
+   .. py:attribute:: final_mlp
+
+
+   .. py:attribute:: include_charges
+      :value: 1
+
+
+
+   .. py:attribute:: mode
+      :value: 'egnn_dynamics'
+
+
+
+   .. py:attribute:: n_dims
+
+
+   .. py:attribute:: num_classes
+
+
+   .. py:attribute:: out_node_nf
+
+
