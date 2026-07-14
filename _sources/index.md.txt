@@ -63,8 +63,7 @@ MolCraftDiff generate my_gen
 :caption: Getting Started
 
 installation
-compute_guide
-glossary
+architectures
 ```
 
 ```{toctree}

@@ -73,7 +73,7 @@ interference:
   mol_size: [50, 60]
   output_path: "results/my_inpainting_run"
   condition_configs:
-    reference_structure_path: "assets/BINOLCpHHH.xyz"
+    reference_structure_path: "path/to/your_molecule.xyz"   # your own XYZ file
     condition_component: xh
     inpaint_cfgs:
       mask_node_index: [5, 30, 31, 6, 7, 45, 8, 32, 9, 10, 33, 11, 34, 12, 35, 13, 36, 14, 15, 16, 17, 18, 37, 19, 38, 20, 39, 21, 40, 22, 23, 41, 24, 44, 25, 26, 43, 42]
@@ -137,7 +137,7 @@ interference:
   mol_size: [30, 40]
   output_path: "results/my_outpainting_run"
   condition_configs:
-    reference_structure_path: "assets/BINOLCp.xyz"
+    reference_structure_path: "path/to/your_fragment.xyz"   # your own XYZ file
     condition_component: xh
     outpaint_cfgs:
       connector_dicts:

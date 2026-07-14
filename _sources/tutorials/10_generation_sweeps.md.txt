@@ -14,14 +14,6 @@ The command-line entry point is:
 MolCraftDiff generate-sweep <sweep_config.yaml>
 ```
 
-The repository root also keeps a compatibility shim:
-
-```bash
-python sweep.py <sweep_config.yaml>
-```
-
-Both commands call the same implementation.
-
 Use sweeps when you want to optimize controlled generation settings for **inpainting**, **outpainting**, **classifier-free guidance (CFG)**, **gradient guidance (GG)**, or **hybrid CFG/GG** without manually launching each run.
 
 ---
@@ -58,12 +50,6 @@ Start with a dry-run. This prints the exact generation and evaluation commands w
 MolCraftDiff generate-sweep configs/sweep_example.yaml --dry-run --max-runs 1
 ```
 
-Equivalent legacy command:
-
-```bash
-python sweep.py configs/sweep_example.yaml --dry-run --max-runs 1
-```
-
 Then launch real runs:
 
 ```bash
@@ -79,6 +65,7 @@ Useful options:
 | `--skip-gen` | Skip generation and only run evaluation/collection. |
 | `--skip-eval` | Skip evaluation and only run generation/collection. |
 | `--retry-failed` | Retry rows marked failed or interrupted in `summary.csv`. |
+| `--early-fail-batches N` | Stop a trial after `N` consecutive failed generation batches before any success (overrides `search.early_fail_batches`). |
 
 ---
 
@@ -93,8 +80,8 @@ configs/sweep_example.yaml
 The main fields are:
 
 ```yaml
-base_config: configs/lilas_cfg/gen_3_nto_op_cfg_2.yaml
-eval_script: workflow_hybrid_sf_a3_2.sh
+base_config: docs/cfg_examples/gen_cfg.yaml
+eval_script: scripts/eval_workflow.sh
 sweep_dir: sweep_results/example_sweep
 name: example_sweep
 ```

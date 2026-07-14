@@ -33,7 +33,7 @@ Visualization answers questions that scalar metrics cannot:
 
 ## Step 1: Featurize
 
-Use `MolCraftDiff analyze featurize` to convert XYZ files into a numpy matrix of fixed-size vectors. The default `--backend soap` requires no additional setup beyond `[data]`; the `--backend uma` backend produces richer embeddings but requires the fairchem clone (see [Installation](../installation.md)).
+Use `MolCraftDiff analyze featurize` to convert XYZ files into a numpy matrix of fixed-size vectors. The default `--backend soap` requires no additional setup beyond `[data]`; `--backend uma` produces richer embeddings but requires the fairchem clone (see [Installation](../installation.md)); `--backend ssl3d` embeds with your own self-supervised checkpoint via `--ssl3d-checkpoint`.
 
 ```bash
 # SOAP features (default) — one vector per molecule, fast, no GPU needed

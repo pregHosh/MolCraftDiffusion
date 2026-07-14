@@ -69,6 +69,7 @@ MolCraftDiff analyze metrics gen_xyz/ --metrics all
 | `core` | Basic validity (connectivity, atom stability) |
 | `posebuster` | Bond lengths, angles, clashes |
 | `geom_revised` | Aromatic-aware stability metrics |
+| `shepherd` | ShEPhERD conditional-similarity metrics (needs `--reference-mol`) |
 | `all` | All of the above |
 
 ### Options
@@ -80,6 +81,12 @@ MolCraftDiff analyze metrics gen_xyz/ --metrics all
 | `--recheck-topo` | False | Recheck topology using RDKit |
 | `--check-strain` | False | Check strain via XTB optimization |
 | `--mol-converter` | `xyz2mol` | XYZ to mol converter |
+| `-s, --split` | `1` | Deterministic splits for mean±std summary logging |
+| `-p, --portion` | `1.0` | Fraction of XYZ files to process |
+| `--filter` / `--filtered-output` | None | Filter structures by a truthy column and write the survivors |
+| `-r, --reference-mol` / `--mol-idx` | None / `0` | Reference `.pkl`/`.sdf` (and index) for `shepherd` metrics |
+| `--skip-atoms` | — | Atom indices to skip in validation |
+| `-t, --timeout` | `10` | Timeout per xyz2mol conversion (s) |
 
 ---
 
@@ -159,6 +166,7 @@ MolCraftDiff analyze xtb-electronic gen_xyz/ -p all -f ase -o results.db
 | `dipole` | Dipole vector and magnitude |
 | `reactivity` | Ionization potential, electron affinity |
 | `global` | Electrophilicity, nucleophilicity, fugalities |
+| `solvation` | Solvation energy, H-bond correction (requires `--solvent`) |
 
 **Atomic-level:**
 | Group | Properties |
@@ -182,10 +190,15 @@ MolCraftDiff analyze xtb-electronic gen_xyz/ -p all -f ase -o results.db
 |--------|---------|-------------|
 | `-m, --method` | `2` | XTB method: 1=GFN1, 2=GFN2, ptb=PTB |
 | `-c, --charge` | `0` | Molecular charge |
+| `--n-unpaired` | `0` | Number of unpaired electrons |
+| `--auto-charge` | False | For PTB neutral singlets with odd electrons, infer ±1 charge from the XYZ |
+| `-s, --solvent` | None | Solvent for the `solvation` group (e.g. `water`, `thf`, `chcl3`) |
 | `-p, --properties` | `energy` | Property groups to compute |
 | `-f, --format` | `csv` | Output format |
 | `--corrected/--no-corrected` | True | Apply empirical IP/EA correction |
+| `--annotate-db` | False | For ASE `.db` input, annotate input rows in place with `xtb_*` results |
 | `-j, --n-jobs` | `1` | Parallel jobs |
+| `-t, --timeout` | `120` | Timeout per molecule (s) |
 
 ---
 

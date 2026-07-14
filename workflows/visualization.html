@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="API Reference" href="../api.html"><link rel="prev" title="Workflow Example: End-to-End Design Loop" href="end_to_end.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Configuration Templates" href="../config_templates.html"><link rel="prev" title="Workflow Example: End-to-End Design Loop" href="end_to_end.html">
         <link rel="canonical" href="https://preghosh.github.io/MolCraftDiffusion/workflows/visualization.html">
         <link rel="prefetch" href="../_static/logo.png" as="image">
 
@@ -209,6 +209,7 @@
   <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architectures.html">Model Architectures</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
@@ -254,6 +255,10 @@
 <li class="toctree-l1"><a class="reference internal" href="conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Workflow: Visualize the Generated Chemical Space</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../config_templates.html">Configuration Templates</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -469,7 +474,7 @@
 <hr class="docutils" />
 <section id="step-1-featurize">
 <h2>Step 1: Featurize<a class="headerlink" href="#step-1-featurize" title="Link to this heading">¶</a></h2>
-<p>Use <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">analyze</span> <span class="pre">featurize</span></code> to convert XYZ files into a numpy matrix of fixed-size vectors. The default <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">soap</span></code> requires no additional setup beyond <code class="docutils literal notranslate"><span class="pre">[data]</span></code>; the <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">uma</span></code> backend produces richer embeddings but requires the fairchem clone (see <a class="reference internal" href="../installation.html"><span class="std std-doc">Installation</span></a>).</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">analyze</span> <span class="pre">featurize</span></code> to convert XYZ files into a numpy matrix of fixed-size vectors. The default <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">soap</span></code> requires no additional setup beyond <code class="docutils literal notranslate"><span class="pre">[data]</span></code>; <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">uma</span></code> produces richer embeddings but requires the fairchem clone (see <a class="reference internal" href="../installation.html"><span class="std std-doc">Installation</span></a>); <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">ssl3d</span></code> embeds with your own self-supervised checkpoint via <code class="docutils literal notranslate"><span class="pre">--ssl3d-checkpoint</span></code>.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># SOAP features (default) — one vector per molecule, fast, no GPU needed</span>
 MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<span class="w"> </span>generated_molecules/<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--backend<span class="w"> </span>soap<span class="w"> </span><span class="se">\</span>
@@ -595,12 +600,12 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../api.html">
+          <a class="next-page" href="../config_templates.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">API Reference</div>
+                <div class="title">Configuration Templates</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>

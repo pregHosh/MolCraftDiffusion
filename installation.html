@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Tutorials" href="tutorials/index.html"><link rel="prev" title="MolCraftDiffusion" href="index.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Model Architectures" href="architectures.html"><link rel="prev" title="MolCraftDiffusion" href="index.html">
         <link rel="canonical" href="https://preghosh.github.io/MolCraftDiffusion/installation.html">
         <link rel="prefetch" href="_static/logo.png" as="image">
 
@@ -209,6 +209,7 @@
   <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul class="current">
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architectures.html">Model Architectures</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
@@ -254,6 +255,10 @@
 <li class="toctree-l1"><a class="reference internal" href="workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="config_templates.html">Configuration Templates</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -440,7 +445,7 @@
 <section id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Python 3.11</p></li>
+<li><p>Python ≥3.10, &lt;3.14 (3.11 recommended)</p></li>
 <li><p>A CUDA-capable GPU is recommended for training</p></li>
 </ul>
 </section>
@@ -572,7 +577,7 @@ an explicit error with the clone instruction above. You can also set:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>--help
 </pre></div>
 </div>
-<p>You should see a list of all available commands: <code class="docutils literal notranslate"><span class="pre">train</span></code>, <code class="docutils literal notranslate"><span class="pre">generate</span></code>, <code class="docutils literal notranslate"><span class="pre">predict</span></code>, <code class="docutils literal notranslate"><span class="pre">eval-predict</span></code>, <code class="docutils literal notranslate"><span class="pre">analyze</span></code>, <code class="docutils literal notranslate"><span class="pre">data</span></code>.</p>
+<p>You should see a list of all available commands: <code class="docutils literal notranslate"><span class="pre">train</span></code>, <code class="docutils literal notranslate"><span class="pre">generate</span></code>, <code class="docutils literal notranslate"><span class="pre">generate-sweep</span></code>, <code class="docutils literal notranslate"><span class="pre">predict</span></code>, <code class="docutils literal notranslate"><span class="pre">eval-predict</span></code>, <code class="docutils literal notranslate"><span class="pre">analyze</span></code>, <code class="docutils literal notranslate"><span class="pre">data</span></code>.</p>
 </section>
 <section id="pre-trained-models">
 <h2>Pre-trained models<a class="headerlink" href="#pre-trained-models" title="Link to this heading">¶</a></h2>
@@ -637,12 +642,12 @@ MolCraftDiff<span class="w"> </span>--help
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="tutorials/index.html">
+          <a class="next-page" href="architectures.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Tutorials</div>
+                <div class="title">Model Architectures</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>

@@ -6,6 +6,7 @@
 # connector_dicts geometry constraints.
 
 defaults:
+  - data: mol_dataset
   - tasks: diffusion
   - interference: gen_outpaint
   - _self_

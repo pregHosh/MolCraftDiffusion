@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Python 3.11
+- Python ≥3.10, <3.14 (3.11 recommended)
 - A CUDA-capable GPU is recommended for training
 
 ## Step-by-step
@@ -121,7 +121,7 @@ to point to the repo root when running from a different working directory.
 MolCraftDiff --help
 ```
 
-You should see a list of all available commands: `train`, `generate`, `predict`, `eval-predict`, `analyze`, `data`.
+You should see a list of all available commands: `train`, `generate`, `generate-sweep`, `predict`, `eval-predict`, `analyze`, `data`.
 
 ## Pre-trained models
 

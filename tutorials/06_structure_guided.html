@@ -209,6 +209,7 @@
   <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architectures.html">Model Architectures</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
@@ -254,6 +255,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../config_templates.html">Configuration Templates</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -555,7 +560,7 @@
 <span class="w">  </span><span class="nt">mol_size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">50</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">60</span><span class="p p-Indicator">]</span>
 <span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;results/my_inpainting_run&quot;</span>
 <span class="w">  </span><span class="nt">condition_configs</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">reference_structure_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;assets/BINOLCpHHH.xyz&quot;</span>
+<span class="w">    </span><span class="nt">reference_structure_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/your_molecule.xyz&quot;</span><span class="w">   </span><span class="c1"># your own XYZ file</span>
 <span class="w">    </span><span class="nt">condition_component</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">xh</span>
 <span class="w">    </span><span class="nt">inpaint_cfgs</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">mask_node_index</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">30</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">31</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">6</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">7</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">45</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">8</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">32</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">10</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">33</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">11</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">34</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">12</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">35</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">13</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">36</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">14</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">15</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">16</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">17</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">18</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">37</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">19</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">38</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">20</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">39</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">21</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">40</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">22</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">23</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">41</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">24</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">44</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">25</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">26</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">43</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">42</span><span class="p p-Indicator">]</span>
@@ -675,7 +680,7 @@
 <span class="w">  </span><span class="nt">mol_size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">30</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">40</span><span class="p p-Indicator">]</span>
 <span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;results/my_outpainting_run&quot;</span>
 <span class="w">  </span><span class="nt">condition_configs</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">reference_structure_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;assets/BINOLCp.xyz&quot;</span>
+<span class="w">    </span><span class="nt">reference_structure_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/your_fragment.xyz&quot;</span><span class="w">   </span><span class="c1"># your own XYZ file</span>
 <span class="w">    </span><span class="nt">condition_component</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">xh</span>
 <span class="w">    </span><span class="nt">outpaint_cfgs</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">connector_dicts</span><span class="p">:</span>

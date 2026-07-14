@@ -209,6 +209,7 @@
   <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architectures.html">Model Architectures</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
@@ -254,6 +255,10 @@
 <li class="toctree-l1"><a class="reference internal" href="workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="config_templates.html">Configuration Templates</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -478,7 +483,7 @@ MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_gen_confi
 MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>metrics<span class="w"> </span>generated_molecules/
 </pre></div>
 </div>
-<p>Ready-to-use template configuration files for common workflows are listed in <a class="reference internal" href="#config_templates.md"><span class="xref myst">Configuration Templates</span></a>, with the full packaged Hydra defaults under <code class="docutils literal notranslate"><span class="pre">src/MolecularDiffusion/configs/</span></code>. Copy the relevant file, fill in your paths, and run:</p>
+<p>Ready-to-use template configuration files for common workflows are listed in <a class="reference internal" href="config_templates.html"><span class="std std-doc">Configuration Templates</span></a>, with the full packaged Hydra defaults under <code class="docutils literal notranslate"><span class="pre">src/MolecularDiffusion/configs/</span></code>. Copy the relevant file, fill in your paths, and run:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example: unconditional generation with the template</span>
 cp<span class="w"> </span>docs/cfg_examples/gen_unconditional.yaml<span class="w"> </span>my_gen.yaml
 <span class="c1"># edit my_gen.yaml → set chkpt_directory</span>
@@ -493,6 +498,7 @@ MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_gen
 <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architectures.html">Model Architectures</a></li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
@@ -522,6 +528,10 @@ MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_gen
 </ul>
 </div>
 <div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="config_templates.html">Configuration Templates</a></li>
+</ul>
 </div>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>

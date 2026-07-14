@@ -209,6 +209,7 @@
   <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architectures.html">Model Architectures</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
@@ -254,6 +255,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../config_templates.html">Configuration Templates</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -558,7 +563,10 @@
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">geom_revised</span></code></p></td>
 <td><p>Aromatic-aware stability metrics</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">all</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">shepherd</span></code></p></td>
+<td><p>ShEPhERD conditional-similarity metrics (needs <code class="docutils literal notranslate"><span class="pre">--reference-mol</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">all</span></code></p></td>
 <td><p>All of the above</p></td>
 </tr>
 </tbody>
@@ -595,6 +603,30 @@
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--mol-converter</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">xyz2mol</span></code></p></td>
 <td><p>XYZ to mol converter</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--split</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>Deterministic splits for mean±std summary logging</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">-p,</span> <span class="pre">--portion</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1.0</span></code></p></td>
+<td><p>Fraction of XYZ files to process</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--filter</span></code> / <code class="docutils literal notranslate"><span class="pre">--filtered-output</span></code></p></td>
+<td><p>None</p></td>
+<td><p>Filter structures by a truthy column and write the survivors</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">-r,</span> <span class="pre">--reference-mol</span></code> / <code class="docutils literal notranslate"><span class="pre">--mol-idx</span></code></p></td>
+<td><p>None / <code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>Reference <code class="docutils literal notranslate"><span class="pre">.pkl</span></code>/<code class="docutils literal notranslate"><span class="pre">.sdf</span></code> (and index) for <code class="docutils literal notranslate"><span class="pre">shepherd</span></code> metrics</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--skip-atoms</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Atom indices to skip in validation</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">-t,</span> <span class="pre">--timeout</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
+<td><p>Timeout per xyz2mol conversion (s)</p></td>
 </tr>
 </tbody>
 </table>
@@ -708,6 +740,9 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>xtb-electroni
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">global</span></code></p></td>
 <td><p>Electrophilicity, nucleophilicity, fugalities</p></td>
 </tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">solvation</span></code></p></td>
+<td><p>Solvation energy, H-bond correction (requires <code class="docutils literal notranslate"><span class="pre">--solvent</span></code>)</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -778,21 +813,41 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>xtb-electroni
 <td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
 <td><p>Molecular charge</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">-p,</span> <span class="pre">--properties</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--n-unpaired</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>Number of unpaired electrons</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--auto-charge</span></code></p></td>
+<td><p>False</p></td>
+<td><p>For PTB neutral singlets with odd electrons, infer ±1 charge from the XYZ</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">-s,</span> <span class="pre">--solvent</span></code></p></td>
+<td><p>None</p></td>
+<td><p>Solvent for the <code class="docutils literal notranslate"><span class="pre">solvation</span></code> group (e.g. <code class="docutils literal notranslate"><span class="pre">water</span></code>, <code class="docutils literal notranslate"><span class="pre">thf</span></code>, <code class="docutils literal notranslate"><span class="pre">chcl3</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">-p,</span> <span class="pre">--properties</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">energy</span></code></p></td>
 <td><p>Property groups to compute</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--format</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--format</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">csv</span></code></p></td>
 <td><p>Output format</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--corrected/--no-corrected</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--corrected/--no-corrected</span></code></p></td>
 <td><p>True</p></td>
 <td><p>Apply empirical IP/EA correction</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--annotate-db</span></code></p></td>
+<td><p>False</p></td>
+<td><p>For ASE <code class="docutils literal notranslate"><span class="pre">.db</span></code> input, annotate input rows in place with <code class="docutils literal notranslate"><span class="pre">xtb_*</span></code> results</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">-j,</span> <span class="pre">--n-jobs</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
 <td><p>Parallel jobs</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">-t,</span> <span class="pre">--timeout</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">120</span></code></p></td>
+<td><p>Timeout per molecule (s)</p></td>
 </tr>
 </tbody>
 </table>

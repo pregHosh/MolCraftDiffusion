@@ -6,6 +6,7 @@
 # the rest of the molecule.
 
 defaults:
+  - data: mol_dataset
   - tasks: diffusion
   - interference: gen_inpaint
   - _self_

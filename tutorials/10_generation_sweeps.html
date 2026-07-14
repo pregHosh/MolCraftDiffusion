@@ -209,6 +209,7 @@
   <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architectures.html">Model Architectures</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
@@ -254,6 +255,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../config_templates.html">Configuration Templates</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -448,11 +453,6 @@
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>&lt;sweep_config.yaml&gt;
 </pre></div>
 </div>
-<p>The repository root also keeps a compatibility shim:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>sweep.py<span class="w"> </span>&lt;sweep_config.yaml&gt;
-</pre></div>
-</div>
-<p>Both commands call the same implementation.</p>
 <p>Use sweeps when you want to optimize controlled generation settings for <strong>inpainting</strong>, <strong>outpainting</strong>, <strong>classifier-free guidance (CFG)</strong>, <strong>gradient guidance (GG)</strong>, or <strong>hybrid CFG/GG</strong> without manually launching each run.</p>
 <hr class="docutils" />
 <section id="what-a-sweep-does">
@@ -476,10 +476,6 @@
 <h2>2. Minimal Command<a class="headerlink" href="#minimal-command" title="Link to this heading">¶</a></h2>
 <p>Start with a dry-run. This prints the exact generation and evaluation commands without writing files:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>configs/sweep_example.yaml<span class="w"> </span>--dry-run<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">1</span>
-</pre></div>
-</div>
-<p>Equivalent legacy command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>sweep.py<span class="w"> </span>configs/sweep_example.yaml<span class="w"> </span>--dry-run<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">1</span>
 </pre></div>
 </div>
 <p>Then launch real runs:</p>
@@ -510,6 +506,9 @@
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">--retry-failed</span></code></p></td>
 <td class="text-left"><p>Retry rows marked failed or interrupted in <code class="docutils literal notranslate"><span class="pre">summary.csv</span></code>.</p></td>
 </tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">--early-fail-batches</span> <span class="pre">N</span></code></p></td>
+<td class="text-left"><p>Stop a trial after <code class="docutils literal notranslate"><span class="pre">N</span></code> consecutive failed generation batches before any success (overrides <code class="docutils literal notranslate"><span class="pre">search.early_fail_batches</span></code>).</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -522,8 +521,8 @@
 </pre></div>
 </div>
 <p>The main fields are:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">base_config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">configs/lilas_cfg/gen_3_nto_op_cfg_2.yaml</span>
-<span class="nt">eval_script</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">workflow_hybrid_sf_a3_2.sh</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">base_config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docs/cfg_examples/gen_cfg.yaml</span>
+<span class="nt">eval_script</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scripts/eval_workflow.sh</span>
 <span class="nt">sweep_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sweep_results/example_sweep</span>
 <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example_sweep</span>
 </pre></div>
