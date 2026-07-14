@@ -65,7 +65,7 @@ MolCraftDiff predict my_prediction
 
 The script will process each XYZ file in the directory and output the results to your specified `output_directory`:
 
-*   **`predictions.csv`**: A table containing the filename of each molecule and its predicted properties.
+*   **`predictions.csv`**: A table with an `xyz_path` column (the source file of each molecule) and its predicted properties.
 *   **`*_hist.png`**: Histogram of the predicted values.
 *   **`*_kde.png`**: Kernel Density Estimation plot of the predicted distribution.
 *   **`kde_all.png`**: A combined plot if multiple properties were predicted.
@@ -101,7 +101,7 @@ data:
   # Path to the CSV file containing ground truth labels
   filename: "data/test_set.csv"
   
-  # Unique name for this dataset (creates 'processed_data_test_set.pt')
+  # Unique name for this dataset (cached as 'processed_data_test_set_benchmark.pt')
   dataset_name: "test_set_benchmark"
   
   # Directory containing corresponding .xyz files
@@ -144,7 +144,7 @@ The script calculates predictions and matches them with the ground truth from yo
 *   **Console Output**: Summary statistics (Mean, Std, Min, Max) for the predictions.
 
 :::{important}
-**Data formats.** The `eval-predict` command currently **only supports `.csv` files** for ground truth labels. It does **not** natively support extracting ground truth data directly from ASE `.db` files. Ensure you have a generated CSV containing the `"filename"` and property columns.
+**Ground-truth source.** `eval-predict` reads ground-truth labels from either a `.csv` (with a `filename` column plus the property columns) **or** directly from an ASE `.db`. If the CSV `filename` is missing or a placeholder, it falls back to the ASE database, so pointing `data.filename` at a `.db` works too.
 :::
 
 ---

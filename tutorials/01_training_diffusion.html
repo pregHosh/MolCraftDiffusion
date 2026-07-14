@@ -446,6 +446,15 @@
 <div><p><strong>Prerequisites:</strong> <a class="reference internal" href="00_data_preparation.html"><span class="std std-doc">Tutorial 0 — Data Preparation</span></a> · <strong>You’ll learn:</strong> configuring and launching a diffusion training run with the override-only workflow · <strong>Next:</strong> <a class="reference internal" href="02_training_regressor.html"><span class="std std-doc">Tutorial 2 — Training a Regressor</span></a></p>
 </div></blockquote>
 <p>This tutorial explains how to configure and run a training job for a diffusion model from scratch. We will focus on using a single configuration file for your experiment to override the project’s default settings.</p>
+<section id="quickstart">
+<h2>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp<span class="w"> </span>configs/example_diffusion_config.yaml<span class="w"> </span>my_first_run.yaml<span class="w">   </span><span class="c1"># copy a template</span>
+<span class="c1"># edit my_first_run.yaml — at minimum set data.ase_db_path and trainer.output_path</span>
+MolCraftDiff<span class="w"> </span>train<span class="w"> </span>my_first_run<span class="w">                              </span><span class="c1"># launch (no .yaml extension)</span>
+</pre></div>
+</div>
+<p>That’s the whole loop. The rest of this tutorial explains what to put in that file: the engine choice, the <code class="docutils literal notranslate"><span class="pre">defaults</span></code> list, and the parameters worth overriding.</p>
+</section>
 <section id="the-override-only-workflow">
 <h2>The “Override-Only” Workflow<a class="headerlink" href="#the-override-only-workflow" title="Link to this heading">¶</a></h2>
 <p>This project uses a powerful configuration framework <a class="reference external" href="https://hydra.cc/">Hydra</a>. The easiest and cleanest way to use it is to have <strong>one single YAML file for your experiment</strong> where you define all your custom settings.</p>
@@ -836,6 +845,7 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Tutorial 1: Training a Diffusion Model</a><ul>
+<li><a class="reference internal" href="#quickstart">Quickstart</a></li>
 <li><a class="reference internal" href="#the-override-only-workflow">The “Override-Only” Workflow</a><ul>
 <li><a class="reference internal" href="#step-1-create-your-experiment-file">Step 1: Create Your Experiment File</a></li>
 <li><a class="reference internal" href="#step-2-choose-a-training-engine">Step 2: Choose a Training Engine</a></li>

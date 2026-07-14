@@ -4,6 +4,16 @@
 
 This tutorial explains how to configure and run a training job for a diffusion model from scratch. We will focus on using a single configuration file for your experiment to override the project's default settings.
 
+## Quickstart
+
+```bash
+cp configs/example_diffusion_config.yaml my_first_run.yaml   # copy a template
+# edit my_first_run.yaml — at minimum set data.ase_db_path and trainer.output_path
+MolCraftDiff train my_first_run                              # launch (no .yaml extension)
+```
+
+That's the whole loop. The rest of this tutorial explains what to put in that file: the engine choice, the `defaults` list, and the parameters worth overriding.
+
 ## The "Override-Only" Workflow
 
 This project uses a powerful configuration framework [Hydra](https://hydra.cc/). The easiest and cleanest way to use it is to have **one single YAML file for your experiment** where you define all your custom settings.

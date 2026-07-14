@@ -108,7 +108,9 @@ The engine supports three primary inputs:
 
 1.  **ASE Database** (Recommended): `load_db` - Reads the compiled `.db` files from Part 1.
 2.  **CSV + XYZ**: `load_csv` - Reads a CSV metadata file mapping to a directory of `.xyz` files.
-3.  **CSV + NPY**: `load_csv_npy` - Reads coordinates and atom counts from `.npy` files.
+3.  **CSV + NPY**: `load_npy` - Reads coordinates and atom counts from `.npy` files.
+
+The engine picks the loader automatically from the paths you set (`ase_db_path`, `filename`/`xyz_dir`, or `.npy` paths) — you don't call these methods yourself.
 
 ### 2. Data Types (`pointcloud` vs `pyg`)
 
@@ -121,12 +123,11 @@ Two molecular tensor representations are supported, set via the `data_type` conf
 
 ### 3. Node Featurization
 
-You can compute graph or geometric features on-the-fly via `node_feature_choice`:
+Node features come from three independent config keys — don't confuse them:
 
-*   **Geometric Features** (`atom_topological`, `atom_geom`, `atom_geom_v2`, `atom_geom_v2_trun`, `atom_geom_opt`): Computed directly from 3D coordinates. Works with all loader types.
-*   **RDKit Scalar Features** (`['degree', 'formal_charge', 'hybridization', 'is_aromatic']`): Requires RDKit mol blocks, meaning it *only works if you compiled an ASE Database* (via `load_db`).
-
-One-hot encoding of atom types is controlled separately via `use_ohe_feature: true`.
+*   **Geometric features** — set `node_feature_choice` to one of `atom_topological`, `atom_geom`, `atom_geom_v2`, `atom_geom_v2_trun`, `atom_geom_opt` (or the `geometric_fast` alias). Computed directly from 3D coordinates; works with all loader types.
+*   **RDKit scalar features** (`degree`, `formal_charge`, `hybridization`, `is_aromatic`) — enable with `use_row_data_features: true`. Requires RDKit mol blocks, so it *only works if you compiled an ASE Database* (via `load_db`).
+*   **One-hot atom-type encoding** — enable with `use_ohe_feature: true`.
 
 ### 4. Example Data Configuration
 

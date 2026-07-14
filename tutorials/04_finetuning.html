@@ -514,9 +514,9 @@
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">0]</span></code></p></td>
 <td class="text-left"><p>The value to use when a condition is masked. This should be a list with the same length as <code class="docutils literal notranslate"><span class="pre">condition_names</span></code>. Typically, this is <code class="docutils literal notranslate"><span class="pre">0</span></code> or the mean value of the property in the dataset.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">tasks.normalization_method</span></code></p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">tasks.normalize_condition</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">&quot;maxmin&quot;</span></code></p></td>
-<td class="text-left"><p>The method to normalize conditional properties. Options are: <code class="docutils literal notranslate"><span class="pre">&quot;maxmin&quot;</span></code> (scales to [-1, 1]), <code class="docutils literal notranslate"><span class="pre">&quot;mad&quot;</span></code> (mean absolute deviation), <code class="docutils literal notranslate"><span class="pre">&quot;value_N&quot;</span></code> (divides by a specific value N), or <code class="docutils literal notranslate"><span class="pre">null</span></code> for no normalization.</p></td>
+<td class="text-left"><p>The method to normalize conditional properties. Options are: <code class="docutils literal notranslate"><span class="pre">&quot;maxmin&quot;</span></code> (scales to [-1, 1]), <code class="docutils literal notranslate"><span class="pre">&quot;mad&quot;</span></code> (mean absolute deviation), <code class="docutils literal notranslate"><span class="pre">&quot;value_N&quot;</span></code> (divides by a specific value N, e.g. <code class="docutils literal notranslate"><span class="pre">value_10</span></code>), or <code class="docutils literal notranslate"><span class="pre">null</span></code> for no normalization. Default: <code class="docutils literal notranslate"><span class="pre">value_10</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -565,7 +565,7 @@ To use an adapter for a specific condition, list its name in <code class="docuti
 <span class="w">  </span><span class="nt">condition_names</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;S1_exc&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;T1_exc&quot;</span><span class="p p-Indicator">]</span>
 <span class="w">  </span><span class="nt">adapter_conditions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;S1_exc&quot;</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># Process S1_exc through an adapter, T1_exc is concatenated</span>
 <span class="w">  </span><span class="nt">context_mask_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span><span class="w"> </span><span class="c1"># Make it CFG-ready</span>
-<span class="w">  </span><span class="nt">normalization_method</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value_10</span>
+<span class="w">  </span><span class="nt">normalize_condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value_10</span>
 </pre></div>
 </div>
 </section>

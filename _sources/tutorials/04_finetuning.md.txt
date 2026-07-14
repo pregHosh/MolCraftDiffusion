@@ -66,7 +66,7 @@ tasks:
 | `tasks.condition_names`| `["S1_exc", "T1_exc"]` | A list of property names from your dataset that the model should learn to associate with the molecules. |
 | `tasks.context_mask_rate`| `0.1` | The probability of hiding the condition during training. A value greater than 0 is required to enable Classifier-Free Guidance (CFG) during generation. A common value is 0.1 (10% of the time). |
 | `tasks.mask_value`| `[0, 0]` | The value to use when a condition is masked. This should be a list with the same length as `condition_names`. Typically, this is `0` or the mean value of the property in the dataset. |
-| `tasks.normalization_method` | `"maxmin"` | The method to normalize conditional properties. Options are: `"maxmin"` (scales to [-1, 1]), `"mad"` (mean absolute deviation), `"value_N"` (divides by a specific value N), or `null` for no normalization. |
+| `tasks.normalize_condition` | `"maxmin"` | The method to normalize conditional properties. Options are: `"maxmin"` (scales to [-1, 1]), `"mad"` (mean absolute deviation), `"value_N"` (divides by a specific value N, e.g. `value_10`), or `null` for no normalization. Default: `value_10`. |
 
 **Concatenation vs. Adapter Conditioning:**
 
@@ -104,7 +104,7 @@ tasks:
   condition_names: ["S1_exc", "T1_exc"]
   adapter_conditions: ["S1_exc"] # Process S1_exc through an adapter, T1_exc is concatenated
   context_mask_rate: 0.1 # Make it CFG-ready
-  normalization_method: value_10
+  normalize_condition: value_10
 ```
 
 ---

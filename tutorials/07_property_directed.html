@@ -448,7 +448,7 @@
 <p>This tutorial covers advanced generation techniques that steer the process towards desired chemical properties.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p><strong>Guidance models must match the base diffusion model.</strong> For Gradient Guidance (GG) and hybrid CFG/GG, the regressor and guidance model must be trained with the <strong>same <code class="docutils literal notranslate"><span class="pre">diffusion_steps</span></code> and noise schedule</strong> as the base diffusion model. A mismatch means the guidance model receives noise levels it was never trained on, producing erratic or broken gradients. Check that <code class="docutils literal notranslate"><span class="pre">diffusion_steps</span></code> and <code class="docutils literal notranslate"><span class="pre">noise_schedule</span></code> in your guidance config match the base model’s training config exactly.</p>
+<p><strong>Guidance models must match the base diffusion model.</strong> For Gradient Guidance (GG) and hybrid CFG/GG, the guidance model must be trained with the <strong>same <code class="docutils literal notranslate"><span class="pre">diffusion_steps</span></code> and polynomial noise schedule (<code class="docutils literal notranslate"><span class="pre">nu_arr</span></code>)</strong> as the base diffusion model. A mismatch means the guidance model receives noise levels it was never trained on, producing erratic or broken gradients. Check that <code class="docutils literal notranslate"><span class="pre">diffusion_steps</span></code> and <code class="docutils literal notranslate"><span class="pre">nu_arr</span></code> in your guidance config match the base model’s training config exactly.</p>
 </div>
 <section id="contents">
 <h2>Contents<a class="headerlink" href="#contents" title="Link to this heading">¶</a></h2>
@@ -470,28 +470,35 @@
 <section id="configuration">
 <h3>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">¶</a></h3>
 <p>The configuration for CFG typically inherits from the <code class="docutils literal notranslate"><span class="pre">interference:</span> <span class="pre">gen_cfg</span></code> template.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">gen_cfg</span></code> template already sets these; override only what you need. Note which keys live at the <code class="docutils literal notranslate"><span class="pre">interference</span></code> top level vs. inside <code class="docutils literal notranslate"><span class="pre">condition_configs</span></code>.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head text-left"><p>Parameter</p></th>
+<th class="head text-left"><p>Where</p></th>
 <th class="head text-left"><p>Description</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">task_type</span></code></p></td>
-<td class="text-left"><p>Must be set to <code class="docutils literal notranslate"><span class="pre">conditional</span></code>.</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">interference</span></code></p></td>
+<td class="text-left"><p>Must be <code class="docutils literal notranslate"><span class="pre">cfg</span></code> (the template sets this — setting <code class="docutils literal notranslate"><span class="pre">conditional</span></code> instead disables CFG and runs plain conditional sampling).</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">target_values</span></code></p></td>
-<td class="text-left"><p>A list of positive target values for the properties specified in <code class="docutils literal notranslate"><span class="pre">property_names</span></code>.</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">interference</span></code></p></td>
+<td class="text-left"><p>A list of positive target values for the properties in <code class="docutils literal notranslate"><span class="pre">property_names</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">negative_target_value</span></code></p></td>
-<td class="text-left"><p>(Optional) A list of values to use as a “negative prompt”. The model is guided <em>away</em> from these property values.</p></td>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">negative_target_values</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">interference</span></code></p></td>
+<td class="text-left"><p>(Optional) A list used as a “negative prompt” — the model is guided <em>away</em> from these values. Note the plural key, and that it sits at the <code class="docutils literal notranslate"><span class="pre">interference</span></code> top level, <strong>not</strong> in <code class="docutils literal notranslate"><span class="pre">condition_configs</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">property_names</span></code></p></td>
-<td class="text-left"><p>A list of property names that the model was trained on.</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">interference</span></code></p></td>
+<td class="text-left"><p>A list of property names the model was trained on.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">cfg_scale</span></code></p></td>
-<td class="text-left"><p>A scaling factor that controls the strength of the guidance. A higher value will result in a stronger push towards the target properties.</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
+<td class="text-left"><p>Strength of the guidance; higher pushes harder toward the target properties.</p></td>
 </tr>
 </tbody>
 </table>
@@ -513,11 +520,11 @@
 <span class="nt">interference</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">num_generate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
 <span class="w">  </span><span class="nt">target_values</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">3</span><span class="p p-Indicator">,</span><span class="nv">1.5</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">negative_target_values</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3.0</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># top-level: push away from S1=1.0, T1=3.0</span>
 <span class="w">  </span><span class="nt">property_names</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;S1_exc&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;T1_exc&quot;</span><span class="p p-Indicator">]</span>
 <span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">generated_mol</span>
 <span class="w">  </span><span class="nt">condition_configs</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">cfg_scale</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
-<span class="w">    </span><span class="nt">negative_target_value</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3.0</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># Push away from S1=1.0, T1=3.0</span>
 </pre></div>
 </div>
 </section>

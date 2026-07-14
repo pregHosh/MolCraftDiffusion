@@ -488,14 +488,18 @@
 </section>
 <section id="key-generation-parameters">
 <h3>Key Generation Parameters<a class="headerlink" href="#key-generation-parameters" title="Link to this heading">¶</a></h3>
-<p>While the example above is minimal, you can control the generation process with several important parameters (overriding the defaults in <code class="docutils literal notranslate"><span class="pre">interference:</span> <span class="pre">gen_unconditional</span></code>):</p>
+<p>While the example above is minimal, you can control the generation process with several important parameters (overriding the defaults in <code class="docutils literal notranslate"><span class="pre">interference:</span> <span class="pre">gen_unconditional</span></code>).</p>
+<p><strong>Top-level keys</strong> (siblings of <code class="docutils literal notranslate"><span class="pre">defaults</span></code>):</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">diffusion_steps</span></code>: (Integer) The number of steps to run the reverse diffusion process. A higher number can lead to better quality molecules but increases generation time. This usually defaults to the value the model was trained with.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">interference.sampling_mode</span></code>: (String) The sampling algorithm to use. Common choices are <code class="docutils literal notranslate"><span class="pre">&quot;ddpm&quot;</span></code> (Denoising Diffusion Probabilistic Models) and <code class="docutils literal notranslate"><span class="pre">&quot;ddim&quot;</span></code> (Denoising Diffusion Implicit Models). ddim is generally faster as it can skip steps.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">interference.mol_size</span></code>: (Integer) Specifies the maximum number of atoms for the molecules you want to generate. This should typically not exceed the maximum number of atoms the model was trained on.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">interference.num_generate</span></code>: (Integer) The total number of molecules you wish to generate in one run.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">chkpt_directory</span></code>: (String) Path to the directory containing the trained model checkpoint.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">interference.output_path</span></code>: (String) Where to save the output file.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chkpt_directory</span></code>: path to the directory containing the trained model checkpoint.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">diffusion_steps</span></code>: number of reverse-diffusion steps. Higher can improve quality but is slower; usually left at the value the model was trained with.</p></li>
+</ul>
+<p><strong>Under <code class="docutils literal notranslate"><span class="pre">interference:</span></code></strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">num_generate</span></code>: how many molecules to sample in one run.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mol_size</span></code>: a <strong>list of ints</strong> controlling atom count — either a single fixed size (<code class="docutils literal notranslate"><span class="pre">[16]</span></code>) or a <code class="docutils literal notranslate"><span class="pre">[min,</span> <span class="pre">max]</span></code> range (<code class="docutils literal notranslate"><span class="pre">[16,</span> <span class="pre">40]</span></code>) sampled per molecule. Each end is clamped to the model’s <code class="docutils literal notranslate"><span class="pre">max_atom</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sampling_mode</span></code>: <code class="docutils literal notranslate"><span class="pre">&quot;ddpm&quot;</span></code> (default) or <code class="docutils literal notranslate"><span class="pre">&quot;ddim&quot;</span></code> — ddim is faster because it can skip steps.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_path</span></code>: directory to save the generated molecules.</p></li>
 </ul>
 </section>
 <section id="running-unconditional-generation">

@@ -503,7 +503,7 @@
 <h3>3. Output<a class="headerlink" href="#output" title="Link to this heading">¶</a></h3>
 <p>The script will process each XYZ file in the directory and output the results to your specified <code class="docutils literal notranslate"><span class="pre">output_directory</span></code>:</p>
 <ul class="simple">
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">predictions.csv</span></code></strong>: A table containing the filename of each molecule and its predicted properties.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">predictions.csv</span></code></strong>: A table with an <code class="docutils literal notranslate"><span class="pre">xyz_path</span></code> column (the source file of each molecule) and its predicted properties.</p></li>
 <li><p><strong><code class="docutils literal notranslate"><span class="pre">*_hist.png</span></code></strong>: Histogram of the predicted values.</p></li>
 <li><p><strong><code class="docutils literal notranslate"><span class="pre">*_kde.png</span></code></strong>: Kernel Density Estimation plot of the predicted distribution.</p></li>
 <li><p><strong><code class="docutils literal notranslate"><span class="pre">kde_all.png</span></code></strong>: A combined plot if multiple properties were predicted.</p></li>
@@ -537,7 +537,7 @@
 <span class="w">  </span><span class="c1"># Path to the CSV file containing ground truth labels</span>
 <span class="w">  </span><span class="nt">filename</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;data/test_set.csv&quot;</span>
 <span class="w">  </span>
-<span class="w">  </span><span class="c1"># Unique name for this dataset (creates &#39;processed_data_test_set.pt&#39;)</span>
+<span class="w">  </span><span class="c1"># Unique name for this dataset (cached as &#39;processed_data_test_set_benchmark.pt&#39;)</span>
 <span class="w">  </span><span class="nt">dataset_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;test_set_benchmark&quot;</span>
 <span class="w">  </span>
 <span class="w">  </span><span class="c1"># Directory containing corresponding .xyz files</span>
@@ -581,7 +581,7 @@
 </ul>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p><strong>Data formats.</strong> The <code class="docutils literal notranslate"><span class="pre">eval-predict</span></code> command currently <strong>only supports <code class="docutils literal notranslate"><span class="pre">.csv</span></code> files</strong> for ground truth labels. It does <strong>not</strong> natively support extracting ground truth data directly from ASE <code class="docutils literal notranslate"><span class="pre">.db</span></code> files. Ensure you have a generated CSV containing the <code class="docutils literal notranslate"><span class="pre">&quot;filename&quot;</span></code> and property columns.</p>
+<p><strong>Ground-truth source.</strong> <code class="docutils literal notranslate"><span class="pre">eval-predict</span></code> reads ground-truth labels from either a <code class="docutils literal notranslate"><span class="pre">.csv</span></code> (with a <code class="docutils literal notranslate"><span class="pre">filename</span></code> column plus the property columns) <strong>or</strong> directly from an ASE <code class="docutils literal notranslate"><span class="pre">.db</span></code>. If the CSV <code class="docutils literal notranslate"><span class="pre">filename</span></code> is missing or a placeholder, it falls back to the ASE database, so pointing <code class="docutils literal notranslate"><span class="pre">data.filename</span></code> at a <code class="docutils literal notranslate"><span class="pre">.db</span></code> works too.</p>
 </div>
 </section>
 </section>

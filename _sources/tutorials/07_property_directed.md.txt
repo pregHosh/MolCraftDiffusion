@@ -5,7 +5,7 @@
 This tutorial covers advanced generation techniques that steer the process towards desired chemical properties.
 
 :::{warning}
-**Guidance models must match the base diffusion model.** For Gradient Guidance (GG) and hybrid CFG/GG, the regressor and guidance model must be trained with the **same `diffusion_steps` and noise schedule** as the base diffusion model. A mismatch means the guidance model receives noise levels it was never trained on, producing erratic or broken gradients. Check that `diffusion_steps` and `noise_schedule` in your guidance config match the base model's training config exactly.
+**Guidance models must match the base diffusion model.** For Gradient Guidance (GG) and hybrid CFG/GG, the guidance model must be trained with the **same `diffusion_steps` and polynomial noise schedule (`nu_arr`)** as the base diffusion model. A mismatch means the guidance model receives noise levels it was never trained on, producing erratic or broken gradients. Check that `diffusion_steps` and `nu_arr` in your guidance config match the base model's training config exactly.
 :::
 
 ## Contents
@@ -29,13 +29,15 @@ Classifier-Free Guidance is a technique that amplifies the learned conditional d
 
 The configuration for CFG typically inherits from the `interference: gen_cfg` template.
 
-| Parameter | Description |
-| :--- | :--- |
-| `task_type` | Must be set to `conditional`. |
-| `target_values` | A list of positive target values for the properties specified in `property_names`. |
-| `negative_target_value` | (Optional) A list of values to use as a "negative prompt". The model is guided *away* from these property values. |
-| `property_names`| A list of property names that the model was trained on. |
-| `cfg_scale` | A scaling factor that controls the strength of the guidance. A higher value will result in a stronger push towards the target properties. |
+The `gen_cfg` template already sets these; override only what you need. Note which keys live at the `interference` top level vs. inside `condition_configs`.
+
+| Parameter | Where | Description |
+| :--- | :--- | :--- |
+| `task_type` | `interference` | Must be `cfg` (the template sets this — setting `conditional` instead disables CFG and runs plain conditional sampling). |
+| `target_values` | `interference` | A list of positive target values for the properties in `property_names`. |
+| `negative_target_values` | `interference` | (Optional) A list used as a "negative prompt" — the model is guided *away* from these values. Note the plural key, and that it sits at the `interference` top level, **not** in `condition_configs`. |
+| `property_names`| `interference` | A list of property names the model was trained on. |
+| `cfg_scale` | `condition_configs` | Strength of the guidance; higher pushes harder toward the target properties. |
 
 ### Example `my_cfg.yaml`
 
@@ -54,11 +56,11 @@ seed: 9
 interference:
   num_generate: 100
   target_values: [3,1.5]
+  negative_target_values: [1.0, 3.0]  # top-level: push away from S1=1.0, T1=3.0
   property_names: ["S1_exc", "T1_exc"]
   output_path: generated_mol
   condition_configs:
     cfg_scale: 1
-    negative_target_value: [1.0, 3.0] # Push away from S1=1.0, T1=3.0
 ```
 
 ### Running CFG Generation

@@ -51,7 +51,7 @@ The `condition_configs` section for inpainting uses a sub-dictionary called `inp
 | `denoising_strength` | `inpaint_cfgs` | How much noise is added to the masked region (0–1). Higher = more creative freedom, lower = stays closer to the original. |
 | `noise_initial_mask` | `inpaint_cfgs` | Add noise to the initial masked positions before denoising starts. |
 | `constraint_strength` | `inpaint_cfgs` | Fraction of denoising during which overlap-push constraints are active (`s < constraint_strength`). Default: `0.8`. |
-| `scale_factor` | `inpaint_cfgs` | Multiplier on covalent radii for bond-distance tolerance. Default: `1.1`. |
+| `scale_factor` | `inpaint_cfgs` | Multiplier on covalent radii for bond-distance tolerance. Code default `1.1`; the shipped `gen_inpaint` template sets `1.2`. |
 
 ### Configuration
 
@@ -76,7 +76,7 @@ interference:
     reference_structure_path: "path/to/your_molecule.xyz"   # your own XYZ file
     condition_component: xh
     inpaint_cfgs:
-      mask_node_index: [5, 30, 31, 6, 7, 45, 8, 32, 9, 10, 33, 11, 34, 12, 35, 13, 36, 14, 15, 16, 17, 18, 37, 19, 38, 20, 39, 21, 40, 22, 23, 41, 24, 44, 25, 26, 43, 42]
+      mask_node_index: [5, 30, 31, 6, 7, 45, 8, 32, 9, 10]   # ... the atom indices to regenerate
       denoising_strength: 0.8
       constraint_strength: 0.8
       scale_factor: 1.1
@@ -114,7 +114,7 @@ The `condition_configs` section for outpainting uses a sub-dictionary called `ou
 | `spread` | `outpaint_cfgs` | Std dev (Å) of the Gaussian used to scatter seed atoms around the seed position. Default: `1.0`. |
 | `n_bq_atom` | `outpaint_cfgs` | Number of atoms at the end of the scaffold used only for seeding positions, not included in conditioning. Default: `0`. |
 | `noise_initial_mask` | `outpaint_cfgs` | Add noise to the initial seed positions before denoising starts. |
-| `constraint_strength` | `outpaint_cfgs` | Fraction of denoising during which constraints are active. Default: `0.7`. |
+| `constraint_strength` | `outpaint_cfgs` | Fraction of denoising during which constraints are active. Code default `0.8`; the shipped `gen_outpaint` template sets `0.7`, so that's what you get if you inherit it. |
 | `scale_factor` | `outpaint_cfgs` | Multiplier on covalent radii for bond-distance tolerance. Default: `1.1`. |
 
 ### Configuration

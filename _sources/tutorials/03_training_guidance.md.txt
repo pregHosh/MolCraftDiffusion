@@ -56,7 +56,7 @@ These parameters control how noise is added to the molecules during training.
 | Parameter | Example Override | Notes / Recommendations |
 | :--- | :--- | :--- |
 | `tasks.diffusion_steps` | `tasks: {diffusion_steps: 900}` | The number of steps in the diffusion process. **Should match your generative diffusion model.** |
-| `tasks.diffusion_noise_schedule` | `tasks: {diffusion_noise_schedule: 'polynomial_2'}` | The noise schedule. **Should match your generative diffusion model.** |
+| `tasks.nu_arr` | `tasks: {nu_arr: [2, 2, 2]}` | Powers of the polynomial noise schedule for `[coords, atom types, charges]`. The guidance task builds its noise model from these (there is no named-schedule key here — `diffusion_noise_schedule` is ignored). |
 | `tasks.t_max` | `tasks: {t_max: 0.7}` | The maximum noise timestep (from 0.0 to 1.0) the model will be trained on. |
 
 ## Putting It All Together

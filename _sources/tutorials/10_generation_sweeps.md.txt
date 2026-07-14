@@ -91,7 +91,7 @@ name: example_sweep
 `eval_script` is a shell workflow that receives the run output directory as its only argument:
 
 ```bash
-bash workflow_hybrid_sf_a3_2.sh sweep_results/example_sweep/<run_name>
+bash scripts/eval_workflow.sh sweep_results/example_sweep/<run_name>
 ```
 
 `sweep_dir` contains:

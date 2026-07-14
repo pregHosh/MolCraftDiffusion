@@ -48,14 +48,17 @@ interference:
 
 ### Key Generation Parameters
 
-While the example above is minimal, you can control the generation process with several important parameters (overriding the defaults in `interference: gen_unconditional`):
+While the example above is minimal, you can control the generation process with several important parameters (overriding the defaults in `interference: gen_unconditional`).
 
-*   `diffusion_steps`: (Integer) The number of steps to run the reverse diffusion process. A higher number can lead to better quality molecules but increases generation time. This usually defaults to the value the model was trained with.
-*   `interference.sampling_mode`: (String) The sampling algorithm to use. Common choices are `"ddpm"` (Denoising Diffusion Probabilistic Models) and `"ddim"` (Denoising Diffusion Implicit Models). ddim is generally faster as it can skip steps.
-*   `interference.mol_size`: (Integer) Specifies the maximum number of atoms for the molecules you want to generate. This should typically not exceed the maximum number of atoms the model was trained on.
-*   `interference.num_generate`: (Integer) The total number of molecules you wish to generate in one run.
-*   `chkpt_directory`: (String) Path to the directory containing the trained model checkpoint.
-*   `interference.output_path`: (String) Where to save the output file.
+**Top-level keys** (siblings of `defaults`):
+*   `chkpt_directory`: path to the directory containing the trained model checkpoint.
+*   `diffusion_steps`: number of reverse-diffusion steps. Higher can improve quality but is slower; usually left at the value the model was trained with.
+
+**Under `interference:`**
+*   `num_generate`: how many molecules to sample in one run.
+*   `mol_size`: a **list of ints** controlling atom count — either a single fixed size (`[16]`) or a `[min, max]` range (`[16, 40]`) sampled per molecule. Each end is clamped to the model's `max_atom`.
+*   `sampling_mode`: `"ddpm"` (default) or `"ddim"` — ddim is faster because it can skip steps.
+*   `output_path`: directory to save the generated molecules.
 
 ### Running Unconditional Generation
 

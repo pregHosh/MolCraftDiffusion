@@ -48,7 +48,7 @@ MolCraftDiff analyze optimize gen_xyz/ --level gfn2 --charge 0
 
 ### Output
 
-Optimized XYZ files saved to `output_dir/` with same filenames.
+Optimized XYZ files saved to `output_dir/`, each with an `_opt` suffix (e.g. `mol_0000.xyz` → `mol_0000_opt.xyz`). Part 3's `compare` expects exactly these `*_opt.xyz` files.
 
 ---
 
