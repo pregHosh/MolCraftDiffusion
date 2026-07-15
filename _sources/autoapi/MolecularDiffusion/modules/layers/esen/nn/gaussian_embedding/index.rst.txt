@@ -1,0 +1,38 @@
+MolecularDiffusion.modules.layers.esen.nn.gaussian_embedding
+============================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.esen.nn.gaussian_embedding
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.esen.nn.gaussian_embedding.GaussianFeatureEmbedding
+
+
+Module Contents
+---------------
+
+.. py:class:: GaussianFeatureEmbedding(num_channels, num_basis=20, start=0.0, stop=10.0, trainable=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: num_basis
+      :value: 20
+
+
+
+   .. py:attribute:: num_channels
+
+
+   .. py:attribute:: trainable
+      :value: False
+
+
+

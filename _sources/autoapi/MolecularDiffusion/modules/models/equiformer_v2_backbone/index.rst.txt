@@ -1,0 +1,67 @@
+MolecularDiffusion.modules.models.equiformer_v2_backbone
+========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.equiformer_v2_backbone
+
+.. autoapi-nested-parse::
+
+   EquiformerV2Backbone — plain per-node scalar-feature backbone for property
+   prediction. Unlike EquiformerV2_dynamics (built for denoising: mandatory
+   timestep, velocity + feature-delta output), this exposes per-node l=0
+   features via forward(data) -> {"x": ...}, mirroring eSEN_Backbone's contract
+   so it plugs into ProperyPrediction.
+
+   The EquiformerV2 encoder and all layer files are NOT modified.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.equiformer_v2_backbone.EquiformerV2Backbone
+
+
+Module Contents
+---------------
+
+.. py:class:: EquiformerV2Backbone(equiformer: torch.nn.Module, in_node_channels: int, sphere_channels: int = 128, lmax_list=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   :param equiformer: Instantiated EquiformerV2 model (from shepherd_arch).
+   :param in_node_channels: Width of the per-node input feature, i.e.
+                            atomic_number(1) + data.x width.
+   :type in_node_channels: int
+   :param sphere_channels: Must match equiformer.sphere_channels.
+   :type sphere_channels: int
+   :param lmax_list: Must match equiformer.lmax_list.
+   :type lmax_list: list[int]
+
+
+   .. py:method:: forward(data) -> dict[str, torch.Tensor]
+
+
+   .. py:attribute:: d_model
+      :value: 128
+
+
+
+   .. py:attribute:: equiformer
+
+
+   .. py:attribute:: input_proj
+
+
+   .. py:attribute:: lmax_list
+      :value: [6]
+
+
+
+   .. py:attribute:: sphere_channels
+      :value: 128
+
+
+

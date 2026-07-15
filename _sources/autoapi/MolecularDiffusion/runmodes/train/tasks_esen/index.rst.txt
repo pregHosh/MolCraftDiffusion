@@ -1,0 +1,189 @@
+MolecularDiffusion.runmodes.train.tasks_esen
+============================================
+
+.. py:module:: MolecularDiffusion.runmodes.train.tasks_esen
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.tasks_esen.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.tasks_esen.ModelTaskFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: ModelTaskFactory(task_type: str, atom_vocab: list, condition_names: list = [], hidden_size: int = 128, num_layers: int = 2, lmax: int = 2, mmax: int = 2, grid_resolution: int | None = None, cutoff: float = 5.0, edge_channels: int = 128, hidden_channels: int = 128, distance_function: str = 'gaussian', num_distance_basis: int = 512, norm_type: str = 'rms_norm_sh', act_type: str = 's2', mlp_type: str = 'grid', use_envelope: bool = False, activation_checkpointing: bool = False, global_attributes: bool = False, sphere_embedding_type: str = 'mixed', aggregation_method: str = 'sum', chkpt_path: str = None, **kwargs)
+
+   Factory to construct eSEN models and task handlers for regression, guidance,
+   and SSL3D tasks.
+
+   Constructor Parameters:
+       task_type (str): "regression", "guidance", or "ssl3d".
+       atom_vocab (list): List of atom vocabulary used for encoding.
+       condition_names (list): List of conditional labels.
+       hidden_size (int): Hidden dimension size.
+       num_layers (int): Number of layers.
+
+       # eSEN specific
+       lmax (int): Maximum degree of spherical harmonics.
+       mmax (int): Maximum order of spherical harmonics.
+       grid_resolution (int): Resolution of the grid.
+       cutoff (float): Cutoff radius.
+       edge_channels (int): Number of edge channels.
+       distance_function (str): Distance function type.
+       num_distance_basis (int): Number of distance basis functions.
+       norm_type (str): Normalization type.
+       act_type (str): Activation type.
+       mlp_type (str): MLP type.
+       use_envelope (bool): Whether to use envelope function.
+       activation_checkpointing (bool): Whether to use activation checkpointing.
+       global_attributes (bool): Whether to use global attributes.
+       sphere_embedding_type (str): Type of sphere embedding.
+
+       Property-prediction kwargs:
+           task_learn (List)
+           criterion (str)
+           metric (List)
+           num_mlp_layer (int)
+           mlp_dropout (float)
+           normalization (bool)
+           chkpt_path (str)
+
+
+   .. py:method:: build()
+
+      Build and return (model, task) based on task_type.
+
+      :param task_type: "regression", "guidance", or "ssl3d".
+      :type task_type: str
+
+
+
+   .. py:attribute:: act_type
+      :value: 's2'
+
+
+
+   .. py:attribute:: activation_checkpointing
+      :value: False
+
+
+
+   .. py:attribute:: aggregation_method
+      :value: 'sum'
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: chkpt_path
+      :value: None
+
+
+
+   .. py:attribute:: condition_names
+      :value: []
+
+
+
+   .. py:attribute:: context_node_nf
+
+
+   .. py:attribute:: cutoff
+      :value: 5.0
+
+
+
+   .. py:attribute:: distance_function
+      :value: 'gaussian'
+
+
+
+   .. py:attribute:: edge_channels
+      :value: 128
+
+
+
+   .. py:attribute:: global_attributes
+      :value: False
+
+
+
+   .. py:attribute:: grid_resolution
+      :value: None
+
+
+
+   .. py:attribute:: hidden_channels
+      :value: 128
+
+
+
+   .. py:attribute:: hidden_size
+      :value: 128
+
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: lmax
+      :value: 2
+
+
+
+   .. py:attribute:: mlp_type
+      :value: 'grid'
+
+
+
+   .. py:attribute:: mmax
+      :value: 2
+
+
+
+   .. py:attribute:: norm_type
+      :value: 'rms_norm_sh'
+
+
+
+   .. py:attribute:: num_distance_basis
+      :value: 512
+
+
+
+   .. py:attribute:: num_layers
+      :value: 2
+
+
+
+   .. py:attribute:: sphere_embedding_type
+      :value: 'mixed'
+
+
+
+   .. py:attribute:: task_type
+
+
+   .. py:attribute:: use_envelope
+      :value: False
+
+
+
+.. py:data:: logger
+

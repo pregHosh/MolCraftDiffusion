@@ -330,6 +330,8 @@
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/logger/index.html">MolecularDiffusion.runmodes.train.logger</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_egcl/index.html">MolecularDiffusion.runmodes.train.tasks_egcl</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_egt/index.html">MolecularDiffusion.runmodes.train.tasks_egt</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_equiformer/index.html">MolecularDiffusion.runmodes.train.tasks_equiformer</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_esen/index.html">MolecularDiffusion.runmodes.train.tasks_esen</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html">MolecularDiffusion.runmodes.train.tasks_gfmdiff</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/trainer/index.html">MolecularDiffusion.runmodes.train.trainer</a></li>
 </ul>
@@ -520,8 +522,18 @@ architecture never touches the core engine.</p>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression.yaml</span></code> / <code class="docutils literal notranslate"><span class="pre">guidance.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression</span></code> / <code class="docutils literal notranslate"><span class="pre">guidance</span></code></p></td>
-<td class="text-left"><p>Property predictor / guidance head</p></td>
-<td class="text-left"><p>Used for property prediction and gradient guidance.</p></td>
+<td class="text-left"><p>Property predictor / guidance head (EGCL backbone)</p></td>
+<td class="text-left"><p><strong>Default.</strong> Used for property prediction and gradient guidance.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression_esen.yaml</span></code> / <code class="docutils literal notranslate"><span class="pre">guidance_esen.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression</span></code> / <code class="docutils literal notranslate"><span class="pre">guidance</span></code></p></td>
+<td class="text-left"><p>Property predictor / guidance head (eSEN backbone)</p></td>
+<td class="text-left"><p>Same task classes as above, eSEN backbone.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression_equiformer.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression</span></code></p></td>
+<td class="text-left"><p>Property predictor (EquiformerV2 backbone)</p></td>
+<td class="text-left"><p>No <code class="docutils literal notranslate"><span class="pre">guidance</span></code>/diffusion config exists yet for this backbone — only <code class="docutils literal notranslate"><span class="pre">regression</span></code> and <code class="docutils literal notranslate"><span class="pre">ssl3d_equiformer</span></code>.</p></td>
 </tr>
 </tbody>
 </table>

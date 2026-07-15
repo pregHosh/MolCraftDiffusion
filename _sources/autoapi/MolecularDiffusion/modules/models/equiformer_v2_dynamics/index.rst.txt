@@ -1,0 +1,108 @@
+MolecularDiffusion.modules.models.equiformer_v2_dynamics
+========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.equiformer_v2_dynamics
+
+.. autoapi-nested-parse::
+
+   EquiformerV2_dynamics — wraps EquiformerV2 encoder as a drop-in denoising network
+   for EnVariationalDiffusion and EnVariationalDiffusionPyG in en_diffusion.py.
+
+   The EquiformerV2 encoder and all layer files are NOT modified.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.equiformer_v2_dynamics.EquiformerV2_dynamics
+
+
+Module Contents
+---------------
+
+.. py:class:: EquiformerV2_dynamics(equiformer: torch.nn.Module, in_node_nf: int, n_dims: int = 3, condition_time: bool = True, context_node_nf: int = 0, adapter_indices=None, concat_indices=None, sphere_channels: int = 128, lmax_list=None)
+
+   Bases: :py:obj:`torch.nn.Module`, :py:obj:`MolecularDiffusion.core.Configurable`
+
+
+   Dynamics wrapper that adapts EquiformerV2 for use with EnVariationalDiffusion(PyG).
+
+   :param equiformer: Instantiated EquiformerV2 model (from shepherd_arch).
+   :param in_node_nf: Number of output node features expected by the diffusion model
+                      (atomic_number_dim + extra_features + optional_charge).
+                      Does NOT include timestep — that is handled internally.
+   :type in_node_nf: int
+   :param n_dims: Spatial dimensions (default 3).
+   :type n_dims: int
+   :param condition_time: Whether to condition on timestep (default True).
+   :type condition_time: bool
+   :param context_node_nf: Total context feature dimension (default 0).
+   :type context_node_nf: int
+   :param adapter_indices: Indices of context columns routed through additive adapter MLPs.
+   :type adapter_indices: list[int]
+   :param concat_indices: Indices of context columns concatenated to input features.
+   :type concat_indices: list[int]
+   :param sphere_channels: Must match equiformer.sphere_channels.
+   :type sphere_channels: int
+   :param lmax_list: Must match equiformer.lmax_list.
+   :type lmax_list: list[int]
+
+
+   .. py:method:: forward(*args, **kwargs)
+
+
+   .. py:attribute:: condition_time
+      :value: True
+
+
+
+   .. py:attribute:: context_node_nf
+      :value: 0
+
+
+
+   .. py:attribute:: equiformer
+
+
+   .. py:attribute:: head_h
+
+
+   .. py:attribute:: head_vel_ffn
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: input_proj
+
+
+   .. py:attribute:: lmax_list
+      :value: None
+
+
+
+   .. py:attribute:: n_adapter_context
+
+
+   .. py:attribute:: n_concat_context
+
+
+   .. py:attribute:: n_dims
+      :value: 3
+
+
+
+   .. py:attribute:: sphere_channels
+      :value: 128
+
+
+
+   .. py:attribute:: use_adapter_module
+
+
+   .. py:attribute:: vel_SO3_grid
+
+

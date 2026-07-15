@@ -1,0 +1,236 @@
+MolecularDiffusion.modules.layers.atomic_data
+=============================================
+
+.. py:module:: MolecularDiffusion.modules.layers.atomic_data
+
+.. autoapi-nested-parse::
+
+   Copyright (c) Meta Platforms, Inc. and affiliates.
+
+   This source code is licensed under the MIT license found in the
+   LICENSE file in the root directory of this source tree.
+
+   modified from troch_geometric Data class
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.atomic_data.AseAtomsAdaptor
+   MolecularDiffusion.modules.layers.atomic_data.IndexType
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.atomic_data.AtomicData
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.atomic_data.atomicdata_list_to_batch
+   MolecularDiffusion.modules.layers.atomic_data.get_neighbors_pymatgen
+   MolecularDiffusion.modules.layers.atomic_data.reshape_features
+   MolecularDiffusion.modules.layers.atomic_data.size_repr
+   MolecularDiffusion.modules.layers.atomic_data.tensor_or_int_to_tensor
+
+
+Module Contents
+---------------
+
+.. py:class:: AtomicData(pos: torch.Tensor, atomic_numbers: torch.Tensor, cell: torch.Tensor, pbc: torch.Tensor, natoms: torch.Tensor, edge_index: torch.Tensor, cell_offsets: torch.Tensor, nedges: torch.Tensor, charge: torch.Tensor, spin: torch.Tensor, fixed: torch.Tensor, tags: torch.Tensor, energy: torch.Tensor | None = None, forces: torch.Tensor | None = None, stress: torch.Tensor | None = None, batch: torch.Tensor | None = None, sid: list[str] | None = None, dataset: list[str] | str | None = None)
+
+   .. py:method:: apply(func)
+
+      Applies the function :obj:`func` to all tensor attributes
+
+
+
+   .. py:method:: assign_batch_stats(slices, cumsum, cat_dims, natoms_list)
+
+
+   .. py:method:: batch_to_atomicdata_list() -> list[AtomicData]
+
+      Reconstructs the list of :class:`torch_geometric.data.Data` objects
+      from the batch object.
+      The batch object must have been created via :meth:`from_data_list` in
+      order to be able to reconstruct the initial objects.
+
+
+
+   .. py:method:: clone()
+
+      Performs a deep-copy of the data object.
+
+
+
+   .. py:method:: contiguous()
+
+      Ensures a contiguous memory layout for all tensor attributes
+
+
+
+   .. py:method:: cpu()
+
+      Copies all tensor attributes to CPU memory.
+
+
+
+   .. py:method:: cuda(device=None, non_blocking=False)
+
+      Copies all tensor attributes to GPU memory.
+
+
+
+   .. py:method:: from_ase(input_atoms: ase.Atoms, r_edges: bool = False, radius: float = 6.0, max_neigh: int | None = None, sid: str | None = None, molecule_cell_size: float | None = None, r_energy: bool = True, r_forces: bool = True, r_stress: bool = True, r_data_keys: list[str] | None = None, task_name: str | None = None) -> AtomicData
+      :classmethod:
+
+
+
+   .. py:method:: from_dict(dictionary)
+      :classmethod:
+
+
+      Creates a data object from a python dictionary.
+
+
+
+   .. py:method:: get(key, default)
+
+
+   .. py:method:: get_batch_stats()
+
+
+   .. py:method:: get_example(idx: int) -> AtomicData
+
+      Reconstructs the :class:`AtomicData` object at index
+      :obj:`idx` from a batched AtomicData object.
+
+
+
+   .. py:method:: index_select(idx: IndexType) -> list[AtomicData]
+
+
+   .. py:method:: keys()
+
+
+   .. py:method:: to(device, **kwargs)
+
+      Performs tensor dtype and/or device conversion for all tensor attributes
+
+
+
+   .. py:method:: to_ase() -> list[ase.Atoms]
+
+
+   .. py:method:: to_ase_single() -> ase.Atoms
+
+
+   .. py:method:: to_dict()
+
+
+   .. py:method:: validate()
+
+
+   .. py:method:: values()
+
+
+   .. py:attribute:: atomic_numbers
+
+
+   .. py:attribute:: cell
+
+
+   .. py:attribute:: cell_offsets
+
+
+   .. py:attribute:: charge
+
+
+   .. py:attribute:: edge_index
+
+
+   .. py:attribute:: fixed
+
+
+   .. py:attribute:: natoms
+
+
+   .. py:attribute:: nedges
+
+
+   .. py:property:: num_edges
+      :type: int
+
+
+      Returns the number of edges in the graph.
+
+
+   .. py:property:: num_graphs
+      :type: int
+
+
+      Returns the number of graphs in the batch.
+
+
+   .. py:property:: num_nodes
+      :type: int
+
+
+      Returns or sets the number of nodes in the graph.
+
+
+   .. py:attribute:: pbc
+
+
+   .. py:attribute:: pos
+
+
+   .. py:attribute:: sid
+
+
+   .. py:attribute:: spin
+
+
+   .. py:attribute:: tags
+
+
+   .. py:property:: task_name
+
+
+.. py:function:: atomicdata_list_to_batch(data_list: list[AtomicData], exclude_keys: Optional[list] = None) -> AtomicData
+
+   all data points must be single graphs and have the same set of keys.
+   TODO: exclude keys?
+
+
+.. py:function:: get_neighbors_pymatgen(atoms: ase.Atoms, cutoff, max_neigh)
+
+   Preforms nearest neighbor search and returns edge index, distances,
+   and cell offsets
+
+
+.. py:function:: reshape_features(c_index: numpy.ndarray, n_index: numpy.ndarray, n_distance: numpy.ndarray, offsets: numpy.ndarray)
+
+   Stack center and neighbor index and reshapes distances,
+   takes in np.arrays and returns torch tensors
+
+
+.. py:function:: size_repr(key: str, item: torch.Tensor, indent=0) -> str
+
+.. py:function:: tensor_or_int_to_tensor(x, dtype=torch.int)
+
+.. py:data:: AseAtomsAdaptor
+   :value: None
+
+
+.. py:data:: IndexType
+

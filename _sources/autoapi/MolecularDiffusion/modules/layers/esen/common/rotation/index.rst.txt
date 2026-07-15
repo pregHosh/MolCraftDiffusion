@@ -1,0 +1,48 @@
+MolecularDiffusion.modules.layers.esen.common.rotation
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.esen.common.rotation
+
+.. autoapi-nested-parse::
+
+   Copyright (c) Meta, Inc. and its affiliates.
+
+   This source code is licensed under the MIT license found in the
+   LICENSE file in the root directory of this source tree.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.esen.common.rotation.YTOL
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.esen.common.rotation.init_edge_rot_mat
+   MolecularDiffusion.modules.layers.esen.common.rotation.rotation_to_wigner
+   MolecularDiffusion.modules.layers.esen.common.rotation.wigner_D
+
+
+Module Contents
+---------------
+
+.. py:function:: init_edge_rot_mat(edge_distance_vec, rot_clip=False)
+
+.. py:function:: rotation_to_wigner(edge_rot_mat: torch.Tensor, start_lmax: int, end_lmax: int, Jd: list[torch.Tensor], rot_clip: bool = False) -> torch.Tensor
+
+   set <rot_clip=True> to handle gradient instability when using gradient-based force/stress prediction.
+
+
+.. py:function:: wigner_D(lv: int, alpha: torch.Tensor, beta: torch.Tensor, gamma: torch.Tensor, _Jd: list[torch.Tensor]) -> torch.Tensor
+
+.. py:data:: YTOL
+   :value: 0.999999
+
+

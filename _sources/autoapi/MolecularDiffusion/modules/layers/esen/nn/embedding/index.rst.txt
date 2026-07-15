@@ -1,0 +1,110 @@
+MolecularDiffusion.modules.layers.esen.nn.embedding
+===================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.esen.nn.embedding
+
+.. autoapi-nested-parse::
+
+   Copyright (c) Meta, Inc. and its affiliates.
+
+   This source code is licensed under the MIT license found in the
+   LICENSE file in the root directory of this source tree.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.esen.nn.embedding.ChgSpinDatasetEmbedding
+   MolecularDiffusion.modules.layers.esen.nn.embedding.EdgeDegreeEmbedding
+
+
+Module Contents
+---------------
+
+.. py:class:: ChgSpinDatasetEmbedding(embedding_type, embedding_target, embedding_size, grad, scale=1.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: embedding_target
+
+
+   .. py:attribute:: embedding_type
+
+
+.. py:class:: EdgeDegreeEmbedding(sphere_channels: int, lmax: int, mmax: int, max_num_elements: int, edge_channels_list, rescale_factor, cutoff, mappingReduced, out_mask, use_envelope)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   :param sphere_channels: Number of spherical channels
+   :type sphere_channels: int
+   :param lmax: degrees (l)
+   :type lmax: int
+   :param mmax: orders (m)
+   :type mmax: int
+   :param max_num_elements: Maximum number of atomic numbers
+   :type max_num_elements: int
+   :param edge_channels_list (list: int):  List of sizes of invariant edge embedding. For example, [input_channels, hidden_channels, hidden_channels].
+                                    The last one will be used as hidden size when `use_atom_edge_embedding` is `True`.
+   :param use_atom_edge_embedding: Whether to use atomic embedding along with relative distance for edge scalar features
+   :type use_atom_edge_embedding: bool
+   :param rescale_factor: Rescale the sum aggregation
+   :type rescale_factor: float
+   :param cutoff: Cutoff distance for the radial function
+   :type cutoff: float
+   :param mappingReduced: Class to convert l and m indices once node embedding is rotated
+   :type mappingReduced: CoefficientMapping
+   :param out_mask: Mask to select the output irreps
+   :type out_mask: torch.Tensor
+   :param use_envelope: Whether to use envelope function
+   :type use_envelope: bool
+
+
+   .. py:method:: forward(x, x_edge, edge_distance, edge_index, wigner_inv, node_offset=0)
+
+
+   .. py:attribute:: edge_channels_list
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: m_0_num_coefficients
+      :type:  int
+
+
+   .. py:attribute:: m_all_num_coefficents
+      :type:  int
+
+
+   .. py:attribute:: mappingReduced
+
+
+   .. py:attribute:: max_num_elements
+
+
+   .. py:attribute:: mmax
+
+
+   .. py:attribute:: out_mask
+
+
+   .. py:attribute:: rad_func
+
+
+   .. py:attribute:: rescale_factor
+
+
+   .. py:attribute:: sphere_channels
+
+
+   .. py:attribute:: use_envelope
+
+

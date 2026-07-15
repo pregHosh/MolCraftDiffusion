@@ -330,6 +330,8 @@
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/logger/index.html">MolecularDiffusion.runmodes.train.logger</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_egcl/index.html">MolecularDiffusion.runmodes.train.tasks_egcl</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_egt/index.html">MolecularDiffusion.runmodes.train.tasks_egt</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_equiformer/index.html">MolecularDiffusion.runmodes.train.tasks_equiformer</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_esen/index.html">MolecularDiffusion.runmodes.train.tasks_esen</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html">MolecularDiffusion.runmodes.train.tasks_gfmdiff</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/trainer/index.html">MolecularDiffusion.runmodes.train.trainer</a></li>
 </ul>
@@ -633,6 +635,36 @@
 </div>
 </section>
 <hr class="docutils" />
+<section id="alternative-backbones-esen-and-equiformerv2">
+<h2>Alternative Backbones: eSEN and EquiformerV2<a class="headerlink" href="#alternative-backbones-esen-and-equiformerv2" title="Link to this heading">¶</a></h2>
+<p>The default <code class="docutils literal notranslate"><span class="pre">tasks:</span> <span class="pre">regression</span></code> uses an EGCL backbone. Two other backbones are available for regression, swapped in the same <code class="docutils literal notranslate"><span class="pre">defaults</span></code> list:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">defaults</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">regression_esen</span><span class="w">        </span><span class="c1"># eSEN backbone</span>
+<span class="w">  </span><span class="c1"># - tasks: regression_equiformer  # or EquiformerV2 backbone</span>
+</pre></div>
+</div>
+<p>Backbone-specific hyperparameters replace the EGCL ones (<code class="docutils literal notranslate"><span class="pre">hidden_size</span></code>, <code class="docutils literal notranslate"><span class="pre">num_sublayers</span></code>, …) shown above:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Backbone</p></th>
+<th class="head text-left"><p>Key <code class="docutils literal notranslate"><span class="pre">tasks:</span></code> overrides</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression_esen</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">hidden_size</span></code>, <code class="docutils literal notranslate"><span class="pre">hidden_channels</span></code>, <code class="docutils literal notranslate"><span class="pre">num_layers</span></code>, <code class="docutils literal notranslate"><span class="pre">lmax</span></code>, <code class="docutils literal notranslate"><span class="pre">mmax</span></code>, <code class="docutils literal notranslate"><span class="pre">sphere_embedding_type</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression_equiformer</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">sphere_channels</span></code>, <code class="docutils literal notranslate"><span class="pre">input_sphere_channels</span></code> (must match <code class="docutils literal notranslate"><span class="pre">sphere_channels</span></code>), <code class="docutils literal notranslate"><span class="pre">num_layers</span></code>, <code class="docutils literal notranslate"><span class="pre">lmax_list</span></code>, <code class="docutils literal notranslate"><span class="pre">mmax_list</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">task_learn</span></code>, <code class="docutils literal notranslate"><span class="pre">criterion</span></code>, <code class="docutils literal notranslate"><span class="pre">metric</span></code>, <code class="docutils literal notranslate"><span class="pre">mlp_*</span></code>, and <code class="docutils literal notranslate"><span class="pre">target_normalization</span></code> behave identically across all three backbones.</p>
+<p>Complete worked examples (predicting <code class="docutils literal notranslate"><span class="pre">gap</span></code> on a FORMED ASE db) are in <code class="docutils literal notranslate"><span class="pre">configs/train_regression_esen_formed.yaml</span></code> and <code class="docutils literal notranslate"><span class="pre">configs/train_regression_equiformer_formed.yaml</span></code>.</p>
+<p><em>(Note: EquiformerV2 currently only supports <code class="docutils literal notranslate"><span class="pre">regression</span></code> and <code class="docutils literal notranslate"><span class="pre">ssl3d_equiformer</span></code> task types — no diffusion path exists for it yet, unlike eSEN and EGCL.)</em></p>
+</section>
 <section id="next-steps-property-prediction-and-guidance">
 <h2>Next Steps: Property Prediction and Guidance<a class="headerlink" href="#next-steps-property-prediction-and-guidance" title="Link to this heading">¶</a></h2>
 <p>Once your regression model is trained, you can use it in two main ways:</p>
@@ -726,6 +758,7 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#putting-it-all-together">Putting It All Together</a></li>
+<li><a class="reference internal" href="#alternative-backbones-esen-and-equiformerv2">Alternative Backbones: eSEN and EquiformerV2</a></li>
 <li><a class="reference internal" href="#next-steps-property-prediction-and-guidance">Next Steps: Property Prediction and Guidance</a></li>
 </ul>
 </li>

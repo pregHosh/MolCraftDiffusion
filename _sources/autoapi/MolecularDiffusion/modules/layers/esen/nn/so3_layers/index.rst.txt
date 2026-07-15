@@ -1,0 +1,53 @@
+MolecularDiffusion.modules.layers.esen.nn.so3_layers
+====================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.esen.nn.so3_layers
+
+.. autoapi-nested-parse::
+
+   Copyright (c) Meta, Inc. and its affiliates.
+
+   This source code is licensed under the MIT license found in the
+   LICENSE file in the root directory of this source tree.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.esen.nn.so3_layers.SO3_Linear
+
+
+Module Contents
+---------------
+
+.. py:class:: SO3_Linear(in_features: int, out_features: int, lmax: int)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   
+   1. Use `torch.einsum` to prevent slicing and concatenation
+   2. Need to specify some behaviors in `no_weight_decay` and weight initialization.
+
+
+   .. py:method:: forward(input_embedding)
+
+
+   .. py:attribute:: bias
+
+
+   .. py:attribute:: in_features
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: out_features
+
+
+   .. py:attribute:: weight
+
+

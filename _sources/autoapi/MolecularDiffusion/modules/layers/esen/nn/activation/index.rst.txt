@@ -1,0 +1,97 @@
+MolecularDiffusion.modules.layers.esen.nn.activation
+====================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.esen.nn.activation
+
+.. autoapi-nested-parse::
+
+   Copyright (c) Meta, Inc. and its affiliates.
+
+   This source code is licensed under the MIT license found in the
+   LICENSE file in the root directory of this source tree.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.esen.nn.activation.GateActivation
+   MolecularDiffusion.modules.layers.esen.nn.activation.S2Activation
+   MolecularDiffusion.modules.layers.esen.nn.activation.SeparableS2Activation
+
+
+Module Contents
+---------------
+
+.. py:class:: GateActivation(lmax: int, mmax: int, num_channels: int)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(gating_scalars, input_tensors)
+
+      `gating_scalars`: shape [N, lmax * num_channels]
+      `input_tensors`: shape  [N, (lmax + 1) ** 2, num_channels]
+
+
+
+   .. py:attribute:: gate_act
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mmax
+
+
+   .. py:attribute:: num_channels
+
+
+   .. py:attribute:: scalar_act
+
+
+.. py:class:: S2Activation(lmax: int, mmax: int, SO3_grid)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Assume we only have one resolution
+
+
+   .. py:method:: forward(inputs)
+
+
+   .. py:attribute:: SO3_grid
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mmax
+
+
+.. py:class:: SeparableS2Activation(lmax: int, mmax: int, SO3_grid)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(input_scalars, input_tensors)
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mmax
+
+
+   .. py:attribute:: s2_act
+
+
+   .. py:attribute:: scalar_act
+
+

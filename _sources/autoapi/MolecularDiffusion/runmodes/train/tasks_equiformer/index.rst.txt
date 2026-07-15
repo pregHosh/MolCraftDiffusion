@@ -1,0 +1,128 @@
+MolecularDiffusion.runmodes.train.tasks_equiformer
+==================================================
+
+.. py:module:: MolecularDiffusion.runmodes.train.tasks_equiformer
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.tasks_equiformer.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.tasks_equiformer.ModelTaskFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: ModelTaskFactory(task_type: str, atom_vocab: list, condition_names: list = [], chkpt_path: str = None, **kwargs)
+
+   Factory to construct EquiformerV2-based models and task handlers.
+
+   Supported task_type values:
+       - "ssl3d_equiformer": SSL3D pretraining with an EquiformerV2 backbone.
+       - "regression": Scalar property prediction with an EquiformerV2 backbone.
+
+   :param task_type: One of the supported task types above.
+   :type task_type: str
+   :param atom_vocab: Atom vocabulary used for feature encoding.
+   :type atom_vocab: list[str]
+   :param condition_names: Names of conditioning properties.
+   :type condition_names: list[str]
+   :param chkpt_path: Optional checkpoint path.
+   :type chkpt_path: str | None
+   :param EquiformerV2 architecture kwargs: sphere_channels (int): Node embedding channels (default 128).
+                                            input_sphere_channels (int): Must equal sphere_channels (default 128).
+                                            num_layers (int): Number of transformer layers (default 8).
+                                            lmax_list (list[int]): Max spherical harmonic degree per resolution (default [6]).
+                                            mmax_list (list[int]): Max order per resolution (default [2]).
+                                            attn_hidden_channels (int): Attention hidden size (default 128).
+                                            attn_alpha_channels (int): Alpha vector channels per head (default 32).
+                                            attn_value_channels (int): Value vector channels per head (default 16).
+                                            ffn_hidden_channels (int): FFN hidden size (default 512).
+                                            num_heads (int): Number of attention heads (default 8).
+                                            norm_type (str): Normalisation type (default "rms_norm_sh").
+                                            edge_channels (int): Edge invariant feature channels (default 128).
+                                            use_atom_edge_embedding (bool): Use atom embedding in edge features (default True).
+                                            share_atom_edge_embedding (bool): Share atom edge embedding (default False).
+                                            distance_function (str): Radial basis function (default "gaussian").
+                                            num_distance_basis (int): Number of basis functions (default 512).
+                                            attn_activation (str): Attention activation (default "scaled_silu").
+                                            ffn_activation (str): FFN activation (default "scaled_silu").
+                                            use_gate_act (bool): Use gate activation (default False).
+                                            use_grid_mlp (bool): Use grid MLP in FFN (default False).
+                                            use_sep_s2_act (bool): Use separable S2 activation (default True).
+                                            alpha_drop (float): Attention dropout (default 0.0).
+                                            drop_path_rate (float): Drop path rate (default 0.0).
+                                            proj_drop (float): Projection dropout (default 0.0).
+                                            cutoff (float): Radial cutoff in Angstrom (default 5.0).
+                                            weight_init (str): Weight initialisation scheme (default "normal").
+   :param SSL3D kwargs: ssl3d_denoise_weight, ssl3d_sigma_min, ssl3d_sigma_max, ssl3d_sigma_schedule,
+                        ssl3d_mtype_weight, ssl3d_mask_rate, ssl3d_atom_vocab_size,
+                        ssl3d_dist_weight, ssl3d_dist_k_pairs
+   :param Regression kwargs: task_learn (list[str]): Property names to predict.
+                             criterion (str): Loss function (default "mse").
+                             metric (list[str]): Evaluation metric(s) (default ["mae"]).
+                             num_mlp_layer (int): Number of MLP head layers (default 2).
+                             mlp_dropout (float): MLP head dropout (default 0.0).
+                             mlp_hidden_dim (int | None): MLP head hidden dim (default: backbone d_model).
+                             mlp_batch_norm (str | None): None, "layernorm", or "batchnorm".
+                             target_normalization (bool): Normalize targets by mean/std (default True).
+                             prediction_mlp_type (str): "pernode" or "padded" (default "pernode").
+                             prediction_activation (str): "relu" or "silu" (default "relu").
+   :param Context routing kwargs: adapter_conditions (list[str]): condition_names routed through adapter MLPs.
+                                  use_adapter_module (bool): DEPRECATED — routes all conditions through adapter.
+
+
+   .. py:method:: build()
+
+      Build and return the task. Called by the training harness.
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: chkpt_path
+      :value: None
+
+
+
+   .. py:attribute:: condition_names
+      :value: []
+
+
+
+   .. py:attribute:: context_node_nf
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: n_adapter_context
+
+
+   .. py:attribute:: n_concat_context
+
+
+   .. py:attribute:: task
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+
+
+.. py:data:: logger
+

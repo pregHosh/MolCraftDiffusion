@@ -21,7 +21,9 @@ architecture never touches the core engine.
 | `vae_equiformer.yaml` | `vae_equiformer` | GeoLDM VAE (Equiformer enc/dec) | Equivariant autoencoder variant. |
 | `pharmacophore.yaml` | `pharmacophore` | Pharmacophore-conditioned dynamics | Requires `open3d`. |
 | `ssl3d_egcl.yaml` / `ssl3d_egt.yaml` / `ssl3d_equiformer.yaml` / `ssl3d_esen.yaml` | `ssl3d_*` | Self-supervised 3D pretraining | Prefix-matched to the `ssl3d` task family. |
-| `regression.yaml` / `guidance.yaml` | `regression` / `guidance` | Property predictor / guidance head | Used for property prediction and gradient guidance. |
+| `regression.yaml` / `guidance.yaml` | `regression` / `guidance` | Property predictor / guidance head (EGCL backbone) | **Default.** Used for property prediction and gradient guidance. |
+| `regression_esen.yaml` / `guidance_esen.yaml` | `regression` / `guidance` | Property predictor / guidance head (eSEN backbone) | Same task classes as above, eSEN backbone. |
+| `regression_equiformer.yaml` | `regression` | Property predictor (EquiformerV2 backbone) | No `guidance`/diffusion config exists yet for this backbone — only `regression` and `ssl3d_equiformer`. |
 
 ShEPhERD is integrated as a scoring/architecture module (`modules/models/shepherd_arch/`,
 `utils/shepherd_score/`) used by the guidance and `analyze metrics --metrics shepherd`

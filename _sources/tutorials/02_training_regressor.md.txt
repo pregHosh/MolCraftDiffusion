@@ -103,6 +103,29 @@ MolCraftDiff train my_regressor_run
 
 ---
 
+## Alternative Backbones: eSEN and EquiformerV2
+
+The default `tasks: regression` uses an EGCL backbone. Two other backbones are available for regression, swapped in the same `defaults` list:
+
+```yaml
+defaults:
+  - tasks: regression_esen        # eSEN backbone
+  # - tasks: regression_equiformer  # or EquiformerV2 backbone
+```
+
+Backbone-specific hyperparameters replace the EGCL ones (`hidden_size`, `num_sublayers`, …) shown above:
+
+| Backbone | Key `tasks:` overrides |
+| :--- | :--- |
+| `regression_esen` | `hidden_size`, `hidden_channels`, `num_layers`, `lmax`, `mmax`, `sphere_embedding_type` |
+| `regression_equiformer` | `sphere_channels`, `input_sphere_channels` (must match `sphere_channels`), `num_layers`, `lmax_list`, `mmax_list` |
+
+`task_learn`, `criterion`, `metric`, `mlp_*`, and `target_normalization` behave identically across all three backbones.
+
+Complete worked examples (predicting `gap` on a FORMED ASE db) are in `configs/train_regression_esen_formed.yaml` and `configs/train_regression_equiformer_formed.yaml`.
+
+*(Note: EquiformerV2 currently only supports `regression` and `ssl3d_equiformer` task types — no diffusion path exists for it yet, unlike eSEN and EGCL.)*
+
 ## Next Steps: Property Prediction and Guidance
 
 Once your regression model is trained, you can use it in two main ways:

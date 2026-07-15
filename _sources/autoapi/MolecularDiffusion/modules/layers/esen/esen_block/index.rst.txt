@@ -1,0 +1,169 @@
+MolecularDiffusion.modules.layers.esen.esen_block
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.esen.esen_block
+
+.. autoapi-nested-parse::
+
+   Copyright (c) Meta, Inc. and its affiliates.
+
+   This source code is licensed under the MIT license found in the
+   LICENSE file in the root directory of this source tree.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.esen.esen_block.Edgewise
+   MolecularDiffusion.modules.layers.esen.esen_block.GridAtomwise
+   MolecularDiffusion.modules.layers.esen.esen_block.SpectralAtomwise
+   MolecularDiffusion.modules.layers.esen.esen_block.eSEN_Block
+
+
+Module Contents
+---------------
+
+.. py:class:: Edgewise(sphere_channels: int, hidden_channels: int, lmax: int, mmax: int, edge_channels_list, mappingReduced, SO3_grid, cutoff, act_type='gate', use_envelope: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x, x_edge, edge_distance, edge_index, wigner, wigner_inv, node_offset: int = 0)
+
+
+   .. py:attribute:: SO3_grid
+
+
+   .. py:attribute:: act_type
+      :value: 'gate'
+
+
+
+   .. py:attribute:: edge_channels_list
+
+
+   .. py:attribute:: hidden_channels
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mappingReduced
+
+
+   .. py:attribute:: mmax
+
+
+   .. py:attribute:: out_mask
+
+
+   .. py:attribute:: so2_conv_1
+
+
+   .. py:attribute:: so2_conv_2
+
+
+   .. py:attribute:: sphere_channels
+
+
+   .. py:attribute:: use_envelope
+      :value: True
+
+
+
+.. py:class:: GridAtomwise(sphere_channels: int, hidden_channels: int, lmax: int, mmax: int, SO3_grid)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: SO3_grid
+
+
+   .. py:attribute:: grid_mlp
+
+
+   .. py:attribute:: hidden_channels
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mmax
+
+
+   .. py:attribute:: sphere_channels
+
+
+.. py:class:: SpectralAtomwise(sphere_channels: int, hidden_channels: int, lmax: int, mmax: int, SO3_grid)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: SO3_grid
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: hidden_channels
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mmax
+
+
+   .. py:attribute:: scalar_mlp
+
+
+   .. py:attribute:: so3_linear_1
+
+
+   .. py:attribute:: so3_linear_2
+
+
+   .. py:attribute:: sphere_channels
+
+
+.. py:class:: eSEN_Block(sphere_channels: int, hidden_channels: int, lmax: int, mmax: int, mappingReduced, SO3_grid, edge_channels_list: list[int], cutoff: float, norm_type: str, act_type: str, mlp_type: str, use_envelope: bool)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x, x_edge, edge_distance, edge_index, wigner, wigner_inv, node_offset: int = 0)
+
+
+   .. py:attribute:: edge_wise
+
+
+   .. py:attribute:: hidden_channels
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mmax
+
+
+   .. py:attribute:: norm_1
+
+
+   .. py:attribute:: norm_2
+
+
+   .. py:attribute:: sphere_channels
+
+
+   .. py:attribute:: use_envelope
+
+
