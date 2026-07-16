@@ -108,3 +108,44 @@ config_templates
 
 api
 ```
+
+---
+
+## Citation
+
+If you use MolCraftDiffusion in your research, please cite:
+
+[![DOI](https://img.shields.io/badge/DOI-10.1021/jacs.5c19960-red)](https://pubs.acs.org/doi/10.1021/jacs.5c19960)
+
+[Modular Framework for 3D Molecular Generation in Computational Chemistry Applications](https://pubs.acs.org/doi/10.1021/jacs.5c19960), *Journal of the American Chemical Society*, 2026.
+
+```bibtex
+@article{worakul_modular_2026,
+	title = {Modular {Framework} for {3D} {Molecular} {Generation} in {Computational} {Chemistry} {Applications}},
+	url = {https://pubs.acs.org/doi/10.1021/jacs.5c19960},
+	doi = {10.1021/jacs.5c19960},
+	journal = {Journal of the American Chemical Society},
+	author = {Worakul, Thanapat and Azzouzi, Mohammed and Wodrich, Matthew D. and Corminboeuf, Clémence},
+	month = jun,
+	year = {2026},
+	pages = {jacs.5c19960},
+}
+```
+
+Related paper:
+
+[![DOI](https://img.shields.io/badge/DOI-10.26434/chemrxiv.15005231/v1-red)](https://chemrxiv.org/doi/full/10.26434/chemrxiv.15005231/v1)
+
+[A Diffusion Framework for Geometrically Valid and Practically Viable 3D Molecular Generation](https://chemrxiv.org/doi/full/10.26434/chemrxiv.15005231/v1).
+
+```bibtex
+@article{worakul_diffusion_2026,
+	title = {A {Diffusion} {Framework} for {Geometrically} {Valid} and {Practically} {Viable} {3D} {Molecular} {Generation}},
+	url = {https://chemrxiv.org/doi/full/10.26434/chemrxiv.15005231/v1},
+	doi = {10.26434/chemrxiv.15005231/v1},
+	publisher = {American Chemical Society (ACS)},
+	author = {Worakul, Thanapat and Corminboeuf, Clémence},
+	month = jun,
+	year = {2026},
+}
+```

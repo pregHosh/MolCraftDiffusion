@@ -48,3 +48,39 @@ and whether generative sampling runs during evaluation.
 
 No change to `core/` is required — that separation is the point of the layered
 design.
+
+## References
+
+Backbones and objectives integrated here are based on the following work.
+
+- **EDM** — Hoogeboom, Satorras, Vignac & Welling. *Equivariant Diffusion for
+  Molecule Generation in 3D.* ICML 2022. [arXiv:2203.17003](https://arxiv.org/abs/2203.17003)
+- **EGCL / EGNN** — Satorras, Hoogeboom & Welling. *E(n) Equivariant Graph
+  Neural Networks.* ICML 2021. [arXiv:2102.09844](https://arxiv.org/abs/2102.09844)
+- **EGT** — Vignac et al. *MiDi: Mixed Graph and 3D Denoising Diffusion for
+  Molecule Generation.* ECML PKDD 2023. [arXiv:2302.09048](https://arxiv.org/abs/2302.09048)
+- **GFMDiff** — Xu et al. *Geometric-Facilitated Denoising Diffusion Model for
+  3D Molecule Generation.* AAAI 2024. [arXiv:2401.02683](https://arxiv.org/abs/2401.02683)
+- **TABASCO** — Vonessen, Harris, Cretu & Liò. *TABASCO: A Fast, Simplified
+  Model for Molecular Generation with Improved Physical Quality.* 2025.
+  [arXiv:2507.00899](https://arxiv.org/abs/2507.00899)
+- **ADiT** — Joshi et al. *All-atom Diffusion Transformers: Unified generative
+  modelling of molecules and materials.* 2025. [arXiv:2503.03965](https://arxiv.org/abs/2503.03965) —
+  built on the **DiT** backbone of Peebles & Xie, *Scalable Diffusion Models with
+  Transformers*, ICCV 2023 ([arXiv:2212.09748](https://arxiv.org/abs/2212.09748)).
+- **DiffLinker** — Igashov et al. *Equivariant 3D-Conditional Diffusion Model
+  for Molecular Linker Design.* Nature Machine Intelligence 2024. [arXiv:2210.05274](https://arxiv.org/abs/2210.05274)
+- **GeoLDM VAE** — Xu, Powers, Dror, Ermon & Leskovec. *Geometric Latent
+  Diffusion Models for 3D Molecule Generation.* ICML 2023. [arXiv:2305.01140](https://arxiv.org/abs/2305.01140)
+- **eSEN** — Fu et al. *Learning Smooth and Expressive Interatomic Potentials
+  for Physical Property Prediction.* 2025. [arXiv:2502.12147](https://arxiv.org/abs/2502.12147)
+- **EquiformerV2** — Liao, Wood, Das & Smidt. *EquiformerV2: Improved Equivariant
+  Transformer for Scaling to Higher-Degree Representations.* ICLR 2024. [arXiv:2306.12059](https://arxiv.org/abs/2306.12059)
+- **ShEPhERD** — Adams, Abeywardane, Fromer & Coley. *ShEPhERD: Diffusing shape,
+  electrostatics, and pharmacophores for bioisosteric drug design.* ICLR 2025.
+  [arXiv:2411.04130](https://arxiv.org/abs/2411.04130)
+
+The pharmacophore-conditioned task (`pharmacophore.yaml`) is a component of
+MolCraftDiffusion itself rather than a re-implementation of an external model;
+cite the framework paper (see below). Related pharmacophore-conditioned
+diffusion work includes PharmaDiff ([arXiv:2505.10545](https://arxiv.org/abs/2505.10545)) and ShEPhERD (above).
