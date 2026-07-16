@@ -542,27 +542,6 @@ architecture never touches the core engine.</p>
 <code class="docutils literal notranslate"><span class="pre">utils/shepherd_score/</span></code>) used by the guidance and <code class="docutils literal notranslate"><span class="pre">analyze</span> <span class="pre">metrics</span> <span class="pre">--metrics</span> <span class="pre">shepherd</span></code>
 paths rather than as a standalone training config.</p>
 </section>
-<section id="how-the-wiring-works">
-<h2>How the wiring works<a class="headerlink" href="#how-the-wiring-works" title="Link to this heading">¶</a></h2>
-<p>Each task config declares a <code class="docutils literal notranslate"><span class="pre">_target_</span></code> factory and a <code class="docutils literal notranslate"><span class="pre">task_type</span></code>. Hydra
-instantiates the factory, which builds the model plus its Lightning task; the
-engine trains it. <code class="docutils literal notranslate"><span class="pre">task_type</span></code> is dispatched (exact match, then prefix) by
-<code class="docutils literal notranslate"><span class="pre">runmodes/train/eval.py</span></code>’s <code class="docutils literal notranslate"><span class="pre">TASK_REGISTRY</span></code> to pick the right validation metric
-and whether generative sampling runs during evaluation.</p>
-</section>
-<section id="adding-a-new-architecture">
-<h2>Adding a new architecture<a class="headerlink" href="#adding-a-new-architecture" title="Link to this heading">¶</a></h2>
-<ol class="arabic simple">
-<li><p>Drop a sub-package under <code class="docutils literal notranslate"><span class="pre">src/MolecularDiffusion/modules/models/&lt;arch&gt;/</span></code>.</p></li>
-<li><p>Add a task module under <code class="docutils literal notranslate"><span class="pre">modules/tasks/</span></code> if it needs a new training objective.</p></li>
-<li><p>Add a <code class="docutils literal notranslate"><span class="pre">configs/tasks/&lt;arch&gt;.yaml</span></code> pointing <code class="docutils literal notranslate"><span class="pre">_target_</span></code> at your factory.</p></li>
-<li><p>Register a <code class="docutils literal notranslate"><span class="pre">task_type</span></code> entry in <code class="docutils literal notranslate"><span class="pre">runmodes/train/eval.py</span></code> (or reuse a prefix
-family like <code class="docutils literal notranslate"><span class="pre">diffusion</span></code>, <code class="docutils literal notranslate"><span class="pre">vae</span></code>, <code class="docutils literal notranslate"><span class="pre">ssl3d</span></code>).</p></li>
-<li><p>Add a <code class="docutils literal notranslate"><span class="pre">tests/models/test_&lt;arch&gt;_compat.py</span></code> compatibility test.</p></li>
-</ol>
-<p>No change to <code class="docutils literal notranslate"><span class="pre">core/</span></code> is required — that separation is the point of the layered
-design.</p>
-</section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
 <p>Backbones and objectives integrated here are based on the following work.</p>
@@ -675,8 +654,6 @@ diffusion work includes PharmaDiff (<a class="reference external" href="https://
             <ul>
 <li><a class="reference internal" href="#">Model Architectures</a><ul>
 <li><a class="reference internal" href="#available-architectures">Available architectures</a></li>
-<li><a class="reference internal" href="#how-the-wiring-works">How the wiring works</a></li>
-<li><a class="reference internal" href="#adding-a-new-architecture">Adding a new architecture</a></li>
 <li><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>

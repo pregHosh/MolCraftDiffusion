@@ -29,26 +29,6 @@ ShEPhERD is integrated as a scoring/architecture module (`modules/models/shepher
 `utils/shepherd_score/`) used by the guidance and `analyze metrics --metrics shepherd`
 paths rather than as a standalone training config.
 
-## How the wiring works
-
-Each task config declares a `_target_` factory and a `task_type`. Hydra
-instantiates the factory, which builds the model plus its Lightning task; the
-engine trains it. `task_type` is dispatched (exact match, then prefix) by
-`runmodes/train/eval.py`'s `TASK_REGISTRY` to pick the right validation metric
-and whether generative sampling runs during evaluation.
-
-## Adding a new architecture
-
-1. Drop a sub-package under `src/MolecularDiffusion/modules/models/<arch>/`.
-2. Add a task module under `modules/tasks/` if it needs a new training objective.
-3. Add a `configs/tasks/<arch>.yaml` pointing `_target_` at your factory.
-4. Register a `task_type` entry in `runmodes/train/eval.py` (or reuse a prefix
-   family like `diffusion`, `vae`, `ssl3d`).
-5. Add a `tests/models/test_<arch>_compat.py` compatibility test.
-
-No change to `core/` is required — that separation is the point of the layered
-design.
-
 ## References
 
 Backbones and objectives integrated here are based on the following work.
