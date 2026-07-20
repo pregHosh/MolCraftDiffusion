@@ -36,8 +36,6 @@ Backbones and objectives integrated here are based on the following work.
 
 - **EDM** — Hoogeboom, Satorras, Vignac & Welling. *Equivariant Diffusion for
   Molecule Generation in 3D.* ICML 2022. [arXiv:2203.17003](https://arxiv.org/abs/2203.17003)
-- **EGCL / EGNN** — Satorras, Hoogeboom & Welling. *E(n) Equivariant Graph
-  Neural Networks.* ICML 2021. [arXiv:2102.09844](https://arxiv.org/abs/2102.09844)
 - **EGT** — Vignac et al. *MiDi: Mixed Graph and 3D Denoising Diffusion for
   Molecule Generation.* ECML PKDD 2023. [arXiv:2302.09048](https://arxiv.org/abs/2302.09048)
 - **GFMDiff** — Xu et al. *Geometric-Facilitated Denoising Diffusion Model for
@@ -54,7 +52,7 @@ Backbones and objectives integrated here are based on the following work.
   Transformers*, ICCV 2023 ([arXiv:2212.09748](https://arxiv.org/abs/2212.09748)).
 - **DiffLinker** — Igashov et al. *Equivariant 3D-Conditional Diffusion Model
   for Molecular Linker Design.* Nature Machine Intelligence 2024. [arXiv:2210.05274](https://arxiv.org/abs/2210.05274)
-- **GeoLDM VAE** — Xu, Powers, Dror, Ermon & Leskovec. *Geometric Latent
+- **GeoLDM** — Xu, Powers, Dror, Ermon & Leskovec. *Geometric Latent
   Diffusion Models for 3D Molecule Generation.* ICML 2023. [arXiv:2305.01140](https://arxiv.org/abs/2305.01140)
 - **eSEN** — Fu et al. *Learning Smooth and Expressive Interatomic Potentials
   for Physical Property Prediction.* 2025. [arXiv:2502.12147](https://arxiv.org/abs/2502.12147)
@@ -64,7 +62,3 @@ Backbones and objectives integrated here are based on the following work.
   electrostatics, and pharmacophores for bioisosteric drug design.* ICLR 2025.
   [arXiv:2411.04130](https://arxiv.org/abs/2411.04130)
 
-The pharmacophore-conditioned task (`pharmacophore.yaml`) is a component of
-MolCraftDiffusion itself rather than a re-implementation of an external model;
-cite the framework paper (see below). Related pharmacophore-conditioned
-diffusion work includes PharmaDiff ([arXiv:2505.10545](https://arxiv.org/abs/2505.10545)) and ShEPhERD (above).
