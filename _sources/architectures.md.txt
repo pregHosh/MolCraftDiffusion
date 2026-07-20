@@ -15,6 +15,7 @@ architecture never touches the core engine.
 | `diffusion_egt.yaml` | `diffusion` | EGT (equivariant graph transformer) | Transformer backbone via `tasks_egt`. |
 | `diffusion_gfmdiff.yaml` | `diffusion` | GFMDiff | Geometric full-molecule diffusion (`tasks_gfmdiff`). |
 | `diffusion_tabasco.yaml` | `diffusion_tabasco` | TABASCO | Flow-matching architecture. |
+| `diffusion_flowmol.yaml` | `diffusion_flowmol` | FlowMol (SE(3)-equivariant GVP) | Flow matching for coordinates, atom types, and formal charges. **This integration considers the bond-free variant only:** bonds are not modeled or generated; graph edges are used only for geometric message passing. |
 | `diffusion_adit.yaml` | `diffusion_adit` | ADiT / DiT-based LDM | Latent diffusion with a DiT denoiser. |
 | `diffusion_difflinker.yaml` | `diffusion_difflinker` | DiffLinker | Fragment linking / linker design. |
 | `vae_transformer.yaml` | `vae_transformer` | GeoLDM VAE (transformer enc/dec) | Trains the autoencoder for latent diffusion. |
@@ -44,6 +45,9 @@ Backbones and objectives integrated here are based on the following work.
 - **TABASCO** — Vonessen, Harris, Cretu & Liò. *TABASCO: A Fast, Simplified
   Model for Molecular Generation with Improved Physical Quality.* 2025.
   [arXiv:2507.00899](https://arxiv.org/abs/2507.00899)
+- **FlowMol** — Dunn & Koes. *Mixed Continuous and Categorical Flow Matching
+  for 3D De Novo Molecule Generation.* 2024.
+  [arXiv:2404.19739](https://arxiv.org/abs/2404.19739)
 - **ADiT** — Joshi et al. *All-atom Diffusion Transformers: Unified generative
   modelling of molecules and materials.* 2025. [arXiv:2503.03965](https://arxiv.org/abs/2503.03965) —
   built on the **DiT** backbone of Peebles & Xie, *Scalable Diffusion Models with

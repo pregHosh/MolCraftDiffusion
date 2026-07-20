@@ -490,47 +490,52 @@ architecture never touches the core engine.</p>
 <td class="text-left"><p>TABASCO</p></td>
 <td class="text-left"><p>Flow-matching architecture.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_adit.yaml</span></code></p></td>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_flowmol.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_flowmol</span></code></p></td>
+<td class="text-left"><p>FlowMol (SE(3)-equivariant GVP)</p></td>
+<td class="text-left"><p>Flow matching for coordinates, atom types, and formal charges. <strong>This integration considers the bond-free variant only:</strong> bonds are not modeled or generated; graph edges are used only for geometric message passing.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_adit.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_adit</span></code></p></td>
 <td class="text-left"><p>ADiT / DiT-based LDM</p></td>
 <td class="text-left"><p>Latent diffusion with a DiT denoiser.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_difflinker.yaml</span></code></p></td>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_difflinker.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_difflinker</span></code></p></td>
 <td class="text-left"><p>DiffLinker</p></td>
 <td class="text-left"><p>Fragment linking / linker design.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">vae_transformer.yaml</span></code></p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">vae_transformer.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">vae_transformer</span></code></p></td>
 <td class="text-left"><p>GeoLDM VAE (transformer enc/dec)</p></td>
 <td class="text-left"><p>Trains the autoencoder for latent diffusion.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">vae_equiformer.yaml</span></code></p></td>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">vae_equiformer.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">vae_equiformer</span></code></p></td>
 <td class="text-left"><p>GeoLDM VAE (Equiformer enc/dec)</p></td>
 <td class="text-left"><p>Equivariant autoencoder variant.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">pharmacophore.yaml</span></code></p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">pharmacophore.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">pharmacophore</span></code></p></td>
 <td class="text-left"><p>Pharmacophore-conditioned dynamics</p></td>
 <td class="text-left"><p>Requires <code class="docutils literal notranslate"><span class="pre">open3d</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">ssl3d_egcl.yaml</span></code> / <code class="docutils literal notranslate"><span class="pre">ssl3d_egt.yaml</span></code> / <code class="docutils literal notranslate"><span class="pre">ssl3d_equiformer.yaml</span></code> / <code class="docutils literal notranslate"><span class="pre">ssl3d_esen.yaml</span></code></p></td>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">ssl3d_egcl.yaml</span></code> / <code class="docutils literal notranslate"><span class="pre">ssl3d_egt.yaml</span></code> / <code class="docutils literal notranslate"><span class="pre">ssl3d_equiformer.yaml</span></code> / <code class="docutils literal notranslate"><span class="pre">ssl3d_esen.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">ssl3d_*</span></code></p></td>
 <td class="text-left"><p>Self-supervised 3D pretraining</p></td>
 <td class="text-left"><p>Prefix-matched to the <code class="docutils literal notranslate"><span class="pre">ssl3d</span></code> task family.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression.yaml</span></code> / <code class="docutils literal notranslate"><span class="pre">guidance.yaml</span></code></p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression.yaml</span></code> / <code class="docutils literal notranslate"><span class="pre">guidance.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression</span></code> / <code class="docutils literal notranslate"><span class="pre">guidance</span></code></p></td>
 <td class="text-left"><p>Property predictor / guidance head (EGCL backbone)</p></td>
 <td class="text-left"><p><strong>Default.</strong> Used for property prediction and gradient guidance.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression_esen.yaml</span></code> / <code class="docutils literal notranslate"><span class="pre">guidance_esen.yaml</span></code></p></td>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression_esen.yaml</span></code> / <code class="docutils literal notranslate"><span class="pre">guidance_esen.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression</span></code> / <code class="docutils literal notranslate"><span class="pre">guidance</span></code></p></td>
 <td class="text-left"><p>Property predictor / guidance head (eSEN backbone)</p></td>
 <td class="text-left"><p>Same task classes as above, eSEN backbone.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression_equiformer.yaml</span></code></p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression_equiformer.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression</span></code></p></td>
 <td class="text-left"><p>Property predictor (EquiformerV2 backbone)</p></td>
 <td class="text-left"><p>No <code class="docutils literal notranslate"><span class="pre">guidance</span></code>/diffusion config exists yet for this backbone — only <code class="docutils literal notranslate"><span class="pre">regression</span></code> and <code class="docutils literal notranslate"><span class="pre">ssl3d_equiformer</span></code>.</p></td>
@@ -557,6 +562,9 @@ Molecule Generation.</em> ECML PKDD 2023. <a class="reference external" href="ht
 <li><p><strong>TABASCO</strong> — Vonessen, Harris, Cretu &amp; Liò. <em>TABASCO: A Fast, Simplified
 Model for Molecular Generation with Improved Physical Quality.</em> 2025.
 <a class="reference external" href="https://arxiv.org/abs/2507.00899">arXiv:2507.00899</a></p></li>
+<li><p><strong>FlowMol</strong> — Dunn &amp; Koes. <em>Mixed Continuous and Categorical Flow Matching
+for 3D De Novo Molecule Generation.</em> 2024.
+<a class="reference external" href="https://arxiv.org/abs/2404.19739">arXiv:2404.19739</a></p></li>
 <li><p><strong>ADiT</strong> — Joshi et al. <em>All-atom Diffusion Transformers: Unified generative
 modelling of molecules and materials.</em> 2025. <a class="reference external" href="https://arxiv.org/abs/2503.03965">arXiv:2503.03965</a> —
 built on the <strong>DiT</strong> backbone of Peebles &amp; Xie, <em>Scalable Diffusion Models with
