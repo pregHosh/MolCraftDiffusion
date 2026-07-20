@@ -1,0 +1,83 @@
+MolecularDiffusion.modules.models.flowmol.interpolant_scheduler
+===============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.flowmol.interpolant_scheduler
+
+.. autoapi-nested-parse::
+
+   Interpolant schedule for FlowMol flow-matching.
+
+   Ported verbatim from FlowMol (``flowmol/models/interpolant_scheduler.py``).
+   Governs the per-feature interpolation weights between prior (t=0) and data
+   (t=1) and the time-dependent loss weights.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.flowmol.interpolant_scheduler.InterpolantScheduler
+
+
+Module Contents
+---------------
+
+.. py:class:: InterpolantScheduler(canonical_feat_order: list, schedule_type: Union[str, Dict[str, str]] = 'cosine', cosine_params: dict = {})
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: alpha_t(t: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: alpha_t_prime(t: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: cosine_alpha_t(t: torch.Tensor, nu: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: cosine_alpha_t_prime(t: torch.Tensor, nu: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: interpolant_weights(t: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+
+      Weights for x_0 and x_1 in the interpolation between them.
+
+
+
+   .. py:method:: linear_alpha_t(t: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: linear_alpha_t_prime(t: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: loss_weights(t: torch.Tensor)
+
+
+   .. py:method:: update_device(t)
+
+
+   .. py:attribute:: clamp_t
+      :value: True
+
+
+
+   .. py:attribute:: cosine_params
+
+
+   .. py:attribute:: feats
+
+
+   .. py:attribute:: n_feats
+
+
+   .. py:attribute:: schedule_types
+
+
+   .. py:attribute:: supported_schedule_types
+      :value: ['cosine', 'linear']
+
+
+

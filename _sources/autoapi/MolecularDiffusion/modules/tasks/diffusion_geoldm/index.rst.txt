@@ -74,7 +74,7 @@ Module Contents
 
 
 
-.. py:class:: GeoLDMTaskFactory(task_type: str, vae_ckpt: str, vae_config: Dict, n_dims: int = 3, hidden_nf: int = 64, n_layers: int = 4, attention: bool = False, tanh: bool = False, model: str = 'egnn_dynamics', norm_constant: float = 0, inv_sublayers: int = 2, sin_embedding: bool = False, normalization_factor: float = 100, aggregation_method: str = 'sum', condition_time: bool = True, include_charges: bool = True, diffusion_steps: int = 1000, diffusion_noise_schedule: str = 'polynomial_2', diffusion_noise_precision: float = 1e-05, diffusion_loss_type: str = 'l2', normalize_factors: tuple = (1.0, 4.0, 10.0), trainable_ae: bool = False, augment_noise: float = 0.0, data_augmentation: bool = False, atom_vocab: Optional[List] = None, **kwargs)
+.. py:class:: GeoLDMTaskFactory(task_type: str, vae_ckpt: str, vae_config: Optional[Dict] = None, n_dims: int = 3, hidden_nf: int = 64, n_layers: int = 4, attention: bool = False, tanh: bool = False, model: str = 'egnn_dynamics', norm_constant: float = 0, inv_sublayers: int = 2, sin_embedding: bool = False, normalization_factor: float = 100, aggregation_method: str = 'sum', condition_time: bool = True, include_charges: bool = True, diffusion_steps: int = 1000, diffusion_noise_schedule: str = 'polynomial_2', diffusion_noise_precision: float = 1e-05, diffusion_loss_type: str = 'l2', normalize_factors: tuple = (1.0, 4.0, 10.0), trainable_ae: bool = False, augment_noise: float = 0.0, data_augmentation: bool = False, atom_vocab: Optional[List] = None, **kwargs)
 
    Factory matching `train.py`'s `task_module.build()` /
    `task_module.task` instantiation pattern. Loads a frozen VAE checkpoint

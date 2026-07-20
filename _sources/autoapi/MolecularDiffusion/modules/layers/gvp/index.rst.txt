@@ -1,0 +1,26 @@
+MolecularDiffusion.modules.layers.gvp
+=====================================
+
+.. py:module:: MolecularDiffusion.modules.layers.gvp
+
+.. autoapi-nested-parse::
+
+   Reusable Geometric Vector Perceptron (GVP) equivariant building blocks.
+
+   Ported from FlowMol (``flowmol/models/gvp.py``) — the generic GVP / GVPConv
+   message-passing primitives plus the node-position and edge-feature update
+   blocks used by the FlowMol vector field. These are architecture-agnostic
+   SE(3)-equivariant blocks, so they live under ``modules/layers`` rather than
+   inside a single model package.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/layers/gvp/gvp/index
+
+

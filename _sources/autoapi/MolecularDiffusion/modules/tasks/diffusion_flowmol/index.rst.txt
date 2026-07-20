@@ -1,0 +1,230 @@
+MolecularDiffusion.modules.tasks.diffusion_flowmol
+==================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_flowmol
+
+.. autoapi-nested-parse::
+
+   Coordinate-only FlowMol flow-matching task integration.
+
+   Wraps the SE(3)-equivariant GVP endpoint vector field
+   (``modules/models/flowmol``) in the duck-typed ``Task`` contract
+   (docs/adding_new_models.md §2.1) and adapts the platform's PointCloud dict
+   batch to / from FlowMol's batched-DGL-graph container.
+
+   Coordinate-only scope (per the approved INTEGRATION_PLAN): the generated
+   modalities are ``x`` (coords), ``a`` (atom types), ``c`` (formal charge).
+   Bonds (the ``e`` modality) are NOT generated -- edges are a geometry-only
+   message-passing convenience. Since the PointCloud pipeline carries no
+   formal-charge channel, ``c`` is trained against a constant neutral target
+   (QM9-style neutral molecules) and is not surfaced in the sample() return.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_flowmol.DGLToPointCloudAdapter
+   MolecularDiffusion.modules.tasks.diffusion_flowmol.FlowMolFlowMatchingTask
+   MolecularDiffusion.modules.tasks.diffusion_flowmol.FlowMolTaskFactory
+   MolecularDiffusion.modules.tasks.diffusion_flowmol.PointCloudToDGLAdapter
+
+
+Module Contents
+---------------
+
+.. py:class:: DGLToPointCloudAdapter
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Integrated DGL graph -> padded PointCloud sample tuple pieces.
+
+
+   .. py:method:: forward(g: dgl.DGLGraph, n_atom_types: int) -> Dict[str, torch.Tensor]
+
+
+.. py:class:: FlowMolFlowMatchingTask(n_atom_types: int, n_charges: int, neutral_charge_index: int, interpolant_scheduler_config: dict, vector_field_config: dict, prior_std: float, time_scaled_loss: bool, total_loss_weights: dict, default_n_timesteps: int, dataset_stats: dict, atom_vocab: Optional[list] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor)
+
+
+   .. py:method:: forward(batch: Dict[str, torch.Tensor])
+
+
+   .. py:method:: predict_and_target(batch: Dict[str, torch.Tensor])
+
+
+   .. py:method:: sample(batch_size: Optional[int] = None, nodesxsample: Optional[torch.Tensor] = None, num_steps: Optional[int] = None, batch: Optional[Dict[str, torch.Tensor]] = None, mode=None, n_frames: int = 0, **kwargs)
+
+
+   .. py:attribute:: atom_vocab
+      :value: None
+
+
+
+   .. py:attribute:: canonical_feat_order
+      :value: ['x', 'a', 'c']
+
+
+
+   .. py:property:: device
+
+
+   .. py:attribute:: fm_num_timesteps
+
+
+   .. py:attribute:: interpolant_scheduler
+
+
+   .. py:attribute:: loss_a
+
+
+   .. py:attribute:: loss_c
+
+
+   .. py:attribute:: loss_x
+
+
+   .. py:property:: model
+
+
+   .. py:attribute:: n_atom_types
+
+
+   .. py:attribute:: n_charges
+
+
+   .. py:property:: n_node_dist
+
+
+   .. py:attribute:: neutral_charge_index
+
+
+   .. py:property:: node_dist_model
+
+
+   .. py:attribute:: prior_std
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_flowmol'
+
+
+
+   .. py:attribute:: time_scaled_loss
+
+
+   .. py:attribute:: to_dgl
+
+
+   .. py:attribute:: to_pc
+
+
+   .. py:attribute:: total_loss_weights
+
+
+   .. py:attribute:: vector_field
+
+
+.. py:class:: FlowMolTaskFactory(task_type: str, interpolant_scheduler_config: dict, vector_field_config: dict, n_charges: int = 6, neutral_charge_index: int = 0, prior_std: float = 1.0, time_scaled_loss: bool = True, total_loss_weights: Optional[dict] = None, default_n_timesteps: int = 250, dataset_stats: Optional[dict] = None, atom_vocab: Optional[list] = None, train_set: Optional[torch.utils.data.Dataset] = None, **kwargs)
+
+   Factory instantiated by ``cli/train.py`` (declares ``train_set`` so the
+   declarative seam injects the dataset for atom-count histogram stats).
+
+
+   .. py:method:: build()
+
+
+   .. py:method:: compute_dataset_stats(dataset)
+
+      Build the atom-count histogram from the training set (like
+      TABASCO's ``compute_dataset_stats``).
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: dataset_stats
+
+
+   .. py:attribute:: default_n_timesteps
+      :value: 250
+
+
+
+   .. py:attribute:: interpolant_scheduler_config
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: n_charges
+      :value: 6
+
+
+
+   .. py:attribute:: neutral_charge_index
+      :value: 0
+
+
+
+   .. py:attribute:: prior_std
+      :value: 1.0
+
+
+
+   .. py:attribute:: task_type
+
+
+   .. py:attribute:: time_scaled_loss
+      :value: True
+
+
+
+   .. py:attribute:: total_loss_weights
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+   .. py:attribute:: vector_field_config
+
+
+.. py:class:: PointCloudToDGLAdapter(n_atom_types: int, n_charges: int, neutral_charge_index: int)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   PointCloud dict batch -> batched, fully-connected DGL graph.
+
+   Padding is stripped via ``node_mask``; per-molecule COM is removed from
+   coordinates so ``x_1_true`` lives in the same zero-COM subspace as the
+   Gaussian prior. No ``edata`` is set -- bonds are dropped.
+
+
+   .. py:method:: forward(batch: Dict[str, torch.Tensor]) -> dgl.DGLGraph
+
+
+   .. py:attribute:: n_atom_types
+
+
+   .. py:attribute:: n_charges
+
+
+   .. py:attribute:: neutral_charge_index
+
+

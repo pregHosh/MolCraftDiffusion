@@ -1,0 +1,23 @@
+MolecularDiffusion.modules.models.flowmol
+=========================================
+
+.. py:module:: MolecularDiffusion.modules.models.flowmol
+
+.. autoapi-nested-parse::
+
+   Coordinate-only FlowMol backbone (SE(3)-equivariant GVP flow matching).
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/flowmol/graph_utils/index
+   /autoapi/MolecularDiffusion/modules/models/flowmol/interpolant_scheduler/index
+   /autoapi/MolecularDiffusion/modules/models/flowmol/priors/index
+   /autoapi/MolecularDiffusion/modules/models/flowmol/vector_field/index
+
+

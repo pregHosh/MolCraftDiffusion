@@ -1,0 +1,45 @@
+MolecularDiffusion.modules.models.flowmol.priors
+================================================
+
+.. py:module:: MolecularDiffusion.modules.models.flowmol.priors
+
+.. autoapi-nested-parse::
+
+   Prior distributions for the coordinate-only FlowMol port.
+
+   Only the priors the ``x``/``a``/``c`` modalities need are kept (ported from
+   FlowMol ``flowmol/data_processing/priors.py``):
+
+   - ``centered_normal_prior_batched_graph`` — a zero-COM Gaussian prior for the
+     continuous coordinate modality ``x`` (COM removed per molecule).
+   - ``uniform_simplex_prior`` — a uniform-on-the-simplex prior for the
+     categorical modalities ``a`` (atom types) and ``c`` (formal charge). This
+     avoids needing a dataset ``marginal_dists_file``.
+
+   Edge / bond priors, CTMC masked priors, marginal / biased priors, and OT
+   alignment are intentionally dropped (out of scope — coordinate-only port).
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.flowmol.priors.centered_normal_prior_batched_graph
+   MolecularDiffusion.modules.models.flowmol.priors.uniform_simplex_prior
+
+
+Module Contents
+---------------
+
+.. py:function:: centered_normal_prior_batched_graph(g: dgl.DGLGraph, node_batch_idx: torch.Tensor, std: float = 1.0) -> torch.Tensor
+
+   Per-molecule zero-COM Gaussian prior for atom positions.
+
+
+.. py:function:: uniform_simplex_prior(n: int, d: int) -> torch.Tensor
+
+   Uniform distribution on the (d-1)-simplex, shape (n, d).
+
+

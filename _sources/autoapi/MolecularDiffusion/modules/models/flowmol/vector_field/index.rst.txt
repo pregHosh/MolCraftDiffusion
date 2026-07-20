@@ -1,0 +1,197 @@
+MolecularDiffusion.modules.models.flowmol.vector_field
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.models.flowmol.vector_field
+
+.. autoapi-nested-parse::
+
+   Coordinate-only FlowMol GVP vector field (endpoint parameterization).
+
+   Ported and surgically reduced from FlowMol
+   (``flowmol/models/vector_field.py::EndpointVectorField``). Differences from
+   the upstream model, per the approved integration plan (coordinate-only):
+
+   - The ``e`` (bond) modality is REMOVED as a generated output. The generated
+     modalities are ``x`` (coords), ``a`` (atom types), ``c`` (formal charge).
+   - Edges are KEPT purely as geometry-only message-passing channels: the edge
+     feature channel is initialised from an RBF expansion of the current
+     interatomic distance (``edge_embedding`` maps ``rbf_dim -> n_hidden_edge``)
+     instead of from a noised bond token ``e_t``. ``EdgeUpdate`` (with
+     ``update_edge_w_distance=True``) refines it through the network.
+   - ``to_edge_logits``, the edge interpolant, edge prior sampling, the edge
+     loss term, self-conditioning, CTMC / Dirichlet, fake atoms, trajectory
+     frames and guidance are all dropped.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.flowmol.vector_field.EdgeUpdate
+   MolecularDiffusion.modules.models.flowmol.vector_field.EndpointVectorField
+   MolecularDiffusion.modules.models.flowmol.vector_field.NodePositionUpdate
+
+
+Module Contents
+---------------
+
+.. py:class:: EdgeUpdate(n_node_scalars, n_edge_feats, update_edge_w_distance=False, rbf_dim=16)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(g: dgl.DGLGraph, node_scalars, edge_feats, d)
+
+
+   .. py:attribute:: edge_norm
+
+
+   .. py:attribute:: edge_update_fn
+
+
+   .. py:attribute:: update_edge_w_distance
+      :value: False
+
+
+
+.. py:class:: EndpointVectorField(n_atom_types: int, canonical_feat_order: list, interpolant_scheduler: MolecularDiffusion.modules.models.flowmol.interpolant_scheduler.InterpolantScheduler, n_charges: int = 6, n_vec_channels: int = 16, n_cp_feats: int = 0, n_hidden_scalars: int = 64, n_hidden_edge_feats: int = 64, n_recycles: int = 1, n_molecule_updates: int = 2, convs_per_update: int = 2, n_message_gvps: int = 3, n_update_gvps: int = 3, n_expansion_gvps: int = 3, separate_mol_updaters: bool = False, message_norm: Union[float, str] = 100, update_edge_w_distance: bool = True, rbf_dmax: float = 20, rbf_dim: int = 16, time_embedding_dim: int = 1, attention: bool = False, n_heads: int = 1, s_message_dim: int = None, v_message_dim: int = None, dropout: float = 0.0, use_dst_feats: bool = False, dst_feat_msg_reduction_factor: float = 4)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: denoise_graph(g: dgl.DGLGraph, node_scalar_features: torch.Tensor, node_vec_features: torch.Tensor, node_positions: torch.Tensor, node_batch_idx: torch.Tensor, apply_softmax: bool = False, remove_com: bool = False)
+
+
+   .. py:method:: forward(g: dgl.DGLGraph, t: torch.Tensor, node_batch_idx: torch.Tensor, apply_softmax: bool = False, remove_com: bool = False)
+
+      Predict the trajectory endpoint (x_1, a_1, c_1) given x_t.
+
+
+
+   .. py:method:: integrate(g: dgl.DGLGraph, node_batch_idx: torch.Tensor, n_timesteps: int)
+
+      Integrate the trajectory from prior (x_0) to endpoint along the VF.
+
+
+
+   .. py:method:: precompute_distances(g: dgl.DGLGraph, node_positions=None)
+
+      Precompute normalised displacement + RBF distance on every edge.
+
+
+
+   .. py:method:: sample_conditional_path(g: dgl.DGLGraph, t: torch.Tensor, node_batch_idx: torch.Tensor)
+
+      Interpolate x_t between prior (x_0) and data (x_1_true).
+
+
+
+   .. py:method:: step(g: dgl.DGLGraph, s_i: torch.Tensor, t_i: torch.Tensor, alpha_t_i: torch.Tensor, alpha_t_prime_i: torch.Tensor, node_batch_idx: torch.Tensor)
+
+
+   .. py:method:: vector_field(x_t, x_1, alpha_t, alpha_t_prime)
+
+
+   .. py:attribute:: canonical_feat_order
+
+
+   .. py:attribute:: conv_layers
+
+
+   .. py:attribute:: convs_per_update
+      :value: 2
+
+
+
+   .. py:attribute:: edge_embedding
+
+
+   .. py:attribute:: edge_updaters
+
+
+   .. py:attribute:: interpolant_scheduler
+
+
+   .. py:attribute:: message_norm
+      :value: 100
+
+
+
+   .. py:attribute:: n_atom_types
+
+
+   .. py:attribute:: n_cat_feats
+
+
+   .. py:attribute:: n_charges
+      :value: 6
+
+
+
+   .. py:attribute:: n_hidden_edge_feats
+      :value: 64
+
+
+
+   .. py:attribute:: n_hidden_scalars
+      :value: 64
+
+
+
+   .. py:attribute:: n_molecule_updates
+      :value: 2
+
+
+
+   .. py:attribute:: n_recycles
+      :value: 1
+
+
+
+   .. py:attribute:: n_vec_channels
+      :value: 16
+
+
+
+   .. py:attribute:: node_output_head
+
+
+   .. py:attribute:: node_position_updaters
+
+
+   .. py:attribute:: rbf_dim
+      :value: 16
+
+
+
+   .. py:attribute:: rbf_dmax
+      :value: 20
+
+
+
+   .. py:attribute:: scalar_embedding
+
+
+   .. py:attribute:: separate_mol_updaters
+      :value: False
+
+
+
+   .. py:attribute:: time_embedding_dim
+      :value: 1
+
+
+
+.. py:class:: NodePositionUpdate(n_scalars, n_vec_channels, n_gvps: int = 3, n_cp_feats: int = 0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(scalars, positions, vectors)
+
+
+   .. py:attribute:: gvps
+
+

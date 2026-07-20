@@ -1,0 +1,39 @@
+MolecularDiffusion.modules.models.flowmol.graph_utils
+=====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.flowmol.graph_utils
+
+.. autoapi-nested-parse::
+
+   Small graph-construction helpers for the FlowMol port.
+
+   Ported from FlowMol (``flowmol/data_processing/utils.py``). Only the
+   fully-connected edge builder and the node batch-index helper are needed —
+   the upper/lower-triangle edge masks are dropped since bonds (the ``e``
+   modality) are not generated in the coordinate-only port; edges are a pure
+   message-passing convenience here.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.flowmol.graph_utils.build_edge_idxs
+   MolecularDiffusion.modules.models.flowmol.graph_utils.get_node_batch_idxs
+
+
+Module Contents
+---------------
+
+.. py:function:: build_edge_idxs(n_atoms: int) -> torch.Tensor
+
+   Fully-connected (directed, no self-loops) edge index for n_atoms.
+
+
+.. py:function:: get_node_batch_idxs(g: dgl.DGLGraph) -> torch.Tensor
+
+   Tensor mapping each node to the molecule (graph) it belongs to.
+
+

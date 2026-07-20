@@ -1,0 +1,275 @@
+MolecularDiffusion.modules.layers.gvp.gvp
+=========================================
+
+.. py:module:: MolecularDiffusion.modules.layers.gvp.gvp
+
+.. autoapi-nested-parse::
+
+   GVP building blocks ported from FlowMol (flowmol/models/gvp.py).
+
+   The GVP, GVPDropout and GVPLayerNorm classes originate from lucidrains'
+   geometric-vector-perceptron repo, adapted by FlowMol. GVPConv is FlowMol's
+   homogeneous-graph GVP convolution. NodePositionUpdate and EdgeUpdate were
+   lifted out of FlowMol's vector_field.py because they are generic reusable
+   blocks (position/edge-feature refinement), not FlowMol-specific.
+
+   Only cosmetic changes vs. the upstream source: the ``_rbf`` radial-basis
+   helper (originally in flowmol.utils.embedding) is defined here so this module
+   is self-contained.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.gvp.gvp.EdgeUpdate
+   MolecularDiffusion.modules.layers.gvp.gvp.GVP
+   MolecularDiffusion.modules.layers.gvp.gvp.GVPConv
+   MolecularDiffusion.modules.layers.gvp.gvp.GVPDropout
+   MolecularDiffusion.modules.layers.gvp.gvp.GVPLayerNorm
+   MolecularDiffusion.modules.layers.gvp.gvp.NodePositionUpdate
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.gvp.gvp.exists
+   MolecularDiffusion.modules.layers.gvp.gvp.get_time_embedding
+
+
+Module Contents
+---------------
+
+.. py:class:: EdgeUpdate(n_node_scalars, n_edge_feats, update_edge_w_distance=False, rbf_dim=16)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Refine edge features from adjacent node scalars (+ optional distance).
+
+
+   .. py:method:: forward(g: dgl.DGLGraph, node_scalars, edge_feats, d)
+
+
+   .. py:attribute:: edge_norm
+
+
+   .. py:attribute:: edge_update_fn
+
+
+   .. py:attribute:: update_edge_w_distance
+      :value: False
+
+
+
+.. py:class:: GVP(dim_vectors_in, dim_vectors_out, dim_feats_in, dim_feats_out, n_cp_feats=0, hidden_vectors=None, feats_activation=nn.SiLU(), vectors_activation=nn.Sigmoid(), vector_gating=True, xavier_init=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(data)
+
+
+   .. py:attribute:: Wh
+
+
+   .. py:attribute:: Wu
+
+
+   .. py:attribute:: dim_feats_in
+
+
+   .. py:attribute:: dim_vectors_in
+
+
+   .. py:attribute:: dim_vectors_out
+
+
+   .. py:attribute:: n_cp_feats
+      :value: 0
+
+
+
+   .. py:attribute:: to_feats_out
+
+
+   .. py:attribute:: vectors_activation
+
+
+.. py:class:: GVPConv(scalar_size: int = 128, vector_size: int = 16, n_cp_feats: int = 0, scalar_activation=nn.SiLU, vector_activation=nn.Sigmoid, n_message_gvps: int = 1, n_update_gvps: int = 1, attention: bool = False, s_message_dim: int = None, v_message_dim: int = None, n_heads: int = 1, n_expansion_gvps: int = 1, use_dst_feats: bool = False, dst_feat_msg_reduction_factor: float = 4, rbf_dmax: float = 20, rbf_dim: int = 16, edge_feat_size: int = 0, message_norm: Union[float, str] = 10, dropout: float = 0.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   GVP graph convolution on a homogeneous graph.
+
+
+   .. py:method:: forward(g: dgl.DGLGraph, scalar_feats: torch.Tensor, coord_feats: torch.Tensor, vec_feats: torch.Tensor, edge_feats: torch.Tensor = None, x_diff: torch.Tensor = None, d: torch.Tensor = None)
+
+
+   .. py:method:: message(edges)
+
+
+   .. py:attribute:: attention
+      :value: False
+
+
+
+   .. py:attribute:: dropout
+
+
+   .. py:attribute:: dropout_rate
+      :value: 0.0
+
+
+
+   .. py:attribute:: edge_feat_size
+      :value: 0
+
+
+
+   .. py:attribute:: edge_message
+
+
+   .. py:attribute:: message_layer_norm
+
+
+   .. py:attribute:: message_norm
+      :value: 10
+
+
+
+   .. py:attribute:: n_cp_feats
+      :value: 0
+
+
+
+   .. py:attribute:: n_heads
+      :value: 1
+
+
+
+   .. py:attribute:: n_message_gvps
+      :value: 1
+
+
+
+   .. py:attribute:: n_update_gvps
+      :value: 1
+
+
+
+   .. py:attribute:: node_update
+
+
+   .. py:attribute:: rbf_dim
+      :value: 16
+
+
+
+   .. py:attribute:: rbf_dmax
+      :value: 20
+
+
+
+   .. py:attribute:: s_message_dim
+      :value: None
+
+
+
+   .. py:attribute:: scalar_activation
+
+
+   .. py:attribute:: scalar_size
+      :value: 128
+
+
+
+   .. py:attribute:: update_layer_norm
+
+
+   .. py:attribute:: use_dst_feats
+      :value: False
+
+
+
+   .. py:attribute:: v_message_dim
+      :value: None
+
+
+
+   .. py:attribute:: vector_activation
+
+
+   .. py:attribute:: vector_size
+      :value: 16
+
+
+
+.. py:class:: GVPDropout(rate)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Separate dropout for scalars and vectors.
+
+
+   .. py:method:: forward(feats, vectors)
+
+
+   .. py:attribute:: feat_dropout
+
+
+   .. py:attribute:: vector_dropout
+
+
+.. py:class:: GVPLayerNorm(feats_h_size, eps=1e-05)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Layer norm for scalars, non-trainable norm for vectors.
+
+
+   .. py:method:: forward(data)
+
+
+   .. py:attribute:: eps
+      :value: 1e-05
+
+
+
+   .. py:attribute:: feat_norm
+
+
+.. py:class:: NodePositionUpdate(n_scalars, n_vec_channels, n_gvps: int = 3, n_cp_feats: int = 0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Refine node positions from scalar/vector features (equivariant).
+
+
+   .. py:method:: forward(scalars, positions, vectors)
+
+
+   .. py:attribute:: gvps
+      :value: []
+
+
+
+.. py:function:: exists(val)
+
+.. py:function:: get_time_embedding(timesteps, embedding_dim=256, max_positions=1000)
+
+   Sinusoidal time embedding (ported from FlowMol utils.embedding).
+
+   Only used when ``time_embedding_dim > 1``; the default FlowMol config here
+   uses a scalar time feature, but the vector field imports this so the name
+   must resolve.
+
+
