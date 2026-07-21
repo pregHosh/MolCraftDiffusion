@@ -458,6 +458,15 @@
 <section id="how-to-use-this-section">
 <h2>How to Use This Section<a class="headerlink" href="#how-to-use-this-section" title="Link to this heading">¶</a></h2>
 <p>Use these pages when you already understand the individual modules, but want a clearer picture of which sequence of steps fits your design goal.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Adapt a pre-trained model; don’t train from scratch.</strong> Training a 3D diffusion model from
+scratch is expensive and rarely necessary. Start from one of the shipped pre-trained bases
+(GEOM-drugs foundation, or QM9) and <strong>fine-tune</strong> it toward your target chemistry — this is the
+default recommended path. The only case that forces training from scratch is chemistry that uses
+atom types outside the pre-trained vocabulary (<code class="docutils literal notranslate"><span class="pre">H,</span> <span class="pre">B,</span> <span class="pre">C,</span> <span class="pre">N,</span> <span class="pre">O,</span> <span class="pre">F,</span> <span class="pre">Al,</span> <span class="pre">Si,</span> <span class="pre">P,</span> <span class="pre">S,</span> <span class="pre">Cl,</span> <span class="pre">As,</span> <span class="pre">Se,</span> <span class="pre">Br,</span> <span class="pre">I,</span> <span class="pre">Hg,</span> <span class="pre">Bi</span></code>). Pre-trained checkpoints: <a class="reference external" href="https://zenodo.org/records/19511401">https://zenodo.org/records/19511401</a>. See
+<a class="reference internal" href="transfer_learning.html"><span class="std std-doc">Transfer Learning and Generate</span></a>.</p>
+</div>
 </section>
 <section id="workflow-comparison">
 <h2>Workflow Comparison<a class="headerlink" href="#workflow-comparison" title="Link to this heading">¶</a></h2>

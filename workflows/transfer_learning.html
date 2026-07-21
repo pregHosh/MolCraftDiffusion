@@ -444,22 +444,73 @@
         <article role="main" id="furo-main-content">
           <section id="workflow-example-transfer-learning-and-generate">
 <h1>Workflow Example: Transfer Learning and Generate<a class="headerlink" href="#workflow-example-transfer-learning-and-generate" title="Link to this heading">¶</a></h1>
-<p>This workflow adapts a pre-trained model to a more target-relevant dataset before generation. The main goal is to shift the model from broad chemical knowledge toward a narrower and more useful design space.</p>
+<p>This workflow adapts a <strong>pre-trained</strong> model to a more target-relevant dataset before generation. The main goal is to shift the model from broad chemical knowledge toward a narrower and more useful design space — <strong>without paying the cost of training a diffusion model from scratch.</strong></p>
+<section id="prefer-fine-tuning-over-training-from-scratch">
+<h2>Prefer Fine-Tuning Over Training From Scratch<a class="headerlink" href="#prefer-fine-tuning-over-training-from-scratch" title="Link to this heading">¶</a></h2>
+<p>Training a 3D molecular diffusion model from scratch is expensive: it needs a large dataset, many GPU-hours, and careful tuning before it even produces valid geometries. In almost all cases you should <strong>not</strong> start there.</p>
+<p>Instead, start from one of the pre-trained models we ship and fine-tune it on your target chemistry. Fine-tuning reuses the broad structural knowledge the base model already learned (bonding, valence, 3D geometry) and only nudges it toward your domain, so it converges in a fraction of the data and compute. This is exactly how the singlet-fission and IFLP models in the paper were built — they are the GEOM foundation model fine-tuned on task-specific data, not trained fresh.</p>
+<blockquote>
+<div><p>Worakul, Azzouzi, Wodrich, Corminboeuf, <em>MolCraftDiffusion: 3D Molecular Generation Framework for Data-driven Molecular Applications</em>, JACS 2026 (<a class="reference external" href="https://pubs.acs.org/doi/10.1021/jacs.5c19960">10.1021/jacs.5c19960</a>).</p>
+</div></blockquote>
+<p><strong>Pre-trained bases to fine-tune from:</strong></p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Base model</p></th>
+<th class="head text-left"><p>Trained on</p></th>
+<th class="head text-left"><p>Good starting point for</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">EDM_geom</span></code> (GEOM-drugs foundation)</p></td>
+<td class="text-left"><p>Large, drug-like 3D chemical space</p></td>
+<td class="text-left"><p>Most organic / main-group design problems</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">EDM_qm9</span></code></p></td>
+<td class="text-left"><p>Small molecules (≤ 9 heavy atoms)</p></td>
+<td class="text-left"><p>Small-molecule tasks, property conditioning</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Where to get them:</strong> download the pre-trained checkpoints from the Zenodo release — <a class="reference external" href="https://zenodo.org/records/19511401">https://zenodo.org/records/19511401</a>.</p>
+<p>The default answer to “should I train or fine-tune?” is <strong>fine-tune</strong> — unless your chemistry falls outside the base model’s atom-type coverage (see below).</p>
+</section>
+<section id="when-fine-tuning-is-not-enough-atom-type-coverage">
+<h2>When Fine-Tuning Is <em>Not</em> Enough — Atom-Type Coverage<a class="headerlink" href="#when-fine-tuning-is-not-enough-atom-type-coverage" title="Link to this heading">¶</a></h2>
+<p>A diffusion model has a <strong>fixed atom-type head</strong>: one output channel per element in the vocabulary it was trained with. Fine-tuning reuses that head, so it can reweight and rearrange the elements the base already knows, but it <strong>cannot invent a new element</strong> — there is no channel to represent one.</p>
+<p>The pre-trained models we ship cover exactly these <strong>17 atom types</strong>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>H, B, C, N, O, F, Al, Si, P, S, Cl, As, Se, Br, I, Hg, Bi
+</pre></div>
+</div>
+<p>(Notably absent: <code class="docutils literal notranslate"><span class="pre">Ge,</span> <span class="pre">Sn,</span> <span class="pre">Sb,</span> <span class="pre">Te</span></code>, most transition metals, and the lanthanides/actinides.)</p>
+<p>So the decision is:</p>
+<ul class="simple">
+<li><p><strong>Your molecules use only these elements</strong> → fine-tune. This is the feasible, recommended path.</p></li>
+<li><p><strong>Your molecules need an element outside this set</strong> → fine-tuning cannot introduce it. You must extend the atom vocabulary and <strong>train from scratch</strong> (or, at minimum, re-initialise and retrain the atom-type embedding/head), which is the expensive path fine-tuning was meant to avoid.</p></li>
+</ul>
+<p><strong>How to check before you commit compute:</strong> list the distinct elements in your target dataset and compare them against the 17 above. If every element is covered, fine-tune; if not, you are in the from-scratch case.</p>
+</section>
 <section id="when-to-use-this">
 <h2>When to Use This<a class="headerlink" href="#when-to-use-this" title="Link to this heading">¶</a></h2>
 <p>Use this workflow when:</p>
 <ul class="simple">
 <li><p>you have a set of known molecules related to your design problem,</p></li>
 <li><p>unconditional generation from the base model is too broad,</p></li>
-<li><p>you want new molecules that remain closer to a task-relevant chemical domain.</p></li>
+<li><p>you want new molecules that remain closer to a task-relevant chemical domain,</p></li>
+<li><p>and (the usual case) your target chemistry stays within the pre-trained atom-type set.</p></li>
 </ul>
 </section>
 <section id="conceptual-flow">
 <h2>Conceptual Flow<a class="headerlink" href="#conceptual-flow" title="Link to this heading">¶</a></h2>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[Pre-trained diffusion model]
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[Pre-trained diffusion model]   &lt;- GEOM foundation or QM9 (do NOT train from scratch)
             |
             v
-[Transfer learning on target-relevant molecules]
+[Atom-type check: are all target elements in the base vocab?]
+            |  yes                         |  no
+            v                              v
+[Transfer learning on             [Extend vocab + train from
+ target-relevant molecules]        scratch — the expensive path]
             |
             v
 [Generate molecules in adapted chemical space]
@@ -479,7 +530,8 @@
 <ul class="simple">
 <li><p>molecules that look more like the chemistry you care about,</p></li>
 <li><p>less wasted sampling in irrelevant regions of chemical space,</p></li>
-<li><p>a better starting point for later conditional generation.</p></li>
+<li><p>a better starting point for later conditional generation,</p></li>
+<li><p>all at a small fraction of the cost of training from scratch.</p></li>
 </ul>
 </section>
 <section id="where-to-go-next">
@@ -565,6 +617,8 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Workflow Example: Transfer Learning and Generate</a><ul>
+<li><a class="reference internal" href="#prefer-fine-tuning-over-training-from-scratch">Prefer Fine-Tuning Over Training From Scratch</a></li>
+<li><a class="reference internal" href="#when-fine-tuning-is-not-enough-atom-type-coverage">When Fine-Tuning Is <em>Not</em> Enough — Atom-Type Coverage</a></li>
 <li><a class="reference internal" href="#when-to-use-this">When to Use This</a></li>
 <li><a class="reference internal" href="#conceptual-flow">Conceptual Flow</a></li>
 <li><a class="reference internal" href="#what-changes-after-transfer-learning">What Changes After Transfer Learning</a></li>

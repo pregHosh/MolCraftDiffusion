@@ -15,6 +15,16 @@ The examples in this section follow four common patterns:
 
 Use these pages when you already understand the individual modules, but want a clearer picture of which sequence of steps fits your design goal.
 
+```{note}
+**Adapt a pre-trained model; don't train from scratch.** Training a 3D diffusion model from
+scratch is expensive and rarely necessary. Start from one of the shipped pre-trained bases
+(GEOM-drugs foundation, or QM9) and **fine-tune** it toward your target chemistry — this is the
+default recommended path. The only case that forces training from scratch is chemistry that uses
+atom types outside the pre-trained vocabulary (`H, B, C, N, O, F, Al, Si, P, S, Cl, As, Se, Br, I,
+Hg, Bi`). Pre-trained checkpoints: <https://zenodo.org/records/19511401>. See
+[Transfer Learning and Generate](transfer_learning.md).
+```
+
 ## Workflow Comparison
 
 | Workflow | Best for | Main idea | Typical next tutorial |

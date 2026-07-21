@@ -39,6 +39,11 @@ You usually obtain:
 
 ## Where to Go Next
 
+Once the baseline shows you what the pre-trained model already covers, the cheap next step toward a
+more target-relevant pool is usually to **fine-tune** it rather than sample harder — see
+[Transfer Learning and Generate](transfer_learning.md).
+
+- [Transfer Learning and Generate](transfer_learning.md)
 - [Tutorial 5: Generation Overview](../tutorials/05_generation_overview.md)
 - [Tutorial 8: Property Prediction and Evaluation](../tutorials/08_eval_predict.md)
 - [Tutorial 9: Analysis](../tutorials/09_analyze.md)
