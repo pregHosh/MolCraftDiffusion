@@ -489,7 +489,7 @@
 <tbody>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">mol_size</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">interference</span></code> (top-level)</p></td>
-<td class="text-left"><p>The expected size of the final molecule. <strong>This should be larger than or equal to the number of atoms in the reference structure.</strong></p></td>
+<td class="text-left"><p>The expected size of the final molecule. <strong>Should be ≥ the number of atoms in the reference structure.</strong> A size below the scaffold is automatically clamped up to the scaffold size (with a warning) — inpaint regenerates masked atoms in place, so the size is effectively derived from the scaffold.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">reference_structure_path</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
@@ -597,7 +597,7 @@
 <tbody>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">mol_size</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">interference</span></code> (top-level)</p></td>
-<td class="text-left"><p>The expected size of the final molecule (fragment + generated part).</p></td>
+<td class="text-left"><p>The expected size of the final molecule (fragment + generated part). <strong>Must be larger than the scaffold</strong> — there must be atoms to grow. An explicit <code class="docutils literal notranslate"><span class="pre">mol_size</span></code> whose maximum is ≤ the scaffold aborts the run with an error; with <code class="docutils literal notranslate"><span class="pre">[0,0]</span></code> (randomised) any draw ≤ the scaffold is resampled from the node distribution, and if the model’s largest possible molecule still can’t exceed the scaffold the run aborts up front.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">reference_structure_path</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
@@ -647,15 +647,27 @@
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
 <td class="text-left"><p>Number of atoms at the end of the scaffold used only for seeding positions, not included in conditioning. Default: <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">noise_initial_mask</span></code></p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">init_method</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p>Add noise to the initial seed positions before denoising starts.</p></td>
+<td class="text-left"><p>How seed atoms are initialised: <code class="docutils literal notranslate"><span class="pre">skeleton</span></code> (procedural), <code class="docutils literal notranslate"><span class="pre">seed</span></code> (raw blob), or <code class="docutils literal notranslate"><span class="pre">fragment</span></code> (bundled substituent). Default: <code class="docutils literal notranslate"><span class="pre">skeleton</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code></p></td>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">skeleton_type</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
+<td class="text-left"><p>Skeleton family used when <code class="docutils literal notranslate"><span class="pre">init_method</span></code> is <code class="docutils literal notranslate"><span class="pre">skeleton</span></code>/<code class="docutils literal notranslate"><span class="pre">fragment</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">random_walk</span></code>). Default: <code class="docutils literal notranslate"><span class="pre">random_walk</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">bond_len</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
+<td class="text-left"><p>Target bond length (Å) used when placing skeleton atoms. Default: <code class="docutils literal notranslate"><span class="pre">1.5</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">forward_noise</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
+<td class="text-left"><p>Strategy for noising the clean seed template up to <code class="docutils literal notranslate"><span class="pre">t_start</span></code>. Default: <code class="docutils literal notranslate"><span class="pre">jitter</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
 <td class="text-left"><p>Fraction of denoising during which constraints are active. Code default <code class="docutils literal notranslate"><span class="pre">0.8</span></code>; the shipped <code class="docutils literal notranslate"><span class="pre">gen_outpaint</span></code> template sets <code class="docutils literal notranslate"><span class="pre">0.7</span></code>, so that’s what you get if you inherit it.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code></p></td>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
 <td class="text-left"><p>Multiplier on covalent radii for bond-distance tolerance. Default: <code class="docutils literal notranslate"><span class="pre">1.1</span></code>.</p></td>
 </tr>
@@ -930,6 +942,10 @@ s = 0.0  ──── generation ends (clean structure)
 <tr class="row-even"><td class="text-left"><p>Generation is slow / low throughput</p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">t_start</span></code> too high</p></td>
 <td class="text-left"><p>Lower to <code class="docutils literal notranslate"><span class="pre">0.7–0.8</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Run aborts: “nothing to grow” / size ≤ scaffold</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">mol_size</span></code> maximum is ≤ the scaffold, or <code class="docutils literal notranslate"><span class="pre">[0,0]</span></code> on a scaffold larger than the model ever generates</p></td>
+<td class="text-left"><p>Set <code class="docutils literal notranslate"><span class="pre">mol_size:[lo,hi]</span></code> with <code class="docutils literal notranslate"><span class="pre">lo</span></code> &gt; scaffold atom count</p></td>
 </tr>
 </tbody>
 </table>

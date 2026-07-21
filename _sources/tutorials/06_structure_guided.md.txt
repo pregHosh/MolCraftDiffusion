@@ -39,7 +39,7 @@ The `condition_configs` section for inpainting uses a sub-dictionary called `inp
 
 | Parameter | Location | Description |
 | :--- | :--- | :--- |
-| `mol_size` | `interference` (top-level) | The expected size of the final molecule. **This should be larger than or equal to the number of atoms in the reference structure.** |
+| `mol_size` | `interference` (top-level) | The expected size of the final molecule. **Should be ≥ the number of atoms in the reference structure.** A size below the scaffold is automatically clamped up to the scaffold size (with a warning) — inpaint regenerates masked atoms in place, so the size is effectively derived from the scaffold. |
 | `reference_structure_path` | `condition_configs` | **CRITICAL:** Path to your own XYZ file containing the molecule you want to inpaint. |
 | `condition_component` | `condition_configs` | Component to inpaint (`x` positions only, `h` features only, `xh` both). |
 | `center_saved_scaffold` | `condition_configs` | Translate scaffold so its centre of mass is at the origin before generation. |
@@ -100,7 +100,7 @@ The `condition_configs` section for outpainting uses a sub-dictionary called `ou
 
 | Parameter | Location | Description |
 | :--- | :--- | :--- |
-| `mol_size` | `interference` (top-level) | The expected size of the final molecule (fragment + generated part). |
+| `mol_size` | `interference` (top-level) | The expected size of the final molecule (fragment + generated part). **Must be larger than the scaffold** — there must be atoms to grow. An explicit `mol_size` whose maximum is ≤ the scaffold aborts the run with an error; with `[0,0]` (randomised) any draw ≤ the scaffold is resampled from the node distribution, and if the model's largest possible molecule still can't exceed the scaffold the run aborts up front. |
 | `reference_structure_path` | `condition_configs` | **CRITICAL:** Path to your own XYZ file containing the fragment you want to grow from. |
 | `condition_component` | `condition_configs` | Component to outpaint (`x`, `h`, or `xh`). |
 | `center_saved_scaffold` | `condition_configs` | Translate scaffold so its CoM is at the origin before generation. |
@@ -113,7 +113,10 @@ The `condition_configs` section for outpainting uses a sub-dictionary called `ou
 | `min_dist` | `outpaint_cfgs` | Minimum distance (Å) new atoms must be from all non-connector scaffold atoms at initialisation. Default: `1.0`. |
 | `spread` | `outpaint_cfgs` | Std dev (Å) of the Gaussian used to scatter seed atoms around the seed position. Default: `1.0`. |
 | `n_bq_atom` | `outpaint_cfgs` | Number of atoms at the end of the scaffold used only for seeding positions, not included in conditioning. Default: `0`. |
-| `noise_initial_mask` | `outpaint_cfgs` | Add noise to the initial seed positions before denoising starts. |
+| `init_method` | `outpaint_cfgs` | How seed atoms are initialised: `skeleton` (procedural), `seed` (raw blob), or `fragment` (bundled substituent). Default: `skeleton`. |
+| `skeleton_type` | `outpaint_cfgs` | Skeleton family used when `init_method` is `skeleton`/`fragment` (e.g. `random_walk`). Default: `random_walk`. |
+| `bond_len` | `outpaint_cfgs` | Target bond length (Å) used when placing skeleton atoms. Default: `1.5`. |
+| `forward_noise` | `outpaint_cfgs` | Strategy for noising the clean seed template up to `t_start`. Default: `jitter`. |
 | `constraint_strength` | `outpaint_cfgs` | Fraction of denoising during which constraints are active. Code default `0.8`; the shipped `gen_outpaint` template sets `0.7`, so that's what you get if you inherit it. |
 | `scale_factor` | `outpaint_cfgs` | Multiplier on covalent radii for bond-distance tolerance. Default: `1.1`. |
 
@@ -312,3 +315,4 @@ Scales the per-atom-type covalent bond length threshold used by all three constr
 | Fragment grows in the wrong direction | `seed_dist` too large, seed cloud too dispersed | Lower `seed_dist`; lower `spread` |
 | Bonds to connector consistently too long | `scale_factor` too high | Lower to `1.0–1.05` |
 | Generation is slow / low throughput | `t_start` too high | Lower to `0.7–0.8` |
+| Run aborts: "nothing to grow" / size ≤ scaffold | `mol_size` maximum is ≤ the scaffold, or `[0,0]` on a scaffold larger than the model ever generates | Set `mol_size:[lo,hi]` with `lo` > scaffold atom count |
