@@ -995,7 +995,16 @@ eta &gt; 0 adds noise (reverts toward DDPM-like).</p>
 <div><ul class="simple">
 <li><p>seed_dist (float, optional): Distance of the seed from the connector atom (used if n_bq_atom == 0)..</p></li>
 <li><p>min_dist (float, optional): Minimum distance from any existing atom in xh_cond (except the connector itself). Defaults to 1.</p></li>
-<li><p>spread (float, optional): Spread of the initiating nodes. Defaults is 1 angstrom.</p></li>
+<li><dl class="simple">
+<dt>spread (float, optional): Random-walk angular dispersion, or</dt><dd><p>legacy seed-cloud position spread. Defaults to 1.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>jitter_scale (float): Explicit positional noise magnitude</dt><dd><p>when forward_noise is “jitter”.</p>
+</dd>
+</dl>
+</li>
 <li><p>n_bq_atom (int, optional): Number of dummy atoms. Defaults is 0.</p></li>
 </ul>
 </div></blockquote>

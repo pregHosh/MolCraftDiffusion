@@ -452,7 +452,10 @@ Module Contents
       `               - connector_index (torch.Tensor, optional): Indices of connector nodes for outpainting. Defaults to an empty tensor.
                       - seed_dist (float, optional): Distance of the seed from the connector atom (used if n_bq_atom == 0)..
                       - min_dist (float, optional): Minimum distance from any existing atom in xh_cond (except the connector itself). Defaults to 1.
-                      - spread (float, optional): Spread of the initiating nodes. Defaults is 1 angstrom.
+                      - spread (float, optional): Random-walk angular dispersion, or
+                          legacy seed-cloud position spread. Defaults to 1.
+                      - jitter_scale (float): Explicit positional noise magnitude
+                          when forward_noise is "jitter".
                       - n_bq_atom (int, optional): Number of dummy atoms. Defaults is 0.
 
               Returns:

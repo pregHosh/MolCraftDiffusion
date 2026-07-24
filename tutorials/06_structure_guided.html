@@ -509,11 +509,11 @@
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">n_retrys</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
-<td class="text-left"><p>Number of retry attempts if a generated molecule is invalid.</p></td>
+<td class="text-left"><p>Keep at <code class="docutils literal notranslate"><span class="pre">0</span></code>; retries are currently disabled for structure-guided generation.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">t_retry</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
-<td class="text-left"><p>Timestep (0–T) to restart from on retry.</p></td>
+<td class="text-left"><p>Timestep (0–T) to restart from on retry (inactive while <code class="docutils literal notranslate"><span class="pre">n_retrys=0</span></code>).</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">n_frames</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
@@ -617,11 +617,11 @@
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">n_retrys</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
-<td class="text-left"><p>Number of retry attempts if a generated molecule is invalid.</p></td>
+<td class="text-left"><p>Keep at <code class="docutils literal notranslate"><span class="pre">0</span></code>; retries are currently disabled for structure-guided generation.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">t_retry</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
-<td class="text-left"><p>Timestep (0–T) to restart from on retry.</p></td>
+<td class="text-left"><p>Timestep (0–T) to restart from on retry (inactive while <code class="docutils literal notranslate"><span class="pre">n_retrys=0</span></code>).</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">connector_dicts</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
@@ -641,7 +641,7 @@
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">spread</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p>Std dev (Å) of the Gaussian used to scatter seed atoms around the seed position. Default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></td>
+<td class="text-left"><p>Angular dispersion for <code class="docutils literal notranslate"><span class="pre">skeleton_type:</span> <span class="pre">random_walk</span></code> (<code class="docutils literal notranslate"><span class="pre">0</span></code> = straight, <code class="docutils literal notranslate"><span class="pre">1</span></code> = standard walk); for legacy <code class="docutils literal notranslate"><span class="pre">init_method:</span> <span class="pre">seed</span></code>, Gaussian position std dev (Å). Default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">n_bq_atom</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
@@ -663,11 +663,15 @@
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
 <td class="text-left"><p>Strategy for noising the clean seed template up to <code class="docutils literal notranslate"><span class="pre">t_start</span></code>. Default: <code class="docutils literal notranslate"><span class="pre">jitter</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code></p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">jitter_scale</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
+<td class="text-left"><p>Positional noise magnitude for <code class="docutils literal notranslate"><span class="pre">forward_noise:</span> <span class="pre">jitter</span></code>. Must be set explicitly; it never inherits <code class="docutils literal notranslate"><span class="pre">spread</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
 <td class="text-left"><p>Fraction of denoising during which constraints are active. Code default <code class="docutils literal notranslate"><span class="pre">0.8</span></code>; the shipped <code class="docutils literal notranslate"><span class="pre">gen_outpaint</span></code> template sets <code class="docutils literal notranslate"><span class="pre">0.7</span></code>, so that’s what you get if you inherit it.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code></p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
 <td class="text-left"><p>Multiplier on covalent radii for bond-distance tolerance. Default: <code class="docutils literal notranslate"><span class="pre">1.1</span></code>.</p></td>
 </tr>
@@ -707,6 +711,7 @@
 <span class="w">      </span><span class="nt">seed_dist</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.0</span>
 <span class="w">      </span><span class="nt">min_dist</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
 <span class="w">      </span><span class="nt">spread</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
+<span class="w">      </span><span class="nt">jitter_scale</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
 </pre></div>
 </div>
 </section>
@@ -774,15 +779,15 @@ t_start = 0.5   →  50% of steps, faster but coarser structures
 </div>
 <p><strong>Use <code class="docutils literal notranslate"><span class="pre">0.8–0.9</span></code></strong> for most experiments. Only lower it for rapid screening where speed matters more than quality.</p>
 </section>
-<section id="seed-dist-min-dist-spread-where-new-atoms-start">
-<h4><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">min_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">spread</span></code> — where new atoms start<a class="headerlink" href="#seed-dist-min-dist-spread-where-new-atoms-start" title="Link to this heading">¶</a></h4>
-<p>These three parameters control the <strong>initial placement</strong> of the generated atoms before denoising begins. They shape the starting geometry that the model then refines.</p>
+<section id="seed-dist-min-dist-spread-jitter-scale-initialization">
+<h4><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">min_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">spread</span></code>, <code class="docutils literal notranslate"><span class="pre">jitter_scale</span></code> — initialization<a class="headerlink" href="#seed-dist-min-dist-spread-jitter-scale-initialization" title="Link to this heading">¶</a></h4>
+<p>These parameters control the clean starting geometry and the separate noise
+applied before denoising. <code class="docutils literal notranslate"><span class="pre">spread</span></code> and <code class="docutils literal notranslate"><span class="pre">jitter_scale</span></code> are independent knobs.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>connector atom (scaffold)
         │
-        │← seed_dist (e.g. 1.5 Å) →●  ← seed point
-                                   ╱│╲
-                         spread (std dev of Gaussian)
-                         atoms scattered around seed point
+        └─ random walk (bond_len steps)
+              spread controls turning
+              jitter_scale adds positional forward noise
 </pre></div>
 </div>
 <div class="table-wrapper colwidths-auto docutils container">
@@ -806,14 +811,20 @@ t_start = 0.5   →  50% of steps, faster but coarser structures
 <td class="text-left"><p>Scaffold is large and seed atoms can’t find valid positions far enough away</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">spread</span></code></p></td>
-<td class="text-left"><p>How tightly the seed atoms are clustered around the seed point</p></td>
-<td class="text-left"><p>You want a dispersed fragment exploring a wide area</p></td>
-<td class="text-left"><p>You want a compact, directed fragment; high spread causes atoms to scatter and drift</p></td>
+<td class="text-left"><p>Random-walk angular dispersion; with legacy <code class="docutils literal notranslate"><span class="pre">init_method:</span> <span class="pre">seed</span></code>, seed-cloud Gaussian std dev</p></td>
+<td class="text-left"><p>You want a more tortuous walk</p></td>
+<td class="text-left"><p>You want a straighter walk</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">jitter_scale</span></code></p></td>
+<td class="text-left"><p>Positional forward-noise magnitude when <code class="docutils literal notranslate"><span class="pre">forward_noise:</span> <span class="pre">jitter</span></code></p></td>
+<td class="text-left"><p>You want a noisier starting latent</p></td>
+<td class="text-left"><p>You want the latent closer to the clean skeleton</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p><strong>Practical starting point:</strong> <code class="docutils literal notranslate"><span class="pre">seed_dist=1.5,</span> <span class="pre">min_dist=1.5,</span> <span class="pre">spread=0.75</span></code> for a compact fragment growing from a single connector. Use <code class="docutils literal notranslate"><span class="pre">seed_dist=2.0,</span> <span class="pre">spread=1.0</span></code> for a more open-ended growth.</p>
+<p><strong>Practical starting point:</strong> <code class="docutils literal notranslate"><span class="pre">seed_dist=1.5,</span> <span class="pre">min_dist=1.5,</span> <span class="pre">spread=0.75,</span> <span class="pre">jitter_scale=1.0</span></code> for a directed fragment. Always state <code class="docutils literal notranslate"><span class="pre">jitter_scale</span></code>
+explicitly; changing <code class="docutils literal notranslate"><span class="pre">spread</span></code> must not silently change the forward noise.</p>
 </section>
 <section id="n-bq-atom-boundary-atoms-for-seeding-only">
 <h4><code class="docutils literal notranslate"><span class="pre">n_bq_atom</span></code> — boundary atoms for seeding only<a class="headerlink" href="#n-bq-atom-boundary-atoms-for-seeding-only" title="Link to this heading">¶</a></h4>
@@ -923,27 +934,31 @@ s = 0.0  ──── generation ends (clean structure)
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code> too low</p></td>
 <td class="text-left"><p>Raise <code class="docutils literal notranslate"><span class="pre">scale_factor</span></code> to <code class="docutils literal notranslate"><span class="pre">1.2–1.3</span></code></p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p>Fragment is compact blob, no diversity</p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">spread</span></code> too low or <code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code> too high</p></td>
-<td class="text-left"><p>Raise <code class="docutils literal notranslate"><span class="pre">spread</span></code>; lower <code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code></p></td>
+<tr class="row-even"><td class="text-left"><p>Random-walk fragment is too straight</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">spread</span></code> too low</p></td>
+<td class="text-left"><p>Raise <code class="docutils literal notranslate"><span class="pre">spread</span></code></p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p>Atoms pile up at connector</p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code> too small; all atoms init at same point</p></td>
-<td class="text-left"><p>Raise <code class="docutils literal notranslate"><span class="pre">seed_dist</span></code>; raise <code class="docutils literal notranslate"><span class="pre">spread</span></code> slightly</p></td>
+<tr class="row-odd"><td class="text-left"><p>Starting latent is too noisy</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">jitter_scale</span></code> too high</p></td>
+<td class="text-left"><p>Lower <code class="docutils literal notranslate"><span class="pre">jitter_scale</span></code></p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p>Fragment grows in the wrong direction</p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code> too large, seed cloud too dispersed</p></td>
-<td class="text-left"><p>Lower <code class="docutils literal notranslate"><span class="pre">seed_dist</span></code>; lower <code class="docutils literal notranslate"><span class="pre">spread</span></code></p></td>
+<tr class="row-even"><td class="text-left"><p>Atoms pile up at connector</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code> too small</p></td>
+<td class="text-left"><p>Raise <code class="docutils literal notranslate"><span class="pre">seed_dist</span></code></p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p>Bonds to connector consistently too long</p></td>
+<tr class="row-odd"><td class="text-left"><p>Fragment grows in the wrong direction</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code> or random-walk <code class="docutils literal notranslate"><span class="pre">spread</span></code> too large</p></td>
+<td class="text-left"><p>Lower <code class="docutils literal notranslate"><span class="pre">seed_dist</span></code> or <code class="docutils literal notranslate"><span class="pre">spread</span></code></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Bonds to connector consistently too long</p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code> too high</p></td>
 <td class="text-left"><p>Lower to <code class="docutils literal notranslate"><span class="pre">1.0–1.05</span></code></p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p>Generation is slow / low throughput</p></td>
+<tr class="row-odd"><td class="text-left"><p>Generation is slow / low throughput</p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">t_start</span></code> too high</p></td>
 <td class="text-left"><p>Lower to <code class="docutils literal notranslate"><span class="pre">0.7–0.8</span></code></p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p>Run aborts: “nothing to grow” / size ≤ scaffold</p></td>
+<tr class="row-even"><td class="text-left"><p>Run aborts: “nothing to grow” / size ≤ scaffold</p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">mol_size</span></code> maximum is ≤ the scaffold, or <code class="docutils literal notranslate"><span class="pre">[0,0]</span></code> on a scaffold larger than the model ever generates</p></td>
 <td class="text-left"><p>Set <code class="docutils literal notranslate"><span class="pre">mol_size:[lo,hi]</span></code> with <code class="docutils literal notranslate"><span class="pre">lo</span></code> &gt; scaffold atom count</p></td>
 </tr>
@@ -1053,7 +1068,7 @@ s = 0.0  ──── generation ends (clean structure)
 <li><a class="reference internal" href="#outpainting-parameters">4.2 Outpainting Parameters</a><ul>
 <li><a class="reference internal" href="#connector-dicts-where-and-how-to-grow"><code class="docutils literal notranslate"><span class="pre">connector_dicts</span></code> — where and how to grow</a></li>
 <li><a class="reference internal" href="#t-start-how-many-denoising-steps-to-run"><code class="docutils literal notranslate"><span class="pre">t_start</span></code> — how many denoising steps to run</a></li>
-<li><a class="reference internal" href="#seed-dist-min-dist-spread-where-new-atoms-start"><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">min_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">spread</span></code> — where new atoms start</a></li>
+<li><a class="reference internal" href="#seed-dist-min-dist-spread-jitter-scale-initialization"><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">min_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">spread</span></code>, <code class="docutils literal notranslate"><span class="pre">jitter_scale</span></code> — initialization</a></li>
 <li><a class="reference internal" href="#n-bq-atom-boundary-atoms-for-seeding-only"><code class="docutils literal notranslate"><span class="pre">n_bq_atom</span></code> — boundary atoms for seeding only</a></li>
 <li><a class="reference internal" href="#constraint-strength-outpainting"><code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code> (outpainting)</a></li>
 <li><a class="reference internal" href="#scale-factor-outpainting"><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code> (outpainting)</a></li>

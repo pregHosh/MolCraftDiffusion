@@ -119,7 +119,7 @@ Use `parameters` for scalar Hydra overrides:
 parameters:
   interference.condition_configs.cfg_scale: [1.5, 2.0, 2.5]
   interference.condition_configs.outpaint_cfgs.t_start: "0.55:0.95:0.20"
-  interference.condition_configs.outpaint_cfgs.spread: [0.5, 1.0, 1.5]
+  interference.condition_configs.outpaint_cfgs.jitter_scale: [0.5, 1.0, 1.5]
   diffusion_steps: [50, 300]
 ```
 
@@ -198,6 +198,7 @@ parameters:
   interference.condition_configs.outpaint_cfgs.seed_dist: [1.0, 1.5, 2.0]
   interference.condition_configs.outpaint_cfgs.min_dist: [1.5, 2.0, 2.5]
   interference.condition_configs.outpaint_cfgs.spread: [0.5, 1.0, 1.5]
+  interference.condition_configs.outpaint_cfgs.jitter_scale: [0.5, 1.0, 1.5]
   interference.condition_configs.outpaint_cfgs.constraint_strength: [0.6, 0.8]
 ```
 

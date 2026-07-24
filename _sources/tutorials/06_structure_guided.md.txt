@@ -44,8 +44,8 @@ The `condition_configs` section for inpainting uses a sub-dictionary called `inp
 | `condition_component` | `condition_configs` | Component to inpaint (`x` positions only, `h` features only, `xh` both). |
 | `center_saved_scaffold` | `condition_configs` | Translate scaffold so its centre of mass is at the origin before generation. |
 | `use_noised_conditioning` | `condition_configs` | Add noise to the scaffold at each denoising step. Set `True` if the model was trained with noised conditioning. |
-| `n_retrys` | `condition_configs` | Number of retry attempts if a generated molecule is invalid. |
-| `t_retry` | `condition_configs` | Timestep (0–T) to restart from on retry. |
+| `n_retrys` | `condition_configs` | Keep at `0`; retries are currently disabled for structure-guided generation. |
+| `t_retry` | `condition_configs` | Timestep (0–T) to restart from on retry (inactive while `n_retrys=0`). |
 | `n_frames` | `condition_configs` | Number of trajectory frames to save for visualisation (0 = disabled). |
 | `mask_node_index` | `inpaint_cfgs` | **CRITICAL:** 0-indexed list of atom indices to remove and regenerate. |
 | `denoising_strength` | `inpaint_cfgs` | How much noise is added to the masked region (0–1). Higher = more creative freedom, lower = stays closer to the original. |
@@ -105,18 +105,19 @@ The `condition_configs` section for outpainting uses a sub-dictionary called `ou
 | `condition_component` | `condition_configs` | Component to outpaint (`x`, `h`, or `xh`). |
 | `center_saved_scaffold` | `condition_configs` | Translate scaffold so its CoM is at the origin before generation. |
 | `use_noised_conditioning` | `condition_configs` | Add noise to the scaffold at each denoising step. |
-| `n_retrys` | `condition_configs` | Number of retry attempts if a generated molecule is invalid. |
-| `t_retry` | `condition_configs` | Timestep (0–T) to restart from on retry. |
+| `n_retrys` | `condition_configs` | Keep at `0`; retries are currently disabled for structure-guided generation. |
+| `t_retry` | `condition_configs` | Timestep (0–T) to restart from on retry (inactive while `n_retrys=0`). |
 | `connector_dicts` | `outpaint_cfgs` | **CRITICAL:** `{atom_index: [n_bonds]}` — which scaffold atoms to grow from and how many bonds each should form. |
 | `t_start` | `outpaint_cfgs` | Fraction of T to start denoising from (e.g. `0.9` → 90% of steps). |
 | `seed_dist` | `outpaint_cfgs` | Distance (Å) from connector to place initial seed atoms. Default: `2.0`. |
 | `min_dist` | `outpaint_cfgs` | Minimum distance (Å) new atoms must be from all non-connector scaffold atoms at initialisation. Default: `1.0`. |
-| `spread` | `outpaint_cfgs` | Std dev (Å) of the Gaussian used to scatter seed atoms around the seed position. Default: `1.0`. |
+| `spread` | `outpaint_cfgs` | Angular dispersion for `skeleton_type: random_walk` (`0` = straight, `1` = standard walk); for legacy `init_method: seed`, Gaussian position std dev (Å). Default: `1.0`. |
 | `n_bq_atom` | `outpaint_cfgs` | Number of atoms at the end of the scaffold used only for seeding positions, not included in conditioning. Default: `0`. |
 | `init_method` | `outpaint_cfgs` | How seed atoms are initialised: `skeleton` (procedural), `seed` (raw blob), or `fragment` (bundled substituent). Default: `skeleton`. |
 | `skeleton_type` | `outpaint_cfgs` | Skeleton family used when `init_method` is `skeleton`/`fragment` (e.g. `random_walk`). Default: `random_walk`. |
 | `bond_len` | `outpaint_cfgs` | Target bond length (Å) used when placing skeleton atoms. Default: `1.5`. |
 | `forward_noise` | `outpaint_cfgs` | Strategy for noising the clean seed template up to `t_start`. Default: `jitter`. |
+| `jitter_scale` | `outpaint_cfgs` | Positional noise magnitude for `forward_noise: jitter`. Must be set explicitly; it never inherits `spread`. |
 | `constraint_strength` | `outpaint_cfgs` | Fraction of denoising during which constraints are active. Code default `0.8`; the shipped `gen_outpaint` template sets `0.7`, so that's what you get if you inherit it. |
 | `scale_factor` | `outpaint_cfgs` | Multiplier on covalent radii for bond-distance tolerance. Default: `1.1`. |
 
@@ -153,6 +154,7 @@ interference:
       seed_dist: 2.0
       min_dist: 1.0
       spread: 1.0
+      jitter_scale: 1.0
 ```
 
 ### Running Outpainting
@@ -231,26 +233,29 @@ t_start = 0.5   →  50% of steps, faster but coarser structures
 
 **Use `0.8–0.9`** for most experiments. Only lower it for rapid screening where speed matters more than quality.
 
-#### `seed_dist`, `min_dist`, `spread` — where new atoms start
+#### `seed_dist`, `min_dist`, `spread`, `jitter_scale` — initialization
 
-These three parameters control the **initial placement** of the generated atoms before denoising begins. They shape the starting geometry that the model then refines.
+These parameters control the clean starting geometry and the separate noise
+applied before denoising. `spread` and `jitter_scale` are independent knobs.
 
 ```
 connector atom (scaffold)
         │
-        │← seed_dist (e.g. 1.5 Å) →●  ← seed point
-                                   ╱│╲
-                         spread (std dev of Gaussian)
-                         atoms scattered around seed point
+        └─ random walk (bond_len steps)
+              spread controls turning
+              jitter_scale adds positional forward noise
 ```
 
 | Parameter | What it controls | Increase when… | Decrease when… |
 | :--- | :--- | :--- | :--- |
 | `seed_dist` | Distance from connector to the centre of the seed cloud | You want the fragment to grow outward and away from the scaffold | Fragment needs to start close to the connector (short bonds, rings) |
 | `min_dist` | Minimum distance new atoms must be from all non-connector scaffold atoms at init | — (usually left at default) | Scaffold is large and seed atoms can't find valid positions far enough away |
-| `spread` | How tightly the seed atoms are clustered around the seed point | You want a dispersed fragment exploring a wide area | You want a compact, directed fragment; high spread causes atoms to scatter and drift |
+| `spread` | Random-walk angular dispersion; with legacy `init_method: seed`, seed-cloud Gaussian std dev | You want a more tortuous walk | You want a straighter walk |
+| `jitter_scale` | Positional forward-noise magnitude when `forward_noise: jitter` | You want a noisier starting latent | You want the latent closer to the clean skeleton |
 
-**Practical starting point:** `seed_dist=1.5, min_dist=1.5, spread=0.75` for a compact fragment growing from a single connector. Use `seed_dist=2.0, spread=1.0` for a more open-ended growth.
+**Practical starting point:** `seed_dist=1.5, min_dist=1.5, spread=0.75,
+jitter_scale=1.0` for a directed fragment. Always state `jitter_scale`
+explicitly; changing `spread` must not silently change the forward noise.
 
 #### `n_bq_atom` — boundary atoms for seeding only
 
@@ -310,9 +315,10 @@ Scales the per-atom-type covalent bond length threshold used by all three constr
 | :--- | :--- | :--- |
 | Fragment disconnected from scaffold in output | `constraint_strength` too low or `seed_dist` too large | Raise `constraint_strength` to `0.8–0.9`; lower `seed_dist` |
 | Fragment fuses into scaffold, overlapping atoms | `scale_factor` too low | Raise `scale_factor` to `1.2–1.3` |
-| Fragment is compact blob, no diversity | `spread` too low or `constraint_strength` too high | Raise `spread`; lower `constraint_strength` |
-| Atoms pile up at connector | `seed_dist` too small; all atoms init at same point | Raise `seed_dist`; raise `spread` slightly |
-| Fragment grows in the wrong direction | `seed_dist` too large, seed cloud too dispersed | Lower `seed_dist`; lower `spread` |
+| Random-walk fragment is too straight | `spread` too low | Raise `spread` |
+| Starting latent is too noisy | `jitter_scale` too high | Lower `jitter_scale` |
+| Atoms pile up at connector | `seed_dist` too small | Raise `seed_dist` |
+| Fragment grows in the wrong direction | `seed_dist` or random-walk `spread` too large | Lower `seed_dist` or `spread` |
 | Bonds to connector consistently too long | `scale_factor` too high | Lower to `1.0–1.05` |
 | Generation is slow / low throughput | `t_start` too high | Lower to `0.7–0.8` |
 | Run aborts: "nothing to grow" / size ≤ scaffold | `mol_size` maximum is ≤ the scaffold, or `[0,0]` on a scaffold larger than the model ever generates | Set `mol_size:[lo,hi]` with `lo` > scaffold atom count |

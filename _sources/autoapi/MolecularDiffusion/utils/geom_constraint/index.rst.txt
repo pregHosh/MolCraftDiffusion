@@ -74,10 +74,25 @@ Module Contents
                          SKELETON_BUILDERS). For "fragment", default to an aromatic ring when
                          left at the procedural default.
    :param seed_dist: geometry knobs.
+                     For ``random_walk``, spread controls angular dispersion. For
+                     legacy ``method="seed"``, it is the Gaussian position standard
+                     deviation.
    :param min_dist: geometry knobs.
+                    For ``random_walk``, spread controls angular dispersion. For
+                    legacy ``method="seed"``, it is the Gaussian position standard
+                    deviation.
    :param spread: geometry knobs.
+                  For ``random_walk``, spread controls angular dispersion. For
+                  legacy ``method="seed"``, it is the Gaussian position standard
+                  deviation.
    :param n_bq_atom: geometry knobs.
+                     For ``random_walk``, spread controls angular dispersion. For
+                     legacy ``method="seed"``, it is the Gaussian position standard
+                     deviation.
    :param bond_len: geometry knobs.
+                    For ``random_walk``, spread controls angular dispersion. For
+                    legacy ``method="seed"``, it is the Gaussian position standard
+                    deviation.
 
    :returns: (B, n_extra, D) clean coordinates + randomized features.
 
