@@ -1,0 +1,163 @@
+MolecularDiffusion.modules.models.diffsmol.common
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.models.diffsmol.common
+
+.. autoapi-nested-parse::
+
+   Shared primitives for the DiffSMol backbone.
+
+   Ported from DiffSMol ``source/models/common.py`` (only the parts the
+   bond-free score model actually reaches).
+
+   ``GVP``/``GVPLayerNorm`` here are DiffSMol's own variants and are NOT
+   interchangeable with ``modules/layers/gvp`` (FlowMol's): that one takes a
+   four-dim ``(dim_vectors_in, dim_vectors_out, dim_feats_in, dim_feats_out)``
+   signature with SiLU/Sigmoid activations and a different tensor layout, while
+   this one takes ``(in_dims, h_dim, out_dims)`` tuples with ReLU/sigmoid. They
+   are kept separate rather than unified because silently swapping activations
+   inside a ported architecture is how you get a model that trains but is not
+   the model you ported.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffsmol.common.GVP
+   MolecularDiffusion.modules.models.diffsmol.common.GVPLayerNorm
+   MolecularDiffusion.modules.models.diffsmol.common.GaussianSmearing
+   MolecularDiffusion.modules.models.diffsmol.common.MLP
+   MolecularDiffusion.modules.models.diffsmol.common.ShiftedSoftplus
+   MolecularDiffusion.modules.models.diffsmol.common.SinusoidalPosEmb
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffsmol.common.norm_no_nan
+   MolecularDiffusion.modules.models.diffsmol.common.outer_product
+
+
+Module Contents
+---------------
+
+.. py:class:: GVP(in_dims: tuple[int, int], h_dim: int, out_dims: tuple[int, int], activations=(F.relu, torch.sigmoid), vector_gate: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Geometric Vector Perceptron (Jing et al. 2021), vector-gated.
+
+   Takes and returns ``(scalars [N, s], vectors [N, v, 3])``.
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: dummy_param
+
+
+   .. py:attribute:: vector_gate
+      :value: True
+
+
+
+.. py:class:: GVPLayerNorm(dims: tuple[int, int])
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   LayerNorm on scalars; RMS rescale (no learned params) on vectors.
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: scalar_norm
+
+
+.. py:class:: GaussianSmearing(start: float = 0.0, stop: float = 5.0, num_gaussians: int = 50)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Distance expansion on a fixed, hand-chosen offset grid.
+
+   Note the offsets are hardcoded upstream (20 of them), so ``num_gaussians``
+   is advisory only -- the true feature width is always 20. It is kept in the
+   signature because the config sets ``num_r_gaussian: 20`` to match.
+
+
+   .. py:method:: forward(dist: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: coeff
+
+
+   .. py:attribute:: num_gaussians
+
+
+   .. py:attribute:: start
+      :value: 0.0
+
+
+
+   .. py:attribute:: stop
+      :value: 5.0
+
+
+
+.. py:class:: MLP(in_dim: int, out_dim: int, hidden_dim: int, num_layer: int = 2, norm: bool = True, act_fn: str = 'relu', act_last: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   MLP with the same hidden dim across all layers.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: net
+
+
+.. py:class:: ShiftedSoftplus
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: shift
+
+
+.. py:class:: SinusoidalPosEmb(dim: int)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Sinusoidal timestep embedding.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: dim
+
+
+.. py:function:: norm_no_nan(x: torch.Tensor, axis: int = -1, keepdims: bool = False, eps: float = 1e-08, sqrt: bool = True) -> torch.Tensor
+
+   L2 norm clamped below at ``eps`` so the gradient never sees 0/0.
+
+
+.. py:function:: outer_product(*vectors: torch.Tensor) -> torch.Tensor
+
+   Flattened outer product of a sequence of per-edge feature tensors.
+
+

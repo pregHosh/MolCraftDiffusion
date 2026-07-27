@@ -1,0 +1,272 @@
+MolecularDiffusion.modules.models.diffsmol.score_model
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.models.diffsmol.score_model
+
+.. autoapi-nested-parse::
+
+   DiffSMol hybrid diffusion score model, bond-free.
+
+   Ported from DiffSMol ``source/models/molopt_score_model.py``
+   (+ ``source/models/diffusion.py`` for the beta schedules).
+
+   Hybrid objective, both kept:
+     * continuous Gaussian DDPM on positions (``sigmoid`` beta schedule),
+     * discrete D3PM categorical diffusion on atom types (``cosine`` schedule,
+       uniform or absorbing-mask transition kernel).
+
+   Dropped per the approved INTEGRATION_PLAN: the bond-type CE loss, the
+   bond-distance loss, the bond-angle loss and the torsion-angle loss (the last
+   two were already switched off by upstream's own shipped config). The loss
+   therefore reduces to ``loss_pos + loss_v_weight * loss_v``.
+
+   Kept: shape conditioning and classifier-free guidance. Training zeroes the
+   whole ``(B, 128, 3)`` latent with probability ``cond_mask_prob``; that is
+   what creates the unconditional branch, and it is why ``sample()`` can fall
+   back to a zero latent when no reference shape is supplied.
+
+   Frame convention: ``center_pos_mode`` is ``'none'``. Coordinates are assumed
+   to already be in the *surface-centered* frame (the caller subtracts the
+   precomputed ``shape_center``), which is the frame the shape latent lives in.
+   Do not re-center here.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffsmol.score_model.DEFAULT_CONFIG
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffsmol.score_model.ScorePosNet3D
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffsmol.score_model.categorical_kl
+   MolecularDiffusion.modules.models.diffsmol.score_model.cosine_beta_schedule
+   MolecularDiffusion.modules.models.diffsmol.score_model.extract
+   MolecularDiffusion.modules.models.diffsmol.score_model.get_beta_schedule
+   MolecularDiffusion.modules.models.diffsmol.score_model.index_to_log_onehot
+   MolecularDiffusion.modules.models.diffsmol.score_model.log_1_min_a
+   MolecularDiffusion.modules.models.diffsmol.score_model.log_add_exp
+   MolecularDiffusion.modules.models.diffsmol.score_model.log_categorical
+   MolecularDiffusion.modules.models.diffsmol.score_model.log_normal
+   MolecularDiffusion.modules.models.diffsmol.score_model.log_sample_categorical
+   MolecularDiffusion.modules.models.diffsmol.score_model.normal_kl
+   MolecularDiffusion.modules.models.diffsmol.score_model.threshold_cfg
+   MolecularDiffusion.modules.models.diffsmol.score_model.to_torch_const
+
+
+Module Contents
+---------------
+
+.. py:class:: ScorePosNet3D(config: Dict[str, Any], atom_vocab: list[str])
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Shape-conditioned hybrid (Gaussian pos + D3PM type) score model.
+
+
+   .. py:method:: compute_v_Lt(log_v_model_prob, log_v0, log_v_true_prob, t, batch)
+
+
+   .. py:method:: forward(ligand_pos_perturbed: torch.Tensor, ligand_v_perturbed: torch.Tensor, batch_ligand: torch.Tensor, ligand_shape: torch.Tensor, time_step: Optional[torch.Tensor] = None, return_all: bool = False) -> Dict[str, torch.Tensor]
+
+      Predict ``(x0, v0)`` from the noisy sample at step ``t``.
+
+      ``ligand_shape``: ``(B, shape_dim, 3)`` equivariant latent, in the
+      same frame as ``ligand_pos_perturbed``.
+
+
+
+   .. py:method:: get_diffusion_loss(ligand_pos: torch.Tensor, ligand_v: torch.Tensor, batch_ligand: torch.Tensor, ligand_shape: torch.Tensor, time_step: Optional[torch.Tensor] = None, eval_mode: bool = False) -> Dict[str, torch.Tensor]
+
+      Bond-free ``loss_pos + loss_v_weight * loss_v``.
+
+      ``ligand_pos`` must already be surface-centered; no re-centering is
+      applied (``center_pos_mode: none`` upstream).
+
+
+
+   .. py:method:: q_pos_posterior(x0, xt, t, batch)
+
+
+   .. py:method:: q_v_posterior(log_v0, log_vt, t, batch)
+
+      q(v_{t-1} | v_t, v_0).
+
+
+
+   .. py:method:: q_v_pred(log_v0, t, batch)
+
+      q(v_t | v_0).
+
+
+
+   .. py:method:: q_v_pred_one_timestep(log_vt_1, t, batch)
+
+      q(v_t | v_{t-1}).
+
+
+
+   .. py:method:: q_v_sample(log_v0, t, batch, num_classes)
+
+
+   .. py:method:: sample_diffusion(init_ligand_pos: torch.Tensor, init_ligand_v: torch.Tensor, batch_ligand: torch.Tensor, ligand_shape: torch.Tensor, num_steps: Optional[int] = None, guide_stren: float = 0.0, threshold_type: Optional[str] = None, threshold_p: Optional[float] = None, progress: bool = False) -> Dict[str, torch.Tensor]
+
+      Reverse diffusion with classifier-free guidance.
+
+      ``guide_stren`` is the CFG weight ``w``: the guided prediction is
+      ``uncond + (1 + w) * (cond - uncond)``. ``0`` means conditional-only
+      (no second pass), matching upstream's shipped no-guidance setting.
+
+
+
+   .. py:method:: sample_time(num_graphs: int, device)
+
+
+   .. py:attribute:: alphas_cumprod
+
+
+   .. py:attribute:: alphas_cumprod_prev
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: betas
+
+
+   .. py:attribute:: cond_mask_prob
+
+
+   .. py:attribute:: config
+
+
+   .. py:attribute:: ligand_atom_emb
+
+
+   .. py:attribute:: log_alphas_cumprod_v
+
+
+   .. py:attribute:: log_alphas_v
+
+
+   .. py:attribute:: log_one_minus_alphas_cumprod_v
+
+
+   .. py:attribute:: log_one_minus_alphas_v
+
+
+   .. py:attribute:: loss_pos_type
+
+
+   .. py:attribute:: loss_v_weight
+
+
+   .. py:attribute:: loss_weight_type
+
+
+   .. py:attribute:: model_mean_type
+
+
+   .. py:attribute:: num_classes
+
+
+   .. py:attribute:: num_timesteps
+
+
+   .. py:attribute:: posterior_logvar
+
+
+   .. py:attribute:: posterior_mean_c0_coef
+
+
+   .. py:attribute:: posterior_mean_ct_coef
+
+
+   .. py:attribute:: posterior_var
+
+
+   .. py:attribute:: pred_bond_type
+      :value: False
+
+
+
+   .. py:attribute:: refine_net
+
+
+   .. py:attribute:: sample_time_method
+
+
+   .. py:attribute:: scalar_hidden_dim
+
+
+   .. py:attribute:: shape_dim
+
+
+   .. py:attribute:: sqrt_alphas_cumprod
+
+
+   .. py:attribute:: sqrt_one_minus_alphas_cumprod
+
+
+   .. py:attribute:: sqrt_recip_alphas_cumprod
+
+
+   .. py:attribute:: sqrt_recipm1_alphas_cumprod
+
+
+   .. py:attribute:: time_emb_dim
+
+
+   .. py:attribute:: v_mode
+
+
+   .. py:attribute:: v_net_type
+
+
+   .. py:attribute:: vec_hidden_dim
+
+
+.. py:function:: categorical_kl(log_prob1, log_prob2)
+
+.. py:function:: cosine_beta_schedule(timesteps: int, s: float = 0.008) -> numpy.ndarray
+
+.. py:function:: extract(coef: torch.Tensor, t: torch.Tensor, batch: torch.Tensor)
+
+.. py:function:: get_beta_schedule(beta_schedule: str, num_diffusion_timesteps: int, **kwargs: Any) -> numpy.ndarray
+
+.. py:function:: index_to_log_onehot(x: torch.Tensor, num_classes: int) -> torch.Tensor
+
+.. py:function:: log_1_min_a(a: numpy.ndarray) -> numpy.ndarray
+
+.. py:function:: log_add_exp(a: torch.Tensor, b: torch.Tensor) -> torch.Tensor
+
+.. py:function:: log_categorical(log_x_start, log_prob)
+
+.. py:function:: log_normal(values, means, log_scales)
+
+.. py:function:: log_sample_categorical(logits: torch.Tensor) -> torch.Tensor
+
+.. py:function:: normal_kl(mean1, logvar1, mean2, logvar2)
+
+.. py:function:: threshold_cfg(x0: torch.Tensor, x0_cond: torch.Tensor, threshold_type: Optional[str], p: Optional[float] = None) -> torch.Tensor
+
+.. py:function:: to_torch_const(x: numpy.ndarray) -> torch.nn.Parameter
+
+.. py:data:: DEFAULT_CONFIG
+   :type:  Dict[str, Any]
+

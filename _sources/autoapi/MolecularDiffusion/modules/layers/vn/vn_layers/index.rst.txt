@@ -1,0 +1,254 @@
+MolecularDiffusion.modules.layers.vn.vn_layers
+==============================================
+
+.. py:module:: MolecularDiffusion.modules.layers.vn.vn_layers
+
+.. autoapi-nested-parse::
+
+   Vector Neuron (VN) equivariant building blocks.
+
+   Ported from DiffSMol (``source/models/shape_vn_layers.py``), which in turn
+   derives from Deng et al., "Vector Neurons: A General Framework for SO(3)-
+   Equivariant Networks" (ICCV 2021).
+
+   A VN feature is a tensor of shape ``[B, C, 3, N, ...]`` -- ``C`` channels of
+   3-vectors. Every op here commutes with a global rotation applied to the
+   ``3`` axis, so a stack of them is exactly SO(3)-equivariant. That is what
+   makes the DiffSMol shape latent a ``(128, 3)`` *equivariant* embedding
+   rather than an invariant descriptor.
+
+   Note these blocks are NOT translation-equivariant: ``get_graph_feature_cross``
+   concatenates the raw coordinate ``x`` as a channel, so the caller is
+   responsible for centering its input first.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.vn.vn_layers.ResnetBlockFC
+   MolecularDiffusion.modules.layers.vn.vn_layers.VNBatchNorm
+   MolecularDiffusion.modules.layers.vn.vn_layers.VNLeakyReLU
+   MolecularDiffusion.modules.layers.vn.vn_layers.VNLinear
+   MolecularDiffusion.modules.layers.vn.vn_layers.VNLinearLeakyReLU
+   MolecularDiffusion.modules.layers.vn.vn_layers.VNMaxPool
+   MolecularDiffusion.modules.layers.vn.vn_layers.VNResnetBlockFC
+   MolecularDiffusion.modules.layers.vn.vn_layers.VNStdFeature
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.vn.vn_layers.get_graph_feature_cross
+   MolecularDiffusion.modules.layers.vn.vn_layers.knn
+   MolecularDiffusion.modules.layers.vn.vn_layers.mean_pool
+
+
+Module Contents
+---------------
+
+.. py:class:: ResnetBlockFC(size_in: int, size_out: int | None = None, size_h: int | None = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Plain (non-VN) fully connected ResNet block, used by the decoder that
+   consumes the invariant features produced from VN latents.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: actvn
+
+
+   .. py:attribute:: fc_0
+
+
+   .. py:attribute:: fc_1
+
+
+   .. py:attribute:: shortcut
+      :value: None
+
+
+
+.. py:class:: VNBatchNorm(num_features: int, dim: int)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   BatchNorm on the per-channel vector *norms*, leaving directions
+   untouched (and therefore equivariance intact).
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: dim
+
+
+.. py:class:: VNLeakyReLU(in_channels: int, share_nonlinearity: bool = False, negative_slope: float = 0.2)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Equivariant leaky ReLU: reflect the component of ``x`` that lies on
+   the negative side of a learned direction ``d``.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: map_to_dir
+
+
+   .. py:attribute:: negative_slope
+      :value: 0.2
+
+
+
+.. py:class:: VNLinear(in_channels: int, out_channels: int)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Channel-mixing linear map; acts on the channel axis only.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+      x: ``[B, C_in, 3, N, ...]`` -> ``[B, C_out, 3, N, ...]``.
+
+
+
+   .. py:attribute:: map_to_feat
+
+
+.. py:class:: VNLinearLeakyReLU(in_channels: int, out_channels: int, dim: int = 5, share_nonlinearity: bool = False, negative_slope: float = 0.2, use_batchnorm: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   ``VNLinear`` -> optional ``VNBatchNorm`` -> equivariant leaky ReLU.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: dim
+      :value: 5
+
+
+
+   .. py:attribute:: map_to_dir
+
+
+   .. py:attribute:: map_to_feat
+
+
+   .. py:attribute:: negative_slope
+      :value: 0.2
+
+
+
+   .. py:attribute:: use_batchnorm
+      :value: True
+
+
+
+.. py:class:: VNMaxPool(in_channels: int)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Max-pool over the last axis, selecting by projection onto a learned
+   direction (an argmax over a scalar, hence equivariant).
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: map_to_dir
+
+
+.. py:class:: VNResnetBlockFC(size_in: int, size_out: int | None = None, size_h: int | None = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Fully connected VN ResNet block.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: actvn_0
+
+
+   .. py:attribute:: actvn_1
+
+
+   .. py:attribute:: fc_0
+
+
+   .. py:attribute:: fc_1
+
+
+   .. py:attribute:: shortcut
+      :value: None
+
+
+
+.. py:class:: VNStdFeature(in_channels: int, dim: int = 4, normalize_frame: bool = False, share_nonlinearity: bool = False, negative_slope: float = 0.2)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Project VN features onto a learned equivariant frame, producing an
+   *invariant* descriptor plus the frame itself.
+
+
+   .. py:method:: forward(x: torch.Tensor)
+
+
+   .. py:attribute:: dim
+      :value: 4
+
+
+
+   .. py:attribute:: normalize_frame
+      :value: False
+
+
+
+   .. py:attribute:: vn1
+
+
+   .. py:attribute:: vn2
+
+
+   .. py:attribute:: vn_lin
+
+
+.. py:function:: get_graph_feature_cross(x: torch.Tensor, k: int = 20, idx: torch.Tensor | None = None, if_cross: bool = False) -> torch.Tensor
+
+   Build a kNN edge feature tensor from VN features.
+
+   ``x``: ``[B, C, 3, N]`` -> ``[B, 2C (or 3C), 3, N, k]``.
+
+   The raw ``x`` is concatenated as a channel, so this is rotation- but NOT
+   translation-equivariant: center the point cloud before calling.
+
+
+.. py:function:: knn(x: torch.Tensor, k: int) -> torch.Tensor
+
+   k-nearest-neighbour indices for ``x`` of shape ``[B, C, N]``.
+
+
+.. py:function:: mean_pool(x: torch.Tensor, dim: int = -1, keepdim: bool = False) -> torch.Tensor
+

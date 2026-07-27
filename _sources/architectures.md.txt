@@ -16,6 +16,7 @@ architecture never touches the core engine.
 | `diffusion_gfmdiff.yaml` | `diffusion` | GFMDiff | Geometric full-molecule diffusion (`tasks_gfmdiff`). |
 | `diffusion_tabasco.yaml` | `diffusion_tabasco` | TABASCO | Flow-matching architecture. |
 | `diffusion_flowmol.yaml` | `diffusion_flowmol` | FlowMol (SE(3)-equivariant GVP) | Flow matching for coordinates, atom types, and formal charges. **This integration considers the bond-free variant only:** bonds are not modeled or generated; graph edges are used only for geometric message passing. |
+| `diffusion_diffsmol.yaml` | `diffusion_diffsmol` | DiffSMol (UniTransformerO2 GVP backbone) | Shape-conditioned generation: continuous DDPM on coordinates + D3PM categorical diffusion on atom types, conditioned on an equivariant `(128,3)` surface-shape latent with classifier-free guidance. **Bond-free variant:** bonds are not supervised or generated; `pred_bond_type` (default `false`) exists only to stay architecture-compatible with upstream's released checkpoint. Heavy atoms only. Needs an offline shape-embedding cache — see [model_integrations/diffsmol/FINAL_REPORT.md](model_integrations/diffsmol/FINAL_REPORT.md). |
 | `diffusion_adit.yaml` | `diffusion_adit` | ADiT / DiT-based LDM | Latent diffusion with a DiT denoiser. |
 | `diffusion_difflinker.yaml` | `diffusion_difflinker` | DiffLinker | Fragment linking / linker design. |
 | `vae_transformer.yaml` | `vae_transformer` | GeoLDM VAE (transformer enc/dec) | Trains the autoencoder for latent diffusion. |
@@ -46,6 +47,9 @@ Backbones and objectives integrated here are based on the following work.
 - **FlowMol** — Dunn & Koes. *Mixed Continuous and Categorical Flow Matching
   for 3D De Novo Molecule Generation.* 2024.
   [arXiv:2404.19739](https://arxiv.org/abs/2404.19739)
+- **DiffSMol** — Chen, Peng, Zhai, Adu-Ampratwum & Ning. *Generating 3D Binding
+  Molecules Using Shape-Conditioned Diffusion Models with Guidance.* Nature
+  Machine Intelligence 2025. [arXiv:2502.06027](https://arxiv.org/abs/2502.06027)
 - **ADiT** — Joshi et al. *All-atom Diffusion Transformers: Unified generative
   modelling of molecules and materials.* 2025. [arXiv:2503.03965](https://arxiv.org/abs/2503.03965) —
   built on the **DiT** backbone of Peebles & Xie, *Scalable Diffusion Models with

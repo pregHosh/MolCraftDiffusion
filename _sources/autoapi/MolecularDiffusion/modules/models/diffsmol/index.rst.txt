@@ -1,0 +1,33 @@
+MolecularDiffusion.modules.models.diffsmol
+==========================================
+
+.. py:module:: MolecularDiffusion.modules.models.diffsmol
+
+.. autoapi-nested-parse::
+
+   DiffSMol: shape-conditioned hybrid 3D molecular diffusion.
+
+   Ported from https://github.com/NingQuanwei/DiffSMol (commit 2f72f80).
+   Bond-free scope; shape conditioning and D3PM atom-type diffusion kept.
+   See ``docs/model_integrations/diffsmol/INTEGRATION_PLAN.md``.
+
+   ``shape_utils`` is deliberately NOT re-exported here -- it pulls optional
+   ``scikit-image``/``trimesh`` deps that training and generation must not
+   require.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/diffsmol/bond_tables/index
+   /autoapi/MolecularDiffusion/modules/models/diffsmol/common/index
+   /autoapi/MolecularDiffusion/modules/models/diffsmol/score_model/index
+   /autoapi/MolecularDiffusion/modules/models/diffsmol/shape_ae/index
+   /autoapi/MolecularDiffusion/modules/models/diffsmol/shape_utils/index
+   /autoapi/MolecularDiffusion/modules/models/diffsmol/uni_transformer/index
+
+

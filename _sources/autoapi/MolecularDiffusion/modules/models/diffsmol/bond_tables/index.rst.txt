@@ -1,0 +1,52 @@
+MolecularDiffusion.modules.models.diffsmol.bond_tables
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.models.diffsmol.bond_tables
+
+.. autoapi-nested-parse::
+
+   Reference bond-length tables, vendored verbatim from DiffSMol.
+
+   ``others/DiffSMol/source/utils/analyze.py`` ``bonds1..bonds4`` (single /
+   double / triple / aromatic, in 0.01 A units, ``-1`` = "no such bond order
+   for this pair").
+
+   These are **not** interchangeable with the platform's own
+   ``utils.geom_analyzer.bonds{1,2,3}``: 26 entries of ``bonds1`` and one of
+   ``bonds2`` differ numerically (mostly Br/I pairs, plus ``S-C`` double).
+   Those tables drive the 5-class edge feature that every attention layer sees,
+   so the pretrained DiffSMol checkpoint only reproduces upstream's numbers
+   against *these* values. The element-vocab path built before this module
+   existed keeps using the platform tables and is untouched.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffsmol.bond_tables.BONDS_AROMATIC
+   MolecularDiffusion.modules.models.diffsmol.bond_tables.BONDS_DOUBLE
+   MolecularDiffusion.modules.models.diffsmol.bond_tables.BONDS_SINGLE
+   MolecularDiffusion.modules.models.diffsmol.bond_tables.BONDS_TRIPLE
+   MolecularDiffusion.modules.models.diffsmol.bond_tables.DIFFSMOL_BOND_TABLES
+
+
+Module Contents
+---------------
+
+.. py:data:: BONDS_AROMATIC
+   :type:  dict[str, dict[str, int]]
+
+.. py:data:: BONDS_DOUBLE
+   :type:  dict[str, dict[str, int]]
+
+.. py:data:: BONDS_SINGLE
+   :type:  dict[str, dict[str, int]]
+
+.. py:data:: BONDS_TRIPLE
+   :type:  dict[str, dict[str, int]]
+
+.. py:data:: DIFFSMOL_BOND_TABLES
+

@@ -1,0 +1,392 @@
+MolecularDiffusion.modules.tasks.diffusion_diffsmol
+===================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_diffsmol
+
+.. autoapi-nested-parse::
+
+   Shape-conditioned DiffSMol diffusion task.
+
+   Binds ``modules/models/diffsmol`` to the duck-typed Task contract
+   (docs/adding_new_models.md §2.1) and adapts the platform's padded PointCloud
+   dict batch to DiffSMol's flat/ragged ``(N_total, ...) + batch_ligand``
+   layout.
+
+   Scope (approved INTEGRATION_PLAN): bonds dropped, D3PM atom-type diffusion
+   kept, shape conditioning + classifier-free guidance kept, heavy atoms only.
+
+   **Frame.** The shape latent is a ``(128, 3)`` SO(3)-equivariant feature that
+   rotates with the molecule and is *not* translation invariant. Upstream puts
+   coordinates in the **surface-centroid** frame -- the mean of the 512 sampled
+   mesh points -- and this task does the same by subtracting the precomputed
+   ``shape_center``. It therefore deliberately does **not** call
+   ``remove_mean_with_mask``: COM-centering would put the coordinates in a
+   different frame from the latent and silently break conditioning. If rotation
+   augmentation is ever switched on, the same ``R`` must be applied to both
+   ``coords`` and ``shape_emb`` (the latter is a stack of 128 3-vectors, so
+   ``shape_emb @ R.T`` is the correct action).
+
+   **Shape cache.** The mesh -> point cloud -> VN-AE chain is precomputed
+   offline by ``docs/model_integrations/diffsmol/scripts/precompute_shapes.py``
+   into a ``.pt`` keyed by each sample's ``xyz`` identifier -- the same key the
+   PointCloud dataset already carries through the default collate. No custom
+   DataModule and no collate change is needed: the platform's collate passes
+   unknown keys (including a list of strings) straight through.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_diffsmol.DIFFSMOL_AROMATIC_FLAGS
+   MolecularDiffusion.modules.tasks.diffusion_diffsmol.DIFFSMOL_AROMATIC_VOCAB
+   MolecularDiffusion.modules.tasks.diffusion_diffsmol.DIFFSMOL_ATOM_VOCAB
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolDiffusionTask
+   MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolShapeGenerator
+   MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolShapeNodeDistribution
+   MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolTaskFactory
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_diffsmol.load_shape_cache
+
+
+Module Contents
+---------------
+
+.. py:class:: DiffSMolDiffusionTask(model_config: dict, atom_vocab: List[str], shape_cache: Dict[str, Dict[str, Any]], dataset_stats: dict, default_num_steps: int, guide_stren: float = 0.0, threshold_type: Optional[str] = None, threshold_p: Optional[float] = None, task_type: str = 'diffusion_diffsmol', atom_mode: str = 'basic')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Task contract implementation for DiffSMol.
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor)
+
+
+   .. py:method:: forward(batch: Dict[str, Any])
+
+
+   .. py:method:: predict_and_target(batch: Dict[str, Any])
+
+
+   .. py:method:: sample(batch_size: Optional[int] = None, nodesxsample: Optional[torch.Tensor] = None, num_steps: Optional[int] = None, batch: Optional[Dict[str, Any]] = None, shape_emb: Optional[torch.Tensor] = None, guide_stren: Optional[float] = None, mode=None, n_frames: int = 0, **kwargs: Any)
+
+      Reverse-diffuse a batch of molecules.
+
+      ``shape_emb=None`` uses the zero latent, i.e. the classifier-free
+      unconditional branch -- so the bundled ``gen_unconditional`` config
+      works with no reference molecule. Returns the platform's EDM 4-tuple
+      ``(one_hot, charges, coords, node_mask)``.
+
+      Coordinates come out in the surface-centered frame of the reference
+      shape, which is the frame that makes generated molecules land inside
+      the reference envelope.
+
+
+
+   .. py:attribute:: T
+
+
+   .. py:attribute:: atom_mode
+      :value: 'basic'
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: default_num_steps
+
+
+   .. py:property:: device
+
+
+   .. py:attribute:: guide_stren
+      :value: 0.0
+
+
+
+   .. py:property:: model
+
+
+   .. py:attribute:: n_atom_types
+
+
+   .. py:property:: n_node_dist
+      :type: Dict[int, int]
+
+
+
+   .. py:property:: node_dist_model
+      :type: DiffSMolShapeNodeDistribution
+
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: score_model
+
+
+   .. py:attribute:: shape_dim
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_diffsmol'
+
+
+
+   .. py:attribute:: threshold_p
+      :value: None
+
+
+
+   .. py:attribute:: threshold_type
+      :value: None
+
+
+
+.. py:class:: DiffSMolShapeGenerator(task, reference_shape: Optional[str] = None, reference_key: Optional[str] = None, num_generate: int = 100, batch_size: int = 8, num_steps: Optional[int] = None, guide_stren: float = 0.0, mol_size: Optional[list] = None, output_path: str = 'generated_diffsmol', seed: int = 42, save_xyzrender_figures: bool = False, **kwargs: Any)
+
+   Shape-conditioned generator behind ``interference/gen_diffsmol_shape``.
+
+   ``GenerativeFactory`` cannot express this conditioning -- its ``cfg``
+   branch carries a run-wide list of scalar ``target_values`` validated
+   against ``len(task.condition)``, which a per-sample ``(128, 3)`` latent has
+   no expression in. A separate generator behind its own ``_target_`` is the
+   in-tree pattern for exactly this (cf. ``PharmacophoreConditionGenerator``)
+   and needs no core change: ``cli/generate.py`` only calls
+   ``hydra.utils.instantiate(cfg.interference, task=task)`` then ``run()``.
+
+   ``reference_shape`` is a ``.pt`` written by ``precompute_shapes.py`` --
+   the *same* code path the training cache came from, so the reference
+   latent is guaranteed to be in the same frame and produced by the same
+   weights. Embedding a reference molecule live is deliberately not
+   supported here.
+
+   # ponytail: reference must be pre-embedded. Keeps skimage/trimesh out of
+   # the generation path entirely; precompute is one command you already ran.
+
+
+   .. py:method:: run() -> None
+
+
+   .. py:attribute:: batch_size
+      :value: 8
+
+
+
+   .. py:attribute:: guide_stren
+      :value: 0.0
+
+
+
+   .. py:attribute:: mol_size
+
+
+   .. py:attribute:: num_generate
+      :value: 100
+
+
+
+   .. py:attribute:: num_steps
+      :value: None
+
+
+
+   .. py:attribute:: output_path
+      :value: 'generated_diffsmol'
+
+
+
+   .. py:attribute:: save_xyzrender_figures
+      :value: False
+
+
+
+   .. py:attribute:: seed
+      :value: 42
+
+
+
+   .. py:attribute:: shape_emb
+      :value: None
+
+
+
+   .. py:attribute:: shape_volume
+      :value: None
+
+
+
+   .. py:attribute:: task
+
+
+.. py:class:: DiffSMolShapeNodeDistribution(n_node_dist: Dict[int, int], volume_bins: Optional[List[float]] = None, volume_hist: Optional[Dict[int, Dict[int, int]]] = None, bin_window: int = 1)
+
+   Atom-count sampler, marginal and shape-volume-conditioned.
+
+   ``sample(n)`` draws from the marginal atom-count histogram (the duck-typed
+   contract every generic caller uses). ``sample_for_volume(volume, n)``
+   draws from the sub-histogram of training molecules whose mesh volume is
+   near ``volume``, mirroring upstream's volume-conditioned draw
+   (``sample_diffusion_no_pocket.py:242-283``).
+
+   # ponytail: keyed on trimesh mesh volume, not upstream's 0.5 A
+   # occupied-voxel count -- the precompute already has ``mesh.volume`` for
+   # free, both are monotone volume proxies, and the histogram is binned
+   # anyway. Port get_atom_stamp/get_voxel_shape/make_grid only if the
+   # generated size distribution measurably degrades.
+
+
+   .. py:method:: sample(n_samples: int = 1) -> torch.Tensor
+
+
+   .. py:method:: sample_for_volume(volume: float, n_samples: int = 1) -> torch.Tensor
+
+      Draw sizes from molecules of comparable mesh volume.
+
+      Falls back to the marginal histogram if the neighbourhood around
+      ``volume`` is empty (or if no volume histogram was built).
+
+
+
+   .. py:attribute:: bin_window
+      :value: 1
+
+
+
+   .. py:property:: max_n_nodes
+      :type: int
+
+
+
+   .. py:attribute:: n_node_dist
+
+
+   .. py:attribute:: volume_bins
+      :value: []
+
+
+
+   .. py:attribute:: volume_hist
+
+
+.. py:class:: DiffSMolTaskFactory(task_type: str = 'diffusion_diffsmol', model_config: Optional[dict] = None, shape_cache_path: Optional[str] = None, num_diffusion_timesteps: int = 1000, default_num_steps: Optional[int] = None, guide_stren: float = 0.0, threshold_type: Optional[str] = None, threshold_p: Optional[float] = None, n_volume_bins: int = 20, atom_mode: str = 'basic', dataset_stats: Optional[dict] = None, atom_vocab: Optional[list] = None, train_set: Optional[torch.utils.data.Dataset] = None, **kwargs: Any)
+
+   Instantiated by ``cli/train.py``.
+
+   Declares ``train_set`` so the declarative seam at ``cli/train.py:621``
+   injects the training dataset; that is where the atom-count / mesh-volume
+   histograms come from. No core change is involved.
+
+
+   .. py:method:: build() -> DiffSMolDiffusionTask
+
+
+   .. py:method:: compute_dataset_stats(dataset, shape_cache: dict) -> None
+
+      Build the marginal atom-count histogram and, if the shape cache
+      covers the training set, the mesh-volume-conditioned one.
+
+
+
+   .. py:attribute:: atom_mode
+      :value: 'basic'
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: dataset_stats
+
+
+   .. py:attribute:: default_num_steps
+      :value: 1000
+
+
+
+   .. py:attribute:: guide_stren
+      :value: 0.0
+
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: model_config
+
+
+   .. py:attribute:: n_volume_bins
+      :value: 20
+
+
+
+   .. py:attribute:: num_diffusion_timesteps
+      :value: 1000
+
+
+
+   .. py:attribute:: shape_cache_path
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_diffsmol'
+
+
+
+   .. py:attribute:: threshold_p
+      :value: None
+
+
+
+   .. py:attribute:: threshold_type
+      :value: None
+
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+.. py:function:: load_shape_cache(path: Optional[str]) -> Dict[str, Dict[str, Any]]
+
+   Load the precomputed ``{key: {shape_emb, shape_center, shape_volume}}``
+   map. An absent path yields an empty cache -- every molecule then falls
+   back to the unconditional (zero-latent) branch, which is exactly what
+   ``gen_unconditional`` wants and is enough to smoke-test the plumbing.
+
+
+.. py:data:: DIFFSMOL_AROMATIC_FLAGS
+   :value: [False, False, True, False, True, False, True, False, False, True, False, True, False, False, False]
+
+
+.. py:data:: DIFFSMOL_AROMATIC_VOCAB
+   :value: ['H', 'C', 'C', 'N', 'N', 'O', 'O', 'F', 'P', 'P', 'S', 'S', 'Cl', 'Br', 'I']
+
+
+.. py:data:: DIFFSMOL_ATOM_VOCAB
+   :value: ['C', 'N', 'O', 'F', 'P', 'S', 'Cl', 'Br', 'I']
+
+

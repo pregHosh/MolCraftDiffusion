@@ -1,0 +1,219 @@
+MolecularDiffusion.modules.models.diffsmol.shape_ae
+===================================================
+
+.. py:module:: MolecularDiffusion.modules.models.diffsmol.shape_ae
+
+.. autoapi-nested-parse::
+
+   DiffSMol point-cloud shape autoencoder (VN-DGCNN encoder + implicit
+   signed-distance decoder).
+
+   Ported from DiffSMol ``source/models/shape_pointcloud_modelAE.py``. Only the
+   encoder is used by the integration: it maps 512 points sampled from a
+   molecular surface mesh to a ``(128, 3)`` SO(3)-*equivariant* latent that
+   rotates with the molecule. That latent is DiffSMol's conditioning signal.
+
+   Two deliberate departures from upstream, both required for correctness:
+
+   1. **``blocks`` is an ``nn.ModuleList``, not a plain Python list.** Upstream
+      stores the 6 encoder blocks in a bare ``list``, so PyTorch never registers
+      them: they are absent from ``state_dict()``, were never saved into the
+      released ``se.pt``, and are therefore re-randomised on every process start.
+      That makes upstream's shape latent irreproducible across runs -- fatal
+      here, where the precompute, the training run and the generation run are
+      three separate processes that must agree on the same embedding function.
+      Registering them properly plus vendoring a checkpoint that *contains* them
+      (see ``checkpoints/shape_ae_pointcloud.pt``) fixes it.
+   2. **No ``easydict``.** The vendored checkpoint stores a plain dict config.
+
+   The AE is frozen and eval-only here; nothing in this file is trained.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffsmol.shape_ae.DEFAULT_SHAPE_AE_CHECKPOINT
+   MolecularDiffusion.modules.models.diffsmol.shape_ae.EPS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffsmol.shape_ae.DecoderInner
+   MolecularDiffusion.modules.models.diffsmol.shape_ae.PointCloudAE
+   MolecularDiffusion.modules.models.diffsmol.shape_ae.VNDGCNNEncoder
+   MolecularDiffusion.modules.models.diffsmol.shape_ae.VNResnetEncoder
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffsmol.shape_ae.load_shape_ae
+
+
+Module Contents
+---------------
+
+.. py:class:: DecoderInner(dim: int = 3, z_dim: int = 128, hidden_size: int = 128, layer_num: int = 4, loss_type: str = 'occupancy', leaky: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Implicit decoder: (query points, VN latent) -> signed distance.
+
+   Unused by training/generation -- kept so the vendored checkpoint loads
+   strictly and so gradient-guidance can be added later without a re-port.
+
+
+   .. py:method:: forward(p: torch.Tensor, z: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: actvn
+
+
+   .. py:attribute:: blocks
+
+
+   .. py:attribute:: fc_in
+
+
+   .. py:attribute:: fc_out
+
+
+   .. py:attribute:: layer_num
+      :value: 4
+
+
+
+   .. py:attribute:: loss_type
+      :value: 'occupancy'
+
+
+
+   .. py:attribute:: z_dim
+      :value: 128
+
+
+
+.. py:class:: PointCloudAE(config: Dict[str, Any])
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   VN point-cloud autoencoder. Only ``encode`` is used downstream.
+
+
+   .. py:method:: encode(point_clouds: torch.Tensor) -> torch.Tensor
+
+      ``point_clouds``: ``[B, N, 3]``, surface-centered.
+
+      Returns the equivariant latent ``[B, latent_dim, 3]``.
+
+
+
+   .. py:method:: forward(point_clouds: torch.Tensor, query_points: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: encoder
+
+
+   .. py:attribute:: generator
+
+
+   .. py:attribute:: loss_type
+
+
+.. py:class:: VNDGCNNEncoder(hidden_dim: int, latent_dim: int, layer_num: int, num_k: int)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   VN-DGCNN encoder: centered point cloud -> ``(latent_dim, 3)`` latent.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+      ``x``: ``[B, 1, N, 3]`` (already surface-centered).
+
+      Returns ``[B, latent_dim, 3]``.
+
+
+
+   .. py:attribute:: blocks
+
+
+   .. py:attribute:: conv_c
+
+
+   .. py:attribute:: conv_pos
+
+
+   .. py:attribute:: layer_num
+
+
+   .. py:attribute:: num_k
+
+
+   .. py:attribute:: pool
+
+
+.. py:class:: VNResnetEncoder(hidden_dim: int, latent_dim: int, layer_num: int, num_k: int)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Alternative VN-ResNet encoder (``encoder: VN_Resnet``). Not used by the
+   shipped checkpoint; kept for config parity.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: actvn_c
+
+
+   .. py:attribute:: blocks
+
+
+   .. py:attribute:: conv_pos
+
+
+   .. py:attribute:: fc_c
+
+
+   .. py:attribute:: fc_pos
+
+
+   .. py:attribute:: layer_num
+
+
+   .. py:attribute:: num_k
+
+
+   .. py:attribute:: pool
+
+
+.. py:function:: load_shape_ae(checkpoint: str | None = None, device: str | torch.device = 'cpu') -> PointCloudAE
+
+   Load the frozen shape autoencoder from a vendored checkpoint.
+
+   The checkpoint is a plain ``{"config": {...}, "model": state_dict}`` dict
+   (no ``easydict``). Parameters are detached and the module is put in eval
+   mode -- the AE is a fixed featuriser, never trained here.
+
+
+.. py:data:: DEFAULT_SHAPE_AE_CHECKPOINT
+   :value: ''
+
+
+.. py:data:: EPS
+   :value: 1e-06
+
+

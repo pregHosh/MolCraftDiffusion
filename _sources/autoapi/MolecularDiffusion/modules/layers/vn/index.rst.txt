@@ -1,0 +1,24 @@
+MolecularDiffusion.modules.layers.vn
+====================================
+
+.. py:module:: MolecularDiffusion.modules.layers.vn
+
+.. autoapi-nested-parse::
+
+   Reusable Vector Neuron (VN) SO(3)-equivariant building blocks.
+
+   Ported from DiffSMol (``source/models/shape_vn_layers.py``); originally from
+   Deng et al., "Vector Neurons" (ICCV 2021). Architecture-agnostic, so they
+   live under ``modules/layers`` rather than inside a single model package.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/layers/vn/vn_layers/index
+
+

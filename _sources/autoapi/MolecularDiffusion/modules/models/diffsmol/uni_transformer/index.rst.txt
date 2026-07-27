@@ -1,0 +1,335 @@
+MolecularDiffusion.modules.models.diffsmol.uni_transformer
+==========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.diffsmol.uni_transformer
+
+.. autoapi-nested-parse::
+
+   DiffSMol's shape-conditioned SE(3)-equivariant backbone (``uni_o2``).
+
+   Ported from DiffSMol ``source/models/uni_transformer.py``, bond-free.
+
+   Dropped relative to upstream (per the approved INTEGRATION_PLAN gate
+   resolution): the ``ligand_bond_index``/``ligand_bond_type`` arguments, the
+   per-layer bond CE loss, and the ``cov_radius`` cutoff mode. None of these fed
+   the geometry path -- upstream already rebuilds a kNN graph from scratch inside
+   every block (``_connect_graph``), never using the ground-truth bond graph.
+
+   What is *kept* is ``_build_edge_type``: a purely distance-and-element based
+   bond-order heuristic computed from the current (noisy) coordinates. It reads
+   no ground-truth bonds, so it survives the bond drop intact and still supplies
+   the 5-wide edge feature the attention layers expect.
+
+   **``pred_bond_type`` (default ``False``, opt-in).** Upstream does not merely
+   *predict* bond types, it feeds them back: ``uni_transformer.py:504`` does
+   ``edge_type = F.softmax(next_edge_type, dim=-1)`` inside the layer loop, so
+   layers 1..N-1 were trained on iteratively refined *predicted* bond types as
+   their 5-dim edge feature, not on the distance heuristic. Loading upstream's
+   released ``diffusion.pt`` without the ``b_inference`` head would therefore
+   feed every layer an input distribution it never saw -- a silent correctness
+   failure, not a crash. Switching ``pred_bond_type: true`` restores the head
+   and that feedback loop, which is what makes the port checkpoint-compatible.
+
+   Bond *supervision* (the bond-type CE / bond-distance / bond-angle / torsion
+   losses) still needs a ground-truth bond channel the data layer does not have,
+   and stays out of scope. It is not needed here: upstream's
+   ``_pred_edge_type(..., if_test=True)`` path -- the only one this port
+   implements -- produces the feedback features without any ground truth.
+
+   The shape latent enters at every layer, twice: as an invariant scalar
+   (``InvariantShapeEmbLayer``) and as raw equivariant 3-vectors mixed into the
+   vector channel. That is why the latent must be in the same rotational frame
+   as the coordinates.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffsmol.uni_transformer.BOND_MARGINS
+   MolecularDiffusion.modules.models.diffsmol.uni_transformer.EPS
+   MolecularDiffusion.modules.models.diffsmol.uni_transformer.N_BOND_TYPES
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffsmol.uni_transformer.AttentionLayerO2TwoUpdateNodeGeneral
+   MolecularDiffusion.modules.models.diffsmol.uni_transformer.BaseGVPAttLayer
+   MolecularDiffusion.modules.models.diffsmol.uni_transformer.InvariantShapeEmbLayer
+   MolecularDiffusion.modules.models.diffsmol.uni_transformer.UniTransformerO2TwoUpdateGeneral
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffsmol.uni_transformer.build_bond_length_tensors
+   MolecularDiffusion.modules.models.diffsmol.uni_transformer.build_diffsmol_bond_tensors
+
+
+Module Contents
+---------------
+
+.. py:class:: AttentionLayerO2TwoUpdateNodeGeneral(input_dim: tuple[int, int], hidden_dim: tuple[int, int], output_dim: tuple[int, int], n_heads: int, num_r_gaussian: int, edge_feat_dim: int, shape_dim: int, shape_latent_dim: int, act_fn: str = 'relu', norm: bool = True, r_min: float = 0.0, r_max: float = 10.0, output_norm: bool = True, use_shape_vec_mul: bool = True, use_residue: bool = True, pred_bond_type: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Thin wrapper: distance expansion + edge-feature outer product, then
+   one ``BaseGVPAttLayer``.
+
+
+   .. py:method:: forward(h: torch.Tensor, vec: torch.Tensor, x: torch.Tensor, ligand_emb: torch.Tensor, edge_attr: torch.Tensor, edge_index: torch.Tensor, ligand_shape_emb: torch.Tensor, invar_ligand_shape: torch.Tensor)
+
+
+   .. py:attribute:: distance_expansion
+
+
+   .. py:attribute:: edge_feat_dim
+
+
+   .. py:attribute:: gvp_layer
+
+
+   .. py:attribute:: output_dim
+
+
+   .. py:attribute:: pred_bond_type
+      :value: False
+
+
+
+.. py:class:: BaseGVPAttLayer(input_dim: tuple[int, int], hidden_dim: tuple[int, int], output_dim: tuple[int, int], shape_dim: int, shape_latent_dim: int, n_heads: int, edge_feat_dim: int, r_feat_dim: int, mess_gvp_layer_num: int = 3, node_gvp_layer_num: int = 3, act_fn: str = 'relu', use_shape_vec_mul: bool = True, use_residue: bool = True, mlp_norm: bool = True, output_norm: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   One shape-conditioned GVP attention layer.
+
+
+   .. py:method:: embed_ligand_shape(scalar_feat: torch.Tensor, vec_feat: torch.Tensor, ligand_shape: torch.Tensor, invar_ligand_shape: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: embed_message_att_weight(mess_scalar_emb: torch.Tensor, mess_vec_emb: torch.Tensor, node_scalar_emb: torch.Tensor, node_vec_emb: torch.Tensor, edge_index: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: forward(scalar_feat: torch.Tensor, vec_feat: torch.Tensor, r_feat: torch.Tensor, rel_x: torch.Tensor, x: torch.Tensor, ligand_emb: torch.Tensor, edge_feat: Optional[torch.Tensor], edge_index: torch.Tensor, ligand_shape: torch.Tensor, invar_ligand_shape: torch.Tensor)
+
+
+   .. py:method:: message_passing(scalar_emb: torch.Tensor, vec_emb: torch.Tensor, x: torch.Tensor, ligand_emb: torch.Tensor, edge_feat: Optional[torch.Tensor], edge_index: torch.Tensor, r_feat: torch.Tensor, rel_x: torch.Tensor)
+
+
+   .. py:attribute:: edge_feat_dim
+
+
+   .. py:attribute:: hidden_dim
+
+
+   .. py:attribute:: hk_func
+
+
+   .. py:attribute:: hq_func
+
+
+   .. py:attribute:: input_dim
+
+
+   .. py:attribute:: message_layer
+
+
+   .. py:attribute:: n_heads
+
+
+   .. py:attribute:: node_output_layer
+
+
+   .. py:attribute:: output_dim
+
+
+   .. py:attribute:: output_norm
+      :value: True
+
+
+
+   .. py:attribute:: shape_dim
+
+
+   .. py:attribute:: shape_emb_layer
+
+
+   .. py:attribute:: shape_in
+
+
+   .. py:attribute:: shape_scalar_layer
+
+
+   .. py:attribute:: use_residue
+      :value: True
+
+
+
+   .. py:attribute:: use_shape_vec_mul
+      :value: True
+
+
+
+.. py:class:: InvariantShapeEmbLayer(input_dim: int, output_dim: int, act_fn: str = 'relu', norm: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Collapse the equivariant ``(shape_dim, 3)`` latent to an invariant
+   ``shape_latent_dim`` scalar by projecting onto its own mean direction.
+
+
+   .. py:method:: forward(shape_h: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: hidden_layer
+
+
+.. py:class:: UniTransformerO2TwoUpdateGeneral(num_blocks: int, num_layers: int, scalar_hidden_dim: int, vec_hidden_dim: int, shape_dim: int, shape_latent_dim: int, atom_vocab: list[str], n_heads: int = 1, k: int = 32, num_r_gaussian: int = 20, edge_feat_dim: int = 5, act_fn: str = 'relu', norm: bool = True, r_max: float = 10.0, use_shape_vec_mul: bool = False, use_residue: bool = True, pred_bond_type: bool = False, aromatic_flags: Optional[list[bool]] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   ``uni_o2`` backbone; bond-free unless ``pred_bond_type`` is set.
+
+
+   .. py:method:: forward(v: torch.Tensor, h: torch.Tensor, x: torch.Tensor, batch_ligand: torch.Tensor, ligand_shape: torch.Tensor, return_all: bool = False) -> Dict[str, torch.Tensor]
+
+
+   .. py:attribute:: act_fn
+      :value: 'relu'
+
+
+
+   .. py:attribute:: aromatic_flags
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: base_block
+
+
+   .. py:attribute:: edge_feat_dim
+      :value: 5
+
+
+
+   .. py:attribute:: invariant_shape_layer
+
+
+   .. py:attribute:: k
+      :value: 32
+
+
+
+   .. py:attribute:: n_heads
+      :value: 1
+
+
+
+   .. py:attribute:: norm
+      :value: True
+
+
+
+   .. py:attribute:: num_blocks
+
+
+   .. py:attribute:: num_layers
+
+
+   .. py:attribute:: num_r_gaussian
+      :value: 20
+
+
+
+   .. py:attribute:: pred_bond_type
+      :value: False
+
+
+
+   .. py:attribute:: r_max
+      :value: 10.0
+
+
+
+   .. py:attribute:: scalar_hidden_dim
+
+
+   .. py:attribute:: shape_dim
+
+
+   .. py:attribute:: shape_latent_dim
+
+
+   .. py:attribute:: use_residue
+      :value: True
+
+
+
+   .. py:attribute:: use_shape_vec_mul
+      :value: False
+
+
+
+   .. py:attribute:: vec_hidden_dim
+
+
+.. py:function:: build_bond_length_tensors(atom_vocab: list[str]) -> torch.Tensor
+
+   Reference bond lengths per (element_i, element_j) and bond order.
+
+   Returns ``[4, V, V]`` in 0.01 A units: single / double / triple /
+   aromatic. Missing pairs get ``-1``, upstream's sentinel for "this bond
+   order does not exist for this pair" (the heuristic's
+   ``dist - ref < margin`` test then never fires for real distances).
+
+   The aromatic slice is all ``-1``: aromaticity is a bond-graph property
+   and was dropped with the bonds, so the vocab is plain elements.
+   Reuses the platform's own bond-length tables rather than re-vendoring
+   DiffSMol's copies of them.
+
+
+.. py:function:: build_diffsmol_bond_tensors(elements: list[str], aromatic_flags: list[bool]) -> torch.Tensor
+
+   Upstream ``construct_bond_tensors('add_aromatic')``, replicated exactly.
+
+   ``elements[i]``/``aromatic_flags[i]`` describe class ``i`` of the 15-class
+   ``(element, is_aromatic)`` vocabulary. A pair that is aromatic on *both*
+   ends gets single + aromatic reference lengths and no double/triple; every
+   other pair gets single/double/triple and no aromatic.
+
+   Used only by the ``pred_bond_type`` / ``add_aromatic`` checkpoint-
+   compatible path. ``build_bond_length_tensors`` above stays the element-
+   vocab default and is untouched.
+
+   # ponytail: upstream's loop writes ``triple_bond_tensor[i, j]`` twice and
+   # never ``[j, i]`` (analyze.py:102-103), so its triple-bond table is
+   # upper-triangular and a triple bond is only ever detected when
+   # ``class(src) <= class(dst)``. Replicated deliberately: the released
+   # checkpoint was trained against exactly that asymmetry. Do not "fix" it
+   # without retraining.
+
+
+.. py:data:: BOND_MARGINS
+   :value: (10, 5, 3, 5)
+
+
+.. py:data:: EPS
+   :value: 1e-06
+
+
+.. py:data:: N_BOND_TYPES
+   :value: 5
+
+

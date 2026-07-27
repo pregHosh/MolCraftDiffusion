@@ -1,0 +1,119 @@
+MolecularDiffusion.modules.models.diffsmol.shape_utils
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.models.diffsmol.shape_utils
+
+.. autoapi-nested-parse::
+
+   Molecule -> surface mesh -> point cloud -> equivariant shape latent.
+
+   Ported from DiffSMol ``source/utils/shape.py`` (the ``pointAE_shape`` path
+   only). This is the *only* module in the integration that needs optional
+   dependencies, and it is **precompute-only**: training and generation read a
+   cached ``.pt`` of tensors and never import this module.
+
+   Optional extras (``pip install '.[shape]' --no-deps``):
+     * ``scikit-image``  -- marching-cubes molecular surface
+     * ``trimesh``       -- mesh handling, area-uniform surface sampling, volume
+
+   Neither ``oddt`` nor ``openbabel`` is required at runtime.
+   ``generate_surface_marching_cubes`` below is a faithful inline port of
+   ``oddt.surface.generate_surface_marching_cubes`` (oddt 0.7), which is dead
+   in any modern env: it imports ``skimage.measure.marching_cubes_lewiner``,
+   removed in scikit-image 0.19, and silently degrades to unusable. The only
+   thing it needed openbabel for was a van-der-Waals radius lookup, which is
+   hardcoded below (``OPENBABEL_VDW_RADII``) straight from openbabel's table.
+   Modern ``skimage.measure.marching_cubes`` *is* the Lewiner algorithm --
+   it became the default when the ``_lewiner`` alias was retired -- so this is
+   numerically faithful to what upstream ran.
+
+   ``pytorch3d`` is *not* required either: upstream used it for exactly two
+   calls, ``sample_points_from_meshes`` (replaced by ``trimesh.Trimesh.sample``,
+   the same area-uniform face sampling) and ``Meshes.get_bounding_boxes``
+   (which only fed the gradient guidance this integration does not port).
+
+   Frame convention -- this is the correctness-critical part. The returned
+   ``shape_center`` is the centroid of the **sampled surface points**, not the
+   atom centroid and not the centre of mass. Upstream subtracts exactly this
+   from both the point cloud and the ligand coordinates
+   (``shape.py:341`` / ``shape_mol_dataset.py:115``). The training task must
+   subtract the same ``shape_center`` from its coordinates, or the latent and
+   the coordinates end up in different frames and conditioning silently breaks.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffsmol.shape_utils.OPENBABEL_VDW_RADII
+   MolecularDiffusion.modules.models.diffsmol.shape_utils.POINT_CLOUD_SAMPLES
+   MolecularDiffusion.modules.models.diffsmol.shape_utils.ang
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffsmol.shape_utils.check_vdw_radii
+   MolecularDiffusion.modules.models.diffsmol.shape_utils.generate_surface_marching_cubes
+   MolecularDiffusion.modules.models.diffsmol.shape_utils.get_mesh
+   MolecularDiffusion.modules.models.diffsmol.shape_utils.read_xyz
+   MolecularDiffusion.modules.models.diffsmol.shape_utils.shape_from_atoms
+
+
+Module Contents
+---------------
+
+.. py:function:: check_vdw_radii() -> None
+
+   Assert ``OPENBABEL_VDW_RADII`` matches openbabel's table.
+
+   A no-op (returns silently) when openbabel is not importable -- it is not
+   a dependency of this module, only the provenance of the numbers.
+
+
+.. py:function:: generate_surface_marching_cubes(symbols: Sequence[str], coords: numpy.ndarray, scaling: float = 1.0, probe_radius: float = 1.4) -> Tuple[numpy.ndarray, numpy.ndarray]
+
+   Marching-cubes molecular surface as ``(verts, faces)``.
+
+   Inline port of ``oddt.surface.generate_surface_marching_cubes``. Like
+   upstream it **ignores hydrogens** -- consistent with the integration's
+   heavy-atoms-only decision, where the surface, the point cloud and the
+   diffused atom set must describe the identical atoms.
+
+
+.. py:function:: get_mesh(symbols: Sequence[str], coords: numpy.ndarray, scaling: float = 1.0, probe_radius: float = 1.4)
+
+   Molecular surface mesh (``trimesh.Trimesh``) via marching cubes.
+
+
+.. py:function:: read_xyz(path: str, with_hydrogen: bool = False)
+
+   Minimal ``.xyz`` reader returning ``(symbols, coords)``.
+
+   ``with_hydrogen=False`` mirrors the dataset's H filter so the surface,
+   the point cloud and the diffused atom set describe the identical atoms.
+   (``generate_surface_marching_cubes`` drops H a second time regardless,
+   matching upstream oddt behaviour.)
+
+
+.. py:function:: shape_from_atoms(symbols: Sequence[str], coords: numpy.ndarray, shape_ae, num_samples: int = POINT_CLOUD_SAMPLES, device: str | torch.device = 'cpu') -> Dict[str, Any]
+
+   Full chain for one molecule.
+
+   Returns ``{"shape_emb": (128, 3), "shape_center": (3,),
+   "shape_volume": float}``, all CPU tensors/floats ready to cache.
+
+
+.. py:data:: OPENBABEL_VDW_RADII
+   :type:  Dict[str, float]
+
+.. py:data:: POINT_CLOUD_SAMPLES
+   :value: 512
+
+
+.. py:data:: ang
+
