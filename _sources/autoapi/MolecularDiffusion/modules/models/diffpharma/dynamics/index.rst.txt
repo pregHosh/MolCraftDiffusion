@@ -1,0 +1,118 @@
+MolecularDiffusion.modules.models.diffpharma.dynamics
+=====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.diffpharma.dynamics
+
+.. autoapi-nested-parse::
+
+   DiffPharma denoiser: four node-set encoders around a three-graph EGNN.
+
+   Port of ``others/DiffPharma/equivariant_diffusion/dynamics.py``. Only the
+   ``egnn_dynamics`` mode is kept (the ``gnn_dynamics`` branch is unreachable in
+   every shipped config and its ``GNN`` backbone is not part of the released
+   checkpoint).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffpharma.dynamics.EGNNDynamics
+
+
+Module Contents
+---------------
+
+.. py:class:: EGNNDynamics(atom_nf, residue_nf, interh_nf, interhp_nf, n_dims, joint_nf=16, hidden_nf=64, device='cpu', act_fn=torch.nn.SiLU(), n_layers=4, attention=False, condition_time=True, tanh=False, norm_constant=0, inv_sublayers=2, sin_embedding=False, normalization_factor=100, aggregation_method='sum', update_pocket_coords=False, edge_cutoff_ligand=None, edge_cutoff_pocket=None, edge_cutoff_interaction=None, reflection_equivariant=True, edge_embedding_dim=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   ``forward`` returns ``(lig_out, pocket_out)``, both flat + scatter-masked.
+
+   ``lig_out`` is ``(n_lig_total, 3 + atom_nf)``: the predicted epsilon for
+   the ligand. ``pocket_out`` is returned for signature compatibility with
+   the joint (unconditional) mode and is unused when the pocket is context.
+
+
+   .. py:method:: forward(xh_atoms, xh_residues, xh_intersh, xh_intershp, t, mask_atoms, mask_residues, mask_intersh, mask_intershp)
+
+
+   .. py:method:: get_edges(batch_mask_ligand, batch_mask_pocket, x_ligand, x_pocket)
+
+
+   .. py:attribute:: atom_decoder
+
+
+   .. py:attribute:: atom_encoder
+
+
+   .. py:attribute:: condition_time
+      :value: True
+
+
+
+   .. py:attribute:: device
+      :value: 'cpu'
+
+
+
+   .. py:attribute:: edge_cutoff_i
+      :value: None
+
+
+
+   .. py:attribute:: edge_cutoff_l
+      :value: None
+
+
+
+   .. py:attribute:: edge_cutoff_p
+      :value: None
+
+
+
+   .. py:attribute:: edge_embedding
+
+
+   .. py:attribute:: edge_nf
+      :value: None
+
+
+
+   .. py:attribute:: egnn
+
+
+   .. py:attribute:: interh_decoder
+
+
+   .. py:attribute:: interh_encoder
+
+
+   .. py:attribute:: interhp_decoder
+
+
+   .. py:attribute:: interhp_encoder
+
+
+   .. py:attribute:: n_dims
+
+
+   .. py:attribute:: node_nf
+      :value: 17
+
+
+
+   .. py:attribute:: residue_decoder
+
+
+   .. py:attribute:: residue_encoder
+
+
+   .. py:attribute:: update_pocket_coords
+      :value: False
+
+
+

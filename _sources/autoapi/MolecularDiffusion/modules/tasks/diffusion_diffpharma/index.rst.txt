@@ -1,0 +1,238 @@
+MolecularDiffusion.modules.tasks.diffusion_diffpharma
+=====================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_diffpharma
+
+.. autoapi-nested-parse::
+
+   DiffPharma task: pocket- and pharmacophore-conditioned ligand diffusion.
+
+   Three objects live here, mirroring the platform's usual layout:
+
+   * :class:`DiffPharmaTask` -- the duck-typed Task (docs/adding_new_models.md
+     Section 2.1) wrapping :class:`~...models.diffpharma.ConditionalDDPM`.
+   * :class:`DiffPharmaTaskFactory` -- the ``_target_`` of
+     ``configs/tasks/diffusion_diffpharma.yaml``.
+   * :class:`DiffPharmaPocketGenerator` -- the ``_target_`` of
+     ``configs/interference/gen_diffpharma_pocket.yaml``. ``GenerativeFactory``
+     cannot express "sample inside this pocket"; a generator behind its own
+     ``_target_`` is the in-tree pattern for that (cf. ``DiffSMolShapeGenerator``)
+     and needs no core change -- ``cli/generate.py`` only does
+     ``instantiate(cfg.interference, task=task)`` then ``run()``.
+
+   The batch is NOT a PointCloud dict: DiffPharma needs four node sets
+   (ligand, pocket, H-bond particles, hydrophobic particles), flat-concatenated
+   with scatter masks. See ``data/component/diffpharma_data.py``.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_diffpharma.DIFFPHARMA_ATOM_VOCAB
+   MolecularDiffusion.modules.tasks.diffusion_diffpharma.FLOAT_TYPE
+   MolecularDiffusion.modules.tasks.diffusion_diffpharma.INT_TYPE
+   MolecularDiffusion.modules.tasks.diffusion_diffpharma.NODE_SETS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator
+   MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask
+   MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: DiffPharmaPocketGenerator(task, pocket_db: Optional[str] = None, pocket_index: int = 0, pocket_pdb: Optional[str] = None, ref_sdf: Optional[str] = None, num_generate: int = 20, batch_size: int = 4, num_steps: Optional[int] = None, mol_size: Optional[list] = None, output_path: str = 'generated_diffpharma', seed: int = 42, device: Optional[str] = None, **kwargs: Any)
+
+   Pocket-conditioned generation behind ``interference/gen_diffpharma_pocket``.
+
+   Two mutually exclusive pocket sources:
+
+   * ``pocket_db`` + ``pocket_index`` -- a row of a converted ASE db
+     (``scripts/convert_dataset.py``), read with ``center=False``.
+   * ``pocket_pdb`` + ``ref_sdf`` -- a novel pocket, built on the fly by
+     ``data.component.diffpharma_prep.complex_from_files``. The SDF is
+     required, not optional: it is both the 8 A pocket-selection reference
+     and the ligand ODDT detects the interactions against.
+
+   Either way the downstream dict is identical.
+
+
+   .. py:method:: run() -> None
+
+
+   .. py:attribute:: batch_size
+      :value: 4
+
+
+
+   .. py:attribute:: device
+      :value: 'cuda'
+
+
+
+   .. py:attribute:: mol_size
+
+
+   .. py:attribute:: num_generate
+      :value: 20
+
+
+
+   .. py:attribute:: num_steps
+      :value: None
+
+
+
+   .. py:attribute:: output_path
+      :value: 'generated_diffpharma'
+
+
+
+   .. py:attribute:: pocket_db
+      :value: None
+
+
+
+   .. py:attribute:: pocket_index
+      :value: 0
+
+
+
+   .. py:attribute:: pocket_pdb
+      :value: None
+
+
+
+   .. py:attribute:: ref_sdf
+      :value: None
+
+
+
+   .. py:attribute:: seed
+      :value: 42
+
+
+
+   .. py:attribute:: task
+
+
+.. py:class:: DiffPharmaTask(model: MolecularDiffusion.modules.models.diffpharma.ConditionalDDPM, atom_vocab: Optional[List[str]] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Task contract around ``ConditionalDDPM``.
+
+
+   .. py:method:: evaluate(pred, target)
+
+
+   .. py:method:: forward(batch)
+
+
+   .. py:method:: predict_and_target(batch)
+
+
+   .. py:method:: sample(batch_size=None, nodesxsample=None, num_steps=None, batch=None, **kwargs)
+
+      Sample ligands inside the pocket carried by ``batch``.
+
+      ``batch`` must hold the ``pocket_*``/``interh_*``/``interhp_*`` keys
+      of a collated DiffPharma batch (the generator builds it). There is no
+      unconditional mode -- mirroring upstream's own hard refusal.
+
+      Returns ``(one_hot, charges, coords, node_mask)`` padded to
+      ``(B, N, .)``, in the ORIGINAL pocket frame (the reverse process
+      re-centres on the ligand CoM; the shift is undone here).
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:property:: device
+
+
+   .. py:attribute:: model
+
+
+   .. py:property:: n_node_dist
+      :type: Dict[int, float]
+
+
+      Ligand-size marginal. Not on the generation path (see module doc).
+
+
+   .. py:attribute:: node_dist_model
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: split
+      :value: 'train'
+
+
+
+.. py:class:: DiffPharmaTaskFactory(task_type: str = 'diffusion_diffpharma', size_distribution_path: Optional[str] = None, atom_nf: int = 11, residue_nf: int = 11, interh_nf: int = 3, interhp_nf: int = 6, n_dims: int = 3, joint_nf: int = 128, hidden_nf: int = 256, n_layers: int = 8, attention: bool = True, tanh: bool = True, norm_constant: float = 1, inv_sublayers: int = 1, sin_embedding: bool = False, aggregation_method: str = 'sum', normalization_factor: float = 100, edge_cutoff_ligand: Optional[float] = None, edge_cutoff_pocket: Optional[float] = 5.0, edge_cutoff_interaction: Optional[float] = 5.0, reflection_equivariant: bool = False, diffusion_steps: int = 500, diffusion_noise_schedule: str = 'polynomial_2', diffusion_noise_precision: float = 0.0005, diffusion_loss_type: str = 'l2', normalize_factors=(1, 1), atom_vocab: Optional[List[str]] = None, **kwargs: Any)
+
+   Hydra entry point for ``configs/tasks/diffusion_diffpharma.yaml``.
+
+
+   .. py:method:: build() -> DiffPharmaTask
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: condition_names
+      :type:  List[str]
+      :value: []
+
+
+
+   .. py:attribute:: ddpm_kwargs
+
+
+   .. py:attribute:: egnn_kwargs
+
+
+   .. py:attribute:: size_distribution_path
+      :value: None
+
+
+
+   .. py:attribute:: task
+      :type:  Optional[DiffPharmaTask]
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_diffpharma'
+
+
+
+.. py:data:: DIFFPHARMA_ATOM_VOCAB
+   :value: ['C', 'N', 'O', 'S', 'B', 'Br', 'Cl', 'P', 'I', 'F', 'others']
+
+
+.. py:data:: FLOAT_TYPE
+
+.. py:data:: INT_TYPE
+
+.. py:data:: NODE_SETS
+   :value: ('lig', 'pocket', 'interh', 'interhp')
+
+

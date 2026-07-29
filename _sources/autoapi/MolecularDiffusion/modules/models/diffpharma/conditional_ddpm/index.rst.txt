@@ -1,0 +1,261 @@
+MolecularDiffusion.modules.models.diffpharma.conditional_ddpm
+=============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.diffpharma.conditional_ddpm
+
+.. autoapi-nested-parse::
+
+   Pocket-conditioned DDPM for DiffPharma.
+
+   Port of ``ConditionalDDPM`` from
+   ``others/DiffPharma/equivariant_diffusion/conditional_model.py`` (EDM /
+   DiffSBDD lineage): epsilon parametrisation, predefined polynomial noise
+   schedule, only the ligand is noised while pocket and both pharmacophore
+   node sets stay clean and act as fixed context.
+
+   Dropped from the upstream file (all dead or broken in this repo's config):
+   ``SimpleConditionalDDPM``, ``GammaNetwork`` (learned schedule),
+   ``partially_noised_ligand`` / ``sample_p_zt_given_zs`` /
+   ``sample_combined_position_feature_noise`` /
+   ``sample_center_gravity_zero_gaussian_batch`` -- all of which call
+   pre-DiffPharma 2-node-set signatures and would raise on entry.
+
+   One upstream bug is fixed: the CoM-drift correction at the end of
+   ``sample_given_pocket`` called ``remove_mean_batch`` with 4 of its 8
+   arguments, i.e. it crashed whenever it triggered.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffpharma.conditional_ddpm.ConditionalDDPM
+   MolecularDiffusion.modules.models.diffpharma.conditional_ddpm.PredefinedNoiseSchedule
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffpharma.conditional_ddpm.clip_noise_schedule
+   MolecularDiffusion.modules.models.diffpharma.conditional_ddpm.cosine_beta_schedule
+   MolecularDiffusion.modules.models.diffpharma.conditional_ddpm.polynomial_schedule
+
+
+Module Contents
+---------------
+
+.. py:class:: ConditionalDDPM(dynamics, atom_nf, residue_nf, interh_nf, interhp_nf, n_dims, size_histogram, timesteps=1000, parametrization='eps', noise_schedule='polynomial_2', noise_precision=0.0001, loss_type='l2', norm_values=(1.0, 1.0), norm_biases=(None, 0.0), virtual_node_idx=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Conditional diffusion module (pocket + pharmacophore particles as context).
+
+
+   .. py:method:: SNR(gamma)
+      :staticmethod:
+
+
+
+   .. py:method:: alpha(gamma, target_tensor)
+
+
+   .. py:method:: assert_mean_zero_with_mask(x, node_mask, eps=1e-10)
+      :staticmethod:
+
+
+
+   .. py:method:: cdf_standard_gaussian(x)
+      :staticmethod:
+
+
+
+   .. py:method:: check_issues_norm_values(num_stdevs=8)
+
+
+   .. py:method:: compute_x_pred(net_out, zt, gamma_t, batch_mask)
+
+
+   .. py:method:: delta_log_px(num_nodes)
+
+
+   .. py:method:: forward(ligand, pocket, interh, interhp, return_info=False)
+
+      Compute the loss terms (see the task module for how they combine).
+
+
+
+   .. py:method:: gaussian_KL(q_mu_minus_p_mu_squared, q_sigma, p_sigma, d)
+      :staticmethod:
+
+
+
+   .. py:method:: inflate_batch_array(array, target)
+      :staticmethod:
+
+
+
+   .. py:method:: kl_prior(xh_lig, mask_lig, num_nodes)
+
+
+   .. py:method:: log_constants_p_x_given_z0(n_nodes, device)
+
+
+   .. py:method:: log_pN(N_lig, N_pocket)
+
+
+   .. py:method:: log_pxh_given_z0_without_constants(ligand, z_0_lig, eps_lig, net_out_lig, gamma_0, epsilon=1e-10)
+
+
+   .. py:method:: noised_representation(xh_lig, xh0_pocket, xh0_interh, xh0_interhp, lig_mask, pocket_mask, interh_mask, interhp_mask, gamma_t)
+
+
+   .. py:method:: normalize(ligand=None, pocket=None)
+
+
+   .. py:method:: remove_mean_batch(x_lig, x_pocket, x_interh, x_interhp, lig_indices, pocket_indices, interh_indices, interhp_indices)
+      :classmethod:
+
+
+      Subtract the ligand centre of mass from every node set.
+
+
+
+   .. py:method:: sample(*args, **kwargs)
+      :abstractmethod:
+
+
+
+   .. py:method:: sample_gaussian(size, device)
+      :staticmethod:
+
+
+
+   .. py:method:: sample_given_pocket(pocket, interh, interhp, num_nodes_lig, return_frames=1, timesteps=None)
+
+      Reverse-diffuse a ligand inside ``pocket``.
+
+      Returns ``(out_lig, out_pocket, lig_mask, pocket_mask)`` -- flat,
+      scatter-masked tensors, NOT ``(B, N, .)``.
+
+
+
+   .. py:method:: sample_normal_zero_com(mu_lig, xh0_pocket, xh0_interh, xh0_interhp, sigma, lig_mask, pocket_mask, interh_mask, interhp_mask, fix_noise=False)
+
+
+   .. py:method:: sample_p_xh_given_z0(z0_lig, xh0_pocket, xh0_interh, xh0_interhp, lig_mask, pocket_mask, interh_mask, interhp_mask, batch_size, fix_noise=False)
+
+
+   .. py:method:: sample_p_zs_given_zt(s, t, zt_lig, xh0_pocket, xh0_interh, xh0_interhp, ligand_mask, pocket_mask, interh_mask, interhp_mask, fix_noise=False)
+
+
+   .. py:method:: sigma(gamma, target_tensor)
+
+
+   .. py:method:: sigma_and_alpha_t_given_s(gamma_t, gamma_s, target_tensor)
+
+
+   .. py:method:: subspace_dimensionality(input_size)
+
+
+   .. py:method:: sum_except_batch(x, indices)
+      :staticmethod:
+
+
+
+   .. py:method:: unnormalize(x, h_cat)
+
+
+   .. py:method:: unnormalize_z(z_lig, z_pocket)
+
+
+   .. py:method:: xh_given_zt_and_epsilon(z_t, epsilon, gamma_t, batch_mask)
+
+      Equation (7) in the EDM paper.
+
+
+
+   .. py:attribute:: T
+      :value: 1000
+
+
+
+   .. py:attribute:: atom_nf
+
+
+   .. py:attribute:: dynamics
+
+
+   .. py:attribute:: gamma
+
+
+   .. py:attribute:: interh_nf
+
+
+   .. py:attribute:: interhp_nf
+
+
+   .. py:attribute:: loss_type
+      :value: 'l2'
+
+
+
+   .. py:attribute:: n_dims
+
+
+   .. py:attribute:: norm_biases
+      :value: (None, 0.0)
+
+
+
+   .. py:attribute:: norm_values
+      :value: (1.0, 1.0)
+
+
+
+   .. py:attribute:: parametrization
+      :value: 'eps'
+
+
+
+   .. py:attribute:: residue_nf
+
+
+   .. py:attribute:: size_distribution
+
+
+   .. py:attribute:: vnode_idx
+      :value: None
+
+
+
+.. py:class:: PredefinedNoiseSchedule(noise_schedule, timesteps, precision)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Lookup table for a non-learned noise schedule.
+
+
+   .. py:method:: forward(t)
+
+
+   .. py:attribute:: gamma
+
+
+   .. py:attribute:: timesteps
+
+
+.. py:function:: clip_noise_schedule(alphas2, clip_value=0.001)
+
+.. py:function:: cosine_beta_schedule(timesteps, s=0.008, raise_to_power: float = 1)
+
+.. py:function:: polynomial_schedule(timesteps: int, s=0.0001, power=3.0)
+
+   Noise schedule ``1 - x^power``.
+
+

@@ -1,0 +1,179 @@
+MolecularDiffusion.data.component.diffpharma_data
+=================================================
+
+.. py:module:: MolecularDiffusion.data.component.diffpharma_data
+
+.. autoapi-nested-parse::
+
+   Dataset / collate / DataModule for DiffPharma complexes.
+
+   DiffPharma needs four node sets per complex -- ligand, protein pocket,
+   H-bond pseudo-particles, hydrophobic pseudo-particles -- flat-concatenated
+   with ``torch_scatter``-style masks. That is not expressible as the platform's
+   padded single-node-set PointCloud batch, so this module brings its own
+   Dataset + ``collate_fn`` and is selected via ``_target_`` from
+   ``configs/data/diffpharma_dataset.yaml``. Precedent:
+   ``data/component/pharmacophore.py::PharmacophoreDataModule``, which likewise
+   ships a non-PointCloud container through the same DataModule seam
+   (``cli/train.py`` -> ``.load()`` / ``.train_set`` / ``.collate_fn``, and
+   ``data/lightning_data_module.py``'s ``collate_fn or graph_collate``).
+
+   Storage is one ASE db row per complex, written by
+   ``docs/model_integrations/diffpharma/scripts/convert_dataset.py``:
+
+       Atoms            -> ligand only (positions + Z; Z=0 for 'others')
+       key_value_pairs  -> name, n_lig, n_pocket, n_interh, n_interhp
+       data             -> lig_one_hot + every other node set's coords/one_hot,
+                           plus the (unused by the model) interaction ids
+
+   ``data['lig_one_hot']`` -- not ``numbers`` -- is the authoritative ligand
+   atom type; Z=0 is not invertible back to 'others'.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.diffpharma_data.GROUPS
+   MolecularDiffusion.data.component.diffpharma_data.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.diffpharma_data.DiffPharmaDataModule
+   MolecularDiffusion.data.component.diffpharma_data.DiffPharmaDataset
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.diffpharma_data.diffpharma_collate
+
+
+Module Contents
+---------------
+
+.. py:class:: DiffPharmaDataModule(root: str, train_file: str = 'train.db', val_file: str = 'val.db', test_file: str = 'test.db', batch_size: int = 8, num_workers: int = 0, center: bool = True, limit: Optional[int] = None, atom_vocab: Optional[List[str]] = None, task_type: str = 'diffusion_diffpharma', **kwargs: Any)
+
+   DataModule contract: ``load()`` + ``train_set``/``valid_set``/``test_set``.
+
+
+   .. py:method:: load() -> None
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: batch_size
+      :value: 8
+
+
+
+   .. py:attribute:: center
+      :value: True
+
+
+
+   .. py:attribute:: collate_fn
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: limit
+      :value: None
+
+
+
+   .. py:attribute:: num_workers
+      :value: 0
+
+
+
+   .. py:attribute:: root
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_diffpharma'
+
+
+
+   .. py:attribute:: test_file
+      :value: 'test.db'
+
+
+
+   .. py:attribute:: test_set
+      :value: None
+
+
+
+   .. py:attribute:: train_file
+      :value: 'train.db'
+
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+   .. py:attribute:: val_file
+      :value: 'val.db'
+
+
+
+   .. py:attribute:: valid_set
+      :value: None
+
+
+
+.. py:class:: DiffPharmaDataset(db_path: str, center: bool = True, limit: Optional[int] = None)
+
+   Bases: :py:obj:`torch.utils.data.Dataset`
+
+
+   One converted ASE db -> one complex per index.
+
+   ``center=True`` subtracts the joint ligand+pocket centroid from all four
+   node sets (upstream ``dataset.py:68-78``); generation needs
+   ``center=False`` so the output is in the input pocket's frame.
+
+   # ponytail: rows are read eagerly into RAM at construction, like
+   # upstream's whole-npz load. Fine to ~100k complexes; if the full
+   # CrossDocked train split ever needs to stream, make __getitem__ read the
+   # row by id instead.
+
+
+   .. py:attribute:: center
+      :value: True
+
+
+
+   .. py:attribute:: db_path
+
+
+   .. py:attribute:: entries
+      :type:  List[Dict[str, Any]]
+      :value: []
+
+
+
+.. py:function:: diffpharma_collate(batch: List[Dict[str, Any]]) -> Dict[str, Any]
+
+   Concatenate complexes; scatter masks are renumbered 0..B-1.
+
+
+.. py:data:: GROUPS
+   :value: ('lig', 'pocket', 'interh', 'interhp')
+
+
+.. py:data:: logger
+

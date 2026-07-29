@@ -294,6 +294,8 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/data/index.html">MolecularDiffusion.data</a><input aria-label="Toggle navigation of MolecularDiffusion.data" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/index.html">MolecularDiffusion.data.component</a><input aria-label="Toggle navigation of MolecularDiffusion.data.component" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/dataset/index.html">MolecularDiffusion.data.component.dataset</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/diffpharma_data/index.html">MolecularDiffusion.data.component.diffpharma_data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/diffpharma_prep/index.html">MolecularDiffusion.data.component.diffpharma_prep</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/feature/index.html">MolecularDiffusion.data.component.feature</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/pharmacophore/index.html">MolecularDiffusion.data.component.pharmacophore</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/pointcloud/index.html">MolecularDiffusion.data.component.pointcloud</a></li>
@@ -475,6 +477,14 @@ pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;
 <span class="c1"># Analysis and post-processing commands (metrics, compare, xyz2mol, xtb-electronic, featurize SOAP)</span>
 pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[analyze]&#39;</span>
 
+<span class="c1"># Backbone-specific groups</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[bio]&#39;</span><span class="w">      </span><span class="c1"># DiffPharma: build a pocket + pharmacophore</span>
+<span class="w">                                          </span><span class="c1"># particles from a raw PDB+SDF pair. Not needed</span>
+<span class="w">                                          </span><span class="c1"># to train or generate from converted ASE dbs.</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[shape]&#39;</span><span class="w">    </span><span class="c1"># DiffSMol: offline shape-cache precompute only</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[flowmol]&#39;</span><span class="w">  </span><span class="c1"># FlowMol: DGL (install the CUDA build matching</span>
+<span class="w">                                          </span><span class="c1"># your torch, see pyproject.toml)</span>
+
 <span class="c1"># xTB is used by optimize, compare, and xtb-electronic — best installed from conda-forge:</span>
 conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="nv">xtb</span><span class="o">==</span><span class="m">6</span>.7.1<span class="w"> </span>-y
 conda<span class="w"> </span>install<span class="w"> </span>xtb-python<span class="w"> </span>-y
@@ -541,6 +551,9 @@ pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;
 
 <span class="c1"># Analyze utilities (PoseBusters/RDKit/OpenBabel Python bindings)</span>
 pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[analyze]&#39;</span>
+
+<span class="c1"># DiffPharma novel-pocket preprocessing (Biopython + ODDT)</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[bio]&#39;</span>
 
 <span class="c1"># Optional: needed for geometric-shape metrics in</span>
 <span class="c1"># `MolCraftDiff analyze metrics --metrics {core,geom_revised,all}`</span>

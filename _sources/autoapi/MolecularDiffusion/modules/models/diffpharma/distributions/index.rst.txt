@@ -1,0 +1,78 @@
+MolecularDiffusion.modules.models.diffpharma.distributions
+==========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.diffpharma.distributions
+
+.. autoapi-nested-parse::
+
+   2D (n_ligand x n_pocket) size prior for DiffPharma.
+
+   Port of ``DistributionNodes`` from
+   ``others/DiffPharma/equivariant_diffusion/conditional_model.py``.
+
+   One deliberate deviation: upstream ``sample(n)`` returns a *pair*
+   ``(n_lig, n_pocket)``, which does not satisfy the platform's
+   ``node_dist_model.sample(n) -> LongTensor of atom counts`` contract. Here
+   ``sample`` returns only the ligand component (i.e. the marginal over pocket
+   size) and the joint draw is available as :meth:`sample_joint`. Generation
+   uses :meth:`sample_conditional`, which is what DiffPharma itself calls.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffpharma.distributions.DistributionNodes
+
+
+Module Contents
+---------------
+
+.. py:class:: DistributionNodes(histogram)
+
+   .. py:method:: log_prob(batch_n_nodes_1, batch_n_nodes_2)
+
+
+   .. py:method:: log_prob_n1_given_n2(n1, n2)
+
+
+   .. py:method:: log_prob_n2_given_n1(n2, n1)
+
+
+   .. py:method:: sample(n_samples=1)
+
+      Ligand sizes only (pocket size marginalised out).
+
+
+
+   .. py:method:: sample_conditional(n1=None, n2=None)
+
+
+   .. py:method:: sample_joint(n_samples=1)
+
+
+   .. py:attribute:: idx_to_n_nodes
+
+
+   .. py:attribute:: m
+
+
+   .. py:attribute:: n1_given_n2
+
+
+   .. py:attribute:: n2_given_n1
+
+
+   .. py:property:: n_node_dist
+
+      ``{n_ligand_atoms: count}`` -- the ligand-size marginal.
+
+
+   .. py:attribute:: n_nodes_to_idx
+
+
+   .. py:attribute:: prob
+
+

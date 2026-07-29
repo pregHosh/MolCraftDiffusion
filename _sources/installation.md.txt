@@ -32,6 +32,14 @@ pip install 'molcraftdiffusion[data]'
 # Analysis and post-processing commands (metrics, compare, xyz2mol, xtb-electronic, featurize SOAP)
 pip install 'molcraftdiffusion[analyze]'
 
+# Backbone-specific groups
+pip install 'molcraftdiffusion[bio]'      # DiffPharma: build a pocket + pharmacophore
+                                          # particles from a raw PDB+SDF pair. Not needed
+                                          # to train or generate from converted ASE dbs.
+pip install 'molcraftdiffusion[shape]'    # DiffSMol: offline shape-cache precompute only
+pip install 'molcraftdiffusion[flowmol]'  # FlowMol: DGL (install the CUDA build matching
+                                          # your torch, see pyproject.toml)
+
 # xTB is used by optimize, compare, and xtb-electronic — best installed from conda-forge:
 conda install -c conda-forge xtb==6.7.1 -y
 conda install xtb-python -y
@@ -75,6 +83,9 @@ pip install 'molcraftdiffusion[data]'
 
 # Analyze utilities (PoseBusters/RDKit/OpenBabel Python bindings)
 pip install 'molcraftdiffusion[analyze]'
+
+# DiffPharma novel-pocket preprocessing (Biopython + ODDT)
+pip install 'molcraftdiffusion[bio]'
 
 # Optional: needed for geometric-shape metrics in
 # `MolCraftDiff analyze metrics --metrics {core,geom_revised,all}`

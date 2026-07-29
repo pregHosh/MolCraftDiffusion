@@ -1,0 +1,80 @@
+MolecularDiffusion.data.component.diffpharma_prep
+=================================================
+
+.. py:module:: MolecularDiffusion.data.component.diffpharma_prep
+
+.. autoapi-nested-parse::
+
+   Build a DiffPharma complex from a raw protein PDB + reference ligand SDF.
+
+   Port of the only working novel-pocket path in the upstream repo:
+   ``test_single.py``'s ``process_data`` + ``process_data_h``, i.e.
+   ``process_crossdock.process_ligand_and_pocket`` (full-atom branch) plus
+   ``interaction_construct.{hbond_create,hydrophobic_data}``.
+
+   Not ported: the ``ca_only=True`` pocket branch (needs
+   ``Bio.PDB.Polypeptide.three_to_one``, removed in Biopython >= 1.80, and the
+   released weights are full-atom anyway), and
+   ``lightning_modules.py:921 generate_ligands`` (stale DiffSBDD leftover that
+   calls ``sample_given_pocket`` with a pre-DiffPharma signature).
+
+   "Novel pocket" here means "novel protein + a reference ligand pose": the SDF
+   is both the 8 A pocket-selection reference and the ligand ODDT detects the
+   protein-ligand interactions against. That is upstream's own framing.
+
+   Heavy dependencies (Biopython, ODDT/OpenBabel, RDKit) are imported inside the
+   functions and gated by ``optional.require_modules("bio", ...)``, so importing
+   this module never fails on a bare install.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.diffpharma_prep.ATOM_DICT
+   MolecularDiffusion.data.component.diffpharma_prep.HYDROPHOBIC_TYPES
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.diffpharma_prep.complex_from_files
+   MolecularDiffusion.data.component.diffpharma_prep.hbond_particles
+   MolecularDiffusion.data.component.diffpharma_prep.hydrophobic_particles
+   MolecularDiffusion.data.component.diffpharma_prep.process_ligand_and_pocket
+
+
+Module Contents
+---------------
+
+.. py:function:: complex_from_files(pdb_file: str, sdf_file: str, center: bool = False, dist_cutoff: float = 8.0) -> Dict[str, Any]
+
+   PDB + reference SDF -> the same per-complex dict a converted db row yields.
+
+
+.. py:function:: hbond_particles(protein, ligand) -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
+
+   3 pseudo-nodes per H-bond, at 1/4, 1/2 and 3/4 along it.
+
+   Classes are ``[SP, DD, AC]`` tiled ``[0, 1, 1]`` for protein-donor bonds
+   and ``[0, 2, 2]`` for protein-acceptor bonds.
+
+
+.. py:function:: hydrophobic_particles(protein, ligand) -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
+
+   2 pseudo-nodes per hydrophobic contact, at 1/3 and 2/3 along it.
+
+
+.. py:function:: process_ligand_and_pocket(pdbfile: str, sdffile: str, dist_cutoff: float = 8.0) -> Tuple[Dict[str, numpy.ndarray], Dict[str, numpy.ndarray]]
+
+   Ligand atoms + every atom of each residue within ``dist_cutoff`` of it.
+
+
+.. py:data:: ATOM_DICT
+
+.. py:data:: HYDROPHOBIC_TYPES
+

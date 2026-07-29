@@ -1,0 +1,27 @@
+MolecularDiffusion.modules.models.diffpharma
+============================================
+
+.. py:module:: MolecularDiffusion.modules.models.diffpharma
+
+.. autoapi-nested-parse::
+
+   DiffPharma: pocket- and pharmacophore-conditioned 3D ligand diffusion.
+
+   Port of https://github.com/.../DiffPharma (DiffSBDD lineage). Three parallel
+   EGNN graphs (ligand+pocket, ligand+H-bond particles, ligand+hydrophobic
+   particles) fused every layer; only the ligand is noised.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/diffpharma/conditional_ddpm/index
+   /autoapi/MolecularDiffusion/modules/models/diffpharma/distributions/index
+   /autoapi/MolecularDiffusion/modules/models/diffpharma/dynamics/index
+   /autoapi/MolecularDiffusion/modules/models/diffpharma/egnn/index
+
+
