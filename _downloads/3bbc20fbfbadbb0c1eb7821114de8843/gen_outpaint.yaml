@@ -3,7 +3,7 @@
 #
 # Grow a molecule from a given fragment. The reference XYZ provides
 # the fixed scaffold; the model appends new atoms according to the
-# connector_dicts geometry constraints.
+# `connectors` geometry constraints.
 
 defaults:
   - data: mol_dataset
@@ -33,8 +33,11 @@ interference:
     outpaint_cfgs:
       t_start: 0.75         # diffusion timestep to start outpainting
       t_critical: 0.0
-      # connector_dicts: maps scaffold atom index → [number of new atoms to attach]
-      connector_dicts:
+      # connectors: maps scaffold atom index → [number of new bonds to form].
+      # One key, one shape, every outpaint mode. n_bonds is honoured by plain
+      # `outpaint` only; outpaintft and the guided outpaint_* modes apply no
+      # bonding constraint and use the keys alone — write 0 there.
+      connectors:
         0: [2]              # <-- replace with your atom indices and valencies
         1: [2]
       spread: 1.25          # spatial spread of newly seeded atoms (Å)

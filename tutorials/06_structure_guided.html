@@ -625,61 +625,29 @@
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
 <td class="text-left"><p>Timestep (0–T) to restart from on retry (inactive while <code class="docutils literal notranslate"><span class="pre">n_retrys=0</span></code>).</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">connector_dicts</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p><strong>CRITICAL:</strong> <code class="docutils literal notranslate"><span class="pre">{atom_index:</span> <span class="pre">[n_bonds]}</span></code> — which scaffold atoms to grow from and how many bonds each should form.</p></td>
-</tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">t_start</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p>Fraction of T to start denoising from (e.g. <code class="docutils literal notranslate"><span class="pre">0.9</span></code> → 90% of steps).</p></td>
-</tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p>Distance (Å) from connector to place initial seed atoms. Default: <code class="docutils literal notranslate"><span class="pre">2.0</span></code>.</p></td>
-</tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">min_dist</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p>Minimum distance (Å) new atoms must be from all non-connector scaffold atoms at initialisation. Default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></td>
-</tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">spread</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p>Angular dispersion for <code class="docutils literal notranslate"><span class="pre">skeleton_type:</span> <span class="pre">random_walk</span></code> (<code class="docutils literal notranslate"><span class="pre">0</span></code> = straight, <code class="docutils literal notranslate"><span class="pre">1</span></code> = standard walk); for legacy <code class="docutils literal notranslate"><span class="pre">init_method:</span> <span class="pre">seed</span></code>, Gaussian position std dev (Å). Default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.</p></td>
-</tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">n_bq_atom</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p>Number of atoms at the end of the scaffold used only for seeding positions, not included in conditioning. Default: <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p></td>
-</tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">init_method</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p>How seed atoms are initialised: <code class="docutils literal notranslate"><span class="pre">skeleton</span></code> (procedural), <code class="docutils literal notranslate"><span class="pre">seed</span></code> (raw blob), or <code class="docutils literal notranslate"><span class="pre">fragment</span></code> (bundled substituent). Default: <code class="docutils literal notranslate"><span class="pre">skeleton</span></code>.</p></td>
-</tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">skeleton_type</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p>Skeleton family used when <code class="docutils literal notranslate"><span class="pre">init_method</span></code> is <code class="docutils literal notranslate"><span class="pre">skeleton</span></code>/<code class="docutils literal notranslate"><span class="pre">fragment</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">random_walk</span></code>). Default: <code class="docutils literal notranslate"><span class="pre">random_walk</span></code>.</p></td>
-</tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">bond_len</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p>Target bond length (Å) used when placing skeleton atoms. Default: <code class="docutils literal notranslate"><span class="pre">1.5</span></code>.</p></td>
-</tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">forward_noise</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p>Strategy for noising the clean seed template up to <code class="docutils literal notranslate"><span class="pre">t_start</span></code>. Default: <code class="docutils literal notranslate"><span class="pre">jitter</span></code>.</p></td>
-</tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">jitter_scale</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p>Positional noise magnitude for <code class="docutils literal notranslate"><span class="pre">forward_noise:</span> <span class="pre">jitter</span></code>. Must be set explicitly; it never inherits <code class="docutils literal notranslate"><span class="pre">spread</span></code>.</p></td>
-</tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p>Fraction of denoising during which constraints are active. Code default <code class="docutils literal notranslate"><span class="pre">0.8</span></code>; the shipped <code class="docutils literal notranslate"><span class="pre">gen_outpaint</span></code> template sets <code class="docutils literal notranslate"><span class="pre">0.7</span></code>, so that’s what you get if you inherit it.</p></td>
-</tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code></p></td>
-<td class="text-left"><p>Multiplier on covalent radii for bond-distance tolerance. Default: <code class="docutils literal notranslate"><span class="pre">1.1</span></code>.</p></td>
-</tr>
 </tbody>
 </table>
 </div>
+<blockquote>
+<div><p><strong>Key name.</strong> <code class="docutils literal notranslate"><span class="pre">connectors</span></code> is the single key for every outpaint mode
+(<code class="docutils literal notranslate"><span class="pre">outpaint</span></code>, <code class="docutils literal notranslate"><span class="pre">outpaintft</span></code>, <code class="docutils literal notranslate"><span class="pre">outpaint_cfg</span></code>, <code class="docutils literal notranslate"><span class="pre">outpaint_gg</span></code>, <code class="docutils literal notranslate"><span class="pre">outpaint_cfggg</span></code>).
+<code class="docutils literal notranslate"><span class="pre">connector_dicts</span></code> and <code class="docutils literal notranslate"><span class="pre">connector_indices</span></code> are deprecated aliases that still
+work and warn. <code class="docutils literal notranslate"><span class="pre">n_bonds</span></code> is honoured by plain <code class="docutils literal notranslate"><span class="pre">outpaint</span></code> only; the other modes
+apply no bonding constraint and use the keys alone.</p>
+</div></blockquote>
+<p>| <code class="docutils literal notranslate"><span class="pre">connectors</span></code> | <code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code> | <strong>CRITICAL:</strong> <code class="docutils literal notranslate"><span class="pre">{atom_index:</span> <span class="pre">[n_bonds]}</span></code> — which scaffold atoms to grow from and how many bonds each should form. |
+| <code class="docutils literal notranslate"><span class="pre">t_start</span></code> | <code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code> | Fraction of T to start denoising from (e.g. <code class="docutils literal notranslate"><span class="pre">0.9</span></code> → 90% of steps). |
+| <code class="docutils literal notranslate"><span class="pre">seed_dist</span></code> | <code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code> | Distance (Å) from connector to place initial seed atoms. Default: <code class="docutils literal notranslate"><span class="pre">2.0</span></code>. |
+| <code class="docutils literal notranslate"><span class="pre">min_dist</span></code> | <code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code> | Minimum distance (Å) new atoms must be from all non-connector scaffold atoms at initialisation. Default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>. |
+| <code class="docutils literal notranslate"><span class="pre">spread</span></code> | <code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code> | Angular dispersion for <code class="docutils literal notranslate"><span class="pre">skeleton_type:</span> <span class="pre">random_walk</span></code> (<code class="docutils literal notranslate"><span class="pre">0</span></code> = straight, <code class="docutils literal notranslate"><span class="pre">1</span></code> = standard walk); for legacy <code class="docutils literal notranslate"><span class="pre">init_method:</span> <span class="pre">seed</span></code>, Gaussian position std dev (Å). Default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>. |
+| <code class="docutils literal notranslate"><span class="pre">n_bq_atom</span></code> | <code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code> | Number of atoms at the end of the scaffold used only for seeding positions, not included in conditioning. Default: <code class="docutils literal notranslate"><span class="pre">0</span></code>. |
+| <code class="docutils literal notranslate"><span class="pre">init_method</span></code> | <code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code> | How seed atoms are initialised: <code class="docutils literal notranslate"><span class="pre">skeleton</span></code> (procedural), <code class="docutils literal notranslate"><span class="pre">seed</span></code> (raw blob), or <code class="docutils literal notranslate"><span class="pre">fragment</span></code> (bundled substituent). Default: <code class="docutils literal notranslate"><span class="pre">skeleton</span></code>. |
+| <code class="docutils literal notranslate"><span class="pre">skeleton_type</span></code> | <code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code> | Skeleton family used when <code class="docutils literal notranslate"><span class="pre">init_method</span></code> is <code class="docutils literal notranslate"><span class="pre">skeleton</span></code>/<code class="docutils literal notranslate"><span class="pre">fragment</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">random_walk</span></code>). Default: <code class="docutils literal notranslate"><span class="pre">random_walk</span></code>. |
+| <code class="docutils literal notranslate"><span class="pre">bond_len</span></code> | <code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code> | Target bond length (Å) used when placing skeleton atoms. Default: <code class="docutils literal notranslate"><span class="pre">1.5</span></code>. |
+| <code class="docutils literal notranslate"><span class="pre">forward_noise</span></code> | <code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code> | Strategy for noising the clean seed template up to <code class="docutils literal notranslate"><span class="pre">t_start</span></code>. Default: <code class="docutils literal notranslate"><span class="pre">jitter</span></code>. |
+| <code class="docutils literal notranslate"><span class="pre">jitter_scale</span></code> | <code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code> | Positional noise magnitude for <code class="docutils literal notranslate"><span class="pre">forward_noise:</span> <span class="pre">jitter</span></code>. Must be set explicitly; it never inherits <code class="docutils literal notranslate"><span class="pre">spread</span></code>. |
+| <code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code> | <code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code> | Fraction of denoising during which constraints are active. Code default <code class="docutils literal notranslate"><span class="pre">0.8</span></code>; the shipped <code class="docutils literal notranslate"><span class="pre">gen_outpaint</span></code> template sets <code class="docutils literal notranslate"><span class="pre">0.7</span></code>, so that’s what you get if you inherit it. |
+| <code class="docutils literal notranslate"><span class="pre">scale_factor</span></code> | <code class="docutils literal notranslate"><span class="pre">outpaint_cfgs</span></code> | Multiplier on covalent radii for bond-distance tolerance. Default: <code class="docutils literal notranslate"><span class="pre">1.1</span></code>. |</p>
 </section>
 <section id="id1">
 <h3>Configuration<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
@@ -703,7 +671,7 @@
 <span class="w">    </span><span class="nt">reference_structure_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/your_fragment.xyz&quot;</span><span class="w">   </span><span class="c1"># your own XYZ file</span>
 <span class="w">    </span><span class="nt">condition_component</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">xh</span>
 <span class="w">    </span><span class="nt">outpaint_cfgs</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">connector_dicts</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">connectors</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">1</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">3</span><span class="p p-Indicator">]</span>
 <span class="w">        </span><span class="nt">2</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">3</span><span class="p p-Indicator">]</span>
 <span class="w">        </span><span class="nt">3</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">3</span><span class="p p-Indicator">]</span>
@@ -765,8 +733,8 @@ denoising_strength = 1.0   →  full noise, model generates freely with no memor
 <hr class="docutils" />
 <section id="outpainting-parameters">
 <h3>4.2 Outpainting Parameters<a class="headerlink" href="#outpainting-parameters" title="Link to this heading">¶</a></h3>
-<section id="connector-dicts-where-and-how-to-grow">
-<h4><code class="docutils literal notranslate"><span class="pre">connector_dicts</span></code> — where and how to grow<a class="headerlink" href="#connector-dicts-where-and-how-to-grow" title="Link to this heading">¶</a></h4>
+<section id="connectors-where-and-how-to-grow">
+<h4><code class="docutils literal notranslate"><span class="pre">connectors</span></code> — where and how to grow<a class="headerlink" href="#connectors-where-and-how-to-grow" title="Link to this heading">¶</a></h4>
 <p>This is the only required parameter. Each entry <code class="docutils literal notranslate"><span class="pre">{atom_index:</span> <span class="pre">[n_bonds]}</span></code> says: <em>“from this scaffold atom, grow exactly n new bonds.”</em></p>
 <p><strong>Choosing the connector atom:</strong> Pick the atom at the growth point — usually an atom that is under-valenced in the scaffold (e.g., a carbon with a free valence after cleaving a bond).</p>
 <p><strong>Choosing <code class="docutils literal notranslate"><span class="pre">n_bonds</span></code>:</strong> Set this to the number of new bonds you want the connector atom to form with the generated fragment. For a single chain, use <code class="docutils literal notranslate"><span class="pre">[1]</span></code>. For a branching point, use <code class="docutils literal notranslate"><span class="pre">[2]</span></code> or <code class="docutils literal notranslate"><span class="pre">[3]</span></code>. The model is guided to place at least this many generated atoms within bonding distance of the connector.</p>
@@ -1068,7 +1036,7 @@ s = 0.0  ──── generation ends (clean structure)
 </ul>
 </li>
 <li><a class="reference internal" href="#outpainting-parameters">4.2 Outpainting Parameters</a><ul>
-<li><a class="reference internal" href="#connector-dicts-where-and-how-to-grow"><code class="docutils literal notranslate"><span class="pre">connector_dicts</span></code> — where and how to grow</a></li>
+<li><a class="reference internal" href="#connectors-where-and-how-to-grow"><code class="docutils literal notranslate"><span class="pre">connectors</span></code> — where and how to grow</a></li>
 <li><a class="reference internal" href="#t-start-how-many-denoising-steps-to-run"><code class="docutils literal notranslate"><span class="pre">t_start</span></code> — how many denoising steps to run</a></li>
 <li><a class="reference internal" href="#seed-dist-min-dist-spread-jitter-scale-initialization"><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">min_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">spread</span></code>, <code class="docutils literal notranslate"><span class="pre">jitter_scale</span></code> — initialization</a></li>
 <li><a class="reference internal" href="#n-bq-atom-boundary-atoms-for-seeding-only"><code class="docutils literal notranslate"><span class="pre">n_bq_atom</span></code> — boundary atoms for seeding only</a></li>

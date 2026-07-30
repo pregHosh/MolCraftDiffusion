@@ -451,13 +451,19 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.EDGE_THRESHOLD" title="MolecularDiffusion.utils.geom_constraint.EDGE_THRESHOLD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EDGE_THRESHOLD</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.CONNECTORS_KEY" title="MolecularDiffusion.utils.geom_constraint.CONNECTORS_KEY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CONNECTORS_KEY</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.SKELETON_BUILDERS" title="MolecularDiffusion.utils.geom_constraint.SKELETON_BUILDERS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SKELETON_BUILDERS</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.EDGE_THRESHOLD" title="MolecularDiffusion.utils.geom_constraint.EDGE_THRESHOLD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EDGE_THRESHOLD</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.WEIGHT_FACTOR" title="MolecularDiffusion.utils.geom_constraint.WEIGHT_FACTOR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WEIGHT_FACTOR</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.SKELETON_BUILDERS" title="MolecularDiffusion.utils.geom_constraint.SKELETON_BUILDERS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SKELETON_BUILDERS</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.WEIGHT_FACTOR" title="MolecularDiffusion.utils.geom_constraint.WEIGHT_FACTOR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WEIGHT_FACTOR</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.logger" title="MolecularDiffusion.utils.geom_constraint.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -511,7 +517,10 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.initialize_extra_nodes_seed" title="MolecularDiffusion.utils.geom_constraint.initialize_extra_nodes_seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize_extra_nodes_seed</span></code></a>(xh_cond, ...[, seed_dist, ...])</p></td>
 <td><p>Initializes extra nodes based on seed locations.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.translate_to_origine" title="MolecularDiffusion.utils.geom_constraint.translate_to_origine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">translate_to_origine</span></code></a>(coords, node_mask)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.resolve_connectors" title="MolecularDiffusion.utils.geom_constraint.resolve_connectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resolve_connectors</span></code></a>(→ dict)</p></td>
+<td><p>Read the growth-site spec out of an outpaint config block.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.translate_to_origine" title="MolecularDiffusion.utils.geom_constraint.translate_to_origine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">translate_to_origine</span></code></a>(coords, node_mask)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -985,8 +994,28 @@ If &gt; 0, connector_indices and seed_dist are ignored for seed location determi
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_constraint.resolve_connectors">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_constraint.</span></span><span class="sig-name descname"><span class="pre">resolve_connectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outpaint_cfgs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_constraint.resolve_connectors" title="Link to this definition">¶</a></dt>
+<dd><p>Read the growth-site spec out of an outpaint config block.</p>
+<p>Canonical form is <code class="docutils literal notranslate"><span class="pre">connectors:</span> <span class="pre">{atom_index:</span> <span class="pre">[n_bonds]}</span></code>. The degree is the number
+of new bonds the connector should form, and is only honoured by plain <code class="docutils literal notranslate"><span class="pre">outpaint</span></code> –
+<code class="docutils literal notranslate"><span class="pre">outpaintft</span></code> and the guided variants apply no bonding constraint and use the keys
+alone.</p>
+<p><code class="docutils literal notranslate"><span class="pre">connector_dicts</span></code> (same shape) and <code class="docutils literal notranslate"><span class="pre">connector_indices</span></code> (a bare list, degree 0)
+are accepted as deprecated aliases so existing configs keep running.</p>
+<p>Returns {int index: [int degree]}; empty dict if nothing is specified. Callers decide
+whether empty is an error – <code class="docutils literal notranslate"><span class="pre">init_method:</span> <span class="pre">seed</span></code> with phantom atoms legitimately has
+no connectors.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_constraint.translate_to_origine">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_constraint.</span></span><span class="sig-name descname"><span class="pre">translate_to_origine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_constraint.translate_to_origine" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_constraint.CONNECTORS_KEY">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_constraint.</span></span><span class="sig-name descname"><span class="pre">CONNECTORS_KEY</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'connectors'</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_constraint.CONNECTORS_KEY" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
@@ -1002,6 +1031,11 @@ If &gt; 0, connector_indices and seed_dist are ignored for seed location determi
 <dl class="py data">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_constraint.WEIGHT_FACTOR">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_constraint.</span></span><span class="sig-name descname"><span class="pre">WEIGHT_FACTOR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_constraint.WEIGHT_FACTOR" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_constraint.logger">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_constraint.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_constraint.logger" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
@@ -1097,10 +1131,13 @@ If &gt; 0, connector_indices and seed_dist are ignored for seed location determi
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.find_subgraph_centroids"><code class="docutils literal notranslate"><span class="pre">find_subgraph_centroids()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.initialize_extra_nodes"><code class="docutils literal notranslate"><span class="pre">initialize_extra_nodes()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.initialize_extra_nodes_seed"><code class="docutils literal notranslate"><span class="pre">initialize_extra_nodes_seed()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.resolve_connectors"><code class="docutils literal notranslate"><span class="pre">resolve_connectors()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.translate_to_origine"><code class="docutils literal notranslate"><span class="pre">translate_to_origine()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.CONNECTORS_KEY"><code class="docutils literal notranslate"><span class="pre">CONNECTORS_KEY</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.EDGE_THRESHOLD"><code class="docutils literal notranslate"><span class="pre">EDGE_THRESHOLD</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.SKELETON_BUILDERS"><code class="docutils literal notranslate"><span class="pre">SKELETON_BUILDERS</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.WEIGHT_FACTOR"><code class="docutils literal notranslate"><span class="pre">WEIGHT_FACTOR</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
 </ul>
 </li>
 </ul>

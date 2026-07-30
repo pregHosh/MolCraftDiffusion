@@ -107,7 +107,13 @@ The `condition_configs` section for outpainting uses a sub-dictionary called `ou
 | `use_noised_conditioning` | `condition_configs` | Add noise to the scaffold at each denoising step. |
 | `n_retrys` | `condition_configs` | Keep at `0`; retries are currently disabled for structure-guided generation. |
 | `t_retry` | `condition_configs` | Timestep (0–T) to restart from on retry (inactive while `n_retrys=0`). |
-| `connector_dicts` | `outpaint_cfgs` | **CRITICAL:** `{atom_index: [n_bonds]}` — which scaffold atoms to grow from and how many bonds each should form. |
+> **Key name.** `connectors` is the single key for every outpaint mode
+> (`outpaint`, `outpaintft`, `outpaint_cfg`, `outpaint_gg`, `outpaint_cfggg`).
+> `connector_dicts` and `connector_indices` are deprecated aliases that still
+> work and warn. `n_bonds` is honoured by plain `outpaint` only; the other modes
+> apply no bonding constraint and use the keys alone.
+
+| `connectors` | `outpaint_cfgs` | **CRITICAL:** `{atom_index: [n_bonds]}` — which scaffold atoms to grow from and how many bonds each should form. |
 | `t_start` | `outpaint_cfgs` | Fraction of T to start denoising from (e.g. `0.9` → 90% of steps). |
 | `seed_dist` | `outpaint_cfgs` | Distance (Å) from connector to place initial seed atoms. Default: `2.0`. |
 | `min_dist` | `outpaint_cfgs` | Minimum distance (Å) new atoms must be from all non-connector scaffold atoms at initialisation. Default: `1.0`. |
@@ -144,7 +150,7 @@ interference:
     reference_structure_path: "path/to/your_fragment.xyz"   # your own XYZ file
     condition_component: xh
     outpaint_cfgs:
-      connector_dicts:
+      connectors:
         1: [3]
         2: [3]
         3: [3]
@@ -213,7 +219,7 @@ Tolerance on bond distances. The overlap threshold for each atom pair is `(cov_r
 
 ### 4.2 Outpainting Parameters
 
-#### `connector_dicts` — where and how to grow
+#### `connectors` — where and how to grow
 
 This is the only required parameter. Each entry `{atom_index: [n_bonds]}` says: *"from this scaffold atom, grow exactly n new bonds."*
 

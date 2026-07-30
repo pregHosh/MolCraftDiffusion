@@ -9,9 +9,11 @@ Attributes
 
 .. autoapisummary::
 
+   MolecularDiffusion.utils.geom_constraint.CONNECTORS_KEY
    MolecularDiffusion.utils.geom_constraint.EDGE_THRESHOLD
    MolecularDiffusion.utils.geom_constraint.SKELETON_BUILDERS
    MolecularDiffusion.utils.geom_constraint.WEIGHT_FACTOR
+   MolecularDiffusion.utils.geom_constraint.logger
 
 
 Functions
@@ -33,6 +35,7 @@ Functions
    MolecularDiffusion.utils.geom_constraint.find_subgraph_centroids
    MolecularDiffusion.utils.geom_constraint.initialize_extra_nodes
    MolecularDiffusion.utils.geom_constraint.initialize_extra_nodes_seed
+   MolecularDiffusion.utils.geom_constraint.resolve_connectors
    MolecularDiffusion.utils.geom_constraint.translate_to_origine
 
 
@@ -412,7 +415,28 @@ Module Contents
    :rtype: torch.Tensor
 
 
+.. py:function:: resolve_connectors(outpaint_cfgs) -> dict
+
+   Read the growth-site spec out of an outpaint config block.
+
+   Canonical form is ``connectors: {atom_index: [n_bonds]}``. The degree is the number
+   of new bonds the connector should form, and is only honoured by plain ``outpaint`` --
+   ``outpaintft`` and the guided variants apply no bonding constraint and use the keys
+   alone.
+
+   ``connector_dicts`` (same shape) and ``connector_indices`` (a bare list, degree 0)
+   are accepted as deprecated aliases so existing configs keep running.
+
+   Returns {int index: [int degree]}; empty dict if nothing is specified. Callers decide
+   whether empty is an error -- ``init_method: seed`` with phantom atoms legitimately has
+   no connectors.
+
+
 .. py:function:: translate_to_origine(coords, node_mask)
+
+.. py:data:: CONNECTORS_KEY
+   :value: 'connectors'
+
 
 .. py:data:: EDGE_THRESHOLD
    :value: 2
@@ -423,4 +447,6 @@ Module Contents
 .. py:data:: WEIGHT_FACTOR
    :value: 2
 
+
+.. py:data:: logger
 
