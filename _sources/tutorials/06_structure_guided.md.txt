@@ -1,8 +1,8 @@
 # Tutorial 6: Structure-Guided Generation
 
-> **Prerequisites:** [Tutorial 5 — Generation Overview](05_generation_overview.md) · **You'll learn:** inpainting and outpainting with 3D geometric constraints, and how to tune every parameter · **Next:** [Tutorial 7 — Property-Directed Generation](07_property_directed.md)
+> **Prerequisites:** [Tutorial 5 — Generation Overview](05_generation_overview.md) · **You'll learn:** inpainting, outpainting and SILVR with 3D geometric constraints, and how to tune every parameter · **Next:** [Tutorial 7 — Property-Directed Generation](07_property_directed.md)
 
-This tutorial explains how to guide molecule generation using structural constraints, such as filling in a missing piece (inpainting) or growing a molecule from a fragment (outpainting).
+This tutorial explains how to guide molecule generation using structural constraints, such as filling in a missing piece (inpainting), growing a molecule from a fragment (outpainting), or softly steering a whole molecule towards a reference shape (SILVR).
 
 :::{warning}
 **Atom indices are tied to graph construction.** `mask_node_index` values are 0-indexed positions in the atom list of your XYZ file. If you preprocess the molecule (reorder atoms, remove hydrogens, add atoms) the indices will shift and the mask will apply to the wrong atoms — silently. Always double-check indices against the exact XYZ file passed to `reference_structure_path`, and set `use_noised_conditioning: true` only if the base model was trained with noised conditioning (check the training config).
@@ -10,10 +10,11 @@ This tutorial explains how to guide molecule generation using structural constra
 
 ## Contents
 
-1.  **Introduction**: The concept of guiding generation with a structural template.
+1.  **Introduction**: The concept of guiding generation with a structural template, and which mode to pick.
 2.  **Inpainting**: How to configure and run generation to fill in a missing portion of a molecule.
 3.  **Outpainting**: How to grow a molecule from a given substructure.
-4.  **Tuning Parameters**: Intuitive guide to tuning all parameters for both tasks.
+4.  **SILVR**: How to softly steer a whole molecule towards a reference, with no frozen atoms.
+5.  **Tuning Parameters**: Intuitive guide to tuning all parameters for every task.
 
 ## 1. Introduction
 
@@ -21,11 +22,35 @@ Structure-guided generation allows you to influence the output of the diffusion 
 
 *   **Inpainting**: Varying initial structures (either the whole molecule or replacing a specific part of it).
 *   **Outpainting**: Extending a molecule from a given fragment.
+*   **SILVR**: Producing a new molecule that *resembles* a reference — typically a set of crystallographic fragments in a binding site — without copying any of it.
 
 
 ![Workflow overview](../asset/ip_op.png)
 
 The process involves providing a reference structure in an XYZ file and specifying which parts of the structure to modify or keep fixed. **Note that all atom indices are 0-indexed.** You can create your experiment configuration files in any directory, as the base templates are bundled with the package.
+
+### 1.1 Which mode do I want?
+
+All three take a `reference_structure_path` and all three run on the same
+unconditionally-trained EDM checkpoint — no retraining, no extra model. The
+difference is **what happens to the reference atoms during denoising**:
+
+| | Inpainting | Outpainting | SILVR |
+| :--- | :--- | :--- | :--- |
+| **Reference atoms are…** | **frozen** (except the ones you mask) | **frozen** | **never frozen** — every atom stays mobile the whole way |
+| **Guidance is…** | hard: unmasked atoms are pinned | hard: scaffold is pinned, growth is seeded and constrained | soft: each step nudges the latent towards a re-noised reference |
+| **You must specify** | `mask_node_index` — which atoms to regenerate | `connectors` — where to grow and how many bonds | `silvr_rate` — how hard to pull (that's it) |
+| **Output contains the reference** | yes, atom-for-atom | yes, atom-for-atom | **no** — a new molecule that merely resembles it |
+| **`mol_size` vs reference** | ≥ reference (clamped up) | **strictly >** reference | ≥ reference (clamped up) |
+| **Geometric constraints** | overlap-push | overlap-push + bonding | none |
+| **Typical use** | swap a substituent, vary part of a known molecule | grow a fragment into a lead | fragment merging; generate a ligand resembling several fragments at once |
+
+Rules of thumb:
+
+*   You need the reference preserved exactly → **inpaint** or **outpaint**.
+*   You need something *new* that occupies the same space → **SILVR**.
+*   You have several disconnected fragments and want one molecule spanning them → **SILVR** (this is the case it was designed for; inpaint/outpaint assume one connected scaffold).
+*   You want a tunable dial between "ignore the reference" and "reproduce it" → **SILVR**'s `silvr_rate`.
 
 ---
 
@@ -171,13 +196,104 @@ MolCraftDiff generate my_outpaint
 
 ---
 
-## 4. Tuning Parameters
+## 4. SILVR
+
+SILVR (**S**elective **I**terative **L**atent **V**ariable **R**efinement) takes a
+different approach from the two modes above: **nothing is frozen**. Every atom
+stays mobile for the whole trajectory, and at each reverse step the latent is
+nudged a little way towards a freshly re-noised copy of the reference:
+
+```
+z̃ₜ = αₜ · reference + σₜ · ε          (reference re-noised at this step's noise level)
+z  ← z − (z · αₜ · ref_mask) · rate + (z̃ₜ · ref_mask) · rate
+```
+
+Because the pull is applied gently at every one of the T steps rather than by
+pinning coordinates, the model is free to produce a chemically sensible molecule
+that merely *resembles* the reference. The reference itself never appears in the
+output.
+
+This makes SILVR the right tool for **fragment merging**: give it several
+crystallographic fragments as one XYZ file and it generates a single connected
+molecule spanning them — something inpaint and outpaint cannot do, since both
+assume one connected scaffold that must be preserved atom-for-atom.
+
+:::{admonition} Reference — cite this paper if you use SILVR
+:class: seealso
+
+Runcie, N. T. & Mey, A. S. J. S. *SILVR: Guided Diffusion for Molecule
+Generation.* J. Chem. Inf. Model. **2023**, 63 (19), 5996–6005.
+[doi:10.1021/acs.jcim.3c00667](https://doi.org/10.1021/acs.jcim.3c00667) ·
+[github.com/meyresearch/SILVR](https://github.com/meyresearch/SILVR)
+:::
+
+### Key SILVR Parameters
+
+The `condition_configs` section for SILVR uses a sub-dictionary called `silvr_cfgs`.
+
+| Parameter | Location | Description |
+| :--- | :--- | :--- |
+| `mol_size` | `interference` (top-level) | Size of the generated molecule = reference atoms + however many extra atoms SILVR may invent. **Must be ≥ the reference**; below it is clamped up with a warning. **Must be explicit if the checkpoint ships no node-size distribution** — `[0,0]` has nothing to draw from and will fail. |
+| `sampling_mode` | `interference` (top-level) | **Must be `ddpm`.** SILVR modifies the DDPM reverse loop only; `ddim` raises rather than silently ignoring the guidance. |
+| `reference_structure_path` | `condition_configs` | **CRITICAL:** Path to your XYZ file. May contain several disconnected fragments. All elements must appear in `atom_vocab`. |
+| `condition_component` | `condition_configs` | `xh` (default) steers coordinates *and* atom types; `x` steers coordinates only, leaving element identity free. |
+| `n_retrys` | `condition_configs` | Keep at `0`; retries are disabled for structure-guided generation. |
+| `silvr_rate` | `silvr_cfgs` | **The main dial.** Per-step pull strength, `0`–`1`. `0.01` is the published working value. See tuning below. |
+| `silvr_rates` | `silvr_cfgs` | Optional per-atom list, length = reference atom count. Overrides `silvr_rate`, letting you pin some fragment atoms harder than others. `null` to disable. |
+| `shift_centre` | `silvr_cfgs` | `true` (default) returns coordinates in the **reference's frame** — i.e. in the binding site. `false` returns them centred on the origin. |
+
+### Configuration
+
+```yaml
+# my_silvr.yaml
+defaults:
+  - tasks: diffusion
+  - interference: gen_silvr # Base template bundled with package
+  - _self_
+
+name: "akatsuki"
+chkpt_directory: "models/edm_pretrained/"
+atom_vocab: [H,B,C,N,O,F,Al,Si,P,S,Cl,As,Se,Br,I,Hg,Bi]
+diffusion_steps: 900
+seed: 9
+
+interference:
+  num_generate: 50
+  batch_size: 4
+  mol_size: [30]          # reference atoms + atoms SILVR may invent
+  output_path: "results/my_silvr_run"
+  condition_configs:
+    reference_structure_path: "path/to/your_fragments.xyz"   # your own XYZ file
+    condition_component: xh
+    n_retrys: 0
+    silvr_cfgs:
+      silvr_rate: 0.01
+      silvr_rates: null
+      shift_centre: true
+```
+
+### Running SILVR
+
+```bash
+MolCraftDiff generate my_silvr
+```
+
+:::{warning}
+**One reference per run.** The reference is broadcast across the batch, so every
+molecule in a run is guided by the same fragments. `batch_size` > 1 is fully
+supported and is the right way to generate many samples — but multiple
+*references* means multiple runs.
+:::
+
+---
+
+## 5. Tuning Parameters
 
 This section explains the intuition behind every tunable parameter so you can diagnose and fix generation problems without trial-and-error guessing.
 
 ---
 
-### 4.1 Inpainting Parameters
+### 5.1 Inpainting Parameters
 
 #### `denoising_strength` — how much to vary the masked region
 
@@ -217,7 +333,7 @@ Tolerance on bond distances. The overlap threshold for each atom pair is `(cov_r
 
 ---
 
-### 4.2 Outpainting Parameters
+### 5.2 Outpainting Parameters
 
 #### `connectors` — where and how to grow
 
@@ -304,7 +420,70 @@ Scales the per-atom-type covalent bond length threshold used by all three constr
 
 ---
 
-### 4.3 Quick Diagnostics
+### 5.3 SILVR Parameters
+
+SILVR has essentially **one** dial, which is the point of the method.
+
+#### `silvr_rate` — how hard to pull towards the reference
+
+```
+silvr_rate = 0      →  reference ignored entirely (plain unconditional generation)
+silvr_rate = 0.01   →  the published working value — recommended starting point
+silvr_rate = 0.1    →  strong resemblance, less chemical freedom
+silvr_rate = 1      →  reference atoms effectively replaced outright
+```
+
+The rate is applied *per step*, so its effect compounds over the full
+trajectory. This is why a value as small as `0.01` produces a clear
+resemblance, and why **the number of diffusion steps matters**: running 100
+steps instead of 900 gives the pull roughly a ninth as many chances to act, and
+the output will drift far from the reference. Use the checkpoint's full step
+count for production runs and reserve short runs for smoke-testing.
+
+:::{note}
+**This implementation's reference is normalized.** The published sampler mixes a
+raw one-hot reference into a latent normalized by `norm_values` (typically
+`[1, 4, 10]`), leaving its feature channels ~4× hot. Here the reference goes
+through the platform's normal loader, so it is scale-consistent — which means
+**feature guidance is ~4× weaker than the paper's at the same `silvr_rate`**.
+Coordinates are unaffected (`norm_values[0] == 1`). If atom types don't track
+the reference as strongly as the paper reports, raise the rate before suspecting
+a bug.
+:::
+
+#### `silvr_rates` — per-atom pull
+
+A list as long as the reference, overriding `silvr_rate`. Use it when parts of
+the reference matter more than others — e.g. pin a known binding motif at `0.05`
+while letting a peripheral fragment float at `0.005`. A `0` entry makes that
+atom a dummy: it contributes nothing, and SILVR is free to place whatever it
+likes there.
+
+#### `condition_component` — what gets steered
+
+`xh` (default) steers coordinates *and* atom types, so the output tends to
+reuse the reference's elements. `x` steers geometry only, leaving element
+identity entirely to the model — use it when you want the reference's *shape*
+but not its chemistry.
+
+#### `shift_centre` — which frame the output lands in
+
+`true` (default) returns coordinates in the reference's own frame, so samples
+are positioned in the binding site and can be scored against the protein
+directly. `false` returns them centred on the origin. This is a pure output
+convention — it changes nothing about the generated molecule.
+
+#### `mol_size` — how much freedom to add atoms
+
+Set it to the reference atom count plus however many atoms SILVR may invent.
+The extra ("dummy") atoms are what let SILVR bridge disconnected fragments into
+one molecule, so for fragment merging give it a generous margin. Equal to the
+reference count is valid and turns SILVR into pure refinement of the reference
+atoms. Below the reference count it is clamped up with a warning.
+
+---
+
+### 5.4 Quick Diagnostics
 
 #### Inpainting
 
@@ -328,3 +507,17 @@ Scales the per-atom-type covalent bond length threshold used by all three constr
 | Bonds to connector consistently too long | `scale_factor` too high | Lower to `1.0–1.05` |
 | Generation is slow / low throughput | `t_start` too high | Lower to `0.7–0.8` |
 | Run aborts: "nothing to grow" / size ≤ scaffold | `mol_size` maximum is ≤ the scaffold, or `[0,0]` on a scaffold larger than the model ever generates | Set `mol_size:[lo,hi]` with `lo` > scaffold atom count |
+
+#### SILVR
+
+| Symptom | Most likely cause | Fix |
+| :--- | :--- | :--- |
+| Output barely resembles the reference | `silvr_rate` too low, or too few diffusion steps | Raise `silvr_rate` to `0.05–0.1`; run the checkpoint's full step count |
+| Atom types ignore the reference but shape is right | Normalized-reference deviation (see §5.3) | Raise `silvr_rate`, or keep `condition_component: xh` if you had set `x` |
+| Output is a near-copy of the reference, no novelty | `silvr_rate` too high | Lower towards `0.01` |
+| Fragments stay separate, no single molecule | `mol_size` too small — no dummy atoms to bridge with | Increase `mol_size` well above the reference atom count |
+| Samples come out at the origin, not in the binding site | `shift_centre: false` | Set `shift_centre: true` |
+| Every sample has an identical centroid | `mol_size` == reference count, so there is no dummy region | Expected, not a bug — increase `mol_size` if you want positional variation |
+| Run aborts: "silvr supports sampling_mode 'ddpm' only" | `sampling_mode: ddim` | Set `sampling_mode: ddpm` |
+| Run fails drawing a size / `node_dist_model` unset | `mol_size: [0,0]` on a checkpoint with no node-size distribution | Set an explicit `mol_size` |
+| Warning: sizes "snapped up to the scaffold size" | `mol_size` below the reference atom count | Expected clamp; raise `mol_size` to silence it |

@@ -71,7 +71,7 @@ Unconditional sampling and the three generation modes at a glance.
 :link: 06_structure_guided
 :link-type: doc
 
-Inpainting and outpainting with 3D geometric constraints, plus a full parameter-tuning guide.
+Inpainting, outpainting and SILVR with 3D geometric constraints, plus a full parameter-tuning guide.
 :::
 
 :::{grid-item-card} 7 · Property-Directed

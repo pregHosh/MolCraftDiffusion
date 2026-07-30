@@ -7,7 +7,7 @@ This tutorial provides an overview of the different ways you can generate molecu
 There are three primary modes for generating molecules:
 
 1.  **Unconditional Generation**: Generating novel molecules without any specific constraints or guidance. This is the simplest form of generation and is the focus of this tutorial.
-2.  **Structure-Guided Generation**: Generating molecules by building upon a predefined chemical scaffold (a process known as outpainting). For a detailed guide on this, please see **[Tutorial 6: Structure-Guided Generation](06_structure_guided.md)**.
+2.  **Structure-Guided Generation**: Generating molecules from a reference structure — filling in a masked region (inpainting), building outward from a scaffold (outpainting), or softly steering a whole molecule towards a reference without freezing any atoms (SILVR). For a detailed guide on this, please see **[Tutorial 6: Structure-Guided Generation](06_structure_guided.md)**.
 3.  **Property-Directed Generation**: Guiding the generation process to produce molecules that are optimised for specific chemical or physical properties (e.g., high solubility, specific energy levels). For a detailed guide on this, please see **[Tutorial 7: Property-Directed Generation](07_property_directed.md)**.
 
 ---

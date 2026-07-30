@@ -27,7 +27,7 @@ MolCraftDiffusion is built with **modularity** at its core, offering an all-in-o
 - **Generation & Guidance Module** — Generate 3D molecules using a variety of guidance mechanisms:
   - *Unconditional Generation*: Generate 3D molecules without any specific constraints or guidance.
   - *Property-Targeted Guidance*: Steer generation toward desired properties using Classifier-Free Guidance (CFG), Gradient Guidance (GG), or a hybrid approach.
-  - *Structure-Guided Generation*: Perform inpainting (scaffold decoration) and outpainting (fragment extension) with precise 3D geometric constraints.
+  - *Structure-Guided Generation*: Perform inpainting (scaffold decoration), outpainting (fragment extension) and SILVR (soft reference steering / fragment merging) with precise 3D geometric constraints.
 - **Analysis & Evaluation Module** — Assess the quality of generated 3D molecules. Includes tools for structural validity metrics, xTB geometry optimization, RMSD comparisons, and quantum-chemical property calculation/prediction.
 
 ---

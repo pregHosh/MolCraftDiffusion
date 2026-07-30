@@ -447,9 +447,9 @@
           <section id="tutorial-6-structure-guided-generation">
 <h1>Tutorial 6: Structure-Guided Generation<a class="headerlink" href="#tutorial-6-structure-guided-generation" title="Link to this heading">¶</a></h1>
 <blockquote>
-<div><p><strong>Prerequisites:</strong> <a class="reference internal" href="05_generation_overview.html"><span class="std std-doc">Tutorial 5 — Generation Overview</span></a> · <strong>You’ll learn:</strong> inpainting and outpainting with 3D geometric constraints, and how to tune every parameter · <strong>Next:</strong> <a class="reference internal" href="07_property_directed.html"><span class="std std-doc">Tutorial 7 — Property-Directed Generation</span></a></p>
+<div><p><strong>Prerequisites:</strong> <a class="reference internal" href="05_generation_overview.html"><span class="std std-doc">Tutorial 5 — Generation Overview</span></a> · <strong>You’ll learn:</strong> inpainting, outpainting and SILVR with 3D geometric constraints, and how to tune every parameter · <strong>Next:</strong> <a class="reference internal" href="07_property_directed.html"><span class="std std-doc">Tutorial 7 — Property-Directed Generation</span></a></p>
 </div></blockquote>
-<p>This tutorial explains how to guide molecule generation using structural constraints, such as filling in a missing piece (inpainting) or growing a molecule from a fragment (outpainting).</p>
+<p>This tutorial explains how to guide molecule generation using structural constraints, such as filling in a missing piece (inpainting), growing a molecule from a fragment (outpainting), or softly steering a whole molecule towards a reference shape (SILVR).</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p><strong>Atom indices are tied to graph construction.</strong> <code class="docutils literal notranslate"><span class="pre">mask_node_index</span></code> values are 0-indexed positions in the atom list of your XYZ file. If you preprocess the molecule (reorder atoms, remove hydrogens, add atoms) the indices will shift and the mask will apply to the wrong atoms — silently. Always double-check indices against the exact XYZ file passed to <code class="docutils literal notranslate"><span class="pre">reference_structure_path</span></code>, and set <code class="docutils literal notranslate"><span class="pre">use_noised_conditioning:</span> <span class="pre">true</span></code> only if the base model was trained with noised conditioning (check the training config).</p>
@@ -457,10 +457,11 @@
 <section id="contents">
 <h2>Contents<a class="headerlink" href="#contents" title="Link to this heading">¶</a></h2>
 <ol class="arabic simple">
-<li><p><strong>Introduction</strong>: The concept of guiding generation with a structural template.</p></li>
+<li><p><strong>Introduction</strong>: The concept of guiding generation with a structural template, and which mode to pick.</p></li>
 <li><p><strong>Inpainting</strong>: How to configure and run generation to fill in a missing portion of a molecule.</p></li>
 <li><p><strong>Outpainting</strong>: How to grow a molecule from a given substructure.</p></li>
-<li><p><strong>Tuning Parameters</strong>: Intuitive guide to tuning all parameters for both tasks.</p></li>
+<li><p><strong>SILVR</strong>: How to softly steer a whole molecule towards a reference, with no frozen atoms.</p></li>
+<li><p><strong>Tuning Parameters</strong>: Intuitive guide to tuning all parameters for every task.</p></li>
 </ol>
 </section>
 <section id="introduction">
@@ -469,9 +470,71 @@
 <ul class="simple">
 <li><p><strong>Inpainting</strong>: Varying initial structures (either the whole molecule or replacing a specific part of it).</p></li>
 <li><p><strong>Outpainting</strong>: Extending a molecule from a given fragment.</p></li>
+<li><p><strong>SILVR</strong>: Producing a new molecule that <em>resembles</em> a reference — typically a set of crystallographic fragments in a binding site — without copying any of it.</p></li>
 </ul>
 <p><img alt="Workflow overview" src="../_images/ip_op.png" /></p>
 <p>The process involves providing a reference structure in an XYZ file and specifying which parts of the structure to modify or keep fixed. <strong>Note that all atom indices are 0-indexed.</strong> You can create your experiment configuration files in any directory, as the base templates are bundled with the package.</p>
+<section id="which-mode-do-i-want">
+<h3>1.1 Which mode do I want?<a class="headerlink" href="#which-mode-do-i-want" title="Link to this heading">¶</a></h3>
+<p>All three take a <code class="docutils literal notranslate"><span class="pre">reference_structure_path</span></code> and all three run on the same
+unconditionally-trained EDM checkpoint — no retraining, no extra model. The
+difference is <strong>what happens to the reference atoms during denoising</strong>:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p></p></th>
+<th class="head text-left"><p>Inpainting</p></th>
+<th class="head text-left"><p>Outpainting</p></th>
+<th class="head text-left"><p>SILVR</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><strong>Reference atoms are…</strong></p></td>
+<td class="text-left"><p><strong>frozen</strong> (except the ones you mask)</p></td>
+<td class="text-left"><p><strong>frozen</strong></p></td>
+<td class="text-left"><p><strong>never frozen</strong> — every atom stays mobile the whole way</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>Guidance is…</strong></p></td>
+<td class="text-left"><p>hard: unmasked atoms are pinned</p></td>
+<td class="text-left"><p>hard: scaffold is pinned, growth is seeded and constrained</p></td>
+<td class="text-left"><p>soft: each step nudges the latent towards a re-noised reference</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><strong>You must specify</strong></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">mask_node_index</span></code> — which atoms to regenerate</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">connectors</span></code> — where to grow and how many bonds</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">silvr_rate</span></code> — how hard to pull (that’s it)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>Output contains the reference</strong></p></td>
+<td class="text-left"><p>yes, atom-for-atom</p></td>
+<td class="text-left"><p>yes, atom-for-atom</p></td>
+<td class="text-left"><p><strong>no</strong> — a new molecule that merely resembles it</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><strong><code class="docutils literal notranslate"><span class="pre">mol_size</span></code> vs reference</strong></p></td>
+<td class="text-left"><p>≥ reference (clamped up)</p></td>
+<td class="text-left"><p><strong>strictly &gt;</strong> reference</p></td>
+<td class="text-left"><p>≥ reference (clamped up)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>Geometric constraints</strong></p></td>
+<td class="text-left"><p>overlap-push</p></td>
+<td class="text-left"><p>overlap-push + bonding</p></td>
+<td class="text-left"><p>none</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><strong>Typical use</strong></p></td>
+<td class="text-left"><p>swap a substituent, vary part of a known molecule</p></td>
+<td class="text-left"><p>grow a fragment into a lead</p></td>
+<td class="text-left"><p>fragment merging; generate a ligand resembling several fragments at once</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Rules of thumb:</p>
+<ul class="simple">
+<li><p>You need the reference preserved exactly → <strong>inpaint</strong> or <strong>outpaint</strong>.</p></li>
+<li><p>You need something <em>new</em> that occupies the same space → <strong>SILVR</strong>.</p></li>
+<li><p>You have several disconnected fragments and want one molecule spanning them → <strong>SILVR</strong> (this is the case it was designed for; inpaint/outpaint assume one connected scaffold).</p></li>
+<li><p>You want a tunable dial between “ignore the reference” and “reproduce it” → <strong>SILVR</strong>’s <code class="docutils literal notranslate"><span class="pre">silvr_rate</span></code>.</p></li>
+</ul>
+</section>
 </section>
 <hr class="docutils" />
 <section id="inpainting">
@@ -693,12 +756,130 @@ apply no bonding constraint and use the keys alone.</p>
 </section>
 </section>
 <hr class="docutils" />
+<section id="silvr">
+<h2>4. SILVR<a class="headerlink" href="#silvr" title="Link to this heading">¶</a></h2>
+<p>SILVR (<strong>S</strong>elective <strong>I</strong>terative <strong>L</strong>atent <strong>V</strong>ariable <strong>R</strong>efinement) takes a
+different approach from the two modes above: <strong>nothing is frozen</strong>. Every atom
+stays mobile for the whole trajectory, and at each reverse step the latent is
+nudged a little way towards a freshly re-noised copy of the reference:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>z̃ₜ = αₜ · reference + σₜ · ε          (reference re-noised at this step&#39;s noise level)
+z  ← z − (z · αₜ · ref_mask) · rate + (z̃ₜ · ref_mask) · rate
+</pre></div>
+</div>
+<p>Because the pull is applied gently at every one of the T steps rather than by
+pinning coordinates, the model is free to produce a chemically sensible molecule
+that merely <em>resembles</em> the reference. The reference itself never appears in the
+output.</p>
+<p>This makes SILVR the right tool for <strong>fragment merging</strong>: give it several
+crystallographic fragments as one XYZ file and it generates a single connected
+molecule spanning them — something inpaint and outpaint cannot do, since both
+assume one connected scaffold that must be preserved atom-for-atom.</p>
+<div class="seealso admonition">
+<p class="admonition-title">Reference — cite this paper if you use SILVR</p>
+<p>Runcie, N. T. &amp; Mey, A. S. J. S. <em>SILVR: Guided Diffusion for Molecule
+Generation.</em> J. Chem. Inf. Model. <strong>2023</strong>, 63 (19), 5996–6005.
+<a class="reference external" href="https://doi.org/10.1021/acs.jcim.3c00667">doi:10.1021/acs.jcim.3c00667</a> ·
+<a class="reference external" href="https://github.com/meyresearch/SILVR">github.com/meyresearch/SILVR</a></p>
+</div>
+<section id="key-silvr-parameters">
+<h3>Key SILVR Parameters<a class="headerlink" href="#key-silvr-parameters" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">condition_configs</span></code> section for SILVR uses a sub-dictionary called <code class="docutils literal notranslate"><span class="pre">silvr_cfgs</span></code>.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Parameter</p></th>
+<th class="head text-left"><p>Location</p></th>
+<th class="head text-left"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">mol_size</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">interference</span></code> (top-level)</p></td>
+<td class="text-left"><p>Size of the generated molecule = reference atoms + however many extra atoms SILVR may invent. <strong>Must be ≥ the reference</strong>; below it is clamped up with a warning. <strong>Must be explicit if the checkpoint ships no node-size distribution</strong> — <code class="docutils literal notranslate"><span class="pre">[0,0]</span></code> has nothing to draw from and will fail.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">sampling_mode</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">interference</span></code> (top-level)</p></td>
+<td class="text-left"><p><strong>Must be <code class="docutils literal notranslate"><span class="pre">ddpm</span></code>.</strong> SILVR modifies the DDPM reverse loop only; <code class="docutils literal notranslate"><span class="pre">ddim</span></code> raises rather than silently ignoring the guidance.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">reference_structure_path</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
+<td class="text-left"><p><strong>CRITICAL:</strong> Path to your XYZ file. May contain several disconnected fragments. All elements must appear in <code class="docutils literal notranslate"><span class="pre">atom_vocab</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_component</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">xh</span></code> (default) steers coordinates <em>and</em> atom types; <code class="docutils literal notranslate"><span class="pre">x</span></code> steers coordinates only, leaving element identity free.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">n_retrys</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
+<td class="text-left"><p>Keep at <code class="docutils literal notranslate"><span class="pre">0</span></code>; retries are disabled for structure-guided generation.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">silvr_rate</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">silvr_cfgs</span></code></p></td>
+<td class="text-left"><p><strong>The main dial.</strong> Per-step pull strength, <code class="docutils literal notranslate"><span class="pre">0</span></code>–<code class="docutils literal notranslate"><span class="pre">1</span></code>. <code class="docutils literal notranslate"><span class="pre">0.01</span></code> is the published working value. See tuning below.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">silvr_rates</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">silvr_cfgs</span></code></p></td>
+<td class="text-left"><p>Optional per-atom list, length = reference atom count. Overrides <code class="docutils literal notranslate"><span class="pre">silvr_rate</span></code>, letting you pin some fragment atoms harder than others. <code class="docutils literal notranslate"><span class="pre">null</span></code> to disable.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">shift_centre</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">silvr_cfgs</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">true</span></code> (default) returns coordinates in the <strong>reference’s frame</strong> — i.e. in the binding site. <code class="docutils literal notranslate"><span class="pre">false</span></code> returns them centred on the origin.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id2">
+<h3>Configuration<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># my_silvr.yaml</span>
+<span class="nt">defaults</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">diffusion</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">interference</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gen_silvr</span><span class="w"> </span><span class="c1"># Base template bundled with package</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">_self_</span>
+
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;akatsuki&quot;</span>
+<span class="nt">chkpt_directory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;models/edm_pretrained/&quot;</span>
+<span class="nt">atom_vocab</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">H</span><span class="p p-Indicator">,</span><span class="nv">B</span><span class="p p-Indicator">,</span><span class="nv">C</span><span class="p p-Indicator">,</span><span class="nv">N</span><span class="p p-Indicator">,</span><span class="nv">O</span><span class="p p-Indicator">,</span><span class="nv">F</span><span class="p p-Indicator">,</span><span class="nv">Al</span><span class="p p-Indicator">,</span><span class="nv">Si</span><span class="p p-Indicator">,</span><span class="nv">P</span><span class="p p-Indicator">,</span><span class="nv">S</span><span class="p p-Indicator">,</span><span class="nv">Cl</span><span class="p p-Indicator">,</span><span class="nv">As</span><span class="p p-Indicator">,</span><span class="nv">Se</span><span class="p p-Indicator">,</span><span class="nv">Br</span><span class="p p-Indicator">,</span><span class="nv">I</span><span class="p p-Indicator">,</span><span class="nv">Hg</span><span class="p p-Indicator">,</span><span class="nv">Bi</span><span class="p p-Indicator">]</span>
+<span class="nt">diffusion_steps</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">900</span>
+<span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9</span>
+
+<span class="nt">interference</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">num_generate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+<span class="w">  </span><span class="nt">batch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">  </span><span class="nt">mol_size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">30</span><span class="p p-Indicator">]</span><span class="w">          </span><span class="c1"># reference atoms + atoms SILVR may invent</span>
+<span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;results/my_silvr_run&quot;</span>
+<span class="w">  </span><span class="nt">condition_configs</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">reference_structure_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/your_fragments.xyz&quot;</span><span class="w">   </span><span class="c1"># your own XYZ file</span>
+<span class="w">    </span><span class="nt">condition_component</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">xh</span>
+<span class="w">    </span><span class="nt">n_retrys</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">    </span><span class="nt">silvr_cfgs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">silvr_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.01</span>
+<span class="w">      </span><span class="nt">silvr_rates</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">      </span><span class="nt">shift_centre</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+</section>
+<section id="running-silvr">
+<h3>Running SILVR<a class="headerlink" href="#running-silvr" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_silvr
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>One reference per run.</strong> The reference is broadcast across the batch, so every
+molecule in a run is guided by the same fragments. <code class="docutils literal notranslate"><span class="pre">batch_size</span></code> &gt; 1 is fully
+supported and is the right way to generate many samples — but multiple
+<em>references</em> means multiple runs.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
 <section id="tuning-parameters">
-<h2>4. Tuning Parameters<a class="headerlink" href="#tuning-parameters" title="Link to this heading">¶</a></h2>
+<h2>5. Tuning Parameters<a class="headerlink" href="#tuning-parameters" title="Link to this heading">¶</a></h2>
 <p>This section explains the intuition behind every tunable parameter so you can diagnose and fix generation problems without trial-and-error guessing.</p>
 <hr class="docutils" />
 <section id="inpainting-parameters">
-<h3>4.1 Inpainting Parameters<a class="headerlink" href="#inpainting-parameters" title="Link to this heading">¶</a></h3>
+<h3>5.1 Inpainting Parameters<a class="headerlink" href="#inpainting-parameters" title="Link to this heading">¶</a></h3>
 <section id="denoising-strength-how-much-to-vary-the-masked-region">
 <h4><code class="docutils literal notranslate"><span class="pre">denoising_strength</span></code> — how much to vary the masked region<a class="headerlink" href="#denoising-strength-how-much-to-vary-the-masked-region" title="Link to this heading">¶</a></h4>
 <p>This is the most important parameter for inpainting. It controls how far the masked atoms are scrambled before the model regenerates them. Think of it as a “creativity dial”:</p>
@@ -732,7 +913,7 @@ denoising_strength = 1.0   →  full noise, model generates freely with no memor
 </section>
 <hr class="docutils" />
 <section id="outpainting-parameters">
-<h3>4.2 Outpainting Parameters<a class="headerlink" href="#outpainting-parameters" title="Link to this heading">¶</a></h3>
+<h3>5.2 Outpainting Parameters<a class="headerlink" href="#outpainting-parameters" title="Link to this heading">¶</a></h3>
 <section id="connectors-where-and-how-to-grow">
 <h4><code class="docutils literal notranslate"><span class="pre">connectors</span></code> — where and how to grow<a class="headerlink" href="#connectors-where-and-how-to-grow" title="Link to this heading">¶</a></h4>
 <p>This is the only required parameter. Each entry <code class="docutils literal notranslate"><span class="pre">{atom_index:</span> <span class="pre">[n_bonds]}</span></code> says: <em>“from this scaffold atom, grow exactly n new bonds.”</em></p>
@@ -852,10 +1033,71 @@ s = 0.0  ──── generation ends (clean structure)
 </section>
 </section>
 <hr class="docutils" />
+<section id="silvr-parameters">
+<h3>5.3 SILVR Parameters<a class="headerlink" href="#silvr-parameters" title="Link to this heading">¶</a></h3>
+<p>SILVR has essentially <strong>one</strong> dial, which is the point of the method.</p>
+<section id="silvr-rate-how-hard-to-pull-towards-the-reference">
+<h4><code class="docutils literal notranslate"><span class="pre">silvr_rate</span></code> — how hard to pull towards the reference<a class="headerlink" href="#silvr-rate-how-hard-to-pull-towards-the-reference" title="Link to this heading">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>silvr_rate = 0      →  reference ignored entirely (plain unconditional generation)
+silvr_rate = 0.01   →  the published working value — recommended starting point
+silvr_rate = 0.1    →  strong resemblance, less chemical freedom
+silvr_rate = 1      →  reference atoms effectively replaced outright
+</pre></div>
+</div>
+<p>The rate is applied <em>per step</em>, so its effect compounds over the full
+trajectory. This is why a value as small as <code class="docutils literal notranslate"><span class="pre">0.01</span></code> produces a clear
+resemblance, and why <strong>the number of diffusion steps matters</strong>: running 100
+steps instead of 900 gives the pull roughly a ninth as many chances to act, and
+the output will drift far from the reference. Use the checkpoint’s full step
+count for production runs and reserve short runs for smoke-testing.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>This implementation’s reference is normalized.</strong> The published sampler mixes a
+raw one-hot reference into a latent normalized by <code class="docutils literal notranslate"><span class="pre">norm_values</span></code> (typically
+<code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">4,</span> <span class="pre">10]</span></code>), leaving its feature channels ~4× hot. Here the reference goes
+through the platform’s normal loader, so it is scale-consistent — which means
+<strong>feature guidance is ~4× weaker than the paper’s at the same <code class="docutils literal notranslate"><span class="pre">silvr_rate</span></code></strong>.
+Coordinates are unaffected (<code class="docutils literal notranslate"><span class="pre">norm_values[0]</span> <span class="pre">==</span> <span class="pre">1</span></code>). If atom types don’t track
+the reference as strongly as the paper reports, raise the rate before suspecting
+a bug.</p>
+</div>
+</section>
+<section id="silvr-rates-per-atom-pull">
+<h4><code class="docutils literal notranslate"><span class="pre">silvr_rates</span></code> — per-atom pull<a class="headerlink" href="#silvr-rates-per-atom-pull" title="Link to this heading">¶</a></h4>
+<p>A list as long as the reference, overriding <code class="docutils literal notranslate"><span class="pre">silvr_rate</span></code>. Use it when parts of
+the reference matter more than others — e.g. pin a known binding motif at <code class="docutils literal notranslate"><span class="pre">0.05</span></code>
+while letting a peripheral fragment float at <code class="docutils literal notranslate"><span class="pre">0.005</span></code>. A <code class="docutils literal notranslate"><span class="pre">0</span></code> entry makes that
+atom a dummy: it contributes nothing, and SILVR is free to place whatever it
+likes there.</p>
+</section>
+<section id="condition-component-what-gets-steered">
+<h4><code class="docutils literal notranslate"><span class="pre">condition_component</span></code> — what gets steered<a class="headerlink" href="#condition-component-what-gets-steered" title="Link to this heading">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">xh</span></code> (default) steers coordinates <em>and</em> atom types, so the output tends to
+reuse the reference’s elements. <code class="docutils literal notranslate"><span class="pre">x</span></code> steers geometry only, leaving element
+identity entirely to the model — use it when you want the reference’s <em>shape</em>
+but not its chemistry.</p>
+</section>
+<section id="shift-centre-which-frame-the-output-lands-in">
+<h4><code class="docutils literal notranslate"><span class="pre">shift_centre</span></code> — which frame the output lands in<a class="headerlink" href="#shift-centre-which-frame-the-output-lands-in" title="Link to this heading">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">true</span></code> (default) returns coordinates in the reference’s own frame, so samples
+are positioned in the binding site and can be scored against the protein
+directly. <code class="docutils literal notranslate"><span class="pre">false</span></code> returns them centred on the origin. This is a pure output
+convention — it changes nothing about the generated molecule.</p>
+</section>
+<section id="mol-size-how-much-freedom-to-add-atoms">
+<h4><code class="docutils literal notranslate"><span class="pre">mol_size</span></code> — how much freedom to add atoms<a class="headerlink" href="#mol-size-how-much-freedom-to-add-atoms" title="Link to this heading">¶</a></h4>
+<p>Set it to the reference atom count plus however many atoms SILVR may invent.
+The extra (“dummy”) atoms are what let SILVR bridge disconnected fragments into
+one molecule, so for fragment merging give it a generous margin. Equal to the
+reference count is valid and turns SILVR into pure refinement of the reference
+atoms. Below the reference count it is clamped up with a warning.</p>
+</section>
+</section>
+<hr class="docutils" />
 <section id="quick-diagnostics">
-<h3>4.3 Quick Diagnostics<a class="headerlink" href="#quick-diagnostics" title="Link to this heading">¶</a></h3>
-<section id="id2">
-<h4>Inpainting<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h4>
+<h3>5.4 Quick Diagnostics<a class="headerlink" href="#quick-diagnostics" title="Link to this heading">¶</a></h3>
+<section id="id3">
+<h4>Inpainting<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h4>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -885,8 +1127,8 @@ s = 0.0  ──── generation ends (clean structure)
 </table>
 </div>
 </section>
-<section id="id3">
-<h4>Outpainting<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h4>
+<section id="id4">
+<h4>Outpainting<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h4>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -931,6 +1173,57 @@ s = 0.0  ──── generation ends (clean structure)
 <tr class="row-even"><td class="text-left"><p>Run aborts: “nothing to grow” / size ≤ scaffold</p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">mol_size</span></code> maximum is ≤ the scaffold, or <code class="docutils literal notranslate"><span class="pre">[0,0]</span></code> on a scaffold larger than the model ever generates</p></td>
 <td class="text-left"><p>Set <code class="docutils literal notranslate"><span class="pre">mol_size:[lo,hi]</span></code> with <code class="docutils literal notranslate"><span class="pre">lo</span></code> &gt; scaffold atom count</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id5">
+<h4>SILVR<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h4>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Symptom</p></th>
+<th class="head text-left"><p>Most likely cause</p></th>
+<th class="head text-left"><p>Fix</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Output barely resembles the reference</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">silvr_rate</span></code> too low, or too few diffusion steps</p></td>
+<td class="text-left"><p>Raise <code class="docutils literal notranslate"><span class="pre">silvr_rate</span></code> to <code class="docutils literal notranslate"><span class="pre">0.05–0.1</span></code>; run the checkpoint’s full step count</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Atom types ignore the reference but shape is right</p></td>
+<td class="text-left"><p>Normalized-reference deviation (see §5.3)</p></td>
+<td class="text-left"><p>Raise <code class="docutils literal notranslate"><span class="pre">silvr_rate</span></code>, or keep <code class="docutils literal notranslate"><span class="pre">condition_component:</span> <span class="pre">xh</span></code> if you had set <code class="docutils literal notranslate"><span class="pre">x</span></code></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Output is a near-copy of the reference, no novelty</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">silvr_rate</span></code> too high</p></td>
+<td class="text-left"><p>Lower towards <code class="docutils literal notranslate"><span class="pre">0.01</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Fragments stay separate, no single molecule</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">mol_size</span></code> too small — no dummy atoms to bridge with</p></td>
+<td class="text-left"><p>Increase <code class="docutils literal notranslate"><span class="pre">mol_size</span></code> well above the reference atom count</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Samples come out at the origin, not in the binding site</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">shift_centre:</span> <span class="pre">false</span></code></p></td>
+<td class="text-left"><p>Set <code class="docutils literal notranslate"><span class="pre">shift_centre:</span> <span class="pre">true</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Every sample has an identical centroid</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">mol_size</span></code> == reference count, so there is no dummy region</p></td>
+<td class="text-left"><p>Expected, not a bug — increase <code class="docutils literal notranslate"><span class="pre">mol_size</span></code> if you want positional variation</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Run aborts: “silvr supports sampling_mode ‘ddpm’ only”</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">sampling_mode:</span> <span class="pre">ddim</span></code></p></td>
+<td class="text-left"><p>Set <code class="docutils literal notranslate"><span class="pre">sampling_mode:</span> <span class="pre">ddpm</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Run fails drawing a size / <code class="docutils literal notranslate"><span class="pre">node_dist_model</span></code> unset</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">mol_size:</span> <span class="pre">[0,0]</span></code> on a checkpoint with no node-size distribution</p></td>
+<td class="text-left"><p>Set an explicit <code class="docutils literal notranslate"><span class="pre">mol_size</span></code></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Warning: sizes “snapped up to the scaffold size”</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">mol_size</span></code> below the reference atom count</p></td>
+<td class="text-left"><p>Expected clamp; raise <code class="docutils literal notranslate"><span class="pre">mol_size</span></code> to silence it</p></td>
 </tr>
 </tbody>
 </table>
@@ -1014,7 +1307,10 @@ s = 0.0  ──── generation ends (clean structure)
             <ul>
 <li><a class="reference internal" href="#">Tutorial 6: Structure-Guided Generation</a><ul>
 <li><a class="reference internal" href="#contents">Contents</a></li>
-<li><a class="reference internal" href="#introduction">1. Introduction</a></li>
+<li><a class="reference internal" href="#introduction">1. Introduction</a><ul>
+<li><a class="reference internal" href="#which-mode-do-i-want">1.1 Which mode do I want?</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#inpainting">2. Inpainting</a><ul>
 <li><a class="reference internal" href="#key-inpainting-parameters">Key Inpainting Parameters</a></li>
 <li><a class="reference internal" href="#configuration">Configuration</a></li>
@@ -1027,15 +1323,21 @@ s = 0.0  ──── generation ends (clean structure)
 <li><a class="reference internal" href="#running-outpainting">Running Outpainting</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#tuning-parameters">4. Tuning Parameters</a><ul>
-<li><a class="reference internal" href="#inpainting-parameters">4.1 Inpainting Parameters</a><ul>
+<li><a class="reference internal" href="#silvr">4. SILVR</a><ul>
+<li><a class="reference internal" href="#key-silvr-parameters">Key SILVR Parameters</a></li>
+<li><a class="reference internal" href="#id2">Configuration</a></li>
+<li><a class="reference internal" href="#running-silvr">Running SILVR</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tuning-parameters">5. Tuning Parameters</a><ul>
+<li><a class="reference internal" href="#inpainting-parameters">5.1 Inpainting Parameters</a><ul>
 <li><a class="reference internal" href="#denoising-strength-how-much-to-vary-the-masked-region"><code class="docutils literal notranslate"><span class="pre">denoising_strength</span></code> — how much to vary the masked region</a></li>
 <li><a class="reference internal" href="#mask-node-index-which-atoms-to-regenerate"><code class="docutils literal notranslate"><span class="pre">mask_node_index</span></code> — which atoms to regenerate</a></li>
 <li><a class="reference internal" href="#constraint-strength-inpainting"><code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code> (inpainting)</a></li>
 <li><a class="reference internal" href="#scale-factor-inpainting"><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code> (inpainting)</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#outpainting-parameters">4.2 Outpainting Parameters</a><ul>
+<li><a class="reference internal" href="#outpainting-parameters">5.2 Outpainting Parameters</a><ul>
 <li><a class="reference internal" href="#connectors-where-and-how-to-grow"><code class="docutils literal notranslate"><span class="pre">connectors</span></code> — where and how to grow</a></li>
 <li><a class="reference internal" href="#t-start-how-many-denoising-steps-to-run"><code class="docutils literal notranslate"><span class="pre">t_start</span></code> — how many denoising steps to run</a></li>
 <li><a class="reference internal" href="#seed-dist-min-dist-spread-jitter-scale-initialization"><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">min_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">spread</span></code>, <code class="docutils literal notranslate"><span class="pre">jitter_scale</span></code> — initialization</a></li>
@@ -1044,9 +1346,18 @@ s = 0.0  ──── generation ends (clean structure)
 <li><a class="reference internal" href="#scale-factor-outpainting"><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code> (outpainting)</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#quick-diagnostics">4.3 Quick Diagnostics</a><ul>
-<li><a class="reference internal" href="#id2">Inpainting</a></li>
-<li><a class="reference internal" href="#id3">Outpainting</a></li>
+<li><a class="reference internal" href="#silvr-parameters">5.3 SILVR Parameters</a><ul>
+<li><a class="reference internal" href="#silvr-rate-how-hard-to-pull-towards-the-reference"><code class="docutils literal notranslate"><span class="pre">silvr_rate</span></code> — how hard to pull towards the reference</a></li>
+<li><a class="reference internal" href="#silvr-rates-per-atom-pull"><code class="docutils literal notranslate"><span class="pre">silvr_rates</span></code> — per-atom pull</a></li>
+<li><a class="reference internal" href="#condition-component-what-gets-steered"><code class="docutils literal notranslate"><span class="pre">condition_component</span></code> — what gets steered</a></li>
+<li><a class="reference internal" href="#shift-centre-which-frame-the-output-lands-in"><code class="docutils literal notranslate"><span class="pre">shift_centre</span></code> — which frame the output lands in</a></li>
+<li><a class="reference internal" href="#mol-size-how-much-freedom-to-add-atoms"><code class="docutils literal notranslate"><span class="pre">mol_size</span></code> — how much freedom to add atoms</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#quick-diagnostics">5.4 Quick Diagnostics</a><ul>
+<li><a class="reference internal" href="#id3">Inpainting</a></li>
+<li><a class="reference internal" href="#id4">Outpainting</a></li>
+<li><a class="reference internal" href="#id5">SILVR</a></li>
 </ul>
 </li>
 </ul>

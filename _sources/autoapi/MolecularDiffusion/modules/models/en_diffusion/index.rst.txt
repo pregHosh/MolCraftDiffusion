@@ -378,7 +378,7 @@ Module Contents
 
 
 
-   .. py:method:: sample(n_samples, n_nodes, node_mask, edge_mask, context, condition_tensor=None, condition_mode=None, inpaint_cfgs={}, outpaint_cfgs={}, use_noised_conditioning=False, fix_noise=False, n_frames=0, t_retry=180, n_retrys=0)
+   .. py:method:: sample(n_samples, n_nodes, node_mask, edge_mask, context, condition_tensor=None, condition_mode=None, inpaint_cfgs={}, outpaint_cfgs={}, use_noised_conditioning=False, fix_noise=False, n_frames=0, t_retry=180, n_retrys=0, silvr_cfgs=None)
 
       Draw samples from the generative model.
 
@@ -805,6 +805,30 @@ Module Contents
 
       :returns: The outpainted and fine-tuned sample zs.
       :rtype: torch.Tensor
+
+
+
+   .. py:method:: sample_p_zs_given_zt_silvr(s, t, zt, node_mask, edge_mask, context, xh_ref, silvr_rate, ref_node_mask, total_shift, condition_component, fix_noise=False)
+
+      One SILVR reverse step (Runcie & Mey 2023, arXiv:2304.10905).
+
+      Reproduces the published sampler's per-step block verbatim
+      (docs/model_integrations/silvr/reference_source/
+      silvr_fork_en_diffusion.py L893-976):
+
+      1. re-centre zt on its own coordinate mean (over node_mask.sum());
+      2. rebuild + re-centre the padded reference, accumulating the removed
+         mean into ``total_shift``;
+      3. take the ordinary, unmodified EDM reverse step;
+      4. blend the reference's noised latent into the reference rows.
+
+      ``alpha_t``/``sigma_t`` come from ``gamma(t)`` -- the higher-noise
+      timestep, one level noisier than the ``z`` step 3 just produced. That
+      is what the source does; it is not a typo for ``gamma(s)``.
+
+      :returns: ``(zs, xh_ref, total_shift)`` -- the latter two are carried
+                into the next step by the caller.
+      :rtype: tuple
 
 
 
