@@ -6,8 +6,8 @@ config's `_target_` factory builds the matching model, so adding or swapping an
 architecture never touches the core engine.
 
 Configs live in `configs/tasks/`. The tables below list one row per **distinct
-model** — configs that differ only in hyperparameters or a starting checkpoint
-are collected under [Variants](#variants) instead.
+model**; configs that differ only in hyperparameters or a starting checkpoint
+are not listed separately.
 
 ## 1. De novo 3D generation
 
@@ -41,7 +41,8 @@ molecule); a plain molecule dataset is not enough.
 | Task config | `task_type` | Conditioned on | Notes |
 | :--- | :--- | :--- | :--- |
 | `diffusion_diffsmol.yaml` | `diffusion_diffsmol` | Molecular **shape** | DiffSMol (UniTransformerO2 GVP). Continuous DDPM on coordinates + D3PM categorical diffusion on atom types, conditioned on an equivariant `(128,3)` surface-shape latent with classifier-free guidance. Bond-free; heavy atoms only. Needs an offline shape cache (`[shape]` extra) — see [model_integrations/diffsmol/FINAL_REPORT.md](model_integrations/diffsmol/FINAL_REPORT.md). |
-| `diffusion_diffpharma.yaml` | `diffusion_diffpharma` | **Protein pocket** + pharmacophore particles | DiffPharma (EGNN over 3 parallel interaction graphs). The only **structure-based (SBDD)** backbone here: generates a ligand *inside a given pocket*. Four node sets — ligand, full-atom pocket, `interh`, `interhp` — and **only the ligand is noised**, so it cannot train on a ligand-only dataset. Ligand size comes from a 2D histogram conditioned on pocket size. Bond-free. Novel pockets from raw PDB+SDF need the `[bio]` extra — see [model_integrations/diffpharma/FINAL_REPORT.md](model_integrations/diffpharma/FINAL_REPORT.md). |
+| `diffusion_diffpharma.yaml` | `diffusion_diffpharma` | **Protein pocket** + pharmacophore particles | DiffPharma (EGNN over 3 parallel interaction graphs). A **structure-based (SBDD)** backbone: generates a ligand *inside a given pocket*. Four node sets — ligand, full-atom pocket, `interh`, `interhp` — and **only the ligand is noised**, so it cannot train on a ligand-only dataset. Ligand size comes from a 2D histogram conditioned on pocket size. Bond-free. Novel pockets from raw PDB+SDF need the `[bio]` extra — see [model_integrations/diffpharma/FINAL_REPORT.md](model_integrations/diffpharma/FINAL_REPORT.md). |
+| `diffusion_pmdm.yaml` | `diffusion_pmdm` | **Protein pocket** | PMDM (dual EGNN + SchNet encoders, ligand↔pocket cross-attention). A **structure-based (SBDD)** backbone, like DiffPharma but pocket-only. Two node sets — ligand and full-atom pocket — and **only the ligand is noised**; the pocket is fixed context, so a ligand-only dataset cannot train it. Continuous DDPM (sigmoid schedule, T=1000) on coordinates + atom types, with a global (6 Å) and a local (3 Å) branch over the joined cloud. Bond-free: the real bonds are discarded before the model sees them. Generation goes through `PMDMPocketGenerator` (`gen_pmdm_pocket.yaml`), not `GenerativeFactory`, since `sample()` has no channel for "which pocket". Inpainting/linker sampling not ported — see [model_integrations/pmdm/FINAL_REPORT.md](model_integrations/pmdm/FINAL_REPORT.md). |
 | `diffusion_difflinker.yaml` | `diffusion_difflinker` | **Fragments** to join | DiffLinker. Linker design: generates the connecting atoms between held-fixed fragments. |
 | `pharmacophore.yaml` | `diffusion_pharmacophore` | **Pharmacophore** points | Ligand-derived pharmacophore conditioning (no protein). Requires `open3d`. |
 
@@ -67,21 +68,6 @@ guidance.
 | `ssl3d_egt.yaml` | `ssl3d` | EGT |
 | `ssl3d_esen.yaml` | `ssl3d` | eSEN |
 | `ssl3d_equiformer.yaml` | `ssl3d_equiformer` | EquiformerV2 |
-
-## Variants
-
-Same model as `diffusion.yaml` (identical `ModelTaskFactory_EGCL`, `task_type:
-diffusion`) — config presets, not separate architectures:
-
-- `diffusion_extraf.yaml` — EDM with extra atom features.
-- `diffusion_pretrained.yaml` — EDM set up to fine-tune from an existing checkpoint.
-
-## Not a training config
-
-ShEPhERD is integrated as a scoring/architecture module
-(`modules/models/shepherd_arch/`, `utils/shepherd_score/`) used by the guidance
-and `analyze metrics --metrics shepherd` paths, rather than as a standalone
-training config.
 
 ## References
 
@@ -113,6 +99,10 @@ Backbones and objectives integrated here are based on the following work.
   a pharmacophore-conditioned extension of **DiffSBDD**: Schneuing et al.,
   *Structure-based Drug Design with Equivariant Diffusion Models*, Nature
   Computational Science 2024 ([arXiv:2210.13695](https://arxiv.org/abs/2210.13695)).
+- **PMDM** — Huang, Yang, Zhou, Zhang, Chen, Zhang, Wang & Tang. *A dual
+  diffusion model enables 3D molecule generation and lead optimization based on
+  target pocket.* Nature Communications 2024.
+  [doi:10.1038/s41467-024-46569-1](https://doi.org/10.1038/s41467-024-46569-1)
 - **DiffLinker** — Igashov et al. *Equivariant 3D-Conditional Diffusion Model
   for Molecular Linker Design.* Nature Machine Intelligence 2024. [arXiv:2210.05274](https://arxiv.org/abs/2210.05274)
 - **eSEN** — Fu et al. *Learning Smooth and Expressive Interatomic Potentials

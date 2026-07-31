@@ -1,0 +1,177 @@
+MolecularDiffusion.modules.models.pmdm.common
+=============================================
+
+.. py:module:: MolecularDiffusion.modules.models.pmdm.common
+
+.. autoapi-nested-parse::
+
+   Shared building blocks for the PMDM epsilon network.
+
+   Ported from the PMDM reference implementation (``models/common.py``,
+   ``models/geometry.py``, ``models/epsnet/diffusion.py``,
+   ``utils/misc.py::get_adj_matrix``). Only the pieces
+   ``MDM_full_pocket_coor_shared`` actually calls are kept; the upstream
+   readouts, cluster helpers and losses have no consumer here.
+
+   Three deliberate deviations from upstream:
+
+   * ``BOND_TYPES`` was imported from ``utils/chem.py``, which imports openbabel
+     at module scope. Only ``len(BOND_TYPES)`` is ever used, so the count is
+     inlined as :data:`NUM_BOND_TYPES`.
+   * ``torch.sparse.LongTensor`` (removed in modern torch) is replaced by
+     :func:`torch.sparse_coo_tensor`.
+   * ``get_edges`` upstream takes separate protein/ligand cutoffs but both call
+     sites pass the same value twice, which makes the second (ligand-block)
+     pass a no-op. It takes one cutoff here.
+
+   # ponytail: the vendored surface is the reachable subset only. If a future
+   # pass turns on ``vae_context``/``linker_mask``, port those branches then.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.pmdm.common.NUM_BOND_TYPES
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.pmdm.common.GaussianSmearing
+   MolecularDiffusion.modules.models.pmdm.common.MultiLayerPerceptron
+   MolecularDiffusion.modules.models.pmdm.common.ShiftedSoftplus
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.pmdm.common.center_pos_pl
+   MolecularDiffusion.modules.models.pmdm.common.clip_norm
+   MolecularDiffusion.modules.models.pmdm.common.eq_transform
+   MolecularDiffusion.modules.models.pmdm.common.extend_graph_order_radius
+   MolecularDiffusion.modules.models.pmdm.common.get_adj_matrix
+   MolecularDiffusion.modules.models.pmdm.common.get_distance
+   MolecularDiffusion.modules.models.pmdm.common.get_edges
+   MolecularDiffusion.modules.models.pmdm.common.get_num_embedding
+
+
+Module Contents
+---------------
+
+.. py:class:: GaussianSmearing(start: float = 0.0, stop: float = 10.0, num_gaussians: int = 50)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Radial basis expansion of a distance.
+
+
+   .. py:method:: forward(dist: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: coeff
+
+
+.. py:class:: MultiLayerPerceptron(input_dim: int, hidden_dims: list, activation: str = 'relu', dropout: float = 0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   MLP with no activation/dropout after the last layer.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: activation
+
+
+   .. py:attribute:: dims
+
+
+   .. py:attribute:: dropout
+
+
+   .. py:attribute:: layers
+
+
+.. py:class:: ShiftedSoftplus
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   ``softplus(x) - log(2)``.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: shift
+
+
+.. py:function:: center_pos_pl(ligand_pos: torch.Tensor, pocket_pos: torch.Tensor, ligand_batch: torch.Tensor, pocket_batch: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+
+   Move ligand *and* pocket so the per-complex ligand centroid is at 0.
+
+
+.. py:function:: clip_norm(vec: torch.Tensor, limit: float, p: int = 2) -> torch.Tensor
+
+   Rescale rows of ``vec`` whose norm exceeds ``limit``.
+
+
+.. py:function:: eq_transform(score_d: torch.Tensor, pos: torch.Tensor, edge_index: torch.Tensor, edge_length: torch.Tensor) -> torch.Tensor
+
+   Turn a per-edge distance score into an equivariant per-node score.
+
+
+.. py:function:: extend_graph_order_radius(num_nodes: int, pos: torch.Tensor, edge_index: torch.Tensor, edge_type: torch.Tensor, batch: torch.Tensor, order: int = 3, cutoff: float = 10.0, extend_order: bool = True, extend_radius: bool = True) -> Tuple[torch.Tensor, torch.Tensor]
+
+   Bond graph -> (k-hop extended) -> (unioned with a radius graph).
+
+   With PMDM's training transform the input bond graph is already
+   fully connected, so ``extend_order`` is a no-op and ``extend_radius``
+   only re-*types* edges: an edge inside ``cutoff`` ends up as type 0
+   (``1 + (-1)``), one outside stays type 1.
+
+
+.. py:function:: get_adj_matrix(n_particles: int, device=None) -> torch.Tensor
+
+   Fully-connected, self-loop-free edge index for one molecule, ``(2, n*(n-1))``.
+
+   Upstream builds this with a double python loop
+   (``utils/misc.py::get_adj_matrix``); the edge *set* is identical here.
+
+
+.. py:function:: get_distance(pos: torch.Tensor, edge_index: torch.Tensor) -> torch.Tensor
+
+   Euclidean length of every edge, ``(E,)``.
+
+
+.. py:function:: get_edges(pos: torch.Tensor, batch_mask: torch.Tensor, cutoff: float, max_pairs: Optional[int] = None) -> torch.Tensor
+
+   Dense within-graph radius graph over the joined ligand+pocket cloud.
+
+   Kept dense (``torch.cdist``) exactly as upstream: the pocket is a few
+   hundred atoms, so the pairwise matrix is small, and a sparse rebuild
+   would change which edges tie on the cutoff boundary.
+
+   # ponytail: O(N^2) in the joined point count, fine to ~5k atoms/batch.
+   # Swap in torch_cluster.radius_graph if a batch ever gets bigger.
+
+
+.. py:function:: get_num_embedding(timesteps: torch.Tensor, embedding_dim: int) -> torch.Tensor
+
+   Sinusoidal embedding of a 1-D integer tensor, ``(G, embedding_dim)``.
+
+
+.. py:data:: NUM_BOND_TYPES
+   :value: 22
+
+

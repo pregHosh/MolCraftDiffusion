@@ -1,0 +1,212 @@
+MolecularDiffusion.data.component.pmdm_data
+===========================================
+
+.. py:module:: MolecularDiffusion.data.component.pmdm_data
+
+.. autoapi-nested-parse::
+
+   Dataset / collate / DataModule for PMDM pocket-ligand complexes.
+
+   PMDM carries two node sets per complex -- a diffused ligand point cloud and a
+   fixed full-atom pocket point cloud -- flat-concatenated with
+   ``torch_scatter``-style batch indices. That is not the platform's padded
+   single-node-set PointCloud batch, so this module brings its own Dataset and
+   ``collate_fn`` and is selected via ``_target_`` from
+   ``configs/data/pmdm_dataset.yaml``. Direct precedent:
+   ``data/component/diffpharma_data.py``, which does the same for a four-node-set
+   model through the same seams (``cli/train.py`` -> ``.load()`` /
+   ``.train_set`` / ``.collate_fn``, then ``data/lightning_data_module.py``'s
+   ``collate_fn or graph_collate``).
+
+   Storage is one ASE db row per complex, written offline by
+   ``docs/model_integrations/pmdm/scripts/convert_dataset.py``:
+
+       Atoms            -> ligand only (positions + raw element Z)
+       key_value_pairs  -> name, n_lig, n_pocket
+       data             -> lig_feat (N_lig, 8) rdkit atom-family flags,
+                           pocket_coords, pocket_element,
+                           pocket_aa_type, pocket_is_backbone
+
+   Everything in the db is a **raw integer**, never one-hot. This module owns the
+   one-hot expansion, so changing a vocabulary does not mean reconverting -- and
+   it keeps PMDM's PDB/SDF parsing (and its ``np.bool``/``np.long`` calls, all
+   removed in modern numpy) entirely out of the runtime path.
+
+   The collate deliberately emits **PMDM's own attribute names**, so the task
+   adapter is a one-line ``SimpleNamespace(**batch)``.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.pmdm_data.MAX_NUM_AA
+   MolecularDiffusion.data.component.pmdm_data.PMDM_ATOM_VOCAB
+   MolecularDiffusion.data.component.pmdm_data.PMDM_ELEMENTS
+   MolecularDiffusion.data.component.pmdm_data.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.pmdm_data.PMDMDataModule
+   MolecularDiffusion.data.component.pmdm_data.PMDMDataset
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.pmdm_data.fully_connected_edges
+   MolecularDiffusion.data.component.pmdm_data.pmdm_collate
+
+
+Module Contents
+---------------
+
+.. py:class:: PMDMDataModule(root: str, train_file: str = 'pmdm_smoke.db', val_file: Optional[str] = None, test_file: Optional[str] = None, batch_size: int = 4, num_workers: int = 0, center: bool = True, limit: Optional[int] = None, atom_vocab: Optional[List[str]] = None, task_type: str = 'diffusion_pmdm', **kwargs: Any)
+
+   DataModule contract: ``load()`` + ``train_set``/``valid_set``/``test_set``.
+
+   # ponytail: one db, no split -- ``val_file``/``test_file`` default to the
+   # training db. The smoke set is 31 complexes; add a real split (and LMDB
+   # streaming) when a full CrossDocked run needs one.
+
+
+   .. py:method:: load() -> None
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: batch_size
+      :value: 4
+
+
+
+   .. py:attribute:: center
+      :value: True
+
+
+
+   .. py:attribute:: collate_fn
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: limit
+      :value: None
+
+
+
+   .. py:attribute:: num_workers
+      :value: 0
+
+
+
+   .. py:attribute:: root
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_pmdm'
+
+
+
+   .. py:attribute:: test_file
+      :value: 'pmdm_smoke.db'
+
+
+
+   .. py:attribute:: test_set
+      :type:  Optional[PMDMDataset]
+      :value: None
+
+
+
+   .. py:attribute:: train_file
+      :value: 'pmdm_smoke.db'
+
+
+
+   .. py:attribute:: train_set
+      :type:  Optional[PMDMDataset]
+      :value: None
+
+
+
+   .. py:attribute:: val_file
+      :value: 'pmdm_smoke.db'
+
+
+
+   .. py:attribute:: valid_set
+      :type:  Optional[PMDMDataset]
+      :value: None
+
+
+
+.. py:class:: PMDMDataset(db_path: str, center: bool = True, limit: Optional[int] = None)
+
+   Bases: :py:obj:`torch.utils.data.Dataset`
+
+
+   One converted ASE db -> one pocket-ligand complex per index.
+
+   ``center=True`` subtracts the joint ligand+pocket centroid (upstream's
+   training-time behaviour, ``center_pos_pl`` re-centres anyway); generation
+   uses ``center=False`` so the sampled ligand lands in the input pocket's
+   own frame.
+
+   # ponytail: rows are read eagerly into RAM at construction, like
+   # DiffPharmaDataset. 31 complexes here, fine to ~100k. Stream by row id in
+   # __getitem__ if a full CrossDocked split ever needs it.
+
+
+   .. py:attribute:: center
+      :value: True
+
+
+
+   .. py:attribute:: db_path
+
+
+   .. py:attribute:: entries
+      :type:  List[Dict[str, Any]]
+      :value: []
+
+
+
+.. py:function:: fully_connected_edges(sizes: List[int]) -> torch.Tensor
+
+   Per-molecule fully-connected, self-loop-free edge index with offsets.
+
+   This is what PMDM's ``GetAdj()`` transform builds (``utils/transforms.py``:
+   ``get_adj_matrix(n)``, bond type constant 2) -- the real bonds are thrown
+   away before the model ever sees them.
+
+
+.. py:function:: pmdm_collate(batch: List[Dict[str, Any]]) -> Dict[str, Any]
+
+   Concatenate complexes; emit PMDM's own attribute names.
+
+
+.. py:data:: MAX_NUM_AA
+   :value: 20
+
+
+.. py:data:: PMDM_ATOM_VOCAB
+   :value: ['H', 'C', 'N', 'O', 'F', 'P', 'S', 'Cl', 'Se', 'others']
+
+
+.. py:data:: PMDM_ELEMENTS
+   :value: [1, 6, 7, 8, 9, 15, 16, 17, 34, 119]
+
+
+.. py:data:: logger
+

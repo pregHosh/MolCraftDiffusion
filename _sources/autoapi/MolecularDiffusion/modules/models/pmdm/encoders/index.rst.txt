@@ -1,0 +1,254 @@
+MolecularDiffusion.modules.models.pmdm.encoders
+===============================================
+
+.. py:module:: MolecularDiffusion.modules.models.pmdm.encoders
+
+.. autoapi-nested-parse::
+
+   Encoders used by the PMDM epsilon network.
+
+   Ported from PMDM's ``models/encoders/{attention,edge,egnn,egnn_pytorch,schnet}.py``,
+   keeping only what ``MDM_full_pocket_coor_shared`` reaches:
+
+   * :class:`CrossAttentionBlock` -- upstream ``BasicTransformerBlock``, the
+     ligand<->pocket token mixer.
+   * :class:`SchNetProteinEncoder` -- upstream ``SchNetEncoder_protein``, used for
+     both the pocket and the ligand tower.
+   * :class:`MLPEdgeEncoder` -- upstream ``MLPEdgeEncoder`` (``edge_encoder: mlp``).
+   * :class:`EGNNSparseNetwork` -- upstream ``EGNN_Sparse_Network``.
+
+   Two deliberate deviations from upstream:
+
+   * **No einops.** Upstream's attention uses ``rearrange`` for three reshapes;
+     those are plain ``view``/``permute`` here, so PMDM needs no new dependency.
+   * **No ``MessagePassing``.** Upstream's ``EGNN_Sparse`` overrides
+     ``propagate`` and reaches into PyG privates (``self.inspector.distribute``,
+     ``_collect``) that moved in PyG 2.5. The message/aggregate pair is written
+     directly with ``scatter_add``, which is what ``aggr="add"`` did anyway.
+     Every graph fed to these layers is symmetric, so the source/target
+     convention cannot flip a result.
+
+   Dropped as unreachable under this integration's scope: the fourier-feature
+   branch (``fourier_features=0``), global linear attention
+   (``global_linear_attn_every=0``), the node/edge embedding-table branch
+   (empty dims), ``linker_mask`` (linker sampling is out of scope), and
+   upstream's unused ``ligandemb``/``proteinemb``/inner ``atten_layer``
+   parameters in ``EGNN_Sparse_Network`` (the live code path is ``h = z``).
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.pmdm.encoders.SiLU
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.pmdm.encoders.CrossAttentionBlock
+   MolecularDiffusion.modules.models.pmdm.encoders.EGNNSparseLayer
+   MolecularDiffusion.modules.models.pmdm.encoders.EGNNSparseNetwork
+   MolecularDiffusion.modules.models.pmdm.encoders.MLPEdgeEncoder
+   MolecularDiffusion.modules.models.pmdm.encoders.SchNetProteinEncoder
+
+
+Module Contents
+---------------
+
+.. py:class:: CrossAttentionBlock(dim: int, n_heads: int, d_head: int, dropout: float = 0.0, context_dim: Optional[int] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Upstream ``BasicTransformerBlock``: self-attend both towers, then cross.
+
+
+   .. py:method:: forward(x: torch.Tensor, context: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+
+
+   .. py:attribute:: attn1
+
+
+   .. py:attribute:: attn2
+
+
+   .. py:attribute:: attn2p
+
+
+   .. py:attribute:: attn_p
+
+
+   .. py:attribute:: ff
+
+
+   .. py:attribute:: ffp
+
+
+   .. py:attribute:: norm1
+
+
+   .. py:attribute:: norm1p
+
+
+   .. py:attribute:: norm2
+
+
+   .. py:attribute:: norm2p
+
+
+   .. py:attribute:: norm3
+
+
+   .. py:attribute:: norm3p
+
+
+.. py:class:: EGNNSparseLayer(feats_dim: int, pos_dim: int = 3, edge_attr_dim: int = 0, m_dim: int = 16, soft_edge: int = 0, norm_feats: bool = False, norm_coors: bool = False, norm_coors_scale_init: float = 0.01, dropout: float = 0.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   One E(n)-equivariant message-passing layer.
+
+   Only the *ligand* block of the coordinate update is applied: the pocket
+   is a fixed conditioning cloud and must not move. Ligand nodes are the
+   first ``n_ligand`` rows of every tensor (the caller concatenates
+   ligand-then-pocket), which is exactly upstream's convention.
+
+
+   .. py:method:: forward(x: torch.Tensor, edge_index: torch.Tensor, edge_attr: Optional[torch.Tensor], batch: torch.Tensor, n_ligand: int) -> torch.Tensor
+
+
+   .. py:attribute:: coors_mlp
+
+
+   .. py:attribute:: coors_norm
+
+
+   .. py:attribute:: edge_mlp
+
+
+   .. py:attribute:: edge_weight
+
+
+   .. py:attribute:: feats_dim
+
+
+   .. py:attribute:: m_dim
+      :value: 16
+
+
+
+   .. py:attribute:: node_mlp
+
+
+   .. py:attribute:: node_norm
+
+
+   .. py:attribute:: pos_dim
+      :value: 3
+
+
+
+   .. py:attribute:: soft_edge
+      :value: 0
+
+
+
+.. py:class:: EGNNSparseNetwork(n_layers: int, feats_dim: int, pos_dim: int = 3, edge_attr_dim: int = 0, m_dim: int = 16, soft_edge: int = 0, norm_feats: bool = True, norm_coors: bool = False, norm_coors_scale_init: float = 0.01, dropout: float = 0.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Stack of :class:`EGNNSparseLayer` over the joined ligand+pocket cloud.
+
+   Returns the ligand slice only: ``(node_feats, coord_update)``, where the
+   coordinate output is the *displacement* from the input positions (the
+   equivariant score), as upstream does.
+
+
+   .. py:method:: forward(z: torch.Tensor, pos: torch.Tensor, edge_index: torch.Tensor, edge_attr: torch.Tensor, batch: torch.Tensor, n_ligand: int) -> Tuple[torch.Tensor, torch.Tensor]
+
+
+   .. py:attribute:: feats_dim
+
+
+   .. py:attribute:: mpnn_layers
+
+
+   .. py:attribute:: pos_dim
+      :value: 3
+
+
+
+.. py:class:: MLPEdgeEncoder(hidden_dim: int = 100, activation: str = 'relu')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Embed an edge length into ``hidden_dim``.
+
+   Upstream also multiplies in a learned bond-type embedding, but both call
+   sites in ``MDM_full_pocket_coor_shared.net`` pass ``edge_type=None`` (the
+   joined ligand+pocket graphs are purely geometric), leaving that embedding
+   permanently untrained. It is dropped here rather than shipped as dead
+   weight that DDP would then flag as an unused parameter.
+
+
+   .. py:method:: forward(edge_length: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: hidden_dim
+      :value: 100
+
+
+
+   .. py:attribute:: mlp
+
+
+   .. py:property:: out_channels
+      :type: int
+
+
+
+.. py:class:: SchNetProteinEncoder(hidden_channels: int = 128, num_filters: int = 128, num_interactions: int = 6, edge_channels: int = 64, cutoff: float = 10.0, input_dim: int = 31)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Continuous-filter tower over a raw point cloud (its own radius graph).
+
+
+   .. py:method:: forward(node_attr: torch.Tensor, pos: torch.Tensor, batch: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: cutoff
+      :value: 10.0
+
+
+
+   .. py:attribute:: distance_expansion
+
+
+   .. py:attribute:: emblin
+
+
+   .. py:attribute:: hidden_channels
+      :value: 128
+
+
+
+   .. py:attribute:: interactions
+
+
+   .. py:property:: out_channels
+      :type: int
+
+
+
+.. py:data:: SiLU
+

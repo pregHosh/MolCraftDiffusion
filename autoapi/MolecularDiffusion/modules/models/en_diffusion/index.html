@@ -298,6 +298,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../../../data/component/diffpharma_prep/index.html">MolecularDiffusion.data.component.diffpharma_prep</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../data/component/feature/index.html">MolecularDiffusion.data.component.feature</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../data/component/pharmacophore/index.html">MolecularDiffusion.data.component.pharmacophore</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../data/component/pmdm_data/index.html">MolecularDiffusion.data.component.pmdm_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../data/component/pointcloud/index.html">MolecularDiffusion.data.component.pointcloud</a></li>
 </ul>
 </li>
@@ -1316,7 +1317,7 @@ to a given reference tensor.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_silvr">
 <span class="sig-name descname"><span class="pre">sample_p_zs_given_zt_silvr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xh_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silvr_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_shift</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition_component</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_silvr" title="Link to this definition">¶</a></dt>
-<dd><p>One SILVR reverse step (Runcie &amp; Mey 2023, arXiv:2304.10905).</p>
+<dd><p>One SILVR reverse step (Runcie &amp; Mey, JCIM 2023, 63, 5996-6005).</p>
 <p>Reproduces the published sampler’s per-step block verbatim
 (docs/model_integrations/silvr/reference_source/
 silvr_fork_en_diffusion.py L893-976):</p>
