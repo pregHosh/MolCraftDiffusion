@@ -1,0 +1,120 @@
+MolecularDiffusion.runmodes.train.tasks_painn
+=============================================
+
+.. py:module:: MolecularDiffusion.runmodes.train.tasks_painn
+
+.. autoapi-nested-parse::
+
+   Factory wiring the ported PaiNN/OM-Diff ``EquivNet`` backbone into the
+   existing, unmodified diffusion task -- structured exactly like
+   ``runmodes/train/tasks_gfmdiff.py::ModelTaskFactory`` (a new dynamics
+   network dropped into ``EnVariationalDiffusion`` +
+   ``GeomMolecularGenerative``, zero edits to either).
+
+   Per the approved integration plan
+   (``docs/model_integrations/omdiff/INTEGRATION_PLAN.md``) this is a §1
+   backbone swap: OM-Diff's plain-L2 loss, metal-centre masking, conditional
+   size prior and regressor guidance are out of scope -- only the network is
+   ported, so it is named after its architecture family (``painn``) rather
+   than after the paper.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.tasks_painn.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: ModelTaskFactory(task_type: str, train_set=None, atom_vocab=None, task_names: list = [], condition_names: list = [], num_interactions: int = 5, hidden_dims: dict = {}, chkpt_path: str = None, **kwargs)
+
+   Build the PaiNN-backbone diffusion model + task.
+
+   :param task_type: must be ``"diffusion"``.
+   :type task_type: str
+   :param train_set: unused; kept for interface parity with the other
+                     factories (the atom-count histogram is computed lazily by
+                     ``GeomMolecularGenerative.preprocess``).
+   :param atom_vocab: atom vocabulary used for encoding.
+   :type atom_vocab: list
+   :param task_names: conditional labels (context columns).
+   :type task_names: list
+   :param condition_names: condition names for conditional generation.
+   :type condition_names: list
+   :param num_interactions: PaiNN interaction/update blocks.
+   :type num_interactions: int
+   :param hidden_dims: keys ``node_size``, ``edge_size``,
+                       ``embedding_dim`` for the backbone widths.
+   :type hidden_dims: dict
+   :param chkpt_path: optional path to a model checkpoint.
+   :type chkpt_path: str
+   :param \*\*kwargs: diffusion + backbone keyword arguments, see
+                      ``configs/tasks/diffusion_painn.yaml``.
+
+
+   .. py:method:: build()
+
+      Build and return the ``GeomMolecularGenerative`` task.
+
+
+
+   .. py:attribute:: atom_vocab
+      :value: None
+
+
+
+   .. py:attribute:: chkpt_path
+      :value: None
+
+
+
+   .. py:attribute:: condition_names
+      :value: []
+
+
+
+   .. py:attribute:: context_node_nf
+
+
+   .. py:attribute:: hidden_dims
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: num_interactions
+      :value: 5
+
+
+
+   .. py:attribute:: task_names
+      :value: []
+
+
+
+   .. py:attribute:: task_type
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+.. py:data:: logger
+

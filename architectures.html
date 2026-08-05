@@ -336,6 +336,7 @@
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_equiformer/index.html">MolecularDiffusion.runmodes.train.tasks_equiformer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_esen/index.html">MolecularDiffusion.runmodes.train.tasks_esen</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html">MolecularDiffusion.runmodes.train.tasks_gfmdiff</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html">MolecularDiffusion.runmodes.train.tasks_painn</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/trainer/index.html">MolecularDiffusion.runmodes.train.trainer</a></li>
 </ul>
 </li>
@@ -483,12 +484,17 @@ conditioning input beyond the atom count.</p>
 <td class="text-left"><p>GFMDiff</p></td>
 <td class="text-left"><p>Geometric full-molecule diffusion (<code class="docutils literal notranslate"><span class="pre">tasks_gfmdiff</span></code>).</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_tabasco.yaml</span></code></p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_painn.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion</span></code></p></td>
+<td class="text-left"><p>PaiNN (scalar+vector message passing)</p></td>
+<td class="text-left"><p>OM-Diff’s <code class="docutils literal notranslate"><span class="pre">EquivNet</span></code> backbone under the default EDM objective (<code class="docutils literal notranslate"><span class="pre">tasks_painn</span></code>).</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_tabasco.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_tabasco</span></code></p></td>
 <td class="text-left"><p>TABASCO</p></td>
 <td class="text-left"><p>Flow matching; simplified, fast, tuned for physical quality.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_flowmol.yaml</span></code></p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_flowmol.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_flowmol</span></code></p></td>
 <td class="text-left"><p>FlowMol (SE(3)-equivariant GVP)</p></td>
 <td class="text-left"><p>Flow matching for coordinates, atom types, and formal charges. <strong>Bond-free variant only:</strong> bonds are not modeled or generated; graph edges serve geometric message passing only. Needs the <code class="docutils literal notranslate"><span class="pre">[flowmol]</span></code> extra (DGL).</p></td>
@@ -641,6 +647,12 @@ Molecule Generation in 3D.</em> ICML 2022. <a class="reference external" href="h
 Molecule Generation.</em> ECML PKDD 2023. <a class="reference external" href="https://arxiv.org/abs/2302.09048">arXiv:2302.09048</a></p></li>
 <li><p><strong>GFMDiff</strong> — Xu et al. <em>Geometric-Facilitated Denoising Diffusion Model for
 3D Molecule Generation.</em> AAAI 2024. <a class="reference external" href="https://arxiv.org/abs/2401.02683">arXiv:2401.02683</a></p></li>
+<li><p><strong>PaiNN / OM-Diff</strong> — the backbone is the <code class="docutils literal notranslate"><span class="pre">EquivNet</span></code> of <em>OM-Diff: Inverse-design
+of organometallic catalysts with guided equivariant denoising diffusion</em>, 2024.
+<a class="reference external" href="https://doi.org/10.26434/chemrxiv-2024-882hh">doi:10.26434/chemrxiv-2024-882hh</a> — itself a variant
+of <strong>PaiNN</strong>: Schütt, Unke &amp; Gastegger, <em>Equivariant message passing for the
+prediction of tensorial properties and molecular spectra</em>, ICML 2021
+(<a class="reference external" href="https://arxiv.org/abs/2102.03150">arXiv:2102.03150</a>).</p></li>
 <li><p><strong>TABASCO</strong> — Vonessen, Harris, Cretu &amp; Liò. <em>TABASCO: A Fast, Simplified
 Model for Molecular Generation with Improved Physical Quality.</em> 2025.
 <a class="reference external" href="https://arxiv.org/abs/2507.00899">arXiv:2507.00899</a></p></li>

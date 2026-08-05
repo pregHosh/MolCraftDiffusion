@@ -334,6 +334,7 @@
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_equiformer/index.html">MolecularDiffusion.runmodes.train.tasks_equiformer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_esen/index.html">MolecularDiffusion.runmodes.train.tasks_esen</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html">MolecularDiffusion.runmodes.train.tasks_gfmdiff</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html">MolecularDiffusion.runmodes.train.tasks_painn</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/trainer/index.html">MolecularDiffusion.runmodes.train.trainer</a></li>
 </ul>
 </li>
@@ -808,10 +809,10 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/shepherd_score/alignment/utils/se3/index.html#MolecularDiffusion.utils.shepherd_score.alignment.utils.se3.apply_SO3_transform">apply_SO3_transform() (in module MolecularDiffusion.utils.shepherd_score.alignment.utils.se3)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/utils/shepherd_score/alignment/utils/se3_np/index.html#MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.apply_SO3_transform_np">apply_SO3_transform_np() (in module MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/metrics/index.html#MolecularDiffusion.modules.tasks.metrics.area_under_prc">area_under_prc() (in module MolecularDiffusion.modules.tasks.metrics)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/metrics/index.html#MolecularDiffusion.modules.tasks.metrics.area_under_roc">area_under_roc() (in module MolecularDiffusion.modules.tasks.metrics)</a>
@@ -984,6 +985,8 @@
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_esen/index.html#MolecularDiffusion.runmodes.train.tasks_esen.ModelTaskFactory.atom_vocab">(MolecularDiffusion.runmodes.train.tasks_esen.ModelTaskFactory attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html#MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory.atom_vocab">(MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory attribute)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html#MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory.atom_vocab">(MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory attribute)</a>
 </li>
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/ssl3d/index.html#MolecularDiffusion.modules.tasks.ssl3d.MaskedAtomTypeObjective.atom_vocab_size">atom_vocab_size (MolecularDiffusion.modules.tasks.ssl3d.MaskedAtomTypeObjective attribute)</a>
@@ -1234,6 +1237,8 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/xtb_electronic/index.html#MolecularDiffusion.runmodes.analyze.xtb_electronic.batch_xtb_electronic">batch_xtb_electronic() (in module MolecularDiffusion.runmodes.analyze.xtb_electronic)</a>
 </li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.BesselRBFLayer">BesselRBFLayer (class in MolecularDiffusion.modules.models.painn_backbone)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/callbacks/train_helper/index.html#MolecularDiffusion.callbacks.train_helper.EMA.beta">beta (MolecularDiffusion.callbacks.train_helper.EMA attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsmol/score_model/index.html#MolecularDiffusion.modules.models.diffsmol.score_model.ScorePosNet3D.betas">betas (MolecularDiffusion.modules.models.diffsmol.score_model.ScorePosNet3D attribute)</a>
@@ -1370,6 +1375,8 @@
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_esen/index.html#MolecularDiffusion.runmodes.train.tasks_esen.ModelTaskFactory.build">(MolecularDiffusion.runmodes.train.tasks_esen.ModelTaskFactory method)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html#MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory.build">(MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory method)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html#MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory.build">(MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory method)</a>
 </li>
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsmol/uni_transformer/index.html#MolecularDiffusion.modules.models.diffsmol.uni_transformer.build_bond_length_tensors">build_bond_length_tensors() (in module MolecularDiffusion.modules.models.diffsmol.uni_transformer)</a>
@@ -1592,6 +1599,8 @@
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_esen/index.html#MolecularDiffusion.runmodes.train.tasks_esen.ModelTaskFactory.chkpt_path">(MolecularDiffusion.runmodes.train.tasks_esen.ModelTaskFactory attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html#MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory.chkpt_path">(MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory attribute)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html#MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory.chkpt_path">(MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/trainer/index.html#MolecularDiffusion.runmodes.train.trainer.OptimSchedulerFactory.chkpt_path">(MolecularDiffusion.runmodes.train.trainer.OptimSchedulerFactory attribute)</a>
 </li>
@@ -1834,12 +1843,12 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/geom_stability/index.html#MolecularDiffusion.utils.geom_stability.compute_molecules_stability_from_graph">compute_molecules_stability_from_graph() (in module MolecularDiffusion.utils.geom_stability)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/utils/shepherd_score/alignment/utils/pca/index.html#MolecularDiffusion.utils.shepherd_score.alignment.utils.pca.compute_moment_of_inertia">compute_moment_of_inertia() (in module MolecularDiffusion.utils.shepherd_score.alignment.utils.pca)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/shepherd_score/alignment/utils/pca_np/index.html#MolecularDiffusion.utils.shepherd_score.alignment.utils.pca_np.compute_moment_of_inertia_np">compute_moment_of_inertia_np() (in module MolecularDiffusion.utils.shepherd_score.alignment.utils.pca_np)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/graph_module/index.html#MolecularDiffusion.modules.layers.graph_module.compute_neighbors">compute_neighbors() (in module MolecularDiffusion.modules.layers.graph_module)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/geom_analyzer/index.html#MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics.compute_novelty">compute_novelty() (MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics method)</a>
@@ -1937,6 +1946,8 @@
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html#MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory.condition_names">(MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory attribute)</a>
 </li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html#MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory.condition_names">(MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory attribute)</a>
+</li>
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/en_diffusion/index.html#MolecularDiffusion.modules.models.en_diffusion.EnVariationalDiffusion.condition_tensor">condition_tensor (MolecularDiffusion.modules.models.en_diffusion.EnVariationalDiffusion attribute)</a>
 </li>
@@ -2007,6 +2018,8 @@
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/models/gfmdiff/dynamics/index.html#MolecularDiffusion.modules.models.gfmdiff.dynamics.GFMDiffDynamics.context_node_nf">(MolecularDiffusion.modules.models.gfmdiff.dynamics.GFMDiffDynamics attribute)</a>
 </li>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/painn_dynamics/index.html#MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics.context_node_nf">(MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics attribute)</a>
+</li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_egcl/index.html#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.context_node_nf">(MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_egt/index.html#MolecularDiffusion.runmodes.train.tasks_egt.ModelTaskFactory.context_node_nf">(MolecularDiffusion.runmodes.train.tasks_egt.ModelTaskFactory attribute)</a>
@@ -2016,6 +2029,8 @@
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_esen/index.html#MolecularDiffusion.runmodes.train.tasks_esen.ModelTaskFactory.context_node_nf">(MolecularDiffusion.runmodes.train.tasks_esen.ModelTaskFactory attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html#MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory.context_node_nf">(MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory attribute)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html#MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory.context_node_nf">(MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory attribute)</a>
 </li>
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/cli/analyze/index.html#MolecularDiffusion.cli.analyze.CONTEXT_SETTINGS">CONTEXT_SETTINGS (in module MolecularDiffusion.cli.analyze)</a>
@@ -2256,6 +2271,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/esen/index.html#MolecularDiffusion.modules.models.esen.eSEN_Backbone.cutoff">(MolecularDiffusion.modules.models.esen.eSEN_Backbone attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/models/ldm/encoders/equiformer/index.html#MolecularDiffusion.modules.models.ldm.encoders.equiformer.EquiformerEncoder.cutoff">(MolecularDiffusion.modules.models.ldm.encoders.equiformer.EquiformerEncoder attribute)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/painn_dynamics/index.html#MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics.cutoff">(MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/models/pmdm/encoders/index.html#MolecularDiffusion.modules.models.pmdm.encoders.SchNetProteinEncoder.cutoff">(MolecularDiffusion.modules.models.pmdm.encoders.SchNetProteinEncoder attribute)</a>
 </li>
@@ -2980,6 +2997,8 @@
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/gvp/gvp/index.html#MolecularDiffusion.modules.layers.gvp.gvp.GVPConv.edge_feat_size">edge_feat_size (MolecularDiffusion.modules.layers.gvp.gvp.GVPConv attribute)</a>
 </li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.EquivNet.edge_featurizers">edge_featurizers (MolecularDiffusion.modules.models.painn_backbone.EquivNet attribute)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/atomic_data/index.html#MolecularDiffusion.modules.layers.atomic_data.AtomicData.edge_index">edge_index (MolecularDiffusion.modules.layers.atomic_data.AtomicData attribute)</a>
 
         <ul>
@@ -3027,6 +3046,8 @@
         <li><a href="autoapi/MolecularDiffusion/modules/models/pmdm/epsnet/index.html#MolecularDiffusion.modules.models.pmdm.epsnet.PMDMEpsNet.edge_order">edge_order (MolecularDiffusion.modules.models.pmdm.epsnet.PMDMEpsNet attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html#MolecularDiffusion.runmodes.analyze.featurize.SSL3DFeaturizer.edge_radius">edge_radius (MolecularDiffusion.runmodes.analyze.featurize.SSL3DFeaturizer attribute)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.EquivNetHParams.edge_size">edge_size (MolecularDiffusion.modules.models.painn_backbone.EquivNetHParams attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/compute_metrics/index.html#MolecularDiffusion.runmodes.analyze.compute_metrics.EDGE_THRESHOLD">EDGE_THRESHOLD (in module MolecularDiffusion.runmodes.analyze.compute_metrics)</a>
 
@@ -3207,6 +3228,8 @@
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/models/geoldm/egnn/index.html#MolecularDiffusion.modules.models.geoldm.egnn.GNN.embedding">(MolecularDiffusion.modules.models.geoldm.egnn.GNN attribute)</a>
 </li>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/painn_dynamics/index.html#MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics.embedding">(MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics attribute)</a>
+</li>
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffpharma/egnn/index.html#MolecularDiffusion.modules.models.diffpharma.egnn.EGNN.embedding2">embedding2 (MolecularDiffusion.modules.models.diffpharma.egnn.EGNN attribute)</a>
 </li>
@@ -3250,8 +3273,6 @@
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_ldm/index.html#MolecularDiffusion.modules.tasks.diffusion_ldm.VAETask.encode">(MolecularDiffusion.modules.tasks.diffusion_ldm.VAETask method)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsmol/shape_ae/index.html#MolecularDiffusion.modules.models.diffsmol.shape_ae.PointCloudAE.encoder">encoder (MolecularDiffusion.modules.models.diffsmol.shape_ae.PointCloudAE attribute)</a>
 
         <ul>
@@ -3260,6 +3281,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_ldm/index.html#MolecularDiffusion.modules.tasks.diffusion_ldm.VAETask.encoder">(MolecularDiffusion.modules.tasks.diffusion_ldm.VAETask attribute)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_ldm/index.html#MolecularDiffusion.modules.tasks.diffusion_ldm.VAETaskFactory.encoder_config">encoder_config (MolecularDiffusion.modules.tasks.diffusion_ldm.VAETaskFactory attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/pmdm/epsnet/index.html#MolecularDiffusion.modules.models.pmdm.epsnet.PMDMEpsNet.encoder_global">encoder_global (MolecularDiffusion.modules.models.pmdm.epsnet.PMDMEpsNet attribute)</a>
@@ -3310,9 +3333,13 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/geoldm/diffusion/index.html#MolecularDiffusion.modules.models.geoldm.diffusion.EnVariationalDiffusion">(class in MolecularDiffusion.modules.models.geoldm.diffusion)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.EquivNet.envelop_layer">envelop_layer (MolecularDiffusion.modules.models.painn_backbone.EquivNet attribute)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/esen/nn/radial/index.html#MolecularDiffusion.modules.layers.esen.nn.radial.EnvelopedBesselBasis.envelope">envelope (MolecularDiffusion.modules.layers.esen.nn.radial.EnvelopedBesselBasis attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/esen/nn/radial/index.html#MolecularDiffusion.modules.layers.esen.nn.radial.EnvelopedBesselBasis">EnvelopedBesselBasis (class in MolecularDiffusion.modules.layers.esen.nn.radial)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.EnvelopLayer">EnvelopLayer (class in MolecularDiffusion.modules.models.painn_backbone)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/core/engine/index.html#MolecularDiffusion.core.engine.Engine.epoch">epoch (MolecularDiffusion.core.engine.Engine property)</a>
 </li>
@@ -3354,6 +3381,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/layers/esen/nn/layer_norm/index.html#MolecularDiffusion.modules.layers.esen.nn.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.eps">(MolecularDiffusion.modules.layers.esen.nn.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2 attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/layers/gvp/gvp/index.html#MolecularDiffusion.modules.layers.gvp.gvp.GVPLayerNorm.eps">(MolecularDiffusion.modules.layers.gvp.gvp.GVPLayerNorm attribute)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.GraphLayerNorm.eps">(MolecularDiffusion.modules.models.painn_backbone.GraphLayerNorm attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/models/shepherd_arch/equiformer_operations/index.html#MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.EquivariantGraphNorm.eps">(MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.EquivariantGraphNorm attribute)</a>
 </li>
@@ -3474,6 +3503,12 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/geoldm/egnn/index.html#MolecularDiffusion.modules.models.geoldm.egnn.EquivariantUpdate">(class in MolecularDiffusion.modules.models.geoldm.egnn)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.EquivNet">EquivNet (class in MolecularDiffusion.modules.models.painn_backbone)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_dynamics/index.html#MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics.equivnet">equivnet (MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics attribute)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.EquivNetHParams">EquivNetHParams (class in MolecularDiffusion.modules.models.painn_backbone)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/esen/index.html#MolecularDiffusion.modules.models.esen.eSEN_Backbone">eSEN_Backbone (class in MolecularDiffusion.modules.models.esen)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/esen/esen_block/index.html#MolecularDiffusion.modules.layers.esen.esen_block.eSEN_Block">eSEN_Block (class in MolecularDiffusion.modules.layers.esen.esen_block)</a>
@@ -4333,6 +4368,20 @@
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/models/ldm/encoders/transformer/index.html#MolecularDiffusion.modules.models.ldm.encoders.transformer.TransformerEncoder.forward">(MolecularDiffusion.modules.models.ldm.encoders.transformer.TransformerEncoder method)</a>
 </li>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.BesselRBFLayer.forward">(MolecularDiffusion.modules.models.painn_backbone.BesselRBFLayer method)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.EnvelopLayer.forward">(MolecularDiffusion.modules.models.painn_backbone.EnvelopLayer method)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.EquivNet.forward">(MolecularDiffusion.modules.models.painn_backbone.EquivNet method)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.GaussianLinearRBFLayer.forward">(MolecularDiffusion.modules.models.painn_backbone.GaussianLinearRBFLayer method)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.GraphLayerNorm.forward">(MolecularDiffusion.modules.models.painn_backbone.GraphLayerNorm method)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/painn_dynamics/index.html#MolecularDiffusion.modules.models.painn_dynamics.FourierTimeFeatures.forward">(MolecularDiffusion.modules.models.painn_dynamics.FourierTimeFeatures method)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/painn_dynamics/index.html#MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics.forward">(MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics method)</a>
+</li>
           <li><a href="autoapi/MolecularDiffusion/modules/models/pharmacophore_dynamics/index.html#MolecularDiffusion.modules.models.pharmacophore_dynamics.PharmacophoreEnVariationalDiff.forward">(MolecularDiffusion.modules.models.pharmacophore_dynamics.PharmacophoreEnVariationalDiff method)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/models/pharmacophore_dynamics/index.html#MolecularDiffusion.modules.models.pharmacophore_dynamics.PharmacophoreModelWrapper.forward">(MolecularDiffusion.modules.models.pharmacophore_dynamics.PharmacophoreModelWrapper method)</a>
@@ -4495,6 +4544,8 @@
         <li><a href="autoapi/MolecularDiffusion/modules/models/shepherd_arch/model/index.html#MolecularDiffusion.modules.models.shepherd_arch.model.Model.forward_x4_decoder_encoder">forward_x4_decoder_encoder() (MolecularDiffusion.modules.models.shepherd_arch.model.Model method)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/difflinker/utils/index.html#MolecularDiffusion.modules.models.difflinker.utils.FoundNaNException">FoundNaNException</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_dynamics/index.html#MolecularDiffusion.modules.models.painn_dynamics.FourierTimeFeatures">FourierTimeFeatures (class in MolecularDiffusion.modules.models.painn_dynamics)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/tabasco/utils/metrics/index.html#MolecularDiffusion.modules.models.tabasco.utils.metrics.MolecularDiversity.fp_size">fp_size (MolecularDiffusion.modules.models.tabasco.utils.metrics.MolecularDiversity attribute)</a>
 </li>
@@ -4666,6 +4717,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/esen/index.html#MolecularDiffusion.modules.models.esen.GaussianFeatureEmbedding">(class in MolecularDiffusion.modules.models.esen)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.GaussianLinearRBFLayer">GaussianLinearRBFLayer (class in MolecularDiffusion.modules.models.painn_backbone)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/equiformer_v2/gaussian_rbf/index.html#MolecularDiffusion.modules.layers.equiformer_v2.gaussian_rbf.GaussianRadialBasisLayer">GaussianRadialBasisLayer (class in MolecularDiffusion.modules.layers.equiformer_v2.gaussian_rbf)</a>
 
         <ul>
@@ -5194,6 +5247,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/layers/equiformer_v2_s/drop/index.html#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.GraphDropPath">(class in MolecularDiffusion.modules.layers.equiformer_v2_s.drop)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.GraphLayerNorm">GraphLayerNorm (class in MolecularDiffusion.modules.models.painn_backbone)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/graph_module/index.html#MolecularDiffusion.modules.layers.graph_module.GraphModelMixin">GraphModelMixin (class in MolecularDiffusion.modules.layers.graph_module)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/egt/index.html#MolecularDiffusion.modules.models.egt.GraphTransformer">GraphTransformer (class in MolecularDiffusion.modules.models.egt)</a>
@@ -5345,6 +5400,8 @@
         <ul>
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html#MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory.hidden_dims">(MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory attribute)</a>
 </li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html#MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory.hidden_dims">(MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory attribute)</a>
+</li>
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsmol/uni_transformer/index.html#MolecularDiffusion.modules.models.diffsmol.uni_transformer.InvariantShapeEmbLayer.hidden_layer">hidden_layer (MolecularDiffusion.modules.models.diffsmol.uni_transformer.InvariantShapeEmbLayer attribute)</a>
 </li>
@@ -5425,6 +5482,8 @@
         <li><a href="autoapi/MolecularDiffusion/modules/models/tabasco/flow/utils/index.html#MolecularDiffusion.modules.models.tabasco.flow.utils.HistogramTimeDistribution">HistogramTimeDistribution (class in MolecularDiffusion.modules.models.tabasco.flow.utils)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsmol/uni_transformer/index.html#MolecularDiffusion.modules.models.diffsmol.uni_transformer.BaseGVPAttLayer.hk_func">hk_func (MolecularDiffusion.modules.models.diffsmol.uni_transformer.BaseGVPAttLayer attribute)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.EquivNet.hp">hp (MolecularDiffusion.modules.models.painn_backbone.EquivNet attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsmol/uni_transformer/index.html#MolecularDiffusion.modules.models.diffsmol.uni_transformer.BaseGVPAttLayer.hq_func">hq_func (MolecularDiffusion.modules.models.diffsmol.uni_transformer.BaseGVPAttLayer attribute)</a>
 </li>
@@ -5507,6 +5566,8 @@
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/models/geoldm/diffusion/index.html#MolecularDiffusion.modules.models.geoldm.diffusion.EnVariationalDiffusion.in_node_nf">(MolecularDiffusion.modules.models.geoldm.diffusion.EnVariationalDiffusion attribute)</a>
 </li>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/painn_dynamics/index.html#MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics.in_node_nf">(MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics attribute)</a>
+</li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_difflinker/index.html#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.in_node_nf">(MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_difflinker/index.html#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTaskFactory.in_node_nf">(MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTaskFactory attribute)</a>
@@ -5520,6 +5581,8 @@
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_esen/index.html#MolecularDiffusion.runmodes.train.tasks_esen.ModelTaskFactory.in_node_nf">(MolecularDiffusion.runmodes.train.tasks_esen.ModelTaskFactory attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html#MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory.in_node_nf">(MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory attribute)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html#MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory.in_node_nf">(MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory attribute)</a>
 </li>
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/tabasco/callbacks/ema/index.html#MolecularDiffusion.modules.models.tabasco.callbacks.ema.EMAOptimizer.in_saving_ema_model_context">in_saving_ema_model_context (MolecularDiffusion.modules.models.tabasco.callbacks.ema.EMAOptimizer attribute)</a>
@@ -5638,6 +5701,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/equiformer_v2_dynamics/index.html#MolecularDiffusion.modules.models.equiformer_v2_dynamics.EquiformerV2_dynamics.input_proj">(MolecularDiffusion.modules.models.equiformer_v2_dynamics.EquiformerV2_dynamics attribute)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.EquivNetHParams.input_size">input_size (MolecularDiffusion.modules.models.painn_backbone.EquivNetHParams attribute)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/equiformer_v2_s/transformer_block/index.html#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.input_sphere_channels">input_sphere_channels (MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention attribute)</a>
 
         <ul>
@@ -5668,8 +5733,12 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/tabasco/losses/index.html#MolecularDiffusion.modules.layers.tabasco.losses.InterDistancesLoss.inter_distances">inter_distances() (MolecularDiffusion.modules.layers.tabasco.losses.InterDistancesLoss method)</a>
 </li>
-        <li><a href="autoapi/MolecularDiffusion/modules/models/pmdm/encoders/index.html#MolecularDiffusion.modules.models.pmdm.encoders.SchNetProteinEncoder.interactions">interactions (MolecularDiffusion.modules.models.pmdm.encoders.SchNetProteinEncoder attribute)</a>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.EquivNet.interactions">interactions (MolecularDiffusion.modules.models.painn_backbone.EquivNet attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/pmdm/encoders/index.html#MolecularDiffusion.modules.models.pmdm.encoders.SchNetProteinEncoder.interactions">(MolecularDiffusion.modules.models.pmdm.encoders.SchNetProteinEncoder attribute)</a>
 </li>
+        </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/gfmdiff/blocks/index.html#MolecularDiffusion.modules.layers.gfmdiff.blocks.InterBlock">InterBlock (class in MolecularDiffusion.modules.layers.gfmdiff.blocks)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/tabasco/flow_model/index.html#MolecularDiffusion.modules.models.tabasco.flow_model.FlowMatchingModel.interdist_loss">interdist_loss (MolecularDiffusion.modules.models.tabasco.flow_model.FlowMatchingModel attribute)</a>
@@ -5962,6 +6031,8 @@
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_esen/index.html#MolecularDiffusion.runmodes.train.tasks_esen.ModelTaskFactory.kwargs">(MolecularDiffusion.runmodes.train.tasks_esen.ModelTaskFactory attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html#MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory.kwargs">(MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory attribute)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html#MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory.kwargs">(MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory attribute)</a>
 </li>
         </ul></li>
     </ul></td>
@@ -6606,6 +6677,8 @@
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_esen/index.html#MolecularDiffusion.runmodes.train.tasks_esen.logger">(in module MolecularDiffusion.runmodes.train.tasks_esen)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html#MolecularDiffusion.runmodes.train.tasks_gfmdiff.logger">(in module MolecularDiffusion.runmodes.train.tasks_gfmdiff)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html#MolecularDiffusion.runmodes.train.tasks_painn.logger">(in module MolecularDiffusion.runmodes.train.tasks_painn)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/utils/file/index.html#MolecularDiffusion.utils.file.logger">(in module MolecularDiffusion.utils.file)</a>
 </li>
@@ -7331,6 +7404,8 @@
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html#MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory">(class in MolecularDiffusion.runmodes.train.tasks_gfmdiff)</a>
 </li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html#MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory">(class in MolecularDiffusion.runmodes.train.tasks_painn)</a>
+</li>
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/ldm/denoisers/dit/index.html#MolecularDiffusion.modules.models.ldm.denoisers.dit.modulate">modulate() (in module MolecularDiffusion.modules.models.ldm.denoisers.dit)</a>
 </li>
@@ -7622,6 +7697,10 @@
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/models/noisemodel/index.html#module-MolecularDiffusion.modules.models.noisemodel">MolecularDiffusion.modules.models.noisemodel</a>
 </li>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#module-MolecularDiffusion.modules.models.painn_backbone">MolecularDiffusion.modules.models.painn_backbone</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/painn_dynamics/index.html#module-MolecularDiffusion.modules.models.painn_dynamics">MolecularDiffusion.modules.models.painn_dynamics</a>
+</li>
           <li><a href="autoapi/MolecularDiffusion/modules/models/pharmacophore_dynamics/index.html#module-MolecularDiffusion.modules.models.pharmacophore_dynamics">MolecularDiffusion.modules.models.pharmacophore_dynamics</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/models/pmdm/index.html#module-MolecularDiffusion.modules.models.pmdm">MolecularDiffusion.modules.models.pmdm</a>
@@ -7804,6 +7883,8 @@
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html#module-MolecularDiffusion.runmodes.train.tasks_gfmdiff">MolecularDiffusion.runmodes.train.tasks_gfmdiff</a>
 </li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html#module-MolecularDiffusion.runmodes.train.tasks_painn">MolecularDiffusion.runmodes.train.tasks_painn</a>
+</li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/trainer/index.html#module-MolecularDiffusion.runmodes.train.trainer">MolecularDiffusion.runmodes.train.trainer</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/utils/index.html#module-MolecularDiffusion.utils">MolecularDiffusion.utils</a>
@@ -7964,8 +8045,6 @@
           <li><a href="autoapi/MolecularDiffusion/callbacks/train_helper/index.html#module-MolecularDiffusion.callbacks.train_helper">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     MolecularDiffusion.cli
 
@@ -7973,6 +8052,8 @@
           <li><a href="autoapi/MolecularDiffusion/cli/index.html#module-MolecularDiffusion.cli">module</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     MolecularDiffusion.cli.analyze
 
@@ -8940,6 +9021,20 @@
 </li>
         </ul></li>
         <li>
+    MolecularDiffusion.modules.models.painn_backbone
+
+        <ul>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#module-MolecularDiffusion.modules.models.painn_backbone">module</a>
+</li>
+        </ul></li>
+        <li>
+    MolecularDiffusion.modules.models.painn_dynamics
+
+        <ul>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/painn_dynamics/index.html#module-MolecularDiffusion.modules.models.painn_dynamics">module</a>
+</li>
+        </ul></li>
+        <li>
     MolecularDiffusion.modules.models.pharmacophore_dynamics
 
         <ul>
@@ -9577,6 +9672,13 @@
 </li>
         </ul></li>
         <li>
+    MolecularDiffusion.runmodes.train.tasks_painn
+
+        <ul>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html#module-MolecularDiffusion.runmodes.train.tasks_painn">module</a>
+</li>
+        </ul></li>
+        <li>
     MolecularDiffusion.runmodes.train.trainer
 
         <ul>
@@ -10068,6 +10170,8 @@
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/models/gfmdiff/dynamics/index.html#MolecularDiffusion.modules.models.gfmdiff.dynamics.GFMDiffDynamics.n_dims">(MolecularDiffusion.modules.models.gfmdiff.dynamics.GFMDiffDynamics attribute)</a>
 </li>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/painn_dynamics/index.html#MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics.n_dims">(MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics attribute)</a>
+</li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion/index.html#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.n_dims">(MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_difflinker/index.html#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.n_dims">(MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask attribute)</a>
@@ -10390,6 +10494,8 @@
         <li><a href="autoapi/MolecularDiffusion/modules/models/flowmol/vector_field/index.html#MolecularDiffusion.modules.models.flowmol.vector_field.EndpointVectorField.node_position_updaters">node_position_updaters (MolecularDiffusion.modules.models.flowmol.vector_field.EndpointVectorField attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffpharma/index.html#MolecularDiffusion.modules.tasks.diffusion_diffpharma.NODE_SETS">NODE_SETS (in module MolecularDiffusion.modules.tasks.diffusion_diffpharma)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.EquivNetHParams.node_size">node_size (MolecularDiffusion.modules.models.painn_backbone.EquivNetHParams attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/gvp/gvp/index.html#MolecularDiffusion.modules.layers.gvp.gvp.GVPConv.node_update">node_update (MolecularDiffusion.modules.layers.gvp.gvp.GVPConv attribute)</a>
 </li>
@@ -10905,6 +11011,12 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/shepherd_arch/equiformer_operations/index.html#MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.Vec2AttnHeads.num_heads">(MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.Vec2AttnHeads attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/models/shepherd_arch/equiformer_v2_encoder/index.html#MolecularDiffusion.modules.models.shepherd_arch.equiformer_v2_encoder.EquiformerV2.num_heads">(MolecularDiffusion.modules.models.shepherd_arch.equiformer_v2_encoder.EquiformerV2 attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.EquivNetHParams.num_interactions">num_interactions (MolecularDiffusion.modules.models.painn_backbone.EquivNetHParams attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html#MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory.num_interactions">(MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory attribute)</a>
 </li>
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/equiformer_v2/drop/index.html#MolecularDiffusion.modules.layers.equiformer_v2.drop.EquivariantDropout.num_irreps">num_irreps (MolecularDiffusion.modules.layers.equiformer_v2.drop.EquivariantDropout attribute)</a>
@@ -11427,6 +11539,8 @@
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/functional/index.html#MolecularDiffusion.modules.layers.functional.padded_to_variadic">padded_to_variadic() (in module MolecularDiffusion.modules.layers.functional)</a>
 </li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_dynamics/index.html#MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics">PaiNNDynamics (class in MolecularDiffusion.modules.models.painn_dynamics)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/gfmdiff/blocks/index.html#MolecularDiffusion.modules.layers.gfmdiff.blocks.InterBlock.pair_attn">pair_attn (MolecularDiffusion.modules.layers.gfmdiff.blocks.InterBlock attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/gfmdiff/blocks/index.html#MolecularDiffusion.modules.layers.gfmdiff.blocks.InterBlock.pair_attn_dropout">pair_attn_dropout (MolecularDiffusion.modules.layers.gfmdiff.blocks.InterBlock attribute)</a>
@@ -11444,6 +11558,8 @@
 </li>
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/gfmdiff/equignn/index.html#MolecularDiffusion.modules.models.gfmdiff.equignn.EquiGNN.pair_scale">pair_scale (MolecularDiffusion.modules.models.gfmdiff.equignn.EquiGNN attribute)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.pairwise_distances">pairwise_distances() (in module MolecularDiffusion.modules.models.painn_backbone)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/ssl3d/index.html#MolecularDiffusion.modules.tasks.ssl3d.PairwiseDistObjective">PairwiseDistObjective (class in MolecularDiffusion.modules.tasks.ssl3d)</a>
 </li>
@@ -11791,6 +11907,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/regression/index.html#MolecularDiffusion.modules.tasks.regression.ProperyPrediction.prediction_mlp_type">(MolecularDiffusion.modules.tasks.regression.ProperyPrediction attribute)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.BesselRBFLayer.prefactor">prefactor (MolecularDiffusion.modules.models.painn_backbone.BesselRBFLayer attribute)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/data/lightning_data_module/index.html#MolecularDiffusion.data.lightning_data_module.MolecularDiffusionDataModule.prefetch_factor">prefetch_factor (MolecularDiffusion.data.lightning_data_module.MolecularDiffusionDataModule attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/cli/data/index.html#MolecularDiffusion.cli.data.prepare">prepare() (in module MolecularDiffusion.cli.data)</a>
@@ -11869,6 +11987,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/shepherd_arch/equiformer_v2_encoder/index.html#MolecularDiffusion.modules.models.shepherd_arch.equiformer_v2_encoder.EquiformerV2.proj_drop">(MolecularDiffusion.modules.models.shepherd_arch.equiformer_v2_encoder.EquiformerV2 attribute)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.EquivNet.project_layer">project_layer (MolecularDiffusion.modules.models.painn_backbone.EquivNet attribute)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/core/engine/index.html#MolecularDiffusion.core.engine.Engine.project_wandb">project_wandb (MolecularDiffusion.core.engine.Engine attribute)</a>
 
         <ul>
@@ -11984,7 +12104,11 @@
         <li><a href="autoapi/MolecularDiffusion/modules/layers/esen/nn/rank2/index.html#MolecularDiffusion.modules.layers.esen.nn.rank2.Rank2Block.r2tensor_MLP">r2tensor_MLP (MolecularDiffusion.modules.layers.esen.nn.rank2.Rank2Block attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsmol/uni_transformer/index.html#MolecularDiffusion.modules.models.diffsmol.uni_transformer.UniTransformerO2TwoUpdateGeneral.r_max">r_max (MolecularDiffusion.modules.models.diffsmol.uni_transformer.UniTransformerO2TwoUpdateGeneral attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.BesselRBFLayer.r_max">(MolecularDiffusion.modules.models.painn_backbone.BesselRBFLayer attribute)</a>
 </li>
+        </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/equiformer_v2/input_block/index.html#MolecularDiffusion.modules.layers.equiformer_v2.input_block.EdgeDegreeEmbedding.rad_func">rad_func (MolecularDiffusion.modules.layers.equiformer_v2.input_block.EdgeDegreeEmbedding attribute)</a>
 
         <ul>
@@ -12087,6 +12211,8 @@
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/gfmdiff/blocks/index.html#MolecularDiffusion.modules.layers.gfmdiff.blocks.RBF_Emb">RBF_Emb (class in MolecularDiffusion.modules.layers.gfmdiff.blocks)</a>
 </li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.EquivNet.rbf_layer">rbf_layer (MolecularDiffusion.modules.models.painn_backbone.EquivNet attribute)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/gfmdiff/blocks/index.html#MolecularDiffusion.modules.layers.gfmdiff.blocks.DistEncoder.rbf_param">rbf_param (MolecularDiffusion.modules.layers.gfmdiff.blocks.DistEncoder attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/xyz2mol/converter/index.html#MolecularDiffusion.utils.xyz2mol.converter.rdEHTTools">rdEHTTools (in module MolecularDiffusion.utils.xyz2mol.converter)</a>
@@ -12113,9 +12239,11 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/sascore/index.html#MolecularDiffusion.utils.sascore.readFragmentScores">readFragmentScores() (in module MolecularDiffusion.utils.sascore)</a>
 </li>
-        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion/index.html#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.readout">readout (MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction attribute)</a>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_dynamics/index.html#MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics.readout">readout (MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics attribute)</a>
 
         <ul>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion/index.html#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.readout">(MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction attribute)</a>
+</li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/regression/index.html#MolecularDiffusion.modules.tasks.regression.ProperyPrediction.readout">(MolecularDiffusion.modules.tasks.regression.ProperyPrediction attribute)</a>
 </li>
         </ul></li>
@@ -12173,10 +12301,10 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/runmodes/generate/tasks_generate/index.html#MolecularDiffusion.runmodes.generate.tasks_generate.PharmacophoreConditionGenerator.reference_mol">reference_mol (MolecularDiffusion.runmodes.generate.tasks_generate.PharmacophoreConditionGenerator attribute)</a>
 </li>
-        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion/index.html#MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative.reference_scaffold">reference_scaffold (MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative attribute)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion/index.html#MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative.reference_scaffold">reference_scaffold (MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative attribute)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsmol/score_model/index.html#MolecularDiffusion.modules.models.diffsmol.score_model.ScorePosNet3D.refine_net">refine_net (MolecularDiffusion.modules.models.diffsmol.score_model.ScorePosNet3D attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffpharma/egnn/index.html#MolecularDiffusion.modules.models.diffpharma.egnn.EGNN.reflection_equiv">reflection_equiv (MolecularDiffusion.modules.models.diffpharma.egnn.EGNN attribute)</a>
@@ -13744,6 +13872,8 @@
         <ul>
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html#MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory.task_names">(MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory attribute)</a>
 </li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html#MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory.task_names">(MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory attribute)</a>
+</li>
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/runmodes/train/eval/index.html#MolecularDiffusion.runmodes.train.eval.TASK_REGISTRY">TASK_REGISTRY (in module MolecularDiffusion.runmodes.train.eval)</a>
 </li>
@@ -13801,6 +13931,8 @@
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_esen/index.html#MolecularDiffusion.runmodes.train.tasks_esen.ModelTaskFactory.task_type">(MolecularDiffusion.runmodes.train.tasks_esen.ModelTaskFactory attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html#MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory.task_type">(MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory attribute)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html#MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory.task_type">(MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory attribute)</a>
 </li>
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/utils/pretty/index.html#MolecularDiffusion.utils.pretty.task_wrapper">task_wrapper() (in module MolecularDiffusion.utils.pretty)</a>
@@ -13890,6 +14022,8 @@
         <li><a href="autoapi/MolecularDiffusion/modules/layers/tabasco/transformer_module/index.html#MolecularDiffusion.modules.layers.tabasco.transformer_module.TransformerModule.time_dim">time_dim (MolecularDiffusion.modules.layers.tabasco.transformer_module.TransformerModule attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsmol/score_model/index.html#MolecularDiffusion.modules.models.diffsmol.score_model.ScorePosNet3D.time_emb_dim">time_emb_dim (MolecularDiffusion.modules.models.diffsmol.score_model.ScorePosNet3D attribute)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_dynamics/index.html#MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics.time_embedding">time_embedding (MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/flowmol/vector_field/index.html#MolecularDiffusion.modules.models.flowmol.vector_field.EndpointVectorField.time_embedding_dim">time_embedding_dim (MolecularDiffusion.modules.models.flowmol.vector_field.EndpointVectorField attribute)</a>
 </li>
@@ -14023,6 +14157,8 @@
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_egt/index.html#MolecularDiffusion.runmodes.train.tasks_egt.ModelTaskFactory.train_set">(MolecularDiffusion.runmodes.train.tasks_egt.ModelTaskFactory attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html#MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory.train_set">(MolecularDiffusion.runmodes.train.tasks_gfmdiff.ModelTaskFactory attribute)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html#MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory.train_set">(MolecularDiffusion.runmodes.train.tasks_painn.ModelTaskFactory attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/train/trainer/index.html#MolecularDiffusion.runmodes.train.trainer.OptimSchedulerFactory.train_set">(MolecularDiffusion.runmodes.train.trainer.OptimSchedulerFactory attribute)</a>
 </li>
@@ -14160,6 +14296,8 @@
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/models/gfmdiff/equignn/index.html#MolecularDiffusion.modules.models.gfmdiff.equignn.EquiGNN.unwrap_forward">(MolecularDiffusion.modules.models.gfmdiff.equignn.EquiGNN method)</a>
 </li>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/painn_dynamics/index.html#MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics.unwrap_forward">(MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics method)</a>
+</li>
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/core/meter/index.html#MolecularDiffusion.core.meter.Meter.update">update() (MolecularDiffusion.core.meter.Meter method)</a>
 
@@ -14209,9 +14347,13 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/shepherd_utils/index.html#MolecularDiffusion.utils.shepherd_utils.update_mol_coordinates">update_mol_coordinates() (in module MolecularDiffusion.utils.shepherd_utils)</a>
 </li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.EquivNetHParams.update_node_positions">update_node_positions (MolecularDiffusion.modules.models.painn_backbone.EquivNetHParams attribute)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffpharma/dynamics/index.html#MolecularDiffusion.modules.models.diffpharma.dynamics.EGNNDynamics.update_pocket_coords">update_pocket_coords (MolecularDiffusion.modules.models.diffpharma.dynamics.EGNNDynamics attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/esen/index.html#MolecularDiffusion.modules.models.esen.eSEN_Backbone.update_position">update_position (MolecularDiffusion.modules.models.esen.eSEN_Backbone attribute)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/modules/models/painn_backbone/index.html#MolecularDiffusion.modules.models.painn_backbone.EquivNet.updates">updates (MolecularDiffusion.modules.models.painn_backbone.EquivNet attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/egcl/index.html#MolecularDiffusion.modules.models.egcl.EGNN_dynamics.use_adapter_module">use_adapter_module (MolecularDiffusion.modules.models.egcl.EGNN_dynamics attribute)</a>
 
@@ -14247,6 +14389,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/shepherd_arch/equiformer_v2_encoder/index.html#MolecularDiffusion.modules.models.shepherd_arch.equiformer_v2_encoder.EquiformerV2.use_atom_edge_embedding">(MolecularDiffusion.modules.models.shepherd_arch.equiformer_v2_encoder.EquiformerV2 attribute)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/equiformer_v2/equiformer_v2_oc20/index.html#MolecularDiffusion.modules.layers.equiformer_v2.equiformer_v2_oc20.EquiformerV2_OC20.use_attn_renorm">use_attn_renorm (MolecularDiffusion.modules.layers.equiformer_v2.equiformer_v2_oc20.EquiformerV2_OC20 attribute)</a>
 
         <ul>
@@ -14261,8 +14405,6 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/shepherd_arch/equiformer_v2_encoder/index.html#MolecularDiffusion.modules.models.shepherd_arch.equiformer_v2_encoder.EquiformerV2.use_attn_renorm">(MolecularDiffusion.modules.models.shepherd_arch.equiformer_v2_encoder.EquiformerV2 attribute)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/vn/vn_layers/index.html#MolecularDiffusion.modules.layers.vn.vn_layers.VNLinearLeakyReLU.use_batchnorm">use_batchnorm (MolecularDiffusion.modules.layers.vn.vn_layers.VNLinearLeakyReLU attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/shepherd_arch/equiformer_operations/index.html#MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.TensorProductRescale.use_bias">use_bias (MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.TensorProductRescale attribute)</a>
@@ -14721,6 +14863,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/gfmdiff/dynamics/index.html#MolecularDiffusion.modules.models.gfmdiff.dynamics.GFMDiffDynamics.wrap_forward">(MolecularDiffusion.modules.models.gfmdiff.dynamics.GFMDiffDynamics method)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/models/gfmdiff/equignn/index.html#MolecularDiffusion.modules.models.gfmdiff.equignn.EquiGNN.wrap_forward">(MolecularDiffusion.modules.models.gfmdiff.equignn.EquiGNN method)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/painn_dynamics/index.html#MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics.wrap_forward">(MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics method)</a>
 </li>
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/runmodes/data/augmentation/index.html#MolecularDiffusion.runmodes.data.augmentation.write_xyz">write_xyz() (in module MolecularDiffusion.runmodes.data.augmentation)</a>

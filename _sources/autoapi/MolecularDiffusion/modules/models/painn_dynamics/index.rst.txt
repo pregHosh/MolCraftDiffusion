@@ -1,0 +1,131 @@
+MolecularDiffusion.modules.models.painn_dynamics
+================================================
+
+.. py:module:: MolecularDiffusion.modules.models.painn_dynamics
+
+.. autoapi-nested-parse::
+
+   Dense <-> flat adapter binding the ported PaiNN/OM-Diff ``EquivNet``
+   backbone to the ``dynamics._forward(t, xh, node_mask, edge_mask, context)``
+   contract that ``EnVariationalDiffusion.phi``
+   (``modules/models/en_diffusion.py:163``) calls.
+
+   Mirrors ``gfmdiff/dynamics.py::GFMDiffDynamics`` in role, but has real
+   work to do: ``EnVariationalDiffusion`` speaks dense padded batches
+   ``(B, N, ...)`` while ``EquivNet`` speaks a flat concatenation of graphs
+   ``(n, ...)`` with an ``(E, 2)`` edge list, so this wrapper packs and
+   unpacks around it.
+
+   It also owns the pieces OM-Diff kept outside the backbone in their
+   ``AtomisticModel`` input/output modules: the linear one-hot embedding,
+   the Fourier time features, and the scalar readout MLP.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.painn_dynamics.FourierTimeFeatures
+   MolecularDiffusion.modules.models.painn_dynamics.PaiNNDynamics
+
+
+Module Contents
+---------------
+
+.. py:class:: FourierTimeFeatures(n_features: int = 16, std: float = 1.0, trainable: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Random Fourier expansion of the diffusion time (om-diff
+   ``layers/features.py::FourierFeatures``). Output is ``2 * n_features``
+   wide; the projection is a fixed buffer unless ``trainable``.
+
+
+   .. py:method:: forward(t: torch.Tensor) -> torch.Tensor
+
+
+.. py:class:: PaiNNDynamics(in_node_nf: int, context_node_nf: int = 0, n_dims: int = 3, num_interactions: int = 5, node_size: int = 256, edge_size: int = 64, embedding_dim: int = 256, rbf_features: int = 64, rbf_max_distance: float = 5.0, time_features: int = 16, cutoff: float | None = None, envelop_p: int | None = 6)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Denoising network: PaiNN scalar+vector backbone, EDM interface.
+
+   :param in_node_nf: Node feature channels the diffusion model expects
+                      back (atom-type one-hot + atomic number [+ extra values]),
+                      excluding time and context, which are added internally.
+   :param context_node_nf: Conditioning channels, concatenated to the node
+                           features before embedding.
+   :param n_dims: Spatial dimensions (3).
+   :param num_interactions: Interaction/update blocks.
+   :param node_size: backbone widths. OM-Diff's
+                     defaults are 256 / 64 / 256.
+   :param edge_size: backbone widths. OM-Diff's
+                     defaults are 256 / 64 / 256.
+   :param embedding_dim: backbone widths. OM-Diff's
+                         defaults are 256 / 64 / 256.
+   :param rbf_features: Gaussian radial basis size and
+                        range, in angstrom.
+   :param rbf_max_distance: Gaussian radial basis size and
+                            range, in angstrom.
+   :param time_features: Fourier time features; contributes ``2 x`` this to
+                         the backbone input width.
+   :param cutoff: Optional edge cutoff in angstrom. ``None`` (default)
+                  keeps the platform's dense fully-connected ``edge_mask``;
+                  set e.g. ``7.5`` to reproduce OM-Diff's radius graph, which
+                  they rebuild from the *noisy* coordinates at every step —
+                  this does the same, since it is applied per forward pass.
+   :param envelop_p: If ``cutoff`` is set, order of the polynomial cutoff
+                     envelope applied to the radial basis. ``None`` disables it.
+
+
+   .. py:method:: forward(t, xh, node_mask, edge_mask, context=None)
+      :abstractmethod:
+
+
+
+   .. py:method:: unwrap_forward()
+
+      Return the unbound forward.
+
+
+
+   .. py:method:: wrap_forward(node_mask, edge_mask, context)
+
+      Bind the masks so an ODE/SDE solver can call ``fwd(t, x)``.
+
+
+
+   .. py:attribute:: context_node_nf
+      :value: 0
+
+
+
+   .. py:attribute:: cutoff
+      :value: None
+
+
+
+   .. py:attribute:: embedding
+
+
+   .. py:attribute:: equivnet
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: n_dims
+      :value: 3
+
+
+
+   .. py:attribute:: readout
+
+
+   .. py:attribute:: time_embedding
+
+

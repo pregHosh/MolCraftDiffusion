@@ -19,6 +19,7 @@ conditioning input beyond the atom count.
 | `diffusion.yaml` | `diffusion` | EDM (E(n)-equivariant diffusion, EGCL backbone) | **Default.** Cartesian-space DDPM; the checkpoints on Hugging Face use this. |
 | `diffusion_egt.yaml` | `diffusion` | EGT (equivariant graph transformer) | Transformer backbone via `tasks_egt`. |
 | `diffusion_gfmdiff.yaml` | `diffusion` | GFMDiff | Geometric full-molecule diffusion (`tasks_gfmdiff`). |
+| `diffusion_painn.yaml` | `diffusion` | PaiNN (scalar+vector message passing) | OM-Diff's `EquivNet` backbone under the default EDM objective (`tasks_painn`). |
 | `diffusion_tabasco.yaml` | `diffusion_tabasco` | TABASCO | Flow matching; simplified, fast, tuned for physical quality. |
 | `diffusion_flowmol.yaml` | `diffusion_flowmol` | FlowMol (SE(3)-equivariant GVP) | Flow matching for coordinates, atom types, and formal charges. **Bond-free variant only:** bonds are not modeled or generated; graph edges serve geometric message passing only. Needs the `[flowmol]` extra (DGL). |
 
@@ -79,6 +80,12 @@ Backbones and objectives integrated here are based on the following work.
   Molecule Generation.* ECML PKDD 2023. [arXiv:2302.09048](https://arxiv.org/abs/2302.09048)
 - **GFMDiff** — Xu et al. *Geometric-Facilitated Denoising Diffusion Model for
   3D Molecule Generation.* AAAI 2024. [arXiv:2401.02683](https://arxiv.org/abs/2401.02683)
+- **PaiNN / OM-Diff** — the backbone is the `EquivNet` of *OM-Diff: Inverse-design
+  of organometallic catalysts with guided equivariant denoising diffusion*, 2024.
+  [doi:10.26434/chemrxiv-2024-882hh](https://doi.org/10.26434/chemrxiv-2024-882hh) — itself a variant
+  of **PaiNN**: Schütt, Unke & Gastegger, *Equivariant message passing for the
+  prediction of tensorial properties and molecular spectra*, ICML 2021
+  ([arXiv:2102.03150](https://arxiv.org/abs/2102.03150)).
 - **TABASCO** — Vonessen, Harris, Cretu & Liò. *TABASCO: A Fast, Simplified
   Model for Molecular Generation with Improved Physical Quality.* 2025.
   [arXiv:2507.00899](https://arxiv.org/abs/2507.00899)

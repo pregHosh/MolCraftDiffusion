@@ -1,0 +1,200 @@
+MolecularDiffusion.modules.models.painn_backbone
+================================================
+
+.. py:module:: MolecularDiffusion.modules.models.painn_backbone
+
+.. autoapi-nested-parse::
+
+   PaiNN-style scalar+vector equivariant backbone, ported from OM-Diff.
+
+   Source: ``om-diff`` @ ``976084eaf407cc84a5f169f4204f72d4a1fbdbbc``
+   (https://github.com/Aalto-QuML/om-diff — MIT), files
+   ``src/models/backbones/equivnet.py``, ``src/models/layers/{rbf,norm,
+   readout,mlp,features}.py`` and ``src/models/ops.py``.
+
+   Only the network is ported. OM-Diff's diffusion objective, metal-centre
+   masking, conditional size prior and sampler are deliberately not part of
+   this file — the platform's ``EnVariationalDiffusion`` supplies all of
+   that (see ``docs/model_integrations/omdiff/INTEGRATION_PLAN.md``).
+
+   Two deliberate deviations from upstream:
+
+   * ``EquivNet.forward`` takes plain tensors instead of OM-Diff's ``Batch``
+     dataclass, so no part of their data model has to come along.
+   * ``EdgeLayer`` / ``with_edge_interactions`` is not ported — it is off in
+     every shipped OM-Diff config and nothing else here would use it.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.painn_backbone.BesselRBFLayer
+   MolecularDiffusion.modules.models.painn_backbone.EnvelopLayer
+   MolecularDiffusion.modules.models.painn_backbone.EquivNet
+   MolecularDiffusion.modules.models.painn_backbone.EquivNetHParams
+   MolecularDiffusion.modules.models.painn_backbone.GaussianLinearRBFLayer
+   MolecularDiffusion.modules.models.painn_backbone.GraphLayerNorm
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.painn_backbone.pairwise_distances
+
+
+Module Contents
+---------------
+
+.. py:class:: BesselRBFLayer(n_features: int = 20, max_distance: float = 5.0, trainable: bool = True)
+
+   Bases: :py:obj:`RBFLayer`
+
+
+   Bessel radial basis (upstream alternative to the Gaussian one).
+
+
+   .. py:method:: forward(distances: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: prefactor
+
+
+   .. py:attribute:: r_max
+
+
+.. py:class:: EnvelopLayer(p: int = 6, xc: float = 5.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Polynomial cutoff envelope, smoothly zero beyond ``xc``.
+
+
+   .. py:method:: forward(distances: torch.Tensor) -> torch.Tensor
+
+
+.. py:class:: EquivNet(hparams: EquivNetHParams, rbf_layer: RBFLayer | None = None, envelop_layer: EnvelopLayer | None = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   OM-Diff's scalar+vector message-passing network.
+
+   Unlike upstream this consumes/returns tensors rather than their
+   ``Batch`` dataclass, so it can be driven straight from the dense
+   diffusion batch by :class:`~MolecularDiffusion.modules.models.
+   painn_dynamics.PaiNNDynamics`.
+
+
+   .. py:method:: forward(node_positions: torch.Tensor, node_states: torch.Tensor, edge_index: torch.Tensor, num_nodes: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]
+
+      Run the network over one flat (concatenated) batch of graphs.
+
+      :param node_positions: ``(n, 3)`` coordinates.
+      :param node_states: ``(n, input_size)`` embedded node features.
+      :param edge_index: ``(E, 2)`` directed edges, ``[:, 0] -> [:, 1]``.
+      :param num_nodes: ``(B,)`` nodes per graph; must sum to ``n``.
+
+      :returns: ``(delta_node_positions (n, 3), node_states (n, node_size))``.
+
+
+
+   .. py:attribute:: edge_featurizers
+
+
+   .. py:attribute:: envelop_layer
+      :value: None
+
+
+
+   .. py:attribute:: hp
+
+
+   .. py:attribute:: interactions
+
+
+   .. py:attribute:: project_layer
+
+
+   .. py:attribute:: rbf_layer
+      :value: None
+
+
+
+   .. py:attribute:: updates
+
+
+.. py:class:: EquivNetHParams
+
+   Hyperparameters of :class:`EquivNet`.
+
+
+   .. py:attribute:: edge_size
+      :type:  int
+      :value: 64
+
+
+
+   .. py:attribute:: input_size
+      :type:  int
+      :value: 288
+
+
+
+   .. py:attribute:: node_size
+      :type:  int
+      :value: 256
+
+
+
+   .. py:attribute:: num_interactions
+      :type:  int
+      :value: 5
+
+
+
+   .. py:attribute:: update_node_positions
+      :type:  bool
+      :value: True
+
+
+
+.. py:class:: GaussianLinearRBFLayer(n_features: int = 64, max_distance: float = 5.0, min_distance: float = 0.0)
+
+   Bases: :py:obj:`RBFLayer`
+
+
+   Evenly spaced Gaussians — OM-Diff's configured default.
+
+
+   .. py:method:: forward(distances: torch.Tensor) -> torch.Tensor
+
+
+.. py:class:: GraphLayerNorm(in_channels: int, eps: float = 1e-06, affine: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Layer norm whose statistics are pooled per graph, not per node.
+
+
+   .. py:method:: forward(x: torch.Tensor, splits: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: eps
+      :value: 1e-06
+
+
+
+.. py:function:: pairwise_distances(positions: torch.Tensor, edges: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]
+
+   Edge distances ``(E, 1)`` and unit vectors ``(E, 3)``, i -> j.
+
+   ``edges`` is ``(E, 2)`` (OM-Diff's layout, not PyG's ``(2, E)``).
+
+
