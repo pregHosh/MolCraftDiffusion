@@ -1,0 +1,141 @@
+MolecularDiffusion.modules.models.ipdiff.score_model
+====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.ipdiff.score_model
+
+.. autoapi-nested-parse::
+
+   IPDiff's score network: KGDiff/TargetDiff's, plus an interaction prior.
+
+   Ported from IPDiff's ``models/molopt_score_model.py`` (commit ``00ed078``).
+   That file is TargetDiff's ``ScorePosNet3D`` with four additions, so rather
+   than re-porting ~700 lines this subclasses the already-in-tree
+   :class:`~...models.kgdiff.score_model.ScorePosNet3D` (itself a TargetDiff
+   port) and overrides only what genuinely differs:
+
+   ======================  =====================================================
+   Member                  IPDiff's change
+   ======================  =====================================================
+   ``__init__``            no affinity head; adds ``cond_dim`` / ``emb_mlp`` /
+                           ``shift_t_mlp_pos`` and the ``k_t`` buffer
+   ``_embed``              concatenates IPNet's features into the protein and
+                           ligand token embeddings before the node indicator
+   ``_heads``              the affinity head is gone (see ``__init__``)
+   ``q_pos_posterior``     the matching ``-k_t*shift_t`` / ``+k_t(t-1)*
+                           shift_{t-1}`` reverse correction
+   ``get_diffusion_loss``  ``h_bap`` from the GROUND-TRUTH complex, and the
+                           forward noising gains ``+ k_t * shift``
+   ``sample_diffusion``    ``h_bap`` recomputed from the current predicted x0
+                           EVERY reverse step (self-conditioning on the prior)
+   ======================  =====================================================
+
+   Everything else -- the beta schedules, the whole D3PM ``q_v_*`` family,
+   ``_predict_x0_from_eps``, ``sample_time``, ``compute_v_Lt`` and ``forward``
+   -- is inherited unchanged, because IPDiff did not change it.
+
+   **The two mechanisms, in one place.** Let ``a_bar`` be the cumulative alpha
+   and ``s_t = shift_t_mlp_pos([h_bap_ligand, t])``:
+
+   * *prior conditioning* -- ``h = emb_mlp([h, h_bap])`` on every token, so the
+     denoiser sees the interaction representation directly;
+   * *prior shifting* -- the forward process becomes
+     ``x_t = sqrt(a_bar) x0 + sqrt(1-a_bar) eps + k_t s_t`` with
+     ``k_t = sqrt(a_bar)(1 - sqrt(a_bar))``, i.e. the noising trajectory itself
+     bends toward the prior, and the reverse posterior undoes it exactly.
+
+   There is no classifier, no CFG, and no gradient of any predictor: unlike
+   KGDiff, the parent's ``use_classifier_guide`` machinery is switched off and
+   its ``expert_pred`` head is deleted outright (the released IPDiff checkpoint
+   has no such tensors).
+
+   **Passing h_bap into an inherited ``forward``.** The parent's ``forward``
+   calls ``self._embed(...)`` with a fixed argument list, so the conditioning
+   features are handed over on ``self`` (:attr:`hbap_protein` /
+   :attr:`hbap_ligand`) immediately before each call rather than threaded
+   through the signature. ``None`` means "no prior" and reproduces upstream's
+   zero-fill (``molopt_score_model.py:321-324``).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ipdiff.score_model.IPDiffScorePosNet3D
+
+
+Module Contents
+---------------
+
+.. py:class:: IPDiffScorePosNet3D(cond_dim: int = 128, **kwargs: Any)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.models.kgdiff.score_model.ScorePosNet3D`
+
+
+   TargetDiff's denoiser conditioned on a frozen interaction prior.
+
+
+   .. py:method:: get_diffusion_loss(net_cond, protein_pos, protein_v, batch_protein, ligand_pos, ligand_v, batch_ligand, time_step=None) -> dict
+
+      ``loss_pos + loss_v_weight * loss_v``, with prior shifting.
+
+      ``h_bap`` is computed ONCE, from the ground-truth complex -- the
+      training-time counterpart of the sampler's per-step recomputation.
+
+
+
+   .. py:method:: q_pos_posterior(x0, xt, t, batch, t_minus1=None, shift=None, shift_minus1=None)
+
+      TargetDiff's posterior mean, un-shifted at ``t`` and re-shifted
+      at ``t-1``.
+
+      With no shift (the first reverse step, and ``t == 0``) this is
+      exactly the parent's expression. Upstream's middle branch
+      (``molopt_score_model.py:415-417``) is unreachable -- the outer
+      condition already excludes ``shift is None`` -- so it is not ported.
+
+
+
+   .. py:method:: sample_diffusion(protein_pos, protein_v, batch_protein, init_ligand_pos, init_ligand_v, batch_ligand, net_cond=None, num_steps: Optional[int] = None, center_pos_mode: Optional[str] = None, progress: bool = True, **_ignored: Any) -> dict
+
+      Ancestral DDPM reverse loop with per-step prior re-conditioning.
+
+      Each step predicts x0, takes the shifted posterior, then re-runs
+      IPNet on ``(predicted x0, the real pocket)`` so the next step's
+      conditioning reflects the molecule as it currently stands. That
+      second IPNet pass is the expensive part -- it builds a fully
+      connected complex graph every step (see ``bapnet.py``).
+
+      Trajectories (``pos_traj``/``v_traj``) are deliberately not
+      accumulated: the platform's GIF path is out of scope for this port
+      and keeping them costs ``num_steps`` copies of the cloud.
+
+
+
+   .. py:attribute:: cond_dim
+      :value: 128
+
+
+
+   .. py:attribute:: emb_mlp
+
+
+   .. py:attribute:: hbap_ligand
+      :type:  Optional[torch.Tensor]
+      :value: None
+
+
+
+   .. py:attribute:: hbap_protein
+      :type:  Optional[torch.Tensor]
+      :value: None
+
+
+
+   .. py:attribute:: k_t
+
+
+   .. py:attribute:: shift_t_mlp_pos
+
+

@@ -1,0 +1,222 @@
+MolecularDiffusion.modules.tasks.diffusion_ipdiff
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_ipdiff
+
+.. autoapi-nested-parse::
+
+   IPDiff task: pocket-conditioned ligand diffusion with an interaction prior.
+
+   Three objects, the same layout the other pocket-conditioned models use:
+
+   * :class:`IPDiffDiffusionTask` -- the duck-typed Task
+     (docs/adding_new_models.md Section 2.1) wrapping
+     :class:`~...models.ipdiff.IPDiffScorePosNet3D` **and** the frozen
+     :class:`~...models.ipdiff.BAPNet` prior.
+   * :class:`ModelTaskFactory` -- the ``_target_`` of
+     ``configs/tasks/diffusion_ipdiff.yaml``.
+   * :class:`IPDiffPocketGenerator` -- the ``_target_`` of
+     ``configs/interference/gen_ipdiff_pocket.yaml``.
+
+   **What IPDiff adds over KGDiff, in one sentence.** KGDiff steers *sampling*
+   by ascending its own predicted affinity (test-time gradient guidance);
+   IPDiff changes what the model is *trained on* -- a separately pretrained,
+   frozen interaction network (IPNet) supplies 128-d features that are folded
+   into every token embedding and that drive a learned shift of both the
+   forward noising process and the reverse posterior. No classifier, no CFG, no
+   gradient of any predictor. Consequently ``prop_dist_model`` is ``None`` and
+   ``sample()`` can run under ``no_grad``.
+
+   **Everything about the data is KGDiff's**, verbatim and by import: the
+   collate (``data/component/kgdiff_data.py``), ``configs/data/
+   kgdiff_dataset.yaml``, the converted smoke db, the 13-class ligand
+   vocabulary, the 27-dim pocket features, the pocket-extent size prior and the
+   13->8 element collapse used when writing .xyz. IPDiff's
+   ``utils/transforms.py`` and ``datasets/pl_data.py`` are a strict subset of
+   KGDiff's, so there is no new data code here at all. The ``affinity`` column
+   those batches carry is simply ignored -- IPDiff never reads it.
+
+   Two deviations from the generic contract, both shared with the other pocket
+   models in-tree:
+
+   * ``sample()`` requires a pocket; there is no unconditional path.
+   * Sampled coordinates come back in the **input pocket's frame**
+     (``center_pos_mode='protein'``).
+
+   Out of scope this pass (see the integration plan): CFG/guidance of any kind
+   (IPDiff has none), unconditional generation, inpainting, trajectory export,
+   ``pos_only`` sampling, and the ``range``/``ref`` ligand-size modes.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_ipdiff.DEFAULT_IPNET_CKPT
+   MolecularDiffusion.modules.tasks.diffusion_ipdiff.INT_TYPE
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_ipdiff.IPDiffDiffusionTask
+   MolecularDiffusion.modules.tasks.diffusion_ipdiff.IPDiffPocketGenerator
+   MolecularDiffusion.modules.tasks.diffusion_ipdiff.ModelTaskFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: IPDiffDiffusionTask(model: MolecularDiffusion.modules.models.ipdiff.IPDiffScorePosNet3D, net_cond: MolecularDiffusion.modules.models.ipdiff.BAPNet, atom_vocab: Optional[List[str]] = None, pos_noise_std: float = 0.1)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Task contract around :class:`IPDiffScorePosNet3D` + frozen IPNet.
+
+
+   .. py:method:: evaluate(pred, target)
+
+
+   .. py:method:: forward(batch)
+
+
+   .. py:method:: predict_and_target(batch)
+
+
+   .. py:method:: sample(batch_size=None, nodesxsample=None, num_steps=None, batch=None, progress: bool = True, **kwargs)
+
+      Sample ligands inside the pocket carried by ``batch``.
+
+      **The signature deliberately deviates from Section 2.1**: it takes a
+      pocket. ``batch`` must hold ``protein_pos`` / ``protein_v`` /
+      ``protein_batch`` from a collated KGDiff-format batch
+      (:class:`IPDiffPocketGenerator` builds it).
+
+      Returns ``(one_hot, charges, coords, node_mask)`` padded to
+      ``(B, N, .)`` in the ORIGINAL pocket frame. ``one_hot`` is over the
+      8-element ``atom_vocab``, not the model's 13 ``(element, aromatic)``
+      classes; ``charges`` is zeros (IPDiff has no charge channel).
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:property:: device
+
+
+   .. py:attribute:: model
+
+
+   .. py:property:: n_node_dist
+      :type: Dict[int, float]
+
+
+
+   .. py:attribute:: net_cond
+
+
+   .. py:property:: node_dist_model
+      :type: MolecularDiffusion.modules.tasks.diffusion_kgdiff.PocketSizePrior
+
+
+
+   .. py:attribute:: pos_noise_std
+      :value: 0.1
+
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: split
+      :value: 'train'
+
+
+
+.. py:class:: IPDiffPocketGenerator(task, **kwargs: Any)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator`
+
+
+   Pocket-conditioned generation behind ``interference/gen_ipdiff_pocket``.
+
+   Subclasses KGDiff's generator because the pocket source is literally the
+   same object (one row of an ASE db written by
+   ``docs/model_integrations/kgdiff/scripts/convert_dataset.py``) and the
+   tiling / size-drawing logic is identical. The only difference is that
+   IPDiff has no guidance knobs to pass through, so ``run`` is re-stated
+   without them.
+
+
+   .. py:method:: run() -> None
+
+
+.. py:class:: ModelTaskFactory(task_type: str = 'diffusion_ipdiff', net_cond_ckpt: str = DEFAULT_IPNET_CKPT, cond_dim: int = 128, pos_noise_std: float = 0.1, protein_atom_feature_dim: int = PROTEIN_FEATURE_DIM, ligand_atom_feature_dim: int = NUM_LIGAND_CLASSES, model_mean_type: str = 'C0', beta_schedule: str = 'sigmoid', beta_start: float = 1e-07, beta_end: float = 0.002, pos_beta_s: float = 0.01, v_beta_schedule: str = 'cosine', v_beta_s: float = 0.01, num_diffusion_timesteps: int = 1000, loss_v_weight: float = 100.0, sample_time_method: str = 'symmetric', time_emb_dim: int = 0, time_emb_mode: str = 'simple', center_pos_mode: str = 'protein', node_indicator: bool = True, model_type: str = 'uni_o2', num_blocks: int = 1, num_layers: int = 9, hidden_dim: int = 128, n_heads: int = 16, edge_feat_dim: int = 4, num_r_gaussian: int = 20, knn: int = 32, num_node_types: int = 8, act_fn: str = 'relu', norm: bool = True, cutoff_mode: str = 'knn', ew_net_type: str = 'global', num_x2h: int = 1, num_h2x: int = 1, r_max: float = 10.0, x2h_out_fc: bool = False, sync_twoup: bool = False, atom_vocab: Optional[List[str]] = None, **kwargs: Any)
+
+   Hydra entry point for ``configs/tasks/diffusion_ipdiff.yaml``.
+
+   No ``train_set`` parameter: like KGDiff, the ligand-size prior is a
+   static table conditioned on pocket extent, so nothing is measured at
+   build time (docs/adding_new_models.md Section 2.5 -- that seam is
+   opt-in).
+
+   ``net_cond_ckpt`` is required in substance: :class:`BAPNet` refuses to
+   build without pretrained weights, because its output *is* IPDiff's
+   conditioning signal.
+
+
+   .. py:method:: build() -> IPDiffDiffusionTask
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: cond_dim
+      :value: 128
+
+
+
+   .. py:attribute:: condition_names
+      :type:  List[str]
+      :value: []
+
+
+
+   .. py:attribute:: model_kwargs
+
+
+   .. py:attribute:: net_cond_ckpt
+      :value: 'docs/model_integrations/ipdiff/checkpoints/ipnet'
+
+
+
+   .. py:attribute:: pos_noise_std
+      :value: 0.1
+
+
+
+   .. py:attribute:: task
+      :type:  Optional[IPDiffDiffusionTask]
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_ipdiff'
+
+
+
+.. py:data:: DEFAULT_IPNET_CKPT
+   :value: 'docs/model_integrations/ipdiff/checkpoints/ipnet'
+
+
+.. py:data:: INT_TYPE
+

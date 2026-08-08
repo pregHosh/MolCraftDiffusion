@@ -1,0 +1,356 @@
+MolecularDiffusion.modules.models.ipdiff.bapnet
+===============================================
+
+.. py:module:: MolecularDiffusion.modules.models.ipdiff.bapnet
+
+.. autoapi-nested-parse::
+
+   IPNet: IPDiff's frozen, pretrained binding-interaction prior.
+
+   Ported from IPDiff's ``graphbap/bapnet.py`` (commit ``00ed078``). This is
+   **not** a diffusion model and it is never trained here: it is a separately
+   pretrained binding-affinity network whose *hidden* representation is the
+   conditioning signal IPDiff injects into the denoiser
+   (:class:`~...ipdiff.score_model.IPDiffScorePosNet3D`).
+
+   Three parallel EGNN stacks run over the same complex -- the joint
+   ligand+pocket graph, the ligand alone, and the pocket alone -- and a single
+   ``GATConv`` fuses the complex embedding with the concatenated
+   ligand-only/pocket-only embeddings. :meth:`BAPNet.extract_features` returns
+   the fused per-node vectors ``(h_ligand, h_pocket)``, each ``(N, 128)``.
+
+   Note what it does **not** return: the scalar affinity. ``OutputLayer`` and
+   ``FinalOutput`` exist in the released ``ipnet`` checkpoint and are
+   constructed here for state-dict key parity, but ``extract_features`` -- the
+   only entry point IPDiff ever calls (``models/molopt_score_model.py:488``
+   during training, ``:624`` inside the sampler) -- stops at the fusion layer.
+   They are kept rather than deleted so the checkpoint maps with zero dropped
+   tensors.
+
+   **Cost warning.** :func:`get_edges` builds a *fully connected* graph within
+   each batch element (upstream passes no ``edge_cutoff``), and the sampler
+   re-runs this every reverse step. With ~300-1000 pocket atoms that is
+   10^5-10^6 edges per complex. Upstream trains at ``batch_size: 4``; treat OOM
+   here as a batch-size question, not a bug.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ipdiff.bapnet.GATCONV_ALIASES
+   MolecularDiffusion.modules.models.ipdiff.bapnet.GATCONV_RENAMES
+   MolecularDiffusion.modules.models.ipdiff.bapnet.LIGAND_ATOM_ADD_AROMATIC_TYPES
+   MolecularDiffusion.modules.models.ipdiff.bapnet.POCKET_ATOM_TYPES
+   MolecularDiffusion.modules.models.ipdiff.bapnet.RESIDUE_TYPES
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ipdiff.bapnet.BAPNet
+   MolecularDiffusion.modules.models.ipdiff.bapnet.EquivariantBlock
+   MolecularDiffusion.modules.models.ipdiff.bapnet.EquivariantUpdate
+   MolecularDiffusion.modules.models.ipdiff.bapnet.GCL
+   MolecularDiffusion.modules.models.ipdiff.bapnet.SinusoidsEmbeddingNew
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ipdiff.bapnet.coord2diff
+   MolecularDiffusion.modules.models.ipdiff.bapnet.get_edges
+   MolecularDiffusion.modules.models.ipdiff.bapnet.remove_pocket_mean
+   MolecularDiffusion.modules.models.ipdiff.bapnet.unsorted_segment_sum
+
+
+Module Contents
+---------------
+
+.. py:class:: BAPNet(ckpt_path: Optional[str] = None, hidden_nf: int = 128, act_fn: Optional[torch.nn.Module] = None, GAT_head: int = 2, graph_layers: int = 1, attention: bool = False, norm_diff: bool = True, tanh: bool = False, coords_range: float = 15, norm_constant: float = 1, inv_sublayers: int = 1, sin_embedding: bool = False, normalization_factor: float = 100, aggregation_method: str = 'sum', ignore_keys: Optional[List[str]] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   The pretrained interaction prior. Frozen; never trained in-platform.
+
+   ``ckpt_path`` is required (upstream asserts it too): an un-pretrained
+   IPNet emits noise, and IPDiff's whole conditioning signal is this
+   network's output, so silently running without weights would train a
+   model on garbage. Weights are loaded at construction and then frozen;
+   because the module is a real submodule of the task, they also round-trip
+   through the platform checkpoint and are restored at generate time.
+
+
+   .. py:method:: extract_features(lig_coords, pocket_coords, lig_a_hidx, pocket_a_hidx, pocket_r_hidx, lig_mask, pocket_mask)
+
+      Fused per-node interaction features ``(h_ligand, h_pocket)``.
+
+      ``lig_a_hidx`` is the 13-class ``(element, aromatic)`` ligand index;
+      ``pocket_a_hidx`` / ``pocket_r_hidx`` are the pocket element and
+      amino-acid indices (``argmax`` of the 27-dim protein feature's first
+      6 and next 20 columns). ``*_mask`` are the scatter batch indices.
+
+
+
+   .. py:method:: freeze() -> None
+
+      Upstream's ``freeze_the_model``: eval mode, no gradients.
+
+
+
+   .. py:method:: init_from_ckpt(path: str, ignore_keys: List[str]) -> None
+
+      Load the released ``ipnet`` weights, strictly.
+
+      Strict on purpose: this is the one place a silent partial load would
+      be invisible and fatal (an unloaded fusion layer would emit noise
+      that still looks like a 128-d feature). The released file predates
+      the current torch-geometric, so its ``GATConv`` keys are translated
+      first -- see :data:`GATCONV_RENAMES`.
+
+
+
+   .. py:method:: train(mode: bool = True) -> BAPNet
+
+      Stay in eval mode even when the parent task calls ``.train()``.
+
+      Nothing here is mode-dependent (no dropout, no batchnorm), so this is
+      belt-and-braces -- but it keeps "frozen" true rather than nominal.
+
+
+
+   .. py:attribute:: ComplexesGraph
+
+
+   .. py:attribute:: FinalOutput
+
+
+   .. py:attribute:: FusionGraph
+
+
+   .. py:attribute:: LigandGraph
+
+
+   .. py:attribute:: OutputLayer
+
+
+   .. py:attribute:: PocketGraph
+
+
+   .. py:attribute:: embed_fusion
+
+
+   .. py:attribute:: graph_dim
+      :value: 128
+
+
+
+   .. py:attribute:: graph_layers
+      :value: 1
+
+
+
+   .. py:attribute:: hidden_nf
+      :value: 128
+
+
+
+   .. py:attribute:: id_embed
+
+
+   .. py:attribute:: ligand_atom_type_embed
+
+
+   .. py:attribute:: pocket_atom_type_embed
+
+
+   .. py:attribute:: pocket_residue_type_embed
+
+
+   .. py:attribute:: pocket_type_fusion
+
+
+.. py:class:: EquivariantBlock(hidden_nf: int, edge_feat_nf: int = 2, act_fn: Optional[torch.nn.Module] = None, n_layers: int = 2, attention: bool = True, norm_diff: bool = True, tanh: bool = False, coords_range: float = 15, norm_constant: float = 1, sin_embedding: Optional[torch.nn.Module] = None, normalization_factor: float = 100, aggregation_method: str = 'sum')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   ``n_layers`` invariant GCLs followed by one coordinate update.
+
+   Submodules are registered with upstream's ``gcl_%d`` / ``gcl_equiv``
+   names via ``add_module`` so the released checkpoint's keys match.
+
+
+   .. py:method:: forward(h, x, edge_index, edge_attr)
+
+
+   .. py:attribute:: aggregation_method
+      :value: 'sum'
+
+
+
+   .. py:attribute:: coords_range_layer
+
+
+   .. py:attribute:: hidden_nf
+
+
+   .. py:attribute:: n_layers
+      :value: 2
+
+
+
+   .. py:attribute:: norm_constant
+      :value: 1
+
+
+
+   .. py:attribute:: norm_diff
+      :value: True
+
+
+
+   .. py:attribute:: normalization_factor
+      :value: 100
+
+
+
+   .. py:attribute:: sin_embedding
+      :value: None
+
+
+
+.. py:class:: EquivariantUpdate(hidden_nf: int, normalization_factor: float, aggregation_method: str, edges_in_d: int = 1, act_fn: Optional[torch.nn.Module] = None, tanh: bool = False, coords_range: float = 10.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Coordinate update: a scalar per edge times the edge direction.
+
+
+   .. py:method:: forward(h, coord, edge_index, coord_diff, edge_attr)
+
+
+   .. py:attribute:: aggregation_method
+
+
+   .. py:attribute:: coord_mlp
+
+
+   .. py:attribute:: coords_range
+      :value: 10.0
+
+
+
+   .. py:attribute:: normalization_factor
+
+
+   .. py:attribute:: tanh
+      :value: False
+
+
+
+.. py:class:: GCL(input_nf: int, output_nf: int, hidden_nf: int, normalization_factor: float, aggregation_method: str, edges_in_d: int = 0, nodes_att_dim: int = 0, act_fn: Optional[torch.nn.Module] = None, attention: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Invariant message-passing layer (EGNN's ``h`` update).
+
+
+   .. py:method:: forward(h, edge_index, edge_attr=None)
+
+
+   .. py:attribute:: aggregation_method
+
+
+   .. py:attribute:: attention
+      :value: False
+
+
+
+   .. py:attribute:: edge_mlp
+
+
+   .. py:attribute:: node_mlp
+
+
+   .. py:attribute:: normalization_factor
+
+
+.. py:class:: SinusoidsEmbeddingNew(max_res: float = 15.0, min_res: float = 15.0 / 2000.0, div_factor: int = 4)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Multi-resolution distance expansion (unused: ``sin_embedding=False``).
+
+   Kept because it is reachable through the constructor flag and costs
+   nothing; the released checkpoint does not use it (it holds no parameters
+   either way).
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: dim
+
+
+   .. py:attribute:: frequencies
+
+
+   .. py:attribute:: n_frequencies
+
+
+.. py:function:: coord2diff(x, edge_index, norm_constant: float = 1)
+
+   Squared edge length and the normalised edge direction.
+
+
+.. py:function:: get_edges(mask: torch.Tensor) -> torch.Tensor
+
+   Fully connected edges within each batch element.
+
+   Upstream's ``edge_cutoff`` argument is ``None`` everywhere it is called,
+   so the distance-gated branch is dropped. The ``.cpu()`` round trip
+   upstream does between building and using this is also dropped -- it was
+   a no-op.
+
+
+.. py:function:: remove_pocket_mean(x_lig, x_pocket, lig_indices, pocket_indices)
+
+   Centre both clouds on the *pocket* centroid.
+
+   IPNet was pretrained in this frame ("pocketCoM" in the released
+   checkpoint's path), and the diffusion model centres the same way
+   (``center_pos_mode: protein``), so features stay consistent.
+
+
+.. py:function:: unsorted_segment_sum(data, segment_ids, num_segments, normalization_factor, aggregation_method)
+
+   Scatter-add with either a constant divisor or a per-node mean.
+
+
+.. py:data:: GATCONV_ALIASES
+
+.. py:data:: GATCONV_RENAMES
+
+.. py:data:: LIGAND_ATOM_ADD_AROMATIC_TYPES
+   :value: ['H', 'C1', 'C2', 'N1', 'N2', 'O1', 'O2', 'F', 'P1', 'P2', 'S1', 'S2', 'Cl']
+
+
+.. py:data:: POCKET_ATOM_TYPES
+   :value: ['H', 'C', 'N', 'O', 'S', 'Se']
+
+
+.. py:data:: RESIDUE_TYPES
+   :value: ['ALA', 'CYS', 'ASP', 'GLU', 'PHE', 'GLY', 'HIS', 'ILE', 'LYS', 'LEU', 'MET', 'ASN', 'PRO',...
+
+
