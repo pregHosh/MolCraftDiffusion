@@ -297,6 +297,7 @@
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/diffpharma_data/index.html">MolecularDiffusion.data.component.diffpharma_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/diffpharma_prep/index.html">MolecularDiffusion.data.component.diffpharma_prep</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/feature/index.html">MolecularDiffusion.data.component.feature</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/kgdiff_data/index.html">MolecularDiffusion.data.component.kgdiff_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/pharmacophore/index.html">MolecularDiffusion.data.component.pharmacophore</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/pmdm_data/index.html">MolecularDiffusion.data.component.pmdm_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/pointcloud/index.html">MolecularDiffusion.data.component.pointcloud</a></li>
@@ -561,12 +562,17 @@ molecule); a plain molecule dataset is not enough.</p>
 <td class="text-left"><p><strong>Protein pocket</strong></p></td>
 <td class="text-left"><p>PMDM (dual EGNN + SchNet encoders, ligand↔pocket cross-attention). A <strong>structure-based (SBDD)</strong> backbone, like DiffPharma but pocket-only. Two node sets — ligand and full-atom pocket — and <strong>only the ligand is noised</strong>; the pocket is fixed context, so a ligand-only dataset cannot train it. Continuous DDPM (sigmoid schedule, T=1000) on coordinates + atom types, with a global (6 Å) and a local (3 Å) branch over the joined cloud. Bond-free: the real bonds are discarded before the model sees them. Generation goes through <code class="docutils literal notranslate"><span class="pre">PMDMPocketGenerator</span></code> (<code class="docutils literal notranslate"><span class="pre">gen_pmdm_pocket.yaml</span></code>), not <code class="docutils literal notranslate"><span class="pre">GenerativeFactory</span></code>, since <code class="docutils literal notranslate"><span class="pre">sample()</span></code> has no channel for “which pocket”. Inpainting/linker sampling not ported — see <a class="reference internal" href="#model_integrations/pmdm/FINAL_REPORT.md"><span class="xref myst">model_integrations/pmdm/FINAL_REPORT.md</span></a>.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_difflinker.yaml</span></code></p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_kgdiff.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_kgdiff</span></code></p></td>
+<td class="text-left"><p><strong>Protein pocket</strong></p></td>
+<td class="text-left"><p>KGDiff (SE(3)-equivariant attention transformer, kNN-32 graph). A <strong>structure-based (SBDD)</strong> backbone: two node sets — ligand and full-atom 10 Å pocket — with <strong>only the ligand noised</strong>. Continuous DDPM (sigmoid schedule, T=1000, x0-parameterised) on coordinates + D3PM categorical diffusion on a 13-class <code class="docutils literal notranslate"><span class="pre">(element,</span> <span class="pre">is_aromatic)</span></code> vocabulary. Coordinates are centred on the <strong>pocket centroid, not zero-CoM</strong>. Its distinguishing feature is a per-atom affinity head trained alongside the denoiser, then used as <strong>its own classifier guide</strong> at sampling time (<code class="docutils literal notranslate"><span class="pre">guide_mode:</span> <span class="pre">joint</span></code>) — one checkpoint both denoises and steers toward higher predicted affinity; <code class="docutils literal notranslate"><span class="pre">wo</span></code> is the unguided ablation. Ligand size comes from a static pocket-extent table, so no training data is needed for the prior. Bond-free. Generation goes through <code class="docutils literal notranslate"><span class="pre">KGDiffPocketGenerator</span></code> (<code class="docutils literal notranslate"><span class="pre">gen_kgdiff_pocket.yaml</span></code>), not <code class="docutils literal notranslate"><span class="pre">GenerativeFactory</span></code>. The <code class="docutils literal notranslate"><span class="pre">valuenet*</span></code>/<code class="docutils literal notranslate"><span class="pre">target_diff</span></code> modes (each needs a second checkpoint) and <code class="docutils literal notranslate"><span class="pre">vina</span></code> mode are not ported — see <a class="reference internal" href="#model_integrations/kgdiff/FINAL_REPORT.md"><span class="xref myst">model_integrations/kgdiff/FINAL_REPORT.md</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_difflinker.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_difflinker</span></code></p></td>
 <td class="text-left"><p><strong>Fragments</strong> to join</p></td>
 <td class="text-left"><p>DiffLinker. Linker design: generates the connecting atoms between held-fixed fragments.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">pharmacophore.yaml</span></code></p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">pharmacophore.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_pharmacophore</span></code></p></td>
 <td class="text-left"><p><strong>Pharmacophore</strong> points</p></td>
 <td class="text-left"><p>Ligand-derived pharmacophore conditioning (no protein). Requires <code class="docutils literal notranslate"><span class="pre">open3d</span></code>.</p></td>
@@ -677,6 +683,12 @@ Computational Science 2024 (<a class="reference external" href="https://arxiv.or
 diffusion model enables 3D molecule generation and lead optimization based on
 target pocket.</em> Nature Communications 2024.
 <a class="reference external" href="https://doi.org/10.1038/s41467-024-46569-1">doi:10.1038/s41467-024-46569-1</a></p></li>
+<li><p><strong>KGDiff</strong> — Qian, Huang, Tu &amp; Xu. <em>KGDiff: towards explainable target-aware
+molecule generation with knowledge guidance.</em> Briefings in Bioinformatics
+25(1), 2024. <a class="reference external" href="https://doi.org/10.1093/bib/bbad435">doi:10.1093/bib/bbad435</a> —
+built on <strong>TargetDiff</strong>: Guan et al., <em>3D Equivariant Diffusion for
+Target-Aware Molecule Generation and Affinity Prediction</em>, ICLR 2023
+(<a class="reference external" href="https://arxiv.org/abs/2303.03543">arXiv:2303.03543</a>).</p></li>
 <li><p><strong>DiffLinker</strong> — Igashov et al. <em>Equivariant 3D-Conditional Diffusion Model
 for Molecular Linker Design.</em> Nature Machine Intelligence 2024. <a class="reference external" href="https://arxiv.org/abs/2210.05274">arXiv:2210.05274</a></p></li>
 <li><p><strong>eSEN</strong> — Fu et al. <em>Learning Smooth and Expressive Interatomic Potentials

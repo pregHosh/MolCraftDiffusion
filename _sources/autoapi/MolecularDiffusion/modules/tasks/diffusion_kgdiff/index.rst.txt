@@ -1,0 +1,271 @@
+MolecularDiffusion.modules.tasks.diffusion_kgdiff
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_kgdiff
+
+.. autoapi-nested-parse::
+
+   KGDiff task: pocket-conditioned ligand diffusion with self-guidance.
+
+   Three objects, mirroring the platform's usual layout:
+
+   * :class:`KGDiffDiffusionTask` -- the duck-typed Task
+     (docs/adding_new_models.md Section 2.1) wrapping
+     :class:`~...models.kgdiff.ScorePosNet3D`.
+   * :class:`ModelTaskFactory` -- the ``_target_`` of
+     ``configs/tasks/diffusion_kgdiff.yaml``.
+   * :class:`KGDiffPocketGenerator` -- the ``_target_`` of
+     ``configs/interference/gen_kgdiff_pocket.yaml``. ``GenerativeFactory``'s
+     ``sample(batch_size, nodesxsample, ...)`` has no channel for "which
+     pocket", so pocket-conditioned models get their own generator behind their
+     own ``_target_``; that is the established in-tree pattern
+     (``PMDMPocketGenerator``, ``DiffPharmaPocketGenerator``) and needs no core
+     change -- ``cli/generate.py`` only does
+     ``instantiate(cfg.interference, task=task)`` then ``.run()``.
+
+   The batch is NOT a PointCloud dict: KGDiff needs a diffused ligand cloud, a
+   fixed pocket cloud, and one affinity label per complex, flat-concatenated
+   with scatter indices. The collate in ``data/component/kgdiff_data.py``
+   already emits KGDiff's own argument names, so the adapter here is a
+   ``.to(device)`` map.
+
+   Two deviations from the generic contract, both deliberate and both shared
+   with the other pocket models in-tree:
+
+   * ``sample()`` requires a pocket. There is no unconditional path -- the
+     network cannot run without ``protein_pos``/``protein_v``.
+   * Sampled coordinates come back in the **input pocket's frame**, not
+     zero-CoM: ``center_pos_mode='protein'`` subtracts the pocket centroid and
+     the sampler adds it back.
+
+   Out of scope this pass (see the integration plan): the ``valuenet*`` /
+   ``target_diff`` / ``vina`` guide modes, PDBBind2020, and CFG / inpainting /
+   trajectory export.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_kgdiff.DEFAULT_POCKET_EXTENT
+   MolecularDiffusion.modules.tasks.diffusion_kgdiff.INT_TYPE
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffDiffusionTask
+   MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator
+   MolecularDiffusion.modules.tasks.diffusion_kgdiff.ModelTaskFactory
+   MolecularDiffusion.modules.tasks.diffusion_kgdiff.PocketSizePrior
+
+
+Module Contents
+---------------
+
+.. py:class:: KGDiffDiffusionTask(model: MolecularDiffusion.modules.models.kgdiff.ScorePosNet3D, atom_vocab: Optional[List[str]] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Task contract around :class:`ScorePosNet3D`.
+
+
+   .. py:method:: evaluate(pred, target)
+
+
+   .. py:method:: forward(batch)
+
+
+   .. py:method:: predict_and_target(batch)
+
+
+   .. py:method:: sample(batch_size=None, nodesxsample=None, num_steps=None, batch=None, guide_mode: str = 'joint', type_grad_weight: float = 100.0, pos_grad_weight: float = 25.0, progress: bool = True, **kwargs)
+
+      Sample ligands inside the pocket carried by ``batch``.
+
+      **The signature deliberately deviates from Section 2.1**: it takes a
+      pocket. ``batch`` must hold ``protein_pos`` / ``protein_v`` /
+      ``protein_batch`` from a collated KGDiff batch
+      (:class:`KGDiffPocketGenerator` builds it).
+
+      Returns ``(one_hot, charges, coords, node_mask)`` padded to
+      ``(B, N, .)`` in the ORIGINAL pocket frame. ``one_hot`` is over the
+      8-element ``atom_vocab``, not the model's 13 ``(element, aromatic)``
+      classes. ``charges`` is zeros: KGDiff has no charge channel.
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:property:: device
+
+
+   .. py:attribute:: model
+
+
+   .. py:property:: n_node_dist
+      :type: Dict[int, float]
+
+
+
+   .. py:property:: node_dist_model
+      :type: PocketSizePrior
+
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: split
+      :value: 'train'
+
+
+
+.. py:class:: KGDiffPocketGenerator(task, pocket_db: Optional[str] = None, pocket_index: int = 0, num_generate: int = 20, batch_size: int = 4, num_steps: Optional[int] = None, mol_size: Optional[list] = None, guide_mode: str = 'joint', type_grad_weight: float = 100.0, pos_grad_weight: float = 25.0, output_path: str = 'generated_kgdiff', seed: int = 42, device: Optional[str] = None, **kwargs: Any)
+
+   Pocket-conditioned generation behind ``interference/gen_kgdiff_pocket``.
+
+   The pocket comes from one row of a converted ASE db
+   (``docs/model_integrations/kgdiff/scripts/convert_dataset.py``); the
+   sampled ligand comes back in that pocket's own frame.
+
+   ``guide_mode='joint'`` is KGDiff's headline self-guided sampler (the
+   model's own affinity head is the classifier guide); ``'wo'`` runs the
+   same loop unguided, which is the paper's ablation and a useful control.
+
+
+   .. py:method:: run() -> None
+
+
+   .. py:attribute:: batch_size
+      :value: 4
+
+
+
+   .. py:attribute:: device
+      :value: 'cuda'
+
+
+
+   .. py:attribute:: guide_mode
+      :value: 'joint'
+
+
+
+   .. py:attribute:: mol_size
+
+
+   .. py:attribute:: num_generate
+      :value: 20
+
+
+
+   .. py:attribute:: num_steps
+      :value: None
+
+
+
+   .. py:attribute:: output_path
+      :value: 'generated_kgdiff'
+
+
+
+   .. py:attribute:: pocket_db
+      :value: None
+
+
+
+   .. py:attribute:: pocket_index
+      :value: 0
+
+
+
+   .. py:attribute:: pos_grad_weight
+      :value: 25.0
+
+
+
+   .. py:attribute:: seed
+      :value: 42
+
+
+
+   .. py:attribute:: task
+
+
+   .. py:attribute:: type_grad_weight
+      :value: 100.0
+
+
+
+.. py:class:: ModelTaskFactory(task_type: str = 'diffusion_kgdiff', protein_atom_feature_dim: int = PROTEIN_FEATURE_DIM, ligand_atom_feature_dim: int = NUM_LIGAND_CLASSES, model_mean_type: str = 'C0', beta_schedule: str = 'sigmoid', beta_start: float = 1e-07, beta_end: float = 0.002, pos_beta_s: float = 0.01, v_beta_schedule: str = 'cosine', v_beta_s: float = 0.01, num_diffusion_timesteps: int = 1000, loss_v_weight: float = 100.0, loss_exp_weight: float = 1.0, sample_time_method: str = 'symmetric', use_classifier_guide: bool = True, time_emb_dim: int = 0, time_emb_mode: str = 'simple', center_pos_mode: str = 'protein', node_indicator: bool = True, model_type: str = 'uni_o2', num_blocks: int = 1, num_layers: int = 9, hidden_dim: int = 128, n_heads: int = 16, edge_feat_dim: int = 4, num_r_gaussian: int = 20, knn: int = 32, num_node_types: int = 8, act_fn: str = 'relu', norm: bool = True, cutoff_mode: str = 'knn', ew_net_type: str = 'global', num_x2h: int = 1, num_h2x: int = 1, r_max: float = 10.0, x2h_out_fc: bool = False, sync_twoup: bool = False, pred_exp_from_all: bool = False, atom_vocab: Optional[List[str]] = None, **kwargs: Any)
+
+   Hydra entry point for ``configs/tasks/diffusion_kgdiff.yaml``.
+
+   No ``train_set`` parameter: KGDiff's size prior is the static
+   ``atom_num_config`` table, so nothing has to be measured at build time
+   (see docs/adding_new_models.md Section 2.5 -- the seam is opt-in).
+
+
+   .. py:method:: build() -> KGDiffDiffusionTask
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: condition_names
+      :type:  List[str]
+      :value: []
+
+
+
+   .. py:attribute:: model_kwargs
+
+
+   .. py:attribute:: task
+      :type:  Optional[KGDiffDiffusionTask]
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_kgdiff'
+
+
+
+.. py:class:: PocketSizePrior(space_size: float = DEFAULT_POCKET_EXTENT)
+
+   Ligand-size prior conditioned on the pocket's spatial extent.
+
+   Wraps KGDiff's static ``atom_num_config`` table, so unlike the other
+   in-tree node distributions it needs neither a ``train_set`` nor a
+   checkpoint buffer -- the table ships with the code and is identical at
+   train and generate time.
+
+   Same interface as ``TabascoNodeDistribution`` etc.: ``.n_node_dist`` and
+   ``.sample(n)``. :attr:`space_size` is set by whoever knows the pocket.
+
+
+   .. py:method:: sample(n_samples: int) -> torch.Tensor
+
+
+   .. py:attribute:: n_node_dist
+
+
+   .. py:attribute:: space_size
+
+
+.. py:data:: DEFAULT_POCKET_EXTENT
+   :value: 30.0
+
+
+.. py:data:: INT_TYPE
+

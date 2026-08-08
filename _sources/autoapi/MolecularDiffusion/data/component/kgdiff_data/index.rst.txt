@@ -1,0 +1,234 @@
+MolecularDiffusion.data.component.kgdiff_data
+=============================================
+
+.. py:module:: MolecularDiffusion.data.component.kgdiff_data
+
+.. autoapi-nested-parse::
+
+   Dataset / collate / DataModule for KGDiff pocket-ligand complexes.
+
+   KGDiff carries two node sets per complex -- a diffused ligand point cloud and
+   a fixed pocket point cloud -- flat-concatenated with ``torch_scatter``-style
+   batch indices, plus one scalar affinity label per complex. That is not the
+   platform's padded single-node-set PointCloud batch, so this module brings its
+   own Dataset and ``collate_fn`` and is selected via ``_target_`` from
+   ``configs/data/kgdiff_dataset.yaml``. Direct precedent:
+   ``data/component/pmdm_data.py`` and ``data/component/diffpharma_data.py``,
+   which do the same through the same seams (``cli/train.py`` -> ``.load()`` /
+   ``.train_set`` / ``.collate_fn``, then ``data/lightning_data_module.py``'s
+   ``collate_fn or graph_collate``).
+
+   Storage is one ASE db row per complex, written offline by
+   ``docs/model_integrations/kgdiff/scripts/convert_dataset.py``:
+
+       Atoms            -> ligand only (positions + raw element Z)
+       key_value_pairs  -> name, n_lig, n_pocket, affinity
+       data             -> lig_aromatic, pocket_coords, pocket_element,
+                           pocket_aa_type, pocket_is_backbone
+
+   Everything in the db is a **raw integer** (or a bool), never one-hot. This
+   module owns the vocabulary expansion -- the 13-class
+   ``(element, is_aromatic)`` ligand index and the 27-dim protein feature -- so
+   changing a vocabulary does not mean reconverting.
+
+   The collate emits **KGDiff's own argument names**, so the task-side adapter
+   is a one-line ``.to(device)`` map rather than a container conversion.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.kgdiff_data.KGDIFF_ATOM_VOCAB
+   MolecularDiffusion.data.component.kgdiff_data.KGDIFF_ELEMENTS
+   MolecularDiffusion.data.component.kgdiff_data.LIGAND_INDEX_TO_Z
+   MolecularDiffusion.data.component.kgdiff_data.MAP_ATOM_TYPE_AROMATIC_TO_INDEX
+   MolecularDiffusion.data.component.kgdiff_data.MAX_NUM_AA
+   MolecularDiffusion.data.component.kgdiff_data.NUM_LIGAND_CLASSES
+   MolecularDiffusion.data.component.kgdiff_data.PROTEIN_ELEMENTS
+   MolecularDiffusion.data.component.kgdiff_data.PROTEIN_FEATURE_DIM
+   MolecularDiffusion.data.component.kgdiff_data.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.kgdiff_data.KGDiffDataModule
+   MolecularDiffusion.data.component.kgdiff_data.KGDiffDataset
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.kgdiff_data.kgdiff_collate
+   MolecularDiffusion.data.component.kgdiff_data.ligand_class_index
+   MolecularDiffusion.data.component.kgdiff_data.protein_features
+
+
+Module Contents
+---------------
+
+.. py:class:: KGDiffDataModule(root: str, train_file: str = 'kgdiff_smoke.db', val_file: Optional[str] = None, test_file: Optional[str] = None, batch_size: int = 4, num_workers: int = 0, limit: Optional[int] = None, atom_vocab: Optional[List[str]] = None, task_type: str = 'diffusion_kgdiff', **kwargs: Any)
+
+   DataModule contract: ``load()`` + ``train_set``/``valid_set``/``test_set``.
+
+   # ponytail: one db, no split -- ``val_file``/``test_file`` default to the
+   # training db. The smoke set is 100 complexes; add a real split (and LMDB
+   # streaming) when a full CrossDocked run needs one.
+
+
+   .. py:method:: load() -> None
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: batch_size
+      :value: 4
+
+
+
+   .. py:attribute:: collate_fn
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: limit
+      :value: None
+
+
+
+   .. py:attribute:: num_workers
+      :value: 0
+
+
+
+   .. py:attribute:: root
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_kgdiff'
+
+
+
+   .. py:attribute:: test_file
+      :value: 'kgdiff_smoke.db'
+
+
+
+   .. py:attribute:: test_set
+      :type:  Optional[KGDiffDataset]
+      :value: None
+
+
+
+   .. py:attribute:: train_file
+      :value: 'kgdiff_smoke.db'
+
+
+
+   .. py:attribute:: train_set
+      :type:  Optional[KGDiffDataset]
+      :value: None
+
+
+
+   .. py:attribute:: val_file
+      :value: 'kgdiff_smoke.db'
+
+
+
+   .. py:attribute:: valid_set
+      :type:  Optional[KGDiffDataset]
+      :value: None
+
+
+
+.. py:class:: KGDiffDataset(db_path: str, limit: Optional[int] = None)
+
+   Bases: :py:obj:`torch.utils.data.Dataset`
+
+
+   One converted ASE db -> one pocket-ligand complex per index.
+
+   Unlike the other pocket models here, coordinates are **never** re-centred
+   at load time: ``ScorePosNet3D`` centres on the pocket centroid inside
+   both ``get_diffusion_loss`` and ``sample_diffusion``
+   (``center_pos_mode='protein'``), and ``sample_diffusion`` adds the offset
+   back, so samples land in the input pocket's own frame either way.
+
+   # ponytail: rows are read eagerly into RAM at construction, like
+   # PMDMDataset. 100 complexes here, fine to ~100k. Stream by row id in
+   # __getitem__ if a full CrossDocked split ever needs it.
+
+
+   .. py:attribute:: db_path
+
+
+   .. py:attribute:: entries
+      :type:  List[Dict[str, Any]]
+      :value: []
+
+
+
+.. py:function:: kgdiff_collate(batch: List[Dict[str, Any]]) -> Dict[str, Any]
+
+   Concatenate complexes; emit KGDiff's own argument names.
+
+
+.. py:function:: ligand_class_index(z: numpy.ndarray, aromatic: numpy.ndarray) -> torch.Tensor
+
+   ``(element Z, is_aromatic)`` -> the 13-class index, as ``int64``.
+
+   Out-of-vocabulary pairs fall back to class 0 (``H``), which is exactly
+   what upstream's ``get_index`` does (``utils/transforms.py:109-113``) --
+   it prints the offender and returns ``(1, False)``.
+
+
+.. py:function:: protein_features(element: numpy.ndarray, aa_type: numpy.ndarray, is_backbone: numpy.ndarray) -> torch.Tensor
+
+   ``(M,) x3`` raw integers -> the ``(M, 27)`` float feature matrix.
+
+   ``[element one-hot (6) | amino acid one-hot (20) | is_backbone (1)]``,
+   matching ``FeaturizeProteinAtom.__call__`` exactly. An element outside
+   the vocabulary yields an all-zero element block, as upstream's boolean
+   ``==`` comparison does.
+
+
+.. py:data:: KGDIFF_ATOM_VOCAB
+   :value: ['H', 'C', 'N', 'O', 'F', 'P', 'S', 'Cl']
+
+
+.. py:data:: KGDIFF_ELEMENTS
+   :value: [1, 6, 7, 8, 9, 15, 16, 17]
+
+
+.. py:data:: LIGAND_INDEX_TO_Z
+
+.. py:data:: MAP_ATOM_TYPE_AROMATIC_TO_INDEX
+
+.. py:data:: MAX_NUM_AA
+   :value: 20
+
+
+.. py:data:: NUM_LIGAND_CLASSES
+   :value: 13
+
+
+.. py:data:: PROTEIN_ELEMENTS
+   :value: [1, 6, 7, 8, 16, 34]
+
+
+.. py:data:: PROTEIN_FEATURE_DIM
+   :value: 27
+
+
+.. py:data:: logger
+

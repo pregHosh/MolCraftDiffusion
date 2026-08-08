@@ -1,0 +1,330 @@
+MolecularDiffusion.modules.models.kgdiff.uni_transformer
+========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.kgdiff.uni_transformer
+
+.. autoapi-nested-parse::
+
+   KGDiff's SE(3)-equivariant attention transformer (``uni_o2``).
+
+   Ported from KGDiff ``models/uni_transformer.py`` (commit ``ad893fc``), which
+   is itself TargetDiff's backbone. One block of ``num_layers`` alternating
+   x2h / h2x attention updates over a kNN graph rebuilt once per block.
+
+   The graph is **geometric, not chemical**: :meth:`_connect_edge` is a plain
+   ``knn_graph(x, k=32)`` over the joint pocket+ligand point cloud, and the
+   ``edge_feat_dim: 4`` channel is a one-hot of the four ligand/protein
+   incidence combinations (ll / lp / pl / pp), not a bond order. No bond
+   information reaches this network.
+
+   Only ``cutoff_mode='knn'`` is ported; the released config and the released
+   checkpoint both use it, and the ``hybrid`` branch pulled in a
+   ``batch_hybrid_edge_connection`` helper nothing else needs.
+
+   Module and parameter names are kept byte-for-byte compatible with the
+   released checkpoint (``refine_net.base_block.<i>.x2h_layers.0.hk_func.net.*``
+   and friends), so conversion is a pure prefix add.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.kgdiff.uni_transformer.AttentionLayerO2TwoUpdateNodeGeneral
+   MolecularDiffusion.modules.models.kgdiff.uni_transformer.BaseH2XAttLayer
+   MolecularDiffusion.modules.models.kgdiff.uni_transformer.BaseX2HAttLayer
+   MolecularDiffusion.modules.models.kgdiff.uni_transformer.UniTransformerO2TwoUpdateGeneral
+
+
+Module Contents
+---------------
+
+.. py:class:: AttentionLayerO2TwoUpdateNodeGeneral(hidden_dim: int, n_heads: int, num_r_gaussian: int, edge_feat_dim: int, act_fn: str = 'relu', norm: bool = True, num_x2h: int = 1, num_h2x: int = 1, r_min: float = 0.0, r_max: float = 10.0, num_node_types: int = 8, ew_net_type: str = 'r', x2h_out_fc: bool = True, sync_twoup: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   One layer: ``num_x2h`` feature updates then ``num_h2x`` coord updates.
+
+
+   .. py:method:: forward(h, x, edge_attr, edge_index, mask_ligand, e_w=None, fix_x=False)
+
+
+   .. py:attribute:: act_fn
+      :value: 'relu'
+
+
+
+   .. py:attribute:: distance_expansion
+
+
+   .. py:attribute:: edge_feat_dim
+
+
+   .. py:attribute:: ew_net_type
+      :value: 'r'
+
+
+
+   .. py:attribute:: h2x_layers
+
+
+   .. py:attribute:: hidden_dim
+
+
+   .. py:attribute:: n_heads
+
+
+   .. py:attribute:: norm
+      :value: True
+
+
+
+   .. py:attribute:: num_h2x
+      :value: 1
+
+
+
+   .. py:attribute:: num_node_types
+      :value: 8
+
+
+
+   .. py:attribute:: num_r_gaussian
+
+
+   .. py:attribute:: num_x2h
+      :value: 1
+
+
+
+   .. py:attribute:: sync_twoup
+      :value: False
+
+
+
+   .. py:attribute:: x2h_layers
+
+
+   .. py:attribute:: x2h_out_fc
+      :value: True
+
+
+
+.. py:class:: BaseH2XAttLayer(input_dim: int, hidden_dim: int, output_dim: int, n_heads: int, edge_feat_dim: int, r_feat_dim: int, act_fn: str = 'relu', norm: bool = True, ew_net_type: str = 'r')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Multi-head attention that emits an equivariant coordinate update.
+
+
+   .. py:method:: forward(h, rel_x, r_feat, edge_feat, edge_index, e_w=None)
+
+
+   .. py:attribute:: act_fn
+      :value: 'relu'
+
+
+
+   .. py:attribute:: edge_feat_dim
+
+
+   .. py:attribute:: ew_net_type
+      :value: 'r'
+
+
+
+   .. py:attribute:: hidden_dim
+
+
+   .. py:attribute:: input_dim
+
+
+   .. py:attribute:: n_heads
+
+
+   .. py:attribute:: output_dim
+
+
+   .. py:attribute:: r_feat_dim
+
+
+   .. py:attribute:: xk_func
+
+
+   .. py:attribute:: xq_func
+
+
+   .. py:attribute:: xv_func
+
+
+.. py:class:: BaseX2HAttLayer(input_dim: int, hidden_dim: int, output_dim: int, n_heads: int, edge_feat_dim: int, r_feat_dim: int, act_fn: str = 'relu', norm: bool = True, ew_net_type: str = 'r', out_fc: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Multi-head attention that updates scalar node features from geometry.
+
+
+   .. py:method:: forward(h, r_feat, edge_feat, edge_index, e_w=None)
+
+
+   .. py:attribute:: act_fn
+      :value: 'relu'
+
+
+
+   .. py:attribute:: edge_feat_dim
+
+
+   .. py:attribute:: ew_net_type
+      :value: 'r'
+
+
+
+   .. py:attribute:: hidden_dim
+
+
+   .. py:attribute:: hk_func
+
+
+   .. py:attribute:: hq_func
+
+
+   .. py:attribute:: hv_func
+
+
+   .. py:attribute:: input_dim
+
+
+   .. py:attribute:: n_heads
+
+
+   .. py:attribute:: out_fc
+      :value: True
+
+
+
+   .. py:attribute:: output_dim
+
+
+   .. py:attribute:: r_feat_dim
+
+
+.. py:class:: UniTransformerO2TwoUpdateGeneral(num_blocks: int, num_layers: int, hidden_dim: int, n_heads: int = 1, k: int = 32, num_r_gaussian: int = 50, edge_feat_dim: int = 0, num_node_types: int = 8, act_fn: str = 'relu', norm: bool = True, cutoff_mode: str = 'knn', ew_net_type: str = 'r', num_init_x2h: int = 1, num_init_h2x: int = 0, num_x2h: int = 1, num_h2x: int = 1, r_max: float = 10.0, x2h_out_fc: bool = True, sync_twoup: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   The ``uni_o2`` refine net: ``num_blocks`` x ``num_layers`` attention.
+
+   ``init_h_emb_layer`` is built (and therefore present in the released
+   checkpoint) but **never called** -- :meth:`forward` only iterates
+   ``self.base_block``. It is kept so the checkpoint's key set matches
+   exactly rather than needing a justified drop.
+
+
+   .. py:method:: forward(h, x, mask_ligand, batch, return_all=False, fix_x=False)
+
+
+   .. py:attribute:: act_fn
+      :value: 'relu'
+
+
+
+   .. py:attribute:: base_block
+
+
+   .. py:attribute:: cutoff_mode
+      :value: 'knn'
+
+
+
+   .. py:attribute:: distance_expansion
+
+
+   .. py:attribute:: edge_feat_dim
+      :value: 0
+
+
+
+   .. py:attribute:: ew_net_type
+      :value: 'r'
+
+
+
+   .. py:attribute:: hidden_dim
+
+
+   .. py:attribute:: init_h_emb_layer
+
+
+   .. py:attribute:: k
+      :value: 32
+
+
+
+   .. py:attribute:: n_heads
+      :value: 1
+
+
+
+   .. py:attribute:: norm
+      :value: True
+
+
+
+   .. py:attribute:: num_blocks
+
+
+   .. py:attribute:: num_h2x
+      :value: 1
+
+
+
+   .. py:attribute:: num_init_h2x
+      :value: 0
+
+
+
+   .. py:attribute:: num_init_x2h
+      :value: 1
+
+
+
+   .. py:attribute:: num_layers
+
+
+   .. py:attribute:: num_node_types
+      :value: 8
+
+
+
+   .. py:attribute:: num_r_gaussian
+      :value: 50
+
+
+
+   .. py:attribute:: num_x2h
+      :value: 1
+
+
+
+   .. py:attribute:: r_max
+      :value: 10.0
+
+
+
+   .. py:attribute:: sync_twoup
+      :value: False
+
+
+
+   .. py:attribute:: x2h_out_fc
+      :value: True
+
+
+

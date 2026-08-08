@@ -1,0 +1,320 @@
+MolecularDiffusion.modules.models.kgdiff.score_model
+====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.kgdiff.score_model
+
+.. autoapi-nested-parse::
+
+   KGDiff's score network: pocket-conditioned hybrid diffusion + value head.
+
+   Ported from KGDiff ``models/molopt_score_model.py`` (commit ``ad893fc``).
+   KGDiff is TargetDiff plus a per-atom affinity ("value") head that is used as
+   its own classifier guide at sampling time.
+
+   Three coupled channels:
+
+   * **Coordinates** -- continuous Gaussian DDPM, ``sigmoid`` beta schedule,
+     ``model_mean_type='C0'`` (the net predicts x0). Positions are centred on
+     the *pocket* centroid, not zero-CoM.
+   * **Atom types** -- D3PM-style multinomial diffusion in log space over a
+     13-class ``(element, is_aromatic)`` vocabulary, cosine schedule.
+   * **Affinity** -- MSE against the normalised Vina score.
+
+   Loss is ``loss_pos + 100 * loss_v + 1 * loss_exp``.
+
+   Deliberately **not** ported (see the integration plan's scope list): the
+   ``vina`` guide mode (needs AutoDockTools/vina at sampling time), the
+   ``valuenet*`` / ``target_diff`` guide modes (each needs a *second*
+   pretrained checkpoint), the PDBBind ``pdbbind_random`` mode, and the
+   ``calc_atom_dis`` debugging routine. What remains is ``guide_mode='joint'``
+   (the paper's headline, self-guided from one checkpoint) and ``'wo'`` (the
+   unguided ablation).
+
+   Upstream took a single ``EasyDict`` config object; this takes explicit
+   keyword arguments so the Hydra task config is the single source of truth and
+   no third-party config class is needed to unpickle anything. Every parameter
+   and buffer name is unchanged, so the released checkpoint maps across with a
+   pure prefix add.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.kgdiff.score_model.GUIDE_MODES
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.kgdiff.score_model.ScorePosNet3D
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.kgdiff.score_model.categorical_kl
+   MolecularDiffusion.modules.models.kgdiff.score_model.center_pos
+   MolecularDiffusion.modules.models.kgdiff.score_model.cosine_beta_schedule
+   MolecularDiffusion.modules.models.kgdiff.score_model.extract
+   MolecularDiffusion.modules.models.kgdiff.score_model.get_beta_schedule
+   MolecularDiffusion.modules.models.kgdiff.score_model.index_to_log_onehot
+   MolecularDiffusion.modules.models.kgdiff.score_model.log_1_min_a
+   MolecularDiffusion.modules.models.kgdiff.score_model.log_add_exp
+   MolecularDiffusion.modules.models.kgdiff.score_model.log_categorical
+   MolecularDiffusion.modules.models.kgdiff.score_model.log_normal
+   MolecularDiffusion.modules.models.kgdiff.score_model.log_sample_categorical
+   MolecularDiffusion.modules.models.kgdiff.score_model.normal_kl
+   MolecularDiffusion.modules.models.kgdiff.score_model.to_torch_const
+
+
+Module Contents
+---------------
+
+.. py:class:: ScorePosNet3D(protein_atom_feature_dim: int = 27, ligand_atom_feature_dim: int = 13, model_mean_type: str = 'C0', beta_schedule: str = 'sigmoid', beta_start: float = 1e-07, beta_end: float = 0.002, pos_beta_s: float = 0.01, v_beta_schedule: str = 'cosine', v_beta_s: float = 0.01, num_diffusion_timesteps: int = 1000, loss_v_weight: float = 100.0, loss_exp_weight: float = 1.0, sample_time_method: str = 'symmetric', use_classifier_guide: bool = True, time_emb_dim: int = 0, time_emb_mode: str = 'simple', center_pos_mode: str = 'protein', node_indicator: bool = True, model_type: str = 'uni_o2', num_blocks: int = 1, num_layers: int = 9, hidden_dim: int = 128, n_heads: int = 16, edge_feat_dim: int = 4, num_r_gaussian: int = 20, knn: int = 32, num_node_types: int = 8, act_fn: str = 'relu', norm: bool = True, cutoff_mode: str = 'knn', ew_net_type: str = 'global', num_x2h: int = 1, num_h2x: int = 1, r_max: float = 10.0, x2h_out_fc: bool = False, sync_twoup: bool = False, pred_exp_from_all: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Pocket-conditioned hybrid diffusion model with a value head.
+
+
+   .. py:method:: compute_v_Lt(log_v_model_prob, log_v0, log_v_true_prob, t, batch)
+
+
+   .. py:method:: forward(protein_pos, protein_v, batch_protein, init_ligand_pos, init_ligand_v, batch_ligand, time_step=None, return_all=False, fix_x=False) -> dict
+
+
+   .. py:method:: get_diffusion_loss(protein_pos, protein_v, affinity, batch_protein, ligand_pos, ligand_v, batch_ligand, time_step=None) -> dict
+
+      ``loss_pos + loss_v_weight * loss_v + loss_exp_weight * loss_exp``.
+
+
+
+   .. py:method:: pv_joint_guide(ligand_v_index, ligand_pos, protein_v, protein_pos, batch_protein, batch_ligand)
+
+      One denoiser pass that also returns d(affinity)/d(type, pos).
+
+      This is KGDiff's headline trick: the value head is differentiated
+      w.r.t. the atom-type one-hot and the coordinates of the *same*
+      network, so guidance needs no second model. Note there is no time
+      embedding here -- the released checkpoint has ``time_emb_dim=0``,
+      so ``t`` never enters the network.
+
+
+
+   .. py:method:: q_pos_posterior(x0, xt, t, batch)
+
+
+   .. py:method:: q_v_posterior(log_v0, log_vt, t, batch)
+
+      ``q(v_{t-1} | v_t, v_0)``.
+
+
+
+   .. py:method:: q_v_pred(log_v0, t, batch)
+
+      ``q(v_t | v_0)``.
+
+
+
+   .. py:method:: q_v_pred_one_timestep(log_vt_1, t, batch)
+
+      ``q(v_t | v_{t-1})``.
+
+
+
+   .. py:method:: q_v_sample(log_v0, t, batch)
+
+
+   .. py:method:: sample_diffusion(guide_mode: str, type_grad_weight: float, pos_grad_weight: float, protein_pos, protein_v, batch_protein, init_ligand_pos, init_ligand_v, batch_ligand, num_steps: Optional[int] = None, center_pos_mode: Optional[str] = None, progress: bool = True, **_ignored: Any) -> dict
+
+      Reverse process. Returns flat ``pos``/``v`` in the INPUT frame.
+
+      ``guide_mode='joint'`` is the self-guided KGDiff sampler;
+      ``'wo'`` is the same loop with guidance switched off.
+
+
+
+   .. py:method:: sample_time(num_graphs, device, method)
+
+
+   .. py:attribute:: alphas_cumprod
+
+
+   .. py:attribute:: alphas_cumprod_prev
+
+
+   .. py:attribute:: betas
+
+
+   .. py:attribute:: center_pos_mode
+      :value: 'protein'
+
+
+
+   .. py:attribute:: expert_pred
+
+
+   .. py:attribute:: hidden_dim
+      :value: 128
+
+
+
+   .. py:attribute:: log_alphas_cumprod_v
+
+
+   .. py:attribute:: log_alphas_v
+
+
+   .. py:attribute:: log_one_minus_alphas_cumprod_v
+
+
+   .. py:attribute:: log_one_minus_alphas_v
+
+
+   .. py:attribute:: loss_exp_weight
+      :value: 1.0
+
+
+
+   .. py:attribute:: loss_v_weight
+      :value: 100.0
+
+
+
+   .. py:attribute:: model_mean_type
+      :value: 'C0'
+
+
+
+   .. py:attribute:: node_indicator
+      :value: True
+
+
+
+   .. py:attribute:: num_classes
+      :value: 13
+
+
+
+   .. py:attribute:: num_timesteps
+
+
+   .. py:attribute:: posterior_logvar
+
+
+   .. py:attribute:: posterior_mean_c0_coef
+
+
+   .. py:attribute:: posterior_mean_ct_coef
+
+
+   .. py:attribute:: posterior_var
+
+
+   .. py:attribute:: pred_exp_from_all
+      :value: False
+
+
+
+   .. py:attribute:: protein_atom_emb
+
+
+   .. py:attribute:: refine_net
+
+
+   .. py:attribute:: refine_net_type
+      :value: 'uni_o2'
+
+
+
+   .. py:attribute:: sample_time_method
+      :value: 'symmetric'
+
+
+
+   .. py:attribute:: sqrt_alphas_cumprod
+
+
+   .. py:attribute:: sqrt_one_minus_alphas_cumprod
+
+
+   .. py:attribute:: sqrt_recip_alphas_cumprod
+
+
+   .. py:attribute:: sqrt_recipm1_alphas_cumprod
+
+
+   .. py:attribute:: time_emb_dim
+      :value: 0
+
+
+
+   .. py:attribute:: time_emb_mode
+      :value: 'simple'
+
+
+
+   .. py:attribute:: use_classifier_guide
+      :value: True
+
+
+
+   .. py:attribute:: v_inference
+
+
+.. py:function:: categorical_kl(log_prob1, log_prob2)
+
+.. py:function:: center_pos(protein_pos, ligand_pos, batch_protein, batch_ligand, mode='protein')
+
+   Shift both clouds so the pocket centroid sits at the origin.
+
+
+.. py:function:: cosine_beta_schedule(timesteps: int, s: float = 0.008) -> numpy.ndarray
+
+   Cosine alpha schedule, sqrt-ed (the atom-type channel uses this).
+
+
+.. py:function:: extract(coef, t, batch)
+
+.. py:function:: get_beta_schedule(beta_schedule: str, *, beta_start: float, beta_end: float, num_diffusion_timesteps: int) -> numpy.ndarray
+
+   Position-channel beta schedule (upstream supports several).
+
+
+.. py:function:: index_to_log_onehot(x: torch.Tensor, num_classes: int) -> torch.Tensor
+
+.. py:function:: log_1_min_a(a: numpy.ndarray) -> numpy.ndarray
+
+.. py:function:: log_add_exp(a, b)
+
+.. py:function:: log_categorical(log_x_start, log_prob)
+
+.. py:function:: log_normal(values, means, log_scales)
+
+.. py:function:: log_sample_categorical(logits: torch.Tensor) -> torch.Tensor
+
+   Gumbel-perturbed logits; ``argmax`` of the result is a sample.
+
+
+.. py:function:: normal_kl(mean1, logvar1, mean2, logvar2)
+
+.. py:function:: to_torch_const(x: numpy.ndarray) -> torch.nn.Parameter
+
+   Frozen ``nn.Parameter`` -- upstream's way of pinning schedule tables.
+
+   Kept as a ``Parameter`` (not a buffer) purely for state-dict key parity
+   with the released checkpoint.
+
+
+.. py:data:: GUIDE_MODES
+   :value: ('joint', 'wo')
+
+

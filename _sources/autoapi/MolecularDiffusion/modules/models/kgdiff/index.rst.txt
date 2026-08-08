@@ -1,0 +1,26 @@
+MolecularDiffusion.modules.models.kgdiff
+========================================
+
+.. py:module:: MolecularDiffusion.modules.models.kgdiff
+
+.. autoapi-nested-parse::
+
+   KGDiff backbone: TargetDiff's uni_o2 transformer + an affinity head.
+
+   See ``docs/model_integrations/kgdiff/INTEGRATION_PLAN.md``.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/kgdiff/atom_num/index
+   /autoapi/MolecularDiffusion/modules/models/kgdiff/atom_num_config/index
+   /autoapi/MolecularDiffusion/modules/models/kgdiff/common/index
+   /autoapi/MolecularDiffusion/modules/models/kgdiff/score_model/index
+   /autoapi/MolecularDiffusion/modules/models/kgdiff/uni_transformer/index
+
+
