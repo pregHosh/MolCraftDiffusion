@@ -11,8 +11,8 @@
         <title>Installation - MolCraftDiffusion</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e7d56144" />
@@ -223,7 +223,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tutorials/06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials/09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/09_analyze.html">Tutorial 9: Analyse Module - 3D Molecular Structure Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/10_generation_sweeps.html">Tutorial 10: Generation Parameter Sweeps</a></li>
 </ul>
 </li>
@@ -236,9 +236,6 @@
 <li class="toctree-l2"><a class="reference internal" href="applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="applications/local_chemical_space.html">Application: Local Chemical Space Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="applications/library_design.html">Application: Library Design with Structure-Directed Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Workflows</span></p>
 <ul>
@@ -247,14 +244,9 @@
 <li class="toctree-l2"><a class="reference internal" href="workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/visualization.html">Workflow: Visualise the Generated Chemical Space</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
 <ul>
@@ -475,10 +467,10 @@ pip<span class="w"> </span>install<span class="w"> </span>molcraftdiffusion<span
 </pre></div>
 </div>
 <p>The base package does not install every data-processing or analysis dependency. Add the feature groups you need:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Data preparation, augmentation, and featurization commands</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Data preparation, augmentation, and featurisation commands</span>
 pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[data]&#39;</span>
 
-<span class="c1"># Analysis and post-processing commands (metrics, compare, xyz2mol, xtb-electronic, featurize SOAP)</span>
+<span class="c1"># Analysis and post-processing commands (metrics, compare, xyz2mol, xtb-electronic, featurise SOAP)</span>
 pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[analyze]&#39;</span>
 
 <span class="c1"># Backbone-specific groups</span>
@@ -489,7 +481,7 @@ pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;
 pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[flowmol]&#39;</span><span class="w">  </span><span class="c1"># FlowMol: DGL (install the CUDA build matching</span>
 <span class="w">                                          </span><span class="c1"># your torch, see pyproject.toml)</span>
 
-<span class="c1"># xTB is used by optimize, compare, and xtb-electronic — best installed from conda-forge:</span>
+<span class="c1"># xTB is used by optimise, compare, and xtb-electronic — best installed from conda-forge:</span>
 conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="nv">xtb</span><span class="o">==</span><span class="m">6</span>.7.1<span class="w"> </span>-y
 conda<span class="w"> </span>install<span class="w"> </span>xtb-python<span class="w"> </span>-y
 </pre></div>
@@ -526,7 +518,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <tr class="row-odd"><td class="text-left"><p>Compile raw XYZ files into an ASE database</p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[data]</span></code></p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p>Featurize molecules with SOAP descriptors</p></td>
+<tr class="row-even"><td class="text-left"><p>Featurise molecules with SOAP descriptors</p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[data]</span></code></p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p>Run validity/connectivity metrics, xyz2mol, RMSD compare</p></td>
@@ -538,7 +530,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <tr class="row-odd"><td class="text-left"><p>Run geometric-shape metrics (<code class="docutils literal notranslate"><span class="pre">--metrics</span> <span class="pre">geom_revised</span></code> or <code class="docutils literal notranslate"><span class="pre">all</span></code>)</p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[analyze]</span></code> + <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">cosymlib</span></code></p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p>Featurize with UMA neural-network embeddings</p></td>
+<tr class="row-even"><td class="text-left"><p>Featurise with UMA neural-network embeddings</p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[analyze]</span></code> + fairchem clone (see below)</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p>Pharmacophore-conditioned training/generation</p></td>
@@ -550,10 +542,10 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 </section>
 <section id="optional-dependencies">
 <h2>Optional dependencies<a class="headerlink" href="#optional-dependencies" title="Link to this heading">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Data utilities (includes dscribe for SOAP featurization)</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Data utilities (includes dscribe for SOAP featurisation)</span>
 pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[data]&#39;</span>
 
-<span class="c1"># Analyze utilities (PoseBusters/RDKit/OpenBabel Python bindings)</span>
+<span class="c1"># Analysis utilities (PoseBusters/RDKit/OpenBabel Python bindings)</span>
 pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[analyze]&#39;</span>
 
 <span class="c1"># DiffPharma novel-pocket preprocessing (Biopython + ODDT)</span>
@@ -567,8 +559,8 @@ pip<span class="w"> </span>install<span class="w"> </span>cosymlib
 conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="nv">xtb</span><span class="o">==</span><span class="m">6</span>.7.1<span class="w"> </span>-y
 </pre></div>
 </div>
-<section id="uma-featurization-backend">
-<h3>UMA featurization backend<a class="headerlink" href="#uma-featurization-backend" title="Link to this heading">¶</a></h3>
+<section id="uma-featurisation-backend">
+<h3>UMA featurisation backend<a class="headerlink" href="#uma-featurisation-backend" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">featurize</span> <span class="pre">--backend</span> <span class="pre">uma</span></code> command uses a pretrained UMA model from fairchem.
 fairchem is <strong>not</strong> installed as a pip package — the source tree is vendored into
 the repository and loaded at runtime.</p>
@@ -622,7 +614,7 @@ pip<span class="w"> </span>install<span class="w"> </span>torch-scatter<span cla
 <hr class="docutils" />
 <section id="xtb-or-openbabel-not-found-at-runtime">
 <h3>xTB or OpenBabel not found at runtime<a class="headerlink" href="#xtb-or-openbabel-not-found-at-runtime" title="Link to this heading">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">xtb</span></code> and <code class="docutils literal notranslate"><span class="pre">openbabel</span></code> are <strong>not pip-installable</strong> in a way that exposes the executables and shared libraries MolCraftDiffusion relies on. Installing them via pip creates a broken partial install that fails silently during optimization or xyz2mol conversion.</p>
+<p><code class="docutils literal notranslate"><span class="pre">xtb</span></code> and <code class="docutils literal notranslate"><span class="pre">openbabel</span></code> are <strong>not pip-installable</strong> in a way that exposes the executables and shared libraries MolCraftDiffusion relies on. Installing them via pip creates a broken partial install that fails silently during optimisation or xyz2mol conversion.</p>
 <p>Always install from conda-forge <strong>before</strong> the pip install:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="nv">xtb</span><span class="o">==</span><span class="m">6</span>.7.1<span class="w"> </span>openbabel<span class="w"> </span>-y
 conda<span class="w"> </span>install<span class="w"> </span>xtb-python<span class="w"> </span>-y
@@ -633,7 +625,7 @@ conda<span class="w"> </span>install<span class="w"> </span>xtb-python<span clas
 <hr class="docutils" />
 <section id="open3d-import-errors-on-headless-servers">
 <h3><code class="docutils literal notranslate"><span class="pre">open3d</span></code> import errors on headless servers<a class="headerlink" href="#open3d-import-errors-on-headless-servers" title="Link to this heading">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">open3d</span></code> requires an OpenGL context for some of its initialization paths. On headless HPC nodes you may see errors like <code class="docutils literal notranslate"><span class="pre">libGL.so.1:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">open3d</span></code> requires an OpenGL context for some of its initialisation paths. On headless HPC nodes you may see errors like <code class="docutils literal notranslate"><span class="pre">libGL.so.1:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code>.</p>
 <p>Install the headless variant:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>open3d-cpu
 </pre></div>
@@ -736,7 +728,7 @@ MolCraftDiff<span class="w"> </span>--help
 </li>
 <li><a class="reference internal" href="#which-extras-do-i-need">Which extras do I need?</a></li>
 <li><a class="reference internal" href="#optional-dependencies">Optional dependencies</a><ul>
-<li><a class="reference internal" href="#uma-featurization-backend">UMA featurization backend</a></li>
+<li><a class="reference internal" href="#uma-featurisation-backend">UMA featurisation backend</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#verifying-the-installation">Verifying the installation</a></li>
@@ -759,7 +751,7 @@ MolCraftDiff<span class="w"> </span>--help
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=6efca38a"></script>
+</div><script src="_static/documentation_options.js?v=030dc6f6"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>

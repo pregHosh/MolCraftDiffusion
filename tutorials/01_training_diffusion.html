@@ -11,8 +11,8 @@
         <title>Tutorial 1: Training a Diffusion Model - MolCraftDiffusion</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e7d56144" />
@@ -223,7 +223,7 @@
 <li class="toctree-l2"><a class="reference internal" href="06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09_analyze.html">Tutorial 9: Analyse Module - 3D Molecular Structure Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="10_generation_sweeps.html">Tutorial 10: Generation Parameter Sweeps</a></li>
 </ul>
 </li>
@@ -236,9 +236,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/local_chemical_space.html">Application: Local Chemical Space Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/library_design.html">Application: Library Design with Structure-Directed Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Workflows</span></p>
 <ul>
@@ -247,14 +244,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualise the Generated Chemical Space</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
 <ul>
@@ -453,12 +445,38 @@
 <blockquote>
 <div><p><strong>Prerequisites:</strong> <a class="reference internal" href="00_data_preparation.html"><span class="std std-doc">Tutorial 0 — Data Preparation</span></a> · <strong>You’ll learn:</strong> configuring and launching a diffusion training run with the override-only workflow · <strong>Next:</strong> <a class="reference internal" href="02_training_regressor.html"><span class="std std-doc">Tutorial 2 — Training a Regressor</span></a></p>
 </div></blockquote>
+<section id="at-a-glance">
+<h2>At a Glance<a class="headerlink" href="#at-a-glance" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p></p></th>
+<th class="head text-left"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><strong>Objective</strong></p></td>
+<td class="text-left"><p>Train a de novo 3D diffusion model from a prepared molecular dataset.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>You need</strong></p></td>
+<td class="text-left"><p>A compiled dataset and one experiment YAML file.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><strong>Main command</strong></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">train</span> <span class="pre">my_first_run.yaml</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>Success looks like</strong></p></td>
+<td class="text-left"><p>Training metrics and checkpoints appear under <code class="docutils literal notranslate"><span class="pre">trainer.output_path</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>This tutorial explains how to configure and run a training job for a diffusion model from scratch. We will focus on using a single configuration file for your experiment to override the project’s default settings.</p>
+</section>
 <section id="quickstart">
 <h2>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp<span class="w"> </span>configs/example_diffusion_config.yaml<span class="w"> </span>my_first_run.yaml<span class="w">   </span><span class="c1"># copy a template</span>
 <span class="c1"># edit my_first_run.yaml — at minimum set data.ase_db_path and trainer.output_path</span>
-MolCraftDiff<span class="w"> </span>train<span class="w"> </span>my_first_run<span class="w">                              </span><span class="c1"># launch (no .yaml extension)</span>
+MolCraftDiff<span class="w"> </span>train<span class="w"> </span>my_first_run.yaml<span class="w">                         </span><span class="c1"># launch training</span>
 </pre></div>
 </div>
 <p>That’s the whole loop. The rest of this tutorial explains what to put in that file: the engine choice, the <code class="docutils literal notranslate"><span class="pre">defaults</span></code> list, and the parameters worth overriding.</p>
@@ -532,7 +550,7 @@ MolCraftDiff<span class="w"> </span>train<span class="w"> </span>my_first_run<sp
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">_self_</span>
 </pre></div>
 </div>
-<p><strong>Think of these default files as a reference manual.</strong> You can find the original base configurations in the <code class="docutils literal notranslate"><span class="pre">configs/</span></code> directory of the repository (e.g., in <code class="docutils literal notranslate"><span class="pre">configs/data/</span></code>, <code class="docutils literal notranslate"><span class="pre">configs/tasks/</span></code>) to see what parameters are available, but you should not edit them directly. All changes are made in your local <code class="docutils literal notranslate"><span class="pre">my_first_run.yaml</span></code>.</p>
+<p><strong>Think of these default files as a reference manual.</strong> You can find the packaged base configurations under <code class="docutils literal notranslate"><span class="pre">src/MolecularDiffusion/configs/</span></code> (for example, <code class="docutils literal notranslate"><span class="pre">data/</span></code> and <code class="docutils literal notranslate"><span class="pre">tasks/</span></code>) to see which parameters are available, but you should not edit them directly. Make all experiment changes in your local <code class="docutils literal notranslate"><span class="pre">my_first_run.yaml</span></code>.</p>
 </section>
 <section id="step-4-set-your-key-parameters">
 <h3>Step 4: Set Your Key Parameters<a class="headerlink" href="#step-4-set-your-key-parameters" title="Link to this heading">¶</a></h3>
@@ -761,13 +779,25 @@ MolCraftDiff<span class="w"> </span>train<span class="w"> </span>my_first_run<sp
 <h3>Step 6: Run Your Training<a class="headerlink" href="#step-6-run-your-training" title="Link to this heading">¶</a></h3>
 <p>Launch the training using the <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span></code> command-line tool. Provide the <code class="docutils literal notranslate"><span class="pre">train</span></code> command followed by the name of your configuration file.</p>
 <p><strong>Command:</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>train<span class="w"> </span>my_first_run
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>train<span class="w"> </span>my_first_run.yaml
 </pre></div>
 </div>
 <p>The tool will automatically find <code class="docutils literal notranslate"><span class="pre">my_first_run.yaml</span></code> in your current directory, build the full configuration from your defaults and overrides, and start the training. All results will be saved in the <code class="docutils literal notranslate"><span class="pre">trainer.output_path</span></code> you specified.</p>
 </section>
 </section>
 <hr class="docutils" />
+<section id="verify-the-result">
+<h2>Verify the Result<a class="headerlink" href="#verify-the-result" title="Link to this heading">¶</a></h2>
+<p>Check <code class="docutils literal notranslate"><span class="pre">trainer.output_path</span></code> for the saved resolved configuration, versioned logs, validation metrics, and checkpoints. A useful smoke test is one short run with a small dataset and frequent validation before committing to the full schedule.</p>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>A task or data <code class="docutils literal notranslate"><span class="pre">_target_</span></code> error usually means the experiment defaults do not match the packaged config names.</p></li>
+<li><p>A feature-width error usually means <code class="docutils literal notranslate"><span class="pre">atom_vocab</span></code>, <code class="docutils literal notranslate"><span class="pre">use_ohe_feature</span></code>, or <code class="docutils literal notranslate"><span class="pre">node_feature_choice</span></code> changed after the processed dataset was cached.</p></li>
+<li><p>An out-of-memory error should first be addressed by lowering <code class="docutils literal notranslate"><span class="pre">data.batch_size</span></code> or using the data-efficient collator.</p></li>
+</ul>
+</section>
 <section id="next-steps-generation">
 <h2>Next Steps: Generation<a class="headerlink" href="#next-steps-generation" title="Link to this heading">¶</a></h2>
 <p>Once your diffusion model is trained, what’s next? You can use it to generate new 3D molecules!</p>
@@ -853,6 +883,7 @@ MolCraftDiff<span class="w"> </span>train<span class="w"> </span>my_first_run<sp
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Tutorial 1: Training a Diffusion Model</a><ul>
+<li><a class="reference internal" href="#at-a-glance">At a Glance</a></li>
 <li><a class="reference internal" href="#quickstart">Quickstart</a></li>
 <li><a class="reference internal" href="#the-override-only-workflow">The “Override-Only” Workflow</a><ul>
 <li><a class="reference internal" href="#step-1-create-your-experiment-file">Step 1: Create Your Experiment File</a></li>
@@ -870,6 +901,8 @@ MolCraftDiff<span class="w"> </span>train<span class="w"> </span>my_first_run<sp
 <li><a class="reference internal" href="#step-6-run-your-training">Step 6: Run Your Training</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#verify-the-result">Verify the Result</a></li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
 <li><a class="reference internal" href="#next-steps-generation">Next Steps: Generation</a></li>
 </ul>
 </li>
@@ -882,7 +915,7 @@ MolCraftDiff<span class="w"> </span>train<span class="w"> </span>my_first_run<sp
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=6efca38a"></script>
+</div><script src="../_static/documentation_options.js?v=030dc6f6"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

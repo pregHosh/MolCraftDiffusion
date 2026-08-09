@@ -26,10 +26,10 @@ pip install molcraftdiffusion[cpu] \
 The base package does not install every data-processing or analysis dependency. Add the feature groups you need:
 
 ```bash
-# Data preparation, augmentation, and featurization commands
+# Data preparation, augmentation, and featurisation commands
 pip install 'molcraftdiffusion[data]'
 
-# Analysis and post-processing commands (metrics, compare, xyz2mol, xtb-electronic, featurize SOAP)
+# Analysis and post-processing commands (metrics, compare, xyz2mol, xtb-electronic, featurise SOAP)
 pip install 'molcraftdiffusion[analyze]'
 
 # Backbone-specific groups
@@ -40,7 +40,7 @@ pip install 'molcraftdiffusion[shape]'    # DiffSMol: offline shape-cache precom
 pip install 'molcraftdiffusion[flowmol]'  # FlowMol: DGL (install the CUDA build matching
                                           # your torch, see pyproject.toml)
 
-# xTB is used by optimize, compare, and xtb-electronic — best installed from conda-forge:
+# xTB is used by optimise, compare, and xtb-electronic — best installed from conda-forge:
 conda install -c conda-forge xtb==6.7.1 -y
 conda install xtb-python -y
 ```
@@ -68,20 +68,20 @@ Use this table to decide which optional groups to install before you start:
 | :--- | :--- |
 | Train or generate only (no data prep, no analysis) | *(base `[gpu]` or `[cpu]` is enough)* |
 | Compile raw XYZ files into an ASE database | `[data]` |
-| Featurize molecules with SOAP descriptors | `[data]` |
+| Featurise molecules with SOAP descriptors | `[data]` |
 | Run validity/connectivity metrics, xyz2mol, RMSD compare | `[analyze]` |
 | Run `analyze optimize` or `xtb-electronic` | `[analyze]` + conda `xtb` |
 | Run geometric-shape metrics (`--metrics geom_revised` or `all`) | `[analyze]` + `pip install cosymlib` |
-| Featurize with UMA neural-network embeddings | `[analyze]` + fairchem clone (see below) |
+| Featurise with UMA neural-network embeddings | `[analyze]` + fairchem clone (see below) |
 | Pharmacophore-conditioned training/generation | `pip install open3d` |
 
 ## Optional dependencies
 
 ```bash
-# Data utilities (includes dscribe for SOAP featurization)
+# Data utilities (includes dscribe for SOAP featurisation)
 pip install 'molcraftdiffusion[data]'
 
-# Analyze utilities (PoseBusters/RDKit/OpenBabel Python bindings)
+# Analysis utilities (PoseBusters/RDKit/OpenBabel Python bindings)
 pip install 'molcraftdiffusion[analyze]'
 
 # DiffPharma novel-pocket preprocessing (Biopython + ODDT)
@@ -95,7 +95,7 @@ pip install cosymlib
 conda install -c conda-forge xtb==6.7.1 -y
 ```
 
-### UMA featurization backend
+### UMA featurisation backend
 
 The `featurize --backend uma` command uses a pretrained UMA model from fairchem.
 fairchem is **not** installed as a pip package — the source tree is vendored into
@@ -162,7 +162,7 @@ If the PyG wheel server does not have a prebuilt wheel for your exact version, y
 
 ### xTB or OpenBabel not found at runtime
 
-`xtb` and `openbabel` are **not pip-installable** in a way that exposes the executables and shared libraries MolCraftDiffusion relies on. Installing them via pip creates a broken partial install that fails silently during optimization or xyz2mol conversion.
+`xtb` and `openbabel` are **not pip-installable** in a way that exposes the executables and shared libraries MolCraftDiffusion relies on. Installing them via pip creates a broken partial install that fails silently during optimisation or xyz2mol conversion.
 
 Always install from conda-forge **before** the pip install:
 
@@ -177,7 +177,7 @@ If you already have a broken pip install, uninstall it first: `pip uninstall xtb
 
 ### `open3d` import errors on headless servers
 
-`open3d` requires an OpenGL context for some of its initialization paths. On headless HPC nodes you may see errors like `libGL.so.1: cannot open shared object file`.
+`open3d` requires an OpenGL context for some of its initialisation paths. On headless HPC nodes you may see errors like `libGL.so.1: cannot open shared object file`.
 
 Install the headless variant:
 

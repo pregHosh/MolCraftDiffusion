@@ -1,6 +1,15 @@
 # Tutorial 4: Fine-Tuning a Diffusion Model
 
-> **Prerequisites:** [Tutorial 1 — Training a Diffusion Model](01_training_diffusion.md) · **You'll learn:** adapting a pretrained model to new data, adding conditions, or specializing for outpainting · **Next:** [Tutorial 5 — Generation Overview](05_generation_overview.md)
+> **Prerequisites:** [Tutorial 1 — Training a Diffusion Model](01_training_diffusion.md) · **You'll learn:** adapting a pretrained model to new data, adding conditions, or specialising for outpainting · **Next:** [Tutorial 5 — Generation Overview](05_generation_overview.md)
+
+## At a Glance
+
+| | |
+| :--- | :--- |
+| **Objective** | Adapt a compatible pretrained checkpoint to new data or conditioning. |
+| **You need** | A base checkpoint, its original architecture settings, and a target dataset. |
+| **Main command** | `MolCraftDiff train finetune_add_condition.yaml` |
+| **Success looks like** | The checkpoint loads without architecture mismatches and a new versioned run is created. |
 
 Fine-tuning adapts a pre-trained model to a specific chemical space or teaches it new capabilities, like conditional generation.
 
@@ -66,7 +75,7 @@ tasks:
 | `tasks.condition_names`| `["S1_exc", "T1_exc"]` | A list of property names from your dataset that the model should learn to associate with the molecules. |
 | `tasks.context_mask_rate`| `0.1` | The probability of hiding the condition during training. A value greater than 0 is required to enable Classifier-Free Guidance (CFG) during generation. A common value is 0.1 (10% of the time). |
 | `tasks.mask_value`| `[0, 0]` | The value to use when a condition is masked. This should be a list with the same length as `condition_names`. Typically, this is `0` or the mean value of the property in the dataset. |
-| `tasks.normalize_condition` | `"maxmin"` | The method to normalize conditional properties. Options are: `"maxmin"` (scales to [-1, 1]), `"mad"` (mean absolute deviation), `"value_N"` (divides by a specific value N, e.g. `value_10`), or `null` for no normalization. Default: `value_10`. |
+| `tasks.normalize_condition` | `"maxmin"` | The method used to normalise conditional properties. Options are: `"maxmin"` (scales to [-1, 1]), `"mad"` (mean absolute deviation), `"value_N"` (divides by a specific value N, e.g. `value_10`), or `null` for no normalisation. Default: `value_10`. |
 
 **Concatenation vs. Adapter Conditioning:**
 
@@ -111,7 +120,7 @@ tasks:
 
 ### Scenario 3: Fine-Tune for Outpainting
 
-**Goal:** To specialize a model to become an expert at "growing" new functional groups from a common scaffold.
+**Goal:** To specialise a model to become an expert at "growing" new functional groups from a common scaffold.
 
 **Configuration:** You load a pre-trained model and fine-tune it on a dataset of molecules, telling it which atoms belong to the core scaffold.
 
@@ -157,5 +166,15 @@ For any of these scenarios, you launch the training with the same `MolCraftDiff 
 
 ```bash
 # Example for Scenario 2
-MolCraftDiff train finetune_add_condition
+MolCraftDiff train finetune_add_condition.yaml
 ```
+
+## Verify the Result
+
+The run should report that pretrained weights were loaded before optimisation begins. Inspect any missing or newly initialised parameter warnings: newly added conditioning channels may be expected, but unrelated missing backbone weights are not.
+
+## Troubleshooting
+
+- A tensor-size mismatch means the configured architecture differs from the checkpoint architecture.
+- If old data appears after changing datasets, use a unique `data.dataset_name` to avoid reusing the previous processed cache.
+- If fine-tuning quickly destroys sample quality, reduce the learning rate and validate more frequently.

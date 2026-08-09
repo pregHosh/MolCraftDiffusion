@@ -11,8 +11,8 @@
         <title>Tutorial 7: Property-Directed Generation - MolCraftDiffusion</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e7d56144" />
@@ -223,7 +223,7 @@
 <li class="toctree-l2"><a class="reference internal" href="06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Tutorial 7: Property-Directed Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09_analyze.html">Tutorial 9: Analyse Module - 3D Molecular Structure Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="10_generation_sweeps.html">Tutorial 10: Generation Parameter Sweeps</a></li>
 </ul>
 </li>
@@ -236,9 +236,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/local_chemical_space.html">Application: Local Chemical Space Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/library_design.html">Application: Library Design with Structure-Directed Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Workflows</span></p>
 <ul>
@@ -247,14 +244,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualise the Generated Chemical Space</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
 <ul>
@@ -453,11 +445,37 @@
 <blockquote>
 <div><p><strong>Prerequisites:</strong> <a class="reference internal" href="05_generation_overview.html"><span class="std std-doc">Tutorial 5 — Generation Overview</span></a> (plus a guidance model from <a class="reference internal" href="02_training_regressor.html"><span class="std std-doc">Tutorial 2</span></a>/<a class="reference internal" href="03_training_guidance.html"><span class="std std-doc">Tutorial 3</span></a> for GG) · <strong>You’ll learn:</strong> CFG, Gradient Guidance, and hybrid guidance · <strong>Next:</strong> <a class="reference internal" href="08_eval_predict.html"><span class="std std-doc">Tutorial 8 — Predict &amp; Evaluate</span></a></p>
 </div></blockquote>
+<section id="at-a-glance">
+<h2>At a Glance<a class="headerlink" href="#at-a-glance" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p></p></th>
+<th class="head text-left"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><strong>Objective</strong></p></td>
+<td class="text-left"><p>Bias generated molecules towards specified property values.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>You need</strong></p></td>
+<td class="text-left"><p>A condition-aware base checkpoint and, for gradient guidance, a schedule-compatible guidance checkpoint.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><strong>Main command</strong></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">generate</span> <span class="pre">my_cfg.yaml</span></code> (or the GG/hybrid config)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>Success looks like</strong></p></td>
+<td class="text-left"><p>Generated XYZ files are produced and downstream predictions shift towards the requested targets.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>This tutorial covers advanced generation techniques that steer the process towards desired chemical properties.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p><strong>Guidance models must match the base diffusion model.</strong> For Gradient Guidance (GG) and hybrid CFG/GG, the guidance model must be trained with the <strong>same <code class="docutils literal notranslate"><span class="pre">diffusion_steps</span></code> and polynomial noise schedule (<code class="docutils literal notranslate"><span class="pre">nu_arr</span></code>)</strong> as the base diffusion model. A mismatch means the guidance model receives noise levels it was never trained on, producing erratic or broken gradients. Check that <code class="docutils literal notranslate"><span class="pre">diffusion_steps</span></code> and <code class="docutils literal notranslate"><span class="pre">nu_arr</span></code> in your guidance config match the base model’s training config exactly.</p>
 </div>
+</section>
 <section id="contents">
 <h2>Contents<a class="headerlink" href="#contents" title="Link to this heading">¶</a></h2>
 <ol class="arabic simple">
@@ -506,7 +524,7 @@
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">cfg_scale</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">condition_configs</span></code></p></td>
-<td class="text-left"><p>Strength of the guidance; higher pushes harder toward the target properties.</p></td>
+<td class="text-left"><p>Strength of the guidance; higher pushes harder towards the target properties.</p></td>
 </tr>
 </tbody>
 </table>
@@ -538,7 +556,7 @@
 </section>
 <section id="running-cfg-generation">
 <h3>Running CFG Generation<a class="headerlink" href="#running-cfg-generation" title="Link to this heading">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_cfg
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_cfg.yaml
 </pre></div>
 </div>
 </section>
@@ -623,7 +641,7 @@
 </section>
 <section id="running-gg-generation">
 <h3>Running GG Generation<a class="headerlink" href="#running-gg-generation" title="Link to this heading">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_gg
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_gg.yaml
 </pre></div>
 </div>
 </section>
@@ -675,10 +693,22 @@
 </section>
 <section id="running-hybrid-cfg-gg-generation">
 <h3>Running Hybrid CFG/GG Generation<a class="headerlink" href="#running-hybrid-cfg-gg-generation" title="Link to this heading">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_cfggg
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_cfggg.yaml
 </pre></div>
 </div>
 </section>
+</section>
+<section id="verify-the-result">
+<h2>Verify the Result<a class="headerlink" href="#verify-the-result" title="Link to this heading">¶</a></h2>
+<p>Generation success alone does not establish successful guidance. Predict the target properties for both guided and unguided samples, then compare their distributions and structural-validity rates. The guided distribution should move towards the target without an unacceptable collapse in validity or diversity.</p>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>If CFG has no effect, confirm that the base checkpoint was trained with the same condition names and a non-zero context mask rate.</p></li>
+<li><p>If gradient guidance is erratic, verify the base and guidance noise schedules before changing guidance strength.</p></li>
+<li><p>If validity collapses, reduce <code class="docutils literal notranslate"><span class="pre">cfg_scale</span></code>, <code class="docutils literal notranslate"><span class="pre">gg_scale</span></code>, or the number of backward guidance steps.</p></li>
+</ul>
 </section>
 </section>
 
@@ -755,6 +785,7 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Tutorial 7: Property-Directed Generation</a><ul>
+<li><a class="reference internal" href="#at-a-glance">At a Glance</a></li>
 <li><a class="reference internal" href="#contents">Contents</a></li>
 <li><a class="reference internal" href="#introduction">1. Introduction</a></li>
 <li><a class="reference internal" href="#classifier-free-guidance-cfg">2. Classifier-Free Guidance (CFG)</a><ul>
@@ -775,6 +806,8 @@
 <li><a class="reference internal" href="#running-hybrid-cfg-gg-generation">Running Hybrid CFG/GG Generation</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#verify-the-result">Verify the Result</a></li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
 </ul>
 </li>
 </ul>
@@ -786,7 +819,7 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=6efca38a"></script>
+</div><script src="../_static/documentation_options.js?v=030dc6f6"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

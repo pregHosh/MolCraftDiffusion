@@ -14,11 +14,11 @@ Use library design when you want to:
 - **build a screening library** with broad steric or physicochemical coverage.
 ::::
 
-The BINOL-Cp example from the manuscript follows this pattern: a fixed ligand scaffold is expanded into a broader virtual library, then analyzed with downstream steric descriptors.
+The BINOL-Cp example from the manuscript follows this pattern: a fixed ligand scaffold is expanded into a broader virtual library, then analysed with downstream steric descriptors.
 
 ![Library design workflow](../asset/virlib_gen.png)
 
-*Conceptual view of the library-design workflow from the paper: scaffold-based generation is used to create Cp ligand variants, which are then optimized and analyzed in descriptor space.*
+*Conceptual view of the library-design workflow from the paper: scaffold-based generation is used to create Cp ligand variants, which are then optimised and analysed in descriptor space.*
 
 ---
 
@@ -35,7 +35,7 @@ The BINOL-Cp example from the manuscript follows this pattern: a fixed ligand sc
   generate decorations]
             |
             v
-  [Filter + analyze: steric,
+  [Filter + analyse: steric,
    physicochemical coverage]
             |
             v

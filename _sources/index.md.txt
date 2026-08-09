@@ -1,34 +1,34 @@
 # MolCraftDiffusion
 
-**A unified generative-AI framework for 3D molecular design.**
+**One platform for diverse 3D molecular generation workflows.**
 
-MolCraftDiffusion is an open-source framework for **3D molecular generation using diffusion models**, designed for **data-driven molecular design and computational chemistry**. The framework enables researchers to train generative models that produce chemically meaningful 3D molecular structures while supporting property optimization, scaffold modification, and exploration of chemical space.
+MolCraftDiffusion is an open-source framework for building, training, applying, and comparing **3D molecular generative models** in computational chemistry. It supports de novo, property-directed, structure-guided, shape-conditioned, pocket-conditioned, fragment-based, and pharmacophore-driven molecular design.
 
-By combining modular training pipelines, flexible guidance strategies, and integrated analysis tools, MolCraftDiffusion provides a complete workflow for developing and deploying **molecular diffusion models** in research applications such as drug discovery, catalyst discovery, materials design, and molecular property optimization.
+The platform unifies data preparation, training and fine-tuning, guided generation, checkpoint handling, and evaluation behind a shared CLI and configuration system. Different generative paradigms can therefore use the same surrounding infrastructure without requiring separate end-to-end codebases.
 
 ![Workflow overview](../images/overview.png)
 
 [![GitHub](https://img.shields.io/badge/GitHub-Repo-black?logo=github)](https://github.com/pregHosh/MolCraftDiffusion)
 [![PyPI](https://img.shields.io/pypi/v/molcraftdiffusion)](https://pypi.org/project/molcraftdiffusion/)
-[![arXiv](https://img.shields.io/badge/PDF-arXiv-blue)](https://chemrxiv.org/engage/chemrxiv/article-details/6909e50fef936fb4a23df237)
+[![Preprint](https://img.shields.io/badge/Preprint-ChemRxiv-blue)](https://chemrxiv.org/engage/chemrxiv/article-details/6909e50fef936fb4a23df237)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19511401.svg)](https://zenodo.org/records/19511401)
 [![Weights](https://img.shields.io/badge/Weights-HuggingFace-yellow)](https://huggingface.co/pregH/MolecularDiffusion)
 [![Dataset](https://img.shields.io/badge/Dataset-HuggingFace-yellow)](https://huggingface.co/pregH/MolecularDiffusion)
-[![Demo](https://img.shields.io/badge/Demo-HuggingFace%20Spaces-orange)](https://huggingface.co/spaces/pregH/MolCraftDiffusion-demo)
 
 ---
 
 ## Key Features
 
-MolCraftDiffusion is built with **modularity** at its core, offering an all-in-one, systematic workflow entirely driven by a unified CLI and YAML configuration files.
+MolCraftDiffusion is built around a common task interface, allowing generators with different architectures and conditioning inputs to share the platform infrastructure.
 
 - **Data Module** — Preprocess, compile, and manage raw `.xyz` files into unified `.db` (ASE Database) pipelines, and annotate properties.
-- **Training & Fine-Tuning Module** — Flexibly train (or fine-tune) diffusion models, property regressors, and time-aware guidance models. 
-- **Generation & Guidance Module** — Generate 3D molecules using a variety of guidance mechanisms:
+- **Training & Fine-Tuning Module** — Train or adapt generative models, property regressors, and time-aware guidance models.
+- **Broad Generator Coverage** — Apply multiple 3D generation paradigms across de novo and conditioned molecular-design tasks.
+- **Generation & Guidance Module** — Generate 3D molecules using a variety of mechanisms:
   - *Unconditional Generation*: Generate 3D molecules without any specific constraints or guidance.
-  - *Property-Targeted Guidance*: Steer generation toward desired properties using Classifier-Free Guidance (CFG), Gradient Guidance (GG), or a hybrid approach.
+  - *Property-Targeted Guidance*: Steer generation towards desired properties using Classifier-Free Guidance (CFG), Gradient Guidance (GG), or a hybrid approach.
   - *Structure-Guided Generation*: Perform inpainting (scaffold decoration), outpainting (fragment extension) and SILVR (soft reference steering / fragment merging) with precise 3D geometric constraints.
-- **Analysis & Evaluation Module** — Assess the quality of generated 3D molecules. Includes tools for structural validity metrics, xTB geometry optimization, RMSD comparisons, and quantum-chemical property calculation/prediction.
+- **Analysis & Evaluation Module** — Assess generated molecules with structural validity metrics, xTB geometry optimisation, RMSD comparisons, and quantum-chemical property calculation or prediction.
 
 ---
 
@@ -78,9 +78,6 @@ tutorials/index
 :caption: Applications
 
 applications/index
-applications/local_chemical_space
-applications/library_design
-applications/inverse_design
 ```
 
 ```{toctree}
@@ -88,11 +85,6 @@ applications/inverse_design
 :caption: Workflows
 
 workflows/index
-workflows/generate_and_filter
-workflows/transfer_learning
-workflows/conditioned_generation
-workflows/end_to_end
-workflows/visualization
 ```
 
 ```{toctree}

@@ -1,6 +1,6 @@
 # Application: Local Chemical Space Exploration
 
-This workflow uses **inpainting** to explore structural variants around a known reference molecule while keeping the rest of the 3D scaffold fixed. It is useful when you want to **probe a local neighborhood** of chemical space rather than generate fully unconstrained molecules.
+This workflow uses **inpainting** to explore structural variants around a known reference molecule while keeping the rest of the 3D scaffold fixed. It is useful when you want to **probe a local neighbourhood** of chemical space rather than generate fully unconstrained molecules.
 
 ---
 

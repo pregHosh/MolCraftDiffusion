@@ -10,7 +10,7 @@ The current examples fall into three broad categories:
 | :--: | :--- | :--- | :--- |
 | 1 | **Local chemical space exploration** | Inpainting — vary a region while fixing the scaffold | [Local Chemical Space](local_chemical_space.md) |
 | 2 | **Library design** | Outpainting — expand a scaffold into a diverse candidate set | [Library Design](library_design.md) |
-| 3 | **Inverse design** | Property- or geometry-directed generation toward a design objective | [Inverse Design](inverse_design.md) |
+| 3 | **Inverse design** | Property- or geometry-directed generation towards a design objective | [Inverse Design](inverse_design.md) |
 
 ## Before You Start
 

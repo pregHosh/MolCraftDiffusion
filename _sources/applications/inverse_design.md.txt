@@ -11,20 +11,20 @@ Inverse design uses MolCraftDiffusion to generate molecules that **satisfy a pre
 
 ## 1. Target Property Inverse Design
 
-Use this route when you want to **bias generation toward a numerical target** such as an energy score, excitation-related objective, or another learned molecular property.
+Use this route when you want to **bias generation towards a numerical target** such as an energy score, excitation-related objective, or another learned molecular property.
 
 ![Property-directed inverse design workflow](../asset/prop_gen_wf.png)
 
-*Conceptual view: the diffusion model is combined with guidance models so generation is biased toward molecules with the desired target profile, followed by ranking and computational validation.*
+*Conceptual view: the diffusion model is combined with guidance models so generation is biased towards molecules with the desired target profile, followed by ranking and computational validation.*
 
 ### Concept
 
-The model is no longer asked to generate molecules that are only plausible. It is asked to generate molecules that are plausible **and** biased toward a desired property target.
+The model is no longer asked to generate molecules that are only plausible. It is asked to generate molecules that are plausible **and** biased towards a desired property target.
 
 ::::{note}
 This is the right framing when your question is:
 
-- Can I **shift generation** toward a target electronic or physicochemical regime?
+- Can I **shift generation** towards a target electronic or physicochemical regime?
 - Can I **enrich the output** in molecules with better scores?
 - Can I **search for hits** without manually enumerating structures?
 ::::
@@ -64,7 +64,7 @@ Use this route when the design objective is primarily **structural** — for exa
 
 ### Concept
 
-In this setting, the target is not just a scalar property. The target is a **geometric arrangement** that the generated molecule should realize in 3D space.
+In this setting, the target is not just a scalar property. The target is a **geometric arrangement** that the generated molecule should realise in 3D space.
 
 ::::{note}
 This is the right framing when your question is:

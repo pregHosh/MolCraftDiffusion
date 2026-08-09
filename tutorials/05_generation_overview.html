@@ -11,8 +11,8 @@
         <title>Tutorial 5: Molecule Generation Overview - MolCraftDiffusion</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e7d56144" />
@@ -223,7 +223,7 @@
 <li class="toctree-l2"><a class="reference internal" href="06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09_analyze.html">Tutorial 9: Analyse Module - 3D Molecular Structure Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="10_generation_sweeps.html">Tutorial 10: Generation Parameter Sweeps</a></li>
 </ul>
 </li>
@@ -236,9 +236,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/local_chemical_space.html">Application: Local Chemical Space Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/library_design.html">Application: Library Design with Structure-Directed Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Workflows</span></p>
 <ul>
@@ -247,14 +244,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualise the Generated Chemical Space</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
 <ul>
@@ -451,15 +443,41 @@
           <section id="tutorial-5-molecule-generation-overview">
 <h1>Tutorial 5: Molecule Generation Overview<a class="headerlink" href="#tutorial-5-molecule-generation-overview" title="Link to this heading">¶</a></h1>
 <blockquote>
-<div><p><strong>Prerequisites:</strong> <a class="reference internal" href="01_training_diffusion.html"><span class="std std-doc">Tutorial 1 — Training a Diffusion Model</span></a> · <strong>You’ll learn:</strong> unconditional sampling and the three generation modes · <strong>Next:</strong> <a class="reference internal" href="06_structure_guided.html"><span class="std std-doc">Tutorial 6 — Structure-Guided Generation</span></a></p>
+<div><p><strong>Prerequisites:</strong> <a class="reference internal" href="01_training_diffusion.html"><span class="std std-doc">Tutorial 1 — Training a Diffusion Model</span></a> · <strong>You’ll learn:</strong> unconditional sampling and the shared generation configuration · <strong>Next:</strong> <a class="reference internal" href="06_structure_guided.html"><span class="std std-doc">Tutorial 6 — Structure-Guided Generation</span></a></p>
 </div></blockquote>
-<p>This tutorial provides an overview of the different ways you can generate molecules using a trained model. The generation process is controlled via the <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">generate</span></code> command, which relies on a configuration file to specify the desired behavior.</p>
-<p>There are three primary modes for generating molecules:</p>
+<section id="at-a-glance">
+<h2>At a Glance<a class="headerlink" href="#at-a-glance" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p></p></th>
+<th class="head text-left"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><strong>Objective</strong></p></td>
+<td class="text-left"><p>Generate complete 3D molecules from a compatible checkpoint.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>You need</strong></p></td>
+<td class="text-left"><p>A checkpoint, matching task configuration, and matching atom vocabulary.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><strong>Main command</strong></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">generate</span> <span class="pre">my_gen.yaml</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>Success looks like</strong></p></td>
+<td class="text-left"><p>The output directory contains the requested number of XYZ files, subject to any reported batch failures.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>This tutorial provides an overview of the different ways you can generate molecules using a trained model. The generation process is controlled via the <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">generate</span></code> command, which relies on a configuration file to specify the desired behaviour.</p>
+<p>This tutorial introduces three modes available through the shared/default generation path:</p>
 <ol class="arabic simple">
 <li><p><strong>Unconditional Generation</strong>: Generating novel molecules without any specific constraints or guidance. This is the simplest form of generation and is the focus of this tutorial.</p></li>
 <li><p><strong>Structure-Guided Generation</strong>: Generating molecules from a reference structure — filling in a masked region (inpainting), building outward from a scaffold (outpainting), or softly steering a whole molecule towards a reference without freezing any atoms (SILVR). For a detailed guide on this, please see <strong><a class="reference internal" href="06_structure_guided.html"><span class="std std-doc">Tutorial 6: Structure-Guided Generation</span></a></strong>.</p></li>
 <li><p><strong>Property-Directed Generation</strong>: Guiding the generation process to produce molecules that are optimised for specific chemical or physical properties (e.g., high solubility, specific energy levels). For a detailed guide on this, please see <strong><a class="reference internal" href="07_property_directed.html"><span class="std std-doc">Tutorial 7: Property-Directed Generation</span></a></strong>.</p></li>
 </ol>
+</section>
 <hr class="docutils" />
 <section id="unconditional-generation">
 <h2>Unconditional Generation<a class="headerlink" href="#unconditional-generation" title="Link to this heading">¶</a></h2>
@@ -513,10 +531,25 @@
 <section id="running-unconditional-generation">
 <h3>Running Unconditional Generation<a class="headerlink" href="#running-unconditional-generation" title="Link to this heading">¶</a></h3>
 <p>Use the <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">generate</span></code> command with your config file:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_gen
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_gen.yaml
 </pre></div>
 </div>
 </section>
+</section>
+<section id="verify-the-result">
+<h2>Verify the Result<a class="headerlink" href="#verify-the-result" title="Link to this heading">¶</a></h2>
+<p>Confirm that <code class="docutils literal notranslate"><span class="pre">interference.output_path</span></code> contains XYZ files and that the command reports at least one successful batch. Then run a quick structural check:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>metrics<span class="w"> </span>generated_mol/<span class="w"> </span>--metrics<span class="w"> </span>core
+</pre></div>
+</div>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>A task-type mismatch means the generation config and checkpoint were built for different tasks.</p></li>
+<li><p>Invalid atom types usually indicate that <code class="docutils literal notranslate"><span class="pre">atom_vocab</span></code> does not match the checkpoint.</p></li>
+<li><p>If no molecules are produced, inspect the first reported sampling exception rather than treating an empty output directory as a successful run.</p></li>
+</ul>
 </section>
 </section>
 
@@ -593,6 +626,7 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Tutorial 5: Molecule Generation Overview</a><ul>
+<li><a class="reference internal" href="#at-a-glance">At a Glance</a></li>
 <li><a class="reference internal" href="#unconditional-generation">Unconditional Generation</a><ul>
 <li><a class="reference internal" href="#how-it-works">How It Works</a></li>
 <li><a class="reference internal" href="#example-configuration">Example Configuration</a></li>
@@ -600,6 +634,8 @@
 <li><a class="reference internal" href="#running-unconditional-generation">Running Unconditional Generation</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#verify-the-result">Verify the Result</a></li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
 </ul>
 </li>
 </ul>
@@ -611,7 +647,7 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=6efca38a"></script>
+</div><script src="../_static/documentation_options.js?v=030dc6f6"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -11,8 +11,8 @@
         <title>Workflows - MolCraftDiffusion</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e7d56144" />
@@ -223,7 +223,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tutorials/09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/09_analyze.html">Tutorial 9: Analyse Module - 3D Molecular Structure Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/10_generation_sweeps.html">Tutorial 10: Generation Parameter Sweeps</a></li>
 </ul>
 </li>
@@ -236,9 +236,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/local_chemical_space.html">Application: Local Chemical Space Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/library_design.html">Application: Library Design with Structure-Directed Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Workflows</span></p>
 <ul class="current">
@@ -247,14 +244,9 @@
 <li class="toctree-l2"><a class="reference internal" href="transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualization.html">Workflow: Visualise the Generated Chemical Space</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
 <ul>
@@ -468,7 +460,7 @@
 <p class="admonition-title">Note</p>
 <p><strong>Adapt a pre-trained model; don’t train from scratch.</strong> Training a 3D diffusion model from
 scratch is expensive and rarely necessary. Start from one of the shipped pre-trained bases
-(GEOM-drugs foundation, or QM9) and <strong>fine-tune</strong> it toward your target chemistry — this is the
+(GEOM-drugs foundation, or QM9) and <strong>fine-tune</strong> it towards your target chemistry — this is the
 default recommended path. The only case that forces training from scratch is chemistry that uses
 atom types outside the pre-trained vocabulary (<code class="docutils literal notranslate"><span class="pre">H,</span> <span class="pre">B,</span> <span class="pre">C,</span> <span class="pre">N,</span> <span class="pre">O,</span> <span class="pre">F,</span> <span class="pre">Al,</span> <span class="pre">Si,</span> <span class="pre">P,</span> <span class="pre">S,</span> <span class="pre">Cl,</span> <span class="pre">As,</span> <span class="pre">Se,</span> <span class="pre">Br,</span> <span class="pre">I,</span> <span class="pre">Hg,</span> <span class="pre">Bi</span></code>). Pre-trained checkpoints: <a class="reference external" href="https://zenodo.org/records/19511401">https://zenodo.org/records/19511401</a>. See
 <a class="reference internal" href="transfer_learning.html"><span class="std std-doc">Transfer Learning and Generate</span></a>.</p>
@@ -498,12 +490,12 @@ atom types outside the pre-trained vocabulary (<code class="docutils literal not
 </tr>
 <tr class="row-even"><td class="text-left"><p>Conditioned generation</p></td>
 <td class="text-left"><p>Directed search</p></td>
-<td class="text-left"><p>Bias generation toward a structure or property target</p></td>
+<td class="text-left"><p>Bias generation towards a structure or property target</p></td>
 <td class="text-left"><p><a class="reference internal" href="../tutorials/06_structure_guided.html"><span class="std std-doc">Tutorial 6</span></a>, <a class="reference internal" href="../tutorials/07_property_directed.html"><span class="std std-doc">Tutorial 7</span></a></p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p>End-to-end design loop</p></td>
-<td class="text-left"><p>Candidate prioritization</p></td>
-<td class="text-left"><p>Combine generation, filtering, optimization, prediction, and ranking</p></td>
+<td class="text-left"><p>Candidate prioritisation</p></td>
+<td class="text-left"><p>Combine generation, filtering, optimisation, prediction, and ranking</p></td>
 <td class="text-left"><p><a class="reference internal" href="../tutorials/08_eval_predict.html"><span class="std std-doc">Tutorial 8</span></a>, <a class="reference internal" href="../tutorials/09_analyze.html"><span class="std std-doc">Tutorial 9</span></a></p></td>
 </tr>
 </tbody>
@@ -518,7 +510,7 @@ atom types outside the pre-trained vocabulary (<code class="docutils literal not
 <li class="toctree-l1"><a class="reference internal" href="transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Workflow: Visualise the Generated Chemical Space</a></li>
 </ul>
 </div>
 </section>
@@ -612,7 +604,7 @@ atom types outside the pre-trained vocabulary (<code class="docutils literal not
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=6efca38a"></script>
+</div><script src="../_static/documentation_options.js?v=030dc6f6"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

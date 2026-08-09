@@ -2,6 +2,15 @@
 
 > **Prerequisites:** [Tutorial 6 — Structure-Guided](06_structure_guided.md) / [Tutorial 7 — Property-Directed](07_property_directed.md) · **You'll learn:** automating grid and Bayesian sweeps over controlled-generation parameters with automatic metric collection · **Next:** [Workflows](../workflows/index.md)
 
+## At a Glance
+
+| | |
+| :--- | :--- |
+| **Objective** | Compare generation settings through reproducible grid or Bayesian sweeps. |
+| **You need** | A working generation config, a sweep YAML file, and an evaluation script. |
+| **Main command** | `MolCraftDiff generate-sweep my_sweep.yaml --dry-run` |
+| **Success looks like** | Each completed trial has a run directory and one row in `summary.csv`. |
+
 This tutorial explains how to run generation sweeps with the packaged sweep module:
 
 ```text
@@ -14,7 +23,7 @@ The command-line entry point is:
 MolCraftDiff generate-sweep <sweep_config.yaml>
 ```
 
-Use sweeps when you want to optimize controlled generation settings for **inpainting**, **outpainting**, **classifier-free guidance (CFG)**, **gradient guidance (GG)**, or **hybrid CFG/GG** without manually launching each run.
+Use sweeps when you want to optimise controlled generation settings for **inpainting**, **outpainting**, **classifier-free guidance (CFG)**, **gradient guidance (GG)**, or **hybrid CFG/GG** without manually launching each run.
 
 ---
 
@@ -47,13 +56,13 @@ This gives you a single table containing the generation parameters and the metri
 Start with a dry-run. This prints the exact generation and evaluation commands without writing files:
 
 ```bash
-MolCraftDiff generate-sweep configs/sweep_example.yaml --dry-run --max-runs 1
+MolCraftDiff generate-sweep my_sweep.yaml --dry-run --max-runs 1
 ```
 
 Then launch real runs:
 
 ```bash
-MolCraftDiff generate-sweep configs/sweep_example.yaml --max-runs 5
+MolCraftDiff generate-sweep my_sweep.yaml --max-runs 5
 ```
 
 Useful options:
@@ -71,10 +80,10 @@ Useful options:
 
 ## 3. Sweep Config Anatomy
 
-A complete commented template is available at:
+A minimal sweep starts with the following file:
 
 ```text
-configs/sweep_example.yaml
+my_sweep.yaml
 ```
 
 The main fields are:
@@ -224,7 +233,7 @@ list_parameters:
     - [0.5, 3.5]
 ```
 
-Use this to tune how strongly the conditional model is pushed toward the desired property regime.
+Use this to tune how strongly the conditional model is pushed towards the desired property regime.
 
 ### Gradient Guidance
 
@@ -241,7 +250,7 @@ parameters:
   interference.condition_configs.n_backwards: [0, 1, 3]
 ```
 
-Use this when guidance is too weak, unstable, or over-optimizes at the cost of molecular quality.
+Use this when guidance is too weak, unstable, or over-optimises at the cost of molecular quality.
 
 ### Hybrid CFG/GG
 
@@ -333,7 +342,7 @@ If `collect` is present, it replaces the built-in defaults. Include every metric
 
 ---
 
-## 7. Bayesian Optimization Objective
+## 7. Bayesian Optimisation Objective
 
 Grid search evaluates combinations in deterministic order. Bayesian search chooses from the same candidate grid using previous rows in `summary.csv`.
 
@@ -368,7 +377,7 @@ collect:
         agg: mean
 ```
 
-For minimization:
+For minimisation:
 
 ```yaml
 objective:
@@ -385,7 +394,7 @@ search:
 
 ---
 
-## 8. Resume Behavior
+## 8. Resume Behaviour
 
 Each completed or failed run is recorded in:
 
@@ -396,13 +405,13 @@ Each completed or failed run is recorded in:
 By default, any recorded configuration is skipped on the next launch:
 
 ```bash
-MolCraftDiff generate-sweep configs/sweep_example.yaml --max-runs 10
+MolCraftDiff generate-sweep my_sweep.yaml --max-runs 10
 ```
 
 To retry failed or interrupted rows:
 
 ```bash
-MolCraftDiff generate-sweep configs/sweep_example.yaml --retry-failed --max-runs 10
+MolCraftDiff generate-sweep my_sweep.yaml --retry-failed --max-runs 10
 ```
 
 The configuration identity is based on the swept parameter values, not the output directory name.
@@ -419,13 +428,13 @@ The configuration identity is based on the swept parameter values, not the outpu
 6. Start with:
 
 ```bash
-MolCraftDiff generate-sweep configs/sweep_example.yaml --dry-run --max-runs 1
+MolCraftDiff generate-sweep my_sweep.yaml --dry-run --max-runs 1
 ```
 
 7. Launch a small batch:
 
 ```bash
-MolCraftDiff generate-sweep configs/sweep_example.yaml --max-runs 3
+MolCraftDiff generate-sweep my_sweep.yaml --max-runs 3
 ```
 
 8. Inspect:
@@ -437,7 +446,17 @@ sweep_results/example_sweep/summary.csv
 9. Continue the sweep when ready:
 
 ```bash
-MolCraftDiff generate-sweep configs/sweep_example.yaml --max-runs 20
+MolCraftDiff generate-sweep my_sweep.yaml --max-runs 20
 ```
 
 The sweep will skip configurations already present in `summary.csv`.
+
+## Verify the Result
+
+Check that each completed run directory contains generation and evaluation logs, then confirm that `summary.csv` has one unique `config_id` per attempted parameter combination. Treat missing objective values as failed evaluation, not as neutral results.
+
+## Troubleshooting
+
+- Run `--dry-run --max-runs 1` first to inspect the exact generated commands.
+- If evaluation fails, execute the configured evaluation script manually with one run directory.
+- If a corrected trial is skipped, use `--retry-failed`; completed configurations remain intentionally resumable and are not rerun.

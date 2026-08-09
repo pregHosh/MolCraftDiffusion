@@ -2,6 +2,15 @@
 
 > **Prerequisites:** [Tutorial 0 — Data Preparation](00_data_preparation.md) · **You'll learn:** configuring and launching a diffusion training run with the override-only workflow · **Next:** [Tutorial 2 — Training a Regressor](02_training_regressor.md)
 
+## At a Glance
+
+| | |
+| :--- | :--- |
+| **Objective** | Train a de novo 3D diffusion model from a prepared molecular dataset. |
+| **You need** | A compiled dataset and one experiment YAML file. |
+| **Main command** | `MolCraftDiff train my_first_run.yaml` |
+| **Success looks like** | Training metrics and checkpoints appear under `trainer.output_path`. |
+
 This tutorial explains how to configure and run a training job for a diffusion model from scratch. We will focus on using a single configuration file for your experiment to override the project's default settings.
 
 ## Quickstart
@@ -9,7 +18,7 @@ This tutorial explains how to configure and run a training job for a diffusion m
 ```bash
 cp configs/example_diffusion_config.yaml my_first_run.yaml   # copy a template
 # edit my_first_run.yaml — at minimum set data.ase_db_path and trainer.output_path
-MolCraftDiff train my_first_run                              # launch (no .yaml extension)
+MolCraftDiff train my_first_run.yaml                         # launch training
 ```
 
 That's the whole loop. The rest of this tutorial explains what to put in that file: the engine choice, the `defaults` list, and the parameters worth overriding.
@@ -73,7 +82,7 @@ defaults:
   - _self_
 ```
 
-**Think of these default files as a reference manual.** You can find the original base configurations in the `configs/` directory of the repository (e.g., in `configs/data/`, `configs/tasks/`) to see what parameters are available, but you should not edit them directly. All changes are made in your local `my_first_run.yaml`.
+**Think of these default files as a reference manual.** You can find the packaged base configurations under `src/MolecularDiffusion/configs/` (for example, `data/` and `tasks/`) to see which parameters are available, but you should not edit them directly. Make all experiment changes in your local `my_first_run.yaml`.
 
 ### Step 4: Set Your Key Parameters
 
@@ -194,12 +203,22 @@ Launch the training using the `MolCraftDiff` command-line tool. Provide the `tra
 
 **Command:**
 ```bash
-MolCraftDiff train my_first_run
+MolCraftDiff train my_first_run.yaml
 ```
 
 The tool will automatically find `my_first_run.yaml` in your current directory, build the full configuration from your defaults and overrides, and start the training. All results will be saved in the `trainer.output_path` you specified.
 
 ---
+
+## Verify the Result
+
+Check `trainer.output_path` for the saved resolved configuration, versioned logs, validation metrics, and checkpoints. A useful smoke test is one short run with a small dataset and frequent validation before committing to the full schedule.
+
+## Troubleshooting
+
+- A task or data `_target_` error usually means the experiment defaults do not match the packaged config names.
+- A feature-width error usually means `atom_vocab`, `use_ohe_feature`, or `node_feature_choice` changed after the processed dataset was cached.
+- An out-of-memory error should first be addressed by lowering `data.batch_size` or using the data-efficient collator.
 
 ## Next Steps: Generation
 

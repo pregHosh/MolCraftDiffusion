@@ -1,6 +1,6 @@
 # Workflow Example: End-to-End Design Loop
 
-This workflow combines generation with downstream analysis and prioritization. It is the most complete pattern in the framework and is the closest to how candidates are handled in a real design campaign.
+This workflow combines generation with downstream analysis and prioritisation. It is the most complete pattern in the framework and is the closest to how candidates are handled in a real design campaign.
 
 ## Conceptual Flow
 
@@ -8,13 +8,13 @@ This workflow combines generation with downstream analysis and prioritization. I
 [Generate molecules]
         |
         v
-[Analyze outputs]
+[Analyse outputs]
         |
         v
 [Filter valid molecules]
         |
         v
-[Optimize structures]
+[Optimise structures]
         |
         v
 [Evaluate with xTB or predictors]
@@ -29,7 +29,7 @@ Generation alone is usually not enough. This workflow separates:
 
 - molecules that are merely generated,
 - molecules that are chemically reasonable,
-- molecules that remain promising after optimization and evaluation.
+- molecules that remain promising after optimisation and evaluation.
 
 That distinction is what turns a raw sample set into a candidate-selection pipeline.
 
@@ -38,8 +38,8 @@ That distinction is what turns a raw sample set into a candidate-selection pipel
 | Stage | Main question | Typical outcome |
 | :--- | :--- | :--- |
 | Generate | What can the model propose? | Raw molecule pool |
-| Analyze | Are the structures valid and diverse? | Cleaned subset |
-| Optimize | Do the structures remain sensible after relaxation? | More reliable geometries |
+| Analyse | Are the structures valid and diverse? | Cleaned subset |
+| Optimise | Do the structures remain sensible after relaxation? | More reliable geometries |
 | Evaluate | Do they satisfy the target property or descriptor? | Scored candidates |
 | Rank | Which molecules deserve follow-up? | Final shortlist |
 

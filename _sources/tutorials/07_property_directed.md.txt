@@ -2,6 +2,15 @@
 
 > **Prerequisites:** [Tutorial 5 — Generation Overview](05_generation_overview.md) (plus a guidance model from [Tutorial 2](02_training_regressor.md)/[Tutorial 3](03_training_guidance.md) for GG) · **You'll learn:** CFG, Gradient Guidance, and hybrid guidance · **Next:** [Tutorial 8 — Predict & Evaluate](08_eval_predict.md)
 
+## At a Glance
+
+| | |
+| :--- | :--- |
+| **Objective** | Bias generated molecules towards specified property values. |
+| **You need** | A condition-aware base checkpoint and, for gradient guidance, a schedule-compatible guidance checkpoint. |
+| **Main command** | `MolCraftDiff generate my_cfg.yaml` (or the GG/hybrid config) |
+| **Success looks like** | Generated XYZ files are produced and downstream predictions shift towards the requested targets. |
+
 This tutorial covers advanced generation techniques that steer the process towards desired chemical properties.
 
 :::{warning}
@@ -37,7 +46,7 @@ The `gen_cfg` template already sets these; override only what you need. Note whi
 | `target_values` | `interference` | A list of positive target values for the properties in `property_names`. |
 | `negative_target_values` | `interference` | (Optional) A list used as a "negative prompt" — the model is guided *away* from these values. Note the plural key, and that it sits at the `interference` top level, **not** in `condition_configs`. |
 | `property_names`| `interference` | A list of property names the model was trained on. |
-| `cfg_scale` | `condition_configs` | Strength of the guidance; higher pushes harder toward the target properties. |
+| `cfg_scale` | `condition_configs` | Strength of the guidance; higher pushes harder towards the target properties. |
 
 ### Example `my_cfg.yaml`
 
@@ -66,7 +75,7 @@ interference:
 ### Running CFG Generation
 
 ```bash
-MolCraftDiff generate my_cfg
+MolCraftDiff generate my_cfg.yaml
 ```
 
 ## 3. Gradient Guidance (GG)
@@ -127,7 +136,7 @@ interference:
 ### Running GG Generation
 
 ```bash
-MolCraftDiff generate my_gg
+MolCraftDiff generate my_gg.yaml
 ```
 
 ## 4. Hybrid CFG/GG Guidance
@@ -179,5 +188,15 @@ interference:
 ### Running Hybrid CFG/GG Generation
 
 ```bash
-MolCraftDiff generate my_cfggg
+MolCraftDiff generate my_cfggg.yaml
 ```
+
+## Verify the Result
+
+Generation success alone does not establish successful guidance. Predict the target properties for both guided and unguided samples, then compare their distributions and structural-validity rates. The guided distribution should move towards the target without an unacceptable collapse in validity or diversity.
+
+## Troubleshooting
+
+- If CFG has no effect, confirm that the base checkpoint was trained with the same condition names and a non-zero context mask rate.
+- If gradient guidance is erratic, verify the base and guidance noise schedules before changing guidance strength.
+- If validity collapses, reduce `cfg_scale`, `gg_scale`, or the number of backward guidance steps.

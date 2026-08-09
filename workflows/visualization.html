@@ -8,11 +8,11 @@
         <link rel="prefetch" href="../_static/logo.png" as="image">
 
     <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
-        <title>Workflow: Visualize the Generated Chemical Space - MolCraftDiffusion</title>
+        <title>Workflow: Visualise the Generated Chemical Space - MolCraftDiffusion</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e7d56144" />
@@ -223,7 +223,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tutorials/09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/09_analyze.html">Tutorial 9: Analyse Module - 3D Molecular Structure Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/10_generation_sweeps.html">Tutorial 10: Generation Parameter Sweeps</a></li>
 </ul>
 </li>
@@ -236,9 +236,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/local_chemical_space.html">Application: Local Chemical Space Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/library_design.html">Application: Library Design with Structure-Directed Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Workflows</span></p>
 <ul class="current">
@@ -247,14 +244,9 @@
 <li class="toctree-l2"><a class="reference internal" href="transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Workflow: Visualize the Generated Chemical Space</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Workflow: Visualise the Generated Chemical Space</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Workflow: Visualize the Generated Chemical Space</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
 <ul>
@@ -448,12 +440,12 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="workflow-visualize-the-generated-chemical-space">
-<h1>Workflow: Visualize the Generated Chemical Space<a class="headerlink" href="#workflow-visualize-the-generated-chemical-space" title="Link to this heading">¶</a></h1>
-<p>Featurize your molecules into fixed-size vectors and project them to 2D, so you can inspect a generated set as a <em>distribution</em> rather than one sample at a time.</p>
+          <section id="workflow-visualise-the-generated-chemical-space">
+<h1>Workflow: Visualise the Generated Chemical Space<a class="headerlink" href="#workflow-visualise-the-generated-chemical-space" title="Link to this heading">¶</a></h1>
+<p>Featurise your molecules into fixed-size vectors and project them to 2D, so you can inspect a generated set as a <em>distribution</em> rather than one sample at a time.</p>
 <section id="quickstart">
 <h2>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. Featurize both sets with identical settings</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. Featurise both sets with identical settings</span>
 MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<span class="w"> </span>generated_molecules/<span class="w"> </span>--backend<span class="w"> </span>soap<span class="w"> </span>--output<span class="w"> </span>features_generated
 MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<span class="w"> </span>training_data/<span class="w">       </span>--backend<span class="w"> </span>soap<span class="w"> </span>--output<span class="w"> </span>features_reference
 </pre></div>
@@ -471,19 +463,19 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span> [Generated 3D molecules]     [Reference / training set]
             |                             |
-            +---------- Featurize --------+      (same backend &amp; settings)
+            +---------- Featurise --------+      (same backend &amp; settings)
                           |
                   [Stack feature matrix]
                           |
                  [UMAP / t-SNE to 2D]
                           |
-        [Scatter — color by source, property, or cluster]
+        [Scatter — colour by source, property, or cluster]
 </pre></div>
 </div>
 </section>
 <hr class="docutils" />
-<section id="step-1-featurize">
-<h2>Step 1: Featurize<a class="headerlink" href="#step-1-featurize" title="Link to this heading">¶</a></h2>
+<section id="step-1-featurise">
+<h2>Step 1: Featurise<a class="headerlink" href="#step-1-featurise" title="Link to this heading">¶</a></h2>
 <p><strong>Goal: one fixed-size vector per molecule, using the same backend for both sets.</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">analyze</span> <span class="pre">featurize</span> <span class="pre">&lt;dir&gt;</span> <span class="pre">--output</span> <span class="pre">&lt;stem&gt;</span></code> converts a directory of XYZ files into a feature matrix. Pick a backend:</p>
 <div class="table-wrapper colwidths-auto docutils container">
@@ -517,7 +509,7 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 <p>Each command writes three files next to the stem:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">&lt;stem&gt;.npy</span></code> — feature array of shape <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">D)</span></code>, one row per molecule (load with <code class="docutils literal notranslate"><span class="pre">np.load</span></code>).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&lt;stem&gt;.csv</span></code> — <code class="docutils literal notranslate"><span class="pre">index,</span> <span class="pre">file,</span> <span class="pre">frame</span></code> for each row (use it to trace a point back to a structure, or to join your own per-molecule property values for coloring).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;stem&gt;.csv</span></code> — <code class="docutils literal notranslate"><span class="pre">index,</span> <span class="pre">file,</span> <span class="pre">frame</span></code> for each row (use it to trace a point back to a structure, or to join your own per-molecule property values for colouring).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">&lt;stem&gt;_meta.json</span></code> — backend, structure count, feature dim, and parameters.</p></li>
 </ul>
 </section>
@@ -547,7 +539,7 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;chemical_space.png&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>To <strong>color by a property</strong> instead of by source, read the property per row (e.g. join <code class="docutils literal notranslate"><span class="pre">features_generated.csv</span></code>’s <code class="docutils literal notranslate"><span class="pre">file</span></code> column with your own values) and pass it as <code class="docutils literal notranslate"><span class="pre">c=</span></code> to <code class="docutils literal notranslate"><span class="pre">scatter</span></code>.</p>
+<p>To <strong>colour by a property</strong> instead of by source, read the property per row (e.g. join <code class="docutils literal notranslate"><span class="pre">features_generated.csv</span></code>’s <code class="docutils literal notranslate"><span class="pre">file</span></code> column with your own values) and pass it as <code class="docutils literal notranslate"><span class="pre">c=</span></code> to <code class="docutils literal notranslate"><span class="pre">scatter</span></code>.</p>
 <p>Prefer t-SNE? Swap <code class="docutils literal notranslate"><span class="pre">UMAP</span></code> for <code class="docutils literal notranslate"><span class="pre">sklearn.manifold.TSNE</span></code>. It’s slower and has no <code class="docutils literal notranslate"><span class="pre">transform()</span></code>, so fit it on the combined matrix exactly as above.</p>
 </section>
 <hr class="docutils" />
@@ -587,7 +579,7 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 <h2>See Also<a class="headerlink" href="#see-also" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="../tutorials/09_analyze.html"><span class="std std-doc">Tutorial 9: Analysis</span></a> — <code class="docutils literal notranslate"><span class="pre">featurize</span></code> subcommand reference</p></li>
-<li><p><a class="reference internal" href="end_to_end.html"><span class="std std-doc">Workflow: End-to-End</span></a> — where visualization fits in the full pipeline</p></li>
+<li><p><a class="reference internal" href="end_to_end.html"><span class="std std-doc">Workflow: End-to-End</span></a> — where visualisation fits in the full pipeline</p></li>
 <li><p><a class="reference internal" href="../applications/index.html"><span class="std std-doc">Applications</span></a> — research-level use cases</p></li>
 </ul>
 </section>
@@ -665,9 +657,9 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Workflow: Visualize the Generated Chemical Space</a><ul>
+<li><a class="reference internal" href="#">Workflow: Visualise the Generated Chemical Space</a><ul>
 <li><a class="reference internal" href="#quickstart">Quickstart</a></li>
-<li><a class="reference internal" href="#step-1-featurize">Step 1: Featurize</a></li>
+<li><a class="reference internal" href="#step-1-featurise">Step 1: Featurise</a></li>
 <li><a class="reference internal" href="#step-2-project-to-2d">Step 2: Project to 2D</a></li>
 <li><a class="reference internal" href="#step-3-interpret-the-plot">Step 3: Interpret the Plot</a></li>
 <li><a class="reference internal" href="#see-also">See Also</a></li>
@@ -682,7 +674,7 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=6efca38a"></script>
+</div><script src="../_static/documentation_options.js?v=030dc6f6"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

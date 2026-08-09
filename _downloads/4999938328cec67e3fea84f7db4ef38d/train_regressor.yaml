@@ -1,0 +1,50 @@
+# Tutorial 2: Training a Property Regressor
+# Usage: MolCraftDiff train docs/cfg_examples/train_regressor
+#
+# Trains an EGCL regressor to predict molecular properties.
+# The trained model can also be used as a gradient-guidance model
+# (see Tutorial 7).
+
+# @package _global_
+defaults:
+  - data: mol_dataset
+  - tasks: regression
+  - engine: original
+  - logger: default
+  - trainer: regression
+  - hydra: default
+  - _self_
+
+name: "EGCL_reg_my_property"
+tags: ["regression"]
+seed: 42
+
+logger:
+  project_wandb: "MolCraftDiffusion"
+
+tasks:
+  task_learn: ["my_property"]   # <-- property column name(s) in your dataset
+  num_sublayers: 5
+  dropout: 0.1
+  prediction_mlp_type: padded
+  target_normalization: True
+  mlp_batch_norm: batchnorm
+
+data:
+  data_type: "pyg"               # CRITICAL: must be "pyg" for regression
+  batch_size: 48
+  root: data/
+  filename: data/my_dataset/metadata.csv   # <-- path to your CSV
+  xyz_dir: data/my_dataset/xyz/            # <-- path to your XYZ directory
+  dataset_name: my_dataset
+  max_atom: 50
+
+trainer:
+  output_path: "training_outputs/${name}"
+  lr: 8e-4
+  validation_interval: 2
+  scheduler: reducelronplateau
+  scheduler_kwargs:
+    mode: "min"
+    factor: 0.5
+    patience: 10

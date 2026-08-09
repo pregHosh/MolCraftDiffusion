@@ -2,6 +2,15 @@
 
 > **Prerequisites:** [Tutorial 1 — Training a Diffusion Model](01_training_diffusion.md) · **You'll learn:** training a property-prediction model (standalone or as a guidance backbone) · **Next:** [Tutorial 3 — Training a Guidance Model](03_training_guidance.md)
 
+## At a Glance
+
+| | |
+| :--- | :--- |
+| **Objective** | Train a model to predict one or more molecular properties. |
+| **You need** | A labelled ASE database and the property-column names. |
+| **Main command** | `MolCraftDiff train my_regressor_run.yaml` |
+| **Success looks like** | Validation metrics and regressor checkpoints appear under `trainer.output_path`. |
+
 This tutorial explains how to train a model to predict specific molecular properties (e.g., energy, solubility). This regressor model can be used as a standalone predictor or, more powerfully, as a guidance model to steer molecule generation towards desired property values (as we will see in Tutorial 07).
 
 ## Configuration
@@ -29,14 +38,14 @@ Below are the key parameters and recommended settings to override when training 
 
 *(Note: Ensure you have prepared your database as described in [Tutorial 0: Data Preparation & Management](00_data_preparation.md).)*
 
-#### Data Settings
+### Data Settings
 
 | Parameter | Example Override | Notes / Recommendations |
 | :--- | :--- | :--- |
 | `data.batch_size` | `data: {batch_size: 128}` | A larger batch size can often be used for this task. |
 | `data.data_type` | `data: {data_type: "pyg"}` | **CRITICAL:** For regression and guidance tasks, the data type must be set to `pyg`. |
 
-#### Regression Task Hyperparameters
+### Regression Task Hyperparameters
 
 | Parameter | Example Override | Notes / Recommendations |
 | :--- | :--- | :--- |
@@ -46,7 +55,7 @@ Below are the key parameters and recommended settings to override when training 
 | `tasks.num_layers` | `tasks: {num_layers: 1}` | For property prediction, it is preferred to have just one block of EGCL. |
 | `tasks.num_sublayers`| `tasks: {num_sublayers: 4}` | Inside the single EGCL block, use multiple sublayers for a deeper model. |
 
-#### Trainer Settings for Regression
+### Trainer Settings for Regression
 
 | Parameter | Example Override | Notes / Recommendations |
 | :--- | :--- | :--- |
@@ -55,7 +64,7 @@ Below are the key parameters and recommended settings to override when training 
 | `trainer.scheduler` | `trainer: {scheduler: "reducelronplateau"}` | `reducelronplateau` is highly recommended. It automatically lowers the learning rate when validation loss stops improving. |
 | `trainer.ema_decay` | `trainer: {ema_decay: 0.0}` | **Important:** Exponential Moving Average (EMA) is typically disabled for regressor training by setting the decay to `0.0`. |
 
-#### Experiment Logging
+### Experiment Logging
 
 | Parameter | Example Override | Description |
 | :--- | :--- | :--- |
@@ -98,7 +107,7 @@ tasks:
 Launch the training as usual:
 
 ```bash
-MolCraftDiff train my_regressor_run
+MolCraftDiff train my_regressor_run.yaml
 ```
 
 ---
@@ -122,9 +131,19 @@ Backbone-specific hyperparameters replace the EGCL ones (`hidden_size`, `num_sub
 
 `task_learn`, `criterion`, `metric`, `mlp_*`, and `target_normalization` behave identically across all three backbones.
 
-Complete worked examples (predicting `gap` on a FORMED ASE db) are in `configs/train_regression_esen_formed.yaml` and `configs/train_regression_equiformer_formed.yaml`.
+Start from the complete [`docs/cfg_examples/train_regressor.yaml`](../cfg_examples/train_regressor.yaml) template, then replace its task default with `regression_esen` or `regression_equiformer` and apply the matching overrides above.
 
 *(Note: EquiformerV2 currently only supports `regression` and `ssl3d_equiformer` task types — no diffusion path exists for it yet, unlike eSEN and EGCL.)*
+
+## Verify the Result
+
+Confirm that the validation metric improves and that the checkpoint metadata records the same `task_learn` fields used by the dataset. Before screening new molecules, evaluate the checkpoint on a held-out labelled split with `eval-predict`.
+
+## Troubleshooting
+
+- If a target is missing, verify that its name matches an ASE row or CSV column exactly.
+- If batching fails, confirm that regression data uses `data_type: pyg`.
+- If predictions have the wrong width, make `tasks.task_learn` match the desired property list in both training and inference configs.
 
 ## Next Steps: Property Prediction and Guidance
 

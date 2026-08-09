@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Workflow: Visualize the Generated Chemical Space" href="visualization.html"><link rel="prev" title="Workflow Example: Conditioned Generation" href="conditioned_generation.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Workflow: Visualise the Generated Chemical Space" href="visualization.html"><link rel="prev" title="Workflow Example: Conditioned Generation" href="conditioned_generation.html">
         <link rel="canonical" href="https://preghosh.github.io/MolCraftDiffusion/workflows/end_to_end.html">
         <link rel="prefetch" href="../_static/logo.png" as="image">
 
@@ -11,8 +11,8 @@
         <title>Workflow Example: End-to-End Design Loop - MolCraftDiffusion</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e7d56144" />
@@ -223,7 +223,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tutorials/09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/09_analyze.html">Tutorial 9: Analyse Module - 3D Molecular Structure Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/10_generation_sweeps.html">Tutorial 10: Generation Parameter Sweeps</a></li>
 </ul>
 </li>
@@ -236,9 +236,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/local_chemical_space.html">Application: Local Chemical Space Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/library_design.html">Application: Library Design with Structure-Directed Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Workflows</span></p>
 <ul class="current">
@@ -246,15 +243,10 @@
 <li class="toctree-l2"><a class="reference internal" href="generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Workflow Example: End-to-End Design Loop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualization.html">Workflow: Visualise the Generated Chemical Space</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
 <ul>
@@ -450,19 +442,19 @@
         <article role="main" id="furo-main-content">
           <section id="workflow-example-end-to-end-design-loop">
 <h1>Workflow Example: End-to-End Design Loop<a class="headerlink" href="#workflow-example-end-to-end-design-loop" title="Link to this heading">¶</a></h1>
-<p>This workflow combines generation with downstream analysis and prioritization. It is the most complete pattern in the framework and is the closest to how candidates are handled in a real design campaign.</p>
+<p>This workflow combines generation with downstream analysis and prioritisation. It is the most complete pattern in the framework and is the closest to how candidates are handled in a real design campaign.</p>
 <section id="conceptual-flow">
 <h2>Conceptual Flow<a class="headerlink" href="#conceptual-flow" title="Link to this heading">¶</a></h2>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[Generate molecules]
         |
         v
-[Analyze outputs]
+[Analyse outputs]
         |
         v
 [Filter valid molecules]
         |
         v
-[Optimize structures]
+[Optimise structures]
         |
         v
 [Evaluate with xTB or predictors]
@@ -478,7 +470,7 @@
 <ul class="simple">
 <li><p>molecules that are merely generated,</p></li>
 <li><p>molecules that are chemically reasonable,</p></li>
-<li><p>molecules that remain promising after optimization and evaluation.</p></li>
+<li><p>molecules that remain promising after optimisation and evaluation.</p></li>
 </ul>
 <p>That distinction is what turns a raw sample set into a candidate-selection pipeline.</p>
 </section>
@@ -497,11 +489,11 @@
 <td class="text-left"><p>What can the model propose?</p></td>
 <td class="text-left"><p>Raw molecule pool</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p>Analyze</p></td>
+<tr class="row-odd"><td class="text-left"><p>Analyse</p></td>
 <td class="text-left"><p>Are the structures valid and diverse?</p></td>
 <td class="text-left"><p>Cleaned subset</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p>Optimize</p></td>
+<tr class="row-even"><td class="text-left"><p>Optimise</p></td>
 <td class="text-left"><p>Do the structures remain sensible after relaxation?</p></td>
 <td class="text-left"><p>More reliable geometries</p></td>
 </tr>
@@ -546,7 +538,7 @@
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Workflow: Visualize the Generated Chemical Space</div>
+                <div class="title">Workflow: Visualise the Generated Chemical Space</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -625,7 +617,7 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=6efca38a"></script>
+</div><script src="../_static/documentation_options.js?v=030dc6f6"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

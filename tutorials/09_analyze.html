@@ -8,11 +8,11 @@
         <link rel="prefetch" href="../_static/logo.png" as="image">
 
     <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
-        <title>Tutorial 9: Analyze Module - 3D Molecular Structure Analysis - MolCraftDiffusion</title>
+        <title>Tutorial 9: Analyse Module - 3D Molecular Structure Analysis - MolCraftDiffusion</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e7d56144" />
@@ -223,7 +223,7 @@
 <li class="toctree-l2"><a class="reference internal" href="06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Tutorial 9: Analyse Module - 3D Molecular Structure Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="10_generation_sweeps.html">Tutorial 10: Generation Parameter Sweeps</a></li>
 </ul>
 </li>
@@ -236,9 +236,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/local_chemical_space.html">Application: Local Chemical Space Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/library_design.html">Application: Library Design with Structure-Directed Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Workflows</span></p>
 <ul>
@@ -247,14 +244,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualise the Generated Chemical Space</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
 <ul>
@@ -448,16 +440,42 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="tutorial-9-analyze-module-3d-molecular-structure-analysis">
-<h1>Tutorial 9: Analyze Module - 3D Molecular Structure Analysis<a class="headerlink" href="#tutorial-9-analyze-module-3d-molecular-structure-analysis" title="Link to this heading">¶</a></h1>
+          <section id="tutorial-9-analyse-module-3d-molecular-structure-analysis">
+<h1>Tutorial 9: Analyse Module - 3D Molecular Structure Analysis<a class="headerlink" href="#tutorial-9-analyse-module-3d-molecular-structure-analysis" title="Link to this heading">¶</a></h1>
 <blockquote>
-<div><p><strong>Prerequisites:</strong> <a class="reference internal" href="05_generation_overview.html"><span class="std std-doc">Tutorial 5 — Generation Overview</span></a> · <strong>You’ll learn:</strong> optimizing, validating, comparing, and featurizing generated structures · <strong>Next:</strong> <a class="reference internal" href="10_generation_sweeps.html"><span class="std std-doc">Tutorial 10 — Generation Sweeps</span></a></p>
+<div><p><strong>Prerequisites:</strong> <a class="reference internal" href="05_generation_overview.html"><span class="std std-doc">Tutorial 5 — Generation Overview</span></a> · <strong>You’ll learn:</strong> optimising, validating, comparing, and featurising generated structures · <strong>Next:</strong> <a class="reference internal" href="10_generation_sweeps.html"><span class="std std-doc">Tutorial 10 — Generation Sweeps</span></a></p>
 </div></blockquote>
-<p>This tutorial covers the <strong>analyze</strong> module, which provides tools for post-generation analysis and validation of 3D molecular structures.</p>
+<section id="at-a-glance">
+<h2>At a Glance<a class="headerlink" href="#at-a-glance" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p></p></th>
+<th class="head text-left"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><strong>Objective</strong></p></td>
+<td class="text-left"><p>Validate and characterise generated 3D molecular structures.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>You need</strong></p></td>
+<td class="text-left"><p>Generated XYZ files or an ASE database, plus optional analysis dependencies for the selected command.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><strong>Main command</strong></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">analyze</span> <span class="pre">&lt;subcommand&gt;</span> <span class="pre">...</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>Success looks like</strong></p></td>
+<td class="text-left"><p>The requested structures, metrics, tables, or feature arrays are written without silently skipping the input set.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>This tutorial covers the <strong>analyse</strong> command group, which provides tools for post-generation analysis and validation of 3D molecular structures. The CLI spelling remains <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">analyze</span></code>.</p>
+</section>
 <hr class="docutils" />
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
-<p>The analyze module includes six subcommands:</p>
+<p>The analysis command group includes six subcommands:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -467,7 +485,7 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">optimize</span></code></p></td>
-<td><p>XTB geometry optimization</p></td>
+<td><p>XTB geometry optimisation</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">metrics</span></code></p></td>
 <td><p>Validity/connectivity metrics</p></td>
@@ -493,9 +511,9 @@
 </div>
 </section>
 <hr class="docutils" />
-<section id="part-1-xtb-geometry-optimization">
-<h2>Part 1: XTB Geometry Optimization<a class="headerlink" href="#part-1-xtb-geometry-optimization" title="Link to this heading">¶</a></h2>
-<p>Optimize generated structures using xTB (GFN1, GFN2, GFN-FF) or MMFF94.</p>
+<section id="part-1-xtb-geometry-optimisation">
+<h2>Part 1: XTB Geometry Optimisation<a class="headerlink" href="#part-1-xtb-geometry-optimisation" title="Link to this heading">¶</a></h2>
+<p>Optimise generated structures using xTB (GFN1, GFN2, GFN-FF) or MMFF94.</p>
 <section id="usage">
 <h3>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>optimize<span class="w"> </span>gen_xyz/<span class="w"> </span>--level<span class="w"> </span>gfn2<span class="w"> </span>--charge<span class="w"> </span><span class="m">0</span>
@@ -519,7 +537,7 @@
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">-l,</span> <span class="pre">--level</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">gfn1</span></code></p></td>
-<td><p>Optimization level: gfn1, gfn2, gfn-ff, mmff94</p></td>
+<td><p>Optimisation level: gfn1, gfn2, gfn-ff, mmff94</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">-c,</span> <span class="pre">--charge</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
@@ -539,7 +557,7 @@
 </section>
 <section id="output">
 <h3>Output<a class="headerlink" href="#output" title="Link to this heading">¶</a></h3>
-<p>Optimized XYZ files saved to <code class="docutils literal notranslate"><span class="pre">output_dir/</span></code>, each with an <code class="docutils literal notranslate"><span class="pre">_opt</span></code> suffix (e.g. <code class="docutils literal notranslate"><span class="pre">mol_0000.xyz</span></code> → <code class="docutils literal notranslate"><span class="pre">mol_0000_opt.xyz</span></code>). Part 3’s <code class="docutils literal notranslate"><span class="pre">compare</span></code> expects exactly these <code class="docutils literal notranslate"><span class="pre">*_opt.xyz</span></code> files.</p>
+<p>Optimised XYZ files are saved to <code class="docutils literal notranslate"><span class="pre">output_dir/</span></code>, each with an <code class="docutils literal notranslate"><span class="pre">_opt</span></code> suffix (e.g. <code class="docutils literal notranslate"><span class="pre">mol_0000.xyz</span></code> → <code class="docutils literal notranslate"><span class="pre">mol_0000_opt.xyz</span></code>). Part 3’s <code class="docutils literal notranslate"><span class="pre">compare</span></code> expects exactly these <code class="docutils literal notranslate"><span class="pre">*_opt.xyz</span></code> files.</p>
 </section>
 </section>
 <hr class="docutils" />
@@ -606,7 +624,7 @@
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--check-strain</span></code></p></td>
 <td><p>False</p></td>
-<td><p>Check strain via XTB optimization</p></td>
+<td><p>Check strain via XTB optimisation</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--mol-converter</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">xyz2mol</span></code></p></td>
@@ -642,12 +660,12 @@
 </section>
 </section>
 <hr class="docutils" />
-<section id="part-3-compare-to-optimized-geometries">
-<h2>Part 3: Compare to Optimized Geometries<a class="headerlink" href="#part-3-compare-to-optimized-geometries" title="Link to this heading">¶</a></h2>
-<p>Compare generated structures with their optimized counterparts.</p>
+<section id="part-3-compare-to-optimised-geometries">
+<h2>Part 3: Compare to Optimised Geometries<a class="headerlink" href="#part-3-compare-to-optimised-geometries" title="Link to this heading">¶</a></h2>
+<p>Compare generated structures with their optimised counterparts.</p>
 <section id="prerequisites">
 <h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">¶</a></h3>
-<p>Run optimization first to create <code class="docutils literal notranslate"><span class="pre">optimized_xyz/</span></code> subdirectory:</p>
+<p>Run optimisation first to create the <code class="docutils literal notranslate"><span class="pre">optimized_xyz/</span></code> subdirectory:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>optimize<span class="w"> </span>gen_xyz/
 </pre></div>
 </div>
@@ -661,7 +679,7 @@
 <section id="computed-metrics">
 <h3>Computed Metrics<a class="headerlink" href="#computed-metrics" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p><strong>RMSD</strong>: Root Mean Square Deviation between original and optimized</p></li>
+<li><p><strong>RMSD</strong>: Root Mean Square Deviation between original and optimised</p></li>
 <li><p><strong>Energy Difference</strong>: xTB energy change</p></li>
 <li><p><strong>Bond Geometry</strong>: Bond length and angle deviations</p></li>
 </ul>
@@ -743,7 +761,7 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>xtb-electroni
 <td><p>Dipole vector and magnitude</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">reactivity</span></code></p></td>
-<td><p>Ionization potential, electron affinity</p></td>
+<td><p>Ionisation potential, electron affinity</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">global</span></code></p></td>
 <td><p>Electrophilicity, nucleophilicity, fugalities</p></td>
@@ -863,8 +881,8 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>xtb-electroni
 </section>
 </section>
 <hr class="docutils" />
-<section id="part-6-featurize-fixed-size-molecular-vectors">
-<h2>Part 6: Featurize — Fixed-Size Molecular Vectors<a class="headerlink" href="#part-6-featurize-fixed-size-molecular-vectors" title="Link to this heading">¶</a></h2>
+<section id="part-6-featurise-fixed-size-molecular-vectors">
+<h2>Part 6: Featurise — Fixed-Size Molecular Vectors<a class="headerlink" href="#part-6-featurise-fixed-size-molecular-vectors" title="Link to this heading">¶</a></h2>
 <p>Convert a directory of XYZ files into a fixed-size feature matrix for downstream
 machine learning (clustering, regression, dimensionality reduction, etc.).</p>
 <p>Three backends are available:</p>
@@ -1143,13 +1161,13 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. Generate molecules</span>
 MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>gen_config.yaml
 
-<span class="c1"># 2. Optimize geometries</span>
+<span class="c1"># 2. Optimise geometries</span>
 MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>optimize<span class="w"> </span>gen_xyz/<span class="w"> </span>-l<span class="w"> </span>gfn2<span class="w"> </span>-o<span class="w"> </span>gen_xyz/optimized_xyz
 
 <span class="c1"># 3. Compute validity metrics</span>
 MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>metrics<span class="w"> </span>gen_xyz/optimized_xyz<span class="w"> </span>-o<span class="w"> </span>metrics.csv
 
-<span class="c1"># 4. Compare to optimized structures</span>
+<span class="c1"># 4. Compare to optimised structures</span>
 MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>compare<span class="w"> </span>gen_xyz/
 
 <span class="c1"># 5. Convert to SMILES for downstream analysis</span>
@@ -1158,7 +1176,7 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>xyz2mol<span 
 <span class="c1"># 6. Compute electronic properties</span>
 MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>xtb-electronic<span class="w"> </span>gen_xyz/optimized_xyz<span class="w"> </span>-p<span class="w"> </span>all<span class="w"> </span>-f<span class="w"> </span>ase<span class="w"> </span>-o<span class="w"> </span>electronic.db
 
-<span class="c1"># 7. Featurize for downstream ML (SOAP)</span>
+<span class="c1"># 7. Featurise for downstream ML (SOAP)</span>
 MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<span class="w"> </span>gen_xyz/optimized_xyz<span class="w"> </span>-o<span class="w"> </span>gen_xyz/soap_features
 
 <span class="c1"># 7b. Or use UMA embeddings (requires fairchem checkout + checkpoint)</span>
@@ -1174,7 +1192,7 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 <hr class="docutils" />
 <section id="id9">
 <h2>Python API<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h2>
-<p>All analyze functions are also available programmatically:</p>
+<p>The analysis functions are also available programmatically:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">MolecularDiffusion.runmodes.analyze</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">optimize_molecule</span><span class="p">,</span>
     <span class="n">get_xtb_optimized_xyz</span><span class="p">,</span>
@@ -1203,6 +1221,18 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 <span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="verify-the-result">
+<h2>Verify the Result<a class="headerlink" href="#verify-the-result" title="Link to this heading">¶</a></h2>
+<p>For every analysis command, compare the reported processed count with the number of eligible input structures. Inspect missing values and per-file failures before using aggregate metrics or feature arrays downstream.</p>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">analyze</span> <span class="pre">&lt;subcommand&gt;</span> <span class="pre">--help</span></code> to confirm optional dependencies and accepted formats.</p></li>
+<li><p>Conversion failures often indicate unsupported elements, invalid coordinates, or disconnected structures.</p></li>
+<li><p>xTB-backed commands require the xTB executable to be available in the active environment.</p></li>
+</ul>
 </section>
 </section>
 
@@ -1278,9 +1308,10 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a><ul>
+<li><a class="reference internal" href="#">Tutorial 9: Analyse Module - 3D Molecular Structure Analysis</a><ul>
+<li><a class="reference internal" href="#at-a-glance">At a Glance</a></li>
 <li><a class="reference internal" href="#overview">Overview</a></li>
-<li><a class="reference internal" href="#part-1-xtb-geometry-optimization">Part 1: XTB Geometry Optimization</a><ul>
+<li><a class="reference internal" href="#part-1-xtb-geometry-optimisation">Part 1: XTB Geometry Optimisation</a><ul>
 <li><a class="reference internal" href="#usage">Usage</a></li>
 <li><a class="reference internal" href="#options">Options</a></li>
 <li><a class="reference internal" href="#output">Output</a></li>
@@ -1292,7 +1323,7 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 <li><a class="reference internal" href="#id2">Options</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#part-3-compare-to-optimized-geometries">Part 3: Compare to Optimized Geometries</a><ul>
+<li><a class="reference internal" href="#part-3-compare-to-optimised-geometries">Part 3: Compare to Optimised Geometries</a><ul>
 <li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
 <li><a class="reference internal" href="#id3">Usage</a></li>
 <li><a class="reference internal" href="#computed-metrics">Computed Metrics</a></li>
@@ -1311,7 +1342,7 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 <li><a class="reference internal" href="#id7">Options</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#part-6-featurize-fixed-size-molecular-vectors">Part 6: Featurize — Fixed-Size Molecular Vectors</a><ul>
+<li><a class="reference internal" href="#part-6-featurise-fixed-size-molecular-vectors">Part 6: Featurise — Fixed-Size Molecular Vectors</a><ul>
 <li><a class="reference internal" href="#id8">Usage</a></li>
 <li><a class="reference internal" href="#soap-options">SOAP Options</a></li>
 <li><a class="reference internal" href="#uma-options">UMA Options</a></li>
@@ -1323,6 +1354,8 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 </li>
 <li><a class="reference internal" href="#example-workflow">Example Workflow</a></li>
 <li><a class="reference internal" href="#id9">Python API</a></li>
+<li><a class="reference internal" href="#verify-the-result">Verify the Result</a></li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
 </ul>
 </li>
 </ul>
@@ -1334,7 +1367,7 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=6efca38a"></script>
+</div><script src="../_static/documentation_options.js?v=030dc6f6"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

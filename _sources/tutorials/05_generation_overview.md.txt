@@ -1,10 +1,19 @@
 # Tutorial 5: Molecule Generation Overview
 
-> **Prerequisites:** [Tutorial 1 — Training a Diffusion Model](01_training_diffusion.md) · **You'll learn:** unconditional sampling and the three generation modes · **Next:** [Tutorial 6 — Structure-Guided Generation](06_structure_guided.md)
+> **Prerequisites:** [Tutorial 1 — Training a Diffusion Model](01_training_diffusion.md) · **You'll learn:** unconditional sampling and the shared generation configuration · **Next:** [Tutorial 6 — Structure-Guided Generation](06_structure_guided.md)
 
-This tutorial provides an overview of the different ways you can generate molecules using a trained model. The generation process is controlled via the `MolCraftDiff generate` command, which relies on a configuration file to specify the desired behavior.
+## At a Glance
 
-There are three primary modes for generating molecules:
+| | |
+| :--- | :--- |
+| **Objective** | Generate complete 3D molecules from a compatible checkpoint. |
+| **You need** | A checkpoint, matching task configuration, and matching atom vocabulary. |
+| **Main command** | `MolCraftDiff generate my_gen.yaml` |
+| **Success looks like** | The output directory contains the requested number of XYZ files, subject to any reported batch failures. |
+
+This tutorial provides an overview of the different ways you can generate molecules using a trained model. The generation process is controlled via the `MolCraftDiff generate` command, which relies on a configuration file to specify the desired behaviour.
+
+This tutorial introduces three modes available through the shared/default generation path:
 
 1.  **Unconditional Generation**: Generating novel molecules without any specific constraints or guidance. This is the simplest form of generation and is the focus of this tutorial.
 2.  **Structure-Guided Generation**: Generating molecules from a reference structure — filling in a masked region (inpainting), building outward from a scaffold (outpainting), or softly steering a whole molecule towards a reference without freezing any atoms (SILVR). For a detailed guide on this, please see **[Tutorial 6: Structure-Guided Generation](06_structure_guided.md)**.
@@ -65,5 +74,19 @@ While the example above is minimal, you can control the generation process with 
 Use the `MolCraftDiff generate` command with your config file:
 
 ```bash
-MolCraftDiff generate my_gen
+MolCraftDiff generate my_gen.yaml
 ```
+
+## Verify the Result
+
+Confirm that `interference.output_path` contains XYZ files and that the command reports at least one successful batch. Then run a quick structural check:
+
+```bash
+MolCraftDiff analyze metrics generated_mol/ --metrics core
+```
+
+## Troubleshooting
+
+- A task-type mismatch means the generation config and checkpoint were built for different tasks.
+- Invalid atom types usually indicate that `atom_vocab` does not match the checkpoint.
+- If no molecules are produced, inspect the first reported sampling exception rather than treating an empty output directory as a successful run.

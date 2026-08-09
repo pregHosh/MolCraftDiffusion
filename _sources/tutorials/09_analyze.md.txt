@@ -1,18 +1,27 @@
-# Tutorial 9: Analyze Module - 3D Molecular Structure Analysis
+# Tutorial 9: Analyse Module - 3D Molecular Structure Analysis
 
-> **Prerequisites:** [Tutorial 5 — Generation Overview](05_generation_overview.md) · **You'll learn:** optimizing, validating, comparing, and featurizing generated structures · **Next:** [Tutorial 10 — Generation Sweeps](10_generation_sweeps.md)
+> **Prerequisites:** [Tutorial 5 — Generation Overview](05_generation_overview.md) · **You'll learn:** optimising, validating, comparing, and featurising generated structures · **Next:** [Tutorial 10 — Generation Sweeps](10_generation_sweeps.md)
 
-This tutorial covers the **analyze** module, which provides tools for post-generation analysis and validation of 3D molecular structures.
+## At a Glance
+
+| | |
+| :--- | :--- |
+| **Objective** | Validate and characterise generated 3D molecular structures. |
+| **You need** | Generated XYZ files or an ASE database, plus optional analysis dependencies for the selected command. |
+| **Main command** | `MolCraftDiff analyze <subcommand> ...` |
+| **Success looks like** | The requested structures, metrics, tables, or feature arrays are written without silently skipping the input set. |
+
+This tutorial covers the **analyse** command group, which provides tools for post-generation analysis and validation of 3D molecular structures. The CLI spelling remains `MolCraftDiff analyze`.
 
 ---
 
 ## Overview
 
-The analyze module includes six subcommands:
+The analysis command group includes six subcommands:
 
 | Command | Description |
 |---------|-------------|
-| `optimize` | XTB geometry optimization |
+| `optimize` | XTB geometry optimisation |
 | `metrics` | Validity/connectivity metrics |
 | `compare` | RMSD and energy comparison |
 | `xyz2mol` | XYZ to SMILES + fingerprints |
@@ -26,9 +35,9 @@ MolCraftDiff analyze --help
 
 ---
 
-## Part 1: XTB Geometry Optimization
+## Part 1: XTB Geometry Optimisation
 
-Optimize generated structures using xTB (GFN1, GFN2, GFN-FF) or MMFF94.
+Optimise generated structures using xTB (GFN1, GFN2, GFN-FF) or MMFF94.
 
 ### Usage
 
@@ -41,14 +50,14 @@ MolCraftDiff analyze optimize gen_xyz/ --level gfn2 --charge 0
 | Option | Default | Description |
 |--------|---------|-------------|
 | `-o, --output-path` | `input_dir/optimized_xyz` | Output directory |
-| `-l, --level` | `gfn1` | Optimization level: gfn1, gfn2, gfn-ff, mmff94 |
+| `-l, --level` | `gfn1` | Optimisation level: gfn1, gfn2, gfn-ff, mmff94 |
 | `-c, --charge` | `0` | Molecular charge |
 | `-t, --timeout` | `240` | Timeout per molecule (seconds) |
 | `-s, --scale-factor` | `1.3` | Covalent radii scale factor |
 
 ### Output
 
-Optimized XYZ files saved to `output_dir/`, each with an `_opt` suffix (e.g. `mol_0000.xyz` → `mol_0000_opt.xyz`). Part 3's `compare` expects exactly these `*_opt.xyz` files.
+Optimised XYZ files are saved to `output_dir/`, each with an `_opt` suffix (e.g. `mol_0000.xyz` → `mol_0000_opt.xyz`). Part 3's `compare` expects exactly these `*_opt.xyz` files.
 
 ---
 
@@ -79,7 +88,7 @@ MolCraftDiff analyze metrics gen_xyz/ --metrics all
 | `-o, --output` | None | Output CSV file |
 | `-m, --metrics` | `all` | Metric type to compute |
 | `--recheck-topo` | False | Recheck topology using RDKit |
-| `--check-strain` | False | Check strain via XTB optimization |
+| `--check-strain` | False | Check strain via XTB optimisation |
 | `--mol-converter` | `xyz2mol` | XYZ to mol converter |
 | `-s, --split` | `1` | Deterministic splits for mean±std summary logging |
 | `-p, --portion` | `1.0` | Fraction of XYZ files to process |
@@ -90,13 +99,13 @@ MolCraftDiff analyze metrics gen_xyz/ --metrics all
 
 ---
 
-## Part 3: Compare to Optimized Geometries
+## Part 3: Compare to Optimised Geometries
 
-Compare generated structures with their optimized counterparts.
+Compare generated structures with their optimised counterparts.
 
 ### Prerequisites
 
-Run optimization first to create `optimized_xyz/` subdirectory:
+Run optimisation first to create the `optimized_xyz/` subdirectory:
 ```bash
 MolCraftDiff analyze optimize gen_xyz/
 ```
@@ -109,7 +118,7 @@ MolCraftDiff analyze compare gen_xyz/ --level gfn2
 
 ### Computed Metrics
 
-- **RMSD**: Root Mean Square Deviation between original and optimized
+- **RMSD**: Root Mean Square Deviation between original and optimised
 - **Energy Difference**: xTB energy change
 - **Bond Geometry**: Bond length and angle deviations
 
@@ -164,7 +173,7 @@ MolCraftDiff analyze xtb-electronic gen_xyz/ -p all -f ase -o results.db
 |-------|------------|
 | `energy` | HOMO, LUMO, HOMO-LUMO gap |
 | `dipole` | Dipole vector and magnitude |
-| `reactivity` | Ionization potential, electron affinity |
+| `reactivity` | Ionisation potential, electron affinity |
 | `global` | Electrophilicity, nucleophilicity, fugalities |
 | `solvation` | Solvation energy, H-bond correction (requires `--solvent`) |
 
@@ -202,7 +211,7 @@ MolCraftDiff analyze xtb-electronic gen_xyz/ -p all -f ase -o results.db
 
 ---
 
-## Part 6: Featurize — Fixed-Size Molecular Vectors
+## Part 6: Featurise — Fixed-Size Molecular Vectors
 
 Convert a directory of XYZ files into a fixed-size feature matrix for downstream
 machine learning (clustering, regression, dimensionality reduction, etc.).
@@ -367,13 +376,13 @@ A typical post-generation analysis workflow:
 # 1. Generate molecules
 MolCraftDiff generate gen_config.yaml
 
-# 2. Optimize geometries
+# 2. Optimise geometries
 MolCraftDiff analyze optimize gen_xyz/ -l gfn2 -o gen_xyz/optimized_xyz
 
 # 3. Compute validity metrics
 MolCraftDiff analyze metrics gen_xyz/optimized_xyz -o metrics.csv
 
-# 4. Compare to optimized structures
+# 4. Compare to optimised structures
 MolCraftDiff analyze compare gen_xyz/
 
 # 5. Convert to SMILES for downstream analysis
@@ -382,7 +391,7 @@ MolCraftDiff analyze xyz2mol gen_xyz/optimized_xyz
 # 6. Compute electronic properties
 MolCraftDiff analyze xtb-electronic gen_xyz/optimized_xyz -p all -f ase -o electronic.db
 
-# 7. Featurize for downstream ML (SOAP)
+# 7. Featurise for downstream ML (SOAP)
 MolCraftDiff analyze featurize gen_xyz/optimized_xyz -o gen_xyz/soap_features
 
 # 7b. Or use UMA embeddings (requires fairchem checkout + checkpoint)
@@ -398,7 +407,7 @@ MolCraftDiff analyze featurize gen_xyz/optimized_xyz --backend ssl3d \
 
 ## Python API
 
-All analyze functions are also available programmatically:
+The analysis functions are also available programmatically:
 
 ```python
 from MolecularDiffusion.runmodes.analyze import (
@@ -428,3 +437,13 @@ df = batch_xtb_electronic(
     properties=["energy", "reactivity"],
 )
 ```
+
+## Verify the Result
+
+For every analysis command, compare the reported processed count with the number of eligible input structures. Inspect missing values and per-file failures before using aggregate metrics or feature arrays downstream.
+
+## Troubleshooting
+
+- Use `MolCraftDiff analyze <subcommand> --help` to confirm optional dependencies and accepted formats.
+- Conversion failures often indicate unsupported elements, invalid coordinates, or disconnected structures.
+- xTB-backed commands require the xTB executable to be available in the active environment.

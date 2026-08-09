@@ -2,6 +2,15 @@
 
 > **Prerequisites:** [Tutorial 5 — Generation Overview](05_generation_overview.md) · **You'll learn:** inpainting, outpainting and SILVR with 3D geometric constraints, and how to tune every parameter · **Next:** [Tutorial 7 — Property-Directed Generation](07_property_directed.md)
 
+## At a Glance
+
+| | |
+| :--- | :--- |
+| **Objective** | Modify, extend, or softly follow a reference 3D structure. |
+| **You need** | A compatible checkpoint, an XYZ reference, and verified zero-based atom indices where required. |
+| **Main command** | `MolCraftDiff generate my_inpaint.yaml` (or the corresponding outpaint/SILVR config) |
+| **Success looks like** | Generated XYZ files preserve or follow the reference according to the selected mode. |
+
 This tutorial explains how to guide molecule generation using structural constraints, such as filling in a missing piece (inpainting), growing a molecule from a fragment (outpainting), or softly steering a whole molecule towards a reference shape (SILVR).
 
 :::{warning}
@@ -110,7 +119,7 @@ interference:
 ### Running Inpainting
 
 ```bash
-MolCraftDiff generate my_inpaint
+MolCraftDiff generate my_inpaint.yaml
 ```
 
 ---
@@ -191,7 +200,7 @@ interference:
 ### Running Outpainting
 
 ```bash
-MolCraftDiff generate my_outpaint
+MolCraftDiff generate my_outpaint.yaml
 ```
 
 ---
@@ -275,7 +284,7 @@ interference:
 ### Running SILVR
 
 ```bash
-MolCraftDiff generate my_silvr
+MolCraftDiff generate my_silvr.yaml
 ```
 
 :::{warning}
@@ -329,7 +338,7 @@ The bonding sub-constraints (enforce + ensure_intact) are intentionally disabled
 
 Tolerance on bond distances. The overlap threshold for each atom pair is `(cov_radius_A + cov_radius_B) × scale_factor`.
 
-**Raise to `1.2`** if generated atoms are clashing into the scaffold in the final structure. **Lower toward `1.0`** if bonds to the scaffold are consistently too long.
+**Raise to `1.2`** if generated atoms are clashing into the scaffold in the final structure. **Lower towards `1.0`** if bonds to the scaffold are consistently too long.
 
 ---
 
@@ -355,7 +364,7 @@ t_start = 0.5   →  50% of steps, faster but coarser structures
 
 **Use `0.8–0.9`** for most experiments. Only lower it for rapid screening where speed matters more than quality.
 
-#### `seed_dist`, `min_dist`, `spread`, `jitter_scale` — initialization
+#### `seed_dist`, `min_dist`, `spread`, `jitter_scale` — initialisation
 
 These parameters control the clean starting geometry and the separate noise
 applied before denoising. `spread` and `jitter_scale` are independent knobs.
@@ -381,7 +390,7 @@ explicitly; changing `spread` must not silently change the forward noise.
 
 #### `n_bq_atom` — boundary atoms for seeding only
 
-Adds phantom atoms at the end of the scaffold that are used only to compute seed positions, not passed to the model as conditioning. Useful when the scaffold's connector region is geometrically ambiguous and you want to steer the seed placement toward a specific spatial direction without altering the conditioning.
+Adds phantom atoms at the end of the scaffold that are used only to compute seed positions, not passed to the model as conditioning. Useful when the scaffold's connector region is geometrically ambiguous and you want to steer the seed placement towards a specific spatial direction without altering the conditioning.
 
 **Leave at `0`** unless you have a specific spatial steering need.
 
@@ -395,13 +404,13 @@ s = 1.0  ──── generation starts (full noise)
 s = constraint_strength  ──── overlap-push activates
              │  generated atoms pushed away from scaffold overlaps
 s = constraint_strength / 2  ──── bonding sub-constraints activate
-             │  atoms pulled toward connectors; disconnected clusters merged
+             │  atoms pulled towards connectors; disconnected clusters merged
 s = 0.0  ──── generation ends (clean structure)
 ```
 
-**Increase toward `0.9`** if generated atoms drift away from the connector or the final structure shows the fragment disconnected from the scaffold.
+**Increase towards `0.9`** if generated atoms drift away from the connector or the final structure shows the fragment disconnected from the scaffold.
 
-**Decrease toward `0.5`** if the fragment is too rigid, diversity is low, or you are generating a large fragment that needs space to explore.
+**Decrease towards `0.5`** if the fragment is too rigid, diversity is low, or you are generating a large fragment that needs space to explore.
 
 **Default `0.7`** works well for typical fragment sizes (5–15 atoms). For very small fragments (1–3 atoms), try `0.8–0.9`. For large fragments (>20 atoms), try `0.5–0.6`.
 
@@ -441,8 +450,8 @@ the output will drift far from the reference. Use the checkpoint's full step
 count for production runs and reserve short runs for smoke-testing.
 
 :::{note}
-**This implementation's reference is normalized.** The published sampler mixes a
-raw one-hot reference into a latent normalized by `norm_values` (typically
+**This implementation's reference is normalised.** The published sampler mixes a
+raw one-hot reference into a latent normalised by `norm_values` (typically
 `[1, 4, 10]`), leaving its feature channels ~4× hot. Here the reference goes
 through the platform's normal loader, so it is scale-consistent — which means
 **feature guidance is ~4× weaker than the paper's at the same `silvr_rate`**.
@@ -483,9 +492,13 @@ atoms. Below the reference count it is clamped up with a warning.
 
 ---
 
-### 5.4 Quick Diagnostics
+## Verify the Result
 
-#### Inpainting
+Inspect both structural validity and reference agreement. Inpainting and outpainting should preserve the fixed scaffold atom-for-atom; SILVR should produce a new molecule that follows the reference without copying it. Always inspect several samples rather than relying on a single structure.
+
+## Troubleshooting
+
+### Inpainting
 
 | Symptom | Most likely cause | Fix |
 | :--- | :--- | :--- |
@@ -494,7 +507,7 @@ atoms. Below the reference count it is clamped up with a warning.
 | Generated atoms crash into scaffold | `scale_factor` too low | Raise to `1.2` |
 | Generated atoms hover far from scaffold | `scale_factor` too high | Lower to `1.0–1.05` |
 
-#### Outpainting
+### Outpainting
 
 | Symptom | Most likely cause | Fix |
 | :--- | :--- | :--- |
@@ -508,12 +521,12 @@ atoms. Below the reference count it is clamped up with a warning.
 | Generation is slow / low throughput | `t_start` too high | Lower to `0.7–0.8` |
 | Run aborts: "nothing to grow" / size ≤ scaffold | `mol_size` maximum is ≤ the scaffold, or `[0,0]` on a scaffold larger than the model ever generates | Set `mol_size:[lo,hi]` with `lo` > scaffold atom count |
 
-#### SILVR
+### SILVR
 
 | Symptom | Most likely cause | Fix |
 | :--- | :--- | :--- |
 | Output barely resembles the reference | `silvr_rate` too low, or too few diffusion steps | Raise `silvr_rate` to `0.05–0.1`; run the checkpoint's full step count |
-| Atom types ignore the reference but shape is right | Normalized-reference deviation (see §5.3) | Raise `silvr_rate`, or keep `condition_component: xh` if you had set `x` |
+| Atom types ignore the reference but shape is right | Normalised-reference deviation (see §5.3) | Raise `silvr_rate`, or keep `condition_component: xh` if you had set `x` |
 | Output is a near-copy of the reference, no novelty | `silvr_rate` too high | Lower towards `0.01` |
 | Fragments stay separate, no single molecule | `mol_size` too small — no dummy atoms to bridge with | Increase `mol_size` well above the reference atom count |
 | Samples come out at the origin, not in the binding site | `shift_centre: false` | Set `shift_centre: true` |

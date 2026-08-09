@@ -11,8 +11,8 @@
         <title>Tutorial 2: Training a Regressor Model - MolCraftDiffusion</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e7d56144" />
@@ -223,7 +223,7 @@
 <li class="toctree-l2"><a class="reference internal" href="06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09_analyze.html">Tutorial 9: Analyse Module - 3D Molecular Structure Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="10_generation_sweeps.html">Tutorial 10: Generation Parameter Sweeps</a></li>
 </ul>
 </li>
@@ -236,9 +236,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/local_chemical_space.html">Application: Local Chemical Space Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/library_design.html">Application: Library Design with Structure-Directed Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Workflows</span></p>
 <ul>
@@ -247,14 +244,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualise the Generated Chemical Space</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
 <ul>
@@ -453,7 +445,33 @@
 <blockquote>
 <div><p><strong>Prerequisites:</strong> <a class="reference internal" href="01_training_diffusion.html"><span class="std std-doc">Tutorial 1 — Training a Diffusion Model</span></a> · <strong>You’ll learn:</strong> training a property-prediction model (standalone or as a guidance backbone) · <strong>Next:</strong> <a class="reference internal" href="03_training_guidance.html"><span class="std std-doc">Tutorial 3 — Training a Guidance Model</span></a></p>
 </div></blockquote>
+<section id="at-a-glance">
+<h2>At a Glance<a class="headerlink" href="#at-a-glance" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p></p></th>
+<th class="head text-left"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><strong>Objective</strong></p></td>
+<td class="text-left"><p>Train a model to predict one or more molecular properties.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>You need</strong></p></td>
+<td class="text-left"><p>A labelled ASE database and the property-column names.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><strong>Main command</strong></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">train</span> <span class="pre">my_regressor_run.yaml</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>Success looks like</strong></p></td>
+<td class="text-left"><p>Validation metrics and regressor checkpoints appear under <code class="docutils literal notranslate"><span class="pre">trainer.output_path</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>This tutorial explains how to train a model to predict specific molecular properties (e.g., energy, solubility). This regressor model can be used as a standalone predictor or, more powerfully, as a guidance model to steer molecule generation towards desired property values (as we will see in Tutorial 07).</p>
+</section>
 <section id="configuration">
 <h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">¶</a></h2>
 <p>We use the exact same override-only configuration workflow introduced in <strong><a class="reference internal" href="01_training_diffusion.html"><span class="std std-doc">Tutorial 1: Training a Diffusion Model</span></a></strong>, but we load the <code class="docutils literal notranslate"><span class="pre">regression</span></code> templates via the <code class="docutils literal notranslate"><span class="pre">defaults</span></code> list.</p>
@@ -636,7 +654,7 @@
 </pre></div>
 </div>
 <p>Launch the training as usual:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>train<span class="w"> </span>my_regressor_run
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>train<span class="w"> </span>my_regressor_run.yaml
 </pre></div>
 </div>
 </section>
@@ -668,8 +686,20 @@
 </table>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">task_learn</span></code>, <code class="docutils literal notranslate"><span class="pre">criterion</span></code>, <code class="docutils literal notranslate"><span class="pre">metric</span></code>, <code class="docutils literal notranslate"><span class="pre">mlp_*</span></code>, and <code class="docutils literal notranslate"><span class="pre">target_normalization</span></code> behave identically across all three backbones.</p>
-<p>Complete worked examples (predicting <code class="docutils literal notranslate"><span class="pre">gap</span></code> on a FORMED ASE db) are in <code class="docutils literal notranslate"><span class="pre">configs/train_regression_esen_formed.yaml</span></code> and <code class="docutils literal notranslate"><span class="pre">configs/train_regression_equiformer_formed.yaml</span></code>.</p>
+<p>Start from the complete <a class="reference download internal" download="" href="../_downloads/4999938328cec67e3fea84f7db4ef38d/train_regressor.yaml"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">docs/cfg_examples/train_regressor.yaml</span></code></span></a> template, then replace its task default with <code class="docutils literal notranslate"><span class="pre">regression_esen</span></code> or <code class="docutils literal notranslate"><span class="pre">regression_equiformer</span></code> and apply the matching overrides above.</p>
 <p><em>(Note: EquiformerV2 currently only supports <code class="docutils literal notranslate"><span class="pre">regression</span></code> and <code class="docutils literal notranslate"><span class="pre">ssl3d_equiformer</span></code> task types — no diffusion path exists for it yet, unlike eSEN and EGCL.)</em></p>
+</section>
+<section id="verify-the-result">
+<h2>Verify the Result<a class="headerlink" href="#verify-the-result" title="Link to this heading">¶</a></h2>
+<p>Confirm that the validation metric improves and that the checkpoint metadata records the same <code class="docutils literal notranslate"><span class="pre">task_learn</span></code> fields used by the dataset. Before screening new molecules, evaluate the checkpoint on a held-out labelled split with <code class="docutils literal notranslate"><span class="pre">eval-predict</span></code>.</p>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>If a target is missing, verify that its name matches an ASE row or CSV column exactly.</p></li>
+<li><p>If batching fails, confirm that regression data uses <code class="docutils literal notranslate"><span class="pre">data_type:</span> <span class="pre">pyg</span></code>.</p></li>
+<li><p>If predictions have the wrong width, make <code class="docutils literal notranslate"><span class="pre">tasks.task_learn</span></code> match the desired property list in both training and inference configs.</p></li>
+</ul>
 </section>
 <section id="next-steps-property-prediction-and-guidance">
 <h2>Next Steps: Property Prediction and Guidance<a class="headerlink" href="#next-steps-property-prediction-and-guidance" title="Link to this heading">¶</a></h2>
@@ -755,6 +785,7 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Tutorial 2: Training a Regressor Model</a><ul>
+<li><a class="reference internal" href="#at-a-glance">At a Glance</a></li>
 <li><a class="reference internal" href="#configuration">Configuration</a></li>
 <li><a class="reference internal" href="#key-parameters-for-regression">Key Parameters for Regression</a><ul>
 <li><a class="reference internal" href="#data-settings">Data Settings</a></li>
@@ -765,6 +796,8 @@
 </li>
 <li><a class="reference internal" href="#putting-it-all-together">Putting It All Together</a></li>
 <li><a class="reference internal" href="#alternative-backbones-esen-and-equiformerv2">Alternative Backbones: eSEN and EquiformerV2</a></li>
+<li><a class="reference internal" href="#verify-the-result">Verify the Result</a></li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
 <li><a class="reference internal" href="#next-steps-property-prediction-and-guidance">Next Steps: Property Prediction and Guidance</a></li>
 </ul>
 </li>
@@ -777,7 +810,7 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=6efca38a"></script>
+</div><script src="../_static/documentation_options.js?v=030dc6f6"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

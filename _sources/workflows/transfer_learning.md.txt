@@ -1,12 +1,12 @@
 # Workflow Example: Transfer Learning and Generate
 
-This workflow adapts a **pre-trained** model to a more target-relevant dataset before generation. The main goal is to shift the model from broad chemical knowledge toward a narrower and more useful design space — **without paying the cost of training a diffusion model from scratch.**
+This workflow adapts a **pre-trained** model to a more target-relevant dataset before generation. The main goal is to shift the model from broad chemical knowledge towards a narrower and more useful design space — **without paying the cost of training a diffusion model from scratch.**
 
 ## Prefer Fine-Tuning Over Training From Scratch
 
 Training a 3D molecular diffusion model from scratch is expensive: it needs a large dataset, many GPU-hours, and careful tuning before it even produces valid geometries. In almost all cases you should **not** start there.
 
-Instead, start from one of the pre-trained models we ship and fine-tune it on your target chemistry. Fine-tuning reuses the broad structural knowledge the base model already learned (bonding, valence, 3D geometry) and only nudges it toward your domain, so it converges in a fraction of the data and compute. This is exactly how the singlet-fission and IFLP models in the paper were built — they are the GEOM foundation model fine-tuned on task-specific data, not trained fresh.
+Instead, start from one of the pre-trained models we ship and fine-tune it on your target chemistry. Fine-tuning reuses the broad structural knowledge the base model already learned (bonding, valence, 3D geometry) and only nudges it towards your domain, so it converges in a fraction of the data and compute. This is exactly how the singlet-fission and IFLP models in the paper were built — they are the GEOM foundation model fine-tuned on task-specific data, not trained fresh.
 
 > Worakul, Azzouzi, Wodrich, Corminboeuf, *MolCraftDiffusion: 3D Molecular Generation Framework for Data-driven Molecular Applications*, JACS 2026 ([10.1021/jacs.5c19960](https://pubs.acs.org/doi/10.1021/jacs.5c19960)).
 
@@ -65,7 +65,7 @@ Use this workflow when:
 [Generate molecules in adapted chemical space]
             |
             v
-        [Analyze and filter]
+        [Analyse and filter]
 ```
 
 ## What Changes After Transfer Learning

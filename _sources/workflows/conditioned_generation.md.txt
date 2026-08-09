@@ -6,7 +6,7 @@ This workflow is for cases where you do not just want plausible molecules, but m
 
 | Mode | Question it answers | Typical method |
 | :--- | :--- | :--- |
-| Property-conditioned | "Can I bias generation toward a target value or regime?" | CFG, GG, or hybrid guidance |
+| Property-conditioned | "Can I bias generation towards a target value or regime?" | CFG, GG, or hybrid guidance |
 | Structure-conditioned | "Can I preserve one part of the molecule while redesigning or extending another?" | Inpainting or outpainting |
 
 ## Conceptual Flow
@@ -25,7 +25,7 @@ This workflow is for cases where you do not just want plausible molecules, but m
 
 ## What Changes with Conditioning
 
-This workflow adds a design constraint to generation. Rather than only sampling plausible molecules, you guide the model toward a target property profile or a target structural pattern.
+This workflow adds a design constraint to generation. Rather than only sampling plausible molecules, you guide the model towards a target property profile or a target structural pattern.
 
 ## Typical Outcome
 

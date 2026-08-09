@@ -8,21 +8,21 @@ New here? Start with [Installation](../installation.md), then work through **Dat
 
 ## 1 · Prepare
 
-:::{grid} 1 2 2 2
+::::{grid} 1 2 2 2
 :gutter: 3
 
 :::{grid-item-card} 0 · Data Preparation
 :link: 00_data_preparation
 :link-type: doc
 
-Compile raw `.xyz` files into ASE databases, featurize, augment, and wire them into the `DataModule`.
+Compile raw `.xyz` files into ASE databases, featurise, augment, and wire them into the `DataModule`.
 :::
 
-:::
+::::
 
 ## 2 · Train
 
-:::{grid} 1 2 2 3
+::::{grid} 1 2 2 3
 :gutter: 3
 
 :::{grid-item-card} 1 · Diffusion Model
@@ -43,21 +43,21 @@ Train a property predictor — a standalone model and the basis for gradient gui
 :link: 03_training_guidance
 :link-type: doc
 
-Train a time-aware regressor on noisy data to steer generation toward target properties.
+Train a time-aware regressor on noisy data to steer generation towards target properties.
 :::
 
 :::{grid-item-card} 4 · Fine-Tuning
 :link: 04_finetuning
 :link-type: doc
 
-Adapt a pretrained model to a new chemical space, add conditions, or specialize for outpainting.
+Adapt a pretrained model to a new chemical space, add conditions, or specialise for outpainting.
 :::
 
-:::
+::::
 
 ## 3 · Generate
 
-:::{grid} 1 2 2 3
+::::{grid} 1 2 2 3
 :gutter: 3
 
 :::{grid-item-card} 5 · Generation Overview
@@ -81,25 +81,25 @@ Inpainting, outpainting and SILVR with 3D geometric constraints, plus a full par
 Steer generation with Classifier-Free Guidance, Gradient Guidance, or a hybrid of both.
 :::
 
-:::
+::::
 
 ## 4 · Evaluate & Scale
 
-:::{grid} 1 2 2 3
+::::{grid} 1 2 2 3
 :gutter: 3
 
 :::{grid-item-card} 8 · Predict & Evaluate
 :link: 08_eval_predict
 :link-type: doc
 
-Predict properties for new molecules and benchmark a model against a labeled set.
+Predict properties for new molecules and benchmark a model against a labelled set.
 :::
 
-:::{grid-item-card} 9 · Analyze
+:::{grid-item-card} 9 · Analyse
 :link: 09_analyze
 :link-type: doc
 
-Post-generation analysis: xTB optimization, validity metrics, RMSD, electronic properties, featurization.
+Post-generation analysis: xTB optimisation, validity metrics, RMSD, electronic properties, featurisation.
 :::
 
 :::{grid-item-card} 10 · Generation Sweeps
@@ -109,7 +109,7 @@ Post-generation analysis: xTB optimization, validity metrics, RMSD, electronic p
 Grid and Bayesian sweeps over controlled-generation parameters with automatic metric collection.
 :::
 
-:::
+::::
 
 ```{toctree}
 :hidden:

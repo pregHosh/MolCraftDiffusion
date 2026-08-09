@@ -1,10 +1,19 @@
 # Tutorial 0: Data Preparation & Management
 
-> **Prerequisites:** [Installation](../installation.md) · **You'll learn:** compiling, featurizing, and augmenting datasets, then loading them into the training engine · **Next:** [Tutorial 1 — Training a Diffusion Model](01_training_diffusion.md)
+> **Prerequisites:** [Installation](../installation.md) · **You'll learn:** compiling, featurising, and augmenting datasets, then loading them into the training engine · **Next:** [Tutorial 1 — Training a Diffusion Model](01_training_diffusion.md)
+
+## At a Glance
+
+| | |
+| :--- | :--- |
+| **Objective** | Convert raw molecular structures into a reusable training dataset. |
+| **You need** | XYZ files, NumPy coordinate arrays, or an existing ASE database. |
+| **Main command** | `MolCraftDiff data prepare compile ...` |
+| **Success looks like** | A readable ASE database and a `DataModule` configuration that loads it without discarding samples. |
 
 This tutorial covers the complete data pipeline in `MolecularDiffusion`—from raw 3D structures to training-ready PyTorch datasets. It is divided into two main parts:
 
-1. **The CLI Data Operations (`MolCraftDiff data`)**: How to compile, augment, and featurize your datasets into unified ASE databases.
+1. **The CLI Data Operations (`MolCraftDiff data`)**: How to compile, augment, and featurise your datasets into unified ASE databases.
 2. **The `DataModule` Configuration**: How to load those databases into the training engine with on-the-fly preprocessing.
 
 ---
@@ -31,7 +40,7 @@ Add custom metadata tags, such as project or subset labels, to an ASE database:
 MolCraftDiff data prepare annotate -d dataset.db -t group -v training
 ```
 
-Generate RDKit mol blocks, SMILES, SDF output, and SA/SC properties for downstream featurization or filtering:
+Generate RDKit mol blocks, SMILES, SDF output, and SA/SC properties for downstream featurisation or filtering:
 
 ```bash
 # From an ASE database
@@ -41,7 +50,7 @@ MolCraftDiff data prepare generate-blocks -s dataset.db --method hybrid
 MolCraftDiff data prepare generate-blocks -s xyz_dir/ --sdf molecules.sdf --method xyz2mol
 ```
 
-### 2. Featurization
+### 2. Featurisation
 
 Convert 3D structures into fixed-length vectors for downstream property guidance or evaluation tasks:
 
@@ -65,7 +74,7 @@ MolCraftDiff data augment charge -i dataset.db -o augmented.db --max-h 1 --db
 # Coordinate distortion: apply random Gaussian noise to atomic coordinates
 MolCraftDiff data augment distortion -i xyz_dir/ -o noisy_xyz/ --sigma 0.1
 
-# Size balancing: augment an ASE database toward a target size distribution
+# Size balancing: augment an ASE database towards a target size distribution
 MolCraftDiff data augment size -i dataset.db -o size_balanced.db --s-start 60 --s-end 120
 ```
 
@@ -121,7 +130,7 @@ Two molecular tensor representations are supported, set via the `data_type` conf
 | `pointcloud` | `PointCloudDataset` | Dense tensor format with padding, used by standard EDM models. |
 | `pyg` | `GraphDataset` | PyTorch Geometric graph format with edge indices, used by architectures like EGCL. |
 
-### 3. Node Featurization
+### 3. Node Featurisation
 
 Node features come from three independent config keys — don't confuse them:
 
@@ -158,3 +167,19 @@ data:
 :::{note}
 **On caching:** The first time the engine runs, it parses your DB and caches the PyTorch tensors as `data/processed_data_my_augmented_dataset.pt`. To force a re-parse, simply delete this `.pt` file.
 :::
+
+## Verify the Result
+
+Inspect the compiled database before training:
+
+```bash
+MolCraftDiff data ase-ops inspect -d dataset.db --limit 5
+```
+
+Confirm that representative rows contain the expected atom counts, structures, and target properties. The first training load should then create the processed cache named by `data.dataset_name`.
+
+## Troubleshooting
+
+- If every molecule is discarded, compare `data.atom_vocab`, `data.max_atom`, and `data.with_hydrogen` with the source structures.
+- If properties are absent, confirm that they were stored in the ASE rows and included in `data.target_fields`.
+- If changed source data is ignored, use a new `data.dataset_name` or remove only that dataset's processed cache.

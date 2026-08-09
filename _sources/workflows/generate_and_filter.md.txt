@@ -19,7 +19,7 @@ Use this workflow when:
    [Generate molecules]
             |
             v
-   [Analyze and filter]
+   [Analyse and filter]
             |
             v
       [Candidate set]
@@ -39,7 +39,7 @@ You usually obtain:
 
 ## Where to Go Next
 
-Once the baseline shows you what the pre-trained model already covers, the cheap next step toward a
+Once the baseline shows you what the pre-trained model already covers, the cheap next step towards a
 more target-relevant pool is usually to **fine-tune** it rather than sample harder — see
 [Transfer Learning and Generate](transfer_learning.md).
 

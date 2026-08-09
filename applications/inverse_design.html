@@ -11,8 +11,8 @@
         <title>Application: Inverse Design - MolCraftDiffusion</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e7d56144" />
@@ -223,7 +223,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tutorials/09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/09_analyze.html">Tutorial 9: Analyse Module - 3D Molecular Structure Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/10_generation_sweeps.html">Tutorial 10: Generation Parameter Sweeps</a></li>
 </ul>
 </li>
@@ -233,12 +233,9 @@
 <li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Applications</a><input aria-label="Toggle navigation of Applications" checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="local_chemical_space.html">Application: Local Chemical Space Exploration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="library_design.html">Application: Library Design with Structure-Directed Generation</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Application: Inverse Design</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Application: Inverse Design</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="local_chemical_space.html">Application: Local Chemical Space Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="library_design.html">Application: Library Design with Structure-Directed Generation</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Application: Inverse Design</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Workflows</span></p>
 <ul>
@@ -247,14 +244,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualise the Generated Chemical Space</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
 <ul>
@@ -474,17 +466,17 @@
 <hr class="docutils" />
 <section id="target-property-inverse-design">
 <h2>1. Target Property Inverse Design<a class="headerlink" href="#target-property-inverse-design" title="Link to this heading">¶</a></h2>
-<p>Use this route when you want to <strong>bias generation toward a numerical target</strong> such as an energy score, excitation-related objective, or another learned molecular property.</p>
+<p>Use this route when you want to <strong>bias generation towards a numerical target</strong> such as an energy score, excitation-related objective, or another learned molecular property.</p>
 <p><img alt="Property-directed inverse design workflow" src="../_images/prop_gen_wf.png" /></p>
-<p><em>Conceptual view: the diffusion model is combined with guidance models so generation is biased toward molecules with the desired target profile, followed by ranking and computational validation.</em></p>
+<p><em>Conceptual view: the diffusion model is combined with guidance models so generation is biased towards molecules with the desired target profile, followed by ranking and computational validation.</em></p>
 <section id="concept">
 <h3>Concept<a class="headerlink" href="#concept" title="Link to this heading">¶</a></h3>
-<p>The model is no longer asked to generate molecules that are only plausible. It is asked to generate molecules that are plausible <strong>and</strong> biased toward a desired property target.</p>
+<p>The model is no longer asked to generate molecules that are only plausible. It is asked to generate molecules that are plausible <strong>and</strong> biased towards a desired property target.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This is the right framing when your question is:</p>
 <ul class="simple">
-<li><p>Can I <strong>shift generation</strong> toward a target electronic or physicochemical regime?</p></li>
+<li><p>Can I <strong>shift generation</strong> towards a target electronic or physicochemical regime?</p></li>
 <li><p>Can I <strong>enrich the output</strong> in molecules with better scores?</p></li>
 <li><p>Can I <strong>search for hits</strong> without manually enumerating structures?</p></li>
 </ul>
@@ -537,7 +529,7 @@
 <p><em>Conceptual view: a core motif is preserved while structure-guided generation builds candidates that satisfy a target 3D arrangement.</em></p>
 <section id="id1">
 <h3>Concept<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
-<p>In this setting, the target is not just a scalar property. The target is a <strong>geometric arrangement</strong> that the generated molecule should realize in 3D space.</p>
+<p>In this setting, the target is not just a scalar property. The target is a <strong>geometric arrangement</strong> that the generated molecule should realise in 3D space.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This is the right framing when your question is:</p>
@@ -677,7 +669,7 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=6efca38a"></script>
+</div><script src="../_static/documentation_options.js?v=030dc6f6"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -18,7 +18,7 @@ Use these pages when you already understand the individual modules, but want a c
 ```{note}
 **Adapt a pre-trained model; don't train from scratch.** Training a 3D diffusion model from
 scratch is expensive and rarely necessary. Start from one of the shipped pre-trained bases
-(GEOM-drugs foundation, or QM9) and **fine-tune** it toward your target chemistry — this is the
+(GEOM-drugs foundation, or QM9) and **fine-tune** it towards your target chemistry — this is the
 default recommended path. The only case that forces training from scratch is chemistry that uses
 atom types outside the pre-trained vocabulary (`H, B, C, N, O, F, Al, Si, P, S, Cl, As, Se, Br, I,
 Hg, Bi`). Pre-trained checkpoints: <https://zenodo.org/records/19511401>. See
@@ -31,8 +31,8 @@ Hg, Bi`). Pre-trained checkpoints: <https://zenodo.org/records/19511401>. See
 | :--- | :--- | :--- | :--- |
 | Generate and filter | Broad exploration | Sample first, narrow later | [Tutorial 5](../tutorials/05_generation_overview.md), [Tutorial 9](../tutorials/09_analyze.md) |
 | Transfer learning and generate | Target-focused exploration | Adapt the model to a more relevant dataset before sampling | [Tutorial 4](../tutorials/04_finetuning.md), [Tutorial 5](../tutorials/05_generation_overview.md) |
-| Conditioned generation | Directed search | Bias generation toward a structure or property target | [Tutorial 6](../tutorials/06_structure_guided.md), [Tutorial 7](../tutorials/07_property_directed.md) |
-| End-to-end design loop | Candidate prioritization | Combine generation, filtering, optimization, prediction, and ranking | [Tutorial 8](../tutorials/08_eval_predict.md), [Tutorial 9](../tutorials/09_analyze.md) |
+| Conditioned generation | Directed search | Bias generation towards a structure or property target | [Tutorial 6](../tutorials/06_structure_guided.md), [Tutorial 7](../tutorials/07_property_directed.md) |
+| End-to-end design loop | Candidate prioritisation | Combine generation, filtering, optimisation, prediction, and ranking | [Tutorial 8](../tutorials/08_eval_predict.md), [Tutorial 9](../tutorials/09_analyze.md) |
 
 ## Pages
 

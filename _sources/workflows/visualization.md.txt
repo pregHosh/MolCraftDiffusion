@@ -1,11 +1,11 @@
-# Workflow: Visualize the Generated Chemical Space
+# Workflow: Visualise the Generated Chemical Space
 
-Featurize your molecules into fixed-size vectors and project them to 2D, so you can inspect a generated set as a *distribution* rather than one sample at a time.
+Featurise your molecules into fixed-size vectors and project them to 2D, so you can inspect a generated set as a *distribution* rather than one sample at a time.
 
 ## Quickstart
 
 ```bash
-# 1. Featurize both sets with identical settings
+# 1. Featurise both sets with identical settings
 MolCraftDiff analyze featurize generated_molecules/ --backend soap --output features_generated
 MolCraftDiff analyze featurize training_data/       --backend soap --output features_reference
 ```
@@ -23,18 +23,18 @@ Each run writes `<output>.npy` (the `(N, D)` feature matrix), `<output>.csv` (ro
 ```text
  [Generated 3D molecules]     [Reference / training set]
             |                             |
-            +---------- Featurize --------+      (same backend & settings)
+            +---------- Featurise --------+      (same backend & settings)
                           |
                   [Stack feature matrix]
                           |
                  [UMAP / t-SNE to 2D]
                           |
-        [Scatter — color by source, property, or cluster]
+        [Scatter — colour by source, property, or cluster]
 ```
 
 ---
 
-## Step 1: Featurize
+## Step 1: Featurise
 
 **Goal: one fixed-size vector per molecule, using the same backend for both sets.**
 
@@ -53,7 +53,7 @@ MolCraftDiff analyze featurize training_data/       --backend soap --output feat
 
 Each command writes three files next to the stem:
 - `<stem>.npy` — feature array of shape `(N, D)`, one row per molecule (load with `np.load`).
-- `<stem>.csv` — `index, file, frame` for each row (use it to trace a point back to a structure, or to join your own per-molecule property values for coloring).
+- `<stem>.csv` — `index, file, frame` for each row (use it to trace a point back to a structure, or to join your own per-molecule property values for colouring).
 - `<stem>_meta.json` — backend, structure count, feature dim, and parameters.
 
 ---
@@ -85,7 +85,7 @@ plt.tight_layout()
 plt.savefig("chemical_space.png", dpi=150)
 ```
 
-To **color by a property** instead of by source, read the property per row (e.g. join `features_generated.csv`'s `file` column with your own values) and pass it as `c=` to `scatter`.
+To **colour by a property** instead of by source, read the property per row (e.g. join `features_generated.csv`'s `file` column with your own values) and pass it as `c=` to `scatter`.
 
 Prefer t-SNE? Swap `UMAP` for `sklearn.manifold.TSNE`. It's slower and has no `transform()`, so fit it on the combined matrix exactly as above.
 
@@ -105,5 +105,5 @@ Prefer t-SNE? Swap `UMAP` for `sklearn.manifold.TSNE`. It's slower and has no `t
 ## See Also
 
 - [Tutorial 9: Analysis](../tutorials/09_analyze.md) — `featurize` subcommand reference
-- [Workflow: End-to-End](end_to_end.md) — where visualization fits in the full pipeline
+- [Workflow: End-to-End](end_to_end.md) — where visualisation fits in the full pipeline
 - [Applications](../applications/index.md) — research-level use cases

@@ -11,8 +11,8 @@
         <title>MolCraftDiffusion</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e7d56144" />
@@ -223,7 +223,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tutorials/06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials/09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/09_analyze.html">Tutorial 9: Analyse Module - 3D Molecular Structure Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/10_generation_sweeps.html">Tutorial 10: Generation Parameter Sweeps</a></li>
 </ul>
 </li>
@@ -236,9 +236,6 @@
 <li class="toctree-l2"><a class="reference internal" href="applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="applications/local_chemical_space.html">Application: Local Chemical Space Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="applications/library_design.html">Application: Library Design with Structure-Directed Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Workflows</span></p>
 <ul>
@@ -247,14 +244,9 @@
 <li class="toctree-l2"><a class="reference internal" href="workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/visualization.html">Workflow: Visualise the Generated Chemical Space</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
 <ul>
@@ -450,32 +442,32 @@
         <article role="main" id="furo-main-content">
           <section id="molcraftdiffusion">
 <h1>MolCraftDiffusion<a class="headerlink" href="#molcraftdiffusion" title="Link to this heading">¶</a></h1>
-<p><strong>A unified generative-AI framework for 3D molecular design.</strong></p>
-<p>MolCraftDiffusion is an open-source framework for <strong>3D molecular generation using diffusion models</strong>, designed for <strong>data-driven molecular design and computational chemistry</strong>. The framework enables researchers to train generative models that produce chemically meaningful 3D molecular structures while supporting property optimization, scaffold modification, and exploration of chemical space.</p>
-<p>By combining modular training pipelines, flexible guidance strategies, and integrated analysis tools, MolCraftDiffusion provides a complete workflow for developing and deploying <strong>molecular diffusion models</strong> in research applications such as drug discovery, catalyst discovery, materials design, and molecular property optimization.</p>
+<p><strong>One platform for diverse 3D molecular generation workflows.</strong></p>
+<p>MolCraftDiffusion is an open-source framework for building, training, applying, and comparing <strong>3D molecular generative models</strong> in computational chemistry. It supports de novo, property-directed, structure-guided, shape-conditioned, pocket-conditioned, fragment-based, and pharmacophore-driven molecular design.</p>
+<p>The platform unifies data preparation, training and fine-tuning, guided generation, checkpoint handling, and evaluation behind a shared CLI and configuration system. Different generative paradigms can therefore use the same surrounding infrastructure without requiring separate end-to-end codebases.</p>
 <p><img alt="Workflow overview" src="_images/overview.png" /></p>
 <p><a class="reference external" href="https://github.com/pregHosh/MolCraftDiffusion"><img alt="GitHub" src="https://img.shields.io/badge/GitHub-Repo-black?logo=github" /></a>
 <a class="reference external" href="https://pypi.org/project/molcraftdiffusion/"><img alt="PyPI" src="https://img.shields.io/pypi/v/molcraftdiffusion" /></a>
-<a class="reference external" href="https://chemrxiv.org/engage/chemrxiv/article-details/6909e50fef936fb4a23df237"><img alt="arXiv" src="https://img.shields.io/badge/PDF-arXiv-blue" /></a>
+<a class="reference external" href="https://chemrxiv.org/engage/chemrxiv/article-details/6909e50fef936fb4a23df237"><img alt="Preprint" src="https://img.shields.io/badge/Preprint-ChemRxiv-blue" /></a>
 <a class="reference external" href="https://zenodo.org/records/19511401"><img alt="DOI" src="https://zenodo.org/badge/DOI/10.5281/zenodo.19511401.svg" /></a>
 <a class="reference external" href="https://huggingface.co/pregH/MolecularDiffusion"><img alt="Weights" src="https://img.shields.io/badge/Weights-HuggingFace-yellow" /></a>
-<a class="reference external" href="https://huggingface.co/pregH/MolecularDiffusion"><img alt="Dataset" src="https://img.shields.io/badge/Dataset-HuggingFace-yellow" /></a>
-<a class="reference external" href="https://huggingface.co/spaces/pregH/MolCraftDiffusion-demo"><img alt="Demo" src="https://img.shields.io/badge/Demo-HuggingFace%20Spaces-orange" /></a></p>
+<a class="reference external" href="https://huggingface.co/pregH/MolecularDiffusion"><img alt="Dataset" src="https://img.shields.io/badge/Dataset-HuggingFace-yellow" /></a></p>
 <hr class="docutils" />
 <section id="key-features">
 <h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h2>
-<p>MolCraftDiffusion is built with <strong>modularity</strong> at its core, offering an all-in-one, systematic workflow entirely driven by a unified CLI and YAML configuration files.</p>
+<p>MolCraftDiffusion is built around a common task interface, allowing generators with different architectures and conditioning inputs to share the platform infrastructure.</p>
 <ul class="simple">
 <li><p><strong>Data Module</strong> — Preprocess, compile, and manage raw <code class="docutils literal notranslate"><span class="pre">.xyz</span></code> files into unified <code class="docutils literal notranslate"><span class="pre">.db</span></code> (ASE Database) pipelines, and annotate properties.</p></li>
-<li><p><strong>Training &amp; Fine-Tuning Module</strong> — Flexibly train (or fine-tune) diffusion models, property regressors, and time-aware guidance models.</p></li>
-<li><p><strong>Generation &amp; Guidance Module</strong> — Generate 3D molecules using a variety of guidance mechanisms:</p>
+<li><p><strong>Training &amp; Fine-Tuning Module</strong> — Train or adapt generative models, property regressors, and time-aware guidance models.</p></li>
+<li><p><strong>Broad Generator Coverage</strong> — Apply multiple 3D generation paradigms across de novo and conditioned molecular-design tasks.</p></li>
+<li><p><strong>Generation &amp; Guidance Module</strong> — Generate 3D molecules using a variety of mechanisms:</p>
 <ul>
 <li><p><em>Unconditional Generation</em>: Generate 3D molecules without any specific constraints or guidance.</p></li>
-<li><p><em>Property-Targeted Guidance</em>: Steer generation toward desired properties using Classifier-Free Guidance (CFG), Gradient Guidance (GG), or a hybrid approach.</p></li>
+<li><p><em>Property-Targeted Guidance</em>: Steer generation towards desired properties using Classifier-Free Guidance (CFG), Gradient Guidance (GG), or a hybrid approach.</p></li>
 <li><p><em>Structure-Guided Generation</em>: Perform inpainting (scaffold decoration), outpainting (fragment extension) and SILVR (soft reference steering / fragment merging) with precise 3D geometric constraints.</p></li>
 </ul>
 </li>
-<li><p><strong>Analysis &amp; Evaluation Module</strong> — Assess the quality of generated 3D molecules. Includes tools for structural validity metrics, xTB geometry optimization, RMSD comparisons, and quantum-chemical property calculation/prediction.</p></li>
+<li><p><strong>Analysis &amp; Evaluation Module</strong> — Assess generated molecules with structural validity metrics, xTB geometry optimisation, RMSD comparisons, and quantum-chemical property calculation or prediction.</p></li>
 </ul>
 </section>
 <hr class="docutils" />
@@ -519,20 +511,12 @@ MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_gen
 <p class="caption" role="heading"><span class="caption-text">Applications</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="applications/index.html">Applications</a></li>
-<li class="toctree-l1"><a class="reference internal" href="applications/local_chemical_space.html">Application: Local Chemical Space Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="applications/library_design.html">Application: Library Design with Structure-Directed Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Workflows</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="workflows/index.html">Workflows</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
@@ -663,7 +647,7 @@ MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_gen
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=6efca38a"></script>
+</div><script src="_static/documentation_options.js?v=030dc6f6"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>

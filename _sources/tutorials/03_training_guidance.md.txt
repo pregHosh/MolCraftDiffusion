@@ -2,6 +2,15 @@
 
 > **Prerequisites:** [Tutorial 2 — Training a Regressor](02_training_regressor.md) · **You'll learn:** training a time-aware regressor on noisy data for gradient guidance · **Next:** [Tutorial 4 — Fine-Tuning](04_finetuning.md)
 
+## At a Glance
+
+| | |
+| :--- | :--- |
+| **Objective** | Train a time-aware property model for gradient-guided generation. |
+| **You need** | A labelled dataset and the noise schedule used by the base generator. |
+| **Main command** | `MolCraftDiff train my_guidance_run.yaml` |
+| **Success looks like** | A guidance checkpoint whose diffusion schedule matches the base model. |
+
 Training a guidance model is very similar to training a standard regressor (Tutorial 02), with one key difference: **the model is trained on noisy data.**
 
 This process makes the model "time-aware," meaning it learns to predict properties of a molecule at various stages of the diffusion denoising process (from noisy to clean). This is the crucial feature that allows it to effectively guide a generative model.
@@ -24,7 +33,7 @@ defaults:
 
 Most settings are identical to the regressor setup. The main difference is the addition of "Noise Injection" parameters.
 
-#### Essential Paths
+### Essential Paths
 
 | Parameter | Example Override | Description |
 | :--- | :--- | :--- |
@@ -33,14 +42,14 @@ Most settings are identical to the regressor setup. The main difference is the a
 
 *(Note: Data caching and preparation work identically to the standard diffusion and regression pipelines. See [Tutorial 0](00_data_preparation.md) and [Tutorial 1](01_training_diffusion.md).)*
 
-#### Data Settings
+### Data Settings
 
 | Parameter | Example Override | Notes / Recommendations |
 | :--- | :--- | :--- |
 | `data.batch_size` | `data: {batch_size: 128}` | A larger batch size can often be used for this task. |
 | `data.data_type` | `data: {data_type: "pyg"}` | **CRITICAL:** For regression and guidance tasks, the data type must be set to `pyg`. |
 
-#### Guidance Task Hyperparameters
+### Guidance Task Hyperparameters
 
 | Parameter | Example Override | Notes / Recommendations |
 | :--- | :--- | :--- |
@@ -49,7 +58,7 @@ Most settings are identical to the regressor setup. The main difference is the a
 | `tasks.num_layers` | `tasks: {num_layers: 1}` | For property prediction, it is preferred to have just one block of EGCL. |
 | `tasks.num_sublayers`| `tasks: {num_sublayers: 4}` | Inside the single EGCL block, use multiple sublayers for a deeper model. |
 
-#### Noise Injection Settings (The Key Difference)
+### Noise Injection Settings (The Key Difference)
 
 These parameters control how noise is added to the molecules during training.
 
@@ -97,13 +106,23 @@ tasks:
 Launch the training as usual:
 
 ```bash
-MolCraftDiff train my_guidance_run
+MolCraftDiff train my_guidance_run.yaml
 ```
 
 ---
 
+## Verify the Result
+
+Evaluate the guidance checkpoint on a held-out split, then compare its saved `diffusion_steps` and noise schedule with the base generator before using it for sampling.
+
+## Troubleshooting
+
+- Unstable or meaningless guidance commonly indicates a mismatch in `diffusion_steps` or `nu_arr`.
+- If training behaves like an ordinary regressor, confirm that the `guidance` task—not `regression`—was selected.
+- If a target cannot be loaded, check `tasks.task_learn` against the dataset property names.
+
 ## Next Steps: Property-Directed Generation
 
-Once your time-aware guidance model is trained, you can use it with **Gradient Guidance (GG)** to steer the diffusion generation process toward molecules with specific properties.
+Once your time-aware guidance model is trained, you can use it with **Gradient Guidance (GG)** to steer the diffusion generation process towards molecules with specific properties.
 
 Learn how to configure your generative model to use this guidance model in **[Tutorial 7: Property-Directed Generation (CFG/GG)](07_property_directed.md)**.

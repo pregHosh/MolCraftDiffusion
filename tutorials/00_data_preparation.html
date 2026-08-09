@@ -11,8 +11,8 @@
         <title>Tutorial 0: Data Preparation &amp; Management - MolCraftDiffusion</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e7d56144" />
@@ -223,7 +223,7 @@
 <li class="toctree-l2"><a class="reference internal" href="06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09_analyze.html">Tutorial 9: Analyse Module - 3D Molecular Structure Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="10_generation_sweeps.html">Tutorial 10: Generation Parameter Sweeps</a></li>
 </ul>
 </li>
@@ -236,9 +236,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/local_chemical_space.html">Application: Local Chemical Space Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/library_design.html">Application: Library Design with Structure-Directed Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Workflows</span></p>
 <ul>
@@ -247,14 +244,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualise the Generated Chemical Space</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
 <ul>
@@ -451,13 +443,39 @@
           <section id="tutorial-0-data-preparation-management">
 <h1>Tutorial 0: Data Preparation &amp; Management<a class="headerlink" href="#tutorial-0-data-preparation-management" title="Link to this heading">¶</a></h1>
 <blockquote>
-<div><p><strong>Prerequisites:</strong> <a class="reference internal" href="../installation.html"><span class="std std-doc">Installation</span></a> · <strong>You’ll learn:</strong> compiling, featurizing, and augmenting datasets, then loading them into the training engine · <strong>Next:</strong> <a class="reference internal" href="01_training_diffusion.html"><span class="std std-doc">Tutorial 1 — Training a Diffusion Model</span></a></p>
+<div><p><strong>Prerequisites:</strong> <a class="reference internal" href="../installation.html"><span class="std std-doc">Installation</span></a> · <strong>You’ll learn:</strong> compiling, featurising, and augmenting datasets, then loading them into the training engine · <strong>Next:</strong> <a class="reference internal" href="01_training_diffusion.html"><span class="std std-doc">Tutorial 1 — Training a Diffusion Model</span></a></p>
 </div></blockquote>
+<section id="at-a-glance">
+<h2>At a Glance<a class="headerlink" href="#at-a-glance" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p></p></th>
+<th class="head text-left"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><strong>Objective</strong></p></td>
+<td class="text-left"><p>Convert raw molecular structures into a reusable training dataset.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>You need</strong></p></td>
+<td class="text-left"><p>XYZ files, NumPy coordinate arrays, or an existing ASE database.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><strong>Main command</strong></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">data</span> <span class="pre">prepare</span> <span class="pre">compile</span> <span class="pre">...</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>Success looks like</strong></p></td>
+<td class="text-left"><p>A readable ASE database and a <code class="docutils literal notranslate"><span class="pre">DataModule</span></code> configuration that loads it without discarding samples.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>This tutorial covers the complete data pipeline in <code class="docutils literal notranslate"><span class="pre">MolecularDiffusion</span></code>—from raw 3D structures to training-ready PyTorch datasets. It is divided into two main parts:</p>
 <ol class="arabic simple">
-<li><p><strong>The CLI Data Operations (<code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">data</span></code>)</strong>: How to compile, augment, and featurize your datasets into unified ASE databases.</p></li>
+<li><p><strong>The CLI Data Operations (<code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">data</span></code>)</strong>: How to compile, augment, and featurise your datasets into unified ASE databases.</p></li>
 <li><p><strong>The <code class="docutils literal notranslate"><span class="pre">DataModule</span></code> Configuration</strong>: How to load those databases into the training engine with on-the-fly preprocessing.</p></li>
 </ol>
+</section>
 <hr class="docutils" />
 <section id="part-1-data-preparation-via-cli">
 <h2>Part 1: Data Preparation via CLI<a class="headerlink" href="#part-1-data-preparation-via-cli" title="Link to this heading">¶</a></h2>
@@ -476,7 +494,7 @@ MolCraftDiff<span class="w"> </span>data<span class="w"> </span>prepare<span cla
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>data<span class="w"> </span>prepare<span class="w"> </span>annotate<span class="w"> </span>-d<span class="w"> </span>dataset.db<span class="w"> </span>-t<span class="w"> </span>group<span class="w"> </span>-v<span class="w"> </span>training
 </pre></div>
 </div>
-<p>Generate RDKit mol blocks, SMILES, SDF output, and SA/SC properties for downstream featurization or filtering:</p>
+<p>Generate RDKit mol blocks, SMILES, SDF output, and SA/SC properties for downstream featurisation or filtering:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># From an ASE database</span>
 MolCraftDiff<span class="w"> </span>data<span class="w"> </span>prepare<span class="w"> </span>generate-blocks<span class="w"> </span>-s<span class="w"> </span>dataset.db<span class="w"> </span>--method<span class="w"> </span>hybrid
 
@@ -485,8 +503,8 @@ MolCraftDiff<span class="w"> </span>data<span class="w"> </span>prepare<span cla
 </pre></div>
 </div>
 </section>
-<section id="featurization">
-<h3>2. Featurization<a class="headerlink" href="#featurization" title="Link to this heading">¶</a></h3>
+<section id="featurisation">
+<h3>2. Featurisation<a class="headerlink" href="#featurisation" title="Link to this heading">¶</a></h3>
 <p>Convert 3D structures into fixed-length vectors for downstream property guidance or evaluation tasks:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate Morgan fingerprints (requires RDKit SMILES generation)</span>
 MolCraftDiff<span class="w"> </span>data<span class="w"> </span>featurize<span class="w"> </span>-m<span class="w"> </span>morgan<span class="w"> </span>-i<span class="w"> </span>dataset.db<span class="w"> </span>-o<span class="w"> </span>features/<span class="w"> </span>--radius<span class="w"> </span><span class="m">2</span><span class="w"> </span>--nbits<span class="w"> </span><span class="m">2048</span>
@@ -505,7 +523,7 @@ MolCraftDiff<span class="w"> </span>data<span class="w"> </span>augment<span cla
 <span class="c1"># Coordinate distortion: apply random Gaussian noise to atomic coordinates</span>
 MolCraftDiff<span class="w"> </span>data<span class="w"> </span>augment<span class="w"> </span>distortion<span class="w"> </span>-i<span class="w"> </span>xyz_dir/<span class="w"> </span>-o<span class="w"> </span>noisy_xyz/<span class="w"> </span>--sigma<span class="w"> </span><span class="m">0</span>.1
 
-<span class="c1"># Size balancing: augment an ASE database toward a target size distribution</span>
+<span class="c1"># Size balancing: augment an ASE database towards a target size distribution</span>
 MolCraftDiff<span class="w"> </span>data<span class="w"> </span>augment<span class="w"> </span>size<span class="w"> </span>-i<span class="w"> </span>dataset.db<span class="w"> </span>-o<span class="w"> </span>size_balanced.db<span class="w"> </span>--s-start<span class="w"> </span><span class="m">60</span><span class="w"> </span>--s-end<span class="w"> </span><span class="m">120</span>
 </pre></div>
 </div>
@@ -574,8 +592,8 @@ MolCraftDiff<span class="w"> </span>data<span class="w"> </span>ase-ops<span cla
 </table>
 </div>
 </section>
-<section id="node-featurization">
-<h3>3. Node Featurization<a class="headerlink" href="#node-featurization" title="Link to this heading">¶</a></h3>
+<section id="node-featurisation">
+<h3>3. Node Featurisation<a class="headerlink" href="#node-featurisation" title="Link to this heading">¶</a></h3>
 <p>Node features come from three independent config keys — don’t confuse them:</p>
 <ul class="simple">
 <li><p><strong>Geometric features</strong> — set <code class="docutils literal notranslate"><span class="pre">node_feature_choice</span></code> to one of <code class="docutils literal notranslate"><span class="pre">atom_topological</span></code>, <code class="docutils literal notranslate"><span class="pre">atom_geom</span></code>, <code class="docutils literal notranslate"><span class="pre">atom_geom_v2</span></code>, <code class="docutils literal notranslate"><span class="pre">atom_geom_v2_trun</span></code>, <code class="docutils literal notranslate"><span class="pre">atom_geom_opt</span></code> (or the <code class="docutils literal notranslate"><span class="pre">geometric_fast</span></code> alias). Computed directly from 3D coordinates; works with all loader types.</p></li>
@@ -612,6 +630,22 @@ MolCraftDiff<span class="w"> </span>data<span class="w"> </span>ase-ops<span cla
 <p><strong>On caching:</strong> The first time the engine runs, it parses your DB and caches the PyTorch tensors as <code class="docutils literal notranslate"><span class="pre">data/processed_data_my_augmented_dataset.pt</span></code>. To force a re-parse, simply delete this <code class="docutils literal notranslate"><span class="pre">.pt</span></code> file.</p>
 </div>
 </section>
+</section>
+<section id="verify-the-result">
+<h2>Verify the Result<a class="headerlink" href="#verify-the-result" title="Link to this heading">¶</a></h2>
+<p>Inspect the compiled database before training:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>data<span class="w"> </span>ase-ops<span class="w"> </span>inspect<span class="w"> </span>-d<span class="w"> </span>dataset.db<span class="w"> </span>--limit<span class="w"> </span><span class="m">5</span>
+</pre></div>
+</div>
+<p>Confirm that representative rows contain the expected atom counts, structures, and target properties. The first training load should then create the processed cache named by <code class="docutils literal notranslate"><span class="pre">data.dataset_name</span></code>.</p>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>If every molecule is discarded, compare <code class="docutils literal notranslate"><span class="pre">data.atom_vocab</span></code>, <code class="docutils literal notranslate"><span class="pre">data.max_atom</span></code>, and <code class="docutils literal notranslate"><span class="pre">data.with_hydrogen</span></code> with the source structures.</p></li>
+<li><p>If properties are absent, confirm that they were stored in the ASE rows and included in <code class="docutils literal notranslate"><span class="pre">data.target_fields</span></code>.</p></li>
+<li><p>If changed source data is ignored, use a new <code class="docutils literal notranslate"><span class="pre">data.dataset_name</span></code> or remove only that dataset’s processed cache.</p></li>
+</ul>
 </section>
 </section>
 
@@ -688,9 +722,10 @@ MolCraftDiff<span class="w"> </span>data<span class="w"> </span>ase-ops<span cla
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Tutorial 0: Data Preparation &amp; Management</a><ul>
+<li><a class="reference internal" href="#at-a-glance">At a Glance</a></li>
 <li><a class="reference internal" href="#part-1-data-preparation-via-cli">Part 1: Data Preparation via CLI</a><ul>
 <li><a class="reference internal" href="#preparation">1. Preparation</a></li>
-<li><a class="reference internal" href="#featurization">2. Featurization</a></li>
+<li><a class="reference internal" href="#featurisation">2. Featurisation</a></li>
 <li><a class="reference internal" href="#data-augmentation">3. Data Augmentation</a></li>
 <li><a class="reference internal" href="#ase-database-operations">4. ASE Database Operations</a></li>
 </ul>
@@ -698,10 +733,12 @@ MolCraftDiff<span class="w"> </span>data<span class="w"> </span>ase-ops<span cla
 <li><a class="reference internal" href="#part-2-loading-data-for-training-datamodule">Part 2: Loading Data for Training (<code class="docutils literal notranslate"><span class="pre">DataModule</span></code>)</a><ul>
 <li><a class="reference internal" href="#supported-input-formats">1. Supported Input Formats</a></li>
 <li><a class="reference internal" href="#data-types-pointcloud-vs-pyg">2. Data Types (<code class="docutils literal notranslate"><span class="pre">pointcloud</span></code> vs <code class="docutils literal notranslate"><span class="pre">pyg</span></code>)</a></li>
-<li><a class="reference internal" href="#node-featurization">3. Node Featurization</a></li>
+<li><a class="reference internal" href="#node-featurisation">3. Node Featurisation</a></li>
 <li><a class="reference internal" href="#example-data-configuration">4. Example Data Configuration</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#verify-the-result">Verify the Result</a></li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
 </ul>
 </li>
 </ul>
@@ -713,7 +750,7 @@ MolCraftDiff<span class="w"> </span>data<span class="w"> </span>ase-ops<span cla
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=6efca38a"></script>
+</div><script src="../_static/documentation_options.js?v=030dc6f6"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

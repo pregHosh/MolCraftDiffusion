@@ -11,8 +11,8 @@
         <title>Workflow Example: Transfer Learning and Generate - MolCraftDiffusion</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e7d56144" />
@@ -223,7 +223,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tutorials/09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/09_analyze.html">Tutorial 9: Analyse Module - 3D Molecular Structure Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/10_generation_sweeps.html">Tutorial 10: Generation Parameter Sweeps</a></li>
 </ul>
 </li>
@@ -236,25 +236,17 @@
 <li class="toctree-l2"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/local_chemical_space.html">Application: Local Chemical Space Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/library_design.html">Application: Library Design with Structure-Directed Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Workflows</span></p>
 <ul class="current">
 <li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Workflows</a><input aria-label="Toggle navigation of Workflows" checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Workflow Example: Transfer Learning and Generate</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualization.html">Workflow: Visualise the Generated Chemical Space</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Workflow Example: Transfer Learning and Generate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
 <ul>
@@ -450,11 +442,11 @@
         <article role="main" id="furo-main-content">
           <section id="workflow-example-transfer-learning-and-generate">
 <h1>Workflow Example: Transfer Learning and Generate<a class="headerlink" href="#workflow-example-transfer-learning-and-generate" title="Link to this heading">¶</a></h1>
-<p>This workflow adapts a <strong>pre-trained</strong> model to a more target-relevant dataset before generation. The main goal is to shift the model from broad chemical knowledge toward a narrower and more useful design space — <strong>without paying the cost of training a diffusion model from scratch.</strong></p>
+<p>This workflow adapts a <strong>pre-trained</strong> model to a more target-relevant dataset before generation. The main goal is to shift the model from broad chemical knowledge towards a narrower and more useful design space — <strong>without paying the cost of training a diffusion model from scratch.</strong></p>
 <section id="prefer-fine-tuning-over-training-from-scratch">
 <h2>Prefer Fine-Tuning Over Training From Scratch<a class="headerlink" href="#prefer-fine-tuning-over-training-from-scratch" title="Link to this heading">¶</a></h2>
 <p>Training a 3D molecular diffusion model from scratch is expensive: it needs a large dataset, many GPU-hours, and careful tuning before it even produces valid geometries. In almost all cases you should <strong>not</strong> start there.</p>
-<p>Instead, start from one of the pre-trained models we ship and fine-tune it on your target chemistry. Fine-tuning reuses the broad structural knowledge the base model already learned (bonding, valence, 3D geometry) and only nudges it toward your domain, so it converges in a fraction of the data and compute. This is exactly how the singlet-fission and IFLP models in the paper were built — they are the GEOM foundation model fine-tuned on task-specific data, not trained fresh.</p>
+<p>Instead, start from one of the pre-trained models we ship and fine-tune it on your target chemistry. Fine-tuning reuses the broad structural knowledge the base model already learned (bonding, valence, 3D geometry) and only nudges it towards your domain, so it converges in a fraction of the data and compute. This is exactly how the singlet-fission and IFLP models in the paper were built — they are the GEOM foundation model fine-tuned on task-specific data, not trained fresh.</p>
 <blockquote>
 <div><p>Worakul, Azzouzi, Wodrich, Corminboeuf, <em>MolCraftDiffusion: 3D Molecular Generation Framework for Data-driven Molecular Applications</em>, JACS 2026 (<a class="reference external" href="https://pubs.acs.org/doi/10.1021/jacs.5c19960">10.1021/jacs.5c19960</a>).</p>
 </div></blockquote>
@@ -522,7 +514,7 @@
 [Generate molecules in adapted chemical space]
             |
             v
-        [Analyze and filter]
+        [Analyse and filter]
 </pre></div>
 </div>
 </section>
@@ -641,7 +633,7 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=6efca38a"></script>
+</div><script src="../_static/documentation_options.js?v=030dc6f6"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

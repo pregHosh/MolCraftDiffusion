@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Applications" href="../applications/index.html"><link rel="prev" title="Tutorial 9: Analyze Module - 3D Molecular Structure Analysis" href="09_analyze.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Applications" href="../applications/index.html"><link rel="prev" title="Tutorial 9: Analyse Module - 3D Molecular Structure Analysis" href="09_analyze.html">
         <link rel="canonical" href="https://preghosh.github.io/MolCraftDiffusion/tutorials/10_generation_sweeps.html">
         <link rel="prefetch" href="../_static/logo.png" as="image">
 
@@ -11,8 +11,8 @@
         <title>Tutorial 10: Generation Parameter Sweeps - MolCraftDiffusion</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e7d56144" />
@@ -223,7 +223,7 @@
 <li class="toctree-l2"><a class="reference internal" href="06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09_analyze.html">Tutorial 9: Analyse Module - 3D Molecular Structure Analysis</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Tutorial 10: Generation Parameter Sweeps</a></li>
 </ul>
 </li>
@@ -236,9 +236,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/local_chemical_space.html">Application: Local Chemical Space Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/library_design.html">Application: Library Design with Structure-Directed Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Workflows</span></p>
 <ul>
@@ -247,14 +244,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualise the Generated Chemical Space</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
 <ul>
@@ -453,6 +445,31 @@
 <blockquote>
 <div><p><strong>Prerequisites:</strong> <a class="reference internal" href="06_structure_guided.html"><span class="std std-doc">Tutorial 6 — Structure-Guided</span></a> / <a class="reference internal" href="07_property_directed.html"><span class="std std-doc">Tutorial 7 — Property-Directed</span></a> · <strong>You’ll learn:</strong> automating grid and Bayesian sweeps over controlled-generation parameters with automatic metric collection · <strong>Next:</strong> <a class="reference internal" href="../workflows/index.html"><span class="std std-doc">Workflows</span></a></p>
 </div></blockquote>
+<section id="at-a-glance">
+<h2>At a Glance<a class="headerlink" href="#at-a-glance" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p></p></th>
+<th class="head text-left"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><strong>Objective</strong></p></td>
+<td class="text-left"><p>Compare generation settings through reproducible grid or Bayesian sweeps.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>You need</strong></p></td>
+<td class="text-left"><p>A working generation config, a sweep YAML file, and an evaluation script.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><strong>Main command</strong></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">generate-sweep</span> <span class="pre">my_sweep.yaml</span> <span class="pre">--dry-run</span></code></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>Success looks like</strong></p></td>
+<td class="text-left"><p>Each completed trial has a run directory and one row in <code class="docutils literal notranslate"><span class="pre">summary.csv</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>This tutorial explains how to run generation sweeps with the packaged sweep module:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MolecularDiffusion.runmodes.generate.sweep
 </pre></div>
@@ -461,7 +478,8 @@
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>&lt;sweep_config.yaml&gt;
 </pre></div>
 </div>
-<p>Use sweeps when you want to optimize controlled generation settings for <strong>inpainting</strong>, <strong>outpainting</strong>, <strong>classifier-free guidance (CFG)</strong>, <strong>gradient guidance (GG)</strong>, or <strong>hybrid CFG/GG</strong> without manually launching each run.</p>
+<p>Use sweeps when you want to optimise controlled generation settings for <strong>inpainting</strong>, <strong>outpainting</strong>, <strong>classifier-free guidance (CFG)</strong>, <strong>gradient guidance (GG)</strong>, or <strong>hybrid CFG/GG</strong> without manually launching each run.</p>
+</section>
 <hr class="docutils" />
 <section id="what-a-sweep-does">
 <h2>1. What a Sweep Does<a class="headerlink" href="#what-a-sweep-does" title="Link to this heading">¶</a></h2>
@@ -483,11 +501,11 @@
 <section id="minimal-command">
 <h2>2. Minimal Command<a class="headerlink" href="#minimal-command" title="Link to this heading">¶</a></h2>
 <p>Start with a dry-run. This prints the exact generation and evaluation commands without writing files:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>configs/sweep_example.yaml<span class="w"> </span>--dry-run<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">1</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>my_sweep.yaml<span class="w"> </span>--dry-run<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">1</span>
 </pre></div>
 </div>
 <p>Then launch real runs:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>configs/sweep_example.yaml<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">5</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>my_sweep.yaml<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">5</span>
 </pre></div>
 </div>
 <p>Useful options:</p>
@@ -524,8 +542,8 @@
 <hr class="docutils" />
 <section id="sweep-config-anatomy">
 <h2>3. Sweep Config Anatomy<a class="headerlink" href="#sweep-config-anatomy" title="Link to this heading">¶</a></h2>
-<p>A complete commented template is available at:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>configs/sweep_example.yaml
+<p>A minimal sweep starts with the following file:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>my_sweep.yaml
 </pre></div>
 </div>
 <p>The main fields are:</p>
@@ -648,7 +666,7 @@
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3.5</span><span class="p p-Indicator">]</span>
 </pre></div>
 </div>
-<p>Use this to tune how strongly the conditional model is pushed toward the desired property regime.</p>
+<p>Use this to tune how strongly the conditional model is pushed towards the desired property regime.</p>
 </section>
 <section id="gradient-guidance">
 <h3>Gradient Guidance<a class="headerlink" href="#gradient-guidance" title="Link to this heading">¶</a></h3>
@@ -663,7 +681,7 @@
 <span class="w">  </span><span class="nt">interference.condition_configs.n_backwards</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">]</span>
 </pre></div>
 </div>
-<p>Use this when guidance is too weak, unstable, or over-optimizes at the cost of molecular quality.</p>
+<p>Use this when guidance is too weak, unstable, or over-optimises at the cost of molecular quality.</p>
 </section>
 <section id="hybrid-cfg-gg">
 <h3>Hybrid CFG/GG<a class="headerlink" href="#hybrid-cfg-gg" title="Link to this heading">¶</a></h3>
@@ -761,8 +779,8 @@
 </div>
 </section>
 <hr class="docutils" />
-<section id="bayesian-optimization-objective">
-<h2>7. Bayesian Optimization Objective<a class="headerlink" href="#bayesian-optimization-objective" title="Link to this heading">¶</a></h2>
+<section id="bayesian-optimisation-objective">
+<h2>7. Bayesian Optimisation Objective<a class="headerlink" href="#bayesian-optimisation-objective" title="Link to this heading">¶</a></h2>
 <p>Grid search evaluates combinations in deterministic order. Bayesian search chooses from the same candidate grid using previous rows in <code class="docutils literal notranslate"><span class="pre">summary.csv</span></code>.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">search</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">method</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bayesian</span>
@@ -790,7 +808,7 @@
 <span class="w">        </span><span class="nt">agg</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mean</span>
 </pre></div>
 </div>
-<p>For minimization:</p>
+<p>For minimisation:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">objective</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">metric</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mean_rmsd</span>
 <span class="w">  </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">min</span>
@@ -803,18 +821,18 @@
 </div>
 </section>
 <hr class="docutils" />
-<section id="resume-behavior">
-<h2>8. Resume Behavior<a class="headerlink" href="#resume-behavior" title="Link to this heading">¶</a></h2>
+<section id="resume-behaviour">
+<h2>8. Resume Behaviour<a class="headerlink" href="#resume-behaviour" title="Link to this heading">¶</a></h2>
 <p>Each completed or failed run is recorded in:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&lt;sweep_dir&gt;/summary.csv
 </pre></div>
 </div>
 <p>By default, any recorded configuration is skipped on the next launch:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>configs/sweep_example.yaml<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">10</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>my_sweep.yaml<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">10</span>
 </pre></div>
 </div>
 <p>To retry failed or interrupted rows:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>configs/sweep_example.yaml<span class="w"> </span>--retry-failed<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">10</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>my_sweep.yaml<span class="w"> </span>--retry-failed<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">10</span>
 </pre></div>
 </div>
 <p>The configuration identity is based on the swept parameter values, not the output directory name.</p>
@@ -830,13 +848,13 @@
 <li><p>Register those CSV files and metrics under <code class="docutils literal notranslate"><span class="pre">collect</span></code>.</p></li>
 <li><p>Start with:</p></li>
 </ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>configs/sweep_example.yaml<span class="w"> </span>--dry-run<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">1</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>my_sweep.yaml<span class="w"> </span>--dry-run<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">1</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="7">
 <li><p>Launch a small batch:</p></li>
 </ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>configs/sweep_example.yaml<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">3</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>my_sweep.yaml<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">3</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="8">
@@ -848,10 +866,22 @@
 <ol class="arabic simple" start="9">
 <li><p>Continue the sweep when ready:</p></li>
 </ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>configs/sweep_example.yaml<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">20</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate-sweep<span class="w"> </span>my_sweep.yaml<span class="w"> </span>--max-runs<span class="w"> </span><span class="m">20</span>
 </pre></div>
 </div>
 <p>The sweep will skip configurations already present in <code class="docutils literal notranslate"><span class="pre">summary.csv</span></code>.</p>
+</section>
+<section id="verify-the-result">
+<h2>Verify the Result<a class="headerlink" href="#verify-the-result" title="Link to this heading">¶</a></h2>
+<p>Check that each completed run directory contains generation and evaluation logs, then confirm that <code class="docutils literal notranslate"><span class="pre">summary.csv</span></code> has one unique <code class="docutils literal notranslate"><span class="pre">config_id</span></code> per attempted parameter combination. Treat missing objective values as failed evaluation, not as neutral results.</p>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">--dry-run</span> <span class="pre">--max-runs</span> <span class="pre">1</span></code> first to inspect the exact generated commands.</p></li>
+<li><p>If evaluation fails, execute the configured evaluation script manually with one run directory.</p></li>
+<li><p>If a corrected trial is skipped, use <code class="docutils literal notranslate"><span class="pre">--retry-failed</span></code>; completed configurations remain intentionally resumable and are not rerun.</p></li>
+</ul>
 </section>
 </section>
 
@@ -876,7 +906,7 @@
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</div>
+                <div class="title">Tutorial 9: Analyse Module - 3D Molecular Structure Analysis</div>
                 
               </div>
             </a>
@@ -928,6 +958,7 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Tutorial 10: Generation Parameter Sweeps</a><ul>
+<li><a class="reference internal" href="#at-a-glance">At a Glance</a></li>
 <li><a class="reference internal" href="#what-a-sweep-does">1. What a Sweep Does</a></li>
 <li><a class="reference internal" href="#minimal-command">2. Minimal Command</a></li>
 <li><a class="reference internal" href="#sweep-config-anatomy">3. Sweep Config Anatomy</a></li>
@@ -941,9 +972,11 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#registering-workflow-csvs">6. Registering Workflow CSVs</a></li>
-<li><a class="reference internal" href="#bayesian-optimization-objective">7. Bayesian Optimization Objective</a></li>
-<li><a class="reference internal" href="#resume-behavior">8. Resume Behavior</a></li>
+<li><a class="reference internal" href="#bayesian-optimisation-objective">7. Bayesian Optimisation Objective</a></li>
+<li><a class="reference internal" href="#resume-behaviour">8. Resume Behaviour</a></li>
 <li><a class="reference internal" href="#practical-workflow">9. Practical Workflow</a></li>
+<li><a class="reference internal" href="#verify-the-result">Verify the Result</a></li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
 </ul>
 </li>
 </ul>
@@ -955,7 +988,7 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=6efca38a"></script>
+</div><script src="../_static/documentation_options.js?v=030dc6f6"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

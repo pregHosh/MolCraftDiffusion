@@ -1,11 +1,20 @@
 # Tutorial 8: Prediction and Evaluation Modes
 
-> **Prerequisites:** [Tutorial 2 — Training a Regressor](02_training_regressor.md) · **You'll learn:** predicting properties for new molecules and benchmarking a model against a labeled set · **Next:** [Tutorial 9 — Analyze](09_analyze.md)
+> **Prerequisites:** [Tutorial 2 — Training a Regressor](02_training_regressor.md) · **You'll learn:** predicting properties for new molecules and benchmarking a model against a labelled set · **Next:** [Tutorial 9 — Analyse](09_analyze.md)
+
+## At a Glance
+
+| | |
+| :--- | :--- |
+| **Objective** | Predict properties for new molecules or evaluate predictions against labels. |
+| **You need** | A regression/guidance checkpoint and either XYZ inputs or a labelled dataset. |
+| **Main command** | `MolCraftDiff predict my_prediction.yaml` or `MolCraftDiff eval-predict my_evaluation.yaml` |
+| **Success looks like** | Prediction tables and, for evaluation, comparison metrics and plots are written to the configured output directory. |
 
 This tutorial explains how to use the inference capabilities of MolCraftDiffusion. There are two main modes for inference:
 
 1.  **Prediction (`predict`)**: For generating predictions on a set of new molecules (XYZ files) without ground truth labels.
-2.  **Evaluation (`eval-predict`)**: For benchmarking a model against a labeled dataset to calculate error metrics.
+2.  **Evaluation (`eval-predict`)**: For benchmarking a model against a labelled dataset to calculate error metrics.
 
 ---
 
@@ -56,10 +65,8 @@ max_atoms: 100
 Execute the prediction using the `MolCraftDiff` CLI, pointing to your config file:
 
 ```bash
-MolCraftDiff predict my_prediction
+MolCraftDiff predict my_prediction.yaml
 ```
-
-*(Note: Do not include the `.yaml` extension in the command)*
 
 ### 3. Output
 
@@ -74,7 +81,7 @@ The script will process each XYZ file in the directory and output the results to
 
 ## Part 2: Evaluation Mode (`eval-predict`)
 
-Use this mode when you have a labeled dataset (ground truth) and want to quantify how well your model performs (e.g., calculating Mean Absolute Error, plotting Correlation).
+Use this mode when you have a labelled dataset (ground truth) and want to quantify how well your model performs (e.g., calculating Mean Absolute Error, plotting correlation).
 
 ### 1. Configuration
 
@@ -131,7 +138,7 @@ seed: 9
 Execute the evaluation using the `MolCraftDiff` CLI, pointing to your config file:
 
 ```bash
-MolCraftDiff eval-predict my_evaluation
+MolCraftDiff eval-predict my_evaluation.yaml
 ```
 
 ### 3. Output
@@ -158,3 +165,13 @@ The script calculates predictions and matches them with the ground truth from yo
 | **Output** | Predictions only | Predictions vs. Ground Truth |
 | **Use Case** | Screening new molecules | Benchmarking model accuracy |
 | **Config Key** | `chkpt_directory` | `tasks.chkpt_path` |
+
+## Verify the Result
+
+Open `predictions.csv` and confirm that the number of rows matches the accepted input molecules and that every requested property has a prediction column. For evaluation, confirm that target and prediction arrays have equal lengths before interpreting aggregate metrics.
+
+## Troubleshooting
+
+- Missing molecules are often larger than `max_atoms` or contain elements absent from `atom_vocab`.
+- A checkpoint loading error usually indicates a task, feature, or vocabulary mismatch.
+- Missing ground truth means the requested property is absent from both the CSV columns and ASE row data.

@@ -11,8 +11,8 @@
         <title>Tutorial 6: Structure-Guided Generation - MolCraftDiffusion</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e7d56144" />
@@ -223,7 +223,7 @@
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Tutorial 6: Structure-Guided Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="09_analyze.html">Tutorial 9: Analyze Module - 3D Molecular Structure Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09_analyze.html">Tutorial 9: Analyse Module - 3D Molecular Structure Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="10_generation_sweeps.html">Tutorial 10: Generation Parameter Sweeps</a></li>
 </ul>
 </li>
@@ -236,9 +236,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/local_chemical_space.html">Application: Local Chemical Space Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/library_design.html">Application: Library Design with Structure-Directed Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Workflows</span></p>
 <ul>
@@ -247,14 +244,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualise the Generated Chemical Space</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/visualization.html">Workflow: Visualize the Generated Chemical Space</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
 <ul>
@@ -453,11 +445,37 @@
 <blockquote>
 <div><p><strong>Prerequisites:</strong> <a class="reference internal" href="05_generation_overview.html"><span class="std std-doc">Tutorial 5 — Generation Overview</span></a> · <strong>You’ll learn:</strong> inpainting, outpainting and SILVR with 3D geometric constraints, and how to tune every parameter · <strong>Next:</strong> <a class="reference internal" href="07_property_directed.html"><span class="std std-doc">Tutorial 7 — Property-Directed Generation</span></a></p>
 </div></blockquote>
+<section id="at-a-glance">
+<h2>At a Glance<a class="headerlink" href="#at-a-glance" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p></p></th>
+<th class="head text-left"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><strong>Objective</strong></p></td>
+<td class="text-left"><p>Modify, extend, or softly follow a reference 3D structure.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>You need</strong></p></td>
+<td class="text-left"><p>A compatible checkpoint, an XYZ reference, and verified zero-based atom indices where required.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><strong>Main command</strong></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">generate</span> <span class="pre">my_inpaint.yaml</span></code> (or the corresponding outpaint/SILVR config)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>Success looks like</strong></p></td>
+<td class="text-left"><p>Generated XYZ files preserve or follow the reference according to the selected mode.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>This tutorial explains how to guide molecule generation using structural constraints, such as filling in a missing piece (inpainting), growing a molecule from a fragment (outpainting), or softly steering a whole molecule towards a reference shape (SILVR).</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p><strong>Atom indices are tied to graph construction.</strong> <code class="docutils literal notranslate"><span class="pre">mask_node_index</span></code> values are 0-indexed positions in the atom list of your XYZ file. If you preprocess the molecule (reorder atoms, remove hydrogens, add atoms) the indices will shift and the mask will apply to the wrong atoms — silently. Always double-check indices against the exact XYZ file passed to <code class="docutils literal notranslate"><span class="pre">reference_structure_path</span></code>, and set <code class="docutils literal notranslate"><span class="pre">use_noised_conditioning:</span> <span class="pre">true</span></code> only if the base model was trained with noised conditioning (check the training config).</p>
 </div>
+</section>
 <section id="contents">
 <h2>Contents<a class="headerlink" href="#contents" title="Link to this heading">¶</a></h2>
 <ol class="arabic simple">
@@ -643,7 +661,7 @@ difference is <strong>what happens to the reference atoms during denoising</stro
 </section>
 <section id="running-inpainting">
 <h3>Running Inpainting<a class="headerlink" href="#running-inpainting" title="Link to this heading">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_inpaint
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_inpaint.yaml
 </pre></div>
 </div>
 </section>
@@ -754,7 +772,7 @@ apply no bonding constraint and use the keys alone.</p>
 </section>
 <section id="running-outpainting">
 <h3>Running Outpainting<a class="headerlink" href="#running-outpainting" title="Link to this heading">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_outpaint
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_outpaint.yaml
 </pre></div>
 </div>
 </section>
@@ -865,7 +883,7 @@ Generation.</em> J. Chem. Inf. Model. <strong>2023</strong>, 63 (19), 5996–600
 </section>
 <section id="running-silvr">
 <h3>Running SILVR<a class="headerlink" href="#running-silvr" title="Link to this heading">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_silvr
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_silvr.yaml
 </pre></div>
 </div>
 <div class="admonition warning">
@@ -912,7 +930,7 @@ denoising_strength = 1.0   →  full noise, model generates freely with no memor
 <section id="scale-factor-inpainting">
 <h4><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code> (inpainting)<a class="headerlink" href="#scale-factor-inpainting" title="Link to this heading">¶</a></h4>
 <p>Tolerance on bond distances. The overlap threshold for each atom pair is <code class="docutils literal notranslate"><span class="pre">(cov_radius_A</span> <span class="pre">+</span> <span class="pre">cov_radius_B)</span> <span class="pre">×</span> <span class="pre">scale_factor</span></code>.</p>
-<p><strong>Raise to <code class="docutils literal notranslate"><span class="pre">1.2</span></code></strong> if generated atoms are clashing into the scaffold in the final structure. <strong>Lower toward <code class="docutils literal notranslate"><span class="pre">1.0</span></code></strong> if bonds to the scaffold are consistently too long.</p>
+<p><strong>Raise to <code class="docutils literal notranslate"><span class="pre">1.2</span></code></strong> if generated atoms are clashing into the scaffold in the final structure. <strong>Lower towards <code class="docutils literal notranslate"><span class="pre">1.0</span></code></strong> if bonds to the scaffold are consistently too long.</p>
 </section>
 </section>
 <hr class="docutils" />
@@ -934,8 +952,8 @@ t_start = 0.5   →  50% of steps, faster but coarser structures
 </div>
 <p><strong>Use <code class="docutils literal notranslate"><span class="pre">0.8–0.9</span></code></strong> for most experiments. Only lower it for rapid screening where speed matters more than quality.</p>
 </section>
-<section id="seed-dist-min-dist-spread-jitter-scale-initialization">
-<h4><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">min_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">spread</span></code>, <code class="docutils literal notranslate"><span class="pre">jitter_scale</span></code> — initialization<a class="headerlink" href="#seed-dist-min-dist-spread-jitter-scale-initialization" title="Link to this heading">¶</a></h4>
+<section id="seed-dist-min-dist-spread-jitter-scale-initialisation">
+<h4><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">min_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">spread</span></code>, <code class="docutils literal notranslate"><span class="pre">jitter_scale</span></code> — initialisation<a class="headerlink" href="#seed-dist-min-dist-spread-jitter-scale-initialisation" title="Link to this heading">¶</a></h4>
 <p>These parameters control the clean starting geometry and the separate noise
 applied before denoising. <code class="docutils literal notranslate"><span class="pre">spread</span></code> and <code class="docutils literal notranslate"><span class="pre">jitter_scale</span></code> are independent knobs.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>connector atom (scaffold)
@@ -983,7 +1001,7 @@ explicitly; changing <code class="docutils literal notranslate"><span class="pre
 </section>
 <section id="n-bq-atom-boundary-atoms-for-seeding-only">
 <h4><code class="docutils literal notranslate"><span class="pre">n_bq_atom</span></code> — boundary atoms for seeding only<a class="headerlink" href="#n-bq-atom-boundary-atoms-for-seeding-only" title="Link to this heading">¶</a></h4>
-<p>Adds phantom atoms at the end of the scaffold that are used only to compute seed positions, not passed to the model as conditioning. Useful when the scaffold’s connector region is geometrically ambiguous and you want to steer the seed placement toward a specific spatial direction without altering the conditioning.</p>
+<p>Adds phantom atoms at the end of the scaffold that are used only to compute seed positions, not passed to the model as conditioning. Useful when the scaffold’s connector region is geometrically ambiguous and you want to steer the seed placement towards a specific spatial direction without altering the conditioning.</p>
 <p><strong>Leave at <code class="docutils literal notranslate"><span class="pre">0</span></code></strong> unless you have a specific spatial steering need.</p>
 </section>
 <section id="constraint-strength-outpainting">
@@ -994,12 +1012,12 @@ explicitly; changing <code class="docutils literal notranslate"><span class="pre
 s = constraint_strength  ──── overlap-push activates
              │  generated atoms pushed away from scaffold overlaps
 s = constraint_strength / 2  ──── bonding sub-constraints activate
-             │  atoms pulled toward connectors; disconnected clusters merged
+             │  atoms pulled towards connectors; disconnected clusters merged
 s = 0.0  ──── generation ends (clean structure)
 </pre></div>
 </div>
-<p><strong>Increase toward <code class="docutils literal notranslate"><span class="pre">0.9</span></code></strong> if generated atoms drift away from the connector or the final structure shows the fragment disconnected from the scaffold.</p>
-<p><strong>Decrease toward <code class="docutils literal notranslate"><span class="pre">0.5</span></code></strong> if the fragment is too rigid, diversity is low, or you are generating a large fragment that needs space to explore.</p>
+<p><strong>Increase towards <code class="docutils literal notranslate"><span class="pre">0.9</span></code></strong> if generated atoms drift away from the connector or the final structure shows the fragment disconnected from the scaffold.</p>
+<p><strong>Decrease towards <code class="docutils literal notranslate"><span class="pre">0.5</span></code></strong> if the fragment is too rigid, diversity is low, or you are generating a large fragment that needs space to explore.</p>
 <p><strong>Default <code class="docutils literal notranslate"><span class="pre">0.7</span></code></strong> works well for typical fragment sizes (5–15 atoms). For very small fragments (1–3 atoms), try <code class="docutils literal notranslate"><span class="pre">0.8–0.9</span></code>. For large fragments (&gt;20 atoms), try <code class="docutils literal notranslate"><span class="pre">0.5–0.6</span></code>.</p>
 </section>
 <section id="scale-factor-outpainting">
@@ -1056,8 +1074,8 @@ the output will drift far from the reference. Use the checkpoint’s full step
 count for production runs and reserve short runs for smoke-testing.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p><strong>This implementation’s reference is normalized.</strong> The published sampler mixes a
-raw one-hot reference into a latent normalized by <code class="docutils literal notranslate"><span class="pre">norm_values</span></code> (typically
+<p><strong>This implementation’s reference is normalised.</strong> The published sampler mixes a
+raw one-hot reference into a latent normalised by <code class="docutils literal notranslate"><span class="pre">norm_values</span></code> (typically
 <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">4,</span> <span class="pre">10]</span></code>), leaving its feature channels ~4× hot. Here the reference goes
 through the platform’s normal loader, so it is scale-consistent — which means
 <strong>feature guidance is ~4× weaker than the paper’s at the same <code class="docutils literal notranslate"><span class="pre">silvr_rate</span></code></strong>.
@@ -1097,11 +1115,16 @@ reference count is valid and turns SILVR into pure refinement of the reference
 atoms. Below the reference count it is clamped up with a warning.</p>
 </section>
 </section>
+</section>
 <hr class="docutils" />
-<section id="quick-diagnostics">
-<h3>5.4 Quick Diagnostics<a class="headerlink" href="#quick-diagnostics" title="Link to this heading">¶</a></h3>
+<section id="verify-the-result">
+<h2>Verify the Result<a class="headerlink" href="#verify-the-result" title="Link to this heading">¶</a></h2>
+<p>Inspect both structural validity and reference agreement. Inpainting and outpainting should preserve the fixed scaffold atom-for-atom; SILVR should produce a new molecule that follows the reference without copying it. Always inspect several samples rather than relying on a single structure.</p>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
 <section id="id3">
-<h4>Inpainting<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h4>
+<h3>Inpainting<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -1132,7 +1155,7 @@ atoms. Below the reference count it is clamped up with a warning.</p>
 </div>
 </section>
 <section id="id4">
-<h4>Outpainting<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h4>
+<h3>Outpainting<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -1183,7 +1206,7 @@ atoms. Below the reference count it is clamped up with a warning.</p>
 </div>
 </section>
 <section id="id5">
-<h4>SILVR<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h4>
+<h3>SILVR<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -1198,7 +1221,7 @@ atoms. Below the reference count it is clamped up with a warning.</p>
 <td class="text-left"><p>Raise <code class="docutils literal notranslate"><span class="pre">silvr_rate</span></code> to <code class="docutils literal notranslate"><span class="pre">0.05–0.1</span></code>; run the checkpoint’s full step count</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p>Atom types ignore the reference but shape is right</p></td>
-<td class="text-left"><p>Normalized-reference deviation (see §5.3)</p></td>
+<td class="text-left"><p>Normalised-reference deviation (see §5.3)</p></td>
 <td class="text-left"><p>Raise <code class="docutils literal notranslate"><span class="pre">silvr_rate</span></code>, or keep <code class="docutils literal notranslate"><span class="pre">condition_component:</span> <span class="pre">xh</span></code> if you had set <code class="docutils literal notranslate"><span class="pre">x</span></code></p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p>Output is a near-copy of the reference, no novelty</p></td>
@@ -1232,7 +1255,6 @@ atoms. Below the reference count it is clamped up with a warning.</p>
 </tbody>
 </table>
 </div>
-</section>
 </section>
 </section>
 </section>
@@ -1310,6 +1332,7 @@ atoms. Below the reference count it is clamped up with a warning.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Tutorial 6: Structure-Guided Generation</a><ul>
+<li><a class="reference internal" href="#at-a-glance">At a Glance</a></li>
 <li><a class="reference internal" href="#contents">Contents</a></li>
 <li><a class="reference internal" href="#introduction">1. Introduction</a><ul>
 <li><a class="reference internal" href="#which-mode-do-i-want">1.1 Which mode do I want?</a></li>
@@ -1344,7 +1367,7 @@ atoms. Below the reference count it is clamped up with a warning.</p>
 <li><a class="reference internal" href="#outpainting-parameters">5.2 Outpainting Parameters</a><ul>
 <li><a class="reference internal" href="#connectors-where-and-how-to-grow"><code class="docutils literal notranslate"><span class="pre">connectors</span></code> — where and how to grow</a></li>
 <li><a class="reference internal" href="#t-start-how-many-denoising-steps-to-run"><code class="docutils literal notranslate"><span class="pre">t_start</span></code> — how many denoising steps to run</a></li>
-<li><a class="reference internal" href="#seed-dist-min-dist-spread-jitter-scale-initialization"><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">min_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">spread</span></code>, <code class="docutils literal notranslate"><span class="pre">jitter_scale</span></code> — initialization</a></li>
+<li><a class="reference internal" href="#seed-dist-min-dist-spread-jitter-scale-initialisation"><code class="docutils literal notranslate"><span class="pre">seed_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">min_dist</span></code>, <code class="docutils literal notranslate"><span class="pre">spread</span></code>, <code class="docutils literal notranslate"><span class="pre">jitter_scale</span></code> — initialisation</a></li>
 <li><a class="reference internal" href="#n-bq-atom-boundary-atoms-for-seeding-only"><code class="docutils literal notranslate"><span class="pre">n_bq_atom</span></code> — boundary atoms for seeding only</a></li>
 <li><a class="reference internal" href="#constraint-strength-outpainting"><code class="docutils literal notranslate"><span class="pre">constraint_strength</span></code> (outpainting)</a></li>
 <li><a class="reference internal" href="#scale-factor-outpainting"><code class="docutils literal notranslate"><span class="pre">scale_factor</span></code> (outpainting)</a></li>
@@ -1358,12 +1381,13 @@ atoms. Below the reference count it is clamped up with a warning.</p>
 <li><a class="reference internal" href="#mol-size-how-much-freedom-to-add-atoms"><code class="docutils literal notranslate"><span class="pre">mol_size</span></code> — how much freedom to add atoms</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#quick-diagnostics">5.4 Quick Diagnostics</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#verify-the-result">Verify the Result</a></li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a><ul>
 <li><a class="reference internal" href="#id3">Inpainting</a></li>
 <li><a class="reference internal" href="#id4">Outpainting</a></li>
 <li><a class="reference internal" href="#id5">SILVR</a></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -1377,7 +1401,7 @@ atoms. Below the reference count it is clamped up with a warning.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=6efca38a"></script>
+</div><script src="../_static/documentation_options.js?v=030dc6f6"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
