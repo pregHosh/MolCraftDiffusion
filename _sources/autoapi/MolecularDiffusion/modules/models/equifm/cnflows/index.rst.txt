@@ -1,0 +1,200 @@
+MolecularDiffusion.modules.models.equifm.cnflows
+================================================
+
+.. py:module:: MolecularDiffusion.modules.models.equifm.cnflows
+
+.. autoapi-nested-parse::
+
+   EquiFM continuous normalizing flow -- the generative core.
+
+   Ported from ``others/MolFM/sampling/cnf_models.py`` (``Cnflows``) with two
+   deliberate differences, both mandated by the approved integration plan:
+
+   * **The training objective is a reconstruction of the paper's Algorithm 1.**
+     MolFM's release is sampling-only: its ``Cnflows`` has no ``forward``, no
+     loss, and no EOT solver -- the ctor stores ``loss_type``/``cat_loss``/
+     ``angle_penalty`` and never reads them. ``compute_loss`` below is
+     reconstructed from Algorithm 1 (p. 14) and Algorithm 3 (p. 18) of
+     arXiv:2312.07168. It is **not** the authors' released objective: their
+     ``args.pickle`` shows the released QM9 weights were trained with
+     ``angle_penalty=True``, ``cat_loss='l2_masked_mean'`` and
+     ``ode_regularization=0.001``, none of which appear anywhere in the paper.
+     A model trained here will therefore not reproduce the paper's Table 1
+     numbers, and any gap must not be reported as a reproduction failure.
+
+   * **The ODE solver is fixed-step RK4, not ``torchdiffeq``'s adaptive dopri5.**
+     ``torchdiffeq`` is not installed and is not a declared dependency. Paper
+     Fig. 3 (p. 9) benchmarks EquiFM with Euler and midpoint integrators and shows
+     both reaching ~0.87-0.88 molecule stability against the dopri5 headline of
+     0.883, so a fixed-step solver costs essentially nothing -- and unlike an
+     adaptive solver it can honour the platform's ``num_steps``.
+     ponytail: fixed-step RK4; wire torchdiffeq dopri5 behind an optional import
+     only if exact paper NFE numbers are ever needed.
+
+   The EGNN backbone is *not* vendored: ``modules/models/geoldm/networks.py``'s
+   ``EGNN_dynamics_QM9`` was verified token-identical to MolFM's, and the released
+   checkpoint's ``dynamics.egnn.*`` keys already match it.
+
+   Time convention: ``t = 1`` is noise, ``t = 0`` is data (MolFM's convention).
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.equifm.cnflows.DISCRETE_PATHS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.equifm.cnflows.Cnflows
+
+
+Module Contents
+---------------
+
+.. py:class:: Cnflows(dynamics: torch.nn.Module, in_node_nf: int, n_dims: int = 3, include_charges: bool = True, norm_values=(1.0, 4.0, 10.0), norm_biases=(None, 0.0, 0.0), discrete_path: str = 'HB_path', sigma_min: float = 0.0001, beta_min: float = 0.1, beta_max: float = 20.0, use_eot: bool = True, eot_max_iters: int = 20)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   E(n)-equivariant CNF with hybrid (OT on x, VP on h) probability transport.
+
+
+   .. py:method:: compute_loss(x_0, h_cat, h_int, node_mask, edge_mask, context=None)
+
+      One Algorithm-1 training step. Returns ``(loss, stats)``.
+
+
+
+   .. py:method:: decode(z, node_mask, edge_mask, context, num_steps: int)
+
+      Fixed-step RK4 integration of ``dz/dt`` from ``t = 1`` down to ``t = 0``.
+
+      ~15 lines instead of ``torchdiffeq.odeint(method='dopri5')``; see the
+      module docstring for why. 4 network evaluations per step.
+
+
+
+   .. py:method:: normalize(x, h_cat, h_int, node_mask)
+
+
+   .. py:method:: phi(t, xh, node_mask, edge_mask, context)
+
+
+   .. py:method:: reweight_factor(t: torch.Tensor, dims: int) -> torch.Tensor
+
+      Per-channel multiplier applied to the network output at sampling time.
+
+      This is the ``M_para`` reweighting of MolFM's sampler
+      (cnf_models.py:261-270). **It is also divided out of the training target**
+      in :meth:`compute_loss`, which is the whole point of exposing
+      ``discrete_path`` as a config field.
+
+      The paper and the release disagree here, and the disagreement is not
+      cosmetic: Algorithm 1 line 9 regresses ``v_theta^h`` onto the *full* VP
+      velocity, which already contains the ``alpha'_t / (1 - alpha_t^2)``
+      prefactor; the released sampler then multiplies the network's ``h``
+      output by ``M_para`` (and ``alpha'_t/(1-alpha_t^2) == M_para * alpha_t``),
+      double-counting it. Rather than pick a winner and bake it in silently,
+      both conventions are supported and kept self-consistent by construction:
+
+      * ``OT_path``  -- factor 1. The network emits the full velocity, so this
+        is the verbatim Algorithm-1 model. Use it for anything trained here.
+      * ``HB_path``  -- factor ``M_para`` on the ``h`` channels only. The
+        network emits ``velocity / M_para``. This is what the released QM9
+        checkpoint was trained to emit (``args.pickle``:
+        ``discrete_path='HB_path'``), so the converted checkpoint MUST be
+        sampled with it.
+      * ``VP_path``  -- factor ``M_para`` on every channel. Included for the
+        Table 3 ablation row; no released weights use it.
+
+
+
+   .. py:method:: sample(n_samples: int, n_nodes: int, node_mask: torch.Tensor, edge_mask: torch.Tensor, context: Optional[torch.Tensor] = None, num_steps: int = 250)
+
+
+   .. py:method:: sample_combined_position_feature_noise(n_samples, n_nodes, node_mask)
+
+
+   .. py:method:: sample_p_xh_given_z0(z0, node_mask)
+
+      Unnormalize, then invert the uniform dequantization (a plain round).
+
+      MolFM routes this through ``UniformDequantizer.reverse``
+      (cnf_models.py:679-682), which is exactly ``torch.round`` on both
+      channel groups -- not worth a class.
+
+
+
+   .. py:method:: unnormalize(x, h_cat, h_int, node_mask)
+
+
+   .. py:attribute:: beta_max
+      :value: 20.0
+
+
+
+   .. py:attribute:: beta_min
+      :value: 0.1
+
+
+
+   .. py:attribute:: discrete_path
+      :value: 'HB_path'
+
+
+
+   .. py:attribute:: dynamics
+
+
+   .. py:attribute:: eot_max_iters
+      :value: 20
+
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: include_charges
+      :value: 1
+
+
+
+   .. py:attribute:: n_dims
+      :value: 3
+
+
+
+   .. py:attribute:: norm_biases
+      :value: (None, 0.0, 0.0)
+
+
+
+   .. py:attribute:: norm_values
+      :value: (1.0, 4.0, 10.0)
+
+
+
+   .. py:attribute:: num_classes
+
+
+   .. py:attribute:: sigma_min
+      :value: 0.0001
+
+
+
+   .. py:attribute:: use_eot
+      :value: True
+
+
+
+.. py:data:: DISCRETE_PATHS
+   :value: ('OT_path', 'HB_path', 'VP_path')
+
+

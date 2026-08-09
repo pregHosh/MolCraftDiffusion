@@ -1,0 +1,29 @@
+MolecularDiffusion.modules.models.equifm
+========================================
+
+.. py:module:: MolecularDiffusion.modules.models.equifm
+
+.. autoapi-nested-parse::
+
+   EquiFM: equivariant flow matching with hybrid probability transport.
+
+   Paper: Song, Gong et al., NeurIPS 2023 (arXiv:2312.07168).
+   Target repo: github.com/AlgoMole/MolFM (sampling-only release).
+
+   The EGNN backbone is deliberately NOT duplicated here -- reuse
+   ``MolecularDiffusion.modules.models.geoldm.networks.EGNN_dynamics_QM9``, which
+   is token-identical to MolFM's and already matches the released checkpoint keys.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/equifm/cnflows/index
+   /autoapi/MolecularDiffusion/modules/models/equifm/eot/index
+   /autoapi/MolecularDiffusion/modules/models/equifm/paths/index
+
+

@@ -1,0 +1,120 @@
+MolecularDiffusion.modules.models.equifm.paths
+==============================================
+
+.. py:module:: MolecularDiffusion.modules.models.equifm.paths
+
+.. autoapi-nested-parse::
+
+   Probability paths for EquiFM (Song, Gong et al., NeurIPS 2023, arXiv:2312.07168).
+
+   Two independent conditional paths (paper Prop. 4.2 licenses treating them
+   separately):
+
+   * **coordinates x** -- conditional OT path, Eq. 8:
+     ``x_t = (sigma_min + (1 - sigma_min) t) * pi*(R* eps_x) + (1 - t) x_0``
+   * **features h** -- variance-preserving path, Eq. 5:
+     ``h_t = alpha_t h_0 + sqrt(1 - alpha_t^2) eps_h``, ``alpha_t = e^{-T(t)/2}``.
+
+   Note ``t = 1`` is *noise* and ``t = 0`` is *data* (MolFM's convention -- their
+   sampler integrates ``t: 1 -> 0``), the reverse of the usual flow-matching
+   convention. Both ``u_x`` and ``u_h`` returned here are the true forward-time
+   velocities ``d/dt`` of the respective paths, so an ODE solver stepping
+   ``t: 1 -> 0`` with ``dt < 0`` reproduces data.
+
+   Paper defects patched here (see INTEGRATION_PLAN.md, "Paper-Reconstruction
+   Assessment"):
+
+   1. ``sigma_min`` is never given a numerical value in the paper; we use the
+      flow-matching convention of Lipman et al., ``1e-4``.
+   2. Algorithm 1 line 8 writes ``h_t = alpha_t h_0 + (1 - alpha_t^2) eps_h``,
+      dropping a square root. Section 3.1 defines the VP path as
+      ``N(h | alpha_t h_0, (1 - alpha_t^2) I)``, so the square root is required.
+      Unambiguous typo; corrected.
+   3. ``beta_min`` / ``beta_max`` for ``T(t)`` are not in the paper. They are in
+      the released code (``others/MolFM/sampling/cnf_models.py:8-19``): 0.1 and
+      20, the standard VP-linear values.
+   4. Algorithm 1 line 9 gives the ``h`` regression target as
+      ``alpha'_t / (1 - alpha_t^2) * (alpha_t h_t - h_0)``. Expanding
+      ``h_t = alpha_t h_0 + sqrt(1 - alpha_t^2) eps_h`` shows that expression
+      equals ``-dh_t/dt``, i.e. it carries the opposite sign to the ``x`` target
+      on the same line (which *is* ``+dx_t/dt``). Since the released sampler
+      integrates ``t: 1 -> 0`` treating the network output as ``dz/dt`` for both
+      channel groups, the sign on line 9's ``h`` term is a typo. ``vp_interpolate``
+      returns ``+dh_t/dt``.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.equifm.paths.EPS
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.equifm.paths.T
+   MolecularDiffusion.modules.models.equifm.paths.T_hat
+   MolecularDiffusion.modules.models.equifm.paths.alpha
+   MolecularDiffusion.modules.models.equifm.paths.m_para
+   MolecularDiffusion.modules.models.equifm.paths.ot_interpolate
+   MolecularDiffusion.modules.models.equifm.paths.vp_interpolate
+
+
+Module Contents
+---------------
+
+.. py:function:: T(t: torch.Tensor, beta_min: float, beta_max: float) -> torch.Tensor
+
+   Integrated VP noise schedule ``T(t) = (b_max - b_min) t^2 / 2 + b_min t``.
+
+
+.. py:function:: T_hat(t: torch.Tensor, beta_min: float, beta_max: float) -> torch.Tensor
+
+   ``T'(t) = (b_max - b_min) t + b_min``.
+
+
+.. py:function:: alpha(t: torch.Tensor, beta_min: float, beta_max: float) -> torch.Tensor
+
+   ``alpha_t = exp(-T(t) / 2)`` (paper Eq. 5).
+
+
+.. py:function:: m_para(t: torch.Tensor, beta_min: float, beta_max: float) -> torch.Tensor
+
+   Hybrid-transport reweighting factor ``-T'(t) / (2 (1 - e^{-T(t)}))``.
+
+   Exactly MolFM's ``M_para`` (cnf_models.py:262-270) -- the factor the
+   released sampler multiplies the network's ``h`` output by at integration
+   time. Always strictly negative, so dividing by it is safe.
+
+
+.. py:function:: ot_interpolate(x_0: torch.Tensor, eps_x: torch.Tensor, t: torch.Tensor, sigma_min: float)
+
+   Paper Eq. 8 / Algorithm 1 lines 7 and 9 (x term).
+
+   ``eps_x`` must already be the EOT-aligned noise ``pi*(R* eps_x)``.
+   Returns ``(x_t, u_x)`` with ``u_x = dx_t/dt``.
+
+
+.. py:function:: vp_interpolate(h_0: torch.Tensor, eps_h: torch.Tensor, t: torch.Tensor, beta_min: float, beta_max: float)
+
+   Paper Eq. 5 / Algorithm 1 line 8, with the square root restored.
+
+   Returns ``(h_t, u_h)`` with ``u_h = dh_t/dt`` written in the expanded form
+
+       dh_t/dt = -T'(t)/2 * alpha_t * (h_0 - alpha_t eps_h / sqrt(1 - alpha_t^2))
+
+   which is algebraically identical to differentiating ``h_t`` but avoids the
+   catastrophic cancellation of forming ``alpha_t h_t - h_0`` and dividing by
+   a vanishing ``1 - alpha_t^2``. See defect (4) in the module docstring for
+   the sign.
+
+
+.. py:data:: EPS
+   :value: 1e-05
+
+

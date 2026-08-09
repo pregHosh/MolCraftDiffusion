@@ -496,7 +496,12 @@ conditioning input beyond the atom count.</p>
 <td class="text-left"><p>TABASCO</p></td>
 <td class="text-left"><p>Flow matching; simplified, fast, tuned for physical quality.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_flowmol.yaml</span></code></p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_equifm.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_equifm</span></code></p></td>
+<td class="text-left"><p>EquiFM (flow matching, EGNN backbone)</p></td>
+<td class="text-left"><p>Hybrid probability transport: an OT path for coordinates regularised by an <strong>equivariant OT coupling</strong> (Kabsch rotation + <code class="docutils literal notranslate"><span class="pre">scipy</span></code> linear-sum assignment between prior and data), and a VP path for atom types and charges. Reuses the GeoLDM EGNN; fixed-step RK4 sampler, so <code class="docutils literal notranslate"><span class="pre">num_steps</span></code> is honoured. Upstream released <strong>sampling code only</strong>, so the training objective is reconstructed from the paper’s Alg. 1/3 and is <em>not</em> the authors’ released objective — the converted QM9 checkpoint (<code class="docutils literal notranslate"><span class="pre">configs/equifm_generate.yaml</span></code>, <code class="docutils literal notranslate"><span class="pre">discrete_path:</span> <span class="pre">HB_path</span></code>) is the validated path; <code class="docutils literal notranslate"><span class="pre">equifm_generate_trained.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">OT_path</span></code>) is for locally trained models. Bond-free, unconditional — see <a class="reference internal" href="#model_integrations/equifm/FINAL_REPORT.md"><span class="xref myst">model_integrations/equifm/FINAL_REPORT.md</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_flowmol.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_flowmol</span></code></p></td>
 <td class="text-left"><p>FlowMol (SE(3)-equivariant GVP)</p></td>
 <td class="text-left"><p>Flow matching for coordinates, atom types, and formal charges. <strong>Bond-free variant only:</strong> bonds are not modeled or generated; graph edges serve geometric message passing only. Needs the <code class="docutils literal notranslate"><span class="pre">[flowmol]</span></code> extra (DGL).</p></td>
@@ -676,6 +681,9 @@ Model for Molecular Generation with Improved Physical Quality.</em> 2025.
 <li><p><strong>FlowMol</strong> — Dunn &amp; Koes. <em>Mixed Continuous and Categorical Flow Matching
 for 3D De Novo Molecule Generation.</em> 2024.
 <a class="reference external" href="https://arxiv.org/abs/2404.19739">arXiv:2404.19739</a></p></li>
+<li><p><strong>EquiFM</strong> — Song, Gong, Xu, Cao, Lan, Ermon, Zhou &amp; Ma. <em>Equivariant Flow
+Matching with Hybrid Probability Transport for 3D Molecule Generation.</em>
+NeurIPS 2023. <a class="reference external" href="https://arxiv.org/abs/2312.07168">arXiv:2312.07168</a></p></li>
 <li><p><strong>GeoLDM</strong> — Xu, Powers, Dror, Ermon &amp; Leskovec. <em>Geometric Latent
 Diffusion Models for 3D Molecule Generation.</em> ICML 2023. <a class="reference external" href="https://arxiv.org/abs/2305.01140">arXiv:2305.01140</a></p></li>
 <li><p><strong>ADiT</strong> — Joshi et al. <em>All-atom Diffusion Transformers: Unified generative

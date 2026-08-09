@@ -21,6 +21,7 @@ conditioning input beyond the atom count.
 | `diffusion_gfmdiff.yaml` | `diffusion` | GFMDiff | Geometric full-molecule diffusion (`tasks_gfmdiff`). |
 | `diffusion_painn.yaml` | `diffusion` | PaiNN (scalar+vector message passing) | OM-Diff's `EquivNet` backbone under the default EDM objective (`tasks_painn`). |
 | `diffusion_tabasco.yaml` | `diffusion_tabasco` | TABASCO | Flow matching; simplified, fast, tuned for physical quality. |
+| `diffusion_equifm.yaml` | `diffusion_equifm` | EquiFM (flow matching, EGNN backbone) | Hybrid probability transport: an OT path for coordinates regularised by an **equivariant OT coupling** (Kabsch rotation + `scipy` linear-sum assignment between prior and data), and a VP path for atom types and charges. Reuses the GeoLDM EGNN; fixed-step RK4 sampler, so `num_steps` is honoured. Upstream released **sampling code only**, so the training objective is reconstructed from the paper's Alg. 1/3 and is *not* the authors' released objective — the converted QM9 checkpoint (`configs/equifm_generate.yaml`, `discrete_path: HB_path`) is the validated path; `equifm_generate_trained.yaml` (`OT_path`) is for locally trained models. Bond-free, unconditional — see [model_integrations/equifm/FINAL_REPORT.md](model_integrations/equifm/FINAL_REPORT.md). |
 | `diffusion_flowmol.yaml` | `diffusion_flowmol` | FlowMol (SE(3)-equivariant GVP) | Flow matching for coordinates, atom types, and formal charges. **Bond-free variant only:** bonds are not modeled or generated; graph edges serve geometric message passing only. Needs the `[flowmol]` extra (DGL). |
 
 ## 2. Latent-space diffusion (two-stage)
@@ -95,6 +96,9 @@ Backbones and objectives integrated here are based on the following work.
 - **FlowMol** — Dunn & Koes. *Mixed Continuous and Categorical Flow Matching
   for 3D De Novo Molecule Generation.* 2024.
   [arXiv:2404.19739](https://arxiv.org/abs/2404.19739)
+- **EquiFM** — Song, Gong, Xu, Cao, Lan, Ermon, Zhou & Ma. *Equivariant Flow
+  Matching with Hybrid Probability Transport for 3D Molecule Generation.*
+  NeurIPS 2023. [arXiv:2312.07168](https://arxiv.org/abs/2312.07168)
 - **GeoLDM** — Xu, Powers, Dror, Ermon & Leskovec. *Geometric Latent
   Diffusion Models for 3D Molecule Generation.* ICML 2023. [arXiv:2305.01140](https://arxiv.org/abs/2305.01140)
 - **ADiT** — Joshi et al. *All-atom Diffusion Transformers: Unified generative

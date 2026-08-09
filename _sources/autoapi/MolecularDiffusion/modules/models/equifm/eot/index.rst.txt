@@ -1,0 +1,58 @@
+MolecularDiffusion.modules.models.equifm.eot
+============================================
+
+.. py:module:: MolecularDiffusion.modules.models.equifm.eot
+
+.. autoapi-nested-parse::
+
+   Equivariant Optimal Transport coupling -- EquiFM paper Algorithm 3, p. 18.
+
+       1: initialise R = I, tau = inf
+       2: repeat
+       3:   Pi = argmin_Pi ||Pi (R z)^T - y^T||_2      {Jonker-Volgenant}
+       4:   R  = argmin_R  ||R (Pi z)^T - y^T||_2      {Kabsch}
+       5:   tau = ||Pi (R z)^T - y^T||_2
+       6: until tau converges
+
+   ``Pi`` is a permutation of the noise nodes, ``R`` a rotation. Jonker-Volgenant
+   is exactly ``scipy.optimize.linear_sum_assignment`` (scipy is already a declared
+   dependency, ``pyproject.toml``, and is already used this way at
+   ``runmodes/data/preparation.py:231-261``). Kabsch is an SVD of the 3x3
+   cross-covariance. Neither needs a new dependency.
+
+   Table 4 of the paper reports 4.67 iterations / 1.10 ms per QM9 sample, so the
+   per-molecule Python loop below is affordable at the paper's batch size of 64.
+
+   ponytail: plain per-molecule loop. The assignment problem is inherently
+   per-molecule (different node counts) and scipy's LSA has no batched form; batch
+   it with a C-level solver only if profiling shows this dominates a training step.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.equifm.eot.solve_eot
+
+
+Module Contents
+---------------
+
+.. py:function:: solve_eot(eps_x: torch.Tensor, x_0: torch.Tensor, node_mask: torch.Tensor, max_iters: int = 20, tol: float = 0.0001) -> torch.Tensor
+
+   Align prior noise to data under the EOT plan (paper Eq. 7 / Algorithm 3).
+
+   :param eps_x: ``(B, N, 3)`` zero-CoM Gaussian noise, padded rows zeroed.
+   :param x_0: ``(B, N, 3)`` zero-CoM data coordinates, padded rows zeroed.
+   :param node_mask: ``(B, N, 1)`` 1 for real atoms.
+   :param max_iters: cap on the alternating loop (paper needs ~5).
+   :param tol: relative change in ``tau`` below which the loop stops.
+
+   :returns: ``(B, N, 3)`` -- ``pi*(R* eps_x)``, i.e. ``eps_x`` permuted and rotated
+             onto ``x_0``. Same distribution as ``eps_x`` (a permutation and rotation
+             of an isotropic zero-CoM Gaussian is that same Gaussian), which is what
+             makes Eq. 8 a valid conditional path; only the *coupling* changes.
+
+

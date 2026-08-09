@@ -1,0 +1,202 @@
+MolecularDiffusion.modules.tasks.diffusion_equifm
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_equifm
+
+.. autoapi-nested-parse::
+
+   EquiFM task -- equivariant flow matching with hybrid probability transport.
+
+   Paper: arXiv:2312.07168 (NeurIPS 2023). Target repo: github.com/AlgoMole/MolFM.
+
+   **The training objective here is a reconstruction of the paper's Algorithm 1,
+   not the authors' released objective.** MolFM's release is sampling-only: it
+   ships no loss, no EOT solver, and no data pipeline. ``args.pickle`` shows the
+   released QM9 weights were additionally trained with ``angle_penalty=True``,
+   ``cat_loss='l2_masked_mean'`` and ``ode_regularization=0.001`` -- none of which
+   appear anywhere in the paper. A model trained with this task will therefore not
+   reproduce the paper's Table 1 numbers, and the gap must not be reported as a
+   reproduction failure of the paper. The *sampler* and the converted released
+   checkpoint are faithful ports and are the real test of this integration.
+
+   Scope (per the approved INTEGRATION_PLAN.md): unconditional QM9 generation only.
+   No property conditioning / CFG (the release has ``context_node_nf=0`` and no
+   conditional weights), no gradient guidance, no inpainting, no trajectory frames,
+   no ``sample_chain``.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_equifm.ModelTaskFactory
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_equifm.EquiFMTask
+   MolecularDiffusion.modules.tasks.diffusion_equifm.EquiFMTaskFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: EquiFMTask(cnflows: MolecularDiffusion.modules.models.equifm.cnflows.Cnflows, default_n_timesteps: int, dataset_stats: dict, atom_vocab: List)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Duck-typed ``Task`` (docs/adding_new_models.md §2.1) around ``Cnflows``.
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor)
+
+
+   .. py:method:: forward(batch: Dict[str, torch.Tensor])
+
+
+   .. py:method:: predict_and_target(batch: Dict[str, torch.Tensor])
+
+
+   .. py:method:: sample(batch_size: Optional[int] = None, nodesxsample: Optional[torch.Tensor] = None, num_steps: Optional[int] = None, batch: Optional[Dict[str, torch.Tensor]] = None, mode=None, n_frames: int = 0, **kwargs)
+
+      Unconditional sampling. Returns ``(one_hot, charges, coords, node_mask)``
+      following the EDM/GeoLDM convention (``charges`` are true nuclear
+      charges), which keeps ``runmodes/generate/tasks_generate.py`` on the
+      ``save_xyz_file`` branch. ``mode`` and ``n_frames`` are accepted and
+      ignored (trajectories are out of scope).
+
+
+
+   .. py:attribute:: T
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: cnflows
+
+
+   .. py:property:: device
+
+
+   .. py:property:: model
+
+
+   .. py:property:: n_node_dist
+
+
+   .. py:property:: node_dist_model
+
+
+   .. py:property:: norm_values
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_equifm'
+
+
+
+.. py:class:: EquiFMTaskFactory(task_type: str = 'diffusion_equifm', n_dims: int = 3, include_charges: bool = True, normalize_factors=(1.0, 4.0, 10.0), sigma_min: float = 0.0001, beta_min: float = 0.1, beta_max: float = 20.0, discrete_path: str = 'HB_path', default_n_timesteps: int = 250, use_eot: bool = True, eot_max_iters: int = 20, dynamics: Optional[dict] = None, dataset_stats: Optional[dict] = None, atom_vocab: Optional[List] = None, train_set: Optional[torch.utils.data.Dataset] = None, **kwargs)
+
+   Factory matching ``cli/train.py``'s ``task_factory.build()`` pattern.
+
+   ``train_set`` is declared as a named parameter so the declarative seam in
+   ``cli/train.py`` injects the training dataset (docs/adding_new_models.md
+   §2.5); it is used only to build the atom-count histogram that backs
+   ``node_dist_model``.
+
+
+   .. py:method:: build() -> EquiFMTask
+
+
+   .. py:method:: compute_dataset_stats(dataset) -> None
+
+      Atom-count histogram from the training set (same shape as FlowMol's).
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: beta_max
+      :value: 20.0
+
+
+
+   .. py:attribute:: beta_min
+      :value: 0.1
+
+
+
+   .. py:attribute:: dataset_stats
+
+
+   .. py:attribute:: default_n_timesteps
+      :value: 250
+
+
+
+   .. py:attribute:: discrete_path
+      :value: 'HB_path'
+
+
+
+   .. py:attribute:: dynamics
+
+
+   .. py:attribute:: eot_max_iters
+      :value: 20
+
+
+
+   .. py:attribute:: include_charges
+      :value: True
+
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: n_dims
+      :value: 3
+
+
+
+   .. py:attribute:: normalize_factors
+      :value: (1.0, 4.0, 10.0)
+
+
+
+   .. py:attribute:: sigma_min
+      :value: 0.0001
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_equifm'
+
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+   .. py:attribute:: use_eot
+      :value: True
+
+
+
+.. py:data:: ModelTaskFactory
+
