@@ -1,0 +1,212 @@
+MolecularDiffusion.modules.models.diffsbdd.egnn
+===============================================
+
+.. py:module:: MolecularDiffusion.modules.models.diffsbdd.egnn
+
+.. autoapi-nested-parse::
+
+   EGNN backbone ported from DiffSBDD's ``equivariant_diffusion/egnn_new.py``.
+
+   Module and submodule names are **load-bearing**: they are the state-dict keys
+   of the released CrossDocked checkpoints (Zenodo 8183747), so ``embedding``,
+   ``embedding_out``, ``e_block_<i>``, ``gcl_<i>``, ``gcl_equiv``, ``edge_mlp``,
+   ``node_mlp``, ``att_mlp``, ``coord_mlp`` and ``cross_product_mlp`` must not be
+   renamed. ``docs/model_integrations/diffsbdd/scripts/convert_checkpoint.py``
+   asserts the whole key set, because ``cli/generate.py`` loads with
+   ``strict=False`` and a bad remap would load nothing in silence.
+
+   Differences from upstream, all deliberate:
+
+   * ``GNN`` / ``mode='gnn_dynamics'`` is not ported -- no shipped DiffSBDD
+     config selects it (``configs/*.yml`` all leave ``mode`` at its
+     ``egnn_dynamics`` default).
+   * The flat-scatter batching, ``update_coords_mask`` and ``reflection_equiv``
+     cross-product term are why this is a separate EGCL from the platform's
+     existing one in ``modules/layers/`` rather than a reuse of it.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffsbdd.egnn.EGNN
+   MolecularDiffusion.modules.models.diffsbdd.egnn.EquivariantBlock
+   MolecularDiffusion.modules.models.diffsbdd.egnn.EquivariantUpdate
+   MolecularDiffusion.modules.models.diffsbdd.egnn.GCL
+   MolecularDiffusion.modules.models.diffsbdd.egnn.SinusoidsEmbeddingNew
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffsbdd.egnn.coord2cross
+   MolecularDiffusion.modules.models.diffsbdd.egnn.coord2diff
+   MolecularDiffusion.modules.models.diffsbdd.egnn.unsorted_segment_sum
+
+
+Module Contents
+---------------
+
+.. py:class:: EGNN(in_node_nf: int, in_edge_nf: int, hidden_nf: int, act_fn: Optional[torch.nn.Module] = None, n_layers: int = 3, attention: bool = False, out_node_nf: Optional[int] = None, tanh: bool = False, coords_range: float = 15, norm_constant: float = 1, inv_sublayers: int = 2, sin_embedding: bool = False, normalization_factor: float = 100, aggregation_method: str = 'sum', reflection_equiv: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   E(n)-equivariant GNN over the flat ligand+pocket node set.
+
+
+   .. py:method:: forward(h: torch.Tensor, x: torch.Tensor, edge_index: torch.Tensor, update_coords_mask: Optional[torch.Tensor] = None, batch_mask: Optional[torch.Tensor] = None, edge_attr: Optional[torch.Tensor] = None) -> Tuple[torch.Tensor, torch.Tensor]
+
+
+   .. py:attribute:: embedding
+
+
+   .. py:attribute:: embedding_out
+
+
+   .. py:attribute:: hidden_nf
+
+
+   .. py:attribute:: n_layers
+      :value: 3
+
+
+
+.. py:class:: EquivariantBlock(hidden_nf: int, edge_feat_nf: int = 2, act_fn: Optional[torch.nn.Module] = None, n_layers: int = 2, attention: bool = True, tanh: bool = False, coords_range: float = 15, norm_constant: float = 1, sin_embedding: Optional[torch.nn.Module] = None, normalization_factor: float = 100, aggregation_method: str = 'sum', reflection_equiv: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   ``inv_sublayers`` GCLs followed by one coordinate update.
+
+
+   .. py:method:: forward(h: torch.Tensor, x: torch.Tensor, edge_index: torch.Tensor, edge_attr: torch.Tensor, update_coords_mask: Optional[torch.Tensor] = None, batch_mask: Optional[torch.Tensor] = None) -> Tuple[torch.Tensor, torch.Tensor]
+
+
+   .. py:attribute:: coords_range_layer
+
+
+   .. py:attribute:: hidden_nf
+
+
+   .. py:attribute:: n_layers
+      :value: 2
+
+
+
+   .. py:attribute:: norm_constant
+      :value: 1
+
+
+
+   .. py:attribute:: reflection_equiv
+      :value: True
+
+
+
+   .. py:attribute:: sin_embedding
+      :value: None
+
+
+
+.. py:class:: EquivariantUpdate(hidden_nf: int, normalization_factor: float, aggregation_method: str, edges_in_d: int = 1, act_fn: Optional[torch.nn.Module] = None, tanh: bool = False, coords_range: float = 10.0, reflection_equiv: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Coordinate update. ``update_coords_mask`` freezes the pocket nodes.
+
+
+   .. py:method:: forward(h: torch.Tensor, coord: torch.Tensor, edge_index: torch.Tensor, coord_diff: torch.Tensor, coord_cross: Optional[torch.Tensor], edge_attr: torch.Tensor, update_coords_mask: Optional[torch.Tensor] = None) -> torch.Tensor
+
+
+   .. py:attribute:: aggregation_method
+
+
+   .. py:attribute:: coord_mlp
+
+
+   .. py:attribute:: coords_range
+      :value: 10.0
+
+
+
+   .. py:attribute:: cross_product_mlp
+      :value: None
+
+
+
+   .. py:attribute:: normalization_factor
+
+
+   .. py:attribute:: reflection_equiv
+      :value: True
+
+
+
+   .. py:attribute:: tanh
+      :value: False
+
+
+
+.. py:class:: GCL(input_nf: int, output_nf: int, hidden_nf: int, normalization_factor: float, aggregation_method: str, edges_in_d: int = 0, act_fn: Optional[torch.nn.Module] = None, attention: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Invariant message-passing layer.
+
+
+   .. py:method:: forward(h: torch.Tensor, edge_index: torch.Tensor, edge_attr: Optional[torch.Tensor] = None) -> torch.Tensor
+
+
+   .. py:attribute:: aggregation_method
+
+
+   .. py:attribute:: attention
+      :value: False
+
+
+
+   .. py:attribute:: edge_mlp
+
+
+   .. py:attribute:: node_mlp
+
+
+   .. py:attribute:: normalization_factor
+
+
+.. py:class:: SinusoidsEmbeddingNew(max_res: float = 15.0, min_res: float = 15.0 / 2000.0, div_factor: int = 4)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Sinusoidal distance embedding (off in every shipped config).
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: dim
+
+
+   .. py:attribute:: frequencies
+
+
+   .. py:attribute:: n_frequencies
+
+
+.. py:function:: coord2cross(x: torch.Tensor, edge_index: torch.Tensor, batch_mask: torch.Tensor, norm_constant: float = 1) -> torch.Tensor
+
+.. py:function:: coord2diff(x: torch.Tensor, edge_index: torch.Tensor, norm_constant: float = 1) -> Tuple[torch.Tensor, torch.Tensor]
+
+.. py:function:: unsorted_segment_sum(data: torch.Tensor, segment_ids: torch.Tensor, num_segments: int, normalization_factor: Optional[float], aggregation_method: str) -> torch.Tensor
+
+   TensorFlow's ``unsorted_segment_sum``, with 'sum' or 'mean' scaling.
+
+

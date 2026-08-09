@@ -1,0 +1,222 @@
+MolecularDiffusion.data.component.diffsbdd_data
+===============================================
+
+.. py:module:: MolecularDiffusion.data.component.diffsbdd_data
+
+.. autoapi-nested-parse::
+
+   Dataset / collate / DataModule for DiffSBDD ligand-pocket complexes.
+
+   DiffSBDD carries two node sets per complex -- a diffused ligand point cloud
+   and a protein pocket point cloud -- flat-concatenated with ``torch_scatter``
+   style batch indices. That is not the platform's padded single-node-set
+   PointCloud batch, so this module brings its own Dataset and ``collate_fn``
+   and is selected via ``_target_`` from ``configs/data/diffsbdd_dataset.yaml``.
+   Direct precedent: ``data/component/kgdiff_data.py`` and
+   ``data/component/pmdm_data.py``, through the same seams (``cli/train.py`` ->
+   ``.load()`` / ``.train_set`` / ``.collate_fn``, then
+   ``data/lightning_data_module.py``'s ``collate_fn or graph_collate``).
+
+   Storage is the **kgdiff ASE db, reused unchanged** (see the integration
+   plan): one row per complex, written by
+   ``docs/model_integrations/kgdiff/scripts/convert_dataset.py``.
+
+       Atoms            -> ligand only (positions + raw element Z)
+       key_value_pairs  -> name, n_lig, n_pocket, affinity (affinity unused here)
+       data             -> lig_aromatic, pocket_coords, pocket_element,
+                           pocket_aa_type, pocket_is_backbone
+
+   Everything there is a raw integer, so this module owns DiffSBDD's own
+   vocabulary expansion and nothing has to be reconverted to change it.
+
+   **Vocabulary: one 10-class element encoder shared by ligand and pocket**, and
+   hydrogens stripped from both. This is not a guess -- it is read off the
+   released full-atom CrossDocked checkpoints (Zenodo 8183747), whose
+   ``hyper_parameters`` say ``dataset='crossdock'`` +
+   ``pocket_representation='full-atom'``, which in ``lightning_modules.py:90-97``
+   resolves *both* encoders to ``dataset_params['crossdock']['atom_encoder']``
+   (10 classes, no ``others`` bucket), and whose ``atom_encoder`` /
+   ``residue_encoder`` weights are both ``(20, 10)``. The 11-class
+   ``crossdock_full`` table in ``constants.py:154`` is unused by those weights.
+   Upstream's ``process_crossdock.py`` is run with ``--no_H``, so hydrogens are
+   absent from both node sets -- hence the strip here, which is also what keeps
+   the pocket inside a vocabulary that has no fallback class.
+
+   The collate emits DiffSBDD's own key names (``dataset.py:53-70``), so the
+   task-side adapter is one dict comprehension.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.diffsbdd_data.DIFFSBDD_ATOM_VOCAB
+   MolecularDiffusion.data.component.diffsbdd_data.DIFFSBDD_ELEMENTS
+   MolecularDiffusion.data.component.diffsbdd_data.NUM_ATOM_CLASSES
+   MolecularDiffusion.data.component.diffsbdd_data.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.diffsbdd_data.DiffSBDDDataModule
+   MolecularDiffusion.data.component.diffsbdd_data.DiffSBDDDataset
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.diffsbdd_data.diffsbdd_collate
+   MolecularDiffusion.data.component.diffsbdd_data.one_hot_from_z
+
+
+Module Contents
+---------------
+
+.. py:class:: DiffSBDDDataModule(root: str, train_file: str = 'diffsbdd_smoke.db', val_file: Optional[str] = None, test_file: Optional[str] = None, batch_size: int = 4, num_workers: int = 0, limit: Optional[int] = None, center: bool = True, atom_vocab: Optional[List[str]] = None, task_type: str = 'diffusion_diffsbdd', **kwargs: Any)
+
+   DataModule contract: ``load()`` + ``train_set``/``valid_set``/``test_set``.
+
+   # ponytail: one db, no split -- ``val_file``/``test_file`` default to the
+   # training db. The smoke set is 100 complexes; add a real split (and LMDB
+   # streaming) when a full CrossDocked run needs one.
+
+
+   .. py:method:: load() -> None
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: batch_size
+      :value: 4
+
+
+
+   .. py:attribute:: center
+      :value: True
+
+
+
+   .. py:attribute:: collate_fn
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: limit
+      :value: None
+
+
+
+   .. py:attribute:: num_workers
+      :value: 0
+
+
+
+   .. py:attribute:: root
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_diffsbdd'
+
+
+
+   .. py:attribute:: test_file
+      :value: 'diffsbdd_smoke.db'
+
+
+
+   .. py:attribute:: test_set
+      :type:  Optional[DiffSBDDDataset]
+      :value: None
+
+
+
+   .. py:attribute:: train_file
+      :value: 'diffsbdd_smoke.db'
+
+
+
+   .. py:attribute:: train_set
+      :type:  Optional[DiffSBDDDataset]
+      :value: None
+
+
+
+   .. py:attribute:: val_file
+      :value: 'diffsbdd_smoke.db'
+
+
+
+   .. py:attribute:: valid_set
+      :type:  Optional[DiffSBDDDataset]
+      :value: None
+
+
+
+.. py:class:: DiffSBDDDataset(db_path: str, limit: Optional[int] = None, center: bool = True)
+
+   Bases: :py:obj:`torch.utils.data.Dataset`
+
+
+   One converted ASE db -> one ligand-pocket complex per index.
+
+   Coordinates are **joint-centred** on the combined ligand+pocket centroid
+   at load time, exactly as upstream's ``ProcessedLigandPocketDataset``
+   (``dataset.py:35-41``, ``center=True``) does for both modes. The
+   generator restores the original pocket frame afterwards.
+
+   # ponytail: rows are read eagerly into RAM, like KGDiffDataset. 100
+   # complexes here; stream by row id in __getitem__ if a full CrossDocked
+   # split ever needs it.
+
+
+   .. py:attribute:: center
+      :value: True
+
+
+
+   .. py:attribute:: db_path
+
+
+   .. py:attribute:: entries
+      :type:  List[Dict[str, Any]]
+      :value: []
+
+
+
+.. py:function:: diffsbdd_collate(batch: List[Dict[str, Any]]) -> Dict[str, Any]
+
+   Concatenate complexes; emit DiffSBDD's own argument names.
+
+
+.. py:function:: one_hot_from_z(z: numpy.ndarray) -> torch.Tensor
+
+   Raw element Z -> ``(N, 10)`` float one-hot.
+
+   Raises on an out-of-vocabulary element rather than silently emitting an
+   all-zero row: this vocabulary has no ``others`` bucket, so a zero row is
+   a feature vector the model never saw in training.
+
+
+.. py:data:: DIFFSBDD_ATOM_VOCAB
+   :value: ['C', 'N', 'O', 'S', 'B', 'Br', 'Cl', 'P', 'I', 'F']
+
+
+.. py:data:: DIFFSBDD_ELEMENTS
+   :value: [6, 7, 8, 16, 5, 35, 17, 15, 53, 9]
+
+
+.. py:data:: NUM_ATOM_CLASSES
+   :value: 10
+
+
+.. py:data:: logger
+

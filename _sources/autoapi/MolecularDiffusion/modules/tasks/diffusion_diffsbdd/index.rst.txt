@@ -1,0 +1,358 @@
+MolecularDiffusion.modules.tasks.diffusion_diffsbdd
+===================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_diffsbdd
+
+.. autoapi-nested-parse::
+
+   DiffSBDD task: pocket-conditioned (and joint) 3D ligand diffusion.
+
+   Four objects, mirroring the platform's usual layout:
+
+   * :class:`DiffSBDDTask` -- the duck-typed Task (docs/adding_new_models.md
+     Section 2.1) wrapping either :class:`ConditionalDDPM` or
+     :class:`EnVariationalDiffusion`, selected by ``mode``.
+   * :class:`ModelTaskFactory` -- the ``_target_`` of
+     ``configs/tasks/diffusion_diffsbdd.yaml`` (and of its 4-line
+     ``diffusion_diffsbdd_joint.yaml`` sibling, which only overrides ``mode``).
+   * :class:`DiffSBDDPocketGenerator` -- the ``_target_`` of BOTH
+     ``configs/interference/gen_diffsbdd_pocket.yaml`` and
+     ``gen_diffsbdd_inpaint.yaml``; they differ only in whether
+     ``fixed_atom_indices`` is null. ``GenerativeFactory``'s
+     ``sample(batch_size, nodesxsample, ...)`` has no channel for "which
+     pocket", so pocket-conditioned models get their own generator behind their
+     own ``_target_`` -- the established in-tree pattern
+     (``KGDiffPocketGenerator``, ``PMDMPocketGenerator``), needing no core
+     change: ``cli/generate.py`` only does
+     ``instantiate(cfg.interference, task=task)`` then ``.run()``.
+   * :class:`LigandPocketSizePrior` -- the ligand-size marginal of the model's
+     2D joint ``(n_lig, n_pocket)`` histogram, wrapped to satisfy the
+     ``node_dist_model`` contract.
+
+   Deviations from the generic contract, both shared with the other pocket
+   models in-tree:
+
+   * ``sample()`` requires a pocket. ``ConditionalDDPM.sample()`` itself raises
+     without one, so ``interference: gen_unconditional`` does not apply here.
+   * Sampled coordinates come back in the **input pocket's frame** -- the
+     generator restores the pocket CoM exactly as
+     ``lightning_modules.py:845-852`` does.
+
+   ## The `mode` guard (read this before touching `mode_id`)
+
+   Both modes share ``task_type: diffusion_diffsbdd`` AND -- verified against the
+   released weights -- **identical state-dict keys and shapes** (122 tensors
+   each; ``update_pocket_coords`` is a flag, not a parameter). The integration
+   plan expected a shape mismatch to catch a joint checkpoint loaded under a
+   ``pocket_conditioning`` config; there is none, and ``cli/generate.py:322``
+   loads with ``strict=False``, so such a mix-up would run silently on the wrong
+   sampler. The ``mode_id`` buffer below is the fix: it round-trips through the
+   checkpoint, and :meth:`DiffSBDDTask._check_mode` refuses to train or sample
+   when the loaded value disagrees with the configured ``mode``.
+
+   Out of scope this pass (see the integration plan): ``optimize.py`` /
+   ``diversify()``, ``SimpleConditionalDDPM``, CA pocket representation, virtual
+   nodes, the auxiliary Lennard-Jones loss, trajectory export, Vina docking, and
+   ``EnVariationalDiffusion.sample()`` (the fully unconditional path that
+   hallucinates a pocket).
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_diffsbdd.FLOAT_TYPE
+   MolecularDiffusion.modules.tasks.diffusion_diffsbdd.INT_TYPE
+   MolecularDiffusion.modules.tasks.diffusion_diffsbdd.MODES
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator
+   MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDTask
+   MolecularDiffusion.modules.tasks.diffusion_diffsbdd.LigandPocketSizePrior
+   MolecularDiffusion.modules.tasks.diffusion_diffsbdd.ModelTaskFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: DiffSBDDPocketGenerator(task, pocket_db: Optional[str] = None, pocket_index: int = 0, num_generate: int = 20, batch_size: int = 4, num_steps: Optional[int] = None, mol_size: Optional[list] = None, fixed_atom_indices: Optional[list] = None, add_n_nodes: Optional[int] = None, resamplings: int = 1, center: str = 'ligand', jump_length: int = 1, output_path: str = 'generated_diffsbdd', seed: int = 42, device: Optional[str] = None, **kwargs: Any)
+
+   Pocket-conditioned generation and inpainting.
+
+   One class behind both interference configs -- they differ only in whether
+   ``fixed_atom_indices`` is null, and a ``DiffSBDDInpaintGenerator`` would
+   be an interface with one implementation.
+
+   The pocket (and, for inpainting, the reference ligand that defined it)
+   comes from one row of the converted ASE db, read with ``center=False`` so
+   sampled ligands come back in that pocket's own frame.
+
+   Fixed atoms are selected by **index into the stored reference ligand**
+   (``fixed_atom_indices: [0, 1, 2, 3]``) rather than by PDB atom name
+   (upstream's ``--fix_atoms "C1 N6 C5"``): the db has no atom names, and the
+   same ``lig_fixed`` tensor reaches ``inpaint()`` either way.
+
+
+   .. py:method:: run() -> None
+
+
+   .. py:attribute:: add_n_nodes
+      :value: None
+
+
+
+   .. py:attribute:: batch_size
+      :value: 4
+
+
+
+   .. py:attribute:: center
+      :value: 'ligand'
+
+
+
+   .. py:attribute:: device
+      :value: 'cuda'
+
+
+
+   .. py:attribute:: fixed_atom_indices
+
+
+   .. py:attribute:: jump_length
+      :value: 1
+
+
+
+   .. py:attribute:: mol_size
+
+
+   .. py:attribute:: num_generate
+      :value: 20
+
+
+
+   .. py:attribute:: num_steps
+      :value: None
+
+
+
+   .. py:attribute:: output_path
+      :value: 'generated_diffsbdd'
+
+
+
+   .. py:attribute:: pocket_db
+      :value: None
+
+
+
+   .. py:attribute:: pocket_index
+      :value: 0
+
+
+
+   .. py:attribute:: resamplings
+      :value: 1
+
+
+
+   .. py:attribute:: seed
+      :value: 42
+
+
+
+   .. py:attribute:: task
+
+
+.. py:class:: DiffSBDDTask(model: torch.nn.Module, mode: str = 'pocket_conditioning', atom_vocab: Optional[List[str]] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Task contract around :class:`ConditionalDDPM` / :class:`EnVariationalDiffusion`.
+
+
+   .. py:method:: evaluate(pred, target)
+
+
+   .. py:method:: forward(batch)
+
+      Loss assembly ported from ``lightning_modules.py:236-302``.
+
+      Mode-independent: both models return the same keys, the conditional
+      one substituting a constant 0 for the pocket terms. ``l2`` with
+      per-example dimension normalisation while training, the full VLB
+      otherwise.
+
+
+
+   .. py:method:: predict_and_target(batch)
+
+
+   .. py:method:: sample(batch_size=None, nodesxsample=None, num_steps=None, batch=None, ligand=None, lig_fixed=None, resamplings: int = 1, center: str = 'ligand', jump_length: int = 1, **kwargs)
+
+      Sample ligands inside the pocket carried by ``batch``.
+
+      **The signature deliberately deviates from Section 2.1**: it takes a
+      pocket. ``batch`` must hold ``pocket_coords`` / ``pocket_one_hot`` /
+      ``pocket_mask`` / ``num_pocket_nodes`` from a collated DiffSBDD batch
+      (:class:`DiffSBDDPocketGenerator` builds it).
+
+      The whole cost of joint mode + inpainting is the three-way branch
+      below; the last two rows of the plan's table are literally the same
+      call, which is upstream's own design
+      (``lightning_modules.py:814-834``), not a shortcut:
+
+      =====================  ===========  ==============================
+      mode                   lig_fixed    call
+      =====================  ===========  ==============================
+      pocket_conditioning    None         ``sample_given_pocket``
+      pocket_conditioning    given        ``ConditionalDDPM.inpaint``
+      joint                  None->zeros  ``EnVariationalDiffusion.inpaint``
+      joint                  given        *same call*
+      =====================  ===========  ==============================
+
+      NB the ``mode`` kwarg that ``GenerativeFactory`` passes (``"ddpm"`` /
+      ``"ddim"``) is swallowed by ``**kwargs`` and is NOT this task's
+      generative ``self.mode``.
+
+      Returns ``(one_hot, charges, coords, node_mask)`` padded to
+      ``(B, N, .)`` in the INPUT POCKET's frame. ``charges`` is zeros:
+      DiffSBDD has no charge channel.
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:property:: device
+
+
+   .. py:attribute:: mode
+      :value: 'pocket_conditioning'
+
+
+
+   .. py:attribute:: model
+
+
+   .. py:property:: n_node_dist
+      :type: Dict[int, float]
+
+
+
+   .. py:property:: node_dist_model
+      :type: LigandPocketSizePrior
+
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: split
+      :value: 'train'
+
+
+
+.. py:class:: LigandPocketSizePrior(histogram: torch.Tensor)
+
+   Ligand-size prior over the model's 2D joint histogram.
+
+   ``.sample(n)`` returns the ligand-axis **marginal**, which is what the
+   Section 2.1 ``node_dist_model`` contract asks for. The pocket generator
+   does not use it: it calls ``sample_conditional(n2=pocket_sizes)`` on the
+   model's own :class:`DistributionNodes`, which is the native behaviour and
+   the only one that respects pocket size.
+
+
+   .. py:method:: sample(n_samples: int) -> torch.Tensor
+
+
+   .. py:attribute:: marginal
+
+
+   .. py:attribute:: n_node_dist
+
+
+.. py:class:: ModelTaskFactory(task_type: str = 'diffusion_diffsbdd', mode: str = 'pocket_conditioning', atom_nf: int = NUM_ATOM_CLASSES, residue_nf: int = NUM_ATOM_CLASSES, n_dims: int = 3, joint_nf: int = 32, hidden_nf: int = 128, n_layers: int = 5, inv_sublayers: int = 1, attention: bool = True, tanh: bool = True, norm_constant: float = 1, sin_embedding: bool = False, normalization_factor: float = 100, aggregation_method: str = 'sum', reflection_equivariant: bool = False, edge_cutoff_ligand: Optional[float] = None, edge_cutoff_pocket: Optional[float] = 5.0, edge_cutoff_interaction: Optional[float] = 5.0, edge_embedding_dim: Optional[int] = None, diffusion_steps: int = 500, diffusion_noise_schedule: str = 'polynomial_2', diffusion_noise_precision: float = 0.0005, normalize_factors: Sequence[float] = (1.0, 4.0), max_n_lig: int = 107, max_n_pocket: int = 1671, atom_vocab: Optional[List[str]] = None, train_set: Any = None, **kwargs: Any)
+
+   Hydra entry point for ``configs/tasks/diffusion_diffsbdd*.yaml``.
+
+   ``train_set`` is declared so ``cli/train.py``'s declarative seam
+   (docs/adding_new_models.md Section 2.5) injects the training set: the 2D
+   joint size histogram is a genuine dataset statistic and is needed at
+   *train* time too, for the ``log_pN`` VLB term. It is stored as a buffer on
+   the model so it survives the checkpoint and generation can rebuild with
+   ``train_set=None``. The buffer's shape is fixed by ``max_n_lig`` /
+   ``max_n_pocket``, so checkpoint shapes never depend on which db was used;
+   the defaults are the released CrossDocked histogram's own shape.
+
+
+   .. py:method:: build() -> DiffSBDDTask
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: condition_names
+      :type:  List[str]
+      :value: []
+
+
+
+   .. py:attribute:: ddpm_kwargs
+
+
+   .. py:attribute:: dynamics_kwargs
+
+
+   .. py:attribute:: max_n_lig
+      :value: 107
+
+
+
+   .. py:attribute:: max_n_pocket
+      :value: 1671
+
+
+
+   .. py:attribute:: mode
+      :value: 'pocket_conditioning'
+
+
+
+   .. py:attribute:: task
+      :type:  Optional[DiffSBDDTask]
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_diffsbdd'
+
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+.. py:data:: FLOAT_TYPE
+
+.. py:data:: INT_TYPE
+
+.. py:data:: MODES
+   :type:  Tuple[str, Ellipsis]
+   :value: ('pocket_conditioning', 'joint')
+
+

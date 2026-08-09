@@ -1,0 +1,38 @@
+MolecularDiffusion.modules.models.diffsbdd
+==========================================
+
+.. py:module:: MolecularDiffusion.modules.models.diffsbdd
+
+.. autoapi-nested-parse::
+
+   DiffSBDD: E(3)-equivariant pocket-conditioned ligand diffusion.
+
+   Ported from https://github.com/arneschneuing/DiffSBDD (commit 5d0d38d).
+   See ``docs/model_integrations/diffsbdd/INTEGRATION_PLAN.md``.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/diffsbdd/dynamics/index
+   /autoapi/MolecularDiffusion/modules/models/diffsbdd/egnn/index
+   /autoapi/MolecularDiffusion/modules/models/diffsbdd/en_diffusion/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffsbdd.DDPM_MODES
+
+
+Package Contents
+----------------
+
+.. py:data:: DDPM_MODES
+

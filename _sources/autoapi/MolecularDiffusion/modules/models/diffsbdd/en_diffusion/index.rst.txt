@@ -1,0 +1,381 @@
+MolecularDiffusion.modules.models.diffsbdd.en_diffusion
+=======================================================
+
+.. py:module:: MolecularDiffusion.modules.models.diffsbdd.en_diffusion
+
+.. autoapi-nested-parse::
+
+   DiffSBDD's E(3)-equivariant DDPMs over a ligand + protein-pocket system.
+
+   Ported from ``equivariant_diffusion/en_diffusion.py`` and
+   ``equivariant_diffusion/conditional_model.py``. Two selectable models:
+
+   * :class:`EnVariationalDiffusion` (``mode: joint``) -- diffuses ligand *and*
+     pocket together. Its :meth:`~EnVariationalDiffusion.inpaint` is also how
+     upstream does pocket-conditioned generation in joint mode
+     (``lightning_modules.py:814-834``): a zero ligand with ``lig_fixed=0`` and
+     ``pocket_fixed=1``. De-novo generation and fragment-fixing are the same
+     call with a different ``lig_fixed``.
+   * :class:`ConditionalDDPM` (``mode: pocket_conditioning``) -- diffuses the
+     ligand only; the pocket is clean, never-noised context, and the system is
+     kept translation-invariant by re-centring on the ligand CoM each step. It
+     has both :meth:`~ConditionalDDPM.sample_given_pocket` and its own
+     :meth:`~ConditionalDDPM.inpaint`.
+
+   Continuous Gaussian noise on coordinates **and** the one-hot feature block,
+   epsilon parametrisation, mean-free coordinate subspace.
+
+   Not ported, all unused by every shipped DiffSBDD config or explicitly out of
+   scope in the integration plan: ``GammaNetwork``/``PositiveLinear``
+   (``noise_schedule='learned'``), virtual nodes, the auxiliary Lennard-Jones
+   term and the ``xh_lig_hat`` it consumed, ``SimpleConditionalDDPM``,
+   ``diversify()``/``partially_noised_ligand()``.
+
+   ``forward()`` returns a dict rather than upstream's 13-tuple: the task module
+   in ``modules/tasks/diffusion_diffsbdd.py`` is the only consumer, and both
+   models return the *same* keys -- which is why ``mode`` costs the task zero
+   extra code (``en_diffusion.py:465`` vs ``conditional_model.py:326`` return
+   matching tuples upstream, the conditional one substituting 0.0 for the pocket
+   error).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffsbdd.en_diffusion.ConditionalDDPM
+   MolecularDiffusion.modules.models.diffsbdd.en_diffusion.DistributionNodes
+   MolecularDiffusion.modules.models.diffsbdd.en_diffusion.EnVariationalDiffusion
+   MolecularDiffusion.modules.models.diffsbdd.en_diffusion.PredefinedNoiseSchedule
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffsbdd.en_diffusion.clip_noise_schedule
+   MolecularDiffusion.modules.models.diffsbdd.en_diffusion.cosine_beta_schedule
+   MolecularDiffusion.modules.models.diffsbdd.en_diffusion.polynomial_schedule
+
+
+Module Contents
+---------------
+
+.. py:class:: ConditionalDDPM(*args: Any, **kwargs: Any)
+
+   Bases: :py:obj:`EnVariationalDiffusion`
+
+
+   ``mode: pocket_conditioning`` -- only the ligand is diffused.
+
+
+   .. py:method:: delta_log_px(num_nodes: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: forward(ligand: Dict, pocket: Dict) -> Dict[str, Any]
+
+      Returns the loss terms; see the module docstring.
+
+
+
+   .. py:method:: inpaint(ligand: Dict, pocket: Dict, lig_fixed: torch.Tensor, resamplings: int = 1, timesteps: Optional[int] = None, center: str = 'ligand', **_kwargs: Any)
+
+      RePaint sampling with ligand atoms held fixed (``inpaint.py:147``).
+
+
+
+   .. py:method:: kl_prior(xh_lig, mask_lig, num_nodes)
+
+
+   .. py:method:: log_pN(n_lig: torch.Tensor, n_pocket: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: log_pxh_given_z0_without_constants(ligand, z_0_lig, eps_lig, net_out_lig, gamma_0, epsilon: float = 1e-10)
+
+
+   .. py:method:: noised_representation(xh_lig, xh0_pocket, lig_mask, pocket_mask, gamma_t)
+
+
+   .. py:method:: remove_mean_batch(x_lig, x_pocket, lig_indices, pocket_indices)
+      :classmethod:
+
+
+      Subtract only the *sampled* part's CoM (the pocket rides along).
+
+
+
+   .. py:method:: sample(*args: Any, **kwargs: Any)
+      :abstractmethod:
+
+
+
+   .. py:method:: sample_combined_position_feature_noise(*args: Any, **kwargs: Any)
+      :abstractmethod:
+
+
+
+   .. py:method:: sample_given_pocket(pocket: Dict, num_nodes_lig: torch.Tensor, timesteps: Optional[int] = None, **_kwargs: Any)
+
+      De-novo ligand generation inside a fixed pocket.
+
+
+
+   .. py:method:: sample_normal(*args: Any, **kwargs: Any)
+      :abstractmethod:
+
+
+
+   .. py:method:: sample_normal_zero_com(mu_lig, xh0_pocket, sigma, lig_mask, pocket_mask)
+
+
+   .. py:method:: sample_p_xh_given_z0(z0_lig, xh0_pocket, lig_mask, pocket_mask, batch_size)
+
+
+   .. py:method:: sample_p_zs_given_zt(s, t, zt_lig, xh0_pocket, ligand_mask, pocket_mask)
+
+
+   .. py:method:: sample_p_zt_given_zs(zs_lig, xh0_pocket, ligand_mask, pocket_mask, gamma_t, gamma_s)
+
+
+.. py:class:: DistributionNodes(histogram: torch.Tensor)
+
+   2D joint histogram over ``(n_ligand_atoms, n_pocket_nodes)``.
+
+   Same semantics as upstream ``en_diffusion.py:958``, but the 178k-entry
+   ``n_nodes_to_idx`` dict and the eager per-column ``Categorical`` lists are
+   replaced by row-major arithmetic and ``torch.multinomial``. Identical
+   maths, built in milliseconds instead of seconds.
+
+
+   .. py:method:: log_prob(n_lig: torch.Tensor, n_pocket: torch.Tensor) -> torch.Tensor
+
+      log p(N_lig, N_pocket) -- the joint model's ``log_pN``.
+
+
+
+   .. py:method:: log_prob_n1_given_n2(n1: torch.Tensor, n2: torch.Tensor) -> torch.Tensor
+
+      log p(N_lig | N_pocket) -- the conditional model's ``log_pN``.
+
+
+
+   .. py:method:: sample(n_samples: int = 1) -> Tuple[torch.Tensor, torch.Tensor]
+
+
+   .. py:method:: sample_conditional(n1: Optional[torch.Tensor] = None, n2: Optional[torch.Tensor] = None) -> torch.Tensor
+
+      Draw one axis given the other. ``n2=pocket_sizes`` is the live path.
+
+
+
+   .. py:attribute:: prob
+
+
+.. py:class:: EnVariationalDiffusion(dynamics: torch.nn.Module, atom_nf: int, residue_nf: int, n_dims: int = 3, size_histogram: Optional[torch.Tensor] = None, max_n_lig: int = 107, max_n_pocket: int = 1671, timesteps: int = 500, noise_schedule: str = 'polynomial_2', noise_precision: float = 0.0005, norm_values: Tuple[float, float] = (1.0, 4.0), norm_biases: Tuple[Optional[float], float] = (None, 0.0))
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   ``mode: joint`` -- ligand and pocket are diffused together.
+
+
+   .. py:method:: SNR(gamma: torch.Tensor) -> torch.Tensor
+      :staticmethod:
+
+
+
+   .. py:method:: alpha(gamma: torch.Tensor, target_tensor: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: assert_mean_zero_with_mask(x: torch.Tensor, node_mask: torch.Tensor, eps: float = 1e-10) -> None
+      :staticmethod:
+
+
+
+   .. py:method:: cdf_standard_gaussian(x: torch.Tensor) -> torch.Tensor
+      :staticmethod:
+
+
+
+   .. py:method:: check_issues_norm_values(num_stdevs: int = 8) -> None
+
+
+   .. py:method:: compute_x_pred(net_out: torch.Tensor, zt: torch.Tensor, gamma_t: torch.Tensor, batch_mask: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: delta_log_px(num_nodes: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: forward(ligand: Dict, pocket: Dict) -> Dict[str, Any]
+
+      Returns the loss terms; see the module docstring.
+
+
+
+   .. py:method:: gaussian_KL(q_mu_minus_p_mu_squared: torch.Tensor, q_sigma: torch.Tensor, p_sigma: torch.Tensor, d) -> torch.Tensor
+      :staticmethod:
+
+
+
+   .. py:method:: get_repaint_schedule(resamplings: int, jump_length: int, timesteps: int)
+      :staticmethod:
+
+
+      RePaint jump schedule: denoising steps before each jump back.
+
+
+
+   .. py:method:: inflate_batch_array(array: torch.Tensor, target: torch.Tensor) -> torch.Tensor
+      :staticmethod:
+
+
+
+   .. py:method:: inpaint(ligand: Dict, pocket: Dict, lig_fixed: torch.Tensor, pocket_fixed: torch.Tensor, resamplings: int = 1, jump_length: int = 1, timesteps: Optional[int] = None, **_kwargs: Any)
+
+      RePaint sampling with parts of the system held fixed.
+
+      In joint mode this is ALSO the de-novo pocket-conditioned path:
+      ``lig_fixed=0`` / ``pocket_fixed=1`` reproduces upstream's
+      ``lightning_modules.py:814-834``. Lugmayr et al., CVPR 2022.
+
+
+
+   .. py:method:: kl_prior_with_pocket(xh_lig: torch.Tensor, xh_pocket: torch.Tensor, mask_lig: torch.Tensor, mask_pocket: torch.Tensor, num_nodes: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: log_constants_p_x_given_z0(n_nodes: torch.Tensor, device) -> torch.Tensor
+
+
+   .. py:method:: log_pN(n_lig: torch.Tensor, n_pocket: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: log_pxh_given_z0_without_constants(ligand, z_0_lig, eps_lig, net_out_lig, pocket, z_0_pocket, eps_pocket, net_out_pocket, gamma_0, epsilon: float = 1e-10)
+
+
+   .. py:method:: noised_representation(xh_lig: torch.Tensor, xh_pocket: torch.Tensor, lig_mask: torch.Tensor, pocket_mask: torch.Tensor, gamma_t: torch.Tensor)
+
+
+   .. py:method:: normalize(ligand: Optional[Dict[str, torch.Tensor]] = None, pocket: Optional[Dict[str, torch.Tensor]] = None)
+
+
+   .. py:method:: remove_mean_batch(x: torch.Tensor, indices: torch.Tensor) -> torch.Tensor
+      :staticmethod:
+
+
+
+   .. py:method:: sample_center_gravity_zero_gaussian_batch(size, lig_indices: torch.Tensor, pocket_indices: torch.Tensor) -> torch.Tensor
+      :staticmethod:
+
+
+
+   .. py:method:: sample_combined_position_feature_noise(lig_indices: torch.Tensor, pocket_indices: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+
+
+   .. py:method:: sample_gaussian(size, device) -> torch.Tensor
+      :staticmethod:
+
+
+
+   .. py:method:: sample_normal(mu_lig: torch.Tensor, mu_pocket: torch.Tensor, sigma: torch.Tensor, lig_mask: torch.Tensor, pocket_mask: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+
+
+   .. py:method:: sample_p_xh_given_z0(z0_lig, z0_pocket, lig_mask, pocket_mask, batch_size)
+
+
+   .. py:method:: sample_p_zs_given_zt(s, t, zt_lig, zt_pocket, ligand_mask, pocket_mask)
+
+
+   .. py:method:: sample_p_zt_given_zs(zs_lig, zs_pocket, ligand_mask, pocket_mask, gamma_t, gamma_s)
+
+
+   .. py:method:: sigma(gamma: torch.Tensor, target_tensor: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: sigma_and_alpha_t_given_s(gamma_t: torch.Tensor, gamma_s: torch.Tensor, target_tensor: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+
+
+   .. py:method:: subspace_dimensionality(input_size: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: sum_except_batch(x: torch.Tensor, indices: torch.Tensor) -> torch.Tensor
+      :staticmethod:
+
+
+
+   .. py:method:: unnormalize(x: torch.Tensor, h_cat: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+
+
+   .. py:method:: unnormalize_z(z_lig: torch.Tensor, z_pocket: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+
+
+   .. py:attribute:: T
+      :value: 500
+
+
+
+   .. py:attribute:: atom_nf
+
+
+   .. py:attribute:: dynamics
+
+
+   .. py:attribute:: gamma
+
+
+   .. py:attribute:: n_dims
+      :value: 3
+
+
+
+   .. py:attribute:: norm_biases
+      :value: (None, 0.0)
+
+
+
+   .. py:attribute:: norm_values
+      :value: (1.0, 4.0)
+
+
+
+   .. py:attribute:: num_classes
+
+
+   .. py:attribute:: residue_nf
+
+
+   .. py:property:: size_distribution
+      :type: DistributionNodes
+
+
+      Rebuilt lazily, so ``load_state_dict`` on the buffer takes effect.
+
+
+.. py:class:: PredefinedNoiseSchedule(noise_schedule: str, timesteps: int, precision: float)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Lookup table of ``gamma`` for a non-learned schedule.
+
+
+   .. py:method:: forward(t: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: gamma
+
+
+   .. py:attribute:: timesteps
+
+
+.. py:function:: clip_noise_schedule(alphas2: numpy.ndarray, clip_value: float = 0.001) -> numpy.ndarray
+
+.. py:function:: cosine_beta_schedule(timesteps: int, s: float = 0.008) -> numpy.ndarray
+
+.. py:function:: polynomial_schedule(timesteps: int, s: float = 0.0001, power: float = 3.0) -> numpy.ndarray
+
+   ``1 - x^power``; ``polynomial_2`` with s=5e-4 is DiffSBDD's default.
+
+

@@ -1,0 +1,115 @@
+MolecularDiffusion.modules.models.diffsbdd.dynamics
+===================================================
+
+.. py:module:: MolecularDiffusion.modules.models.diffsbdd.dynamics
+
+.. autoapi-nested-parse::
+
+   ``EGNNDynamics``, ported from DiffSBDD ``equivariant_diffusion/dynamics.py``.
+
+   Two node sets -- a diffused ligand and a protein pocket -- are projected into
+   a shared ``joint_nf`` space by separate encoder/decoder MLPs, concatenated
+   into one flat node set, message-passed over a distance-cutoff graph, then
+   split and decoded again.
+
+   The graph is rebuilt every forward pass from batch membership plus optional
+   distance cutoffs (:meth:`EGNNDynamics.get_edges`). It carries no chemistry:
+   ``edge_embedding`` is a 3-way *node provenance* label (lig-lig / lig-pocket /
+   pocket-pocket), not a bond type, and is ``None`` unless
+   ``edge_embedding_dim`` is set -- which no shipped DiffSBDD config does.
+
+   ``mode='gnn_dynamics'`` is not ported (unused by every shipped config), so
+   ``self.mode`` is gone and the EGNN branch is unconditional.
+
+   Submodule names are state-dict keys of the released checkpoints; do not
+   rename ``atom_encoder`` / ``atom_decoder`` / ``residue_encoder`` /
+   ``residue_decoder`` / ``egnn``.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffsbdd.dynamics.EGNNDynamics
+
+
+Module Contents
+---------------
+
+.. py:class:: EGNNDynamics(atom_nf: int, residue_nf: int, n_dims: int = 3, joint_nf: int = 16, hidden_nf: int = 64, act_fn: Optional[torch.nn.Module] = None, n_layers: int = 4, attention: bool = False, condition_time: bool = True, tanh: bool = False, norm_constant: float = 0, inv_sublayers: int = 2, sin_embedding: bool = False, normalization_factor: float = 100, aggregation_method: str = 'sum', update_pocket_coords: bool = True, edge_cutoff_ligand: Optional[float] = None, edge_cutoff_pocket: Optional[float] = None, edge_cutoff_interaction: Optional[float] = None, reflection_equivariant: bool = True, edge_embedding_dim: Optional[int] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   ``(xh_ligand, xh_pocket, t, mask_lig, mask_pocket) -> (out_lig, out_pocket)``.
+
+
+   .. py:method:: forward(xh_atoms: torch.Tensor, xh_residues: torch.Tensor, t: torch.Tensor, mask_atoms: torch.Tensor, mask_residues: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+
+
+   .. py:method:: get_edges(batch_mask_ligand: torch.Tensor, batch_mask_pocket: torch.Tensor, x_ligand: torch.Tensor, x_pocket: torch.Tensor) -> torch.Tensor
+
+      Complete graph within each complex, optionally distance-masked.
+
+
+
+   .. py:attribute:: atom_decoder
+
+
+   .. py:attribute:: atom_encoder
+
+
+   .. py:attribute:: condition_time
+      :value: True
+
+
+
+   .. py:attribute:: edge_cutoff_i
+      :value: None
+
+
+
+   .. py:attribute:: edge_cutoff_l
+      :value: None
+
+
+
+   .. py:attribute:: edge_cutoff_p
+      :value: None
+
+
+
+   .. py:attribute:: edge_embedding
+
+
+   .. py:attribute:: edge_nf
+      :value: None
+
+
+
+   .. py:attribute:: egnn
+
+
+   .. py:attribute:: n_dims
+      :value: 3
+
+
+
+   .. py:attribute:: node_nf
+      :value: 17
+
+
+
+   .. py:attribute:: residue_decoder
+
+
+   .. py:attribute:: residue_encoder
+
+
+   .. py:attribute:: update_pocket_coords
+      :value: True
+
+
+
