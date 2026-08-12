@@ -1,0 +1,83 @@
+MolecularDiffusion.modules.models.ligandiff.gvp
+===============================================
+
+.. py:module:: MolecularDiffusion.modules.models.ligandiff.gvp
+
+.. autoapi-nested-parse::
+
+   Geometric Vector Perceptron.
+
+   Verbatim port of LigandDiff's ``src/gvp.py`` (itself from DiffHopp,
+   https://github.com/jostorge/diffusion-hopping).
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ligandiff.gvp.s_V
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ligandiff.gvp.GVP
+
+
+Module Contents
+---------------
+
+.. py:class:: GVP(in_dims: Tuple[int, int], out_dims: Tuple[int, int], activations=(F.relu, torch.sigmoid), vector_gate: bool = False, eps: float = 0.0001)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Geometric vector perceptron (Jing et al.).
+
+
+   .. py:method:: forward(x: Union[torch.Tensor, s_V]) -> Union[torch.Tensor, s_V]
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: W_h
+
+
+   .. py:attribute:: W_m
+
+
+   .. py:attribute:: W_mu
+
+
+   .. py:attribute:: eps
+      :value: 0.0001
+
+
+
+   .. py:attribute:: h
+
+
+   .. py:attribute:: m
+
+
+   .. py:attribute:: mu
+
+
+   .. py:attribute:: n
+
+
+   .. py:attribute:: v
+
+
+   .. py:attribute:: vector_gate
+      :value: False
+
+
+
+.. py:data:: s_V
+

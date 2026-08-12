@@ -1,0 +1,53 @@
+MolecularDiffusion.modules.models.ligandiff.gvp_model
+=====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.ligandiff.gvp_model
+
+.. autoapi-nested-parse::
+
+   GVP network. Verbatim port of LigandDiff's ``src/gvp_model.py``.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ligandiff.gvp_model.GVPNetwork
+
+
+Module Contents
+---------------
+
+.. py:class:: GVPNetwork(in_dims: Tuple[int, int], out_dims: Tuple[int, int], hidden_dims: Tuple[int, int], num_layers: int, drop_rate: float = 0.0, attention: bool = False, normalization_factor: float = 100.0, aggr: str = 'add', activations=(F.silu, None), vector_gate: bool = True, eps: float = 0.0001)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Stack of GVP conv layers over a geometric graph.
+
+
+   .. py:method:: forward(h, pos, edge_index) -> MolecularDiffusion.modules.models.ligandiff.gvp.s_V
+
+
+   .. py:method:: get_edge_attr(edge_index, pos) -> MolecularDiffusion.modules.models.ligandiff.gvp.s_V
+
+
+   .. py:attribute:: edge_embedding
+
+
+   .. py:attribute:: embedding_in
+
+
+   .. py:attribute:: embedding_out
+
+
+   .. py:attribute:: eps
+      :value: 0.0001
+
+
+
+   .. py:attribute:: layers
+
+

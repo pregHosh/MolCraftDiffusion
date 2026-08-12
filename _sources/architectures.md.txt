@@ -51,7 +51,20 @@ molecule); a plain molecule dataset is not enough.
 | `diffusion_difflinker.yaml` | `diffusion_difflinker` | **Fragments** to join | DiffLinker. Linker design: generates the connecting atoms between held-fixed fragments. |
 | `pharmacophore.yaml` | `diffusion_pharmacophore` | **Pharmacophore** points | Ligand-derived pharmacophore conditioning (no protein). Requires `open3d`. |
 
-## 4. Property prediction and guidance
+## 4. Transition-metal complex generation
+
+Ligand design *around a metal centre*: freeze the metal and the retained
+ligands, re-diffuse the rest. Both are bond-free, conditional-only (every
+sample needs an input complex), generate via the bundled `outpaint` mode, and
+need a dataset built with `data.use_row_data_features: true` for their
+per-atom conditioning columns.
+
+| Task config | `task_type` | Regenerates | Notes |
+| :--- | :--- | :--- | :--- |
+| `diffusion_ligandiff.yaml` | `diffusion_ligandiff` | Exactly **one** ligand per run | LigandDiff (GVP dynamics, EDM). T=500 Cartesian DDPM, heavy atoms only. The slot to fill is given, so the complex keeps its ligand count and denticities. Generating from the released weights needs `diffusion_noise_schedule: learned`. |
+| `diffusion_ligandiff_multi.yaml` | `diffusion_ligandiff_multi` | **Any subset**, one ligand up to the whole coordination sphere | multi-LigandDiff, same backbone. Retain *k* ligands and regenerate the rest; retain none and it builds a complete complex around a bare metal. It also picks how the vacant sites are partitioned — so it chooses the **number of new ligands and their denticities**, not just their atoms. Weights are trained on Cr–Zn only. |
+
+## 5. Property prediction and guidance
 
 Not generators. `regression` predicts a property; `guidance` exposes the same
 head as a gradient signal to steer a diffusion sampler.
@@ -62,7 +75,7 @@ head as a gradient signal to steer a diffusion sampler.
 | `regression_esen.yaml` / `guidance_esen.yaml` | `regression` / `guidance` | eSEN. |
 | `regression_equiformer.yaml` | `regression` | EquiformerV2. No `guidance` config for this backbone yet. |
 
-## 5. Self-supervised pretraining
+## 6. Self-supervised pretraining
 
 Pretrain a backbone on unlabeled 3D structures, then fine-tune for regression or
 guidance.
@@ -131,6 +144,14 @@ Backbones and objectives integrated here are based on the following work.
   *Protein-Ligand Interaction Prior for Binding-aware 3D Molecule Diffusion
   Models.* ICLR 2024.
   [openreview:qH9nrMNTIW](https://openreview.net/forum?id=qH9nrMNTIW)
+- **LigandDiff** — Jin & Merz. *LigandDiff: de Novo Ligand Design for 3D
+  Transition Metal Complexes with Diffusion Models.* Journal of Chemical Theory
+  and Computation 20(10), 4377–4384, 2024.
+  [doi:10.1021/acs.jctc.4c00232](https://doi.org/10.1021/acs.jctc.4c00232)
+- **multi-LigandDiff** — Jin & Merz. *Partial to Total Generation of 3D
+  Transition-Metal Complexes.* Journal of Chemical Theory and Computation, 2024.
+  [doi:10.1021/acs.jctc.4c00775](https://doi.org/10.1021/acs.jctc.4c00775) —
+  an extension of **LigandDiff** (above), itself built on **DiffLinker**.
 - **DiffLinker** — Igashov et al. *Equivariant 3D-Conditional Diffusion Model
   for Molecular Linker Design.* Nature Machine Intelligence 2024. [arXiv:2210.05274](https://arxiv.org/abs/2210.05274)
 - **eSEN** — Fu et al. *Learning Smooth and Expressive Interatomic Potentials

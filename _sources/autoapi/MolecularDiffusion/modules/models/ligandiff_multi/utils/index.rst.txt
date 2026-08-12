@@ -1,0 +1,95 @@
+MolecularDiffusion.modules.models.ligandiff_multi.utils
+=======================================================
+
+.. py:module:: MolecularDiffusion.modules.models.ligandiff_multi.utils
+
+.. autoapi-nested-parse::
+
+   Geometry helpers for multi-LigandDiff's 20-metal scaffold decomposition.
+
+   Everything else multi-LigandDiff needs at runtime -- ``EDM``, ``Dynamics``,
+   ``remove_partial_mean_with_mask``, ``FoundNaNException`` -- is imported
+   unchanged from ``MolecularDiffusion.modules.models.ligandiff``.
+
+   This module exists for one reason: ``models/ligandiff/utils.py`` pins
+   ``METAL_Z`` to LigandDiff's **ten** metals as a module constant, and its
+   ``ligand_groups_from_geometry`` reads it with no override parameter.
+   multi-LigandDiff supports **twenty** (``src/const.py:15``), so the
+   decomposition is reimplemented here against the wider set rather than by
+   editing a file the already-working ``ligandiff`` integration depends on.
+
+   ``coord_sites_from_geometry`` is genuinely new: multi-LigandDiff adds a
+   per-atom "coordinates the metal" flag (``coord_site``) that LigandDiff has no
+   analogue for. Upstream derives it from molSimplify's ``ligcon``
+   (``generate.py:101-106``); molSimplify is not a dependency here and generation
+   input is a bare ``.xyz``, so it is recovered from the covalent-contact
+   criterion instead -- the same substitution ``ligandiff`` already validated for
+   ``ligand_group``.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ligandiff_multi.utils.CN_OCT
+   MolecularDiffusion.modules.models.ligandiff_multi.utils.METAL_Z
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ligandiff_multi.utils.coord_sites_from_geometry
+   MolecularDiffusion.modules.models.ligandiff_multi.utils.distribute_atoms
+   MolecularDiffusion.modules.models.ligandiff_multi.utils.ligand_groups_from_geometry
+
+
+Module Contents
+---------------
+
+.. py:function:: coord_sites_from_geometry(coords: torch.Tensor, charges: torch.Tensor, scale_factor: float = 1.25) -> torch.Tensor
+
+   Recover the per-atom ``coord_site`` flag from geometry alone.
+
+   ``coord_site[i] == 1`` iff atom ``i`` is a non-metal in covalent contact
+   with a metal, i.e. it occupies one of the metal's coordination sites.
+   Upstream gets the same set from molSimplify's ``ligcon``
+   (``generate.py:101-106``).
+
+   Returns ``(N,)`` float 0/1; metal rows are always 0.
+
+
+.. py:function:: distribute_atoms(n_new: int, denticities: List[int]) -> List[int]
+
+   Split ``n_new`` new atoms across ligands of the given denticities.
+
+   Each ligand gets at least ``d`` atoms (it has to supply ``d`` donor
+   atoms); the surplus is dealt out round-robin. Upstream instead draws each
+   ligand's size independently (``generate.py:187-192``) and lets the total
+   fall out; the platform fixes the total via ``mol_size`` / the node-size
+   distribution, so the split is derived from it rather than the reverse.
+
+
+.. py:function:: ligand_groups_from_geometry(coords: torch.Tensor, charges: torch.Tensor, n_slots: int = 6, scale_factor: float = 1.25) -> torch.Tensor
+
+   Recover the ``ligand_group`` one-hot from geometry alone.
+
+   Same construction as ``models/ligandiff/utils.py``'s function of the same
+   name, over the 20-metal ``METAL_Z`` above: delete the metal(s), take the
+   connected components of the covalent-radius contact graph, one slot per
+   component. Components beyond ``n_slots`` fold into the last slot.
+
+   Returns ``(N, n_slots)`` float one-hot; metal rows are all zero. A
+   metal-only scaffold (upstream's ``[]_[...]`` total-generation case)
+   correctly yields the all-zero matrix, leaving every slot free.
+
+
+.. py:data:: CN_OCT
+   :type:  dict
+
+.. py:data:: METAL_Z
+   :type:  Set[int]
+

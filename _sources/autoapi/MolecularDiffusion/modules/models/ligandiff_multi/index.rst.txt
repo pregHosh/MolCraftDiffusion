@@ -1,0 +1,32 @@
+MolecularDiffusion.modules.models.ligandiff_multi
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.models.ligandiff_multi
+
+.. autoapi-nested-parse::
+
+   multi-LigandDiff support code.
+
+   Deliberately tiny. multi-LigandDiff's network is **not** re-ported: the
+   already-integrated ``MolecularDiffusion.modules.models.ligandiff`` package is
+   imported unchanged and instantiated with ``ligand_group_node_nf=7``, which
+   reproduces the released checkpoint's shapes exactly (a ``strict=True``
+   ``load_state_dict`` matches all 238 tensors -- see
+   ``docs/model_integrations/ligandiff_multi/INTEGRATION_PLAN.md``).
+
+   Only ``utils.py`` exists here, because ``models/ligandiff/utils.py``'s
+   ``METAL_Z`` is a hard-coded 10-metal module constant that
+   ``ligand_groups_from_geometry`` reads with no override, and multi-LigandDiff
+   supports 20 metals. Editing that file is out of bounds for this integration.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/ligandiff_multi/utils/index
+
+

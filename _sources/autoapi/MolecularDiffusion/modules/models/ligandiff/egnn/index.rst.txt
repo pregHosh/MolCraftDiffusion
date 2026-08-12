@@ -1,0 +1,110 @@
+MolecularDiffusion.modules.models.ligandiff.egnn
+================================================
+
+.. py:module:: MolecularDiffusion.modules.models.ligandiff.egnn
+
+.. autoapi-nested-parse::
+
+   LigandDiff denoiser wrapper.
+
+   Port of the target repo's ``src/egnn.py``, restricted to the
+   ``gvp_dynamics`` backbone.
+
+   ponytail: the ``egnn_dynamics`` branch (``GCL``/``EquivariantBlock``/``EGNN``
+   /``SinusoidsEmbeddingNew``/``coord2diff``, ~200 lines) is deliberately not
+   ported. Upstream's ``config.yml:28`` selects ``gvp_dynamics`` and the released
+   ``model/pretrained.ckpt`` was trained with it (``hyper_parameters['model'] ==
+   'gvp_dynamics'``), so the EGNN branch is unreachable for every artifact this
+   integration ships. Port it from ``others/LigandDiff/src/egnn.py:69-279`` if a
+   future run actually wants it.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ligandiff.egnn.DenseLayer
+   MolecularDiffusion.modules.models.ligandiff.egnn.Dynamics
+   MolecularDiffusion.modules.models.ligandiff.egnn.ScaledSiLU
+
+
+Module Contents
+---------------
+
+.. py:class:: DenseLayer(in_features: int, out_features: int, bias: bool = True, activation: Union[Callable, torch.nn.Module, None] = None, weight_init: Callable = kaiming_uniform_, bias_init: Callable = zeros_)
+
+   Bases: :py:obj:`torch.nn.Linear`
+
+
+   ``nn.Linear`` with kaiming init and an optional fused activation.
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: bias_init
+
+
+   .. py:attribute:: weight_init
+
+
+.. py:class:: Dynamics(in_node_nf: int, n_dims: int, ligand_group_node_nf: int, hidden_nf: int = 32, activation: str = 'silu', n_layers: int = 2, attention: bool = False, tanh: bool = True, norm_constant: float = 1e-05, inv_sublayers: int = 2, sin_embedding: bool = False, normalization_factor: float = 100, aggregation_method: str = 'sum', drop_rate: float = 0.0, device: str = 'cpu', model: str = 'gvp_dynamics', normalization: str = 'batch_norm', condition_time: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Epsilon-prediction denoiser over a flat (ragged) atom batch.
+
+   Consumes ``xh = cat(x, h)`` with membership given by ``batch_seg``; edges
+   are a runtime fully-connected geometric graph, never stored data.
+
+
+   .. py:method:: forward(xh, t, ligand_diff, ligand_group, batch_seg)
+
+
+   .. py:attribute:: device
+      :value: 'cpu'
+
+
+
+   .. py:attribute:: dynamics
+
+
+   .. py:attribute:: h_embedding
+
+
+   .. py:attribute:: h_embedding_out
+
+
+   .. py:attribute:: ligand_group_embedding
+
+
+   .. py:attribute:: ligand_group_node_nf
+
+
+   .. py:attribute:: model
+      :value: 'gvp_dynamics'
+
+
+
+   .. py:attribute:: n_dims
+
+
+.. py:class:: ScaledSiLU
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   SiLU rescaled by 1/0.6 to keep unit variance.
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: scale_factor
+      :value: 1.6666666666666667
+
+
+

@@ -1,0 +1,95 @@
+MolecularDiffusion.modules.models.ligandiff.conv_layer
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.models.ligandiff.conv_layer
+
+.. autoapi-nested-parse::
+
+   GVP message passing. Verbatim port of LigandDiff's ``src/conv_layer.py``.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ligandiff.conv_layer.GVPConvLayer
+   MolecularDiffusion.modules.models.ligandiff.conv_layer.GVPMessagePassing
+
+
+Module Contents
+---------------
+
+.. py:class:: GVPConvLayer(node_dims: Tuple[int, int], edge_dims: Tuple[int, int], drop_rate: float = 0.0, activations=(F.relu, torch.sigmoid), vector_gate: bool = False, residual: bool = True, attention: bool = True, aggr: str = 'add', normalization_factor: float = 1.0)
+
+   Bases: :py:obj:`GVPMessagePassing`, :py:obj:`abc.ABC`
+
+
+   One GVP conv block: message passing + residual feed-forward.
+
+
+   .. py:method:: forward(x: Union[MolecularDiffusion.modules.models.ligandiff.gvp.s_V, torch.Tensor], edge_index: torch.Tensor, edge_attr: torch.Tensor) -> MolecularDiffusion.modules.models.ligandiff.gvp.s_V
+
+
+   .. py:attribute:: drop_rate
+      :value: 0.0
+
+
+
+   .. py:attribute:: dropout
+
+
+   .. py:attribute:: ff_func
+
+
+   .. py:attribute:: norm
+
+
+   .. py:attribute:: residual
+      :value: True
+
+
+
+.. py:class:: GVPMessagePassing(in_dims: Tuple[int, int], out_dims: Tuple[int, int], edge_dims: Tuple[int, int], hidden_dims: Optional[Tuple[int, int]] = None, activations=(F.relu, torch.sigmoid), vector_gate: bool = False, attention: bool = True, aggr: str = 'add', normalization_factor: float = 1.0)
+
+   Bases: :py:obj:`torch_geometric.nn.MessagePassing`, :py:obj:`abc.ABC`
+
+
+   Edge-GVP message passing with optional scalar attention gating.
+
+
+   .. py:method:: forward(x: MolecularDiffusion.modules.models.ligandiff.gvp.s_V, edge_index: torch.Tensor, edge_attr: torch.Tensor) -> MolecularDiffusion.modules.models.ligandiff.gvp.s_V
+
+
+   .. py:method:: message(s_i, s_j, V_i, V_j, edge_attr, v_dim)
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:method:: update(aggr_out: torch.Tensor) -> MolecularDiffusion.modules.models.ligandiff.gvp.s_V
+
+
+   .. py:attribute:: attention
+      :value: True
+
+
+
+   .. py:attribute:: edge_gvps
+
+
+   .. py:attribute:: hidden_scalar
+
+
+   .. py:attribute:: hidden_vector
+
+
+   .. py:attribute:: in_vector
+
+
+   .. py:attribute:: normalization_factor
+      :value: 1.0
+
+
+

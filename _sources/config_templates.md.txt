@@ -33,7 +33,7 @@ MolCraftDiff train docs/cfg_examples/train_diffusion
 MolCraftDiff generate docs/cfg_examples/gen_cfg
 ```
 
-Every command accepts Hydra-style dotted overrides, e.g.
+Config-driven commands accept Hydra-style dotted overrides, e.g.
 `MolCraftDiff generate docs/cfg_examples/gen_cfg interference.num_generate=200`.
 See [Model Architectures](architectures.md) for choosing a training backbone and
 [Tutorials](tutorials/index.md) for end-to-end walkthroughs.

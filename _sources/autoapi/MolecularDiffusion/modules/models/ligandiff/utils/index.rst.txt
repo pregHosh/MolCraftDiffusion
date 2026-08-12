@@ -1,0 +1,96 @@
+MolecularDiffusion.modules.models.ligandiff.utils
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.models.ligandiff.utils
+
+.. autoapi-nested-parse::
+
+   LigandDiff helpers.
+
+   ``remove_partial_mean_with_mask`` and ``FoundNaNException`` are verbatim from
+   the target repo's ``src/utils.py``. ``ligand_groups_from_geometry`` is new --
+   see its docstring.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ligandiff.utils.METAL_Z
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ligandiff.utils.FoundNaNException
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ligandiff.utils.ligand_groups_from_geometry
+   MolecularDiffusion.modules.models.ligandiff.utils.remove_partial_mean_with_mask
+
+
+Module Contents
+---------------
+
+.. py:exception:: FoundNaNException(x, h)
+
+   Bases: :py:obj:`Exception`
+
+
+   Raised by ``Dynamics.forward`` when the denoiser output goes NaN.
+
+   Initialize self.  See help(type(self)) for accurate signature.
+
+
+   .. py:method:: find_nan_idx(z)
+      :staticmethod:
+
+
+
+   .. py:attribute:: only_h_nan_idx
+
+
+   .. py:attribute:: only_x_nan_idx
+
+
+   .. py:attribute:: x_h_nan_idx
+
+
+.. py:function:: ligand_groups_from_geometry(coords: torch.Tensor, charges: torch.Tensor, n_slots: int = 6, scale_factor: float = 1.25) -> torch.Tensor
+
+   Recover LigandDiff's ``ligand_group`` one-hot from geometry alone.
+
+   Upstream derives this column block with molSimplify's ``ligand_breakdown``
+   (``generate.py:81-87``): each atom is tagged with the index of the ligand
+   it belongs to, the metal getting an all-zero row. molSimplify is not a
+   dependency here and generation input is a bare ``.xyz``, so the same
+   decomposition is recovered directly: delete the metal(s), then take the
+   connected components of the covalent-radius contact graph -- which is what
+   "a ligand" means for a mononuclear complex.
+
+   :param coords: ``(N, 3)`` positions.
+   :param charges: ``(N,)`` atomic numbers (metals identified via ``METAL_Z``).
+   :param n_slots: number of ligand columns (upstream: 6). Components beyond
+                   this are folded into the last slot.
+   :param scale_factor: covalent-radius multiplier for the contact criterion.
+
+   :returns: ``(N, n_slots)`` float one-hot; metal rows are all zero.
+
+
+.. py:function:: remove_partial_mean_with_mask(x, center_of_mass_mask, batch_seg)
+
+   Subtract the masked subset's centre of mass from every coordinate.
+
+
+.. py:data:: METAL_Z
+   :type:  Set[int]
+

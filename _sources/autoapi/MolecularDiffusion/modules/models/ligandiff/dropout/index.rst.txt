@@ -1,0 +1,49 @@
+MolecularDiffusion.modules.models.ligandiff.dropout
+===================================================
+
+.. py:module:: MolecularDiffusion.modules.models.ligandiff.dropout
+
+.. autoapi-nested-parse::
+
+   GVP dropout. Verbatim port of LigandDiff's ``src/dropout.py``.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ligandiff.dropout.s_V
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ligandiff.dropout.GVPDropout
+
+
+Module Contents
+---------------
+
+.. py:class:: GVPDropout(p: float = 0.5)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Dropout on scalars, channel dropout on vectors.
+
+
+   .. py:method:: forward(x: Union[torch.Tensor, s_V]) -> Union[torch.Tensor, s_V]
+
+
+   .. py:attribute:: dropout_features
+
+
+   .. py:attribute:: dropout_vector
+
+
+.. py:data:: s_V
+

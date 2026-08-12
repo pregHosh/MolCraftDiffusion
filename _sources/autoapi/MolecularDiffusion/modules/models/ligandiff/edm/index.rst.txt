@@ -1,0 +1,178 @@
+MolecularDiffusion.modules.models.ligandiff.edm
+===============================================
+
+.. py:module:: MolecularDiffusion.modules.models.ligandiff.edm
+
+.. autoapi-nested-parse::
+
+   LigandDiff EDM. Verbatim port of the target repo's ``src/edm.py``.
+
+   Continuous 3D Gaussian DDPM (epsilon parametrisation) over
+   ``xh = cat(coords, one_hot)``, noised and denoised **only** on the
+   ``ligand_diff`` rows; the ``context`` rows are re-pasted clean at every step.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ligandiff.edm.EDM
+
+
+Module Contents
+---------------
+
+.. py:class:: EDM(dynamics: MolecularDiffusion.modules.models.ligandiff.egnn.Dynamics, in_node_nf: int, n_dims: int, timesteps: int = 1000, noise_schedule: str = 'learned', noise_precision: float = 0.0001, loss_type: str = 'vlb', norm_values: tuple = (1.0, 1.0, 1.0), norm_biases: tuple = (None, 0.0, 0.0))
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Equivariant diffusion model with two-mask (context/ligand) inpainting.
+
+
+   .. py:method:: SNR(gamma)
+
+      Signal-to-noise ratio ``alpha^2 / sigma^2`` given gamma.
+
+
+
+   .. py:method:: alpha(gamma)
+
+      Compute alpha given gamma.
+
+
+
+   .. py:method:: cdf_standard_gaussian(x)
+      :staticmethod:
+
+
+      Standard-normal CDF.
+
+
+
+   .. py:method:: compute_x_pred(eps_t, z_t, gamma_t, batch_seg)
+
+      Most likely prediction of x.
+
+
+
+   .. py:method:: forward(x, h, context, ligand_diff, batch_seg, batch_size, ligand_group=None)
+
+
+   .. py:method:: gaussian_kl(q_mu_minus_p_mu_squared, q_sigma, p_sigma, d)
+      :staticmethod:
+
+
+      KL distance between two isotropic normal distributions.
+
+
+
+   .. py:method:: inflate_batch_array(x, batch_seg)
+      :staticmethod:
+
+
+      Sum a per-atom quantity into a per-molecule vector.
+
+
+
+   .. py:method:: kl_prior(xh, mask, batch_seg)
+
+      KL between ``q(z_1 | x)`` and the prior ``N(0, 1)``.
+
+
+
+   .. py:method:: log_constant_of_p_x_given_z0(mask, batch_seg, batch_size)
+
+      Normalising constant of ``p(x | z_0)``.
+
+
+
+   .. py:method:: log_p_xh_given_z0_without_constants(h, z_0, gamma_0, eps, eps_hat, mask, batch_seg, epsilon=1e-10)
+
+      Reconstruction terms for coordinates and atom types at t=0.
+
+
+
+   .. py:method:: noised_representation(xh, ligand_diff, context, batch_seg, gamma_t)
+
+
+   .. py:method:: normalize(x, h)
+
+      Scale coordinates and features to the model's working range.
+
+
+
+   .. py:method:: sample_chain(x, h, context, ligand_diff, batch_seg, batch_size, ligand_group, keep_frames=None, timesteps=None)
+
+
+   .. py:method:: sample_combined_position_feature_noise(x, ligand_diff)
+
+      Gaussian noise on coordinates + features, ligand rows only.
+
+
+
+   .. py:method:: sample_normal(mu_xh, ligand_diff, sigma, batch_seg)
+
+
+   .. py:method:: sample_p_xh_given_z0_only_ligandDiff(z_0, context, ligand_diff, batch_size, batch_seg, ligand_group)
+
+      Sample ``x, h ~ p(x, h | z_0)``, ligand rows only.
+
+
+
+   .. py:method:: sample_p_zs_given_zt_only_ligandDiff(s, t, z_t, context, ligand_diff, batch_seg, ligand_group)
+
+      Sample ``z_s ~ p(z_s | z_t)``, ligand rows only.
+
+
+
+   .. py:method:: sigma(gamma)
+
+      Compute sigma given gamma.
+
+
+
+   .. py:method:: sigma_and_alpha_t_given_s(gamma_t: torch.Tensor, gamma_s: torch.Tensor)
+
+      ``alpha_t|s = alpha_t / alpha_s`` and the matching sigma.
+
+
+
+   .. py:method:: unnormalize(x, h)
+
+      Inverse of :meth:`normalize`.
+
+
+
+   .. py:method:: unnormalize_z(z)
+
+      Unnormalize a concatenated ``[x | h]`` latent.
+
+
+
+   .. py:attribute:: T
+      :value: 1000
+
+
+
+   .. py:attribute:: dynamics
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: n_dims
+
+
+   .. py:attribute:: norm_biases
+      :value: (None, 0.0, 0.0)
+
+
+
+   .. py:attribute:: norm_values
+      :value: (1.0, 1.0, 1.0)
+
+
+

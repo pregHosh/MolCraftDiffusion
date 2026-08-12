@@ -589,8 +589,39 @@ molecule); a plain molecule dataset is not enough.</p>
 </table>
 </div>
 </section>
+<section id="transition-metal-complex-generation">
+<h2>4. Transition-metal complex generation<a class="headerlink" href="#transition-metal-complex-generation" title="Link to this heading">¶</a></h2>
+<p>Ligand design <em>around a metal centre</em>: freeze the metal and the retained
+ligands, re-diffuse the rest. Both are bond-free, conditional-only (every
+sample needs an input complex), generate via the bundled <code class="docutils literal notranslate"><span class="pre">outpaint</span></code> mode, and
+need a dataset built with <code class="docutils literal notranslate"><span class="pre">data.use_row_data_features:</span> <span class="pre">true</span></code> for their
+per-atom conditioning columns.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Task config</p></th>
+<th class="head text-left"><p><code class="docutils literal notranslate"><span class="pre">task_type</span></code></p></th>
+<th class="head text-left"><p>Regenerates</p></th>
+<th class="head text-left"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_ligandiff.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_ligandiff</span></code></p></td>
+<td class="text-left"><p>Exactly <strong>one</strong> ligand per run</p></td>
+<td class="text-left"><p>LigandDiff (GVP dynamics, EDM). T=500 Cartesian DDPM, heavy atoms only. The slot to fill is given, so the complex keeps its ligand count and denticities. Generating from the released weights needs <code class="docutils literal notranslate"><span class="pre">diffusion_noise_schedule:</span> <span class="pre">learned</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_ligandiff_multi.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_ligandiff_multi</span></code></p></td>
+<td class="text-left"><p><strong>Any subset</strong>, one ligand up to the whole coordination sphere</p></td>
+<td class="text-left"><p>multi-LigandDiff, same backbone. Retain <em>k</em> ligands and regenerate the rest; retain none and it builds a complete complex around a bare metal. It also picks how the vacant sites are partitioned — so it chooses the <strong>number of new ligands and their denticities</strong>, not just their atoms. Weights are trained on Cr–Zn only.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="property-prediction-and-guidance">
-<h2>4. Property prediction and guidance<a class="headerlink" href="#property-prediction-and-guidance" title="Link to this heading">¶</a></h2>
+<h2>5. Property prediction and guidance<a class="headerlink" href="#property-prediction-and-guidance" title="Link to this heading">¶</a></h2>
 <p>Not generators. <code class="docutils literal notranslate"><span class="pre">regression</span></code> predicts a property; <code class="docutils literal notranslate"><span class="pre">guidance</span></code> exposes the same
 head as a gradient signal to steer a diffusion sampler.</p>
 <div class="table-wrapper colwidths-auto docutils container">
@@ -619,7 +650,7 @@ head as a gradient signal to steer a diffusion sampler.</p>
 </div>
 </section>
 <section id="self-supervised-pretraining">
-<h2>5. Self-supervised pretraining<a class="headerlink" href="#self-supervised-pretraining" title="Link to this heading">¶</a></h2>
+<h2>6. Self-supervised pretraining<a class="headerlink" href="#self-supervised-pretraining" title="Link to this heading">¶</a></h2>
 <p>Pretrain a backbone on unlabeled 3D structures, then fine-tune for regression or
 guidance.</p>
 <div class="table-wrapper colwidths-auto docutils container">
@@ -708,6 +739,14 @@ so <code class="docutils literal notranslate"><span class="pre">diffusion_kgdiff
 <em>Protein-Ligand Interaction Prior for Binding-aware 3D Molecule Diffusion
 Models.</em> ICLR 2024.
 <a class="reference external" href="https://openreview.net/forum?id=qH9nrMNTIW">openreview:qH9nrMNTIW</a></p></li>
+<li><p><strong>LigandDiff</strong> — Jin &amp; Merz. <em>LigandDiff: de Novo Ligand Design for 3D
+Transition Metal Complexes with Diffusion Models.</em> Journal of Chemical Theory
+and Computation 20(10), 4377–4384, 2024.
+<a class="reference external" href="https://doi.org/10.1021/acs.jctc.4c00232">doi:10.1021/acs.jctc.4c00232</a></p></li>
+<li><p><strong>multi-LigandDiff</strong> — Jin &amp; Merz. <em>Partial to Total Generation of 3D
+Transition-Metal Complexes.</em> Journal of Chemical Theory and Computation, 2024.
+<a class="reference external" href="https://doi.org/10.1021/acs.jctc.4c00775">doi:10.1021/acs.jctc.4c00775</a> —
+an extension of <strong>LigandDiff</strong> (above), itself built on <strong>DiffLinker</strong>.</p></li>
 <li><p><strong>DiffLinker</strong> — Igashov et al. <em>Equivariant 3D-Conditional Diffusion Model
 for Molecular Linker Design.</em> Nature Machine Intelligence 2024. <a class="reference external" href="https://arxiv.org/abs/2210.05274">arXiv:2210.05274</a></p></li>
 <li><p><strong>eSEN</strong> — Fu et al. <em>Learning Smooth and Expressive Interatomic Potentials
@@ -797,8 +836,9 @@ electrostatics, and pharmacophores for bioisosteric drug design.</em> ICLR 2025.
 <li><a class="reference internal" href="#de-novo-3d-generation">1. De novo 3D generation</a></li>
 <li><a class="reference internal" href="#latent-space-diffusion-two-stage">2. Latent-space diffusion (two-stage)</a></li>
 <li><a class="reference internal" href="#conditional-and-structure-aware-generation">3. Conditional and structure-aware generation</a></li>
-<li><a class="reference internal" href="#property-prediction-and-guidance">4. Property prediction and guidance</a></li>
-<li><a class="reference internal" href="#self-supervised-pretraining">5. Self-supervised pretraining</a></li>
+<li><a class="reference internal" href="#transition-metal-complex-generation">4. Transition-metal complex generation</a></li>
+<li><a class="reference internal" href="#property-prediction-and-guidance">5. Property prediction and guidance</a></li>
+<li><a class="reference internal" href="#self-supervised-pretraining">6. Self-supervised pretraining</a></li>
 <li><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>

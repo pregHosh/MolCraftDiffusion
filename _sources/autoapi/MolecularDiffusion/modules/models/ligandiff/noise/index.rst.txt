@@ -1,0 +1,130 @@
+MolecularDiffusion.modules.models.ligandiff.noise
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.models.ligandiff.noise
+
+.. autoapi-nested-parse::
+
+   Diffusion noise schedules. Verbatim port of LigandDiff's ``src/noise.py``.
+
+   Both branches matter: ``polynomial_2`` is upstream's ``config.yml`` default
+   for fresh training, while the released ``model/pretrained.ckpt`` was trained
+   with the learned ``GammaNetwork`` (its ``edm.gamma.{gamma_0,gamma_1,l1,l2,l3}``
+   tensors are in the checkpoint). Selecting the wrong one makes those eight
+   tensors arrive as *unexpected* keys, which ``cli/generate.py``'s
+   ``strict=False`` load silently drops.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ligandiff.noise.GammaNetwork
+   MolecularDiffusion.modules.models.ligandiff.noise.PositiveLinear
+   MolecularDiffusion.modules.models.ligandiff.noise.PredefinedNoiseSchedule
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ligandiff.noise.clip_noise_schedule
+   MolecularDiffusion.modules.models.ligandiff.noise.cosine_beta_schedule
+   MolecularDiffusion.modules.models.ligandiff.noise.polynomial_schedule
+
+
+Module Contents
+---------------
+
+.. py:class:: GammaNetwork
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Monotonic learned gamma schedule (VDM paper construction).
+
+
+   .. py:method:: forward(t)
+
+
+   .. py:method:: gamma_tilde(t)
+
+
+   .. py:attribute:: gamma_0
+
+
+   .. py:attribute:: gamma_1
+
+
+   .. py:attribute:: l1
+
+
+   .. py:attribute:: l2
+
+
+   .. py:attribute:: l3
+
+
+.. py:class:: PositiveLinear(in_features: int, out_features: int, bias: bool = True, weight_init_offset: int = -2)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Linear layer with weights forced to be positive.
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: in_features
+
+
+   .. py:attribute:: out_features
+
+
+   .. py:attribute:: weight
+
+
+   .. py:attribute:: weight_init_offset
+      :value: -2
+
+
+
+.. py:class:: PredefinedNoiseSchedule(noise_schedule, timesteps, precision)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Lookup table for a fixed (non-learned) noise schedule.
+
+
+   .. py:method:: forward(t)
+
+
+   .. py:attribute:: gamma
+
+
+   .. py:attribute:: timesteps
+
+
+.. py:function:: clip_noise_schedule(alphas2, clip_value=0.001)
+
+   Clip alpha_t / alpha_{t-1} for sampling stability.
+
+
+.. py:function:: cosine_beta_schedule(timesteps, s=0.008, raise_to_power: float = 1)
+
+   Cosine schedule (Nichol & Dhariwal).
+
+
+.. py:function:: polynomial_schedule(timesteps: int, s=0.0001, power=3.0)
+
+   Noise schedule based on ``1 - x^power``.
+
+

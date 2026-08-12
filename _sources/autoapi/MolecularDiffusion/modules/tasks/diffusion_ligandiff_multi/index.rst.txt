@@ -1,0 +1,408 @@
+MolecularDiffusion.modules.tasks.diffusion_ligandiff_multi
+==========================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_ligandiff_multi
+
+.. autoapi-nested-parse::
+
+   multi-LigandDiff integration with the MolecularDiffusion data pipeline.
+
+   multi-LigandDiff (https://github.com/Neon8988/multi_LigandDiff, ChemRxiv 2024)
+   regenerates **several** ligands at once around a fixed transition-metal
+   centre -- "partial to total generation", up to every ligand from a bare metal.
+   It is a direct extension of LigandDiff, already integrated here as
+   ``modules/tasks/diffusion_ligandiff.py``.
+
+   **The network is not re-ported.** ``EDM`` and ``Dynamics`` are imported
+   unchanged from ``MolecularDiffusion.modules.models.ligandiff`` and constructed
+   with ``ligand_group_node_nf=7``; that reproduces the released checkpoint's
+   shapes exactly (``strict=True`` load, 238/238 tensors matched). See
+   ``docs/model_integrations/ligandiff_multi/INTEGRATION_PLAN.md`` for the
+   experiment. Only the 20-metal geometry helpers are new, in
+   ``modules/models/ligandiff_multi/utils.py``.
+
+   What is new relative to ``ligandiff``:
+
+   * the conditioning channel is **7** wide, ``cat([ligand_group(6),
+     coord_site(1)])`` (upstream ``src/lightning.py:126``), where ``coord_site``
+     is a per-atom "coordinates the metal" flag. ``ligand_group`` itself is still
+     6 slots.
+   * the row-data contract is therefore **16** columns, not 15.
+   * ``normalize_factors`` is ``[10, 4, 1]``, not ``[1, 4, 10]``.
+   * ``sample()`` grows *several* ligands, picking an octahedral denticity
+     partition from ``CN_OCT`` (upstream ``generate.py::reform_data``).
+
+   Two vocabularies, deliberately different widths:
+
+   * ``in_node_nf = 8`` -- the model's / dataset's one-hot width, upstream's
+     heavy-atom vocab ``{C,N,O,S,Br,Cl,P,F}`` in ``src/const.py:11`` order
+     (byte-identical to LigandDiff's). The metal carries an **all-zero** row and
+     its element travels out of band.
+   * ``task.atom_vocab`` -- 28 entries (those 8, then the 20 metals). A
+     decode-side symbol table only; it sizes no tensor. It is mandatory because
+     ``runmodes/generate/tasks_generate.py:1463`` resolves reference-structure
+     elements with ``onehot(..., allow_unknown=False)``.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_ligandiff_multi.LIGANDIFF_ATOM_VOCAB
+   MolecularDiffusion.modules.tasks.diffusion_ligandiff_multi.LIGANDIFF_MULTI_FULL_VOCAB
+   MolecularDiffusion.modules.tasks.diffusion_ligandiff_multi.LIGANDIFF_MULTI_METAL_VOCAB
+   MolecularDiffusion.modules.tasks.diffusion_ligandiff_multi.LIGANDIFF_MULTI_ROW_DATA_COLUMNS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_ligandiff_multi.LigandDiffMultiTask
+   MolecularDiffusion.modules.tasks.diffusion_ligandiff_multi.LigandDiffMultiTaskFactory
+   MolecularDiffusion.modules.tasks.diffusion_ligandiff_multi.PointCloudToLigandDiffMultiBatch
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_ligandiff_multi.LigandDiffMultiToPointCloud
+
+
+Module Contents
+---------------
+
+.. py:class:: LigandDiffMultiTask(in_node_nf: int, n_dims: int, ligand_group_node_nf: int, hidden_nf: int, n_layers: int, activation: str, attention: bool, tanh: bool, norm_constant: float, inv_sublayers: int, sin_embedding: bool, normalization_factor: float, aggregation_method: str, model: str, normalization: Optional[str], condition_time: bool, drop_rate: float, diffusion_steps: int, diffusion_noise_schedule: str, diffusion_noise_precision: float, diffusion_loss_type: str, normalize_factors: tuple, center_of_mass: str, atom_vocab: Optional[list] = None, denticity_split: Optional[list] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Plain ``nn.Module`` task (docs/adding_new_models.md §2.6) wrapping the
+   **imported, unmodified** LigandDiff ``EDM``.
+
+   The EDM is held at ``self.edm`` because the released checkpoint's 238
+   tensors are all named ``edm.*``; any other attribute name makes every key
+   "unexpected" and ``cli/generate.py:322``'s ``strict=False`` load drops
+   them all silently.
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor) -> dict
+
+      Validation metric.
+
+
+
+   .. py:method:: forward(batch: dict)
+
+      Compute the diffusion loss (src/lightning.py:124-176).
+
+
+
+   .. py:method:: get_extra_state() -> dict
+
+      Persist the atom-count histogram into the checkpoint.
+
+
+
+   .. py:method:: predict_and_target(batch: dict)
+
+      Validation hook: the loss doubles as the prediction.
+
+
+
+   .. py:method:: sample(nodesxsample: Optional[torch.Tensor] = None, batch_size: Optional[int] = None, num_steps: Optional[int] = None, batch: Optional[dict] = None, condition_tensor: Optional[torch.Tensor] = None, condition_mode: Optional[str] = None, outpaint_cfgs: Optional[dict] = None, use_noised_conditioning: bool = False, n_frames: int = 0, n_retrys: int = 0, t_retry: Optional[int] = None, context: Optional[torch.Tensor] = None, **kwargs)
+
+      Grow several ligands around a fixed metal-complex scaffold.
+
+      Dispatched through the bundled ``outpaint`` GenerativeFactory path
+      (``configs/interference/gen_outpaint.yaml`` ->
+      ``tasks_generate.py::structural_guidance``), whose mechanism -- freeze
+      a reference scaffold, draw a strictly larger total size, grow the
+      difference -- is exactly upstream's ``generate.py::reform_data``. The
+      scaffold may be as small as a bare metal (upstream's ``[]_[...]``
+      total-generation case).
+
+      Out of scope this pass, accepted and ignored: ``batch``,
+      ``num_steps``, ``condition_mode``, ``use_noised_conditioning``,
+      ``n_frames`` (no trajectory export), ``n_retrys``/``t_retry``,
+      ``context`` (no ``prop_dist_model``).
+
+
+
+   .. py:method:: set_extra_state(state: dict) -> None
+
+      Restore the atom-count histogram from a checkpoint.
+
+
+
+   .. py:attribute:: T
+
+
+   .. py:property:: atom_count_histogram
+      :type: Optional[dict]
+
+
+      Total-atom-count histogram accumulated from real batches.
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: center_of_mass
+
+
+   .. py:attribute:: denticity_split
+
+
+   .. py:property:: device
+      :type: torch.device
+
+
+      Device the parameters live on.
+
+
+   .. py:attribute:: edm
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: ligand_group_node_nf
+
+
+   .. py:attribute:: loss_type
+
+
+   .. py:property:: model
+
+      ``tasks_generate.py`` reads ``T``/``norm_values`` off this.
+
+
+   .. py:attribute:: n_dims
+
+
+   .. py:property:: n_node_dist
+      :type: Optional[dict]
+
+
+      Raw histogram, as core/engine_lightning.py checkpoints it.
+
+
+   .. py:attribute:: ndim_extra
+      :value: 0
+
+
+
+   .. py:property:: node_dist_model
+      :type: Optional[MolecularDiffusion.modules.models.difflinker.linker_size.DistributionNodes]
+
+
+      Sampler over total molecule sizes.
+
+
+   .. py:attribute:: norm_values
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+.. py:class:: LigandDiffMultiTaskFactory(task_type: str, in_node_nf: int = 8, n_dims: int = 3, ligand_group_node_nf: int = 7, hidden_nf: int = 192, n_layers: int = 5, activation: str = 'silu', attention: bool = True, tanh: bool = True, norm_constant: float = 1, inv_sublayers: int = 1, sin_embedding: bool = False, normalization_factor: float = 100, aggregation_method: str = 'sum', model: str = 'gvp_dynamics', normalization: Optional[str] = 'batch_norm', condition_time: bool = True, drop_rate: float = 0.2, diffusion_steps: int = 500, diffusion_noise_schedule: str = 'learned', diffusion_noise_precision: float = 1e-05, diffusion_loss_type: str = 'vlb', normalize_factors: tuple = (10, 4, 1), center_of_mass: str = 'context', atom_vocab: Optional[list] = None, denticity_split: Optional[list] = None, **kwargs)
+
+   Factory matching ``cli/train.py``'s ``build()`` instantiation pattern.
+
+   The trailing ``**kwargs`` is load-bearing, not decoration:
+   ``cli/train.py:649-651`` passes ``node_feature_dim`` /
+   ``extra_norm_values`` into every factory. Both are meaningless here (the
+   16 row-data columns are consumed by the adapter, not normalised as extra
+   features) and are deliberately absorbed and ignored.
+
+
+   .. py:method:: build() -> LigandDiffMultiTask
+
+      Instantiate the task module.
+
+
+
+   .. py:attribute:: activation
+      :value: 'silu'
+
+
+
+   .. py:attribute:: aggregation_method
+      :value: 'sum'
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: attention
+      :value: True
+
+
+
+   .. py:attribute:: center_of_mass
+      :value: 'context'
+
+
+
+   .. py:attribute:: condition_time
+      :value: True
+
+
+
+   .. py:attribute:: denticity_split
+
+
+   .. py:attribute:: diffusion_loss_type
+      :value: 'vlb'
+
+
+
+   .. py:attribute:: diffusion_noise_precision
+      :value: 1e-05
+
+
+
+   .. py:attribute:: diffusion_noise_schedule
+      :value: 'learned'
+
+
+
+   .. py:attribute:: diffusion_steps
+      :value: 500
+
+
+
+   .. py:attribute:: drop_rate
+      :value: 0.2
+
+
+
+   .. py:attribute:: hidden_nf
+      :value: 192
+
+
+
+   .. py:attribute:: in_node_nf
+      :value: 8
+
+
+
+   .. py:attribute:: inv_sublayers
+      :value: 1
+
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: ligand_group_node_nf
+      :value: 7
+
+
+
+   .. py:attribute:: model
+      :value: 'gvp_dynamics'
+
+
+
+   .. py:attribute:: n_dims
+      :value: 3
+
+
+
+   .. py:attribute:: n_layers
+      :value: 5
+
+
+
+   .. py:attribute:: norm_constant
+      :value: 1
+
+
+
+   .. py:attribute:: normalization
+      :value: 'batch_norm'
+
+
+
+   .. py:attribute:: normalization_factor
+      :value: 100
+
+
+
+   .. py:attribute:: normalize_factors
+      :value: (10, 4, 1)
+
+
+
+   .. py:attribute:: sin_embedding
+      :value: False
+
+
+
+   .. py:attribute:: tanh
+      :value: True
+
+
+
+   .. py:attribute:: task_type
+
+
+.. py:class:: PointCloudToLigandDiffMultiBatch
+
+   Dense ``(B, N, ·)`` PointCloud batch -> multi-LigandDiff's flat layout.
+
+   Identical in shape to ``ligandiff``'s adapter, one column wider. The
+   dataset supplies
+   ``[one_hot(8) | ligand_diff(1) | ligand_group(6) | coord_site(1)]``
+   through the existing ``data.use_row_data_features`` seam
+   (``data/component/dataset.py:1328``).
+
+   The 16 columns are taken from the **right-hand end** of ``node_feature``,
+   not from index 0: ``DataModule.load()``'s ``data_type: pointcloud`` branch
+   (``runmodes/train/data.py:294-312``) does not forward ``use_ohe_feature``
+   the way its ``pyg`` sibling at :284 does, so the 28-wide atom OHE is
+   always prepended regardless of the config flag. Slicing from the end is
+   correct either way and needs no change to shared code.
+
+   There is no synthesis fallback: the Zenodo splits ship every column
+   precomputed, so a missing one means a misconfigured dataset and must raise
+   rather than silently train on a fabricated split.
+
+
+.. py:function:: LigandDiffMultiToPointCloud(coords_flat: torch.Tensor, charges_flat: torch.Tensor, batch_seg: torch.Tensor, batch_size: int, atom_vocab: list)
+
+   Flat ``(N_total, ·)`` output -> dense PointCloud tensors.
+
+   ``charges_flat`` must already be the *final* per-atom atomic number: taken
+   from the known context elements for ``context`` rows (which is what stops
+   the metal's all-zero one-hot decoding to index 0, i.e. carbon) and from
+   the 8-way ``one_hot.argmax`` for generated rows. The returned one-hot is
+   re-expanded from those atomic numbers onto ``atom_vocab`` (28 entries).
+
+   Returns ``(one_hot, charges, coords, node_mask)``, all dense.
+
+
+.. py:data:: LIGANDIFF_ATOM_VOCAB
+   :value: ['C', 'N', 'O', 'S', 'Br', 'Cl', 'P', 'F']
+
+
+.. py:data:: LIGANDIFF_MULTI_FULL_VOCAB
+   :value: ['C', 'N', 'O', 'S', 'Br', 'Cl', 'P', 'F', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn',...
+
+
+.. py:data:: LIGANDIFF_MULTI_METAL_VOCAB
+   :value: ['Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn', 'Zr', 'Mo', 'Ru', 'Rh', 'Pd', 'Cd', 'W',...
+
+
+.. py:data:: LIGANDIFF_MULTI_ROW_DATA_COLUMNS
+

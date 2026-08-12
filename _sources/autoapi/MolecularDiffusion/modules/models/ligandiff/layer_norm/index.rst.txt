@@ -1,0 +1,49 @@
+MolecularDiffusion.modules.models.ligandiff.layer_norm
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.models.ligandiff.layer_norm
+
+.. autoapi-nested-parse::
+
+   GVP layer norm. Verbatim port of LigandDiff's ``src/layer_norm.py``.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ligandiff.layer_norm.s_V
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ligandiff.layer_norm.GVPLayerNorm
+
+
+Module Contents
+---------------
+
+.. py:class:: GVPLayerNorm(dims: Tuple[int, int], eps: float = 1e-05)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   LayerNorm on the scalar channel, RMS rescaling on the vector channel.
+
+
+   .. py:method:: forward(x: Union[torch.Tensor, s_V]) -> Union[torch.Tensor, s_V]
+
+
+   .. py:attribute:: eps
+
+
+   .. py:attribute:: feature_layer_norm
+
+
+.. py:data:: s_V
+
