@@ -36,6 +36,9 @@ pip install 'molcraftdiffusion[analyze]'
 pip install 'molcraftdiffusion[bio]'      # DiffPharma: build a pocket + pharmacophore
                                           # particles from a raw PDB+SDF pair. Not needed
                                           # to train or generate from converted ASE dbs.
+pip install 'molcraftdiffusion[sbdd]'     # AutoDock Vina scoring of generated ligands
+                                          # against a protein pocket. Pure pip: no conda,
+                                          # no external binaries.
 pip install 'molcraftdiffusion[shape]'    # DiffSMol: offline shape-cache precompute only
 pip install 'molcraftdiffusion[flowmol]'  # FlowMol: DGL (install the CUDA build matching
                                           # your torch, see pyproject.toml)
@@ -72,6 +75,7 @@ Use this table to decide which optional groups to install before you start:
 | Run validity/connectivity metrics, xyz2mol, RMSD compare | `[analyze]` |
 | Run `analyze optimize` or `xtb-electronic` | `[analyze]` + conda `xtb` |
 | Run geometric-shape metrics (`--metrics geom_revised` or `all`) | `[analyze]` |
+| Score generated ligands against a protein pocket (`--metrics sbdd`) | `[analyze]` + `[sbdd]` |
 | Featurise with UMA neural-network embeddings | `[analyze]` + fairchem clone (see below) |
 | Pharmacophore-conditioned training/generation | `pip install open3d` |
 
@@ -86,6 +90,10 @@ pip install 'molcraftdiffusion[analyze]'
 
 # DiffPharma novel-pocket preprocessing (Biopython + ODDT)
 pip install 'molcraftdiffusion[bio]'
+
+# AutoDock Vina scoring of generated ligands against a protein pocket
+# (`MolCraftDiff analyze metrics ... --metrics sbdd`)
+pip install 'molcraftdiffusion[sbdd]'
 
 # xTB executable for xTB-backed analysis
 conda install -c conda-forge xtb==6.7.1 -y
@@ -168,6 +176,22 @@ conda install xtb-python -y
 ```
 
 If you already have a broken pip install, uninstall it first: `pip uninstall xtb openbabel`.
+
+---
+
+### `ModuleNotFoundError: No module named 'gemmi'` from meeko
+
+`meeko` declares no dependencies in its wheel metadata, but `import meeko`
+pulls in `gemmi` (via `meeko.polymer` -> `meeko.chemtempgen`). The `[sbdd]`
+extra lists `gemmi` explicitly, so the normal install is fine — you only hit
+this if you installed meeko with `--no-deps`:
+
+```bash
+pip install gemmi
+```
+
+Neither `vina`, `meeko` nor `gemmi` touches an existing numpy/pandas install;
+they add only themselves.
 
 ---
 

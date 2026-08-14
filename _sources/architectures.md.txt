@@ -53,7 +53,7 @@ bonds are perceived afterwards.
 | `diffusion_ipdiff.yaml` | `diffusion_ipdiff` | **Protein pocket** | Like KGDiff's lineage, but binding awareness is **baked into training** via a frozen interaction prior rather than applied at sampling. Prior weights ship with it and are mandatory. Caveat before you trust it: the released checkpoint is carbon-saturated (93% C against 64% in real ligands). |
 | `diffusion_apo2mol.yaml` | `diffusion_apo2mol` | **Apo protein pocket** | The one for **flexible receptors**: condition on an **apo** (ligand-free) structure — what you actually have when there is no known binder — and it generates the ligand *and* the pocket's induced-fit conformation together. All the others assume a fixed, ligand-shaped pocket. Needs apo/holo **paired** training data. Generated pockets are written as `.pdb` sidecars next to the ligands. **Sample with the full schedule** (leave `num_steps` unset): unlike the flow-matching models, truncating it degrades the chemistry badly — 205 of 1000 steps returns near-random elements. |
 | `diffusion_difflinker.yaml` | `diffusion_difflinker` | **Fragments** to join | **Linker design / fragment growing**: hold fragments fixed, generate the atoms connecting them. |
-| `pharmacophore.yaml` | `diffusion_pharmacophore` | **Pharmacophore** points | Ligand-based design when you have a pharmacophore hypothesis but **no protein structure**. Requires `open3d`. |
+| `pharmacophore.yaml` | `diffusion_pharmacophore` | **Pharmacophore** points | ShEPhERD. Ligand-based design when you have a pharmacophore hypothesis but **no protein structure**. Requires `open3d`. |
 
 ## 4. Transition-metal complex generation
 

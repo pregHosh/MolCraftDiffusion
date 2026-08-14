@@ -309,7 +309,10 @@
 <li class="toctree-l4 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/index.html">MolecularDiffusion.runmodes.analyze</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.analyze" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/compare_to_optimized/index.html">MolecularDiffusion.runmodes.analyze.compare_to_optimized</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/compute_metrics/index.html">MolecularDiffusion.runmodes.analyze.compute_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/docking/index.html">MolecularDiffusion.runmodes.analyze.docking</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/druglike/index.html">MolecularDiffusion.runmodes.analyze.druglike</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html">MolecularDiffusion.runmodes.analyze.featurize</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/similarity3d/index.html">MolecularDiffusion.runmodes.analyze.similarity3d</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/ssl3d_embed/index.html">MolecularDiffusion.runmodes.analyze.ssl3d_embed</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/uma_embeddings/index.html">MolecularDiffusion.runmodes.analyze.uma_embeddings</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/xtb_electronic/index.html">MolecularDiffusion.runmodes.analyze.xtb_electronic</a></li>
@@ -1487,10 +1490,10 @@
           <li><a href="autoapi/MolecularDiffusion/utils/geom_analyzer/index.html#MolecularDiffusion.utils.geom_analyzer.Histogram_discrete.bins">(MolecularDiffusion.utils.geom_analyzer.Histogram_discrete attribute)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/esen/nn/rank2/index.html#MolecularDiffusion.modules.layers.esen.nn.rank2.Rank2SymmetricTensorHead.block">block (MolecularDiffusion.modules.layers.esen.nn.rank2.Rank2SymmetricTensorHead attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/models/gfmdiff/equignn/index.html#MolecularDiffusion.modules.models.gfmdiff.equignn.EquiGNN.block_calc">block_calc (MolecularDiffusion.modules.models.gfmdiff.equignn.EquiGNN attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/equiformer_v2/equiformer_v2_oc20/index.html#MolecularDiffusion.modules.layers.equiformer_v2.equiformer_v2_oc20.EquiformerV2_OC20.blocks">blocks (MolecularDiffusion.modules.layers.equiformer_v2.equiformer_v2_oc20.EquiformerV2_OC20 attribute)</a>
@@ -1558,6 +1561,10 @@
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsmol/bond_tables/index.html#MolecularDiffusion.modules.models.diffsmol.bond_tables.BONDS_SINGLE">BONDS_SINGLE (in module MolecularDiffusion.modules.models.diffsmol.bond_tables)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsmol/bond_tables/index.html#MolecularDiffusion.modules.models.diffsmol.bond_tables.BONDS_TRIPLE">BONDS_TRIPLE (in module MolecularDiffusion.modules.models.diffsmol.bond_tables)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/docking/index.html#MolecularDiffusion.runmodes.analyze.docking.BOX_BUFFER">BOX_BUFFER (in module MolecularDiffusion.runmodes.analyze.docking)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/docking/index.html#MolecularDiffusion.runmodes.analyze.docking.box_for">box_for() (in module MolecularDiffusion.runmodes.analyze.docking)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_apo2mol/index.html#MolecularDiffusion.modules.tasks.diffusion_apo2mol.ModelTaskFactory.build">build() (MolecularDiffusion.modules.tasks.diffusion_apo2mol.ModelTaskFactory method)</a>
 
@@ -2022,7 +2029,11 @@
         <li><a href="autoapi/MolecularDiffusion/runmodes/train/data/index.html#MolecularDiffusion.runmodes.train.data.DataModule.compact">compact (MolecularDiffusion.runmodes.train.data.DataModule attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/cli/analyze/index.html#MolecularDiffusion.cli.analyze.compare">compare() (in module MolecularDiffusion.cli.analyze)</a>
+
+        <ul>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/similarity3d/index.html#MolecularDiffusion.runmodes.analyze.similarity3d.compare">(in module MolecularDiffusion.runmodes.analyze.similarity3d)</a>
 </li>
+        </ul></li>
         <li><a href="autoapi/MolecularDiffusion/utils/geom_metrics/index.html#MolecularDiffusion.utils.geom_metrics.compare_graph_topology">compare_graph_topology() (in module MolecularDiffusion.utils.geom_metrics)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/cli/data/index.html#MolecularDiffusion.cli.data.compile_cmd">compile_cmd() (in module MolecularDiffusion.cli.data)</a>
@@ -2055,9 +2066,11 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/kgdiff/common/index.html#MolecularDiffusion.modules.models.kgdiff.common.compose_context">(in module MolecularDiffusion.modules.models.kgdiff.common)</a>
 </li>
         </ul></li>
-        <li><a href="autoapi/MolecularDiffusion/modules/models/tabasco/utils/metrics/index.html#MolecularDiffusion.modules.models.tabasco.utils.metrics.AtomFractionMetric.compute">compute() (MolecularDiffusion.modules.models.tabasco.utils.metrics.AtomFractionMetric method)</a>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/druglike/index.html#MolecularDiffusion.runmodes.analyze.druglike.compute">compute() (in module MolecularDiffusion.runmodes.analyze.druglike)</a>
 
         <ul>
+          <li><a href="autoapi/MolecularDiffusion/modules/models/tabasco/utils/metrics/index.html#MolecularDiffusion.modules.models.tabasco.utils.metrics.AtomFractionMetric.compute">(MolecularDiffusion.modules.models.tabasco.utils.metrics.AtomFractionMetric method)</a>
+</li>
           <li><a href="autoapi/MolecularDiffusion/modules/models/tabasco/utils/metrics/index.html#MolecularDiffusion.modules.models.tabasco.utils.metrics.AtomTypeDistribution.compute">(MolecularDiffusion.modules.models.tabasco.utils.metrics.AtomTypeDistribution method)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/models/tabasco/utils/metrics/index.html#MolecularDiffusion.modules.models.tabasco.utils.metrics.MolecularConnectivity.compute">(MolecularDiffusion.modules.models.tabasco.utils.metrics.MolecularConnectivity method)</a>
@@ -2169,10 +2182,10 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/geom_stability/index.html#MolecularDiffusion.utils.geom_stability.compute_molecules_stability">compute_molecules_stability() (in module MolecularDiffusion.utils.geom_stability)</a>
 </li>
-        <li><a href="autoapi/MolecularDiffusion/utils/geom_stability/index.html#MolecularDiffusion.utils.geom_stability.compute_molecules_stability_from_graph">compute_molecules_stability_from_graph() (in module MolecularDiffusion.utils.geom_stability)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/MolecularDiffusion/utils/geom_stability/index.html#MolecularDiffusion.utils.geom_stability.compute_molecules_stability_from_graph">compute_molecules_stability_from_graph() (in module MolecularDiffusion.utils.geom_stability)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/utils/shepherd_score/alignment/utils/pca/index.html#MolecularDiffusion.utils.shepherd_score.alignment.utils.pca.compute_moment_of_inertia">compute_moment_of_inertia() (in module MolecularDiffusion.utils.shepherd_score.alignment.utils.pca)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/shepherd_score/alignment/utils/pca_np/index.html#MolecularDiffusion.utils.shepherd_score.alignment.utils.pca_np.compute_moment_of_inertia_np">compute_moment_of_inertia_np() (in module MolecularDiffusion.utils.shepherd_score.alignment.utils.pca_np)</a>
@@ -3071,10 +3084,10 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsmol/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolDiffusionTask">DiffSMolDiffusionTask (class in MolecularDiffusion.modules.tasks.diffusion_diffsmol)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsmol/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolShapeGenerator">DiffSMolShapeGenerator (class in MolecularDiffusion.modules.tasks.diffusion_diffsmol)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsmol/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolShapeNodeDistribution">DiffSMolShapeNodeDistribution (class in MolecularDiffusion.modules.tasks.diffusion_diffsmol)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsmol/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolTaskFactory">DiffSMolTaskFactory (class in MolecularDiffusion.modules.tasks.diffusion_diffsmol)</a>
@@ -3268,6 +3281,8 @@
         <li><a href="autoapi/MolecularDiffusion/modules/models/ldm/denoisers/dit/index.html#MolecularDiffusion.modules.models.ldm.denoisers.dit.DiT">DiT (class in MolecularDiffusion.modules.models.ldm.denoisers.dit)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/ldm/denoisers/dit/index.html#MolecularDiffusion.modules.models.ldm.denoisers.dit.DiTBlock">DiTBlock (class in MolecularDiffusion.modules.models.ldm.denoisers.dit)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/docking/index.html#MolecularDiffusion.runmodes.analyze.docking.DOCK_MODES">DOCK_MODES (in module MolecularDiffusion.runmodes.analyze.docking)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/file/index.html#MolecularDiffusion.utils.file.download">download() (in module MolecularDiffusion.utils.file)</a>
 </li>
@@ -3949,10 +3964,10 @@
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_ldm/index.html#MolecularDiffusion.modules.tasks.diffusion_ldm.VAETask.encoder">(MolecularDiffusion.modules.tasks.diffusion_ldm.VAETask attribute)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_ldm/index.html#MolecularDiffusion.modules.tasks.diffusion_ldm.VAETaskFactory.encoder_config">encoder_config (MolecularDiffusion.modules.tasks.diffusion_ldm.VAETaskFactory attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/models/pmdm/epsnet/index.html#MolecularDiffusion.modules.models.pmdm.epsnet.PMDMEpsNet.encoder_global">encoder_global (MolecularDiffusion.modules.models.pmdm.epsnet.PMDMEpsNet attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/pmdm/epsnet/index.html#MolecularDiffusion.modules.models.pmdm.epsnet.PMDMEpsNet.encoder_local">encoder_local (MolecularDiffusion.modules.models.pmdm.epsnet.PMDMEpsNet attribute)</a>
@@ -4231,6 +4246,8 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/shepherd_score/score/electrostatic_scoring_np/index.html#MolecularDiffusion.utils.shepherd_score.score.electrostatic_scoring_np.esp_combo_score_np">esp_combo_score_np() (in module MolecularDiffusion.utils.shepherd_score.score.electrostatic_scoring_np)</a>
 </li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/similarity3d/index.html#MolecularDiffusion.runmodes.analyze.similarity3d.ESP_LAMBDA">ESP_LAMBDA (in module MolecularDiffusion.runmodes.analyze.similarity3d)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/data/dataloader/index.html#MolecularDiffusion.data.dataloader.estimate_batch_size">estimate_batch_size() (in module MolecularDiffusion.data.dataloader)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/conv/index.html#MolecularDiffusion.modules.layers.conv.EtoX">EtoX (class in MolecularDiffusion.modules.layers.conv)</a>
@@ -4435,6 +4452,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/ipdiff/bapnet/index.html#MolecularDiffusion.modules.models.ipdiff.bapnet.BAPNet.extract_features">(MolecularDiffusion.modules.models.ipdiff.bapnet.BAPNet method)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/similarity3d/index.html#MolecularDiffusion.runmodes.analyze.similarity3d.extract_profiles">extract_profiles() (in module MolecularDiffusion.runmodes.analyze.similarity3d)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/xyz2mol/index.html#MolecularDiffusion.runmodes.analyze.xyz2mol.extract_scaffold_and_fingerprints">extract_scaffold_and_fingerprints() (in module MolecularDiffusion.runmodes.analyze.xyz2mol)</a>
 </li>
     </ul></td>
@@ -7381,6 +7400,8 @@
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/data/component/kgdiff_data/index.html#MolecularDiffusion.data.component.kgdiff_data.LIGAND_INDEX_TO_Z">LIGAND_INDEX_TO_Z (in module MolecularDiffusion.data.component.kgdiff_data)</a>
 </li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/docking/index.html#MolecularDiffusion.runmodes.analyze.docking.ligand_pdbqt">ligand_pdbqt() (in module MolecularDiffusion.runmodes.analyze.docking)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_ligandiff_multi/index.html#MolecularDiffusion.modules.tasks.diffusion_ligandiff_multi.LigandDiffMultiTask">LigandDiffMultiTask (class in MolecularDiffusion.modules.tasks.diffusion_ligandiff_multi)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_ligandiff_multi/index.html#MolecularDiffusion.modules.tasks.diffusion_ligandiff_multi.LigandDiffMultiTaskFactory">LigandDiffMultiTaskFactory (class in MolecularDiffusion.modules.tasks.diffusion_ligandiff_multi)</a>
@@ -7745,6 +7766,10 @@
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/runmodes/train/data/index.html#MolecularDiffusion.runmodes.train.data.DataModule.load_pkl">load_pkl (MolecularDiffusion.runmodes.train.data.DataModule attribute)</a>
 </li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/docking/index.html#MolecularDiffusion.runmodes.analyze.docking.load_pose">load_pose() (in module MolecularDiffusion.runmodes.analyze.docking)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/similarity3d/index.html#MolecularDiffusion.runmodes.analyze.similarity3d.load_reference_source">load_reference_source() (in module MolecularDiffusion.runmodes.analyze.similarity3d)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsmol/shape_ae/index.html#MolecularDiffusion.modules.models.diffsmol.shape_ae.load_shape_ae">load_shape_ae() (in module MolecularDiffusion.modules.models.diffsmol.shape_ae)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsmol/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsmol.load_shape_cache">load_shape_cache() (in module MolecularDiffusion.modules.tasks.diffusion_diffsmol)</a>
@@ -8043,6 +8068,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/pharmacophore/index.html#MolecularDiffusion.modules.tasks.pharmacophore.logger">(in module MolecularDiffusion.modules.tasks.pharmacophore)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/molcraftdiff/index.html#MolecularDiffusion.molcraftdiff.logger">(in module MolecularDiffusion.molcraftdiff)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/similarity3d/index.html#MolecularDiffusion.runmodes.analyze.similarity3d.logger">(in module MolecularDiffusion.runmodes.analyze.similarity3d)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/xtb_electronic/index.html#MolecularDiffusion.runmodes.analyze.xtb_electronic.logger">(in module MolecularDiffusion.runmodes.analyze.xtb_electronic)</a>
 </li>
@@ -9435,7 +9462,13 @@
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/compute_metrics/index.html#module-MolecularDiffusion.runmodes.analyze.compute_metrics">MolecularDiffusion.runmodes.analyze.compute_metrics</a>
 </li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/docking/index.html#module-MolecularDiffusion.runmodes.analyze.docking">MolecularDiffusion.runmodes.analyze.docking</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/druglike/index.html#module-MolecularDiffusion.runmodes.analyze.druglike">MolecularDiffusion.runmodes.analyze.druglike</a>
+</li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html#module-MolecularDiffusion.runmodes.analyze.featurize">MolecularDiffusion.runmodes.analyze.featurize</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/similarity3d/index.html#module-MolecularDiffusion.runmodes.analyze.similarity3d">MolecularDiffusion.runmodes.analyze.similarity3d</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/ssl3d_embed/index.html#module-MolecularDiffusion.runmodes.analyze.ssl3d_embed">MolecularDiffusion.runmodes.analyze.ssl3d_embed</a>
 </li>
@@ -11465,10 +11498,31 @@
 </li>
         </ul></li>
         <li>
+    MolecularDiffusion.runmodes.analyze.docking
+
+        <ul>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/docking/index.html#module-MolecularDiffusion.runmodes.analyze.docking">module</a>
+</li>
+        </ul></li>
+        <li>
+    MolecularDiffusion.runmodes.analyze.druglike
+
+        <ul>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/druglike/index.html#module-MolecularDiffusion.runmodes.analyze.druglike">module</a>
+</li>
+        </ul></li>
+        <li>
     MolecularDiffusion.runmodes.analyze.featurize
 
         <ul>
           <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html#module-MolecularDiffusion.runmodes.analyze.featurize">module</a>
+</li>
+        </ul></li>
+        <li>
+    MolecularDiffusion.runmodes.analyze.similarity3d
+
+        <ul>
+          <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/similarity3d/index.html#module-MolecularDiffusion.runmodes.analyze.similarity3d">module</a>
 </li>
         </ul></li>
         <li>
@@ -12769,8 +12823,6 @@
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/ldm/denoisers/dit/index.html#MolecularDiffusion.modules.models.ldm.denoisers.dit.FinalLayer.norm_final">norm_final (MolecularDiffusion.modules.models.ldm.denoisers.dit.FinalLayer attribute)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/equiformer_v2/layer_norm/index.html#MolecularDiffusion.modules.layers.equiformer_v2.layer_norm.EquivariantLayerNormArraySphericalHarmonics.norm_l0">norm_l0 (MolecularDiffusion.modules.layers.equiformer_v2.layer_norm.EquivariantLayerNormArraySphericalHarmonics attribute)</a>
 
         <ul>
@@ -12779,6 +12831,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/layers/esen/nn/layer_norm/index.html#MolecularDiffusion.modules.layers.esen.nn.layer_norm.EquivariantLayerNormArraySphericalHarmonics.norm_l0">(MolecularDiffusion.modules.layers.esen.nn.layer_norm.EquivariantLayerNormArraySphericalHarmonics attribute)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsmol/common/index.html#MolecularDiffusion.modules.models.diffsmol.common.norm_no_nan">norm_no_nan() (in module MolecularDiffusion.modules.models.diffsmol.common)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/conv/index.html#MolecularDiffusion.modules.layers.conv.XEyTransformerLayer.norm_pos1">norm_pos1 (MolecularDiffusion.modules.layers.conv.XEyTransformerLayer attribute)</a>
@@ -13006,6 +13060,8 @@
         <li><a href="autoapi/MolecularDiffusion/modules/models/noisemodel/index.html#MolecularDiffusion.modules.models.noisemodel.NoiseModel.nu_arr">nu_arr (MolecularDiffusion.modules.models.noisemodel.NoiseModel attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/geom_analyzer/index.html#MolecularDiffusion.utils.geom_analyzer.num2symbol">num2symbol (in module MolecularDiffusion.utils.geom_analyzer)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/similarity3d/index.html#MolecularDiffusion.runmodes.analyze.similarity3d.NUM_ALIGN_REPEATS">NUM_ALIGN_REPEATS (in module MolecularDiffusion.runmodes.analyze.similarity3d)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/pmdm/epsnet/index.html#MolecularDiffusion.modules.models.pmdm.epsnet.PMDMEpsNet.num_atom">num_atom (MolecularDiffusion.modules.models.pmdm.epsnet.PMDMEpsNet attribute)</a>
 </li>
@@ -13460,6 +13516,8 @@
 </li>
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/runmodes/train/tasks_egcl/index.html#MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory.num_sublayers">num_sublayers (MolecularDiffusion.runmodes.train.tasks_egcl.ModelTaskFactory attribute)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/similarity3d/index.html#MolecularDiffusion.runmodes.analyze.similarity3d.NUM_SURFACE_POINTS">NUM_SURFACE_POINTS (in module MolecularDiffusion.runmodes.analyze.similarity3d)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/shepherd_arch/ocp_compat/index.html#MolecularDiffusion.modules.models.shepherd_arch.ocp_compat.BaseModel.num_targets">num_targets (MolecularDiffusion.modules.models.shepherd_arch.ocp_compat.BaseModel attribute)</a>
 
@@ -14377,6 +14435,8 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/diffusion_utils/index.html#MolecularDiffusion.utils.diffusion_utils.prepare_context_pyG">prepare_context_pyG() (in module MolecularDiffusion.utils.diffusion_utils)</a>
 </li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/docking/index.html#MolecularDiffusion.runmodes.analyze.docking.prepare_receptor">prepare_receptor() (in module MolecularDiffusion.runmodes.analyze.docking)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion/index.html#MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative.preprocess">preprocess() (MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative method)</a>
 
         <ul>
@@ -14417,6 +14477,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/en_diffusion/index.html#MolecularDiffusion.modules.models.en_diffusion.DistributionNodes.prob">(MolecularDiffusion.modules.models.en_diffusion.DistributionNodes attribute)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/similarity3d/index.html#MolecularDiffusion.runmodes.analyze.similarity3d.PROBE_RADIUS">PROBE_RADIUS (in module MolecularDiffusion.runmodes.analyze.similarity3d)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/data/component/pharmacophore/index.html#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.probe_radius">probe_radius (MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/tabasco/flow/utils/index.html#MolecularDiffusion.modules.models.tabasco.flow.utils.HistogramTimeDistribution.probs">probs (MolecularDiffusion.modules.models.tabasco.flow.utils.HistogramTimeDistribution attribute)</a>
@@ -14763,6 +14825,8 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/smilify/index.html#MolecularDiffusion.utils.smilify.Molecule.rdkit_mol">rdkit_mol (MolecularDiffusion.utils.smilify.Molecule attribute)</a>
 </li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/druglike/index.html#MolecularDiffusion.runmodes.analyze.druglike.rdkit_rmsd">rdkit_rmsd() (in module MolecularDiffusion.runmodes.analyze.druglike)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/compute_metrics/index.html#MolecularDiffusion.runmodes.analyze.compute_metrics.RDLogger">RDLogger (in module MolecularDiffusion.runmodes.analyze.compute_metrics)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/runmodes/data/preparation/index.html#MolecularDiffusion.runmodes.data.preparation.read_fragment_scores">read_fragment_scores() (in module MolecularDiffusion.runmodes.data.preparation)</a>
@@ -14848,6 +14912,8 @@
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion/index.html#MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative.reference_indices">reference_indices (MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/runmodes/generate/tasks_generate/index.html#MolecularDiffusion.runmodes.generate.tasks_generate.PharmacophoreConditionGenerator.reference_mol">reference_mol (MolecularDiffusion.runmodes.generate.tasks_generate.PharmacophoreConditionGenerator attribute)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/similarity3d/index.html#MolecularDiffusion.runmodes.analyze.similarity3d.reference_mol">reference_mol() (in module MolecularDiffusion.runmodes.analyze.similarity3d)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion/index.html#MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative.reference_scaffold">reference_scaffold (MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative attribute)</a>
 </li>
@@ -15038,6 +15104,8 @@
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion/index.html#MolecularDiffusion.modules.tasks.diffusion.reverse_tensor">reverse_tensor() (in module MolecularDiffusion.modules.tasks.diffusion)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/equifm/cnflows/index.html#MolecularDiffusion.modules.models.equifm.cnflows.Cnflows.reweight_factor">reweight_factor() (MolecularDiffusion.modules.models.equifm.cnflows.Cnflows method)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/druglike/index.html#MolecularDiffusion.runmodes.analyze.druglike.RING_SIZES">RING_SIZES (in module MolecularDiffusion.runmodes.analyze.druglike)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/geom_utils/index.html#MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator.rmsd_threshold">rmsd_threshold (MolecularDiffusion.utils.geom_utils.MoleculeReconstructionEvaluator attribute)</a>
 </li>
@@ -15495,6 +15563,8 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_pmdm/index.html#MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator.sampler_kwargs">sampler_kwargs (MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator attribute)</a>
 </li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/similarity3d/index.html#MolecularDiffusion.runmodes.analyze.similarity3d.SAMPLES_PER_ATOM">SAMPLES_PER_ATOM (in module MolecularDiffusion.runmodes.analyze.similarity3d)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/runmodes/generate/tasks_generate/index.html#MolecularDiffusion.runmodes.generate.tasks_generate.GenerativeFactory.sampling_mode">sampling_mode (MolecularDiffusion.runmodes.generate.tasks_generate.GenerativeFactory attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/xyz2mol/index.html#MolecularDiffusion.runmodes.analyze.xyz2mol.sanitize_smiles">sanitize_smiles() (in module MolecularDiffusion.runmodes.analyze.xyz2mol)</a>
@@ -15682,6 +15752,10 @@
         <li><a href="autoapi/MolecularDiffusion/modules/models/pmdm/encoders/index.html#MolecularDiffusion.modules.models.pmdm.encoders.SchNetProteinEncoder">SchNetProteinEncoder (class in MolecularDiffusion.modules.models.pmdm.encoders)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsmol/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolDiffusionTask.score_model">score_model (MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolDiffusionTask attribute)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/docking/index.html#MolecularDiffusion.runmodes.analyze.docking.score_pose">score_pose() (in module MolecularDiffusion.runmodes.analyze.docking)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/docking/index.html#MolecularDiffusion.runmodes.analyze.docking.score_reference">score_reference() (in module MolecularDiffusion.runmodes.analyze.docking)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/apo2mol/score_model/index.html#MolecularDiffusion.modules.models.apo2mol.score_model.ScorePosNet3D">ScorePosNet3D (class in MolecularDiffusion.modules.models.apo2mol.score_model)</a>
 

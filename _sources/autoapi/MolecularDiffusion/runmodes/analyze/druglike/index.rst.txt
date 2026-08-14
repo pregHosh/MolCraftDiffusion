@@ -1,0 +1,67 @@
+MolecularDiffusion.runmodes.analyze.druglike
+============================================
+
+.. py:module:: MolecularDiffusion.runmodes.analyze.druglike
+
+.. autoapi-nested-parse::
+
+   Drug-likeness descriptors for generated molecules.
+
+   Backs ``MolCraftDiff analyze metrics --metrics druglike``. Everything here is
+   computed from the molecule alone -- no reference molecule, no receptor -- which
+   is why it is a separate set from :mod:`similarity3d`.
+
+   Columns follow what the pocket-conditioned literature reports:
+
+   * RDKit descriptors -- QED, SA, LogP, fsp3, MW, HBD, HBA;
+   * ``lipinski`` -- how many of the five Lipinski rules a molecule obeys
+     (``others/targetdiff/utils/evaluation/scoring_func.py:obey_lipinski``);
+   * ``pains_pass`` -- free of PAINS-A substructures;
+   * ``ring_filter_pass`` -- no ring larger than 6 that is not aromatic-fused,
+     the 2D ring sanity filter from DiffLinker;
+   * ring statistics -- counts plus which ring sizes are present;
+   * ``rdkit_rmsd_*`` -- distance from the generated pose to UFF-optimised RDKit
+     conformers. Expensive (embeds ``n_conf`` conformers per molecule), so it is
+     opt-in via ``--rdkit-rmsd``.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.druglike.RING_SIZES
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.druglike.compute
+   MolecularDiffusion.runmodes.analyze.druglike.rdkit_rmsd
+
+
+Module Contents
+---------------
+
+.. py:function:: compute(mol, with_rdkit_rmsd=False, n_conf=20)
+
+   All drug-likeness columns for one molecule.
+
+   ``mol`` must already be sanitized. Returns a flat dict ready for a
+   DataFrame row.
+
+
+.. py:function:: rdkit_rmsd(mol, n_conf=20, random_seed=42)
+
+   RMSD from the generated pose to ``n_conf`` UFF-optimised conformers.
+
+   Mirrors ``others/targetdiff/utils/evaluation/scoring_func.py:get_rdkit_rmsd``.
+   Returns ``(min, median, max)``, or ``(None, None, None)`` when embedding
+   fails.
+
+
+.. py:data:: RING_SIZES
+

@@ -311,7 +311,10 @@
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../runmodes/analyze/index.html">MolecularDiffusion.runmodes.analyze</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.analyze" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/compare_to_optimized/index.html">MolecularDiffusion.runmodes.analyze.compare_to_optimized</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/compute_metrics/index.html">MolecularDiffusion.runmodes.analyze.compute_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/docking/index.html">MolecularDiffusion.runmodes.analyze.docking</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/druglike/index.html">MolecularDiffusion.runmodes.analyze.druglike</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/featurize/index.html">MolecularDiffusion.runmodes.analyze.featurize</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/similarity3d/index.html">MolecularDiffusion.runmodes.analyze.similarity3d</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/ssl3d_embed/index.html">MolecularDiffusion.runmodes.analyze.ssl3d_embed</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/uma_embeddings/index.html">MolecularDiffusion.runmodes.analyze.uma_embeddings</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/xtb_electronic/index.html">MolecularDiffusion.runmodes.analyze.xtb_electronic</a></li>
@@ -547,7 +550,7 @@ MolCraftDiff analyze featurize gen_xyz/ –backend ssl3d –ssl3d-checkpoint run
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.cli.analyze.metrics">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.analyze.</span></span><span class="sig-name descname"><span class="pre">metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filtered_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recheck_topo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_strain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_neutrality</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">portion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mol_converter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_mol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mol_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_smiles</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.analyze.metrics" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.analyze.</span></span><span class="sig-name descname"><span class="pre">metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filtered_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recheck_topo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_strain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_neutrality</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">portion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mol_converter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_mol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mol_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_smiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">receptor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_ligand</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dock_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exhaustiveness</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rdkit_rmsd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rmsd_n_conf</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.analyze.metrics" title="Link to this definition">¶</a></dt>
 <dd><p>Compute validity and connectivity metrics for XYZ files or ASE DB rows.</p>
 <p>
 Metrics types:</p>
@@ -559,7 +562,15 @@ core         Validity (RDKit + geometry), connectivity, atom stability,</p>
 </div></blockquote>
 <p>posebuster   PoseBusters checks (bond lengths, angles, clashes)
 geom_revised Aromatic-aware stability metrics
-shepherd     Drug-likeness and conditional similarity metrics</p>
+druglike     Drug-likeness descriptors: QED, SA, LogP, Lipinski, PAINS,</p>
+<blockquote>
+<div><p>ring statistics (+ –rdkit-rmsd)</p>
+</div></blockquote>
+<p>similarity3d Shape / ESP / pharmacophore similarity to –reference-mol
+sbdd         AutoDock Vina affinity against a protein pocket</p>
+<blockquote>
+<div><p>(needs –receptor and the [sbdd] extra)</p>
+</div></blockquote>
 </div></blockquote>
 <p>
 .. rubric:: Examples</p>
@@ -568,9 +579,10 @@ MolCraftDiff analyze metrics molecules.db –metrics core
 MolCraftDiff analyze metrics gen_xyz/ –metrics core –filter valid_connected –filtered-output kept/
 MolCraftDiff analyze metrics gen_xyz/ –metrics posebuster
 MolCraftDiff analyze metrics gen_xyz/ –metrics geom_revised –mol-converter openbabel
-MolCraftDiff analyze metrics gen_xyz/ –metrics shepherd
+MolCraftDiff analyze metrics gen_xyz/ –metrics druglike
 MolCraftDiff analyze metrics gen_xyz/ –split 4
-MolCraftDiff analyze metrics gen_xyz/ –metrics shepherd -r data/shepherd_data/gdb/molblock_charges_9_test100.pkl –mol-idx 0</p>
+MolCraftDiff analyze metrics gen_xyz/ –metrics similarity3d -r reference.sdf –mol-idx 0
+MolCraftDiff analyze metrics gen_xyz/ –metrics sbdd –receptor pocket.pdbqt –ref-ligand ref.sdf</p>
 </dd></dl>
 
 <dl class="py function">

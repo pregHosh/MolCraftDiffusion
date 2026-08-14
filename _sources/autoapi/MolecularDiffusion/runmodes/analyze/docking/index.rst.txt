@@ -1,0 +1,99 @@
+MolecularDiffusion.runmodes.analyze.docking
+===========================================
+
+.. py:module:: MolecularDiffusion.runmodes.analyze.docking
+
+.. autoapi-nested-parse::
+
+   AutoDock Vina scoring of generated ligands against a protein pocket.
+
+   Backs ``MolCraftDiff analyze metrics --metrics sbdd``. Needs the ``[sbdd]``
+   extra (``vina`` + ``meeko`` + ``gemmi``); every import is deferred so the rest
+   of the analysis commands keep working without it.
+
+   Protocol follows the SBDD literature (targetdiff / KGDiff / IPDiff / Apo2Mol):
+
+   * the search box is centred on the ligand being scored, sized to its own
+     extent plus a 5 A buffer -- generated ligands already sit in the pocket
+     frame, so their own bounding box defines the site;
+   * three modes, increasing cost: ``score`` (in place), ``min`` (local
+     minimisation), ``dock`` (full redock).
+
+   The pose matters, so molecules are perceived with OpenBabel, **not** xyz2mol:
+   xyz2mol returns a topology with no conformer, which silently discards the
+   coordinates the model generated.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.docking.BOX_BUFFER
+   MolecularDiffusion.runmodes.analyze.docking.DOCK_MODES
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.docking.box_for
+   MolecularDiffusion.runmodes.analyze.docking.ligand_pdbqt
+   MolecularDiffusion.runmodes.analyze.docking.load_pose
+   MolecularDiffusion.runmodes.analyze.docking.prepare_receptor
+   MolecularDiffusion.runmodes.analyze.docking.score_pose
+   MolecularDiffusion.runmodes.analyze.docking.score_reference
+
+
+Module Contents
+---------------
+
+.. py:function:: box_for(mol, buffer=BOX_BUFFER)
+
+   Search box centred on this molecule: (center, size), both length 3.
+
+
+.. py:function:: ligand_pdbqt(mol)
+
+   Sanitized, H-added mol -> PDBQT string (meeko 0.7 API).
+
+
+.. py:function:: load_pose(xyz_path)
+
+   Read one .xyz into a sanitized RDKit mol that still has its pose.
+
+   Returns ``(smiles, mol)``; ``mol`` is ``None`` when the structure cannot be
+   perceived, is multi-fragment, or lost its conformer.
+
+
+.. py:function:: prepare_receptor(receptor_path, out_dir=None)
+
+   Return a receptor PDBQT path, converting from PDB only if needed.
+
+   A ``.pdbqt`` is used as-is -- CrossDocked-style test sets ship them, and
+   reusing one keeps our numbers comparable with the upstream papers.
+
+
+.. py:function:: score_pose(mol, receptor_pdbqt, mode='dock', exhaustiveness=8, seed=42, buffer=BOX_BUFFER)
+
+   Vina affinities for one posed molecule.
+
+   Returns a dict with ``vina_score`` (always), plus ``vina_min`` for
+   ``mode in {"min", "dock"}`` and ``vina_dock`` for ``mode == "dock"``.
+
+
+.. py:function:: score_reference(ref_ligand_sdf, receptor_pdbqt, **kwargs)
+
+   Score the reference (crystal) ligand -- the bar `high_affinity` uses.
+
+
+.. py:data:: BOX_BUFFER
+   :value: 5.0
+
+
+.. py:data:: DOCK_MODES
+   :value: ('score', 'min', 'dock')
+
+

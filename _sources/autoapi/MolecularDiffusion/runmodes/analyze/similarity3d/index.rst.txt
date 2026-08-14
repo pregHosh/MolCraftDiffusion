@@ -1,0 +1,100 @@
+MolecularDiffusion.runmodes.analyze.similarity3d
+================================================
+
+.. py:module:: MolecularDiffusion.runmodes.analyze.similarity3d
+
+.. autoapi-nested-parse::
+
+   3D similarity of generated molecules to a reference molecule.
+
+   Backs ``MolCraftDiff analyze metrics --metrics similarity3d``, which needs
+   ``--reference-mol``. Three Gaussian-overlap scores, each aligned before
+   scoring:
+
+   * ``shape_sim``  -- molecular-surface overlap (ROCS-style);
+   * ``esp_sim``    -- surface overlap weighted by electrostatic potential;
+   * ``pharm_sim``  -- pharmacophore-point overlap.
+
+   The scoring itself comes from the vendored ``utils/shepherd_score`` package;
+   this module only prepares the profiles and drives the alignment. Logic is
+   lifted unchanged from the former ``shepherd`` metric block so the numbers stay
+   identical across the rename.
+
+   Generated molecules may ship precomputed profiles as sidecar files next to the
+   ``.xyz`` (``.npz``, ``_surface.npy``, ``_esp.npz``, ``_pharm.npz``); those are
+   reused when present and recomputed from the molecule otherwise.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.similarity3d.ESP_LAMBDA
+   MolecularDiffusion.runmodes.analyze.similarity3d.NUM_ALIGN_REPEATS
+   MolecularDiffusion.runmodes.analyze.similarity3d.NUM_SURFACE_POINTS
+   MolecularDiffusion.runmodes.analyze.similarity3d.PROBE_RADIUS
+   MolecularDiffusion.runmodes.analyze.similarity3d.SAMPLES_PER_ATOM
+   MolecularDiffusion.runmodes.analyze.similarity3d.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.similarity3d.compare
+   MolecularDiffusion.runmodes.analyze.similarity3d.extract_profiles
+   MolecularDiffusion.runmodes.analyze.similarity3d.load_reference_source
+   MolecularDiffusion.runmodes.analyze.similarity3d.reference_mol
+
+
+Module Contents
+---------------
+
+.. py:function:: compare(mol, ref_data, xyz_path=None)
+
+   Shape / ESP / pharmacophore similarity of ``mol`` against ``ref_data``.
+
+   Returns a dict of the three scores; a modality that cannot be computed is
+   reported as ``0.0``, matching the behaviour of the former shepherd block.
+
+
+.. py:function:: extract_profiles(mol)
+
+   Surface points, ESP values and pharmacophores for one molecule.
+
+
+.. py:function:: load_reference_source(path)
+
+   Open a reference ``.pkl`` (list of molblocks) or ``.sdf`` supplier.
+
+
+.. py:function:: reference_mol(data_source, index)
+
+   Pull one molecule out of a reference source by index.
+
+
+.. py:data:: ESP_LAMBDA
+   :value: 0.3
+
+
+.. py:data:: NUM_ALIGN_REPEATS
+   :value: 45
+
+
+.. py:data:: NUM_SURFACE_POINTS
+   :value: 75
+
+
+.. py:data:: PROBE_RADIUS
+   :value: 1.2
+
+
+.. py:data:: SAMPLES_PER_ATOM
+   :value: 25
+
+
+.. py:data:: logger
+

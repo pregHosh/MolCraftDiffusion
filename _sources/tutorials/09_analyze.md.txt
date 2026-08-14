@@ -82,8 +82,10 @@ so rows can be joined back to the source database.
 | `core` | Validity, connectivity, atom stability, and set-level uniqueness/novelty/diversity |
 | `posebuster` | Bond lengths, angles, clashes |
 | `geom_revised` | Aromatic-aware stability metrics |
-| `shepherd` | ShEPhERD conditional-similarity metrics (needs `--reference-mol`) |
-| `all` | All of the above |
+| `druglike` | QED, SA, LogP, fsp3, MW, HBD, HBA, Lipinski, PAINS, ring statistics (+ optional `--rdkit-rmsd`) |
+| `similarity3d` | Shape / ESP / pharmacophore similarity to `--reference-mol` |
+| `sbdd` | AutoDock Vina binding affinity against a protein pocket (needs `--receptor` and the `[sbdd]` extra) |
+| `all` | All of the above **except `sbdd`**, which needs a receptor and is opt-in |
 
 ### What `core` reports
 
@@ -118,9 +120,81 @@ to process). Sweeps pick this file up automatically.
 | `-p, --portion` | `1.0` | Fraction of XYZ files to process |
 | `--filter` / `--filtered-output` | None | Keep only structures whose column is truthy (e.g. `--filter valid_connected`), from any metric set. Writes an XYZ directory, or an ASE `.db` when the input was a database. |
 | `--train-smiles` | None | Reference SMILES (`.txt` one per line, or `.csv`) to score novelty against; without it novelty is reported as `n/a` |
-| `-r, --reference-mol` / `--mol-idx` | None / `0` | Reference `.pkl`/`.sdf` (and index) for `shepherd` metrics |
+| `--receptor` | None | Protein receptor for `sbdd`: a `.pdbqt`, or a `.pdb` that meeko prepares |
+| `--ref-ligand` | None | Reference ligand `.sdf`; its own affinity becomes the bar for `high_affinity` |
+| `--dock-mode` | `dock` | `score` (in place) / `min` (+ local optimisation) / `dock` (full redock) |
+| `--exhaustiveness` | `8` | Vina search effort for `--dock-mode dock` |
+| `-r, --reference-mol` / `--mol-idx` | None / `0` | Reference `.pkl`/`.sdf` (and index) for `similarity3d`; `--mol-idx -1` picks a random reference per molecule |
+| `--rdkit-rmsd` / `--rmsd-n-conf` | off / `20` | `druglike`: RMSD of the pose against UFF-optimised RDKit conformers (slow) |
 | `--skip-atoms` | — | Atom indices to skip in validation |
 | `-t, --timeout` | `10` | Timeout per xyz2mol conversion (s) |
+
+### What `druglike` and `similarity3d` report
+
+These two were one set called `shepherd` until they were split, because they
+answer different questions and need different inputs.
+
+`druglike` needs nothing but the structures:
+
+| Column | Meaning |
+|--------|---------|
+| `QED`, `SA_score`, `LogP`, `fsp3`, `MW`, `HBD`, `HBA` | standard RDKit descriptors |
+| `lipinski` | how many of the five Lipinski rules the molecule obeys, 0–5 |
+| `pains_pass` | free of PAINS-A alerts |
+| `ring_filter_pass` | no non-aromatic ring larger than 6 |
+| `n_rings`, `n_aromatic_rings`, `n_aliphatic_rings` | ring counts |
+| `ring_size_3` … `ring_size_9` | per molecule a boolean; the summary reports the **fraction of molecules containing** each size, which is the form the SBDD papers print |
+| `rdkit_rmsd_min` / `_median` / `_max` | only with `--rdkit-rmsd`; embeds `--rmsd-n-conf` conformers per molecule, so it is far slower than the rest |
+
+`similarity3d` needs `--reference-mol` and reports `shape_sim`, `esp_sim` and
+`pharm_sim` — Gaussian-overlap scores after alignment.
+
+> **Reproducibility:** `shape_sim` and `esp_sim` are **not deterministic**. The
+> molecular surface is sampled randomly and the overlay uses 45 random restarts,
+> so re-running the same input moves them by up to ~0.05. Compare them within a
+> run, and treat small differences between runs as noise. `pharm_sim` is
+> deterministic.
+
+> **Migration:** `--metrics shepherd` no longer exists. Use `--metrics druglike`
+> for the descriptors and `--metrics similarity3d` for the reference
+> comparison. `--metrics all` runs `druglike` always, and `similarity3d` only
+> when `--reference-mol` is given.
+
+---
+
+### What `sbdd` reports
+
+Binding affinity for pocket-conditioned models, the numbers the SBDD
+literature quotes. Requires the `[sbdd]` extra (`pip install
+'molcraftdiffusion[sbdd]'`).
+
+```bash
+MolCraftDiff analyze metrics gen_xyz/ --metrics sbdd \
+    --receptor pocket.pdbqt --ref-ligand reference.sdf
+```
+
+| Column / metric | Meaning |
+|-----------------|---------|
+| `vina_score` | Affinity of the generated pose exactly as produced, no relaxation |
+| `vina_min` | After local minimisation in the pocket |
+| `vina_dock` | After a full redock — the number most papers report |
+| `high_affinity` | Fraction of molecules beating `--ref-ligand`'s own affinity |
+| `success_rate` | QED > 0.25 ∧ SA > 0.59 ∧ `vina_dock` < −8.18 |
+
+The search box is centred on each molecule's own bounding box plus a 5 Å
+buffer, matching the reference implementations — generated ligands already sit
+in the pocket frame.
+
+Two things worth knowing:
+
+* **Poses are perceived with OpenBabel, not xyz2mol.** xyz2mol returns a
+  topology with no conformer, which would silently discard the coordinates the
+  model generated. Structures that cannot be perceived, that lose their
+  conformer, or that come back as several fragments are reported with an
+  `error` and no affinity rather than being skipped silently — check `n_scored`
+  in the summary against your input count.
+* `sbdd` is **not** part of `--metrics all`, because it needs a receptor and
+  costs seconds per molecule (`--dock-mode score` is far cheaper than `dock`).
 
 ---
 

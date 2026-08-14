@@ -311,7 +311,10 @@
 <li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/index.html">MolecularDiffusion.runmodes.analyze</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.analyze" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/compare_to_optimized/index.html">MolecularDiffusion.runmodes.analyze.compare_to_optimized</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/compute_metrics/index.html">MolecularDiffusion.runmodes.analyze.compute_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/docking/index.html">MolecularDiffusion.runmodes.analyze.docking</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/druglike/index.html">MolecularDiffusion.runmodes.analyze.druglike</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html">MolecularDiffusion.runmodes.analyze.featurize</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/similarity3d/index.html">MolecularDiffusion.runmodes.analyze.similarity3d</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/ssl3d_embed/index.html">MolecularDiffusion.runmodes.analyze.ssl3d_embed</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/uma_embeddings/index.html">MolecularDiffusion.runmodes.analyze.uma_embeddings</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/xtb_electronic/index.html">MolecularDiffusion.runmodes.analyze.xtb_electronic</a></li>
@@ -596,11 +599,17 @@ so rows can be joined back to the source database.</p>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">geom_revised</span></code></p></td>
 <td><p>Aromatic-aware stability metrics</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">shepherd</span></code></p></td>
-<td><p>ShEPhERD conditional-similarity metrics (needs <code class="docutils literal notranslate"><span class="pre">--reference-mol</span></code>)</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">druglike</span></code></p></td>
+<td><p>QED, SA, LogP, fsp3, MW, HBD, HBA, Lipinski, PAINS, ring statistics (+ optional <code class="docutils literal notranslate"><span class="pre">--rdkit-rmsd</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">similarity3d</span></code></p></td>
+<td><p>Shape / ESP / pharmacophore similarity to <code class="docutils literal notranslate"><span class="pre">--reference-mol</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sbdd</span></code></p></td>
+<td><p>AutoDock Vina binding affinity against a protein pocket (needs <code class="docutils literal notranslate"><span class="pre">--receptor</span></code> and the <code class="docutils literal notranslate"><span class="pre">[sbdd]</span></code> extra)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">all</span></code></p></td>
-<td><p>All of the above</p></td>
+<td><p>All of the above <strong>except <code class="docutils literal notranslate"><span class="pre">sbdd</span></code></strong>, which needs a receptor and is opt-in</p></td>
 </tr>
 </tbody>
 </table>
@@ -687,21 +696,144 @@ to process). Sweeps pick this file up automatically.</p>
 <td><p>None</p></td>
 <td><p>Reference SMILES (<code class="docutils literal notranslate"><span class="pre">.txt</span></code> one per line, or <code class="docutils literal notranslate"><span class="pre">.csv</span></code>) to score novelty against; without it novelty is reported as <code class="docutils literal notranslate"><span class="pre">n/a</span></code></p></td>
 </tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--receptor</span></code></p></td>
+<td><p>None</p></td>
+<td><p>Protein receptor for <code class="docutils literal notranslate"><span class="pre">sbdd</span></code>: a <code class="docutils literal notranslate"><span class="pre">.pdbqt</span></code>, or a <code class="docutils literal notranslate"><span class="pre">.pdb</span></code> that meeko prepares</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--ref-ligand</span></code></p></td>
+<td><p>None</p></td>
+<td><p>Reference ligand <code class="docutils literal notranslate"><span class="pre">.sdf</span></code>; its own affinity becomes the bar for <code class="docutils literal notranslate"><span class="pre">high_affinity</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--dock-mode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dock</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">score</span></code> (in place) / <code class="docutils literal notranslate"><span class="pre">min</span></code> (+ local optimisation) / <code class="docutils literal notranslate"><span class="pre">dock</span></code> (full redock)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--exhaustiveness</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">8</span></code></p></td>
+<td><p>Vina search effort for <code class="docutils literal notranslate"><span class="pre">--dock-mode</span> <span class="pre">dock</span></code></p></td>
+</tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">-r,</span> <span class="pre">--reference-mol</span></code> / <code class="docutils literal notranslate"><span class="pre">--mol-idx</span></code></p></td>
 <td><p>None / <code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
-<td><p>Reference <code class="docutils literal notranslate"><span class="pre">.pkl</span></code>/<code class="docutils literal notranslate"><span class="pre">.sdf</span></code> (and index) for <code class="docutils literal notranslate"><span class="pre">shepherd</span></code> metrics</p></td>
+<td><p>Reference <code class="docutils literal notranslate"><span class="pre">.pkl</span></code>/<code class="docutils literal notranslate"><span class="pre">.sdf</span></code> (and index) for <code class="docutils literal notranslate"><span class="pre">similarity3d</span></code>; <code class="docutils literal notranslate"><span class="pre">--mol-idx</span> <span class="pre">-1</span></code> picks a random reference per molecule</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--skip-atoms</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--rdkit-rmsd</span></code> / <code class="docutils literal notranslate"><span class="pre">--rmsd-n-conf</span></code></p></td>
+<td><p>off / <code class="docutils literal notranslate"><span class="pre">20</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">druglike</span></code>: RMSD of the pose against UFF-optimised RDKit conformers (slow)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--skip-atoms</span></code></p></td>
 <td><p>—</p></td>
 <td><p>Atom indices to skip in validation</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">-t,</span> <span class="pre">--timeout</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">-t,</span> <span class="pre">--timeout</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
 <td><p>Timeout per xyz2mol conversion (s)</p></td>
 </tr>
 </tbody>
 </table>
 </div>
+</section>
+<section id="what-druglike-and-similarity3d-report">
+<h3>What <code class="docutils literal notranslate"><span class="pre">druglike</span></code> and <code class="docutils literal notranslate"><span class="pre">similarity3d</span></code> report<a class="headerlink" href="#what-druglike-and-similarity3d-report" title="Link to this heading">¶</a></h3>
+<p>These two were one set called <code class="docutils literal notranslate"><span class="pre">shepherd</span></code> until they were split, because they
+answer different questions and need different inputs.</p>
+<p><code class="docutils literal notranslate"><span class="pre">druglike</span></code> needs nothing but the structures:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">QED</span></code>, <code class="docutils literal notranslate"><span class="pre">SA_score</span></code>, <code class="docutils literal notranslate"><span class="pre">LogP</span></code>, <code class="docutils literal notranslate"><span class="pre">fsp3</span></code>, <code class="docutils literal notranslate"><span class="pre">MW</span></code>, <code class="docutils literal notranslate"><span class="pre">HBD</span></code>, <code class="docutils literal notranslate"><span class="pre">HBA</span></code></p></td>
+<td><p>standard RDKit descriptors</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lipinski</span></code></p></td>
+<td><p>how many of the five Lipinski rules the molecule obeys, 0–5</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pains_pass</span></code></p></td>
+<td><p>free of PAINS-A alerts</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ring_filter_pass</span></code></p></td>
+<td><p>no non-aromatic ring larger than 6</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">n_rings</span></code>, <code class="docutils literal notranslate"><span class="pre">n_aromatic_rings</span></code>, <code class="docutils literal notranslate"><span class="pre">n_aliphatic_rings</span></code></p></td>
+<td><p>ring counts</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ring_size_3</span></code> … <code class="docutils literal notranslate"><span class="pre">ring_size_9</span></code></p></td>
+<td><p>per molecule a boolean; the summary reports the <strong>fraction of molecules containing</strong> each size, which is the form the SBDD papers print</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rdkit_rmsd_min</span></code> / <code class="docutils literal notranslate"><span class="pre">_median</span></code> / <code class="docutils literal notranslate"><span class="pre">_max</span></code></p></td>
+<td><p>only with <code class="docutils literal notranslate"><span class="pre">--rdkit-rmsd</span></code>; embeds <code class="docutils literal notranslate"><span class="pre">--rmsd-n-conf</span></code> conformers per molecule, so it is far slower than the rest</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">similarity3d</span></code> needs <code class="docutils literal notranslate"><span class="pre">--reference-mol</span></code> and reports <code class="docutils literal notranslate"><span class="pre">shape_sim</span></code>, <code class="docutils literal notranslate"><span class="pre">esp_sim</span></code> and
+<code class="docutils literal notranslate"><span class="pre">pharm_sim</span></code> — Gaussian-overlap scores after alignment.</p>
+<blockquote>
+<div><p><strong>Reproducibility:</strong> <code class="docutils literal notranslate"><span class="pre">shape_sim</span></code> and <code class="docutils literal notranslate"><span class="pre">esp_sim</span></code> are <strong>not deterministic</strong>. The
+molecular surface is sampled randomly and the overlay uses 45 random restarts,
+so re-running the same input moves them by up to ~0.05. Compare them within a
+run, and treat small differences between runs as noise. <code class="docutils literal notranslate"><span class="pre">pharm_sim</span></code> is
+deterministic.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>Migration:</strong> <code class="docutils literal notranslate"><span class="pre">--metrics</span> <span class="pre">shepherd</span></code> no longer exists. Use <code class="docutils literal notranslate"><span class="pre">--metrics</span> <span class="pre">druglike</span></code>
+for the descriptors and <code class="docutils literal notranslate"><span class="pre">--metrics</span> <span class="pre">similarity3d</span></code> for the reference
+comparison. <code class="docutils literal notranslate"><span class="pre">--metrics</span> <span class="pre">all</span></code> runs <code class="docutils literal notranslate"><span class="pre">druglike</span></code> always, and <code class="docutils literal notranslate"><span class="pre">similarity3d</span></code> only
+when <code class="docutils literal notranslate"><span class="pre">--reference-mol</span></code> is given.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="what-sbdd-reports">
+<h3>What <code class="docutils literal notranslate"><span class="pre">sbdd</span></code> reports<a class="headerlink" href="#what-sbdd-reports" title="Link to this heading">¶</a></h3>
+<p>Binding affinity for pocket-conditioned models, the numbers the SBDD
+literature quotes. Requires the <code class="docutils literal notranslate"><span class="pre">[sbdd]</span></code> extra (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">'molcraftdiffusion[sbdd]'</span></code>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>metrics<span class="w"> </span>gen_xyz/<span class="w"> </span>--metrics<span class="w"> </span>sbdd<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--receptor<span class="w"> </span>pocket.pdbqt<span class="w"> </span>--ref-ligand<span class="w"> </span>reference.sdf
+</pre></div>
+</div>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column / metric</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vina_score</span></code></p></td>
+<td><p>Affinity of the generated pose exactly as produced, no relaxation</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vina_min</span></code></p></td>
+<td><p>After local minimisation in the pocket</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vina_dock</span></code></p></td>
+<td><p>After a full redock — the number most papers report</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">high_affinity</span></code></p></td>
+<td><p>Fraction of molecules beating <code class="docutils literal notranslate"><span class="pre">--ref-ligand</span></code>’s own affinity</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">success_rate</span></code></p></td>
+<td><p>QED &gt; 0.25 ∧ SA &gt; 0.59 ∧ <code class="docutils literal notranslate"><span class="pre">vina_dock</span></code> &lt; −8.18</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The search box is centred on each molecule’s own bounding box plus a 5 Å
+buffer, matching the reference implementations — generated ligands already sit
+in the pocket frame.</p>
+<p>Two things worth knowing:</p>
+<ul class="simple">
+<li><p><strong>Poses are perceived with OpenBabel, not xyz2mol.</strong> xyz2mol returns a
+topology with no conformer, which would silently discard the coordinates the
+model generated. Structures that cannot be perceived, that lose their
+conformer, or that come back as several fragments are reported with an
+<code class="docutils literal notranslate"><span class="pre">error</span></code> and no affinity rather than being skipped silently — check <code class="docutils literal notranslate"><span class="pre">n_scored</span></code>
+in the summary against your input count.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sbdd</span></code> is <strong>not</strong> part of <code class="docutils literal notranslate"><span class="pre">--metrics</span> <span class="pre">all</span></code>, because it needs a receptor and
+costs seconds per molecule (<code class="docutils literal notranslate"><span class="pre">--dock-mode</span> <span class="pre">score</span></code> is far cheaper than <code class="docutils literal notranslate"><span class="pre">dock</span></code>).</p></li>
+</ul>
 </section>
 </section>
 <hr class="docutils" />
@@ -1367,6 +1499,8 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 <li><a class="reference internal" href="#metric-types">Metric Types</a></li>
 <li><a class="reference internal" href="#what-core-reports">What <code class="docutils literal notranslate"><span class="pre">core</span></code> reports</a></li>
 <li><a class="reference internal" href="#id2">Options</a></li>
+<li><a class="reference internal" href="#what-druglike-and-similarity3d-report">What <code class="docutils literal notranslate"><span class="pre">druglike</span></code> and <code class="docutils literal notranslate"><span class="pre">similarity3d</span></code> report</a></li>
+<li><a class="reference internal" href="#what-sbdd-reports">What <code class="docutils literal notranslate"><span class="pre">sbdd</span></code> reports</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#part-3-compare-to-optimised-geometries">Part 3: Compare to Optimised Geometries</a><ul>

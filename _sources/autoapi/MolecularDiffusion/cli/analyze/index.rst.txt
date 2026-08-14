@@ -88,7 +88,7 @@ Module Contents
    MolCraftDiff analyze featurize gen_xyz/ --backend ssl3d --ssl3d-checkpoint runs/last.ckpt --device cuda
 
 
-.. py:function:: metrics(input_path, output, filter_column, filtered_output, metrics_type, recheck_topo, check_strain, check_neutrality, portion, mol_converter, skip_atoms, split, timeout, reference_mol, mol_idx, train_smiles)
+.. py:function:: metrics(input_path, output, filter_column, filtered_output, metrics_type, recheck_topo, check_strain, check_neutrality, portion, mol_converter, skip_atoms, split, timeout, reference_mol, mol_idx, train_smiles, receptor, ref_ligand, dock_mode, exhaustiveness, rdkit_rmsd, rmsd_n_conf)
 
    Compute validity and connectivity metrics for XYZ files or ASE DB rows.
 
@@ -99,7 +99,11 @@ Module Contents
                   uniqueness/novelty/diversity
      posebuster   PoseBusters checks (bond lengths, angles, clashes)
      geom_revised Aromatic-aware stability metrics
-     shepherd     Drug-likeness and conditional similarity metrics
+     druglike     Drug-likeness descriptors: QED, SA, LogP, Lipinski, PAINS,
+                  ring statistics (+ --rdkit-rmsd)
+     similarity3d Shape / ESP / pharmacophore similarity to --reference-mol
+     sbdd         AutoDock Vina affinity against a protein pocket
+                  (needs --receptor and the [sbdd] extra)
 
    
    .. rubric:: Examples
@@ -109,9 +113,10 @@ Module Contents
    MolCraftDiff analyze metrics gen_xyz/ --metrics core --filter valid_connected --filtered-output kept/
    MolCraftDiff analyze metrics gen_xyz/ --metrics posebuster
    MolCraftDiff analyze metrics gen_xyz/ --metrics geom_revised --mol-converter openbabel
-   MolCraftDiff analyze metrics gen_xyz/ --metrics shepherd
+   MolCraftDiff analyze metrics gen_xyz/ --metrics druglike
    MolCraftDiff analyze metrics gen_xyz/ --split 4
-   MolCraftDiff analyze metrics gen_xyz/ --metrics shepherd -r data/shepherd_data/gdb/molblock_charges_9_test100.pkl --mol-idx 0
+   MolCraftDiff analyze metrics gen_xyz/ --metrics similarity3d -r reference.sdf --mol-idx 0
+   MolCraftDiff analyze metrics gen_xyz/ --metrics sbdd --receptor pocket.pdbqt --ref-ligand ref.sdf
 
 
 .. py:function:: optimize(input_path, output_path, charge, level, timeout, scale_factor, csv_path, filter_column, inherit_attributes)
