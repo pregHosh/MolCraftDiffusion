@@ -71,7 +71,7 @@ Use this table to decide which optional groups to install before you start:
 | Featurise molecules with SOAP descriptors | `[data]` |
 | Run validity/connectivity metrics, xyz2mol, RMSD compare | `[analyze]` |
 | Run `analyze optimize` or `xtb-electronic` | `[analyze]` + conda `xtb` |
-| Run geometric-shape metrics (`--metrics geom_revised` or `all`) | `[analyze]` + `pip install cosymlib` |
+| Run geometric-shape metrics (`--metrics geom_revised` or `all`) | `[analyze]` |
 | Featurise with UMA neural-network embeddings | `[analyze]` + fairchem clone (see below) |
 | Pharmacophore-conditioned training/generation | `pip install open3d` |
 
@@ -86,10 +86,6 @@ pip install 'molcraftdiffusion[analyze]'
 
 # DiffPharma novel-pocket preprocessing (Biopython + ODDT)
 pip install 'molcraftdiffusion[bio]'
-
-# Optional: needed for geometric-shape metrics in
-# `MolCraftDiff analyze metrics --metrics {core,geom_revised,all}`
-pip install cosymlib
 
 # xTB executable for xTB-backed analysis
 conda install -c conda-forge xtb==6.7.1 -y

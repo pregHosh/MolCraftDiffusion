@@ -26,7 +26,6 @@ Classes
 
 .. autoapisummary::
 
-   MolecularDiffusion.utils.geom_analyzer.BasicMolecularMetrics
    MolecularDiffusion.utils.geom_analyzer.Histogram_cont
    MolecularDiffusion.utils.geom_analyzer.Histogram_discrete
 
@@ -37,7 +36,6 @@ Functions
 .. autoapisummary::
 
    MolecularDiffusion.utils.geom_analyzer.analyze_node_distribution
-   MolecularDiffusion.utils.geom_analyzer.analyze_stability_for_molecules
    MolecularDiffusion.utils.geom_analyzer.build_molecule
    MolecularDiffusion.utils.geom_analyzer.build_xae_molecule
    MolecularDiffusion.utils.geom_analyzer.check_connected
@@ -60,44 +58,6 @@ Functions
 
 Module Contents
 ---------------
-
-.. py:class:: BasicMolecularMetrics(ratio, dataset_smiles_list)
-
-   Bases: :py:obj:`object`
-
-
-   Valid amongst all generated molecules
-   Uniqueness amongst valid molecules
-   Novelty amongst unique molecules
-
-
-   .. py:method:: compute_novelty(unique)
-
-
-   .. py:method:: compute_uniqueness(valid)
-
-      valid: list of SMILES strings.
-
-
-
-   .. py:method:: compute_validity(generated)
-
-      generated smiles
-
-
-
-   .. py:method:: evaluate(generated)
-
-      generated: list of pairs (positions: n x 3, atom_types: n [int])
-      the positions and atom types should already be masked.
-
-
-
-   .. py:attribute:: dataset_smiles_list
-
-
-   .. py:attribute:: ratio
-
 
 .. py:class:: Histogram_cont(num_bins=100, range=(0.0, 13.0), name='histogram', ignore_zeros=False)
 
@@ -150,25 +110,6 @@ Module Contents
 
 
 .. py:function:: analyze_node_distribution(mol_list)
-
-.. py:function:: analyze_stability_for_molecules(molecule_list: Dict[str, torch.Tensor], atom_decoder: List[str], dataset_smiles_list: List[str], use_rdkit: bool = True, debug: bool = True) -> Tuple[Dict[str, float], Optional[List[float]]]
-
-   Analyze the stability of a list of molecules.
-   If xyz cannot be converted to mol and smiles, the molecule is considered unstable.
-   Then for unstable molecules, the number of bonds is checked against the allowed bonds.
-   Only "stable" smiles are then used for the RDKit metrics.
-
-   Parameters:
-   - molecule_list (Dict[str, torch.Tensor]): Dictionary containing 'one_hot', 'x', and 'node_mask' tensors.
-   - atom_decoder (List[str]): List to decode atomic types to element symbols.
-   - dataset_smiles_list (List[str]): List of reference SMILES strings from the dataset.
-   - use_rdkit (bool): Whether to use RDKit for additional metrics. Default is True.
-
-   Returns:
-   Tuple[Dict[str, float], Optional[List[float]]]:
-   - Dictionary with molecule and atomic stability.
-   - List of RDKit metrics if `use_rdkit` is True, otherwise None.
-
 
 .. py:function:: build_molecule(positions, atom_types, atom_decoder)
 

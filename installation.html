@@ -354,6 +354,7 @@
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/utils/plot_function/index.html">MolecularDiffusion.utils.plot_function</a></li>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/utils/pretty/index.html">MolecularDiffusion.utils.pretty</a></li>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/utils/sascore/index.html">MolecularDiffusion.utils.sascore</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/utils/shape_measure/index.html">MolecularDiffusion.utils.shape_measure</a></li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/utils/shepherd_score/index.html">MolecularDiffusion.utils.shepherd_score</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/utils/shepherd_score/alignment/index.html">MolecularDiffusion.utils.shepherd_score.alignment</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.alignment" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l6 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/utils/shepherd_score/alignment/utils/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.alignment.utils" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -531,7 +532,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[analyze]</span></code> + conda <code class="docutils literal notranslate"><span class="pre">xtb</span></code></p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p>Run geometric-shape metrics (<code class="docutils literal notranslate"><span class="pre">--metrics</span> <span class="pre">geom_revised</span></code> or <code class="docutils literal notranslate"><span class="pre">all</span></code>)</p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[analyze]</span></code> + <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">cosymlib</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[analyze]</span></code></p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p>Featurise with UMA neural-network embeddings</p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">[analyze]</span></code> + fairchem clone (see below)</p></td>
@@ -553,10 +554,6 @@ pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;
 
 <span class="c1"># DiffPharma novel-pocket preprocessing (Biopython + ODDT)</span>
 pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[bio]&#39;</span>
-
-<span class="c1"># Optional: needed for geometric-shape metrics in</span>
-<span class="c1"># `MolCraftDiff analyze metrics --metrics {core,geom_revised,all}`</span>
-pip<span class="w"> </span>install<span class="w"> </span>cosymlib
 
 <span class="c1"># xTB executable for xTB-backed analysis</span>
 conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="nv">xtb</span><span class="o">==</span><span class="m">6</span>.7.1<span class="w"> </span>-y

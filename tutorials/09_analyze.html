@@ -354,6 +354,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/plot_function/index.html">MolecularDiffusion.utils.plot_function</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/pretty/index.html">MolecularDiffusion.utils.pretty</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/sascore/index.html">MolecularDiffusion.utils.sascore</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shape_measure/index.html">MolecularDiffusion.utils.shape_measure</a></li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/index.html">MolecularDiffusion.utils.shepherd_score</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/alignment/index.html">MolecularDiffusion.utils.shepherd_score.alignment</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.alignment" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l6 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/alignment/utils/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.alignment.utils" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -572,6 +573,9 @@
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>metrics<span class="w"> </span>gen_xyz/<span class="w"> </span>--metrics<span class="w"> </span>all
 </pre></div>
 </div>
+<p>The input may be a directory of <code class="docutils literal notranslate"><span class="pre">.xyz</span></code> files <strong>or</strong> an ASE <code class="docutils literal notranslate"><span class="pre">.db</span></code> file. For a
+database, every row is scored and the results carry an <code class="docutils literal notranslate"><span class="pre">ase_db_row_id</span></code> column
+so rows can be joined back to the source database.</p>
 </section>
 <section id="metric-types">
 <h3>Metric Types<a class="headerlink" href="#metric-types" title="Link to this heading">¶</a></h3>
@@ -584,7 +588,7 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">core</span></code></p></td>
-<td><p>Basic validity (connectivity, atom stability)</p></td>
+<td><p>Validity, connectivity, atom stability, and set-level uniqueness/novelty/diversity</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">posebuster</span></code></p></td>
 <td><p>Bond lengths, angles, clashes</p></td>
@@ -601,6 +605,40 @@
 </tbody>
 </table>
 </div>
+</section>
+<section id="what-core-reports">
+<h3>What <code class="docutils literal notranslate"><span class="pre">core</span></code> reports<a class="headerlink" href="#what-core-reports" title="Link to this heading">¶</a></h3>
+<p>Two validity columns are written per molecule, because they answer different
+questions:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">valid</span></code></p></td>
+<td><p>The perceived molecule sanitises in RDKit and its SMILES round-trips. This is the definition used throughout the literature, so it is the number to quote in comparisons.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">valid_geom</span></code></p></td>
+<td><p>Stricter, geometry-aware check: bond counts, bond lengths, and the coordination-shape measure of every atom. Use it to catch physically distorted structures that still sanitise.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">valid_connected</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">valid</span></code> and a single connected fragment.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p><strong>Note:</strong> before this release <code class="docutils literal notranslate"><span class="pre">valid</span></code> held what is now <code class="docutils literal notranslate"><span class="pre">valid_geom</span></code>. If you
+have a sweep config or script that depends on the old, stricter number,
+point it at <code class="docutils literal notranslate"><span class="pre">valid_geom</span></code>.</p>
+</div></blockquote>
+<p>Alongside the per-molecule CSV, <code class="docutils literal notranslate"><span class="pre">core</span></code> writes a <code class="docutils literal notranslate"><span class="pre">&lt;output&gt;_summary.json</span></code> with
+the aggregate rates (validity, connectivity, atom stability, uniqueness,
+novelty, diversity, the molecular-size statistics, and how many files failed
+to process). Sweeps pick this file up automatically.</p>
 </section>
 <section id="id2">
 <h3>Options<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
@@ -643,17 +681,21 @@
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--filter</span></code> / <code class="docutils literal notranslate"><span class="pre">--filtered-output</span></code></p></td>
 <td><p>None</p></td>
-<td><p>Filter structures by a truthy column and write the survivors</p></td>
+<td><p>Keep only structures whose column is truthy (e.g. <code class="docutils literal notranslate"><span class="pre">--filter</span> <span class="pre">valid_connected</span></code>), from any metric set. Writes an XYZ directory, or an ASE <code class="docutils literal notranslate"><span class="pre">.db</span></code> when the input was a database.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">-r,</span> <span class="pre">--reference-mol</span></code> / <code class="docutils literal notranslate"><span class="pre">--mol-idx</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--train-smiles</span></code></p></td>
+<td><p>None</p></td>
+<td><p>Reference SMILES (<code class="docutils literal notranslate"><span class="pre">.txt</span></code> one per line, or <code class="docutils literal notranslate"><span class="pre">.csv</span></code>) to score novelty against; without it novelty is reported as <code class="docutils literal notranslate"><span class="pre">n/a</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">-r,</span> <span class="pre">--reference-mol</span></code> / <code class="docutils literal notranslate"><span class="pre">--mol-idx</span></code></p></td>
 <td><p>None / <code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
 <td><p>Reference <code class="docutils literal notranslate"><span class="pre">.pkl</span></code>/<code class="docutils literal notranslate"><span class="pre">.sdf</span></code> (and index) for <code class="docutils literal notranslate"><span class="pre">shepherd</span></code> metrics</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--skip-atoms</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--skip-atoms</span></code></p></td>
 <td><p>—</p></td>
 <td><p>Atom indices to skip in validation</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">-t,</span> <span class="pre">--timeout</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">-t,</span> <span class="pre">--timeout</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
 <td><p>Timeout per xyz2mol conversion (s)</p></td>
 </tr>
@@ -1323,6 +1365,7 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 <li><a class="reference internal" href="#part-2-validity-connectivity-metrics">Part 2: Validity &amp; Connectivity Metrics</a><ul>
 <li><a class="reference internal" href="#id1">Usage</a></li>
 <li><a class="reference internal" href="#metric-types">Metric Types</a></li>
+<li><a class="reference internal" href="#what-core-reports">What <code class="docutils literal notranslate"><span class="pre">core</span></code> reports</a></li>
 <li><a class="reference internal" href="#id2">Options</a></li>
 </ul>
 </li>

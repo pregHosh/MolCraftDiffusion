@@ -71,15 +71,39 @@ Compute structural validation metrics for generated molecules.
 MolCraftDiff analyze metrics gen_xyz/ --metrics all
 ```
 
+The input may be a directory of `.xyz` files **or** an ASE `.db` file. For a
+database, every row is scored and the results carry an `ase_db_row_id` column
+so rows can be joined back to the source database.
+
 ### Metric Types
 
 | Type | Description |
 |------|-------------|
-| `core` | Basic validity (connectivity, atom stability) |
+| `core` | Validity, connectivity, atom stability, and set-level uniqueness/novelty/diversity |
 | `posebuster` | Bond lengths, angles, clashes |
 | `geom_revised` | Aromatic-aware stability metrics |
 | `shepherd` | ShEPhERD conditional-similarity metrics (needs `--reference-mol`) |
 | `all` | All of the above |
+
+### What `core` reports
+
+Two validity columns are written per molecule, because they answer different
+questions:
+
+| Column | Meaning |
+|--------|---------|
+| `valid` | The perceived molecule sanitises in RDKit and its SMILES round-trips. This is the definition used throughout the literature, so it is the number to quote in comparisons. |
+| `valid_geom` | Stricter, geometry-aware check: bond counts, bond lengths, and the coordination-shape measure of every atom. Use it to catch physically distorted structures that still sanitise. |
+| `valid_connected` | `valid` and a single connected fragment. |
+
+> **Note:** before this release `valid` held what is now `valid_geom`. If you
+> have a sweep config or script that depends on the old, stricter number,
+> point it at `valid_geom`.
+
+Alongside the per-molecule CSV, `core` writes a `<output>_summary.json` with
+the aggregate rates (validity, connectivity, atom stability, uniqueness,
+novelty, diversity, the molecular-size statistics, and how many files failed
+to process). Sweeps pick this file up automatically.
 
 ### Options
 
@@ -92,7 +116,8 @@ MolCraftDiff analyze metrics gen_xyz/ --metrics all
 | `--mol-converter` | `xyz2mol` | XYZ to mol converter |
 | `-s, --split` | `1` | Deterministic splits for mean±std summary logging |
 | `-p, --portion` | `1.0` | Fraction of XYZ files to process |
-| `--filter` / `--filtered-output` | None | Filter structures by a truthy column and write the survivors |
+| `--filter` / `--filtered-output` | None | Keep only structures whose column is truthy (e.g. `--filter valid_connected`), from any metric set. Writes an XYZ directory, or an ASE `.db` when the input was a database. |
+| `--train-smiles` | None | Reference SMILES (`.txt` one per line, or `.csv`) to score novelty against; without it novelty is reported as `n/a` |
 | `-r, --reference-mol` / `--mol-idx` | None / `0` | Reference `.pkl`/`.sdf` (and index) for `shepherd` metrics |
 | `--skip-atoms` | — | Atom indices to skip in validation |
 | `-t, --timeout` | `10` | Timeout per xyz2mol conversion (s) |

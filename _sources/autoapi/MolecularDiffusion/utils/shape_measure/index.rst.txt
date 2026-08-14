@@ -1,0 +1,95 @@
+MolecularDiffusion.utils.shape_measure
+======================================
+
+.. py:module:: MolecularDiffusion.utils.shape_measure
+
+.. autoapi-nested-parse::
+
+   Continuous shape measures for coordination geometries.
+
+   A continuous shape measure (CShM) scores how far a set of coordinating atoms
+   is from an ideal polyhedron.  For a problem structure ``Q`` (the central atom
+   plus its ``N`` neighbours) and an ideal reference ``P``::
+
+       S(Q, P) = 100 * min  sum_i |q_i - s R p_perm(i)|^2 / sum_i |q_i - q_mean|^2
+
+   minimised over permutations of the vertices, rotations ``R`` and a uniform
+   scale ``s``.  ``S = 0`` means a perfect match; larger is more distorted.
+   Values are on the conventional 0-100 scale, so they are directly comparable
+   with published shape-measure tables (e.g. an ideal tetrahedron scores 33.33
+   against the square-planar reference, and an ideal trigonal prism scores
+   16.74 against the octahedron).
+
+   Reference polyhedra follow the usual convention for shapes that include a
+   central atom: vertices sit on a unit sphere whose centre is the central atom,
+   and for the fully-symmetric shapes the vertices also average to that centre.
+   "Vacant" shapes keep their parent polyhedron's vertices and simply omit one
+   or more of them, which is why their vertices do *not* average to the centre.
+
+   Only geometry is needed -- no external shape package.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.shape_measure.available_shapes
+   MolecularDiffusion.utils.shape_measure.reference_shape
+   MolecularDiffusion.utils.shape_measure.shape_measure
+
+
+Module Contents
+---------------
+
+.. py:function:: available_shapes(n_vertices: int | None = None) -> list[str]
+
+   Shape labels this module knows, optionally filtered by vertex count.
+
+
+.. py:function:: reference_shape(label: str) -> numpy.ndarray
+
+   Ideal coordinates for ``label``: central atom first, then vertices.
+
+
+.. py:function:: shape_measure(positions, label: str, central_atom: int = 1) -> float
+
+   Continuous shape measure of ``positions`` against the ideal ``label``.
+
+   :param positions: ``(N+1, 3)`` coordinates of the central atom and its neighbours, in
+                     any order.
+   :param label: Reference shape, e.g. ``"OC-6"`` (see :func:`available_shapes`).
+   :param central_atom: **1-based** index of the central atom within ``positions``.
+   :param Returns:
+   :param -------:
+   :param float: The measure on the 0-100 scale; ``0.0`` is a perfect match.
+   :param Examples:
+   :param --------:
+   :param >>> import numpy as np:
+   :param >>> tetra = np.array([[0.:
+   :param 0.:
+   :param 0.]:
+   :param [1.:
+   :param 1.:
+   :param 1.]:
+   :param [1.:
+   :param -1.:
+   :param -1.]:
+   :param :
+   :param ...                   [-1.:
+   :param 1.:
+   :param -1.]:
+   :param [-1.:
+   :param -1.:
+   :param 1.]]):
+   :param >>> round(shape_measure(tetra:
+   :param "T-4"):
+   :param 6):
+   :param 0.0:
+   :param >>> round(shape_measure(tetra:
+   :param "SP-4"):
+   :param 2):
+   :param 33.33:
+
+

@@ -8,10 +8,12 @@ MolecularDiffusion.cli.analyze
    Analyze CLI subcommands for 3D molecule analysis.
 
    Provides subcommands for:
-   - optimize: XTB geometry optimization
+   - optimize: xTB geometry optimization
    - metrics: Validity/connectivity metrics
    - compare: RMSD, energy, and optional bond analysis
    - xyz2mol: XYZ to SMILES conversion + fingerprints
+   - featurize: fixed-size feature vectors for XYZ molecules
+   - xtb-electronic: xTB electronic properties
 
 
 
@@ -46,10 +48,12 @@ Module Contents
 
    
    Subcommands:
-     optimize  XTB geometry optimization
-     metrics   Validity/connectivity metrics
-     compare   RMSD, energy, and bond analysis
-     xyz2mol   Convert XYZ to SMILES + fingerprints
+     optimize        xTB geometry optimization
+     metrics         Validity/connectivity metrics
+     compare         RMSD, energy, and bond analysis
+     xyz2mol         Convert XYZ to SMILES + fingerprints
+     featurize       Fixed-size feature vectors for XYZ molecules
+     xtb-electronic  xTB electronic properties
 
 
 .. py:function:: compare(directory, mol_converter, n_subsets, csv_path, charge, level, timeout)
@@ -84,14 +88,15 @@ Module Contents
    MolCraftDiff analyze featurize gen_xyz/ --backend ssl3d --ssl3d-checkpoint runs/last.ckpt --device cuda
 
 
-.. py:function:: metrics(input_path, output, filter_column, filtered_output, metrics_type, recheck_topo, check_strain, portion, mol_converter, skip_atoms, split, timeout, reference_mol, mol_idx)
+.. py:function:: metrics(input_path, output, filter_column, filtered_output, metrics_type, recheck_topo, check_strain, check_neutrality, portion, mol_converter, skip_atoms, split, timeout, reference_mol, mol_idx, train_smiles)
 
    Compute validity and connectivity metrics for XYZ files or ASE DB rows.
 
    
    Metrics types:
      all          Run all metrics (core + posebuster + geom_revised + shepherd)
-     core         Basic validity checks (connectivity, atom stability)
+     core         Validity (RDKit + geometry), connectivity, atom stability,
+                  uniqueness/novelty/diversity
      posebuster   PoseBusters checks (bond lengths, angles, clashes)
      geom_revised Aromatic-aware stability metrics
      shepherd     Drug-likeness and conditional similarity metrics
@@ -100,7 +105,8 @@ Module Contents
    .. rubric:: Examples
 
    MolCraftDiff analyze metrics gen_xyz/
-   MolCraftDiff analyze metrics molecules.db --metrics core --filter valid_connected
+   MolCraftDiff analyze metrics molecules.db --metrics core
+   MolCraftDiff analyze metrics gen_xyz/ --metrics core --filter valid_connected --filtered-output kept/
    MolCraftDiff analyze metrics gen_xyz/ --metrics posebuster
    MolCraftDiff analyze metrics gen_xyz/ --metrics geom_revised --mol-converter openbabel
    MolCraftDiff analyze metrics gen_xyz/ --metrics shepherd

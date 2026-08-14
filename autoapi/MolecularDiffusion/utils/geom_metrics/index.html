@@ -354,6 +354,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../plot_function/index.html">MolecularDiffusion.utils.plot_function</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../pretty/index.html">MolecularDiffusion.utils.pretty</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../sascore/index.html">MolecularDiffusion.utils.sascore</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../shape_measure/index.html">MolecularDiffusion.utils.shape_measure</a></li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../shepherd_score/index.html">MolecularDiffusion.utils.shepherd_score</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5 has-children"><a class="reference internal" href="../shepherd_score/alignment/index.html">MolecularDiffusion.utils.shepherd_score.alignment</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.alignment" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l6 has-children"><a class="reference internal" href="../shepherd_score/alignment/utils/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.alignment.utils" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -486,13 +487,10 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.covalent_radii" title="MolecularDiffusion.utils.geom_metrics.covalent_radii"><code class="xref py py-obj docutils literal notranslate"><span class="pre">covalent_radii</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.is_cosymlib_available" title="MolecularDiffusion.utils.geom_metrics.is_cosymlib_available"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_cosymlib_available</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.logger" title="MolecularDiffusion.utils.geom_metrics.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.logger" title="MolecularDiffusion.utils.geom_metrics.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.pybel" title="MolecularDiffusion.utils.geom_metrics.pybel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pybel</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.pybel" title="MolecularDiffusion.utils.geom_metrics.pybel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pybel</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -558,16 +556,13 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.run_postbuster" title="MolecularDiffusion.utils.geom_metrics.run_postbuster"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_postbuster</span></code></a>(mols[, timeout, batch_size])</p></td>
 <td><p>Run PoseBusters on a list of RDKit molecules, optionally in batches, with a timeout per batch.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.runner" title="MolecularDiffusion.utils.geom_metrics.runner"><code class="xref py py-obj docutils literal notranslate"><span class="pre">runner</span></code></a>(args)</p></td>
-<td><p>Main runner function to process a directory of XYZ files, compute geometric metrics,</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.smilify_wrapper" title="MolecularDiffusion.utils.geom_metrics.smilify_wrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilify_wrapper</span></code></a>(xyzs, xyz2mol)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.smilify_wrapper" title="MolecularDiffusion.utils.geom_metrics.smilify_wrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilify_wrapper</span></code></a>(xyzs, xyz2mol)</p></td>
 <td><p>Convert a list of XYZ files to SMILES strings using a provided xyz2mol function.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.xyz_to_pdb" title="MolecularDiffusion.utils.geom_metrics.xyz_to_pdb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz_to_pdb</span></code></a>(xyz_file_path, pdb_file_path)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.xyz_to_pdb" title="MolecularDiffusion.utils.geom_metrics.xyz_to_pdb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz_to_pdb</span></code></a>(xyz_file_path, pdb_file_path)</p></td>
 <td><p>Converts an XYZ file to a PDB file using OpenBabel (via pybel).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol" title="MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz_to_rdkit_mol</span></code></a>(xyz_path)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol" title="MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz_to_rdkit_mol</span></code></a>(xyz_path)</p></td>
 <td><p>Convert an XYZ file to an RDKit molecule with perceived bonds.</p></td>
 </tr>
 </tbody>
@@ -592,7 +587,8 @@ a mismatch between electrons and spin multiplicity.</p>
 <dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the XYZ file containing the molecule.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>True if the molecule is neutral (no mismatch found), False otherwise.</p>
+<dd class="field-even"><p>True if the molecule is neutral (no mismatch found), False
+otherwise, or None when xTB is unavailable or failed.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
@@ -928,24 +924,6 @@ If None, processes all molecules in one batch. Default is None.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.runner">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">runner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.runner" title="Link to this definition">¶</a></dt>
-<dd><p>Main runner function to process a directory of XYZ files, compute geometric metrics,
-check validity, and optionally run strain and diversity checks.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.14)"><em>argparse.Namespace</em></a>) – Arguments containing:
-- input (str): Input directory path containing .xyz files.
-- output (str, optional): Output CSV file path.
-- recheck_topo (bool): Whether to recheck topology.
-- check_strain (bool): Whether to check strain energy.
-- check_diversity (bool): Whether to compute diversity scores.
-- skip_atoms (list of int, optional): Atom indices to skip during checks.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.smilify_wrapper">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">smilify_wrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz2mol</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.smilify_wrapper" title="Link to this definition">¶</a></dt>
 <dd><p>Convert a list of XYZ files to SMILES strings using a provided xyz2mol function.</p>
@@ -1056,11 +1034,6 @@ Tries multiple charges to find a valid structure without radicals.</p>
 <dd></dd></dl>
 
 <dl class="py data">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.is_cosymlib_available">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">is_cosymlib_available</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.is_cosymlib_available" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py data">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.logger">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.logger" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1167,7 +1140,6 @@ Tries multiple charges to find a valid structure without radicals.</p>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.optimize_shape_alignment"><code class="docutils literal notranslate"><span class="pre">optimize_shape_alignment()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.pca_align"><code class="docutils literal notranslate"><span class="pre">pca_align()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.run_postbuster"><code class="docutils literal notranslate"><span class="pre">run_postbuster()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.runner"><code class="docutils literal notranslate"><span class="pre">runner()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.smilify_wrapper"><code class="docutils literal notranslate"><span class="pre">smilify_wrapper()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.xyz_to_pdb"><code class="docutils literal notranslate"><span class="pre">xyz_to_pdb()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol"><code class="docutils literal notranslate"><span class="pre">xyz_to_rdkit_mol()</span></code></a></li>
@@ -1183,7 +1155,6 @@ Tries multiple charges to find a valid structure without radicals.</p>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.SCALE_FACTOR"><code class="docutils literal notranslate"><span class="pre">SCALE_FACTOR</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.SCORES_THRESHOLD"><code class="docutils literal notranslate"><span class="pre">SCORES_THRESHOLD</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.covalent_radii"><code class="docutils literal notranslate"><span class="pre">covalent_radii</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.is_cosymlib_available"><code class="docutils literal notranslate"><span class="pre">is_cosymlib_available</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.pybel"><code class="docutils literal notranslate"><span class="pre">pybel</span></code></a></li>
 </ul>

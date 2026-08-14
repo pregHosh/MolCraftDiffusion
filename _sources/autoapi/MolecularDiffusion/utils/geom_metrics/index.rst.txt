@@ -21,7 +21,6 @@ Attributes
    MolecularDiffusion.utils.geom_metrics.SCALE_FACTOR
    MolecularDiffusion.utils.geom_metrics.SCORES_THRESHOLD
    MolecularDiffusion.utils.geom_metrics.covalent_radii
-   MolecularDiffusion.utils.geom_metrics.is_cosymlib_available
    MolecularDiffusion.utils.geom_metrics.logger
    MolecularDiffusion.utils.geom_metrics.pybel
 
@@ -49,7 +48,6 @@ Functions
    MolecularDiffusion.utils.geom_metrics.optimize_shape_alignment
    MolecularDiffusion.utils.geom_metrics.pca_align
    MolecularDiffusion.utils.geom_metrics.run_postbuster
-   MolecularDiffusion.utils.geom_metrics.runner
    MolecularDiffusion.utils.geom_metrics.smilify_wrapper
    MolecularDiffusion.utils.geom_metrics.xyz_to_pdb
    MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol
@@ -70,7 +68,8 @@ Module Contents
    :param filename: Path to the XYZ file containing the molecule.
    :type filename: str
 
-   :returns: True if the molecule is neutral (no mismatch found), False otherwise.
+   :returns: True if the molecule is neutral (no mismatch found), False
+             otherwise, or None when xTB is unavailable or failed.
    :rtype: bool
 
 
@@ -329,21 +328,6 @@ Module Contents
    :rtype: pd.DataFrame or None
 
 
-.. py:function:: runner(args)
-
-   Main runner function to process a directory of XYZ files, compute geometric metrics,
-   check validity, and optionally run strain and diversity checks.
-
-   :param args: Arguments containing:
-                - input (str): Input directory path containing .xyz files.
-                - output (str, optional): Output CSV file path.
-                - recheck_topo (bool): Whether to recheck topology.
-                - check_strain (bool): Whether to check strain energy.
-                - check_diversity (bool): Whether to compute diversity scores.
-                - skip_atoms (list of int, optional): Atom indices to skip during checks.
-   :type args: argparse.Namespace
-
-
 .. py:function:: smilify_wrapper(xyzs, xyz2mol)
 
    Convert a list of XYZ files to SMILES strings using a provided xyz2mol function.
@@ -419,10 +403,6 @@ Module Contents
 
 .. py:data:: covalent_radii
    :value: None
-
-
-.. py:data:: is_cosymlib_available
-   :value: True
 
 
 .. py:data:: logger
