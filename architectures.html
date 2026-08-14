@@ -285,6 +285,7 @@
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/data/index.html">MolecularDiffusion.data</a><input aria-label="Toggle navigation of MolecularDiffusion.data" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/index.html">MolecularDiffusion.data.component</a><input aria-label="Toggle navigation of MolecularDiffusion.data.component" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/apo2mol_data/index.html">MolecularDiffusion.data.component.apo2mol_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/dataset/index.html">MolecularDiffusion.data.component.dataset</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/diffpharma_data/index.html">MolecularDiffusion.data.component.diffpharma_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/diffpharma_prep/index.html">MolecularDiffusion.data.component.diffpharma_prep</a></li>
@@ -466,37 +467,37 @@ conditioning input beyond the atom count.</p>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion</span></code></p></td>
 <td class="text-left"><p>EDM (E(n)-equivariant diffusion, EGCL backbone)</p></td>
-<td class="text-left"><p><strong>Default.</strong> Cartesian-space DDPM; the checkpoints on Hugging Face use this.</p></td>
+<td class="text-left"><p><strong>Start here.</strong> The default and best-tested path; the Hugging Face checkpoints for this repo use it.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_egt.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion</span></code></p></td>
 <td class="text-left"><p>EGT (equivariant graph transformer)</p></td>
-<td class="text-left"><p>Transformer backbone via <code class="docutils literal notranslate"><span class="pre">tasks_egt</span></code>.</p></td>
+<td class="text-left"><p>Same objective as the default, with a transformer backbone instead of message passing.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_gfmdiff.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion</span></code></p></td>
 <td class="text-left"><p>GFMDiff</p></td>
-<td class="text-left"><p>Geometric full-molecule diffusion (<code class="docutils literal notranslate"><span class="pre">tasks_gfmdiff</span></code>).</p></td>
+<td class="text-left"><p>Alternative de novo backbone; drop-in swap for the default.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_painn.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion</span></code></p></td>
 <td class="text-left"><p>PaiNN (scalar+vector message passing)</p></td>
-<td class="text-left"><p>OM-Diff’s <code class="docutils literal notranslate"><span class="pre">EquivNet</span></code> backbone under the default EDM objective (<code class="docutils literal notranslate"><span class="pre">tasks_painn</span></code>).</p></td>
+<td class="text-left"><p>Same objective again, with the backbone from OM-Diff’s organometallic work.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_tabasco.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_tabasco</span></code></p></td>
 <td class="text-left"><p>TABASCO</p></td>
-<td class="text-left"><p>Flow matching; simplified, fast, tuned for physical quality.</p></td>
+<td class="text-left"><p>Pick this when you care about <strong>speed and clean geometry</strong> — it is the simplified, physics-tuned option.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_equifm.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_equifm</span></code></p></td>
 <td class="text-left"><p>EquiFM (flow matching, EGNN backbone)</p></td>
-<td class="text-left"><p>Hybrid transport: OT path for coordinates (<strong>equivariant OT coupling</strong> — Kabsch + linear-sum assignment), VP path for types/charges. GeoLDM EGNN; fixed-step RK4, so <code class="docutils literal notranslate"><span class="pre">num_steps</span></code> is honoured. Upstream released <strong>sampling code only</strong> — the training objective follows the paper’s Alg. 1/3, not an official implementation. Converted QM9 checkpoint needs <code class="docutils literal notranslate"><span class="pre">discrete_path:</span> <span class="pre">HB_path</span></code>; <code class="docutils literal notranslate"><span class="pre">OT_path</span></code> for locally trained models. Bond-free, unconditional.</p></td>
+<td class="text-left"><p>Flow matching, so sampling honours <code class="docutils literal notranslate"><span class="pre">num_steps</span></code> and can go short. Caveat: upstream released sampling code only, so <strong>training here follows the paper, not an official implementation</strong> — treat locally trained results as unverified. The converted QM9 checkpoint needs <code class="docutils literal notranslate"><span class="pre">discrete_path:</span> <span class="pre">HB_path</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_flowmol.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_flowmol</span></code></p></td>
 <td class="text-left"><p>FlowMol (SE(3)-equivariant GVP)</p></td>
-<td class="text-left"><p>Flow matching for coordinates, atom types, and formal charges. <strong>Bond-free variant only:</strong> bonds are not modelled or generated; graph edges serve geometric message passing only. Needs the <code class="docutils literal notranslate"><span class="pre">[flowmol]</span></code> extra (DGL).</p></td>
+<td class="text-left"><p>Flow matching that also generates formal charges. Needs the <code class="docutils literal notranslate"><span class="pre">[flowmol]</span></code> extra (DGL). Bond-free variant only.</p></td>
 </tr>
 </tbody>
 </table>
@@ -519,12 +520,12 @@ conditioning input beyond the atom count.</p>
 <tr class="row-even"><td class="text-left"><p>GeoLDM</p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">vae_geoldm.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">vae_geoldm</span></code>)</p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_geoldm.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">diffusion_geoldm</span></code>)</p></td>
-<td class="text-left"><p>Equivariant point-cloud autoencoder + latent DDPM.</p></td>
+<td class="text-left"><p>The established latent option. Diffusing in latent space is cheaper per step than Cartesian EDM, at the cost of training two models.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p>ADiT</p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">vae_transformer.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">vae_transformer</span></code>) or <code class="docutils literal notranslate"><span class="pre">vae_equiformer.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">vae_equiformer</span></code>)</p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_adit.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">diffusion_adit</span></code>)</p></td>
-<td class="text-left"><p>DiT denoiser over the latent. Two encoder choices: plain transformer or Equiformer.</p></td>
+<td class="text-left"><p>Transformer-scale latent diffusion; the encoder is your choice (plain transformer is cheaper, Equiformer is equivariant). Aimed at scaling up rather than small datasets.</p></td>
 </tr>
 </tbody>
 </table>
@@ -534,7 +535,9 @@ conditioning input beyond the atom count.</p>
 <h2>3. Conditional and structure-aware generation<a class="headerlink" href="#conditional-and-structure-aware-generation" title="Link to this heading">¶</a></h2>
 <p>Generation steered by an external input — a shape, a pocket, a set of fragments,
 a pharmacophore. These need <strong>paired</strong> data (the condition alongside the
-molecule); a plain molecule dataset is not enough.</p>
+molecule); a plain molecule dataset is not enough. The shape- and
+pocket-conditioned models all generate heavy atoms only, with no bonds —
+bonds are perceived afterwards.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -548,42 +551,47 @@ molecule); a plain molecule dataset is not enough.</p>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffsmol.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffsmol</span></code></p></td>
 <td class="text-left"><p>Molecular <strong>shape</strong></p></td>
-<td class="text-left"><p>DiffSMol (UniTransformerO2 GVP). DDPM on coordinates + D3PM on atom types, conditioned on an equivariant <code class="docutils literal notranslate"><span class="pre">(128,3)</span></code> surface-shape latent with classifier-free guidance. Bond-free, heavy atoms only. Needs an offline shape cache (<code class="docutils literal notranslate"><span class="pre">[shape]</span></code> extra).</p></td>
+<td class="text-left"><p>For <strong>shape-matching / bioisostere</strong> work: give it a reference molecule’s surface, get different chemistry with the same shape. No protein needed. Requires an offline shape cache (<code class="docutils literal notranslate"><span class="pre">[shape]</span></code> extra).</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffsbdd.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffsbdd</span></code></p></td>
 <td class="text-left"><p><strong>Protein pocket</strong></p></td>
-<td class="text-left"><p>DiffSBDD (flat-scatter EGNN). The reference <strong>SBDD</strong> backbone: E(3)-equivariant DDPM on coordinates + 10-class element one-hot; bond-free, heavy atoms only. Two modes: <code class="docutils literal notranslate"><span class="pre">pocket_conditioning</span></code> (pocket as clean context, <strong>recommended</strong>) and <code class="docutils literal notranslate"><span class="pre">joint</span></code> (ligand+pocket diffused together — use <code class="docutils literal notranslate"><span class="pre">diffusion_diffsbdd_joint_moad.yaml</span></code>, the CrossDocked joint weights are defective upstream). Both support RePaint <code class="docutils literal notranslate"><span class="pre">inpaint()</span></code> for scaffold hopping (<code class="docutils literal notranslate"><span class="pre">src/MolecularDiffusion/configs/interference/gen_diffsbdd_inpaint.yaml</span></code>). Ligand size from a pocket-conditioned 2D histogram. Generation via <code class="docutils literal notranslate"><span class="pre">DiffSBDDPocketGenerator</span></code> (<code class="docutils literal notranslate"><span class="pre">gen_diffsbdd_pocket.yaml</span></code>), not <code class="docutils literal notranslate"><span class="pre">GenerativeFactory</span></code>. The modes share state-dict keys, so a <code class="docutils literal notranslate"><span class="pre">mode_id</span></code> buffer raises on a mismatched checkpoint.</p></td>
+<td class="text-left"><p>The <strong>reference SBDD choice</strong> — best documented, most flexible. Use the recommended <code class="docutils literal notranslate"><span class="pre">pocket_conditioning</span></code> mode; the <code class="docutils literal notranslate"><span class="pre">joint</span></code> mode needs <code class="docutils literal notranslate"><span class="pre">diffusion_diffsbdd_joint_moad.yaml</span></code>, since the CrossDocked joint weights are defective upstream. Uniquely here, it also does <strong>scaffold hopping</strong> by inpainting part of a known ligand (<code class="docutils literal notranslate"><span class="pre">gen_diffsbdd_inpaint.yaml</span></code>).</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffpharma.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffpharma</span></code></p></td>
 <td class="text-left"><p><strong>Protein pocket</strong> + pharmacophore particles</p></td>
-<td class="text-left"><p>DiffPharma (EGNN over 3 parallel interaction graphs). <strong>SBDD</strong>: generates a ligand <em>inside a given pocket</em>. Four node sets (ligand, full-atom pocket, <code class="docutils literal notranslate"><span class="pre">interh</span></code>, <code class="docutils literal notranslate"><span class="pre">interhp</span></code>) but <strong>only the ligand is noised</strong>, so a ligand-only dataset cannot train it. Ligand size from a pocket-size-conditioned 2D histogram. Bond-free. Novel pockets from raw PDB+SDF need the <code class="docutils literal notranslate"><span class="pre">[bio]</span></code> extra.</p></td>
+<td class="text-left"><p>SBDD for when you know the <strong>interaction pattern</strong> you want, not just the pocket. Needs pocket-paired training data; a ligand-only dataset cannot train it. Novel pockets from raw PDB+SDF need the <code class="docutils literal notranslate"><span class="pre">[bio]</span></code> extra.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_pmdm.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_pmdm</span></code></p></td>
 <td class="text-left"><p><strong>Protein pocket</strong></p></td>
-<td class="text-left"><p>PMDM (dual EGNN + SchNet encoders, ligand↔pocket cross-attention). <strong>SBDD</strong>, like DiffPharma but pocket-only: ligand + full-atom pocket, <strong>only the ligand is noised</strong>, so a ligand-only dataset cannot train it. DDPM (sigmoid schedule, T=1000) on coordinates + atom types, with a global (6 Å) and a local (3 Å) branch over the joined cloud. Bond-free — real bonds are discarded before the model sees them. Generation via <code class="docutils literal notranslate"><span class="pre">PMDMPocketGenerator</span></code> (<code class="docutils literal notranslate"><span class="pre">gen_pmdm_pocket.yaml</span></code>), not <code class="docutils literal notranslate"><span class="pre">GenerativeFactory</span></code>, since <code class="docutils literal notranslate"><span class="pre">sample()</span></code> has no channel for “which pocket”. No inpainting/linker sampling.</p></td>
+<td class="text-left"><p>Plain pocket-conditioned SBDD with a dual short/long-range design. Also targets <strong>lead optimisation</strong>. Needs pocket-paired data. No scaffold hopping or linker sampling.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_kgdiff.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_kgdiff</span></code></p></td>
 <td class="text-left"><p><strong>Protein pocket</strong></p></td>
-<td class="text-left"><p>KGDiff (SE(3)-equivariant attention transformer, kNN-32 graph). <strong>SBDD</strong>: ligand + full-atom 10 Å pocket, only the ligand noised. DDPM on coordinates + D3PM on a 13-class <code class="docutils literal notranslate"><span class="pre">(element,</span> <span class="pre">is_aromatic)</span></code> vocabulary; centred on the <strong>pocket centroid, not zero-CoM</strong>. Bond-free. Distinguishing feature: a per-atom affinity head trained alongside the denoiser acts as <strong>its own classifier guide</strong> (<code class="docutils literal notranslate"><span class="pre">guide_mode:</span> <span class="pre">joint</span></code>), so one checkpoint denoises <em>and</em> steers towards higher predicted affinity (<code class="docutils literal notranslate"><span class="pre">wo</span></code> = unguided ablation). Ligand size from a static pocket-extent table, so the prior needs no training data. <strong>Also runs <a class="reference external" href="https://arxiv.org/abs/2303.03543">TargetDiff</a></strong> — same backbone: set <code class="docutils literal notranslate"><span class="pre">use_classifier_guide=false</span></code>, sample with <code class="docutils literal notranslate"><span class="pre">guide_mode=wo</span></code>. Generation via <code class="docutils literal notranslate"><span class="pre">KGDiffPocketGenerator</span></code> (<code class="docutils literal notranslate"><span class="pre">gen_kgdiff_pocket.yaml</span></code>), not <code class="docutils literal notranslate"><span class="pre">GenerativeFactory</span></code>.</p></td>
+<td class="text-left"><p>Choose this when you want samples <strong>steered towards predicted binding affinity</strong> — its affinity head guides its own sampling, no second model to train. The same config <strong>also runs <a class="reference external" href="https://arxiv.org/abs/2303.03543">TargetDiff</a></strong> (<code class="docutils literal notranslate"><span class="pre">use_classifier_guide=false</span></code>, <code class="docutils literal notranslate"><span class="pre">guide_mode=wo</span></code>), so it doubles as the unguided baseline.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_ipdiff.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_ipdiff</span></code></p></td>
 <td class="text-left"><p><strong>Protein pocket</strong></p></td>
-<td class="text-left"><p>IPDiff. Same TargetDiff lineage as KGDiff (identical backbone, data pipeline, vocabulary, objective) but conditions on a <strong>frozen pretrained interaction prior (IPNet)</strong> instead of gradient guidance. IPNet’s 128-d per-atom features are concatenated into the token embeddings (<em>prior conditioning</em>) and drive a learned shift <code class="docutils literal notranslate"><span class="pre">k_t·f(h_bap,</span> <span class="pre">t)</span></code> added to <strong>both the forward noising and the reverse posterior</strong> (<em>prior shifting</em>), so conditioning is baked into training rather than applied at sampling; <code class="docutils literal notranslate"><span class="pre">h_bap</span></code> is recomputed from the predicted x0 each reverse step. No classifier, CFG, or property head. IPNet weights ship with the model and are <strong>mandatory</strong> (<code class="docutils literal notranslate"><span class="pre">net_cond_ckpt</span></code>). Bond-free. Generation via <code class="docutils literal notranslate"><span class="pre">IPDiffPocketGenerator</span></code> (<code class="docutils literal notranslate"><span class="pre">gen_ipdiff_pocket.yaml</span></code>). The released checkpoint is carbon-saturated (93% C versus 64% in reference ligands).</p></td>
+<td class="text-left"><p>Like KGDiff’s lineage, but binding awareness is <strong>baked into training</strong> via a frozen interaction prior rather than applied at sampling. Prior weights ship with it and are mandatory. Caveat before you trust it: the released checkpoint is carbon-saturated (93% C against 64% in real ligands).</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_difflinker.yaml</span></code></p></td>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_apo2mol.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_apo2mol</span></code></p></td>
+<td class="text-left"><p><strong>Apo protein pocket</strong></p></td>
+<td class="text-left"><p>The one for <strong>flexible receptors</strong>: condition on an <strong>apo</strong> (ligand-free) structure — what you actually have when there is no known binder — and it generates the ligand <em>and</em> the pocket’s induced-fit conformation together. All the others assume a fixed, ligand-shaped pocket. Needs apo/holo <strong>paired</strong> training data. Generated pockets are written as <code class="docutils literal notranslate"><span class="pre">.pdb</span></code> sidecars next to the ligands; the pocket only moves on a few reverse steps, so keep <code class="docutils literal notranslate"><span class="pre">num_steps</span></code> at ~200 or above.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_difflinker.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_difflinker</span></code></p></td>
 <td class="text-left"><p><strong>Fragments</strong> to join</p></td>
-<td class="text-left"><p>DiffLinker. Linker design: generates the connecting atoms between held-fixed fragments.</p></td>
+<td class="text-left"><p><strong>Linker design / fragment growing</strong>: hold fragments fixed, generate the atoms connecting them.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">pharmacophore.yaml</span></code></p></td>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">pharmacophore.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_pharmacophore</span></code></p></td>
 <td class="text-left"><p><strong>Pharmacophore</strong> points</p></td>
-<td class="text-left"><p>Ligand-derived pharmacophore conditioning (no protein). Requires <code class="docutils literal notranslate"><span class="pre">open3d</span></code>.</p></td>
+<td class="text-left"><p>Ligand-based design when you have a pharmacophore hypothesis but <strong>no protein structure</strong>. Requires <code class="docutils literal notranslate"><span class="pre">open3d</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -609,12 +617,12 @@ per-atom conditioning columns.</p>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_ligandiff.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_ligandiff</span></code></p></td>
 <td class="text-left"><p>Exactly <strong>one</strong> ligand per run</p></td>
-<td class="text-left"><p>LigandDiff (GVP dynamics, EDM). T=500 Cartesian DDPM, heavy atoms only. The slot to fill is given, so the complex keeps its ligand count and denticities. Generating from the released weights needs <code class="docutils literal notranslate"><span class="pre">diffusion_noise_schedule:</span> <span class="pre">learned</span></code>.</p></td>
+<td class="text-left"><p>Swap a single ligand for new chemistry while the rest of the complex stays put — the coordination geometry is preserved, since the slot to fill is given. Generating from the released weights needs <code class="docutils literal notranslate"><span class="pre">diffusion_noise_schedule:</span> <span class="pre">learned</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_ligandiff_multi.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_ligandiff_multi</span></code></p></td>
 <td class="text-left"><p><strong>Any subset</strong>, one ligand up to the whole coordination sphere</p></td>
-<td class="text-left"><p>multi-LigandDiff, same backbone. Retain <em>k</em> ligands and regenerate the rest; retain none and it builds a complete complex around a bare metal. It also picks how the vacant sites are partitioned — so it chooses the <strong>number of new ligands and their denticities</strong>, not just their atoms. Weights are trained on Cr–Zn only.</p></td>
+<td class="text-left"><p>The broader option: retain <em>k</em> ligands and regenerate the rest, or retain none and build a complex from a bare metal. It also decides the <strong>number of new ligands and their denticities</strong>, so use it when the coordination sphere itself is up for redesign. Released weights cover Cr–Zn only.</p></td>
 </tr>
 </tbody>
 </table>
@@ -739,6 +747,11 @@ so <code class="docutils literal notranslate"><span class="pre">diffusion_kgdiff
 <em>Protein-Ligand Interaction Prior for Binding-aware 3D Molecule Diffusion
 Models.</em> ICLR 2024.
 <a class="reference external" href="https://openreview.net/forum?id=qH9nrMNTIW">openreview:qH9nrMNTIW</a></p></li>
+<li><p><strong>Apo2Mol</strong> — Zheng, Jiang, Seabra, Li &amp; Li. <em>Apo2Mol: 3D molecule generation
+via dynamic pocket-aware diffusion models.</em> AAAI 2026, 40(2), 1614–1622.
+<a class="reference external" href="https://arxiv.org/abs/2511.14559">arXiv:2511.14559</a> — built on the
+<strong>TargetDiff</strong> backbone (above); its PMINet prior follows <strong>IPDiff</strong>’s
+prior-conditioning idea with a different network.</p></li>
 <li><p><strong>LigandDiff</strong> — Jin &amp; Merz. <em>LigandDiff: de Novo Ligand Design for 3D
 Transition Metal Complexes with Diffusion Models.</em> Journal of Chemical Theory
 and Computation 20(10), 4377–4384, 2024.

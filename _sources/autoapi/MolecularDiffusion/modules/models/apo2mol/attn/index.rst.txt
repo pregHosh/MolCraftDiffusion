@@ -1,0 +1,68 @@
+MolecularDiffusion.modules.models.apo2mol.attn
+==============================================
+
+.. py:module:: MolecularDiffusion.modules.models.apo2mol.attn
+
+.. autoapi-nested-parse::
+
+   Retrieval-augmented linear attention over the ligand token block.
+
+   Ported from ``others/Apo2Mol/models/attn.py:17-44``.
+
+   **The retrieval path itself is out of scope** (``topk_prompt: 0`` in the
+   released ``configs/training.yaml``, so
+   ``prompt_hbap_ligand_batch_all_list`` is always empty and the module is
+   called with ``h_retrieved = h``, i.e. self-attention). The module is still
+   ported because its four weight matrices are in the released checkpoint and
+   they do affect the forward pass in that degenerate configuration.
+
+   ``CrossAttention`` from the same upstream file is not ported: it is imported
+   by ``models/molopt_score_model.py:15`` but never instantiated, so it
+   contributes no checkpoint tensors and has no call site.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.apo2mol.attn.RetAugmentationLinearAttention
+
+
+Module Contents
+---------------
+
+.. py:class:: RetAugmentationLinearAttention(in_dim: int, d: int, context_dim: int)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Linear attention mixing a token block with a retrieved block.
+
+   ``h`` and ``h_retrieved`` are ``(B, N, in_dim)`` -- note this is the one
+   place in the model that uses a *padded* ligand block rather than the flat
+   scatter layout (``molopt_score_model.py:390-414`` pads to 150 atoms and
+   unpads afterwards).
+
+
+   .. py:method:: forward(h: torch.Tensor, h_retrieved: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: cond_flag
+      :value: False
+
+
+
+   .. py:attribute:: linear_attn
+
+
+   .. py:attribute:: out
+
+
+   .. py:attribute:: to_k
+
+
+   .. py:attribute:: to_v
+
+

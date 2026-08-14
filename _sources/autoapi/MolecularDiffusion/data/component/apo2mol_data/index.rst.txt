@@ -1,0 +1,206 @@
+MolecularDiffusion.data.component.apo2mol_data
+==============================================
+
+.. py:module:: MolecularDiffusion.data.component.apo2mol_data
+
+.. autoapi-nested-parse::
+
+   Dataset / collate / DataModule for Apo2Mol apo-holo-ligand complexes.
+
+   Apo2Mol carries **three** things per complex: a diffused ligand point cloud, an
+   apo pocket, and the holo pocket the model is trained to recover. The pocket is
+   not just coordinates -- it also carries a per-residue rigid transform
+   (quaternion + translation) and five side-chain chi angles, because the pocket
+   conformation is *generated*, not conditioned on. None of that fits the
+   platform's padded single-node-set PointCloud batch, so this module brings its
+   own Dataset and ``collate_fn`` and is selected via ``_target_`` from
+   ``configs/data/apo2mol_dataset.yaml``. Direct precedent:
+   ``data/component/kgdiff_data.py``, whose schema this extends, and
+   ``pmdm_data.py`` / ``diffpharma_data.py``, which go through the same seams
+   (``cli/train.py`` -> ``.load()`` / ``.train_set`` / ``.collate_fn``, then
+   ``data/lightning_data_module.py``'s ``collate_fn or graph_collate``).
+
+   Storage is one ASE db row per complex, written offline by
+   ``docs/model_integrations/apo2mol/scripts/convert_dataset.py``::
+
+       Atoms            -> ligand only (positions + raw element Z)
+       key_value_pairs  -> name, n_lig, n_pocket, n_res
+       data             -> lig_aromatic,
+                           pocket_coords (apo), pocket_coords_holo,
+                           pocket_element, pocket_aa_type, pocket_is_backbone,
+                           pocket_atom_name, pocket_aa_name,
+                           pocket_atom_to_aa_group,
+                           res_rotations, res_translations,
+                           chi_apo, chi_holo, chi_mask
+
+   Everything numeric is a **raw integer** (or float), never one-hot: the
+   vocabularies live here, so changing one does not mean reconverting. The
+   13-class ligand index and the 27-dim protein feature are imported from
+   ``kgdiff_data`` -- Apo2Mol's are byte-for-byte the same tables.
+
+   ## Two invariants the collate must not break
+
+   1. ``protein_atom_name`` and ``protein_atom_to_aa_name`` stay **nested per
+      complex** (``list[list[str]]``). Flattening them makes
+      ``apply_transforms_tensor_batch`` index the wrong atoms and produce wrong
+      coordinates *without raising*.
+   2. ``protein_atom_to_aa_group`` is **not** offset across complexes -- it
+      restarts at 0 in every one. Both the backbone
+      (``uni_transformer._global_residue_index``) and the residue-transform code
+      re-derive global ids themselves, so offsetting here would double-count.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.apo2mol_data.APO2MOL_ATOM_VOCAB
+   MolecularDiffusion.data.component.apo2mol_data.MAX_CHI
+   MolecularDiffusion.data.component.apo2mol_data.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.apo2mol_data.Apo2MolDataModule
+   MolecularDiffusion.data.component.apo2mol_data.Apo2MolDataset
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.apo2mol_data.apo2mol_collate
+
+
+Module Contents
+---------------
+
+.. py:class:: Apo2MolDataModule(root: str, train_file: str = 'apo2mol_smoke.db', val_file: Optional[str] = None, test_file: Optional[str] = None, batch_size: int = 2, num_workers: int = 0, limit: Optional[int] = None, atom_vocab: Optional[List[str]] = None, task_type: str = 'diffusion_apo2mol', **kwargs: Any)
+
+   DataModule contract: ``load()`` + ``train_set``/``valid_set``/``test_set``.
+
+   # ponytail: one db, no split -- ``val_file``/``test_file`` default to the
+   # training db. Point them at real split dbs for a full run.
+
+
+   .. py:method:: load() -> None
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: batch_size
+      :value: 2
+
+
+
+   .. py:attribute:: collate_fn
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: limit
+      :value: None
+
+
+
+   .. py:attribute:: num_workers
+      :value: 0
+
+
+
+   .. py:attribute:: root
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_apo2mol'
+
+
+
+   .. py:attribute:: test_file
+      :value: 'apo2mol_smoke.db'
+
+
+
+   .. py:attribute:: test_set
+      :type:  Optional[Apo2MolDataset]
+      :value: None
+
+
+
+   .. py:attribute:: train_file
+      :value: 'apo2mol_smoke.db'
+
+
+
+   .. py:attribute:: train_set
+      :type:  Optional[Apo2MolDataset]
+      :value: None
+
+
+
+   .. py:attribute:: val_file
+      :value: 'apo2mol_smoke.db'
+
+
+
+   .. py:attribute:: valid_set
+      :type:  Optional[Apo2MolDataset]
+      :value: None
+
+
+
+.. py:class:: Apo2MolDataset(db_path: str, limit: Optional[int] = None)
+
+   Bases: :py:obj:`torch.utils.data.Dataset`
+
+
+   One converted ASE db -> one apo/holo/ligand complex per index.
+
+   Coordinates are **never** re-centred at load time: ``ScorePosNet3D``
+   subtracts the apo pocket centroid inside both ``get_diffusion_loss`` and
+   ``sample_diffusion`` (``center_pos_mode='protein'``) and the sampler adds
+   the offset back, so samples land in the input pocket's own frame.
+
+   # ponytail: rows are read eagerly into RAM at construction, like
+   # KGDiffDataset. Fine for the smoke set and up to ~100k complexes; stream
+   # by row id in __getitem__ if the full 24k-complex set with per-residue
+   # arrays ever gets tight.
+
+
+   .. py:attribute:: db_path
+
+
+   .. py:attribute:: entries
+      :type:  List[Dict[str, Any]]
+      :value: []
+
+
+
+.. py:function:: apo2mol_collate(batch: List[Dict[str, Any]]) -> Dict[str, Any]
+
+   Concatenate complexes; emit Apo2Mol's own argument names.
+
+   Three scatter indices come out, one per node set:
+   ``ligand_batch`` (atoms), ``protein_batch`` / ``protein_element_batch``
+   (pocket atoms; the same tensor under both names, because the model reads
+   it under each), and ``protein_translations_batch`` (residues).
+
+
+.. py:data:: APO2MOL_ATOM_VOCAB
+   :value: ['H', 'C', 'N', 'O', 'F', 'P', 'S', 'Cl']
+
+
+.. py:data:: MAX_CHI
+   :value: 5
+
+
+.. py:data:: logger
+

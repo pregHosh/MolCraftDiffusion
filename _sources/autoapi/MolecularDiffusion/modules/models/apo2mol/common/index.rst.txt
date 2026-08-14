@@ -1,0 +1,149 @@
+MolecularDiffusion.modules.models.apo2mol.common
+================================================
+
+.. py:module:: MolecularDiffusion.modules.models.apo2mol.common
+
+.. autoapi-nested-parse::
+
+   Shared building blocks for Apo2Mol's ``uni_o2`` backbone.
+
+   Ported verbatim from ``others/Apo2Mol/models/common.py`` (only the pieces the
+   backbone actually touches). Kept as its own module rather than imported from
+   ``modules/models/kgdiff/common.py`` because ``GaussianSmearing`` registers a
+   buffer that lands in the released checkpoint, so the class identity has to
+   stay under this package's key prefix.
+
+   Dead upstream helpers not ported: ``AngleExpansion``, ``get_h_dist``,
+   ``get_r_feat`` (no call sites reachable from ``uni_o2``).
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.apo2mol.common.NONLINEARITIES
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.apo2mol.common.GaussianSmearing
+   MolecularDiffusion.modules.models.apo2mol.common.MLP
+   MolecularDiffusion.modules.models.apo2mol.common.ShiftedSoftplus
+   MolecularDiffusion.modules.models.apo2mol.common.Swish
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.apo2mol.common.batch_hybrid_edge_connection
+   MolecularDiffusion.modules.models.apo2mol.common.compose_context
+   MolecularDiffusion.modules.models.apo2mol.common.hybrid_edge_connection
+   MolecularDiffusion.modules.models.apo2mol.common.outer_product
+
+
+Module Contents
+---------------
+
+.. py:class:: GaussianSmearing(start: float = 0.0, stop: float = 5.0, num_gaussians: int = 50)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Radial basis over a FIXED 20-entry offset table.
+
+   Note the upstream quirk, preserved deliberately: ``start`` / ``stop`` /
+   ``num_gaussians`` are recorded but **ignored** -- the offsets are a
+   hardcoded, non-uniform table (``models/common.py:14``). The released
+   checkpoint stores it as a buffer, so changing it would silently change
+   every edge feature.
+
+
+   .. py:method:: forward(dist: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: coeff
+
+
+   .. py:attribute:: num_gaussians
+      :value: 50
+
+
+
+   .. py:attribute:: start
+      :value: 0.0
+
+
+
+   .. py:attribute:: stop
+      :value: 5.0
+
+
+
+.. py:class:: MLP(in_dim: int, out_dim: int, hidden_dim: int, num_layer: int = 2, norm: bool = True, act_fn: str = 'relu', act_last: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   MLP with the same hidden dim across all layers.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: net
+
+
+.. py:class:: ShiftedSoftplus
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: shift
+
+
+.. py:class:: Swish
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: beta
+
+
+.. py:function:: batch_hybrid_edge_connection(x, k, mask_ligand, batch, add_p_index=False)
+
+   Only reachable via ``cutoff_mode='hybrid'``; the release uses ``knn``.
+
+
+.. py:function:: compose_context(h_protein: torch.Tensor, h_ligand: torch.Tensor, pos_protein: torch.Tensor, pos_ligand: torch.Tensor, batch_protein: torch.Tensor, batch_ligand: torch.Tensor, hbap_protein=None, hbap_ligand=None)
+
+   Interleave the pocket and ligand token sets into one graph-sorted list.
+
+   The stable sort by graph id is what keeps each complex's tokens
+   contiguous; ``mask_ligand`` records which of them came from the ligand.
+
+
+.. py:function:: hybrid_edge_connection(ligand_pos, protein_pos, k, ligand_index, protein_index)
+
+.. py:function:: outer_product(*vectors: torch.Tensor) -> torch.Tensor
+
+   Flattened outer product, used to cross edge type with distance RBF.
+
+   ``outer_product(edge_attr (E,5), dist_feat (E,20)) -> (E, 100)``, which is
+   the ``r_feat_dim = num_r_gaussian * 5`` the attention layers expect.
+
+
+.. py:data:: NONLINEARITIES
+

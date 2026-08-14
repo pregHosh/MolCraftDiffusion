@@ -1,0 +1,32 @@
+MolecularDiffusion.modules.models.apo2mol
+=========================================
+
+.. py:module:: MolecularDiffusion.modules.models.apo2mol
+
+.. autoapi-nested-parse::
+
+   Apo2Mol: apo-pocket-conditioned ligand diffusion with a co-generated pocket.
+
+   See ``docs/model_integrations/apo2mol/INTEGRATION_PLAN.md``. Public surface:
+
+   * :class:`ScorePosNet3D` -- the joint ligand + pocket diffusion model.
+   * :class:`BAPNet` -- PMINet, the frozen interaction prior (NOT IPDiff's).
+   * :func:`log_sample_categorical` -- used by the task to draw the initial
+     uniform atom types.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/apo2mol/attn/index
+   /autoapi/MolecularDiffusion/modules/models/apo2mol/common/index
+   /autoapi/MolecularDiffusion/modules/models/apo2mol/pminet/index
+   /autoapi/MolecularDiffusion/modules/models/apo2mol/residue_ops/index
+   /autoapi/MolecularDiffusion/modules/models/apo2mol/score_model/index
+   /autoapi/MolecularDiffusion/modules/models/apo2mol/uni_transformer/index
+
+

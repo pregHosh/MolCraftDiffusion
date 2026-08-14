@@ -1,0 +1,373 @@
+MolecularDiffusion.modules.models.apo2mol.score_model
+=====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.apo2mol.score_model
+
+.. autoapi-nested-parse::
+
+   Apo2Mol's ``ScorePosNet3D``: three simultaneous generative processes.
+
+   Ported from ``others/Apo2Mol/models/molopt_score_model.py``. Upstream takes an
+   OmegaConf ``config`` object; this takes plain keyword arguments and rebuilds a
+   namespace internally, so the Hydra task config stays flat and the ported body
+   stays a near-verbatim copy.
+
+   What is actually being generated, and how:
+
+   1. **Ligand coordinates** -- continuous Gaussian DDPM, sigmoid beta schedule,
+      ``T = 1000``, the network predicts ``x0`` (``model_mean_type: C0``). Same
+      as KGDiff / IPDiff / TargetDiff.
+   2. **Ligand atom types** -- D3PM categorical diffusion in log space over the
+      13-class ``(element, is_aromatic)`` vocabulary, cosine schedule.
+   3. **Pocket conformation** -- *not* a DDPM. A ``lambda_schedule`` interpolant
+      from the holo pose towards the apo pose: translations and chi angles
+      interpolate linearly, rotations by SLERP from the identity, each with
+      Gaussian jitter scaled by ``beta.sqrt()``. The network predicts the
+      **inverse** transform, i.e. how to get back to holo.
+
+   Loss (``:772``)::
+
+       loss_ligand_pos + 100 * loss_v + loss_prot_tr + loss_prot_rot
+                       + 5 * loss_prot_chi
+
+   Two cost-shaping details worth knowing before reading :meth:`sample_diffusion`:
+
+   * the pocket is updated on only **5 of the 1000** reverse steps
+     (:attr:`protein_update_steps`), because each update runs a Python loop over
+     residues in :func:`~.residue_ops.apply_transforms_tensor_batch`;
+   * the frozen PMINet prior is re-evaluated on **every** step from the current
+     prediction, and it builds a dense complex graph, so memory scales with
+     ``(pocket atoms x batch)^2``.
+
+   Out of scope this pass (see the integration plan): the retrieval-prompt branch
+   (``topk_prompt: 0`` in the release, so it is dead), ``pos_only`` sampling, and
+   the ``egnn`` backbone alternative.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.apo2mol.score_model.MAX_LIG_LEN
+   MolecularDiffusion.modules.models.apo2mol.score_model.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.apo2mol.score_model.ScorePosNet3D
+   MolecularDiffusion.modules.models.apo2mol.score_model.SinusoidalPosEmb
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.apo2mol.score_model.calculate_tm_score
+   MolecularDiffusion.modules.models.apo2mol.score_model.categorical_kl
+   MolecularDiffusion.modules.models.apo2mol.score_model.center_pos
+   MolecularDiffusion.modules.models.apo2mol.score_model.cosine_beta_schedule
+   MolecularDiffusion.modules.models.apo2mol.score_model.extract
+   MolecularDiffusion.modules.models.apo2mol.score_model.get_beta_schedule
+   MolecularDiffusion.modules.models.apo2mol.score_model.index_to_log_onehot
+   MolecularDiffusion.modules.models.apo2mol.score_model.log_1_min_a
+   MolecularDiffusion.modules.models.apo2mol.score_model.log_add_exp
+   MolecularDiffusion.modules.models.apo2mol.score_model.log_categorical
+   MolecularDiffusion.modules.models.apo2mol.score_model.log_normal
+   MolecularDiffusion.modules.models.apo2mol.score_model.log_sample_categorical
+   MolecularDiffusion.modules.models.apo2mol.score_model.normal_kl
+   MolecularDiffusion.modules.models.apo2mol.score_model.to_torch_const
+
+
+Module Contents
+---------------
+
+.. py:class:: ScorePosNet3D(protein_atom_feature_dim: int = 27, ligand_atom_feature_dim: int = 13, cond_dim: int = 128, topk_prompt: int = 0, model_mean_type: str = 'C0', beta_schedule: str = 'sigmoid', beta_start: float = 1e-07, beta_end: float = 0.002, pos_beta_s: float = 0.01, v_beta_schedule: str = 'cosine', v_beta_s: float = 0.01, lambda_schedule: str = 'sigmoid', num_diffusion_timesteps: int = 1000, loss_v_weight: float = 100.0, loss_chi_weight: float = 5.0, sample_time_method: str = 'symmetric', time_emb_dim: int = 0, time_emb_mode: str = 'simple', center_pos_mode: str = 'protein', node_indicator: bool = True, model_type: str = 'uni_o2', num_blocks: int = 1, num_layers: int = 9, hidden_dim: int = 128, n_heads: int = 16, edge_feat_dim: int = 5, num_r_gaussian: int = 20, knn: int = 32, num_node_types: int = 8, act_fn: str = 'relu', norm: bool = True, cutoff_mode: str = 'knn', ew_net_type: str = 'global', num_x2h: int = 1, num_h2x: int = 1, r_max: float = 10.0, x2h_out_fc: bool = False, sync_twoup: bool = False, num_protein_update_steps: int = 5)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Joint ligand + pocket diffusion model (``molopt_score_model.py:231``).
+
+
+   .. py:method:: add_noise_to_quaternion(q, noise_scale)
+
+      Compose ``q`` with a small random rotation of scale ``noise_scale``.
+
+
+
+   .. py:method:: calculate_quat_loss(pred_rot, target_rot, batch)
+
+      Norm penalty + L2 on the normalised quaternion (``:794-810``).
+
+
+
+   .. py:method:: compute_v_Lt(log_v_model_prob, log_v0, log_v_true_prob, t, batch)
+
+
+   .. py:method:: forward(protein_pos, protein_v, batch_protein, init_ligand_pos, init_ligand_v, batch_ligand, protein_atom_to_aa_group, time_step=None, return_all=False, fix_x=False, hbap_protein=None, hbap_ligand=None) -> Dict[str, torch.Tensor]
+
+
+   .. py:method:: get_diffusion_loss(net_cond, data, protein_pos_apo, protein_pos_holo, protein_v, batch_protein, ligand_pos, ligand_v, batch_ligand, time_step=None) -> Dict[str, Any]
+
+      One training step's losses (``molopt_score_model.py:614-792``).
+
+      ``data`` is any object exposing the per-residue fields as attributes
+      (``protein_translations``, ``protein_rotations``, ``protein_chi_apo``
+      / ``_holo`` / ``_mask``, ``protein_translations_batch``,
+      ``protein_atom_name``, ``protein_atom_to_aa_name``,
+      ``protein_atom_to_aa_group``, ``protein_element_batch``); the task
+      wraps the collated dict in a ``SimpleNamespace`` for exactly this.
+
+      Note **the diffusion target for the pocket is HOLO**: the apo pocket
+      only supplies the centering offset.
+
+
+
+   .. py:method:: q_pos_posterior(x0, xt, t, batch)
+
+
+   .. py:method:: q_v_posterior(log_v0, log_vt, t, batch)
+
+
+   .. py:method:: q_v_pred(log_v0, t, batch)
+
+
+   .. py:method:: q_v_pred_one_timestep(log_vt_1, t, batch)
+
+
+   .. py:method:: q_v_sample(log_v0, t, batch)
+
+
+   .. py:method:: sample_diffusion(data, protein_pos_apo, protein_pos_holo, protein_v, batch_protein, init_ligand_pos, init_ligand_v, batch_ligand, num_steps: Optional[int] = None, center_pos_mode: Optional[str] = None, net_cond=None, progress: bool = True) -> Dict[str, Any]
+
+      Reverse process (``molopt_score_model.py:812-960``).
+
+      Everything comes back in the **input pocket's frame** -- the pocket
+      centroid offset is added back before returning.
+
+      In pocket-only generation the caller sets ``protein_pos_holo =
+      protein_pos_apo``, so the returned ``protein_pos_rmsd`` /
+      ``protein_pos_tmscore`` measure displacement from the input apo
+      structure, NOT accuracy against a true holo structure.
+
+
+
+   .. py:method:: sample_time(num_graphs, device, method)
+
+
+   .. py:attribute:: alphas_cumprod
+
+
+   .. py:attribute:: alphas_cumprod_prev
+
+
+   .. py:attribute:: betas
+
+
+   .. py:attribute:: center_pos_mode
+      :value: 'protein'
+
+
+
+   .. py:attribute:: cond_dim
+      :value: 128
+
+
+
+   .. py:attribute:: custom_noise
+
+
+   .. py:attribute:: emb_mlp
+
+
+   .. py:attribute:: emb_mlp_aug
+
+
+   .. py:attribute:: hidden_dim
+      :value: 128
+
+
+
+   .. py:attribute:: lambdas
+
+
+   .. py:attribute:: log_alphas_cumprod_v
+
+
+   .. py:attribute:: log_alphas_v
+
+
+   .. py:attribute:: log_one_minus_alphas_cumprod_v
+
+
+   .. py:attribute:: log_one_minus_alphas_v
+
+
+   .. py:attribute:: loss_chi_weight
+      :value: 5.0
+
+
+
+   .. py:attribute:: loss_v_weight
+      :value: 100.0
+
+
+
+   .. py:attribute:: model_mean_type
+      :value: 'C0'
+
+
+
+   .. py:attribute:: node_indicator
+      :value: True
+
+
+
+   .. py:attribute:: num_classes
+      :value: 13
+
+
+
+   .. py:attribute:: num_timesteps
+
+
+   .. py:attribute:: posterior_logvar
+
+
+   .. py:attribute:: posterior_mean_c0_coef
+
+
+   .. py:attribute:: posterior_mean_ct_coef
+
+
+   .. py:attribute:: posterior_var
+
+
+   .. py:attribute:: prompt_ligand_attn
+
+
+   .. py:attribute:: prompt_protein_mlp
+
+
+   .. py:attribute:: protein_atom_emb
+
+
+   .. py:attribute:: protein_update_steps
+
+
+   .. py:attribute:: refine_net
+
+
+   .. py:attribute:: refine_net_type
+      :value: 'uni_o2'
+
+
+
+   .. py:attribute:: res_inference
+
+
+   .. py:attribute:: sample_time_method
+      :value: 'symmetric'
+
+
+
+   .. py:attribute:: sqrt_alphas_cumprod
+
+
+   .. py:attribute:: sqrt_one_minus_alphas_cumprod
+
+
+   .. py:attribute:: sqrt_recip_alphas_cumprod
+
+
+   .. py:attribute:: sqrt_recipm1_alphas_cumprod
+
+
+   .. py:attribute:: time_emb_dim
+      :value: 0
+
+
+
+   .. py:attribute:: time_emb_mode
+      :value: 'simple'
+
+
+
+   .. py:attribute:: topk_prompt
+      :value: 0
+
+
+
+   .. py:attribute:: v_inference
+
+
+.. py:class:: SinusoidalPosEmb(dim: int)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: dim
+
+
+.. py:function:: calculate_tm_score(predicted_pos, reference_pos)
+
+   TM-score after optimal superposition. Diagnostic only.
+
+   ``Bio.SVDSuperimposer`` is imported lazily -- upstream imports it at
+   module scope, which would make ``biopython`` (an optional ``[bio]`` extra
+   here) a hard import dependency of the model itself.
+
+
+.. py:function:: categorical_kl(log_prob1, log_prob2)
+
+.. py:function:: center_pos(protein_pos, protein_pos_holo, ligand_pos, batch_protein, batch_ligand, mode='protein')
+
+   Subtract the APO pocket centroid from everything; return the offset.
+
+
+.. py:function:: cosine_beta_schedule(timesteps, s=0.008)
+
+   Cosine schedule; returns ``sqrt(alphas)`` (the paper's alpha).
+
+
+.. py:function:: extract(coef, t, batch)
+
+.. py:function:: get_beta_schedule(beta_schedule, *, beta_start, beta_end, num_diffusion_timesteps)
+
+.. py:function:: index_to_log_onehot(x, num_classes)
+
+.. py:function:: log_1_min_a(a)
+
+.. py:function:: log_add_exp(a, b)
+
+.. py:function:: log_categorical(log_x_start, log_prob)
+
+.. py:function:: log_normal(values, means, log_scales)
+
+.. py:function:: log_sample_categorical(logits)
+
+   Gumbel-max sample; returns CLASS INDICES, not a one-hot.
+
+
+.. py:function:: normal_kl(mean1, logvar1, mean2, logvar2)
+
+.. py:function:: to_torch_const(x)
+
+   Schedule constant as a frozen Parameter (so it lands in state_dict).
+
+
+.. py:data:: MAX_LIG_LEN
+   :value: 150
+
+
+.. py:data:: logger
+

@@ -1,0 +1,344 @@
+MolecularDiffusion.modules.models.apo2mol.pminet
+================================================
+
+.. py:module:: MolecularDiffusion.modules.models.apo2mol.pminet
+
+.. autoapi-nested-parse::
+
+   PMINet -- Apo2Mol's frozen protein-molecule interaction prior.
+
+   Ported from ``others/Apo2Mol/graphbap/bapnet.py``. Its per-node 128-d output
+   is folded into every token embedding (``score_model.py``, the ``hbap_*``
+   arguments) and re-computed from the current prediction at every reverse step.
+
+   **This is NOT IPDiff's IPNet, despite both being called ``BAPNet``.**
+   Verified before porting: the two checkpoints hold 55 vs 58 tensors over
+   disjoint key sets, and 0 of the 45 same-named tensors are byte-identical.
+   Structurally, Apo2Mol's complex/geometry/fusion stages are ``GATConv``
+   attention layers while IPDiff's are EGNN ``GCL`` stacks. Hence a separate
+   module rather than an import of ``modules/models/ipdiff/bapnet.py``.
+
+   The equivariant ligand/pocket blocks (``GCL`` / ``EquivariantUpdate`` /
+   ``EquivariantBlock``) are the usual EGNN pieces and are ported here too, so
+   this package has no cross-model import.
+
+   Not ported: ``SinusoidsEmbeddingNew`` is instantiated only when
+   ``sin_embedding=True``, which the release never sets (``edge_feat_nf`` is 2 in
+   the checkpoint, the ``sin_embedding=False`` branch); ``check_memory`` is a
+   debug print.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.apo2mol.pminet.LIGAND_ATOM_ADD_AROMATIC_TYPES
+   MolecularDiffusion.modules.models.apo2mol.pminet.POCKET_ATOM_TYPES
+   MolecularDiffusion.modules.models.apo2mol.pminet.RESIDUE_TYPES
+   MolecularDiffusion.modules.models.apo2mol.pminet.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.apo2mol.pminet.BAPNet
+   MolecularDiffusion.modules.models.apo2mol.pminet.EquivariantBlock
+   MolecularDiffusion.modules.models.apo2mol.pminet.EquivariantUpdate
+   MolecularDiffusion.modules.models.apo2mol.pminet.GCL
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.apo2mol.pminet.coord2diff
+   MolecularDiffusion.modules.models.apo2mol.pminet.get_edges
+   MolecularDiffusion.modules.models.apo2mol.pminet.remove_mean_batch_ligand
+   MolecularDiffusion.modules.models.apo2mol.pminet.unsorted_segment_sum
+
+
+Module Contents
+---------------
+
+.. py:class:: BAPNet(ckpt_path: Optional[str] = None, hidden_nf: int = 128, act_fn=None, GAT_head: int = 2, graph_layers: int = 1, attention: bool = False, norm_diff: bool = True, tanh: bool = False, coords_range: int = 15, norm_constant: int = 1, inv_sublayers: int = 1, sin_embedding: bool = False, normalization_factor: int = 100, aggregation_method: str = 'sum', edge_cutoff=None, ignore_keys: Optional[List[str]] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Apo2Mol's PMINet (``bapnet.py:44``).
+
+   Unlike IPDiff's same-named class, ``ckpt_path`` is **optional** here: the
+   prior's weights live under ``net_cond.*`` in Apo2Mol's own released
+   checkpoint, so at generate time they arrive with the rest of the task and
+   there is nothing to pre-load. Pass ``ckpt_path`` when training from
+   scratch, where the prior is supposed to start from the released PMINet
+   weights (upstream's ``train_pl.py:81`` always does).
+
+   The prior is not registered with the optimiser upstream
+   (``pl_model.py:configure_optimizers`` passes ``self.model`` only), so it
+   is effectively frozen while still being checkpointed. The task mirrors
+   that by calling :meth:`freeze`.
+
+
+   .. py:method:: extract_features(lig_coords, pocket_coords, lig_a_hidx, pocket_a_hidx, pocket_r_hidx, lig_mask, pocket_mask)
+
+      Per-node 128-d interaction features for ligand and pocket.
+
+      Returns ``(ligand_feats, pocket_feats)``, both detached: this is a
+      frozen prior, gradients never flow back into it.
+
+      # ponytail: `get_edges` builds a DENSE within-graph adjacency, so cost
+      # is O((n_lig + n_pocket)^2) per complex, same as upstream. That is the
+      # memory ceiling on batch_size; sparsify with `edge_cutoff` if it bites.
+
+
+
+   .. py:method:: freeze() -> None
+
+      Upstream never adds these parameters to the optimiser.
+
+
+
+   .. py:method:: init_from_ckpt(path: str, ignore_keys: List[str]) -> None
+
+      Load a converted PMINet state dict.
+
+      Expects the output of
+      ``docs/model_integrations/apo2mol/scripts/convert_checkpoint.py``,
+      NOT the raw ``others/Apo2Mol/pretrained_models/PMINet``: the raw file
+      was written by an older ``torch_geometric`` whose ``GATConv`` split
+      its input projection into ``lin_src`` / ``lin_dst`` (an alias of the
+      same tensor). The converter proves they are byte-identical and folds
+      them into today's single ``lin``.
+
+
+
+   .. py:attribute:: ComplexesGraph
+
+
+   .. py:attribute:: FinalOutput
+
+
+   .. py:attribute:: FusionGraph
+
+
+   .. py:attribute:: GeoGraph
+
+
+   .. py:attribute:: LigandGraph
+
+
+   .. py:attribute:: OutputLayer
+
+
+   .. py:attribute:: PocketGraph
+
+
+   .. py:attribute:: aggregation_method
+      :value: 'sum'
+
+
+
+   .. py:attribute:: coords_range_layer
+
+
+   .. py:attribute:: edge_cutoff
+      :value: None
+
+
+
+   .. py:attribute:: embed_fusion
+
+
+   .. py:attribute:: graph_dim
+      :value: 128
+
+
+
+   .. py:attribute:: graph_layers
+      :value: 1
+
+
+
+   .. py:attribute:: hidden_nf
+      :value: 128
+
+
+
+   .. py:attribute:: id_embed
+
+
+   .. py:attribute:: ligand_atom_type_embed
+
+
+   .. py:attribute:: norm_diff
+      :value: True
+
+
+
+   .. py:attribute:: normalization_factor
+      :value: 100
+
+
+
+   .. py:attribute:: pocket_atom_type_embed
+
+
+   .. py:attribute:: pocket_residue_type_embed
+
+
+   .. py:attribute:: pocket_type_fusion
+
+
+   .. py:attribute:: sin_embedding
+      :value: None
+
+
+
+.. py:class:: EquivariantBlock(hidden_nf, edge_feat_nf=2, act_fn=None, n_layers=2, attention=True, norm_diff=True, tanh=False, coords_range=15, norm_constant=1, sin_embedding=None, normalization_factor=100, aggregation_method='sum')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   ``n_layers`` GCLs then one coordinate update (``bapnet.py:345``).
+
+
+   .. py:method:: forward(h, x, edge_index, node_mask=None, edge_mask=None, edge_attr=None, update_coords_mask=None)
+
+
+   .. py:attribute:: aggregation_method
+      :value: 'sum'
+
+
+
+   .. py:attribute:: coords_range_layer
+
+
+   .. py:attribute:: hidden_nf
+
+
+   .. py:attribute:: n_layers
+      :value: 2
+
+
+
+   .. py:attribute:: norm_constant
+      :value: 1
+
+
+
+   .. py:attribute:: norm_diff
+      :value: True
+
+
+
+   .. py:attribute:: normalization_factor
+      :value: 100
+
+
+
+   .. py:attribute:: sin_embedding
+      :value: None
+
+
+
+.. py:class:: EquivariantUpdate(hidden_nf, normalization_factor, aggregation_method, edges_in_d=1, act_fn=None, tanh=False, coords_range=10.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   EGNN coordinate update (``bapnet.py:299``).
+
+
+   .. py:method:: coord_model(h, coord, edge_index, coord_diff, edge_attr, edge_mask, update_coords_mask=None)
+
+
+   .. py:method:: forward(h, coord, edge_index, coord_diff, edge_attr=None, node_mask=None, edge_mask=None, update_coords_mask=None)
+
+
+   .. py:attribute:: aggregation_method
+
+
+   .. py:attribute:: coord_mlp
+
+
+   .. py:attribute:: coords_range
+      :value: 10.0
+
+
+
+   .. py:attribute:: normalization_factor
+
+
+   .. py:attribute:: tanh
+      :value: False
+
+
+
+.. py:class:: GCL(input_nf, output_nf, hidden_nf, normalization_factor, aggregation_method, edges_in_d=0, nodes_att_dim=0, act_fn=None, attention=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   EGNN scalar message-passing layer (``bapnet.py:236``).
+
+
+   .. py:method:: edge_model(source, target, edge_attr, edge_mask)
+
+
+   .. py:method:: forward(h, edge_index, edge_attr=None, node_attr=None, node_mask=None, edge_mask=None)
+
+
+   .. py:method:: node_model(x, edge_index, edge_attr, node_attr)
+
+
+   .. py:attribute:: aggregation_method
+
+
+   .. py:attribute:: attention
+      :value: False
+
+
+
+   .. py:attribute:: edge_mlp
+
+
+   .. py:attribute:: node_mlp
+
+
+   .. py:attribute:: normalization_factor
+
+
+.. py:function:: coord2diff(x, edge_index, norm_constant=1)
+
+.. py:function:: get_edges(mask, x=None, edge_cutoff=None)
+
+   Dense within-graph edge list. NB: fully connected per graph.
+
+
+.. py:function:: remove_mean_batch_ligand(x_lig, x_pocket, lig_indices, pocket_indices)
+
+   Centre ligand and pocket on their OWN per-graph centroids, separately.
+
+
+.. py:function:: unsorted_segment_sum(data, segment_ids, num_segments, normalization_factor, aggregation_method)
+
+.. py:data:: LIGAND_ATOM_ADD_AROMATIC_TYPES
+   :value: ['H', 'C1', 'C2', 'N1', 'N2', 'O1', 'O2', 'F', 'P1', 'P2', 'S1', 'S2', 'Cl']
+
+
+.. py:data:: POCKET_ATOM_TYPES
+   :value: ['H', 'C', 'N', 'O', 'S', 'Se']
+
+
+.. py:data:: RESIDUE_TYPES
+   :value: ['ALA', 'CYS', 'ASP', 'GLU', 'PHE', 'GLY', 'HIS', 'ILE', 'LYS', 'LEU', 'MET', 'ASN', 'PRO',...
+
+
+.. py:data:: logger
+

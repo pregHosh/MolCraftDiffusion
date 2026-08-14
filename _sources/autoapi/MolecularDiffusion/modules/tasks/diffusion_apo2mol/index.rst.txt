@@ -1,0 +1,310 @@
+MolecularDiffusion.modules.tasks.diffusion_apo2mol
+==================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_apo2mol
+
+.. autoapi-nested-parse::
+
+   Apo2Mol task: apo-pocket-conditioned ligand diffusion with a co-generated pocket.
+
+   Three objects, the layout every pocket-conditioned model here uses:
+
+   * :class:`Apo2MolDiffusionTask` -- the duck-typed Task
+     (docs/adding_new_models.md Section 2.1) wrapping
+     :class:`~...models.apo2mol.ScorePosNet3D` **and** the frozen PMINet prior.
+   * :class:`ModelTaskFactory` -- the ``_target_`` of
+     ``configs/tasks/diffusion_apo2mol.yaml``.
+   * :class:`Apo2MolPocketGenerator` -- the ``_target_`` of
+     ``configs/interference/gen_apo2mol_pocket.yaml``.
+     ``GenerativeFactory``'s ``sample(batch_size, nodesxsample, ...)`` has no
+     channel for "which pocket", so pocket models get their own generator behind
+     their own ``_target_``; ``cli/generate.py`` only does
+     ``instantiate(cfg.interference, task=task)`` then ``.run()``, so no core
+     change is needed.
+
+   **What Apo2Mol adds over KGDiff / IPDiff, in one sentence.** Those two treat
+   the pocket as a fixed condition; Apo2Mol takes an **apo** (ligand-free) pocket
+   and generates the ligand *and* a holo-like pocket conformation together, by
+   diffusing per-residue rigid transforms and side-chain chi angles alongside the
+   ligand point cloud.
+
+   **Where the generated pocket goes.** The Section 2.1 ``sample()`` return
+   tuple has no protein channel, so it stays the platform-standard
+   ``(one_hot, charges, coords, node_mask)`` and the co-generated pocket is
+   handed back out-of-band via :attr:`Apo2MolDiffusionTask.last_pocket`, which
+   the generator writes out as a ``.pdb`` sidecar per sample together with its
+   RMSD / TM-score against the input pocket.
+
+   Two deviations from the generic contract, both shared with the other pocket
+   models in-tree:
+
+   * ``sample()`` requires a pocket; there is no unconditional path.
+   * Sampled coordinates come back in the **input pocket's frame**
+     (``center_pos_mode='protein'``).
+
+   Out of scope this pass (see the integration plan): guidance of every kind
+   (Apo2Mol has none -- ``prop_dist_model`` is ``None``), unconditional
+   generation, trajectory / ``n_frames`` export, the retrieval-prompt branch,
+   ``pos_only`` sampling, and Vina docking.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_apo2mol.DEFAULT_PMINET_CKPT
+   MolecularDiffusion.modules.tasks.diffusion_apo2mol.INT_TYPE
+   MolecularDiffusion.modules.tasks.diffusion_apo2mol.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolDiffusionTask
+   MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator
+   MolecularDiffusion.modules.tasks.diffusion_apo2mol.ModelTaskFactory
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_apo2mol.write_pocket_pdb
+
+
+Module Contents
+---------------
+
+.. py:class:: Apo2MolDiffusionTask(model: MolecularDiffusion.modules.models.apo2mol.ScorePosNet3D, net_cond: MolecularDiffusion.modules.models.apo2mol.BAPNet, atom_vocab: Optional[List[str]] = None, pos_noise_std: float = 0.1)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Task contract around :class:`ScorePosNet3D` + the frozen PMINet prior.
+
+
+   .. py:method:: evaluate(pred, target)
+
+
+   .. py:method:: forward(batch)
+
+
+   .. py:method:: predict_and_target(batch)
+
+
+   .. py:method:: sample(batch_size=None, nodesxsample=None, num_steps=None, batch=None, progress: bool = True, **kwargs)
+
+      Sample ligands inside the apo pocket carried by ``batch``.
+
+      **The signature deliberately deviates from Section 2.1**: it takes a
+      pocket. ``batch`` must come from ``apo2mol_collate``, or from
+      :meth:`Apo2MolPocketGenerator._repeat`, which builds the same keys.
+
+      Returns ``(one_hot, charges, coords, node_mask)`` padded to
+      ``(B, N, .)`` in the ORIGINAL pocket frame. ``one_hot`` is over the
+      8-element ``atom_vocab``, not the model's 13 ``(element, aromatic)``
+      classes; ``charges`` is zeros (Apo2Mol has no charge channel).
+
+      The co-generated pocket lands in :attr:`last_pocket` as
+      ``{"pos", "batch", "rmsd", "tmscore"}``.
+
+      If ``batch`` carries no ``protein_pos_holo`` (pocket-only generation)
+      the apo coordinates are used in its place, exactly as upstream's
+      ``sample_custom_pocket.py:690`` does. The reported RMSD / TM-score is
+      then **displacement from the input apo structure, not accuracy against
+      a true holo structure**.
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:property:: device
+
+
+   .. py:attribute:: last_pocket
+      :type:  Optional[Dict[str, Any]]
+      :value: None
+
+
+
+   .. py:attribute:: model
+
+
+   .. py:property:: n_node_dist
+      :type: Dict[int, float]
+
+
+
+   .. py:attribute:: net_cond
+
+
+   .. py:property:: node_dist_model
+      :type: MolecularDiffusion.modules.tasks.diffusion_kgdiff.PocketSizePrior
+
+
+
+   .. py:attribute:: pos_noise_std
+      :value: 0.1
+
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: split
+      :value: 'train'
+
+
+
+.. py:class:: Apo2MolPocketGenerator(task, pocket_db: Optional[str] = None, pocket_index: int = 0, num_generate: int = 20, batch_size: int = 2, num_steps: Optional[int] = None, mol_size: Optional[list] = None, use_holo_reference: bool = False, output_path: str = 'generated_apo2mol', seed: int = 42, device: Optional[str] = None, **kwargs: Any)
+
+   Pocket-conditioned generation behind ``interference/gen_apo2mol_pocket``.
+
+   The apo pocket comes from one row of a converted ASE db
+   (``docs/model_integrations/apo2mol/scripts/convert_dataset.py``); the
+   sampled ligand comes back in that pocket's own frame.
+
+   Two things it writes that no other in-tree generator does:
+
+   * ``pocket_<i>.pdb`` -- the co-generated holo-like pocket for each sample,
+     which is Apo2Mol's headline contribution;
+   * ``pocket_metrics.csv`` -- per-sample RMSD and TM-score of that pocket
+     against the reference the model was given.
+
+   ``use_holo_reference`` decides what that reference is. Default ``false``
+   reproduces upstream's custom-inference behaviour
+   (``sample_custom_pocket.py:686-690``): holo is set to apo, so the metrics
+   measure **displacement from the input apo structure**, not accuracy. Set
+   it to ``true`` on a db row converted from a real apo/holo pair to get a
+   genuine accuracy number instead.
+
+
+   .. py:method:: run() -> None
+
+
+   .. py:attribute:: batch_size
+      :value: 2
+
+
+
+   .. py:attribute:: device
+      :value: 'cuda'
+
+
+
+   .. py:attribute:: mol_size
+
+
+   .. py:attribute:: num_generate
+      :value: 20
+
+
+
+   .. py:attribute:: num_steps
+      :value: None
+
+
+
+   .. py:attribute:: output_path
+      :value: 'generated_apo2mol'
+
+
+
+   .. py:attribute:: pocket_db
+      :value: None
+
+
+
+   .. py:attribute:: pocket_index
+      :value: 0
+
+
+
+   .. py:attribute:: seed
+      :value: 42
+
+
+
+   .. py:attribute:: task
+
+
+   .. py:attribute:: use_holo_reference
+      :value: False
+
+
+
+.. py:class:: ModelTaskFactory(task_type: str = 'diffusion_apo2mol', net_cond_ckpt: Optional[str] = DEFAULT_PMINET_CKPT, cond_dim: int = 128, topk_prompt: int = 0, pos_noise_std: float = 0.1, protein_atom_feature_dim: int = PROTEIN_FEATURE_DIM, ligand_atom_feature_dim: int = NUM_LIGAND_CLASSES, model_mean_type: str = 'C0', beta_schedule: str = 'sigmoid', beta_start: float = 1e-07, beta_end: float = 0.002, pos_beta_s: float = 0.01, v_beta_schedule: str = 'cosine', v_beta_s: float = 0.01, lambda_schedule: str = 'sigmoid', num_diffusion_timesteps: int = 1000, loss_v_weight: float = 100.0, loss_chi_weight: float = 5.0, sample_time_method: str = 'symmetric', time_emb_dim: int = 0, time_emb_mode: str = 'simple', center_pos_mode: str = 'protein', node_indicator: bool = True, model_type: str = 'uni_o2', num_blocks: int = 1, num_layers: int = 9, hidden_dim: int = 128, n_heads: int = 16, edge_feat_dim: int = 5, num_r_gaussian: int = 20, knn: int = 32, num_node_types: int = 8, act_fn: str = 'relu', norm: bool = True, cutoff_mode: str = 'knn', ew_net_type: str = 'global', num_x2h: int = 1, num_h2x: int = 1, r_max: float = 10.0, x2h_out_fc: bool = False, sync_twoup: bool = False, num_protein_update_steps: int = 5, atom_vocab: Optional[List[str]] = None, **kwargs: Any)
+
+   Hydra entry point for ``configs/tasks/diffusion_apo2mol.yaml``.
+
+   No ``train_set`` parameter: like KGDiff and IPDiff, the ligand-size prior
+   is a static table conditioned on pocket extent, so nothing has to be
+   measured at build time (docs/adding_new_models.md Section 2.5 -- that seam
+   is opt-in).
+
+
+   .. py:method:: build() -> Apo2MolDiffusionTask
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: cond_dim
+      :value: 128
+
+
+
+   .. py:attribute:: condition_names
+      :type:  List[str]
+      :value: []
+
+
+
+   .. py:attribute:: model_kwargs
+
+
+   .. py:attribute:: net_cond_ckpt
+      :value: 'docs/model_integrations/apo2mol/checkpoints/pminet'
+
+
+
+   .. py:attribute:: pos_noise_std
+      :value: 0.1
+
+
+
+   .. py:attribute:: task
+      :type:  Optional[Apo2MolDiffusionTask]
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_apo2mol'
+
+
+
+.. py:function:: write_pocket_pdb(path: str, coords: torch.Tensor, atom_names: List[str], aa_names: List[str], aa_group: torch.Tensor, elements: Optional[List[str]] = None) -> None
+
+   Write a minimal, viewer-loadable PDB for one generated pocket.
+
+   Residue numbering is the local 0-based ``aa_group`` + 1, so the sidecar is
+   self-consistent but is NOT the original PDB numbering.
+
+
+.. py:data:: DEFAULT_PMINET_CKPT
+   :value: 'docs/model_integrations/apo2mol/checkpoints/pminet'
+
+
+.. py:data:: INT_TYPE
+
+.. py:data:: logger
+

@@ -1,0 +1,167 @@
+MolecularDiffusion.modules.models.apo2mol.residue_ops
+=====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.apo2mol.residue_ops
+
+.. autoapi-nested-parse::
+
+   Per-residue rigid + side-chain transforms, and the quaternion math for them.
+
+   This is the half of Apo2Mol that no other pocket model in-tree has: the pocket
+   is not a fixed condition, it is *co-generated*. A residue's holo pose is
+   represented as ``(rigid rotation quaternion, translation, 5 chi angles)``
+   relative to its apo pose, and :func:`apply_transforms_tensor_batch` rebuilds
+   Cartesian pocket coordinates from that representation. Ported from
+   ``others/Apo2Mol/utils/data.py`` (``CHI_BOND_DICTS`` at :303-388,
+   ``apply_transforms_tensor`` at :470-534, ``apply_transforms_tensor_batch`` at
+   :535-596).
+
+   ## Why the three ``kornia`` conversions are inlined here
+
+   Upstream imports ``kornia`` for exactly three functions. ``kornia`` is not a
+   dependency of this repo and is not installed in ``moleculardiffusion_dev``;
+   per the approved integration plan we inline them instead of taking the
+   dependency. That is ~40 lines, but it is 40 lines the released checkpoint was
+   trained under, so a sign or ordering slip would be **silent** -- the model
+   would still emit plausible pockets, just wrong ones.
+
+   Conventions, matched to kornia exactly:
+
+   * quaternions are ``(w, x, y, z)`` (kornia's ``QuaternionCoeffOrder.WXYZ``,
+     the default since kornia 0.6);
+   * :func:`quaternion_to_rotation_matrix` does **not** normalise its input,
+     matching ``kornia.geometry.conversions.quaternion_to_rotation_matrix``;
+   * rotation matrices act as ``R @ v`` on column vectors.
+
+   ``tests/test_apo2mol_residue_ops.py`` pins all three against hand-computed
+   values plus round-trip identities. Run ``python -m
+   MolecularDiffusion.modules.models.apo2mol.residue_ops`` for the same checks
+   as a standalone self-check.
+
+   Not ported: ``apply_transforms`` (the numpy twin, no call sites) and
+   ``compute_residue_transforms`` (converter-only -- it lives in
+   ``docs/model_integrations/apo2mol/scripts/convert_dataset.py``, where scipy
+   replaces ``numpy-quaternion``).
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.apo2mol.residue_ops.CHI_BOND_DICTS
+   MolecularDiffusion.modules.models.apo2mol.residue_ops.CHI_ORDER
+   MolecularDiffusion.modules.models.apo2mol.residue_ops.MAX_CHI
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.apo2mol.residue_ops.apply_transforms_tensor
+   MolecularDiffusion.modules.models.apo2mol.residue_ops.apply_transforms_tensor_batch
+   MolecularDiffusion.modules.models.apo2mol.residue_ops.axis_angle_to_quaternion
+   MolecularDiffusion.modules.models.apo2mol.residue_ops.axis_angle_to_rotation_matrix
+   MolecularDiffusion.modules.models.apo2mol.residue_ops.quaternion_product
+   MolecularDiffusion.modules.models.apo2mol.residue_ops.quaternion_to_rotation_matrix
+   MolecularDiffusion.modules.models.apo2mol.residue_ops.slerp_identity_to_q
+
+
+Module Contents
+---------------
+
+.. py:function:: apply_transforms_tensor(protein_pos: torch.Tensor, protein_atom_name: List[str], protein_atom_to_aa_name: List[str], protein_atom_to_aa_group: torch.Tensor, rotations: torch.Tensor, translations: torch.Tensor, chi_update: torch.Tensor, chi_mask: torch.Tensor) -> torch.Tensor
+
+   Apply one protein's per-residue rigid transform, then the chi deltas.
+
+   Ported from ``utils/data.py:470-534``.
+
+   :param protein_pos: ``(N, 3)`` this protein's atom coordinates.
+   :param protein_atom_name: length ``N`` PDB atom names.
+   :param protein_atom_to_aa_name: length ``N`` residue names.
+   :param protein_atom_to_aa_group: ``(N,)`` atom -> LOCAL residue id.
+   :param rotations: ``(M, 4)`` per-residue quaternions, row ``r`` matching the
+                     ``r``-th distinct residue id in ascending order.
+   :param translations: ``(M, 3)``.
+   :param chi_update: ``(M, 5)`` delta-chi in radians.
+   :param chi_mask: ``(M, 5)`` 0/1.
+
+   :returns: ``(N, 3)`` transformed coordinates, in the input's atom order.
+
+   # ponytail: the chi pass is a Python loop over residues x 5 slots, as
+   # upstream. It runs on 5 of 1000 reverse steps (protein_update_steps), so
+   # it is not the bottleneck; vectorise per chi-slot if that ever changes.
+
+
+.. py:function:: apply_transforms_tensor_batch(protein_pos: torch.Tensor, protein_atom_name: List[List[str]], protein_atom_to_aa_name: List[List[str]], protein_atom_to_aa_group: torch.Tensor, protein_element_batch: torch.Tensor, rotations: torch.Tensor, translations: torch.Tensor, chi_update: torch.Tensor, chi_mask: torch.Tensor, protein_translations_batch: torch.Tensor) -> torch.Tensor
+
+   Batched :func:`apply_transforms_tensor` (``utils/data.py:535-596``).
+
+   ``protein_atom_name`` / ``protein_atom_to_aa_name`` are **nested per
+   complex** (``list[list[str]]``), not flat, and
+   ``protein_atom_to_aa_group`` restarts at 0 in every complex. The collate
+   in ``data/component/apo2mol_data.py`` preserves both properties; flatten
+   either one and this returns wrong coordinates without erroring.
+
+
+.. py:function:: axis_angle_to_quaternion(axis_angle: torch.Tensor) -> torch.Tensor
+
+   ``(*, 3)`` rotation vector -> ``(*, 4)`` ``(w,x,y,z)`` unit quaternion.
+
+   Replaces ``kornia.geometry.conversions.axis_angle_to_quaternion``
+   (``models/molopt_score_model.py:606``). kornia uses the Taylor expansion
+   ``sin(theta/2)/theta -> 0.5 - theta^2/48`` below ``theta^2 = 1e-6``; the
+   same branch is reproduced so behaviour matches at theta = 0 (where the
+   naive form is 0/0).
+
+
+.. py:function:: axis_angle_to_rotation_matrix(axis_angle: torch.Tensor) -> torch.Tensor
+
+   ``(*, 3)`` rotation vector -> ``(*, 3, 3)`` (Rodrigues).
+
+   Replaces ``kornia.geometry.conversions.axis_angle_to_rotation_matrix``
+   (``utils/data.py:524``). kornia branches to a first-order Taylor form
+   below ``theta^2 = 1e-6``; ``I + [w]_x`` is exactly that first-order form,
+   so the two agree to float precision on both sides of the branch.
+
+
+.. py:function:: quaternion_product(q1: torch.Tensor, q2: torch.Tensor) -> torch.Tensor
+
+   Hamilton product, ``(w, x, y, z)`` layout.
+
+   Ported from ``models/molopt_score_model.py:968-978``.
+
+
+.. py:function:: quaternion_to_rotation_matrix(quaternion: torch.Tensor) -> torch.Tensor
+
+   ``(*, 4)`` ``(w,x,y,z)`` -> ``(*, 3, 3)``.
+
+   Replaces ``kornia.geometry.conversions.quaternion_to_rotation_matrix``
+   (``utils/data.py:490``, ``models/molopt_score_model.py:654,760``).
+   Deliberately does NOT normalise the input, exactly as kornia does not:
+   callers here always pass unit quaternions, and silently normalising would
+   hide a caller bug.
+
+
+.. py:function:: slerp_identity_to_q(q: torch.Tensor, lambdas: torch.Tensor) -> torch.Tensor
+
+   Spherical interpolation from the identity rotation towards ``q``.
+
+   ``q``: ``(B, 4)``; ``lambdas``: ``(B, 1)`` -- the weight on the IDENTITY
+   end, so ``lambdas = 1`` returns identity and ``lambdas = 0`` returns ``q``.
+   Ported from ``models/molopt_score_model.py:564-588`` (this is the pocket
+   channel's noising interpolant, not a DDPM step).
+
+
+.. py:data:: CHI_BOND_DICTS
+
+.. py:data:: CHI_ORDER
+   :value: ['chi1', 'chi2', 'chi3', 'chi4', 'chi5']
+
+
+.. py:data:: MAX_CHI
+   :value: 5
+
+

@@ -1,0 +1,380 @@
+MolecularDiffusion.modules.models.apo2mol.uni_transformer
+=========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.apo2mol.uni_transformer
+
+.. autoapi-nested-parse::
+
+   Apo2Mol's ``uni_o2`` backbone: TargetDiff's SE(3) attention transformer,
+   plus the two things that make it Apo2Mol's.
+
+   Ported from ``others/Apo2Mol/models/uni_transformer.py``. It needs its own
+   module rather than an import of ``modules/models/kgdiff/uni_transformer.py``
+   because of two additions:
+
+   1. **A residue head.** ``forward`` takes ``protein_atom_to_aa_group`` and
+      returns ``residue_h`` (:meth:`_aggregate_atom_to_residue`,
+      ``uni_transformer.py:608-653``): pocket token features are concatenated
+      with their updated coordinates and pooled per residue, giving the
+      ``hidden_dim + 3`` vector that ``ScorePosNet3D.res_inference`` decodes into
+      ``(3 translation, 4 quaternion, 5 chi)``. This is the pocket half of the
+      generative process.
+   2. **A 5-wide edge type** instead of KGDiff's 4 (:meth:`_build_edge_type`).
+      KGDiff distinguishes ligand-ligand / ligand-protein / protein-ligand /
+      protein-protein; Apo2Mol splits the last into *same residue* and *across
+      residues*. Still purely topological -- no bond or chemistry information
+      reaches the network in either model.
+
+   Also note ``h2x`` updates **both** pocket and ligand coordinates
+   (``uni_transformer.py:193``, where KGDiff masks the update to ligand atoms
+   only). That is deliberate upstream and is what makes the pocket mobile.
+
+   Not ported (dead in the released configuration, verified by reading call
+   sites): ``GVPLayer`` -- ``self.prot_gvp_layer`` is constructed upstream but
+   its only call site, ``uni_transformer.py:549-551``, is commented out, and
+   ``h_protein_update`` at :554 is built from the raw ``protein_h``/``protein_pos``
+   instead. Its 6 checkpoint tensors are dropped by
+   ``scripts/convert_checkpoint.py`` with that justification. ``SAGPoolNet`` by
+   contrast is **live** (called at :647) and is ported below.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.apo2mol.uni_transformer.AttentionLayerO2TwoUpdateNodeGeneral
+   MolecularDiffusion.modules.models.apo2mol.uni_transformer.BaseH2XAttLayer
+   MolecularDiffusion.modules.models.apo2mol.uni_transformer.BaseX2HAttLayer
+   MolecularDiffusion.modules.models.apo2mol.uni_transformer.SAGPoolNet
+   MolecularDiffusion.modules.models.apo2mol.uni_transformer.UniTransformerO2TwoUpdateGeneral
+
+
+Module Contents
+---------------
+
+.. py:class:: AttentionLayerO2TwoUpdateNodeGeneral(hidden_dim, n_heads, num_r_gaussian, edge_feat_dim, act_fn='relu', norm=True, num_x2h=1, num_h2x=1, r_min=0.0, r_max=10.0, num_node_types=8, ew_net_type='r', x2h_out_fc=True, sync_twoup=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   One block: ``num_x2h`` feature updates then ``num_h2x`` coord updates.
+
+
+   .. py:method:: forward(h, x, edge_attr, edge_index, mask_ligand, e_w=None, fix_x=False)
+
+
+   .. py:attribute:: act_fn
+      :value: 'relu'
+
+
+
+   .. py:attribute:: distance_expansion
+
+
+   .. py:attribute:: edge_feat_dim
+
+
+   .. py:attribute:: ew_net_type
+      :value: 'r'
+
+
+
+   .. py:attribute:: h2x_layers
+
+
+   .. py:attribute:: hidden_dim
+
+
+   .. py:attribute:: n_heads
+
+
+   .. py:attribute:: norm
+      :value: True
+
+
+
+   .. py:attribute:: num_h2x
+      :value: 1
+
+
+
+   .. py:attribute:: num_node_types
+      :value: 8
+
+
+
+   .. py:attribute:: num_r_gaussian
+
+
+   .. py:attribute:: num_x2h
+      :value: 1
+
+
+
+   .. py:attribute:: sync_twoup
+      :value: False
+
+
+
+   .. py:attribute:: x2h_layers
+
+
+   .. py:attribute:: x2h_out_fc
+      :value: True
+
+
+
+.. py:class:: BaseH2XAttLayer(input_dim, hidden_dim, output_dim, n_heads, edge_feat_dim, r_feat_dim, act_fn='relu', norm=True, ew_net_type='r')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Equivariant coordinate update (``uni_transformer.py:78-127``).
+
+
+   .. py:method:: forward(h, rel_x, r_feat, edge_feat, edge_index, e_w=None)
+
+
+   .. py:attribute:: act_fn
+      :value: 'relu'
+
+
+
+   .. py:attribute:: edge_feat_dim
+
+
+   .. py:attribute:: ew_net_type
+      :value: 'r'
+
+
+
+   .. py:attribute:: hidden_dim
+
+
+   .. py:attribute:: input_dim
+
+
+   .. py:attribute:: n_heads
+
+
+   .. py:attribute:: output_dim
+
+
+   .. py:attribute:: r_feat_dim
+
+
+   .. py:attribute:: xk_func
+
+
+   .. py:attribute:: xq_func
+
+
+   .. py:attribute:: xv_func
+
+
+.. py:class:: BaseX2HAttLayer(input_dim, hidden_dim, output_dim, n_heads, edge_feat_dim, r_feat_dim, act_fn='relu', norm=True, ew_net_type='r', out_fc=True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Scalar-feature attention update (``uni_transformer.py:12-75``).
+
+
+   .. py:method:: forward(h, r_feat, edge_feat, edge_index, e_w=None)
+
+
+   .. py:attribute:: act_fn
+      :value: 'relu'
+
+
+
+   .. py:attribute:: edge_feat_dim
+
+
+   .. py:attribute:: ew_net_type
+      :value: 'r'
+
+
+
+   .. py:attribute:: hidden_dim
+
+
+   .. py:attribute:: hk_func
+
+
+   .. py:attribute:: hq_func
+
+
+   .. py:attribute:: hv_func
+
+
+   .. py:attribute:: input_dim
+
+
+   .. py:attribute:: n_heads
+
+
+   .. py:attribute:: out_fc
+      :value: True
+
+
+
+   .. py:attribute:: output_dim
+
+
+   .. py:attribute:: r_feat_dim
+
+
+.. py:class:: SAGPoolNet(in_dim: int, hidden_dim: int, ratio: float = 0.5)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Per-residue pooling of pocket atom features (``uni_transformer.py:274``).
+
+   LIVE, despite sitting next to a lot of dead code: it is what turns
+   ``(n_pocket_atoms, hidden_dim + 3)`` into one vector per residue for the
+   pocket head.
+
+   Built from ``torch_geometric``'s own ``GCNConv`` / ``SAGPooling`` rather
+   than a reimplementation, and the parameter names line up with the released
+   checkpoint (``conv1.lin.weight``, ``pool1.gnn.lin_rel.*``,
+   ``pool1.gnn.lin_root.weight``, ``lin.*``).
+
+   **One version-skew fixup.** PyG >= 2.4 factors ``SAGPooling``'s top-k
+   selection into a ``SelectTopK`` submodule carrying its own projection
+   ``select.weight`` of shape ``(1, 1)``; the PyG that trained the released
+   checkpoint had no such parameter and scored nodes with a plain
+   ``tanh(gnn(x))``. With ``in_channels == 1`` the new code computes
+   ``tanh(score * w / |w|) == tanh(score * sign(w))``, so **any positive
+   ``w`` reproduces the old behaviour exactly**. It is therefore pinned to
+   +1.0 here at construction, and ``scripts/convert_checkpoint.py`` supplies
+   the same value as a documented sidecar.
+
+
+   .. py:method:: forward(x, edge_index, batch)
+
+
+   .. py:attribute:: conv1
+
+
+   .. py:attribute:: lin
+
+
+   .. py:attribute:: pool1
+
+
+.. py:class:: UniTransformerO2TwoUpdateGeneral(num_blocks, num_layers, hidden_dim, n_heads=1, k=32, num_r_gaussian=50, edge_feat_dim=0, num_node_types=8, act_fn='relu', norm=True, cutoff_mode='radius', ew_net_type='r', num_init_x2h=1, num_init_h2x=0, num_x2h=1, num_h2x=1, r_max=10.0, x2h_out_fc=True, sync_twoup=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   The joint pocket+ligand SE(3) transformer (``uni_transformer.py:289``).
+
+
+   .. py:method:: forward(h_protein, h_ligand, protein_pos, ligand_pos, batch_protein, batch_ligand, protein_atom_to_aa_group, return_all=False, fix_x=False)
+
+
+   .. py:attribute:: act_fn
+      :value: 'relu'
+
+
+
+   .. py:attribute:: base_block
+
+
+   .. py:attribute:: cutoff_mode
+      :value: 'radius'
+
+
+
+   .. py:attribute:: distance_expansion
+
+
+   .. py:attribute:: edge_feat_dim
+      :value: 0
+
+
+
+   .. py:attribute:: ew_net_type
+      :value: 'r'
+
+
+
+   .. py:attribute:: hidden_dim
+
+
+   .. py:attribute:: init_h_emb_layer
+
+
+   .. py:attribute:: k
+      :value: 32
+
+
+
+   .. py:attribute:: n_heads
+      :value: 1
+
+
+
+   .. py:attribute:: norm
+      :value: True
+
+
+
+   .. py:attribute:: num_blocks
+
+
+   .. py:attribute:: num_h2x
+      :value: 1
+
+
+
+   .. py:attribute:: num_init_h2x
+      :value: 0
+
+
+
+   .. py:attribute:: num_init_x2h
+      :value: 1
+
+
+
+   .. py:attribute:: num_layers
+
+
+   .. py:attribute:: num_node_types
+      :value: 8
+
+
+
+   .. py:attribute:: num_r_gaussian
+      :value: 50
+
+
+
+   .. py:attribute:: num_x2h
+      :value: 1
+
+
+
+   .. py:attribute:: prot_sag_layer
+
+
+   .. py:attribute:: r_max
+      :value: 10.0
+
+
+
+   .. py:attribute:: sync_twoup
+      :value: False
+
+
+
+   .. py:attribute:: x2h_out_fc
+      :value: True
+
+
+

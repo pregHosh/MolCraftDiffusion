@@ -16,13 +16,13 @@ conditioning input beyond the atom count.
 
 | Task config | `task_type` | Model | Notes |
 | :--- | :--- | :--- | :--- |
-| `diffusion.yaml` | `diffusion` | EDM (E(n)-equivariant diffusion, EGCL backbone) | **Default.** Cartesian-space DDPM; the checkpoints on Hugging Face use this. |
-| `diffusion_egt.yaml` | `diffusion` | EGT (equivariant graph transformer) | Transformer backbone via `tasks_egt`. |
-| `diffusion_gfmdiff.yaml` | `diffusion` | GFMDiff | Geometric full-molecule diffusion (`tasks_gfmdiff`). |
-| `diffusion_painn.yaml` | `diffusion` | PaiNN (scalar+vector message passing) | OM-Diff's `EquivNet` backbone under the default EDM objective (`tasks_painn`). |
-| `diffusion_tabasco.yaml` | `diffusion_tabasco` | TABASCO | Flow matching; simplified, fast, tuned for physical quality. |
-| `diffusion_equifm.yaml` | `diffusion_equifm` | EquiFM (flow matching, EGNN backbone) | Hybrid transport: OT path for coordinates (**equivariant OT coupling** — Kabsch + linear-sum assignment), VP path for types/charges. GeoLDM EGNN; fixed-step RK4, so `num_steps` is honoured. Upstream released **sampling code only** — the training objective follows the paper's Alg. 1/3, not an official implementation. Converted QM9 checkpoint needs `discrete_path: HB_path`; `OT_path` for locally trained models. Bond-free, unconditional. |
-| `diffusion_flowmol.yaml` | `diffusion_flowmol` | FlowMol (SE(3)-equivariant GVP) | Flow matching for coordinates, atom types, and formal charges. **Bond-free variant only:** bonds are not modelled or generated; graph edges serve geometric message passing only. Needs the `[flowmol]` extra (DGL). |
+| `diffusion.yaml` | `diffusion` | EDM (E(n)-equivariant diffusion, EGCL backbone) | **Start here.** The default and best-tested path; the Hugging Face checkpoints for this repo use it. |
+| `diffusion_egt.yaml` | `diffusion` | EGT (equivariant graph transformer) | Same objective as the default, with a transformer backbone instead of message passing. |
+| `diffusion_gfmdiff.yaml` | `diffusion` | GFMDiff | Alternative de novo backbone; drop-in swap for the default. |
+| `diffusion_painn.yaml` | `diffusion` | PaiNN (scalar+vector message passing) | Same objective again, with the backbone from OM-Diff's organometallic work. |
+| `diffusion_tabasco.yaml` | `diffusion_tabasco` | TABASCO | Pick this when you care about **speed and clean geometry** — it is the simplified, physics-tuned option. |
+| `diffusion_equifm.yaml` | `diffusion_equifm` | EquiFM (flow matching, EGNN backbone) | Flow matching, so sampling honours `num_steps` and can go short. Caveat: upstream released sampling code only, so **training here follows the paper, not an official implementation** — treat locally trained results as unverified. The converted QM9 checkpoint needs `discrete_path: HB_path`. |
+| `diffusion_flowmol.yaml` | `diffusion_flowmol` | FlowMol (SE(3)-equivariant GVP) | Flow matching that also generates formal charges. Needs the `[flowmol]` extra (DGL). Bond-free variant only. |
 
 ## 2. Latent-space diffusion (two-stage)
 
@@ -31,25 +31,28 @@ Train an autoencoder first, then diffuse in its latent space. Each family needs
 
 | Family | Stage 1 — VAE | Stage 2 — diffusion | Notes |
 | :--- | :--- | :--- | :--- |
-| GeoLDM | `vae_geoldm.yaml` (`vae_geoldm`) | `diffusion_geoldm.yaml` (`diffusion_geoldm`) | Equivariant point-cloud autoencoder + latent DDPM. |
-| ADiT | `vae_transformer.yaml` (`vae_transformer`) or `vae_equiformer.yaml` (`vae_equiformer`) | `diffusion_adit.yaml` (`diffusion_adit`) | DiT denoiser over the latent. Two encoder choices: plain transformer or Equiformer. |
+| GeoLDM | `vae_geoldm.yaml` (`vae_geoldm`) | `diffusion_geoldm.yaml` (`diffusion_geoldm`) | The established latent option. Diffusing in latent space is cheaper per step than Cartesian EDM, at the cost of training two models. |
+| ADiT | `vae_transformer.yaml` (`vae_transformer`) or `vae_equiformer.yaml` (`vae_equiformer`) | `diffusion_adit.yaml` (`diffusion_adit`) | Transformer-scale latent diffusion; the encoder is your choice (plain transformer is cheaper, Equiformer is equivariant). Aimed at scaling up rather than small datasets. |
 
 ## 3. Conditional and structure-aware generation
 
 Generation steered by an external input — a shape, a pocket, a set of fragments,
 a pharmacophore. These need **paired** data (the condition alongside the
-molecule); a plain molecule dataset is not enough.
+molecule); a plain molecule dataset is not enough. The shape- and
+pocket-conditioned models all generate heavy atoms only, with no bonds —
+bonds are perceived afterwards.
 
 | Task config | `task_type` | Conditioned on | Notes |
 | :--- | :--- | :--- | :--- |
-| `diffusion_diffsmol.yaml` | `diffusion_diffsmol` | Molecular **shape** | DiffSMol (UniTransformerO2 GVP). DDPM on coordinates + D3PM on atom types, conditioned on an equivariant `(128,3)` surface-shape latent with classifier-free guidance. Bond-free, heavy atoms only. Needs an offline shape cache (`[shape]` extra). |
-| `diffusion_diffsbdd.yaml` | `diffusion_diffsbdd` | **Protein pocket** | DiffSBDD (flat-scatter EGNN). The reference **SBDD** backbone: E(3)-equivariant DDPM on coordinates + 10-class element one-hot; bond-free, heavy atoms only. Two modes: `pocket_conditioning` (pocket as clean context, **recommended**) and `joint` (ligand+pocket diffused together — use `diffusion_diffsbdd_joint_moad.yaml`, the CrossDocked joint weights are defective upstream). Both support RePaint `inpaint()` for scaffold hopping (`src/MolecularDiffusion/configs/interference/gen_diffsbdd_inpaint.yaml`). Ligand size from a pocket-conditioned 2D histogram. Generation via `DiffSBDDPocketGenerator` (`gen_diffsbdd_pocket.yaml`), not `GenerativeFactory`. The modes share state-dict keys, so a `mode_id` buffer raises on a mismatched checkpoint. |
-| `diffusion_diffpharma.yaml` | `diffusion_diffpharma` | **Protein pocket** + pharmacophore particles | DiffPharma (EGNN over 3 parallel interaction graphs). **SBDD**: generates a ligand *inside a given pocket*. Four node sets (ligand, full-atom pocket, `interh`, `interhp`) but **only the ligand is noised**, so a ligand-only dataset cannot train it. Ligand size from a pocket-size-conditioned 2D histogram. Bond-free. Novel pockets from raw PDB+SDF need the `[bio]` extra. |
-| `diffusion_pmdm.yaml` | `diffusion_pmdm` | **Protein pocket** | PMDM (dual EGNN + SchNet encoders, ligand↔pocket cross-attention). **SBDD**, like DiffPharma but pocket-only: ligand + full-atom pocket, **only the ligand is noised**, so a ligand-only dataset cannot train it. DDPM (sigmoid schedule, T=1000) on coordinates + atom types, with a global (6 Å) and a local (3 Å) branch over the joined cloud. Bond-free — real bonds are discarded before the model sees them. Generation via `PMDMPocketGenerator` (`gen_pmdm_pocket.yaml`), not `GenerativeFactory`, since `sample()` has no channel for "which pocket". No inpainting/linker sampling. |
-| `diffusion_kgdiff.yaml` | `diffusion_kgdiff` | **Protein pocket** | KGDiff (SE(3)-equivariant attention transformer, kNN-32 graph). **SBDD**: ligand + full-atom 10 Å pocket, only the ligand noised. DDPM on coordinates + D3PM on a 13-class `(element, is_aromatic)` vocabulary; centred on the **pocket centroid, not zero-CoM**. Bond-free. Distinguishing feature: a per-atom affinity head trained alongside the denoiser acts as **its own classifier guide** (`guide_mode: joint`), so one checkpoint denoises *and* steers towards higher predicted affinity (`wo` = unguided ablation). Ligand size from a static pocket-extent table, so the prior needs no training data. **Also runs [TargetDiff](https://arxiv.org/abs/2303.03543)** — same backbone: set `use_classifier_guide=false`, sample with `guide_mode=wo`. Generation via `KGDiffPocketGenerator` (`gen_kgdiff_pocket.yaml`), not `GenerativeFactory`. |
-| `diffusion_ipdiff.yaml` | `diffusion_ipdiff` | **Protein pocket** | IPDiff. Same TargetDiff lineage as KGDiff (identical backbone, data pipeline, vocabulary, objective) but conditions on a **frozen pretrained interaction prior (IPNet)** instead of gradient guidance. IPNet's 128-d per-atom features are concatenated into the token embeddings (*prior conditioning*) and drive a learned shift `k_t·f(h_bap, t)` added to **both the forward noising and the reverse posterior** (*prior shifting*), so conditioning is baked into training rather than applied at sampling; `h_bap` is recomputed from the predicted x0 each reverse step. No classifier, CFG, or property head. IPNet weights ship with the model and are **mandatory** (`net_cond_ckpt`). Bond-free. Generation via `IPDiffPocketGenerator` (`gen_ipdiff_pocket.yaml`). The released checkpoint is carbon-saturated (93% C versus 64% in reference ligands). |
-| `diffusion_difflinker.yaml` | `diffusion_difflinker` | **Fragments** to join | DiffLinker. Linker design: generates the connecting atoms between held-fixed fragments. |
-| `pharmacophore.yaml` | `diffusion_pharmacophore` | **Pharmacophore** points | Ligand-derived pharmacophore conditioning (no protein). Requires `open3d`. |
+| `diffusion_diffsmol.yaml` | `diffusion_diffsmol` | Molecular **shape** | For **shape-matching / bioisostere** work: give it a reference molecule's surface, get different chemistry with the same shape. No protein needed. Requires an offline shape cache (`[shape]` extra). |
+| `diffusion_diffsbdd.yaml` | `diffusion_diffsbdd` | **Protein pocket** | The **reference SBDD choice** — best documented, most flexible. Use the recommended `pocket_conditioning` mode; the `joint` mode needs `diffusion_diffsbdd_joint_moad.yaml`, since the CrossDocked joint weights are defective upstream. Uniquely here, it also does **scaffold hopping** by inpainting part of a known ligand (`gen_diffsbdd_inpaint.yaml`). |
+| `diffusion_diffpharma.yaml` | `diffusion_diffpharma` | **Protein pocket** + pharmacophore particles | SBDD for when you know the **interaction pattern** you want, not just the pocket. Needs pocket-paired training data; a ligand-only dataset cannot train it. Novel pockets from raw PDB+SDF need the `[bio]` extra. |
+| `diffusion_pmdm.yaml` | `diffusion_pmdm` | **Protein pocket** | Plain pocket-conditioned SBDD with a dual short/long-range design. Also targets **lead optimisation**. Needs pocket-paired data. No scaffold hopping or linker sampling. |
+| `diffusion_kgdiff.yaml` | `diffusion_kgdiff` | **Protein pocket** | Choose this when you want samples **steered towards predicted binding affinity** — its affinity head guides its own sampling, no second model to train. The same config **also runs [TargetDiff](https://arxiv.org/abs/2303.03543)** (`use_classifier_guide=false`, `guide_mode=wo`), so it doubles as the unguided baseline. |
+| `diffusion_ipdiff.yaml` | `diffusion_ipdiff` | **Protein pocket** | Like KGDiff's lineage, but binding awareness is **baked into training** via a frozen interaction prior rather than applied at sampling. Prior weights ship with it and are mandatory. Caveat before you trust it: the released checkpoint is carbon-saturated (93% C against 64% in real ligands). |
+| `diffusion_apo2mol.yaml` | `diffusion_apo2mol` | **Apo protein pocket** | The one for **flexible receptors**: condition on an **apo** (ligand-free) structure — what you actually have when there is no known binder — and it generates the ligand *and* the pocket's induced-fit conformation together. All the others assume a fixed, ligand-shaped pocket. Needs apo/holo **paired** training data. Generated pockets are written as `.pdb` sidecars next to the ligands; the pocket only moves on a few reverse steps, so keep `num_steps` at ~200 or above. |
+| `diffusion_difflinker.yaml` | `diffusion_difflinker` | **Fragments** to join | **Linker design / fragment growing**: hold fragments fixed, generate the atoms connecting them. |
+| `pharmacophore.yaml` | `diffusion_pharmacophore` | **Pharmacophore** points | Ligand-based design when you have a pharmacophore hypothesis but **no protein structure**. Requires `open3d`. |
 
 ## 4. Transition-metal complex generation
 
@@ -61,8 +64,8 @@ per-atom conditioning columns.
 
 | Task config | `task_type` | Regenerates | Notes |
 | :--- | :--- | :--- | :--- |
-| `diffusion_ligandiff.yaml` | `diffusion_ligandiff` | Exactly **one** ligand per run | LigandDiff (GVP dynamics, EDM). T=500 Cartesian DDPM, heavy atoms only. The slot to fill is given, so the complex keeps its ligand count and denticities. Generating from the released weights needs `diffusion_noise_schedule: learned`. |
-| `diffusion_ligandiff_multi.yaml` | `diffusion_ligandiff_multi` | **Any subset**, one ligand up to the whole coordination sphere | multi-LigandDiff, same backbone. Retain *k* ligands and regenerate the rest; retain none and it builds a complete complex around a bare metal. It also picks how the vacant sites are partitioned — so it chooses the **number of new ligands and their denticities**, not just their atoms. Weights are trained on Cr–Zn only. |
+| `diffusion_ligandiff.yaml` | `diffusion_ligandiff` | Exactly **one** ligand per run | Swap a single ligand for new chemistry while the rest of the complex stays put — the coordination geometry is preserved, since the slot to fill is given. Generating from the released weights needs `diffusion_noise_schedule: learned`. |
+| `diffusion_ligandiff_multi.yaml` | `diffusion_ligandiff_multi` | **Any subset**, one ligand up to the whole coordination sphere | The broader option: retain *k* ligands and regenerate the rest, or retain none and build a complex from a bare metal. It also decides the **number of new ligands and their denticities**, so use it when the coordination sphere itself is up for redesign. Released weights cover Cr–Zn only. |
 
 ## 5. Property prediction and guidance
 
@@ -144,6 +147,11 @@ Backbones and objectives integrated here are based on the following work.
   *Protein-Ligand Interaction Prior for Binding-aware 3D Molecule Diffusion
   Models.* ICLR 2024.
   [openreview:qH9nrMNTIW](https://openreview.net/forum?id=qH9nrMNTIW)
+- **Apo2Mol** — Zheng, Jiang, Seabra, Li & Li. *Apo2Mol: 3D molecule generation
+  via dynamic pocket-aware diffusion models.* AAAI 2026, 40(2), 1614–1622.
+  [arXiv:2511.14559](https://arxiv.org/abs/2511.14559) — built on the
+  **TargetDiff** backbone (above); its PMINet prior follows **IPDiff**'s
+  prior-conditioning idea with a different network.
 - **LigandDiff** — Jin & Merz. *LigandDiff: de Novo Ligand Design for 3D
   Transition Metal Complexes with Diffusion Models.* Journal of Chemical Theory
   and Computation 20(10), 4377–4384, 2024.
