@@ -47,10 +47,11 @@ bonds are perceived afterwards.
 | `diffusion_diffsmol.yaml` | `diffusion_diffsmol` | Molecular **shape** | For **shape-matching / bioisostere** work: give it a reference molecule's surface, get different chemistry with the same shape. No protein needed. Requires an offline shape cache (`[shape]` extra). |
 | `diffusion_diffsbdd.yaml` | `diffusion_diffsbdd` | **Protein pocket** | The **reference SBDD choice** — best documented, most flexible. Use the recommended `pocket_conditioning` mode; the `joint` mode needs `diffusion_diffsbdd_joint_moad.yaml`, since the CrossDocked joint weights are defective upstream. Uniquely here, it also does **scaffold hopping** by inpainting part of a known ligand (`gen_diffsbdd_inpaint.yaml`). |
 | `diffusion_diffpharma.yaml` | `diffusion_diffpharma` | **Protein pocket** + pharmacophore particles | SBDD for when you know the **interaction pattern** you want, not just the pocket. Needs pocket-paired training data; a ligand-only dataset cannot train it. Novel pockets from raw PDB+SDF need the `[bio]` extra. |
+| `diffusion_diffint.yaml` | `diffusion_diffint` | **Protein pocket** + hydrogen-bond interaction particles | SBDD steered by an **explicit H-bond pattern**: two pseudo-atoms per detected donor–acceptor pair are added to the pocket, so generation is biased towards reproducing that interaction geometry. Unlike every other pocket model here, sampling **requires a reference ligand pose** — the H-bonds are protein↔ligand, so a bare pocket is not enough. The pocket is CA-only (one node per residue). Needs pocket-paired training data and the `[bio]` extra. |
 | `diffusion_pmdm.yaml` | `diffusion_pmdm` | **Protein pocket** | Plain pocket-conditioned SBDD with a dual short/long-range design. Also targets **lead optimisation**. Needs pocket-paired data. No scaffold hopping or linker sampling. |
 | `diffusion_kgdiff.yaml` | `diffusion_kgdiff` | **Protein pocket** | Choose this when you want samples **steered towards predicted binding affinity** — its affinity head guides its own sampling, no second model to train. The same config **also runs [TargetDiff](https://arxiv.org/abs/2303.03543)** (`use_classifier_guide=false`, `guide_mode=wo`), so it doubles as the unguided baseline. |
 | `diffusion_ipdiff.yaml` | `diffusion_ipdiff` | **Protein pocket** | Like KGDiff's lineage, but binding awareness is **baked into training** via a frozen interaction prior rather than applied at sampling. Prior weights ship with it and are mandatory. Caveat before you trust it: the released checkpoint is carbon-saturated (93% C against 64% in real ligands). |
-| `diffusion_apo2mol.yaml` | `diffusion_apo2mol` | **Apo protein pocket** | The one for **flexible receptors**: condition on an **apo** (ligand-free) structure — what you actually have when there is no known binder — and it generates the ligand *and* the pocket's induced-fit conformation together. All the others assume a fixed, ligand-shaped pocket. Needs apo/holo **paired** training data. Generated pockets are written as `.pdb` sidecars next to the ligands; the pocket only moves on a few reverse steps, so keep `num_steps` at ~200 or above. |
+| `diffusion_apo2mol.yaml` | `diffusion_apo2mol` | **Apo protein pocket** | The one for **flexible receptors**: condition on an **apo** (ligand-free) structure — what you actually have when there is no known binder — and it generates the ligand *and* the pocket's induced-fit conformation together. All the others assume a fixed, ligand-shaped pocket. Needs apo/holo **paired** training data. Generated pockets are written as `.pdb` sidecars next to the ligands. **Sample with the full schedule** (leave `num_steps` unset): unlike the flow-matching models, truncating it degrades the chemistry badly — 205 of 1000 steps returns near-random elements. |
 | `diffusion_difflinker.yaml` | `diffusion_difflinker` | **Fragments** to join | **Linker design / fragment growing**: hold fragments fixed, generate the atoms connecting them. |
 | `pharmacophore.yaml` | `diffusion_pharmacophore` | **Pharmacophore** points | Ligand-based design when you have a pharmacophore hypothesis but **no protein structure**. Requires `open3d`. |
 
@@ -132,6 +133,13 @@ Backbones and objectives integrated here are based on the following work.
 - **DiffPharma** — Sekijima Lab (Institute of Science Tokyo). ChemRxiv preprint,
   2025. [chemrxiv.org/…/684c1f943ba0887c3310534d](https://chemrxiv.org/engage/chemrxiv/article-details/684c1f943ba0887c3310534d) —
   a pharmacophore-conditioned extension of **DiffSBDD** (above).
+- **DiffInt** — Sako, Yasuo & Sekijima. *DiffInt: A Diffusion Model for
+  Structure-Based Drug Design with Explicit Hydrogen Bond Interaction Guidance.*
+  Journal of Chemical Information and Modeling 65(1), 71–82, 2025.
+  [doi:10.1021/acs.jcim.4c01385](https://doi.org/10.1021/acs.jcim.4c01385) —
+  like **DiffPharma** (above), from the Sekijima Lab and built on **DiffSBDD**;
+  the network is DiffSBDD's unchanged, the contribution is the added
+  interaction particles.
 - **PMDM** — Huang, Yang, Zhou, Zhang, Chen, Zhang, Wang & Tang. *A dual
   diffusion model enables 3D molecule generation and lead optimization based on
   target pocket.* Nature Communications 2024.

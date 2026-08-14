@@ -1,0 +1,196 @@
+MolecularDiffusion.data.component.diffint_data
+==============================================
+
+.. py:module:: MolecularDiffusion.data.component.diffint_data
+
+.. autoapi-nested-parse::
+
+   Dataset / collate / DataModule for DiffInt ligand-pocket complexes.
+
+   DiffInt is DiffSBDD with a CA pocket that has been extended by H-bond
+   pseudo-atoms (see ``diffint_prep``). The ligand side is byte-for-byte
+   DiffSBDD's -- same 10-class element vocabulary, hydrogens stripped -- so
+   ``one_hot_from_z`` is imported from ``diffsbdd_data`` rather than copied.
+   Only the pocket differs: 22 classes (20 amino acids + ``DD`` + ``AC``)
+   instead of 10 elements.
+
+   Selected via ``_target_`` from ``configs/data/diffint_dataset.yaml``, through
+   the same seams ``diffsbdd_data.py`` uses (``cli/train.py`` -> ``.load()`` /
+   ``.train_set`` / ``.collate_fn``, then ``data/lightning_data_module.py``'s
+   ``collate_fn or graph_collate``).
+
+   Storage: one ASE db row per complex, written by
+   ``docs/model_integrations/diffint/scripts/convert_dataset.py``.
+
+       Atoms            -> ligand only (positions + raw element Z)
+       key_value_pairs  -> name, n_lig, n_residues, n_particles
+       data             -> pocket_coords  (residues THEN particles, N_p x 3)
+                           pocket_class   (int 0..21)
+
+   ``pocket_class`` is a raw integer, not a one-hot, so the vocabulary lives in
+   this module and can change without reconverting.
+
+   ## ``num_pocket_nodes`` excludes the particles -- deliberately
+
+   ``pocket_mask`` spans every pocket node (residues *and* particles), because
+   all of them condition the EGNN. ``num_pocket_nodes`` counts residues only,
+   reproducing ``dataset.py:65``'s ``num_pocket_nodes -= num_inter_nodes``. That
+   number feeds nothing but the ``log_pN`` term and the size prior
+   (``en_diffusion.py:1111``), and the released checkpoint's (107, 113)
+   histogram is on the residue scale -- counting particles there would
+   mis-score every sample.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.diffint_data.DiffIntDataModule
+   MolecularDiffusion.data.component.diffint_data.DiffIntDataset
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.diffint_data.diffint_collate
+   MolecularDiffusion.data.component.diffint_data.make_item
+
+
+Module Contents
+---------------
+
+.. py:class:: DiffIntDataModule(root: str, train_file: str = 'diffint_smoke.db', val_file: Optional[str] = None, test_file: Optional[str] = None, batch_size: int = 4, num_workers: int = 0, limit: Optional[int] = None, center: bool = True, atom_vocab: Optional[List[str]] = None, task_type: str = 'diffusion_diffint', **kwargs: Any)
+
+   DataModule contract: ``load()`` + ``train_set``/``valid_set``/``test_set``.
+
+   # ponytail: one db, no split -- ``val_file``/``test_file`` default to the
+   # training db, exactly as DiffSBDDDataModule. Add a real split when a full
+   # CrossDocked run needs one.
+
+
+   .. py:method:: load() -> None
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: batch_size
+      :value: 4
+
+
+
+   .. py:attribute:: center
+      :value: True
+
+
+
+   .. py:attribute:: collate_fn
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: limit
+      :value: None
+
+
+
+   .. py:attribute:: num_workers
+      :value: 0
+
+
+
+   .. py:attribute:: root
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_diffint'
+
+
+
+   .. py:attribute:: test_file
+      :value: 'diffint_smoke.db'
+
+
+
+   .. py:attribute:: test_set
+      :type:  Optional[DiffIntDataset]
+      :value: None
+
+
+
+   .. py:attribute:: train_file
+      :value: 'diffint_smoke.db'
+
+
+
+   .. py:attribute:: train_set
+      :type:  Optional[DiffIntDataset]
+      :value: None
+
+
+
+   .. py:attribute:: val_file
+      :value: 'diffint_smoke.db'
+
+
+
+   .. py:attribute:: valid_set
+      :type:  Optional[DiffIntDataset]
+      :value: None
+
+
+
+.. py:class:: DiffIntDataset(db_path: str, limit: Optional[int] = None, center: bool = True)
+
+   Bases: :py:obj:`torch.utils.data.Dataset`
+
+
+   One converted ASE db -> one ligand-pocket complex per index.
+
+   # ponytail: rows are read eagerly into RAM, like DiffSBDDDataset. 100
+   # complexes here; stream by row id in __getitem__ if a full CrossDocked
+   # split ever needs it.
+
+
+   .. py:attribute:: center
+      :value: True
+
+
+
+   .. py:attribute:: db_path
+
+
+   .. py:attribute:: entries
+      :type:  List[Dict[str, Any]]
+      :value: []
+
+
+
+.. py:function:: diffint_collate(batch: List[Dict[str, Any]]) -> Dict[str, Any]
+
+   Concatenate complexes; emit DiffSBDD's own argument names.
+
+   Identical to ``diffsbdd_collate`` except that ``num_pocket_nodes`` is the
+   residue count while ``pocket_mask`` spans the particles too.
+
+
+.. py:function:: make_item(name: str, lig_coords: numpy.ndarray, lig_z: numpy.ndarray, pocket_coords: numpy.ndarray, pocket_class: numpy.ndarray, center: bool = True) -> Dict[str, Any]
+
+   Raw per-complex arrays -> the tensor dict the task consumes.
+
+   Shared by the db path and the on-the-fly ``pocket_pdb`` path so the two
+   cannot drift. Hydrogens are stripped from the ligand (upstream trains
+   with ``--no_H``); the CA pocket has none by construction.
+
+   ``center`` joint-centres ligand + pocket on their combined centroid, as
+   upstream's ``ProcessedLigandPocketDataset`` does (``dataset.py:53-61``).
+   The particles count towards that centroid: upstream centres the
+   already-augmented ``pocket_coords`` array, and the centring happens
+   before the ``num_pocket_nodes`` correction on the next line.
+
+

@@ -1,0 +1,113 @@
+MolecularDiffusion.modules.tasks.diffusion_diffint
+==================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_diffint
+
+.. autoapi-nested-parse::
+
+   DiffInt task: DiffSBDD conditioned on explicit H-bond interaction nodes.
+
+   **No new model code.** DiffInt's ``equivariant_diffusion/*`` is functionally
+   identical to the already-ported ``modules/models/diffsbdd/``; the paper's
+   contribution is entirely data-level (two H-bond pseudo-atoms per protein-
+   ligand hydrogen bond, appended to the *pocket* node set with two extra
+   one-hot channels, widening ``residue_nf`` 20 -> 22). The pseudo-atoms are
+   conditioning and are never diffused, so :class:`DiffSBDDTask` runs them
+   unmodified.
+
+   What this module adds is therefore two one-method overrides plus a generator:
+
+   * :class:`ModelTaskFactory` -- ``diffusion_diffsbdd.ModelTaskFactory`` with a
+     different :meth:`_size_histogram`. Upstream keys the size prior on the
+     **residue** count, excluding the particles (``dataset.py:65``), and the
+     released checkpoint's (107, 113) histogram is on that scale; keying it on
+     ``len(pocket_coords)`` would mis-score every sample's ``log_pN``.
+   * :class:`DiffIntPocketGenerator` -- ``DiffSBDDPocketGenerator`` reading
+     :class:`DiffIntDataset` rows, plus the novel-PDB path (``pocket_pdb`` +
+     ``ref_sdf``), and passing the residue count as ``num_pocket_nodes``.
+
+   The task class itself is :class:`DiffSBDDTask`, reused verbatim: it already
+   reads ``pocket["size"]`` from ``num_pocket_nodes`` while ``pocket["mask"]``
+   spans every pocket node, which is exactly the residues/particles split
+   DiffInt needs.
+
+   Out of scope this pass (see the integration plan): the auxiliary interaction
+   loss (``loss_inter_xh`` / ``loss_inter_2`` -- commented out in the release and
+   never active for the shipped checkpoint), ``joint`` mode (DiffInt ships only
+   ``pocket_conditioning`` weights and its forked ``inpaint()`` lost the
+   ``pocket_fixed`` argument ``lightning_modules.py:967`` still passes),
+   inpainting, trajectories and virtual nodes.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator
+   MolecularDiffusion.modules.tasks.diffusion_diffint.ModelTaskFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: DiffIntPocketGenerator(task, pocket_db: Optional[str] = None, pocket_index: int = 0, pocket_pdb: Optional[str] = None, ref_sdf: Optional[str] = None, dist_cutoff: float = 8.0, output_path: str = 'generated_diffint', **kwargs: Any)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator`
+
+
+   Pocket-conditioned generation behind ``interference/gen_diffint_pocket``.
+
+   Two mutually exclusive pocket sources:
+
+   * ``pocket_db`` + ``pocket_index`` -- a row of a converted ASE db
+     (``scripts/convert_dataset.py``), read with ``center=False`` so samples
+     come back in that pocket's own frame.
+   * ``pocket_pdb`` + ``ref_sdf`` -- a novel protein + reference ligand pose,
+     preprocessed on the fly by
+     ``data.component.diffint_prep.complex_from_files``. The SDF is
+     required, not optional: it is both the 8 A pocket-selection reference
+     and the ligand ODDT detects the H-bonds against, since hydrogen bonds
+     are protein<->ligand.
+
+   **Do not "simplify" the novel-PDB path back onto upstream's
+   ``generate_ligands()``**: ``lightning_modules.py:852-890`` zero-pads the
+   20-class CA one-hot to 22 and never appends the particles, so the
+   ``DD``/``AC`` columns stay all-zero and the model silently degrades to
+   plain DiffSBDD with no error. This follows ``test_single.py:157-192``
+   instead.
+
+
+   .. py:attribute:: dist_cutoff
+      :value: 8.0
+
+
+
+   .. py:attribute:: pocket_db
+      :value: None
+
+
+
+   .. py:attribute:: pocket_pdb
+      :value: None
+
+
+
+   .. py:attribute:: ref_sdf
+      :value: None
+
+
+
+.. py:class:: ModelTaskFactory(task_type: str = 'diffusion_diffint', residue_nf: int = NUM_POCKET_CLASSES, max_n_pocket: int = 113, **kwargs: Any)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.diffusion_diffsbdd.ModelTaskFactory`
+
+
+   Hydra entry point for ``configs/tasks/diffusion_diffint.yaml``.
+
+   Everything -- ``build()``, the EGNN/diffusion kwargs, the ``train_set``
+   injection seam -- is inherited. Only the size histogram's pocket axis
+   changes; see the module docstring.
+
+

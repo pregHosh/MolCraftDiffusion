@@ -1,0 +1,135 @@
+MolecularDiffusion.data.component.diffint_prep
+==============================================
+
+.. py:module:: MolecularDiffusion.data.component.diffint_prep
+
+.. autoapi-nested-parse::
+
+   Build a DiffInt complex from a raw protein PDB + reference ligand SDF.
+
+   DiffInt is DiffSBDD with a **CA pocket** whose node set is extended by
+   H-bond pseudo-atoms: two per detected protein-ligand hydrogen bond, placed
+   at 1/3 and 2/3 along the donor-acceptor vector, carrying two extra one-hot
+   channels (``DD`` = 20, ``AC`` = 21) on top of the 20 amino-acid classes.
+   They are *conditioning* -- appended to the pocket, never diffused.
+
+   This module is the single implementation of that construction. Both the
+   offline converter (``docs/model_integrations/diffint/scripts/
+   convert_dataset.py``) and the on-the-fly generation path
+   (``DiffIntPocketGenerator`` with ``pocket_pdb`` + ``ref_sdf``) call
+   :func:`complex_from_files`, so the two can never drift apart.
+
+   ## Ported from ``test_single.py``, NOT from ``lightning_modules.py``
+
+   Upstream ships two novel-PDB paths and only one of them is correct:
+
+   * ``lightning_modules.py:852-890`` (``generate_ligands`` / ``prepare_pocket``)
+     builds the 22-wide one-hot by zero-padding the 20-class CA encoding and
+     then **never adds the particles**. Every ``DD``/``AC`` column stays zero, so
+     the model silently degrades to plain DiffSBDD -- the paper's entire
+     contribution is switched off, with no error.
+   * ``test_single.py:141-192`` (``process_data`` + ``process_data_h``) rebuilds
+     the augmented pocket properly via ``hbond_double.hbond_create``. That is
+     what is ported here.
+
+   ## Two upstream data bugs are fixed rather than reproduced
+
+   * ``hbond_double.py:41-43`` appends a dummy empty row to ``int_id`` when a
+     complex has zero H-bonds, which produces a ragged array. ``int_id`` is only
+     consumed by the auxiliary interaction loss, which is out of scope (it is
+     commented out in the release and the shipped checkpoint was trained without
+     it), so it is simply not built here.
+   * ``process_crossdock.process_ligand_and_pocket`` derives ``lig_coords`` from
+     every atom but ``lig_one_hot`` from a filtered atom list, and its H filter
+     (``a.element != 'H'``) hits an attribute RDKit's ``Atom`` does not have.
+     Both only matter for SDFs carrying explicit hydrogens; here hydrogens are
+     stripped from the molecule up front, which is what upstream's
+     ``--no_H`` preprocessing achieved anyway.
+
+   Heavy dependencies (Biopython, ODDT/OpenBabel, RDKit) are imported inside the
+   functions and gated by ``optional.require_modules``, so importing this module
+   never fails on a bare install.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.diffint_prep.CLASS_AC
+   MolecularDiffusion.data.component.diffint_prep.CLASS_DD
+   MolecularDiffusion.data.component.diffint_prep.DIFFINT_POCKET_VOCAB
+   MolecularDiffusion.data.component.diffint_prep.NUM_POCKET_CLASSES
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.diffint_prep.ca_pocket
+   MolecularDiffusion.data.component.diffint_prep.complex_from_files
+   MolecularDiffusion.data.component.diffint_prep.hbond_particles
+
+
+Module Contents
+---------------
+
+.. py:function:: ca_pocket(pdbfile: str, lig_coords: numpy.ndarray, dist_cutoff: float = 8.0)
+
+   One node per CA of every standard residue within ``dist_cutoff``.
+
+   Port of ``process_crossdock.process_ligand_and_pocket``'s ``ca_only=True``
+   branch (``process_crossdock.py:65-80``). Returns
+   ``(coords (N, 3) float32, classes (N,) int64 in 0..19)``.
+
+
+.. py:function:: complex_from_files(pdb_file: str, sdf_file: str, dist_cutoff: float = 8.0) -> Dict[str, Any]
+
+   PDB + reference SDF -> the raw arrays one converted db row holds.
+
+   "Novel pocket" means "novel protein + a reference ligand pose": the SDF is
+   both the 8 A pocket-selection reference and the ligand ODDT detects the
+   H-bonds against. That is upstream's own framing (``test_single.py``) and
+   is unavoidable -- the interactions are protein<->ligand.
+
+   Pocket nodes come back **residues first, then particles**, which is the
+   order ``num_pocket_nodes`` (residues only) assumes.
+
+
+.. py:function:: hbond_particles(protein, ligand) -> Tuple[numpy.ndarray, numpy.ndarray]
+
+   2 pseudo-nodes per H-bond, at 1/3 and 2/3 along it.
+
+   Port of ``hbond_double.py:8-43``. Returns
+   ``(coords (2K, 3) float32, classes (2K,) int64 in {20, 21})``, with the
+   two particles of a bond adjacent, the ``hbond_acceptor_donor(protein,
+   ligand)`` block first.
+
+   ``data/component/diffpharma_prep.py:hbond_particles`` runs the *same*
+   ODDT detection but emits DiffPharma's geometry (3 particles at 1/4, 1/2,
+   3/4 with a 3-class vocabulary), which is not interchangeable with
+   DiffInt's -- different node count, different one-hot width, different
+   checkpoint. What is genuinely shared (the ``np.in1d`` shim, the
+   ``protein.protein = True`` / ``ligand.removeh()`` preconditions) is
+   reproduced above rather than imported for a side effect.
+
+
+.. py:data:: CLASS_AC
+   :value: 21
+
+
+.. py:data:: CLASS_DD
+   :value: 20
+
+
+.. py:data:: DIFFINT_POCKET_VOCAB
+   :type:  List[str]
+   :value: ['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W',...
+
+
+.. py:data:: NUM_POCKET_CLASSES
+   :value: 22
+
+

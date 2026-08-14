@@ -287,6 +287,8 @@
 <li class="toctree-l4 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/index.html">MolecularDiffusion.data.component</a><input aria-label="Toggle navigation of MolecularDiffusion.data.component" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/apo2mol_data/index.html">MolecularDiffusion.data.component.apo2mol_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/dataset/index.html">MolecularDiffusion.data.component.dataset</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/diffint_data/index.html">MolecularDiffusion.data.component.diffint_data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/diffint_prep/index.html">MolecularDiffusion.data.component.diffint_prep</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/diffpharma_data/index.html">MolecularDiffusion.data.component.diffpharma_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/diffpharma_prep/index.html">MolecularDiffusion.data.component.diffpharma_prep</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/diffsbdd_data/index.html">MolecularDiffusion.data.component.diffsbdd_data</a></li>
@@ -563,32 +565,37 @@ bonds are perceived afterwards.</p>
 <td class="text-left"><p><strong>Protein pocket</strong> + pharmacophore particles</p></td>
 <td class="text-left"><p>SBDD for when you know the <strong>interaction pattern</strong> you want, not just the pocket. Needs pocket-paired training data; a ligand-only dataset cannot train it. Novel pockets from raw PDB+SDF need the <code class="docutils literal notranslate"><span class="pre">[bio]</span></code> extra.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_pmdm.yaml</span></code></p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffint.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffint</span></code></p></td>
+<td class="text-left"><p><strong>Protein pocket</strong> + hydrogen-bond interaction particles</p></td>
+<td class="text-left"><p>SBDD steered by an <strong>explicit H-bond pattern</strong>: two pseudo-atoms per detected donor–acceptor pair are added to the pocket, so generation is biased towards reproducing that interaction geometry. Unlike every other pocket model here, sampling <strong>requires a reference ligand pose</strong> — the H-bonds are protein↔ligand, so a bare pocket is not enough. The pocket is CA-only (one node per residue). Needs pocket-paired training data and the <code class="docutils literal notranslate"><span class="pre">[bio]</span></code> extra.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_pmdm.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_pmdm</span></code></p></td>
 <td class="text-left"><p><strong>Protein pocket</strong></p></td>
 <td class="text-left"><p>Plain pocket-conditioned SBDD with a dual short/long-range design. Also targets <strong>lead optimisation</strong>. Needs pocket-paired data. No scaffold hopping or linker sampling.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_kgdiff.yaml</span></code></p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_kgdiff.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_kgdiff</span></code></p></td>
 <td class="text-left"><p><strong>Protein pocket</strong></p></td>
 <td class="text-left"><p>Choose this when you want samples <strong>steered towards predicted binding affinity</strong> — its affinity head guides its own sampling, no second model to train. The same config <strong>also runs <a class="reference external" href="https://arxiv.org/abs/2303.03543">TargetDiff</a></strong> (<code class="docutils literal notranslate"><span class="pre">use_classifier_guide=false</span></code>, <code class="docutils literal notranslate"><span class="pre">guide_mode=wo</span></code>), so it doubles as the unguided baseline.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_ipdiff.yaml</span></code></p></td>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_ipdiff.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_ipdiff</span></code></p></td>
 <td class="text-left"><p><strong>Protein pocket</strong></p></td>
 <td class="text-left"><p>Like KGDiff’s lineage, but binding awareness is <strong>baked into training</strong> via a frozen interaction prior rather than applied at sampling. Prior weights ship with it and are mandatory. Caveat before you trust it: the released checkpoint is carbon-saturated (93% C against 64% in real ligands).</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_apo2mol.yaml</span></code></p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_apo2mol.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_apo2mol</span></code></p></td>
 <td class="text-left"><p><strong>Apo protein pocket</strong></p></td>
-<td class="text-left"><p>The one for <strong>flexible receptors</strong>: condition on an <strong>apo</strong> (ligand-free) structure — what you actually have when there is no known binder — and it generates the ligand <em>and</em> the pocket’s induced-fit conformation together. All the others assume a fixed, ligand-shaped pocket. Needs apo/holo <strong>paired</strong> training data. Generated pockets are written as <code class="docutils literal notranslate"><span class="pre">.pdb</span></code> sidecars next to the ligands; the pocket only moves on a few reverse steps, so keep <code class="docutils literal notranslate"><span class="pre">num_steps</span></code> at ~200 or above.</p></td>
+<td class="text-left"><p>The one for <strong>flexible receptors</strong>: condition on an <strong>apo</strong> (ligand-free) structure — what you actually have when there is no known binder — and it generates the ligand <em>and</em> the pocket’s induced-fit conformation together. All the others assume a fixed, ligand-shaped pocket. Needs apo/holo <strong>paired</strong> training data. Generated pockets are written as <code class="docutils literal notranslate"><span class="pre">.pdb</span></code> sidecars next to the ligands. <strong>Sample with the full schedule</strong> (leave <code class="docutils literal notranslate"><span class="pre">num_steps</span></code> unset): unlike the flow-matching models, truncating it degrades the chemistry badly — 205 of 1000 steps returns near-random elements.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_difflinker.yaml</span></code></p></td>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_difflinker.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_difflinker</span></code></p></td>
 <td class="text-left"><p><strong>Fragments</strong> to join</p></td>
 <td class="text-left"><p><strong>Linker design / fragment growing</strong>: hold fragments fixed, generate the atoms connecting them.</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">pharmacophore.yaml</span></code></p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">pharmacophore.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_pharmacophore</span></code></p></td>
 <td class="text-left"><p><strong>Pharmacophore</strong> points</p></td>
 <td class="text-left"><p>Ligand-based design when you have a pharmacophore hypothesis but <strong>no protein structure</strong>. Requires <code class="docutils literal notranslate"><span class="pre">open3d</span></code>.</p></td>
@@ -732,6 +739,13 @@ equivariant diffusion models.</em> Nature Computational Science 4(12), 899–909
 <li><p><strong>DiffPharma</strong> — Sekijima Lab (Institute of Science Tokyo). ChemRxiv preprint,
 2025. <a class="reference external" href="https://chemrxiv.org/engage/chemrxiv/article-details/684c1f943ba0887c3310534d">chemrxiv.org/…/684c1f943ba0887c3310534d</a> —
 a pharmacophore-conditioned extension of <strong>DiffSBDD</strong> (above).</p></li>
+<li><p><strong>DiffInt</strong> — Sako, Yasuo &amp; Sekijima. <em>DiffInt: A Diffusion Model for
+Structure-Based Drug Design with Explicit Hydrogen Bond Interaction Guidance.</em>
+Journal of Chemical Information and Modeling 65(1), 71–82, 2025.
+<a class="reference external" href="https://doi.org/10.1021/acs.jcim.4c01385">doi:10.1021/acs.jcim.4c01385</a> —
+like <strong>DiffPharma</strong> (above), from the Sekijima Lab and built on <strong>DiffSBDD</strong>;
+the network is DiffSBDD’s unchanged, the contribution is the added
+interaction particles.</p></li>
 <li><p><strong>PMDM</strong> — Huang, Yang, Zhou, Zhang, Chen, Zhang, Wang &amp; Tang. <em>A dual
 diffusion model enables 3D molecule generation and lead optimization based on
 target pocket.</em> Nature Communications 2024.
