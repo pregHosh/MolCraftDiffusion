@@ -212,11 +212,6 @@ Module Contents
 
 
 
-   .. py:property:: num_atom_type
-
-      Number of different atom types.
-
-
    .. py:property:: num_atoms
 
       Number of atoms in each molecule.
@@ -550,11 +545,6 @@ Module Contents
       :param verbose: output verbose level
       :type verbose: int, optional
 
-
-
-   .. py:property:: num_atom_type
-
-      Number of different atom types.
 
 
    .. py:property:: num_atoms

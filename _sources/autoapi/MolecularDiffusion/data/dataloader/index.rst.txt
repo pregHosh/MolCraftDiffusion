@@ -10,7 +10,6 @@ Classes
 .. autoapisummary::
 
    MolecularDiffusion.data.dataloader.DataLoader
-   MolecularDiffusion.data.dataloader.DataQueue
 
 
 Functions
@@ -54,20 +53,6 @@ Module Contents
    :param collate_fn: merge a list of samples into a mini-batch
    :type collate_fn: callable, optional
    :param kwargs: keyword arguments for `torch.utils.data.DataLoader`_
-
-
-.. py:class:: DataQueue
-
-   Bases: :py:obj:`torch.utils.data.Dataset`
-
-
-   .. py:method:: append(item)
-
-
-   .. py:method:: pop()
-
-
-   .. py:attribute:: queue
 
 
 .. py:function:: estimate_batch_size(nmax, vram_size=40)
