@@ -53,6 +53,7 @@ bonds are perceived afterwards.
 | `diffusion_ipdiff.yaml` | `diffusion_ipdiff` | **Protein pocket** | Like KGDiff's lineage, but binding awareness is **baked into training** via a frozen interaction prior rather than applied at sampling. Prior weights ship with it and are mandatory. Caveat before you trust it: the released checkpoint is carbon-saturated (93% C against 64% in real ligands). |
 | `diffusion_apo2mol.yaml` | `diffusion_apo2mol` | **Apo protein pocket** | The one for **flexible receptors**: condition on an **apo** (ligand-free) structure — what you actually have when there is no known binder — and it generates the ligand *and* the pocket's induced-fit conformation together. All the others assume a fixed, ligand-shaped pocket. Needs apo/holo **paired** training data. Generated pockets are written as `.pdb` sidecars next to the ligands. **Sample with the full schedule** (leave `num_steps` unset): unlike the flow-matching models, truncating it degrades the chemistry badly — 205 of 1000 steps returns near-random elements. |
 | `diffusion_difflinker.yaml` | `diffusion_difflinker` | **Fragments** to join | **Linker design / fragment growing**: hold fragments fixed, generate the atoms connecting them. |
+| `diffusion_diffdec.yaml` | `diffusion_diffdec` | **Scaffold** + anchor atom + **protein pocket** | **R-group decoration**: hold a 3D scaffold fixed, pick one anchor atom on it, and grow a substituent off that atom inside the pocket. Choose it over DiffLinker when you have a growth *vector* rather than two fragments to bridge, and over DiffSBDD's inpainting when the attachment point is already decided. R-group size is not configured — the model picks it. Single R-group, conditional only. |
 | `pharmacophore.yaml` | `diffusion_pharmacophore` | **Pharmacophore** points | ShEPhERD. Ligand-based design when you have a pharmacophore hypothesis but **no protein structure**. Requires `open3d`. |
 
 ## 4. Transition-metal complex generation
@@ -170,6 +171,13 @@ Backbones and objectives integrated here are based on the following work.
   an extension of **LigandDiff** (above), itself built on **DiffLinker**.
 - **DiffLinker** — Igashov et al. *Equivariant 3D-Conditional Diffusion Model
   for Molecular Linker Design.* Nature Machine Intelligence 2024. [arXiv:2210.05274](https://arxiv.org/abs/2210.05274)
+- **DiffDec** — Xie, Chen, Lei & Yang. *DiffDec: Structure-Aware Scaffold
+  Decoration with an End-to-End Diffusion Model.* Journal of Chemical
+  Information and Modeling 64(7), 2554–2564, 2024.
+  [doi:10.1021/acs.jcim.3c01466](https://doi.org/10.1021/acs.jcim.3c01466) — a
+  fork of **DiffLinker** (above): the same EDM objective and EGNN backbone,
+  with the pocket added and fragment-joining swapped for anchored R-group
+  growth.
 - **eSEN** — Fu et al. *Learning Smooth and Expressive Interatomic Potentials
   for Physical Property Prediction.* 2025. [arXiv:2502.12147](https://arxiv.org/abs/2502.12147)
 - **EquiformerV2** — Liao, Wood, Das & Smidt. *EquiformerV2: Improved Equivariant

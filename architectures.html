@@ -287,6 +287,7 @@
 <li class="toctree-l4 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/index.html">MolecularDiffusion.data.component</a><input aria-label="Toggle navigation of MolecularDiffusion.data.component" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/apo2mol_data/index.html">MolecularDiffusion.data.component.apo2mol_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/dataset/index.html">MolecularDiffusion.data.component.dataset</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/diffdec_data/index.html">MolecularDiffusion.data.component.diffdec_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/diffint_data/index.html">MolecularDiffusion.data.component.diffint_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/diffint_prep/index.html">MolecularDiffusion.data.component.diffint_prep</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/diffpharma_data/index.html">MolecularDiffusion.data.component.diffpharma_data</a></li>
@@ -599,7 +600,12 @@ bonds are perceived afterwards.</p>
 <td class="text-left"><p><strong>Fragments</strong> to join</p></td>
 <td class="text-left"><p><strong>Linker design / fragment growing</strong>: hold fragments fixed, generate the atoms connecting them.</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">pharmacophore.yaml</span></code></p></td>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffdec.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffdec</span></code></p></td>
+<td class="text-left"><p><strong>Scaffold</strong> + anchor atom + <strong>protein pocket</strong></p></td>
+<td class="text-left"><p><strong>R-group decoration</strong>: hold a 3D scaffold fixed, pick one anchor atom on it, and grow a substituent off that atom inside the pocket. Choose it over DiffLinker when you have a growth <em>vector</em> rather than two fragments to bridge, and over DiffSBDD’s inpainting when the attachment point is already decided. R-group size is not configured — the model picks it. Single R-group, conditional only.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">pharmacophore.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_pharmacophore</span></code></p></td>
 <td class="text-left"><p><strong>Pharmacophore</strong> points</p></td>
 <td class="text-left"><p>ShEPhERD. Ligand-based design when you have a pharmacophore hypothesis but <strong>no protein structure</strong>. Requires <code class="docutils literal notranslate"><span class="pre">open3d</span></code>.</p></td>
@@ -780,6 +786,13 @@ Transition-Metal Complexes.</em> Journal of Chemical Theory and Computation, 202
 an extension of <strong>LigandDiff</strong> (above), itself built on <strong>DiffLinker</strong>.</p></li>
 <li><p><strong>DiffLinker</strong> — Igashov et al. <em>Equivariant 3D-Conditional Diffusion Model
 for Molecular Linker Design.</em> Nature Machine Intelligence 2024. <a class="reference external" href="https://arxiv.org/abs/2210.05274">arXiv:2210.05274</a></p></li>
+<li><p><strong>DiffDec</strong> — Xie, Chen, Lei &amp; Yang. <em>DiffDec: Structure-Aware Scaffold
+Decoration with an End-to-End Diffusion Model.</em> Journal of Chemical
+Information and Modeling 64(7), 2554–2564, 2024.
+<a class="reference external" href="https://doi.org/10.1021/acs.jcim.3c01466">doi:10.1021/acs.jcim.3c01466</a> — a
+fork of <strong>DiffLinker</strong> (above): the same EDM objective and EGNN backbone,
+with the pocket added and fragment-joining swapped for anchored R-group
+growth.</p></li>
 <li><p><strong>eSEN</strong> — Fu et al. <em>Learning Smooth and Expressive Interatomic Potentials
 for Physical Property Prediction.</em> 2025. <a class="reference external" href="https://arxiv.org/abs/2502.12147">arXiv:2502.12147</a></p></li>
 <li><p><strong>EquiformerV2</strong> — Liao, Wood, Das &amp; Smidt. <em>EquiformerV2: Improved Equivariant

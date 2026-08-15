@@ -1,0 +1,234 @@
+MolecularDiffusion.data.component.diffdec_data
+==============================================
+
+.. py:module:: MolecularDiffusion.data.component.diffdec_data
+
+.. autoapi-nested-parse::
+
+   Dataset / collate / DataModule for DiffDec scaffold-pocket-R-group complexes.
+
+   DiffDec carries three node sets per example -- a fixed 3D scaffold, a protein
+   pocket, and the diffused R-group -- flat-concatenated into ONE padded node set
+   with five per-atom masks (``scaffold_only_mask``, ``pocket_mask``,
+   ``scaffold_mask`` = scaffold+pocket, ``rgroup_mask``, ``anchors``). That is not
+   the platform's single-node-set PointCloud batch, so this module brings its own
+   Dataset and ``collate_fn`` and is selected via ``_target_`` from
+   ``configs/data/diffdec_dataset.yaml``. Direct precedent:
+   ``data/component/diffsbdd_data.py``, through the same seams
+   (``cli/train.py:597`` -> ``.load()`` / ``.train_set`` / ``.collate_fn``, then
+   ``data/lightning_data_module.py``'s ``collate_fn or graph_collate``).
+
+   **Storage is upstream's own preprocessed ``.pt``, read unchanged.** DiffDec
+   publishes ``crossdocksingle_{train,test}_full.pt`` (Zenodo record 10527451) --
+   a plain ``list[dict]`` of exactly the tensors its model consumes. Converting
+   that into an ASE db and back would be a lossy round-trip for no gain: the five
+   masks and the anchor flag have no home in the PointCloud db's node-feature
+   columns. So the DataModule reads the list directly and
+   :func:`diffdec_collate` below is a port of upstream ``src/datasets.py``
+   ``collate`` (l. 126-166), pocket branch.
+
+   Each row carries::
+
+       uuid, name              -> list attrs, passed through untouched
+       positions   (N, 3)      -> float32 coordinates
+       one_hot     (N, 10)     -> element one-hot over DIFFDEC_ATOM_VOCAB
+       charges     (N,)        -> atomic number (unused by the model, h = one_hot)
+       anchors     (N,)        -> 1.0 on the single scaffold attachment atom
+       scaffold_only_mask (N,) -> scaffold atoms, pocket excluded
+       pocket_mask (N,)        -> pocket atoms
+       scaffold_mask (N,)      -> scaffold_only | pocket  (everything NOT noised)
+       rgroup_mask (N,)        -> the diffused R-group slots
+       num_atoms               -> int, list attr
+
+   The R-group is padded to a fixed 10 slots with a fake ``'#'`` atom
+   (upstream ``parse_rgroup``, datasets.py l. 84-124), so R-group size is
+   *implicit*: the model emits ``'#'`` into unused slots and the generator strips
+   those rows. ``'#'`` is therefore a real class of the vocabulary here, never a
+   padding artefact to be filtered at load time.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.diffdec_data.DATA_ATTRS_TO_ADD_LAST_DIM
+   MolecularDiffusion.data.component.diffdec_data.DATA_ATTRS_TO_PAD
+   MolecularDiffusion.data.component.diffdec_data.DATA_LIST_ATTRS
+   MolecularDiffusion.data.component.diffdec_data.DIFFDEC_ATOM_VOCAB
+   MolecularDiffusion.data.component.diffdec_data.DIFFDEC_CHARGES
+   MolecularDiffusion.data.component.diffdec_data.FAKE_ATOM_INDEX
+   MolecularDiffusion.data.component.diffdec_data.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.diffdec_data.DiffDecDataModule
+   MolecularDiffusion.data.component.diffdec_data.DiffDecDataset
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.diffdec_data.create_template
+   MolecularDiffusion.data.component.diffdec_data.create_templates_for_rgroup_generation_single
+   MolecularDiffusion.data.component.diffdec_data.diffdec_collate
+
+
+Module Contents
+---------------
+
+.. py:class:: DiffDecDataModule(root: str, train_file: str = 'crossdocksingle_test_full.pt', val_file: Optional[str] = None, test_file: Optional[str] = None, batch_size: int = 4, num_workers: int = 0, limit: Optional[int] = None, atom_vocab: Optional[List[str]] = None, task_type: str = 'diffusion_diffdec', **kwargs: Any)
+
+   DataModule contract: ``load()`` + ``train_set``/``valid_set``/``test_set``.
+
+   # ponytail: no split logic -- ``val_file``/``test_file`` fall back to the
+   # training file. The published test split is 43 complexes and is what the
+   # smoke test uses; point each at its own ``.pt`` for a real run.
+
+
+   .. py:method:: load() -> None
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: batch_size
+      :value: 4
+
+
+
+   .. py:attribute:: collate_fn
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: limit
+      :value: None
+
+
+
+   .. py:attribute:: num_workers
+      :value: 0
+
+
+
+   .. py:attribute:: root
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_diffdec'
+
+
+
+   .. py:attribute:: test_file
+      :value: 'crossdocksingle_test_full.pt'
+
+
+
+   .. py:attribute:: test_set
+      :type:  Optional[DiffDecDataset]
+      :value: None
+
+
+
+   .. py:attribute:: train_file
+      :value: 'crossdocksingle_test_full.pt'
+
+
+
+   .. py:attribute:: train_set
+      :type:  Optional[DiffDecDataset]
+      :value: None
+
+
+
+   .. py:attribute:: val_file
+      :value: 'crossdocksingle_test_full.pt'
+
+
+
+   .. py:attribute:: valid_set
+      :type:  Optional[DiffDecDataset]
+      :value: None
+
+
+
+.. py:class:: DiffDecDataset(pt_path: str, limit: Optional[int] = None)
+
+   Bases: :py:obj:`torch.utils.data.Dataset`
+
+
+   One upstream ``.pt`` -> one scaffold/pocket/R-group complex per index.
+
+   No re-centring at load time: ``DiffDecTask.forward`` removes the partial
+   centre of mass itself (w.r.t. ``center_of_mass``, ``anchors`` by default),
+   exactly as upstream ``model_single.py:161-169`` does, and the generator
+   adds that offset back so samples land in the original pocket's frame.
+
+   # ponytail: the whole list is read into RAM, like DiffSBDDDataset. The
+   # test split is 43 complexes / 939 KB; the full train split is 1.6 GB, so
+   # switch to a memory-mapped or sharded read if you train on it.
+
+
+   .. py:attribute:: data
+      :type:  List[Dict[str, Any]]
+
+
+   .. py:attribute:: pt_path
+
+
+.. py:function:: create_template(tensor: torch.Tensor, scaffold_size: int, rgroup_size: int, fill: float = 0.0) -> torch.Tensor
+
+   Port of upstream ``datasets.py::create_template`` (l. 216-220).
+
+   Keeps the first ``scaffold_size`` rows (scaffold + pocket, which the
+   collate ordering puts first) and replaces the R-group rows with a constant
+   block -- zeros for coordinates/features, ones for ``rgroup_mask``.
+
+
+.. py:function:: create_templates_for_rgroup_generation_single(data: Dict[str, Any], rgroup_sizes: torch.Tensor) -> Dict[str, Any]
+
+   Port of upstream ``datasets.py`` l. 222-244.
+
+   Blanks the ground-truth R-group out of a real batch, leaving the scaffold
+   and pocket intact, so sampling starts from noise in the R-group slots only.
+
+
+.. py:function:: diffdec_collate(batch: List[Dict[str, Any]]) -> Dict[str, Any]
+
+   Port of upstream ``src/datasets.py::collate`` (l. 126-166).
+
+   Pocket branch only (``pocket_mask`` is always present in the single-R-group
+   CrossDocked data): ``edge_mask`` is emitted as a flat **batch-index
+   vector**, not an adjacency mask. The actual graph is a 4 A radius graph
+   rebuilt every forward pass by
+   ``DynamicsWithPockets.get_dist_edges_4A``, which uses this vector only to
+   forbid edges between different samples.
+
+
+.. py:data:: DATA_ATTRS_TO_ADD_LAST_DIM
+
+.. py:data:: DATA_ATTRS_TO_PAD
+
+.. py:data:: DATA_LIST_ATTRS
+
+.. py:data:: DIFFDEC_ATOM_VOCAB
+   :value: ['C', 'O', 'N', 'F', 'S', 'Cl', 'Br', 'I', 'P', '#']
+
+
+.. py:data:: DIFFDEC_CHARGES
+   :value: [6, 8, 7, 9, 16, 17, 35, 53, 15, 0]
+
+
+.. py:data:: FAKE_ATOM_INDEX
+
+.. py:data:: logger
+

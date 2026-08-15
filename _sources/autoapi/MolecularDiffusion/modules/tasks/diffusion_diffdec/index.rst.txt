@@ -1,0 +1,388 @@
+MolecularDiffusion.modules.tasks.diffusion_diffdec
+==================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_diffdec
+
+.. autoapi-nested-parse::
+
+   DiffDec: pocket-aware scaffold decoration with an end-to-end diffusion model.
+
+   DiffDec (https://github.com/biomed-AI/DiffDec, Xie et al., *J. Chem. Inf.
+   Model.* 64(7) 2554-2564, 2024, doi:10.1021/acs.jcim.3c01466) grows an R-group
+   off a named anchor atom of a **fixed 3D scaffold**, inside a **fixed protein
+   pocket**. Scaffold and pocket atoms are never noised; only the R-group rows
+   are diffused. See docs/model_integrations/diffdec/INTEGRATION_PLAN.md for the
+   full integration plan (scope, data adapters, task-contract mapping).
+
+   **No new model package.** DiffDec is a fork of DiffLinker, and its
+   ``src/edm_single.py``, ``src/noise.py`` and ``src/egnn.py`` are the ported
+   ``MolecularDiffusion.modules.models.difflinker`` modules modulo formatting and
+   a ``fragment``/``linker`` -> ``scaffold``/``rgroup`` rename (verified by
+   normalized diff -- INTEGRATION_PLAN.md "Repo Inspection"). So this task reuses
+   ``modules.models.difflinker`` rather than copying a fourth near-identical
+   EDM/EGNN into the tree. That package is **frozen ported upstream code now
+   shared by two tasks** (``diffusion_difflinker.py`` and this one) -- changing it
+   changes both.
+
+   The mask-name mapping across that seam is::
+
+       DiffDec                     difflinker.EDM / Dynamics
+       ---------------------------------------------------------
+       scaffold_mask (scaf+pocket) fragment_mask   (never noised)
+       rgroup_mask                 linker_mask     (diffused)
+       context[..., -2] scaffold_only_mask         fragment_only_mask
+       context[..., -1] pocket_only_mask           pocket_only_mask
+
+   ``DynamicsWithPockets`` is used with ``graph_type="4A"``, i.e. a 4 A radius
+   graph rebuilt each forward pass, which is exactly DiffDec's
+   ``get_dist_edges`` (egnn.py l. 531-539).
+
+   Generation goes through :class:`DiffDecScaffoldGenerator`, not through
+   ``GenerativeFactory``: DiffDec has no unconditional mode, and
+   ``sample(batch_size, nodesxsample)`` has no channel for "which scaffold, which
+   pocket, which anchor". That is the established pattern for every
+   pocket-conditioned model here (``DiffSBDDPocketGenerator``,
+   ``gen_kgdiff_pocket.yaml``, ``gen_pmdm_pocket.yaml``).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator
+   MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecTask
+   MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecTaskFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: DiffDecScaffoldGenerator(task: DiffDecTask, data_file: Optional[str] = None, complex_index: int = 0, num_generate: int = 20, batch_size: int = 4, num_steps: Optional[int] = None, output_path: str = 'generated_diffdec', save_reference: bool = True, seed: int = 42, device: Optional[str] = None, **kwargs: Any)
+
+   Scaffold decoration inside a fixed pocket.
+
+   ``cli/generate.py:673`` does ``instantiate(cfg.interference, task=task)``
+   then ``.run()``, so every key of the interference config lands straight in
+   this ``__init__`` -- nothing needs registering. Precedent:
+   ``DiffSBDDPocketGenerator``.
+
+   The scaffold, its anchor atom and the pocket all come from ONE row of
+   upstream's preprocessed ``.pt`` (``data_file`` + ``complex_index``).
+   ``num_generate`` R-groups are then sampled for that one input, which is
+   upstream's own protocol (``sample_single.py``: ``--n_samples`` decorations
+   per complex).
+
+
+   .. py:method:: run() -> None
+
+
+   .. py:attribute:: batch_size
+      :value: 4
+
+
+
+   .. py:attribute:: complex_index
+      :value: 0
+
+
+
+   .. py:attribute:: data_file
+      :value: None
+
+
+
+   .. py:attribute:: device
+      :value: 'cuda'
+
+
+
+   .. py:attribute:: num_generate
+      :value: 20
+
+
+
+   .. py:attribute:: num_steps
+      :value: None
+
+
+
+   .. py:attribute:: output_path
+      :value: 'generated_diffdec'
+
+
+
+   .. py:attribute:: save_reference
+      :value: True
+
+
+
+   .. py:attribute:: seed
+      :value: 42
+
+
+
+   .. py:attribute:: task
+
+
+.. py:class:: DiffDecTask(in_node_nf: int, n_dims: int, hidden_nf: int, activation: str, tanh: bool, n_layers: int, attention: bool, norm_constant: float, inv_sublayers: int, sin_embedding: bool, normalization_factor: float, aggregation_method: str, model: str, normalization: Optional[str], condition_time: bool, anchors_context: bool, diffusion_steps: int, diffusion_noise_schedule: str, diffusion_noise_precision: float, diffusion_loss_type: str, normalize_factors: tuple, center_of_mass: str, atom_vocab: Optional[list] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Plain ``nn.Module`` task wrapper (TABASCO-style -- see
+   docs/adding_new_models.md §2.6) implementing the §2.1 contract around
+   DiffLinker's ``EDM`` driven by DiffDec's mask/context convention.
+
+   ``self.edm`` is deliberately named to match upstream's own attribute path
+   (``DDPM.edm``), so the released ``diffdec_single.ckpt``'s ``edm.*`` keys
+   land without renaming -- see
+   ``docs/model_integrations/diffdec/scripts/convert_checkpoint.py``.
+
+
+   .. py:method:: decorate(batch: Dict[str, Any], rgroup_sizes: Optional[torch.Tensor] = None, keep_frames: int = 1)
+
+      Grow R-groups onto the scaffolds in ``batch``.
+
+      Port of ``model_single.py::DDPM.sample_chain`` (l. 289-340). Returns
+      ``(one_hot, positions, ligand_mask)`` where ``ligand_mask`` is
+      ``atom_mask - pocket_mask`` -- scaffold + R-group, pocket dropped --
+      matching upstream ``sample_single.py`` l. 148.
+
+      Coordinates come back in the **centred** frame (partial COM removed);
+      the caller adds the offset back, as upstream does at
+      ``sample_single.py`` l. 146.
+
+      ``rgroup_sizes`` defaults to ``rgroup_mask.sum(1)``, i.e. the fixed
+      10-slot budget -- upstream's ``sample_fn = None`` path. Unused slots
+      come back as the fake ``'#'`` atom.
+
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor) -> dict
+
+
+   .. py:method:: forward(batch: Dict[str, Any])
+
+
+   .. py:method:: get_extra_state() -> dict
+
+
+   .. py:method:: predict_and_target(batch: Dict[str, Any])
+
+
+   .. py:method:: sample(*args: Any, **kwargs: Any)
+
+      Not reachable through ``GenerativeFactory`` -- see the module
+      docstring and INTEGRATION_PLAN.md's Task-contract mapping.
+
+      The §2.1 signature is kept so the contract check passes, but DiffDec
+      cannot generate without a scaffold, a pocket and an anchor atom, and
+      ``sample(batch_size, nodesxsample, ...)`` carries none of those. Use
+      :class:`DiffDecScaffoldGenerator` (``configs/interference/
+      gen_diffdec_scaffold.yaml``), which calls :meth:`decorate`.
+
+
+
+   .. py:method:: set_extra_state(state: dict) -> None
+
+
+   .. py:attribute:: anchors_context
+
+
+   .. py:property:: atom_count_histogram
+      :type: Optional[dict]
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: center_of_mass
+
+
+   .. py:property:: device
+      :type: torch.device
+
+
+
+   .. py:attribute:: edm
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: loss_type
+
+
+   .. py:property:: model
+
+
+   .. py:attribute:: n_dims
+
+
+   .. py:property:: n_node_dist
+      :type: Optional[dict]
+
+
+
+   .. py:attribute:: ndim_extra
+      :value: 0
+
+
+
+   .. py:property:: node_dist_model
+      :type: Optional[MolecularDiffusion.modules.models.difflinker.linker_size.DistributionNodes]
+
+
+
+   .. py:attribute:: norm_values
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+.. py:class:: DiffDecTaskFactory(task_type: str = 'diffusion_diffdec', in_node_nf: int = 10, n_dims: int = 3, hidden_nf: int = 128, activation: str = 'silu', tanh: bool = False, n_layers: int = 6, attention: bool = False, norm_constant: float = 1e-06, inv_sublayers: int = 2, sin_embedding: bool = False, normalization_factor: float = 100, aggregation_method: str = 'sum', model: str = 'egnn_dynamics', normalization: Optional[str] = 'batch_norm', condition_time: bool = True, anchors_context: bool = True, diffusion_steps: int = 500, diffusion_noise_schedule: str = 'polynomial_2', diffusion_noise_precision: float = 1e-05, diffusion_loss_type: str = 'l2', normalize_factors: tuple = (1, 4, 10), center_of_mass: str = 'anchors', atom_vocab: Optional[list] = None, **kwargs: Any)
+
+   Factory matching ``cli/train.py``'s ``task_module.build()`` /
+   ``task_module.task`` instantiation pattern (precedent:
+   ``diffusion_difflinker.py::DiffLinkerTaskFactory``).
+
+   Defaults follow DiffDec ``configs/single.yml`` + ``train_single.py``'s
+   argparse defaults, cross-checked against the released
+   ``diffdec_single.ckpt``'s own ``hyper_parameters``.
+
+
+   .. py:method:: build() -> DiffDecTask
+
+
+   .. py:attribute:: activation
+      :value: 'silu'
+
+
+
+   .. py:attribute:: aggregation_method
+      :value: 'sum'
+
+
+
+   .. py:attribute:: anchors_context
+      :value: True
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: attention
+      :value: False
+
+
+
+   .. py:attribute:: center_of_mass
+      :value: 'anchors'
+
+
+
+   .. py:attribute:: condition_time
+      :value: True
+
+
+
+   .. py:attribute:: diffusion_loss_type
+      :value: 'l2'
+
+
+
+   .. py:attribute:: diffusion_noise_precision
+      :value: 1e-05
+
+
+
+   .. py:attribute:: diffusion_noise_schedule
+      :value: 'polynomial_2'
+
+
+
+   .. py:attribute:: diffusion_steps
+      :value: 500
+
+
+
+   .. py:attribute:: hidden_nf
+      :value: 128
+
+
+
+   .. py:attribute:: in_node_nf
+      :value: 10
+
+
+
+   .. py:attribute:: inv_sublayers
+      :value: 2
+
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: model
+      :value: 'egnn_dynamics'
+
+
+
+   .. py:attribute:: n_dims
+      :value: 3
+
+
+
+   .. py:attribute:: n_layers
+      :value: 6
+
+
+
+   .. py:attribute:: norm_constant
+      :value: 1e-06
+
+
+
+   .. py:attribute:: normalization
+      :value: 'batch_norm'
+
+
+
+   .. py:attribute:: normalization_factor
+      :value: 100
+
+
+
+   .. py:attribute:: normalize_factors
+      :value: (1, 4, 10)
+
+
+
+   .. py:attribute:: sin_embedding
+      :value: False
+
+
+
+   .. py:attribute:: tanh
+      :value: False
+
+
+
+   .. py:attribute:: task
+      :type:  Optional[DiffDecTask]
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_diffdec'
+
+
+
