@@ -203,6 +203,11 @@ Module Contents
 
 
 
+   .. py:attribute:: max_consecutive_bad_batches
+      :value: 20
+
+
+
    .. py:attribute:: model_config
       :value: None
 

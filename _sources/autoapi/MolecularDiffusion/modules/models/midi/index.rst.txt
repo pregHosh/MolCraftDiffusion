@@ -1,0 +1,33 @@
+MolecularDiffusion.modules.models.midi
+======================================
+
+.. py:module:: MolecularDiffusion.modules.models.midi
+
+.. autoapi-nested-parse::
+
+   MiDi backbone: mixed graph + 3D denoising diffusion.
+
+   Vignac, Osman, Toni, Frossard, "MiDi: Mixed Graph and 3D Denoising Diffusion
+   for Molecule Generation", ECML 2023, arXiv:2302.09048.
+
+   Ported from the reference implementation with the training loop, PyG data
+   loading, wandb/torchmetrics accumulators, molecular metrics, ``ExtraFeatures``
+   and the variational-NLL machinery left behind -- the platform already covers
+   those. What remains is the network, the noise process and the sampling math,
+   which is all ``modules/tasks/diffusion_midi.py`` needs.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/midi/diffusion_utils/index
+   /autoapi/MolecularDiffusion/modules/models/midi/layers/index
+   /autoapi/MolecularDiffusion/modules/models/midi/noise_model/index
+   /autoapi/MolecularDiffusion/modules/models/midi/placeholder/index
+   /autoapi/MolecularDiffusion/modules/models/midi/transformer_model/index
+
+

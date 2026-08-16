@@ -1,0 +1,36 @@
+MolecularDiffusion.modules.models.flowmol_graph3d.ctmc_utils
+============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.flowmol_graph3d.ctmc_utils
+
+.. autoapi-nested-parse::
+
+   Purity sampling for CTMC discrete flow matching.
+
+   Ported verbatim from FlowMol (``flowmol/utils/ctmc_utils.py``). Reached only
+   when ``high_confidence_threshold > 0``; the released FlowMol3 config sets
+   ``0.9``, so this is on the live path.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.flowmol_graph3d.ctmc_utils.purity_sampling
+
+
+Module Contents
+---------------
+
+.. py:function:: purity_sampling(xt: torch.Tensor, x1: torch.Tensor, x1_probs: torch.Tensor, unmask_prob: torch.Tensor, mask_index: int, batch_size: int, batch_num_nodes: torch.Tensor, node_batch_idx: torch.Tensor, hc_thresh: float, device: torch.device) -> torch.Tensor
+
+   Bias unmasking toward high-confidence predictions.
+
+   Instead of unmasking a uniformly random subset of the still-masked
+   positions, allocate the per-graph unmasking budget preferentially to
+   positions whose predicted class probability exceeds ``hc_thresh``, spending
+   the remainder on the low-confidence ones.
+
+

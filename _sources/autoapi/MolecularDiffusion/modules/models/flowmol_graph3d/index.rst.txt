@@ -1,0 +1,33 @@
+MolecularDiffusion.modules.models.flowmol_graph3d
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.models.flowmol_graph3d
+
+.. autoapi-nested-parse::
+
+   FlowMol3 backbone: bond-carrying, CTMC discrete-flow-matching GVP field.
+
+   Sibling of the coordinate-only ``modules/models/flowmol`` package, which stays
+   byte-identical. The two share ``build_edge_idxs``, ``InterpolantScheduler`` and
+   the whole of ``modules/layers/gvp``; everything bond- or CTMC-specific lives
+   here.
+
+   See ``docs/model_integrations/flowmol_graph3d/`` for the integration plan and
+   the provenance of the released weights this reproduces.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/flowmol_graph3d/ctmc_utils/index
+   /autoapi/MolecularDiffusion/modules/models/flowmol_graph3d/ctmc_vector_field/index
+   /autoapi/MolecularDiffusion/modules/models/flowmol_graph3d/graph_utils/index
+   /autoapi/MolecularDiffusion/modules/models/flowmol_graph3d/priors/index
+   /autoapi/MolecularDiffusion/modules/models/flowmol_graph3d/self_conditioning/index
+   /autoapi/MolecularDiffusion/modules/models/flowmol_graph3d/vector_field/index
+
+

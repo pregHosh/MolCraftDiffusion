@@ -1,0 +1,267 @@
+MolecularDiffusion.modules.tasks.diffusion_midi
+===============================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_midi
+
+.. autoapi-nested-parse::
+
+   MiDi task: joint diffusion over coordinates, atom types, bonds and charges.
+
+   MiDi (Vignac et al., ECML 2023, arXiv:2302.09048) is the first model in this
+   platform that generates the *molecular graph itself* -- bond orders and formal
+   charges are diffused jointly with the 3D coordinates, so a sample arrives with
+   an explicit bond table instead of needing post-hoc perception.
+
+   Data path: ``data_type: graph3d`` with ``bond_collate: dense``.
+   ``graph3d_dense_collate`` already produces MiDi's exact dense shapes, so the
+   adapter below is a handful of ``F.one_hot`` calls and upstream's
+   ``utils.to_dense`` (the PyG -> dense bridge) is not needed at all.
+
+   Bond classes are the platform's canonical five (``0=none, 1=SINGLE, 2=DOUBLE,
+   3=TRIPLE, 4=AROMATIC``) and MiDi uses exactly those, in the same order -- the
+   mapping is the identity.
+
+   Formal charges are stored raw and signed; the offset and class count are
+   applied here (``charge_offset``/``n_charge_classes``: QM9 -> +1/3,
+   GEOM -> +2/6), never baked into the dataset.
+
+   Out of scope this pass (see the integration plan): ``ExtraFeatures`` (every
+   released config sets ``extra_features: null``), the variational-NLL validation
+   path, MiDi's own molecular metrics, the size-aware loader, and all
+   conditioning/guidance modes -- MiDi is unconditional-only.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_midi.Chem
+   MolecularDiffusion.modules.tasks.diffusion_midi.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_midi.MidiDiffusionTask
+   MolecularDiffusion.modules.tasks.diffusion_midi.ModelTaskFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: MidiDiffusionTask(atom_vocab: list, n_layers: int, hidden_mlp_dims: dict, hidden_dims: dict, diffusion_steps: int, diffusion_noise_schedule: str, transition: str, nu: dict, lambda_train: list, charge_offset: int, n_charge_classes: int, sdf_output_path: Optional[str], x_marginals: Optional[torch.Tensor], e_marginals: Optional[torch.Tensor], charges_marginals: Optional[torch.Tensor], n_atoms_hist: dict)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   MiDi wrapped in the platform's duck-typed Task contract (§2.1).
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor) -> dict
+
+      Reduce accumulated losses into the logged validation metric.
+
+
+
+   .. py:method:: forward(batch: dict) -> tuple[torch.Tensor, dict]
+
+      One training step: noise the batch, denoise it, weight the losses.
+
+
+
+   .. py:method:: predict_and_target(batch: dict) -> tuple[torch.Tensor, torch.Tensor]
+
+      Pure-generative stub: the loss is both prediction and target.
+
+
+
+   .. py:method:: sample(batch_size: Optional[int] = None, nodesxsample: Optional[torch.Tensor] = None, num_steps: Optional[int] = None, batch: Optional[dict] = None, mode: Optional[str] = None, n_frames: int = 0, **kwargs: Any) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]
+
+      Unconditional sampling.
+
+      Returns the platform's ``(one_hot, charges, coords, node_mask)``
+      tuple. ``charges`` carries **signed formal charges** (FlowMol's
+      precedent for this slot) -- the element identity is in ``one_hot``.
+      The generated bond matrix has no channel in that tuple, so it is
+      stashed on ``self.last_bond_types`` and, when ``sdf_output_path`` is
+      set, written as an ``.sdf`` sidecar alongside the platform's ``.xyz``.
+
+
+
+   .. py:attribute:: T
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: backbone
+
+
+   .. py:attribute:: charge_offset
+
+
+   .. py:property:: device
+      :type: torch.device
+
+
+      Device of the backbone parameters.
+
+
+   .. py:attribute:: input_dims
+
+
+   .. py:attribute:: lambda_train
+
+
+   .. py:attribute:: last_bond_types
+      :type:  Optional[torch.Tensor]
+      :value: None
+
+
+
+   .. py:property:: model
+      :type: MidiDiffusionTask
+
+
+      ``tasks_generate.py`` reads ``task.model.T``; self is the model.
+
+
+   .. py:attribute:: n_atom_types
+
+
+   .. py:attribute:: n_charge_classes
+
+
+   .. py:property:: n_node_dist
+      :type: dict
+
+
+      ``{n_atoms: count}`` histogram used to clamp ``mol_size``.
+
+
+   .. py:attribute:: node_dist_model
+
+
+   .. py:attribute:: output_dims
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:property:: sdf_output_path
+      :type: Optional[str]
+
+
+      Where to write the bond sidecar, generate-config value winning.
+
+      Resolved once, lazily (the CLI argv is fixed for the process). A
+      checkpoint this platform trained carries the *training-time* value here,
+      which is ``null`` for any normal training run -- see
+      ``_generate_config_override`` for why the generate config cannot reach
+      the task through the usual path.
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_midi'
+
+
+
+.. py:class:: ModelTaskFactory(task_type: str = 'diffusion_midi', n_layers: int = 12, hidden_mlp_dims: Optional[dict] = None, hidden_dims: Optional[dict] = None, diffusion_steps: int = 500, diffusion_noise_schedule: str = 'cosine', transition: str = 'marginal', nu: Optional[dict] = None, lambda_train: Optional[list] = None, charge_offset: int = 1, n_charge_classes: int = 3, sdf_output_path: Optional[str] = None, atom_vocab: Optional[list] = None, train_set: Optional[torch.utils.data.Dataset] = None, **kwargs: Any)
+
+   Hydra entry point for the MiDi task (``configs/tasks/diffusion_midi``).
+
+   Declares ``train_set`` so ``cli/train.py``'s declarative seam injects the
+   training dataset: MiDi's noise model needs the atom/bond/charge marginals
+   and the size histogram *at construction time*, and neither is an
+   ``nn.Module`` buffer, so neither survives in a checkpoint.
+
+
+   .. py:method:: build() -> MidiDiffusionTask
+
+      Construct the task, deriving marginals/size histogram from data.
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: charge_offset
+      :value: 1
+
+
+
+   .. py:attribute:: diffusion_noise_schedule
+      :value: 'cosine'
+
+
+
+   .. py:attribute:: diffusion_steps
+      :value: 500
+
+
+
+   .. py:attribute:: hidden_dims
+
+
+   .. py:attribute:: hidden_mlp_dims
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: lambda_train
+      :value: [3, 0.4, 1, 2, 0]
+
+
+
+   .. py:attribute:: n_charge_classes
+      :value: 3
+
+
+
+   .. py:attribute:: n_layers
+      :value: 12
+
+
+
+   .. py:attribute:: nu
+
+
+   .. py:attribute:: sdf_output_path
+      :value: None
+
+
+
+   .. py:attribute:: task
+      :type:  Optional[MidiDiffusionTask]
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_midi'
+
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+   .. py:attribute:: transition
+      :value: 'marginal'
+
+
+
+.. py:data:: Chem
+   :value: None
+
+
+.. py:data:: logger
+

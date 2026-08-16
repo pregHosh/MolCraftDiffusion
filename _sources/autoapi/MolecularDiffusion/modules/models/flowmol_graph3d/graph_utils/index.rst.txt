@@ -1,0 +1,51 @@
+MolecularDiffusion.modules.models.flowmol_graph3d.graph_utils
+=============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.flowmol_graph3d.graph_utils
+
+.. autoapi-nested-parse::
+
+   Graph helpers for the bond-carrying FlowMol3 port.
+
+   Ported from FlowMol (``flowmol/data_processing/utils.py``). ``build_edge_idxs``
+   and ``get_node_batch_idxs`` are **imported** from the existing coordinate-only
+   port rather than duplicated -- ``build_edge_idxs`` in particular is the single
+   source of the ``[upper-triangle | mirrored-lower-triangle]`` edge ordering that
+   :func:`get_upper_edge_mask` below *infers* rather than stores. Re-deriving it
+   elsewhere with a different order would silently produce wrong masks (no error).
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.flowmol_graph3d.graph_utils.get_batch_idxs
+   MolecularDiffusion.modules.models.flowmol_graph3d.graph_utils.get_edge_batch_idxs
+   MolecularDiffusion.modules.models.flowmol_graph3d.graph_utils.get_upper_edge_mask
+
+
+Module Contents
+---------------
+
+.. py:function:: get_batch_idxs(g: dgl.DGLGraph)
+
+   ``(node_batch_idx, edge_batch_idx)`` for a batched graph.
+
+
+.. py:function:: get_edge_batch_idxs(g: dgl.DGLGraph) -> torch.Tensor
+
+   Tensor mapping each edge to the molecule (graph) it belongs to.
+
+
+.. py:function:: get_upper_edge_mask(g: dgl.DGLGraph) -> torch.Tensor
+
+   Boolean mask selecting the upper-triangle edges of every batched graph.
+
+   Derived purely from the edge *ordering* laid down by ``build_edge_idxs``
+   (upper triangle first, then the mirrored lower triangle, per graph, then
+   concatenated by ``dgl.batch``). There is no stored flag to fall back on, so
+   graphs must always be built with ``build_edge_idxs``.
+
+

@@ -1,0 +1,252 @@
+MolecularDiffusion.modules.models.flowmol_graph3d.vector_field
+==============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.flowmol_graph3d.vector_field
+
+.. autoapi-nested-parse::
+
+   Bond-carrying FlowMol endpoint vector field (GVP, SE(3)-equivariant).
+
+   Ported from FlowMol (``flowmol/models/vector_field.py``) **with the bond (``e``)
+   modality intact**, which is what makes this a separate package from the
+   platform's coordinate-only ``modules/models/flowmol/``: that one has no
+   ``n_bond_types``, no ``token_embeddings``, no ``to_edge_logits`` and an
+   ``edge_embedding`` re-sourced to an RBF of interatomic distance, so restoring
+   bonds there would mean changing its constructor and every public method (and
+   breaking the existing ``diffusion_flowmol`` task, which pins
+   ``canonical_feat_order = ["x", "a", "c"]``).
+
+   Reused unchanged rather than re-ported:
+
+   - ``modules/layers/gvp`` -- ``GVPConv``, ``NodePositionUpdate``, ``EdgeUpdate``,
+     ``_rbf``, ``_norm_no_nan``, ``get_time_embedding``. Diffed against upstream:
+     the platform copy already supports every FlowMol3 setting, including
+     ``message_norm: 'sum'``, ``n_expansion_gvps``, ``n_cp_feats`` and the
+     ``edge_feat_size`` path.
+   - ``modules/models/flowmol.interpolant_scheduler.InterpolantScheduler`` --
+     feature-agnostic (driven by ``canonical_feat_order``) and ``linear``-capable
+     without ``cosine_params``.
+
+   Not ported: ``VectorField`` and ``DirichletVectorField`` (the ``vector-field``
+   and ``dirichlet`` parameterizations, both unreachable at ``parameterization:
+   ctmc``), and trajectory visualization (``n_frames`` is out of scope).
+
+   **Symmetry is structural, not asserted.** Loss and integration run on the upper
+   triangle only and are written back to both halves, and the backbone pools both
+   directions (``ue_feats + le_feats``) before the bond head. That makes the whole
+   thing depend on the edge *ordering* laid down by ``build_edge_idxs``, which is
+   why ``get_upper_edge_mask`` may only ever be applied to graphs built with it.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.flowmol_graph3d.vector_field.EndpointVectorField
+
+
+Module Contents
+---------------
+
+.. py:class:: EndpointVectorField(n_atom_types: int, canonical_feat_order: list, interpolant_scheduler: MolecularDiffusion.modules.models.flowmol.interpolant_scheduler.InterpolantScheduler, n_charges: int = 6, n_bond_types: int = 4, n_vec_channels: int = 16, n_cp_feats: int = 0, n_hidden_scalars: int = 64, n_hidden_edge_feats: int = 64, n_recycles: int = 1, n_molecule_updates: int = 2, convs_per_update: int = 2, n_message_gvps: int = 3, n_update_gvps: int = 3, n_expansion_gvps: int = 3, separate_mol_updaters: bool = False, message_norm: float | str = 100, update_edge_w_distance: bool = False, rbf_dmax: float = 20, rbf_dim: int = 16, exclude_charges: bool = False, continuous_inv_temp_schedule=None, continuous_inv_temp_max: float = 10.0, time_embedding_dim: int = 1, a_token_dim: int = 0, c_token_dim: int = 0, e_token_dim: int = 0, attention: bool = False, n_heads: int = 1, s_message_dim: int = None, v_message_dim: int = None, dropout: float = 0.0, has_mask: bool = False, self_conditioning: bool = False, use_dst_feats: bool = False, dst_feat_msg_reduction_factor: float = 4, scprop: float = 0.5)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Predicts the trajectory endpoint ``x_1`` for all four modalities.
+
+   ``forward`` consumes ``g.ndata['x_t','a_t','c_t']`` and ``g.edata['e_t']``
+   and returns a dict keyed ``{'x','a','c','e'}``. The ``e`` entry covers the
+   **upper-triangle edges only** (that is what ``to_edge_logits`` is fed).
+
+
+   .. py:method:: build_continuous_inv_temp_func(schedule, max_inv_temp: float = None) -> collections.abc.Callable
+      :staticmethod:
+
+
+      Inverse-temperature schedule for the continuous (``x``) vector field.
+
+
+
+   .. py:method:: denoise_graph(g: dgl.DGLGraph, node_scalar_features: torch.Tensor, node_vec_features: torch.Tensor, node_positions: torch.Tensor, edge_features: torch.Tensor, node_batch_idx: torch.Tensor, upper_edge_mask: torch.Tensor, apply_softmax: bool = False, remove_com: bool = False) -> dict
+
+      The GVP message-passing stack plus the four output heads.
+
+
+
+   .. py:method:: forward(g: dgl.DGLGraph, t: torch.Tensor, node_batch_idx: torch.Tensor, upper_edge_mask: torch.Tensor, apply_softmax: bool = False, remove_com: bool = False, prev_dst_dict: dict = None) -> dict
+
+      Predict ``x_1`` given ``x_t`` (and optionally a previous endpoint).
+
+
+
+   .. py:method:: integrate(g: dgl.DGLGraph, node_batch_idx: torch.Tensor, upper_edge_mask: torch.Tensor, n_timesteps: int, **kwargs) -> dgl.DGLGraph
+
+      Euler-integrate all four modalities from the prior to the data.
+
+      Overridden by :class:`~...ctmc_vector_field.CTMCVectorField`, which is
+      the only parameterization in scope; this stays for the sake of a
+      complete, reusable bond-carrying parent.
+
+
+
+   .. py:method:: precompute_distances(g: dgl.DGLGraph, node_positions: torch.Tensor = None)
+
+      Unit displacement vectors and RBF-embedded lengths for every edge.
+
+
+
+   .. py:method:: sample_conditional_path(g: dgl.DGLGraph, t: torch.Tensor, node_batch_idx: torch.Tensor, edge_batch_idx: torch.Tensor, upper_edge_mask: torch.Tensor) -> dgl.DGLGraph
+
+      Linearly interpolate between the prior and the data at time ``t``.
+
+
+
+   .. py:method:: step(g: dgl.DGLGraph, s_i: torch.Tensor, t_i: torch.Tensor, alpha_t_i: torch.Tensor, alpha_s_i: torch.Tensor, alpha_t_prime_i: torch.Tensor, node_batch_idx: torch.Tensor, upper_edge_mask: torch.Tensor, prev_dst_dict: dict = None, inv_temp_func: collections.abc.Callable = None, **kwargs)
+
+      One Euler step of the endpoint parameterization.
+
+
+
+   .. py:method:: vector_field(x_t, x_1, alpha_t, alpha_t_prime)
+      :staticmethod:
+
+
+      The endpoint-parameterized conditional vector field.
+
+
+
+   .. py:attribute:: canonical_feat_order
+
+
+   .. py:attribute:: continuous_inv_temp_func
+
+
+   .. py:attribute:: continuous_inv_temp_max
+      :value: 10.0
+
+
+
+   .. py:attribute:: continuous_inv_temp_schedule
+      :value: None
+
+
+
+   .. py:attribute:: conv_layers
+
+
+   .. py:attribute:: convs_per_update
+      :value: 2
+
+
+
+   .. py:attribute:: edge_embedding
+
+
+   .. py:attribute:: edge_updaters
+
+
+   .. py:attribute:: has_mask
+      :value: False
+
+
+
+   .. py:attribute:: interpolant_scheduler
+
+
+   .. py:attribute:: message_norm
+      :value: 100
+
+
+
+   .. py:attribute:: n_atom_types
+
+
+   .. py:attribute:: n_bond_types
+      :value: 4
+
+
+
+   .. py:attribute:: n_cat_feats
+
+
+   .. py:attribute:: n_charges
+      :value: 6
+
+
+
+   .. py:attribute:: n_hidden_edge_feats
+      :value: 64
+
+
+
+   .. py:attribute:: n_hidden_scalars
+      :value: 64
+
+
+
+   .. py:attribute:: n_molecule_updates
+      :value: 2
+
+
+
+   .. py:attribute:: n_recycles
+      :value: 1
+
+
+
+   .. py:attribute:: n_vec_channels
+      :value: 16
+
+
+
+   .. py:attribute:: node_output_head
+
+
+   .. py:attribute:: node_position_updaters
+
+
+   .. py:attribute:: rbf_dim
+      :value: 16
+
+
+
+   .. py:attribute:: rbf_dmax
+      :value: 20
+
+
+
+   .. py:attribute:: scalar_embedding
+
+
+   .. py:attribute:: scprop
+      :value: 0.5
+
+
+
+   .. py:attribute:: self_conditioning
+      :value: False
+
+
+
+   .. py:attribute:: separate_mol_updaters
+      :value: False
+
+
+
+   .. py:attribute:: time_embedding_dim
+      :value: 1
+
+
+
+   .. py:attribute:: to_edge_logits
+
+
+   .. py:attribute:: token_dims
+
+
+   .. py:attribute:: token_embeddings
+
+

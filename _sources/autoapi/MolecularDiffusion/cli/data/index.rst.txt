@@ -40,6 +40,7 @@ Functions
    MolecularDiffusion.cli.data.distortion_cmd
    MolecularDiffusion.cli.data.featurize_cmd
    MolecularDiffusion.cli.data.generate_blocks_cmd
+   MolecularDiffusion.cli.data.import_graph3d_cmd
    MolecularDiffusion.cli.data.inspect_cmd
    MolecularDiffusion.cli.data.merge_cmd
    MolecularDiffusion.cli.data.prepare
@@ -106,6 +107,14 @@ Module Contents
 .. py:function:: generate_blocks_cmd(source, sdf, natoms, csv, fraction, indices, method)
 
    Generate Mol Blocks, SMILES, and properties (SA, SC).
+
+
+.. py:function:: import_graph3d_cmd(source, raw_dir, out_db, limit, max_conformers, no_sanitize, delete_raw)
+
+   Convert MiDi's raw QM9/GEOM data into a 3D-graph ASE database with explicit bonds.
+
+   Stores upper-triangular real bonds (5-class vocabulary) plus raw signed
+   formal charges, for use with `data_type: graph3d`.
 
 
 .. py:function:: inspect_cmd(db, output, keys, sample_size, limit, check_nan, nan_key, discard_nan, detect_outliers, outlier_threshold, discard_outliers, outlier_key, clean_db)

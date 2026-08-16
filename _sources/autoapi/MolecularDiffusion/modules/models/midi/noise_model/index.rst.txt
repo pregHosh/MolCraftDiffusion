@@ -1,0 +1,332 @@
+MolecularDiffusion.modules.models.midi.noise_model
+==================================================
+
+.. py:module:: MolecularDiffusion.modules.models.midi.noise_model
+
+.. autoapi-nested-parse::
+
+   MiDi's joint noise process: D3PM on the categoricals, VP-SDE on positions.
+
+   Ported from ``midi/diffusion/noise_model.py`` with one deliberate change: the
+   constructor takes plain arguments instead of the upstream Hydra ``cfg``
+   object, so nothing here depends on MiDi's config tree.
+
+   This is **not** an ``nn.Module``. The transition matrices and marginals are
+   plain tensors derived from dataset statistics, which is why they are absent
+   from every released MiDi checkpoint and must be rebuilt at construction time
+   from ``train_set.graph3d_stats``.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.midi.noise_model.MODALITIES
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.midi.noise_model.DiscreteUniformTransition
+   MolecularDiffusion.modules.models.midi.noise_model.MarginalUniformTransition
+   MolecularDiffusion.modules.models.midi.noise_model.NoiseModel
+
+
+Module Contents
+---------------
+
+.. py:class:: DiscreteUniformTransition(output_dims: MolecularDiffusion.modules.models.midi.placeholder.Dims, nu: dict[str, float], diffusion_steps: int = 500, noise_schedule: str = 'cosine')
+
+   Bases: :py:obj:`NoiseModel`
+
+
+   Uniform limit distribution over every categorical modality.
+
+
+   .. py:attribute:: E_classes
+
+
+   .. py:attribute:: E_marginals
+
+
+   .. py:attribute:: Pcharges
+
+
+   .. py:attribute:: Pe
+
+
+   .. py:attribute:: Px
+
+
+   .. py:attribute:: Py
+
+
+   .. py:attribute:: X_classes
+
+
+   .. py:attribute:: X_marginals
+
+
+   .. py:attribute:: charges_classes
+
+
+   .. py:attribute:: charges_marginals
+
+
+   .. py:attribute:: y_classes
+
+
+   .. py:attribute:: y_marginals
+
+
+.. py:class:: MarginalUniformTransition(x_marginals: torch.Tensor, e_marginals: torch.Tensor, charges_marginals: torch.Tensor, y_classes: int, nu: dict[str, float], diffusion_steps: int = 500, noise_schedule: str = 'cosine')
+
+   Bases: :py:obj:`NoiseModel`
+
+
+   Limit distribution = the dataset's own class marginals.
+
+   This is what every released MiDi config uses (``transition: marginal``),
+   and the marginals come from ``train_set.graph3d_stats`` -- not from the
+   checkpoint, which holds ``nn.Module`` weights only.
+
+
+   .. py:attribute:: E_classes
+
+
+   .. py:attribute:: E_marginals
+
+
+   .. py:attribute:: Pcharges
+
+
+   .. py:attribute:: Pe
+
+
+   .. py:attribute:: Px
+
+
+   .. py:attribute:: Py
+
+
+   .. py:attribute:: X_classes
+
+
+   .. py:attribute:: X_marginals
+
+
+   .. py:attribute:: charges_classes
+
+
+   .. py:attribute:: charges_marginals
+
+
+   .. py:attribute:: y_classes
+
+
+   .. py:attribute:: y_marginals
+
+
+.. py:class:: NoiseModel(nu: dict[str, float], diffusion_steps: int = 500, noise_schedule: str = 'cosine')
+
+   Forward/reverse noise process shared by both transition variants.
+
+
+   .. py:method:: apply_noise(dense_data: MolecularDiffusion.modules.models.midi.placeholder.PlaceHolder) -> MolecularDiffusion.modules.models.midi.placeholder.PlaceHolder
+
+      Sample ``t`` and return the noised batch ``z_t``.
+
+
+
+   .. py:method:: get_Qt(t_int: torch.Tensor) -> MolecularDiffusion.modules.models.midi.placeholder.PlaceHolder
+
+      One-step transition matrices from ``t-1`` to ``t``.
+
+
+
+   .. py:method:: get_Qt_bar(t_int: torch.Tensor) -> MolecularDiffusion.modules.models.midi.placeholder.PlaceHolder
+
+      Cumulative transition matrices from ``0`` to ``t``.
+
+
+
+   .. py:method:: get_alpha_bar(t_normalized: torch.Tensor | None = None, t_int: torch.Tensor | None = None, key: str | None = None) -> torch.Tensor
+
+      ``alpha_bar_t`` for one modality.
+
+
+
+   .. py:method:: get_alpha_pos_ts(t_int: torch.Tensor, s_int: torch.Tensor) -> torch.Tensor
+
+      ``alpha_t / alpha_s`` for positions.
+
+
+
+   .. py:method:: get_alpha_pos_ts_sq(t_int: torch.Tensor, s_int: torch.Tensor) -> torch.Tensor
+
+      ``(alpha_t / alpha_s)^2`` for positions.
+
+
+
+   .. py:method:: get_beta(t_normalized: torch.Tensor | None = None, t_int: torch.Tensor | None = None, key: str | None = None) -> torch.Tensor
+
+      ``beta_t`` for one modality.
+
+
+
+   .. py:method:: get_gamma(t_normalized: torch.Tensor | None = None, t_int: torch.Tensor | None = None, key: str | None = None) -> torch.Tensor
+
+      ``gamma_t`` (log SNR) for one modality.
+
+
+
+   .. py:method:: get_limit_dist() -> MolecularDiffusion.modules.models.midi.placeholder.PlaceHolder
+
+      Smoothed marginals used as the ``t = T`` prior.
+
+
+
+   .. py:method:: get_sigma2_bar(t_normalized: torch.Tensor | None = None, t_int: torch.Tensor | None = None, key: str | None = None) -> torch.Tensor
+
+      ``sigma_bar_t^2`` for one modality.
+
+
+
+   .. py:method:: get_sigma_bar(t_normalized: torch.Tensor | None = None, t_int: torch.Tensor | None = None, key: str | None = None) -> torch.Tensor
+
+      ``sigma_bar_t`` for one modality.
+
+
+
+   .. py:method:: get_sigma_pos_sq_ratio(s_int: torch.Tensor, t_int: torch.Tensor) -> torch.Tensor
+
+      ``sigma_s^2 / sigma_t^2`` for positions.
+
+
+
+   .. py:method:: get_x_pos_prefactor(s_int: torch.Tensor, t_int: torch.Tensor) -> torch.Tensor
+
+      ``a_s (s_t^2 - a_ts^2 s_s^2) / s_t^2``.
+
+
+
+   .. py:method:: move_P_device(tensor: torch.Tensor) -> MolecularDiffusion.modules.models.midi.placeholder.PlaceHolder
+
+      Transition matrices on ``tensor``'s device.
+
+
+
+   .. py:method:: sample_limit_dist(node_mask: torch.Tensor) -> MolecularDiffusion.modules.models.midi.placeholder.PlaceHolder
+
+      Draw ``z_T`` from the limit (marginal) distribution.
+
+
+
+   .. py:method:: sample_zs_from_zt_and_pred(z_t: MolecularDiffusion.modules.models.midi.placeholder.PlaceHolder, pred: MolecularDiffusion.modules.models.midi.placeholder.PlaceHolder, s_int: torch.Tensor) -> MolecularDiffusion.modules.models.midi.placeholder.PlaceHolder
+
+      One reverse step: ``z_s ~ p(z_s | z_t)`` given the denoiser output.
+
+
+
+   .. py:attribute:: E_classes
+      :value: 0
+
+
+
+   .. py:attribute:: E_marginals
+      :type:  torch.Tensor | None
+      :value: None
+
+
+
+   .. py:attribute:: Pcharges
+      :type:  torch.Tensor | None
+      :value: None
+
+
+
+   .. py:attribute:: Pe
+      :type:  torch.Tensor | None
+      :value: None
+
+
+
+   .. py:attribute:: Px
+      :type:  torch.Tensor | None
+      :value: None
+
+
+
+   .. py:attribute:: Py
+      :type:  torch.Tensor | None
+      :value: None
+
+
+
+   .. py:attribute:: T
+      :value: 500
+
+
+
+   .. py:attribute:: X_classes
+      :value: 0
+
+
+
+   .. py:attribute:: X_marginals
+      :type:  torch.Tensor | None
+      :value: None
+
+
+
+   .. py:attribute:: charges_classes
+      :value: 0
+
+
+
+   .. py:attribute:: charges_marginals
+      :type:  torch.Tensor | None
+      :value: None
+
+
+
+   .. py:attribute:: inverse_mapping
+
+
+   .. py:attribute:: mapping
+      :value: ['p', 'x', 'c', 'e', 'y']
+
+
+
+   .. py:attribute:: noise_schedule
+      :value: 'cosine'
+
+
+
+   .. py:attribute:: nu_arr
+
+
+   .. py:attribute:: timesteps
+      :value: 500
+
+
+
+   .. py:attribute:: y_classes
+      :value: 0
+
+
+
+   .. py:attribute:: y_marginals
+      :type:  torch.Tensor | None
+      :value: None
+
+
+
+.. py:data:: MODALITIES
+   :value: ('p', 'x', 'c', 'e', 'y')
+
+

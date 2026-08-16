@@ -1,0 +1,147 @@
+MolecularDiffusion.modules.models.midi.placeholder
+==================================================
+
+.. py:module:: MolecularDiffusion.modules.models.midi.placeholder
+
+.. autoapi-nested-parse::
+
+   MiDi's multi-modality tensor container.
+
+   Trimmed from upstream ``midi/utils.py``: the wandb setup, the torchmetrics
+   ``NoSync*`` wrappers and ``to_dense`` (the PyG -> dense bridge) are all gone.
+   ``to_dense`` in particular is replaced wholesale by the platform's
+   ``graph3d_dense_collate``, which already emits these exact shapes.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.midi.placeholder.Dims
+   MolecularDiffusion.modules.models.midi.placeholder.PlaceHolder
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.midi.placeholder.remove_mean_with_mask
+
+
+Module Contents
+---------------
+
+.. py:class:: Dims
+
+   Per-modality channel counts.
+
+   Upstream reuses ``PlaceHolder`` itself as the dims container, which reads
+   badly (a ``pos`` field holding the integer 3). A dataclass says the same
+   thing without pretending to be a batch.
+
+
+   .. py:attribute:: E
+      :type:  int
+
+
+   .. py:attribute:: X
+      :type:  int
+
+
+   .. py:attribute:: charges
+      :type:  int
+
+
+   .. py:attribute:: pos
+      :type:  int
+      :value: 3
+
+
+
+   .. py:attribute:: y
+      :type:  int
+
+
+.. py:class:: PlaceHolder(pos: torch.Tensor | None, X: torch.Tensor | None, charges: torch.Tensor | None, E: torch.Tensor | None, y: torch.Tensor | None, t_int: torch.Tensor | None = None, t: torch.Tensor | None = None, node_mask: torch.Tensor | None = None)
+
+   Dense batch of the four diffused modalities plus the global feature.
+
+   ``pos (B,N,3)``, ``X (B,N,K)``, ``charges (B,N,C)``, ``E (B,N,N,5)``,
+   ``y (B,dy)``, ``node_mask (B,N)`` bool.
+
+
+   .. py:method:: collapse(collapse_charges: torch.Tensor) -> PlaceHolder
+
+      One-hot/logit modalities -> integer class ids (charges decoded).
+
+      Padded entries are marked out of range exactly as upstream does
+      (``X = -1``, ``charges = 1000``, ``E = -1``); the task clamps them
+      before handing anything to the platform.
+
+
+
+   .. py:method:: copy() -> PlaceHolder
+
+      Shallow copy sharing the underlying tensors.
+
+
+
+   .. py:method:: device_as(x: torch.Tensor) -> PlaceHolder
+
+      Move every present modality onto ``x``'s device.
+
+
+
+   .. py:method:: mask(node_mask: torch.Tensor | None = None) -> PlaceHolder
+
+      Zero padded rows/columns and the diagonal, and re-centre ``pos``.
+
+      The trailing symmetry check is upstream's and is kept: MiDi's whole
+      edge pipeline assumes ``E == E^T``, and a violation shows up as bad
+      molecules rather than as an exception anywhere else.
+
+
+
+   .. py:attribute:: E
+
+
+   .. py:attribute:: X
+
+
+   .. py:attribute:: charges
+
+
+   .. py:attribute:: node_mask
+      :value: None
+
+
+
+   .. py:attribute:: pos
+
+
+   .. py:attribute:: t
+      :value: None
+
+
+
+   .. py:attribute:: t_int
+      :value: None
+
+
+
+   .. py:attribute:: y
+
+
+.. py:function:: remove_mean_with_mask(x: torch.Tensor, node_mask: torch.Tensor) -> torch.Tensor
+
+   Subtract the per-molecule mean over real nodes only.
+
+   :param x: ``(B, N, D)`` tensor, already zeroed on padded rows.
+   :param node_mask: ``(B, N)`` bool, ``True`` for real atoms.
+
+   :returns: ``x`` with the masked mean removed from every real row.
+
+

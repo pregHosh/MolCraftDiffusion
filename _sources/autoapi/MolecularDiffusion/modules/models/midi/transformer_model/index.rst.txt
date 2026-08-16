@@ -1,0 +1,283 @@
+MolecularDiffusion.modules.models.midi.transformer_model
+========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.midi.transformer_model
+
+.. autoapi-nested-parse::
+
+   MiDi's relational graph transformer with an EGNN-style coordinate update.
+
+   Ported verbatim in behaviour from ``midi/models/transformer_model.py``; the
+   only changes are import paths, the ``Dims`` dims container and docstrings.
+
+   Two upstream oddities are deliberately preserved because the released
+   checkpoints depend on them:
+
+   * ``NodeEdgeBlock.pre_softmax`` is never used in ``forward`` but is still
+     registered (upstream comment: "Unused, but needed to load old checkpoints").
+   * every layer is built with ``last_layer=False``, including the last one, so
+     the ``y``-branch modules exist in all 12 layers (upstream line 339).
+
+   Removing either would change the parameter set and silently break the weight
+   mapping, since ``cli/generate.py`` loads with ``strict=False``.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.midi.transformer_model.GraphTransformer
+   MolecularDiffusion.modules.models.midi.transformer_model.NodeEdgeBlock
+   MolecularDiffusion.modules.models.midi.transformer_model.XEyTransformerLayer
+
+
+Module Contents
+---------------
+
+.. py:class:: GraphTransformer(input_dims: MolecularDiffusion.modules.models.midi.placeholder.Dims, n_layers: int, hidden_mlp_dims: dict, hidden_dims: dict, output_dims: MolecularDiffusion.modules.models.midi.placeholder.Dims)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   MiDi's denoiser: ``PlaceHolder -> PlaceHolder``.
+
+   :param input_dims: channel counts of the noised input (``y`` includes the
+                      timestep column).
+   :param n_layers: number of :class:`XEyTransformerLayer` blocks.
+   :param hidden_mlp_dims: widths of the input/output MLPs, keys
+                           ``X``/``E``/``y``/``pos``.
+   :param hidden_dims: transformer widths, keys ``dx``/``de``/``dy``/``n_head``/
+                       ``dim_ffX``/``dim_ffE``/``dim_ffy``.
+   :param output_dims: channel counts of the prediction (``y`` is 0 -- MiDi is
+                       unconditional).
+
+
+   .. py:method:: forward(data: MolecularDiffusion.modules.models.midi.placeholder.PlaceHolder) -> MolecularDiffusion.modules.models.midi.placeholder.PlaceHolder
+
+      Denoise one batch; returns logits for the categorical modalities.
+
+
+
+   .. py:attribute:: mlp_in_E
+
+
+   .. py:attribute:: mlp_in_X
+
+
+   .. py:attribute:: mlp_in_pos
+
+
+   .. py:attribute:: mlp_in_y
+
+
+   .. py:attribute:: mlp_out_E
+
+
+   .. py:attribute:: mlp_out_X
+
+
+   .. py:attribute:: mlp_out_pos
+
+
+   .. py:attribute:: n_layers
+
+
+   .. py:attribute:: out_dim_E
+
+
+   .. py:attribute:: out_dim_X
+
+
+   .. py:attribute:: out_dim_charges
+
+
+   .. py:attribute:: out_dim_y
+
+
+   .. py:attribute:: tf_layers
+
+
+.. py:class:: NodeEdgeBlock(dx: int, de: int, dy: int, n_head: int, *, last_layer: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Self-attention over nodes that also updates edges, ``y`` and positions.
+
+
+   .. py:method:: forward(X: torch.Tensor, E: torch.Tensor, y: torch.Tensor, pos: torch.Tensor, node_mask: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor | None, torch.Tensor]
+
+      Return ``(Xout, Eout, y_out, vel)``, all with the input shapes.
+
+
+
+   .. py:attribute:: a
+
+
+   .. py:attribute:: de
+
+
+   .. py:attribute:: df
+
+
+   .. py:attribute:: dist_add_e
+
+
+   .. py:attribute:: dist_mul_e
+
+
+   .. py:attribute:: dx
+
+
+   .. py:attribute:: dy
+
+
+   .. py:attribute:: e_att_mul
+
+
+   .. py:attribute:: e_out
+
+
+   .. py:attribute:: e_pos1
+
+
+   .. py:attribute:: e_pos2
+
+
+   .. py:attribute:: e_x_mul
+
+
+   .. py:attribute:: in_E
+
+
+   .. py:attribute:: k
+
+
+   .. py:attribute:: last_layer
+      :value: False
+
+
+
+   .. py:attribute:: lin_dist1
+
+
+   .. py:attribute:: lin_norm_pos1
+
+
+   .. py:attribute:: lin_norm_pos2
+
+
+   .. py:attribute:: n_head
+
+
+   .. py:attribute:: out
+
+
+   .. py:attribute:: pos_att_mul
+
+
+   .. py:attribute:: pos_x_mul
+
+
+   .. py:attribute:: pre_softmax
+
+
+   .. py:attribute:: q
+
+
+   .. py:attribute:: v
+
+
+   .. py:attribute:: x_e_mul1
+
+
+   .. py:attribute:: x_e_mul2
+
+
+   .. py:attribute:: x_out
+
+
+   .. py:attribute:: y_e_add
+
+
+   .. py:attribute:: y_e_mul
+
+
+   .. py:attribute:: y_x_add
+
+
+   .. py:attribute:: y_x_mul
+
+
+.. py:class:: XEyTransformerLayer(dx: int, de: int, dy: int, n_head: int, dim_ffX: int = 2048, dim_ffE: int = 128, dim_ffy: int = 2048, dropout: float = 0.1, layer_norm_eps: float = 1e-05, device: torch.device | None = None, dtype: torch.dtype | None = None, *, last_layer: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   One transformer layer updating nodes, edges, positions and ``y``.
+
+
+   .. py:method:: forward(features: MolecularDiffusion.modules.models.midi.placeholder.PlaceHolder) -> MolecularDiffusion.modules.models.midi.placeholder.PlaceHolder
+
+      Residual update of ``X``, ``E``, ``y`` and ``pos``.
+
+
+
+   .. py:attribute:: activation
+
+
+   .. py:attribute:: dropoutE1
+
+
+   .. py:attribute:: dropoutE2
+
+
+   .. py:attribute:: dropoutE3
+
+
+   .. py:attribute:: dropoutX1
+
+
+   .. py:attribute:: dropoutX2
+
+
+   .. py:attribute:: dropoutX3
+
+
+   .. py:attribute:: last_layer
+      :value: False
+
+
+
+   .. py:attribute:: linE1
+
+
+   .. py:attribute:: linE2
+
+
+   .. py:attribute:: linX1
+
+
+   .. py:attribute:: linX2
+
+
+   .. py:attribute:: normE1
+
+
+   .. py:attribute:: normE2
+
+
+   .. py:attribute:: normX1
+
+
+   .. py:attribute:: normX2
+
+
+   .. py:attribute:: norm_pos1
+
+
+   .. py:attribute:: self_attn
+
+

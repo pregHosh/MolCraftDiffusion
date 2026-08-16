@@ -1,0 +1,61 @@
+MolecularDiffusion.modules.models.flowmol_graph3d.self_conditioning
+===================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.flowmol_graph3d.self_conditioning
+
+.. autoapi-nested-parse::
+
+   Self-conditioning residual block for FlowMol3.
+
+   Ported from FlowMol (``flowmol/models/self_conditioning.py``). ``_rbf`` and
+   ``_norm_no_nan`` are re-sourced to ``modules/layers/gvp``, which already exports
+   both. Upstream also imports ``rbf_twoscale`` here but never calls it (verified
+   by grep over the whole target repo: the only other occurrence is its
+   definition), so it is not ported.
+
+   Both MLP widths are checkpoint-verified against the released FlowMol3 weights:
+   ``node_residual_mlp.0.weight`` is ``(256, 305)`` = ``256 + 11 + 6 + 32`` and
+   ``edge_residual_mlp.0.weight`` is ``(128, 164)`` = ``128 + 4 + 32``.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.flowmol_graph3d.self_conditioning.SelfConditioningResidualLayer
+
+
+Module Contents
+---------------
+
+.. py:class:: SelfConditioningResidualLayer(n_atom_types: int, n_charges: int, n_bond_types: int, node_embedding_dim: int, edge_embedding_dim: int, rbf_dim: int, rbf_dmax: float)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Fold a previously predicted endpoint back into the current features.
+
+
+   .. py:method:: edge_distances(g: dgl.DGLGraph, node_positions: torch.Tensor = None) -> torch.Tensor
+
+      RBF-embedded length of every edge in ``g``.
+
+
+
+   .. py:method:: forward(g: dgl.DGLGraph, s_t: torch.Tensor, x_t: torch.Tensor, v_t: torch.Tensor, e_t: torch.Tensor, dst_dict: dict, node_batch_idx: torch.Tensor, upper_edge_mask: torch.Tensor)
+
+
+   .. py:attribute:: edge_residual_mlp
+
+
+   .. py:attribute:: node_residual_mlp
+
+
+   .. py:attribute:: rbf_dim
+
+
+   .. py:attribute:: rbf_dmax
+
+

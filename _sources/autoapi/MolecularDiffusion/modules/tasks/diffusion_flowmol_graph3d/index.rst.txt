@@ -1,0 +1,400 @@
+MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d
+==========================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d
+
+.. autoapi-nested-parse::
+
+   FlowMol3 (bond-generating, CTMC discrete flow matching) task.
+
+   The GEOM-Drugs-scale, bond-generating successor to the platform's
+   coordinate-only ``diffusion_flowmol`` task, which this file does not touch. Four
+   modalities are generated jointly: ``x`` (coordinates, continuous flow matching)
+   and ``a``/``c``/``e`` (atom types, formal charges, **bond orders** -- CTMC
+   discrete flow matching from an all-mask prior).
+
+   Wraps ``modules/models/flowmol_graph3d`` in the duck-typed ``Task`` contract
+   (docs/adding_new_models.md §2.1) and adapts the platform's ``graph3d`` PyG
+   ``Batch`` (``bond_collate: raw``) to / from FlowMol's batched DGL graph.
+
+   Three atom-type widths, all real, all easy to confuse (this cost the first
+   FlowMol port two test attempts):
+
+   ===============================  =====  ==========================================
+   width                            value  where
+   ===============================  =====  ==========================================
+   ``len(atom_vocab)``              10     stored data, and the ``sample()`` one-hot
+   ``n_atom_types``                 11     output heads (+1 fake-atom column)
+   ``a`` input token embedding      12     ``n_atom_types`` + 1 CTMC mask token
+   ===============================  =====  ==========================================
+
+   ``kekulize: true`` is **mandatory** in every config that reaches this task. The
+   released FlowMol3 weights have ``explicit_aromaticity: False``: their
+   ``to_edge_logits`` is 4 logits wide and ``token_embeddings.e`` is 4 classes plus
+   one mask row. Canonical bond class 4 (AROMATIC) therefore has **no input row and
+   no output logit** -- a class-4 label is a hard index crash, not a distribution
+   wrinkle. Because ``kekulize_bonds`` returns bonds unchanged when RDKit cannot
+   kekulize a molecule (``graph3d_dataset.py:213-216``), which does happen on
+   GEOM-Drugs, :meth:`Graph3DToDGLAdapter.forward` asserts the invariant rather
+   than trusting it.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.CANONICAL_FEAT_ORDER
+   MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.Chem
+   MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.ModelTaskFactory
+   MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.N_BOND_TYPES_KEKULIZED
+   MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTask
+   MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTaskFactory
+   MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.Graph3DToDGLAdapter
+
+
+Module Contents
+---------------
+
+.. py:class:: FlowMolGraph3DTask(atom_vocab: list, n_atom_types: int, n_charge_classes: int, charge_offset: int, n_bond_types: int, fake_atom_p: float, fake_atom_std: float, distort_p: float, distort_t: float, prior_std: float, time_scaled_loss: bool, total_loss_weights: dict, default_n_timesteps: int, stochasticity: float, high_confidence_threshold: float, sdf_output_path: str | None, interpolant_scheduler_config: dict, vector_field_config: dict, n_atoms_hist: dict, task_type: str = 'diffusion_flowmol_graph3d')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   FlowMol3 wrapped in the platform's duck-typed Task contract (§2.1).
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor)
+
+
+   .. py:method:: forward(batch: Any) -> tuple[torch.Tensor, dict]
+
+      One training step: interpolate, distort, denoise, weight the losses.
+
+
+
+   .. py:method:: predict_and_target(batch: Any)
+
+      Pure-generative stub: the loss is the only scalar to report.
+
+
+
+   .. py:method:: sample(batch_size: int | None = None, nodesxsample: torch.Tensor | None = None, num_steps: int | None = None, batch: dict | None = None, mode: str | None = None, n_frames: int = 0, **kwargs: Any) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]
+
+      Unconditional sampling from the all-mask prior.
+
+      Returns the platform's ``(one_hot, charges, coords, node_mask)``.
+      ``one_hot`` is **``len(atom_vocab)`` wide (10)** -- the fake-atom column
+      is consumed internally and never surfaces. ``charges`` carries signed
+      formal charges (MiDi's and FlowMol's precedent for that slot). The
+      generated bond table has no channel in the tuple, so it is stashed on
+      ``self.last_bond_types`` and, when ``sdf_output_path`` is set, written as
+      an ``.sdf`` sidecar beside the platform's ``.xyz``.
+
+      Because a node the model assigns to the fake class is physically deleted
+      (upstream ``molecule_builder.py:226-231``), the produced atom count is
+      ``<=`` the requested one. ``node_mask`` carries the truth; a mild size
+      shortfall is upstream behaviour, not a port defect.
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: canonical_feat_order
+      :value: ['x', 'a', 'c', 'e']
+
+
+
+   .. py:attribute:: charge_offset
+
+
+   .. py:property:: device
+      :type: torch.device
+
+
+
+   .. py:attribute:: distort_p
+
+
+   .. py:attribute:: distort_t
+
+
+   .. py:attribute:: fake_atom_index
+
+
+   .. py:attribute:: fake_atom_p
+
+
+   .. py:attribute:: fm_num_timesteps
+
+
+   .. py:attribute:: high_confidence_threshold
+
+
+   .. py:attribute:: interpolant_scheduler
+
+
+   .. py:attribute:: last_bond_types
+      :type:  list | None
+      :value: None
+
+
+
+   .. py:attribute:: loss_cat
+
+
+   .. py:attribute:: loss_x
+
+
+   .. py:property:: model
+      :type: FlowMolGraph3DTask
+
+
+
+   .. py:attribute:: n_atom_types
+
+
+   .. py:attribute:: n_bond_types
+
+
+   .. py:attribute:: n_charge_classes
+
+
+   .. py:property:: n_node_dist
+      :type: dict
+
+
+      ``{n_atoms: count}``, used by ``GenerativeFactory`` to clamp sizes.
+
+
+   .. py:attribute:: n_real_atom_types
+
+
+   .. py:attribute:: node_dist_model
+
+
+   .. py:attribute:: prior_std
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:property:: sdf_output_path
+      :type: str | None
+
+
+      Where to write the bond sidecar, generate-config value winning.
+
+      Resolved once, lazily. For a checkpoint this platform trained, the task
+      is rebuilt from the *training-time* ``hyper_parameters.model_config`` and
+      only an allowlist of keys is taken from the generate config
+      (``cli/generate.py:277-281``) -- ``sdf_output_path`` is not on it, so the
+      training-time ``null`` would silently win and the bonds (the whole point
+      of this model) would be lost with no error. See MiDi's
+      ``_generate_config_override``, imported rather than copied.
+
+
+   .. py:attribute:: stochasticity
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_flowmol_graph3d'
+
+
+
+   .. py:attribute:: time_scaled_loss
+
+
+   .. py:attribute:: to_dgl
+
+
+   .. py:attribute:: total_loss_weights
+
+
+   .. py:attribute:: vector_field
+
+
+.. py:class:: FlowMolGraph3DTaskFactory(task_type: str = 'diffusion_flowmol_graph3d', interpolant_scheduler_config: dict | None = None, vector_field_config: dict | None = None, n_charge_classes: int = 6, charge_offset: int = 2, n_bond_types: int = N_BOND_TYPES_KEKULIZED, fake_atom_p: float = 0.3, fake_atom_std: float = 1.0, distort_p: float = 0.7, distort_t: float = 0.25, prior_std: float = 1.0, time_scaled_loss: bool = True, total_loss_weights: dict | None = None, default_n_timesteps: int = 250, stochasticity: float = 30.0, high_confidence_threshold: float = 0.9, sdf_output_path: str | None = None, dataset_stats: dict | None = None, atom_vocab: list | None = None, train_set: torch.utils.data.Dataset | None = None, **kwargs: Any)
+
+   Factory instantiated by ``cli/train.py``.
+
+   Declaring ``train_set`` is what makes the declarative injection seam
+   (``cli/train.py:624-637``) hand over the dataset, which carries
+   ``graph3d_stats`` and therefore the molecule-size histogram FlowMol needs
+   for sampling.
+
+
+   .. py:method:: build() -> FlowMolGraph3DTask
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: charge_offset
+      :value: 2
+
+
+
+   .. py:attribute:: dataset_stats
+
+
+   .. py:attribute:: default_n_timesteps
+      :value: 250
+
+
+
+   .. py:attribute:: distort_p
+      :value: 0.7
+
+
+
+   .. py:attribute:: distort_t
+      :value: 0.25
+
+
+
+   .. py:attribute:: fake_atom_p
+      :value: 0.3
+
+
+
+   .. py:attribute:: fake_atom_std
+      :value: 1.0
+
+
+
+   .. py:attribute:: high_confidence_threshold
+      :value: 0.9
+
+
+
+   .. py:attribute:: interpolant_scheduler_config
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: n_bond_types
+      :value: 4
+
+
+
+   .. py:attribute:: n_charge_classes
+      :value: 6
+
+
+
+   .. py:attribute:: prior_std
+      :value: 1.0
+
+
+
+   .. py:attribute:: sdf_output_path
+      :value: None
+
+
+
+   .. py:attribute:: stochasticity
+      :value: 30.0
+
+
+
+   .. py:attribute:: task
+      :type:  FlowMolGraph3DTask | None
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_flowmol_graph3d'
+
+
+
+   .. py:attribute:: time_scaled_loss
+      :value: True
+
+
+
+   .. py:attribute:: total_loss_weights
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+   .. py:attribute:: vector_field_config
+
+
+.. py:class:: Graph3DToDGLAdapter(n_atom_types: int, n_charge_classes: int, charge_offset: int, n_bond_types: int, fake_atom_p: float, fake_atom_std: float)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   ``graph3d`` PyG ``Batch`` -> batched, fully-connected DGL graph.
+
+   Per molecule, in upstream's order (``data_processing/dataset.py:99-149``):
+
+   1. inject fake atoms **first**, so the fully-connected edge set covers them;
+   2. re-remove the centre of mass (upstream re-centres *after* the injection);
+   3. build the edge set with ``build_edge_idxs`` -- never re-derived, because
+      ``get_upper_edge_mask`` infers the upper/lower split from that ordering
+      alone and silently returns a wrong mask under any other order;
+   4. densify the stored upper-triangular bonds into an ``(n, n)`` integer
+      adjacency and read the labels back along ``triu_indices``. This is the
+      step that materializes bond class 0 ("no bond"), which is never stored;
+   5. mirror the labels onto both edge directions.
+
+
+   .. py:method:: forward(batch: Any, *, use_fake_atoms: bool) -> dgl.DGLGraph
+
+
+   .. py:attribute:: charge_offset
+
+
+   .. py:attribute:: fake_atom_index
+
+
+   .. py:attribute:: fake_atom_p
+
+
+   .. py:attribute:: fake_atom_std
+
+
+   .. py:attribute:: n_atom_types
+
+
+   .. py:attribute:: n_bond_types
+
+
+   .. py:attribute:: n_charge_classes
+
+
+.. py:data:: CANONICAL_FEAT_ORDER
+   :value: ['x', 'a', 'c', 'e']
+
+
+.. py:data:: Chem
+   :value: None
+
+
+.. py:data:: ModelTaskFactory
+
+.. py:data:: N_BOND_TYPES_KEKULIZED
+   :value: 4
+
+
+.. py:data:: logger
+

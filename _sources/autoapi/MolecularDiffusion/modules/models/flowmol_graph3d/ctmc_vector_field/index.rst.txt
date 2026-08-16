@@ -1,0 +1,127 @@
+MolecularDiffusion.modules.models.flowmol_graph3d.ctmc_vector_field
+===================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.flowmol_graph3d.ctmc_vector_field
+
+.. autoapi-nested-parse::
+
+   CTMC (Continuous-Time Markov Chain) discrete flow matching for FlowMol3.
+
+   Ported from FlowMol (``flowmol/models/ctmc_vector_field.py``). Coordinates stay
+   continuous flow matching; ``a``/``c``/``e`` follow a **masking** interpolant from
+   an all-mask prior to the data, integrated with Campbell-style unmask/re-mask
+   steps. CTMC for flow matching was introduced in arXiv:2402.04997; FlowMol
+   interpolates along a per-modality progress coordinate ``alpha_t`` and does purity
+   sampling per batched graph rather than per molecule.
+
+   **Not ported** (out of scope per the approved plan):
+
+   - ``gat_step`` and its ``forward_weight_schedule``. These serve
+     ``dfm_type='gat'``, which no released config selects; ``campbell`` is the
+     default and the only mode in scope. Passing ``dfm_type='gat'`` raises rather
+     than silently doing something else.
+
+   The categorical temperature function **is** ported: ``step`` applies it
+   unconditionally (upstream ``:355-356``), so dropping it would silently change
+   the sampler.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.flowmol_graph3d.ctmc_vector_field.CTMCVectorField
+
+
+Module Contents
+---------------
+
+.. py:class:: CTMCVectorField(*args, stochasticity: float = 0.0, high_confidence_threshold: float = 0.0, dfm_type: str = 'campbell', cat_temperature_schedule: str | collections.abc.Callable | float = 0.05, cat_temp_decay_max: float = 0.8, cat_temp_decay_a: float = 2, fake_atoms: bool = False, **kwargs)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.models.flowmol_graph3d.vector_field.EndpointVectorField`
+
+
+   Masking-interpolant discrete flow matching over ``a``/``c``/``e``.
+
+
+   .. py:method:: build_cat_temp_schedule(cat_temperature_schedule, cat_temp_decay_max, cat_temp_decay_a) -> collections.abc.Callable
+      :staticmethod:
+
+
+      Temperature applied to the predicted categorical distribution.
+
+
+
+   .. py:method:: campbell_step(p_1_given_t: torch.Tensor, xt: torch.Tensor, stochasticity: float, hc_thresh: float, alpha_t: torch.Tensor, alpha_t_prime: torch.Tensor, dt: torch.Tensor, batch_size: int, batch_num_nodes: torch.Tensor, n_classes: int, mask_index: int, last_step: bool, batch_idx: torch.Tensor)
+      :staticmethod:
+
+
+      Unmask some masked positions, re-mask some unmasked ones.
+
+
+
+   .. py:method:: integrate(g: dgl.DGLGraph, node_batch_idx: torch.Tensor, upper_edge_mask: torch.Tensor, n_timesteps: int, stochasticity: float = 8.0, high_confidence_threshold: float = 0.9, cat_temp_func: collections.abc.Callable = None, tspan: torch.Tensor = None, **kwargs) -> dgl.DGLGraph
+
+      Integrate from the all-mask prior to a molecule in ``n_timesteps``.
+
+
+
+   .. py:method:: sample_conditional_path(g: dgl.DGLGraph, t: torch.Tensor, node_batch_idx: torch.Tensor, edge_batch_idx: torch.Tensor, upper_edge_mask: torch.Tensor) -> dgl.DGLGraph
+
+      Sample ``p(g_t | g_0, g_1)``: linear for ``x``, masking for ``a/c/e``.
+
+      Each categorical position is replaced by the mask token with probability
+      ``1 - alpha_t``. The ground-truth one-hots arrive without a mask column,
+      so they are argmaxed to indices and re-one-hotted one class wider.
+
+
+
+   .. py:method:: step(g: dgl.DGLGraph, s_i: torch.Tensor, t_i: torch.Tensor, alpha_t_i: torch.Tensor, alpha_s_i: torch.Tensor, alpha_t_prime_i: torch.Tensor, node_batch_idx: torch.Tensor, edge_batch_idx: torch.Tensor = None, upper_edge_mask: torch.Tensor = None, cat_temp_func: collections.abc.Callable = None, prev_dst_dict: dict = None, stochasticity: float = 8.0, high_confidence_threshold: float = 0.9, last_step: bool = False, inv_temp_func: collections.abc.Callable = None, **kwargs)
+
+      One CTMC step: Euler on ``x``, Campbell unmask/re-mask on ``a/c/e``.
+
+
+
+   .. py:attribute:: cat_temp_decay_a
+      :value: 2
+
+
+
+   .. py:attribute:: cat_temp_decay_max
+      :value: 0.8
+
+
+
+   .. py:attribute:: cat_temp_func
+
+
+   .. py:attribute:: cat_temperature_schedule
+      :value: 0.05
+
+
+
+   .. py:attribute:: dfm_type
+      :value: 'campbell'
+
+
+
+   .. py:attribute:: eta
+      :value: 0.0
+
+
+
+   .. py:attribute:: fake_atoms
+      :value: False
+
+
+
+   .. py:attribute:: hc_thresh
+      :value: 0.0
+
+
+
+   .. py:attribute:: mask_idxs
+
+

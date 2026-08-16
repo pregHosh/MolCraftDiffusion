@@ -1,0 +1,302 @@
+MolecularDiffusion.data.component.graph3d_dataset
+=================================================
+
+.. py:module:: MolecularDiffusion.data.component.graph3d_dataset
+
+.. autoapi-nested-parse::
+
+   3D molecular graph dataset with EXPLICIT BONDS.
+
+   The platform's other two data shapes (``pointcloud``, ``pyg``) are point
+   clouds: coordinates + atom types, with at most a ``radius_graph``/k-NN
+   ``edge_index`` as a message-passing convenience and **no edge features**. This
+   module adds a third shape, ``graph3d``, carrying real bond orders and formal
+   charges so bond-*generating* models become expressible -- FlowMol's ``e``
+   modality (currently dropped, see ``modules/tasks/diffusion_flowmol.py:10``) and
+   MiDi.
+
+   It is strictly additive. Nothing here is imported by the existing loaders; the
+   shared helpers flow the other way (this file imports from ``.dataset``), so no
+   existing path can regress.
+
+   ## The one storage rule
+
+   FlowMol and MiDi look different but agree on the underlying object:
+
+       FlowMol  disk: sparse upper-triangular real bonds   model: [upper||lower] directed
+       MiDi     disk: symmetric edge_index + edge_attr     model: dense (B,N,N) one-hot
+
+   Both are recoverable from the *smaller* of the two. So:
+
+       **Store upper-triangular real bonds only. Materialize per model in collate.**
+
+   ``bond_type`` uses 5 classes -- ``0=none, 1=SINGLE, 2=DOUBLE, 3=TRIPLE,
+   4=AROMATIC`` -- matching ``data/component/pharmacophore.py:186``, which already
+   uses this vocabulary. Class 0 is *never stored*: absence from ``bond_index``
+   means "no bond", and the no-bond count is derived, not counted.
+
+   ## Why the fields are named ``bond_index`` / ``bond_type``
+
+   Not ``edge_index``/``edge_attr``, for two independent reasons:
+
+   1. PyG's ``Batch.from_data_list`` auto-increments any key whose name contains
+      ``index``. ``bond_index`` therefore batches correctly for free; a key named
+      anything else is silently concatenated *without* the node offset, which
+      produces wrong graphs rather than an error.
+   2. A sparse real-bonds-only tensor called ``edge_index`` would be misread as
+      "the message-passing graph" by every existing pyg-consuming module.
+
+   ## Charges are stored raw and signed
+
+   FlowMol hardcodes ``[-2,+3]`` (6 classes), MiDi QM9 uses 3 classes offset +1,
+   MiDi GEOM 6 offset +2. Storing the raw signed integer means a model changing
+   its range never forces a dataset reconversion -- the offset/one-hot is applied
+   model-side.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.graph3d_dataset.BOND_ORDER_TO_CLASS
+   MolecularDiffusion.data.component.graph3d_dataset.BOND_VOCAB
+   MolecularDiffusion.data.component.graph3d_dataset.Chem
+   MolecularDiffusion.data.component.graph3d_dataset.N_BOND_CLASSES
+   MolecularDiffusion.data.component.graph3d_dataset.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.graph3d_dataset.Graph3DDataset
+   MolecularDiffusion.data.component.graph3d_dataset.Graph3DStats
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.graph3d_dataset.build_rdkit_mol
+   MolecularDiffusion.data.component.graph3d_dataset.graph3d_dense_collate
+   MolecularDiffusion.data.component.graph3d_dataset.kekulize_bonds
+   MolecularDiffusion.data.component.graph3d_dataset.rdkit_bond_types
+   MolecularDiffusion.data.component.graph3d_dataset.remap_bonds_after_atom_removal
+
+
+Module Contents
+---------------
+
+.. py:class:: Graph3DDataset(root: str = '', ase_db_path: Optional[str] = None, dataset_name: str = 'graph3d', max_atom: int = 200, load_only: bool = False, **kwargs: Any)
+
+   Bases: :py:obj:`torch.utils.data.Dataset`
+
+
+   3D molecular graphs with explicit bonds, loaded from an ASE db.
+
+   Exposes the same public surface as ``GraphDataset``/``LazyChunkedGraphDataset``
+   (``smiles_list``, ``num_atoms``, ``get_property``, ``atom_types``,
+   ``targets``) so the ``DataModule`` tail at ``runmodes/train/data.py:320-357``
+   drives it with no changes.
+
+
+   .. py:method:: atom_types() -> List[int]
+
+
+   .. py:method:: get_item(index: int) -> Dict[str, Any]
+
+
+   .. py:method:: get_property(task: str) -> Optional[torch.Tensor]
+
+
+   .. py:method:: load_db(db_path: str, atom_vocab: Optional[List[str]] = None, target_fields: Optional[List[str]] = None, max_atom: int = 200, with_hydrogen: bool = True, forbidden_atoms: Optional[List[str]] = None, allow_unknown: bool = False, use_ohe_feature: bool = True, center_coords: bool = False, kekulize: bool = False, compute_stats: bool = True, transform: Optional[Callable] = None, verbose: int = 0, chunk_size: Optional[int] = None, chunk_dir: Optional[str] = None, **kwargs: Any)
+
+      Build the dataset from ASE db rows written by the graph3d converter.
+
+      Each row must carry ``bond_index`` (2,E upper-triangular), ``bond_type``
+      (E,) and ``formal_charge`` (N,) in ``row.data``; rows without them are
+      counted and skipped rather than silently treated as bond-free.
+
+
+
+   .. py:method:: load_pickle(pkl_file: str, verbose: int = 0)
+
+
+   .. py:method:: save_pickle(pkl_file: str, verbose: int = 0)
+
+
+   .. py:attribute:: dataset_name
+      :value: 'graph3d'
+
+
+
+   .. py:attribute:: max_atom
+      :value: 200
+
+
+
+   .. py:property:: num_atoms
+      :type: torch.Tensor
+
+
+
+   .. py:attribute:: root
+      :value: ''
+
+
+
+   .. py:property:: tasks
+      :type: List[str]
+
+
+
+   .. py:attribute:: transform
+      :value: None
+
+
+
+.. py:class:: Graph3DStats
+
+   Preprocessing-time statistics. Both target models refuse to build without
+   some of these, and both compute the same things under different names.
+
+   ``bond_type_counts`` is in **upper-triangular pair units**:
+   ``[0] = sum_mols(n(n-1)/2 - n_real_bonds)``, ``[1..4] = real bond counts``.
+   FlowMol's ``p_e`` uses this directly. MiDi's ``edge_counts`` wants directed
+   counts, i.e. exactly ``2x`` every entry -- one multiply, stated once here so
+   it is never re-derived incorrectly downstream.
+
+
+   .. py:method:: atom_type_marginal() -> numpy.ndarray
+
+
+   .. py:method:: bond_type_marginal(directed: bool = False) -> numpy.ndarray
+
+      Normalized bond-class distribution. ``directed=True`` gives MiDi's
+      convention; the scaling cancels, so the result is identical -- the flag
+      exists for callers that also want the raw counts to match.
+
+
+
+   .. py:method:: n_atoms_histogram()
+
+      ``(sizes, counts)`` sorted by size, as FlowMol's sampler expects.
+
+
+
+   .. py:attribute:: atom_type_counts
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: bond_type_counts
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: charge_counts
+      :type:  Dict[int, Dict[int, int]]
+
+
+   .. py:property:: charge_range
+
+      Observed ``(min, max)`` raw signed formal charge, or ``None``.
+
+
+   .. py:attribute:: n_atoms_hist
+      :type:  Dict[int, int]
+
+
+   .. py:attribute:: n_molecules
+      :type:  int
+      :value: 0
+
+
+
+   .. py:attribute:: valencies
+      :type:  Dict[int, Dict[int, Dict[float, int]]]
+
+
+.. py:function:: build_rdkit_mol(atomic_numbers, bond_index, bond_type, formal_charge=None, coords=None, sanitize: bool = True, assign_stereo: bool = True)
+
+   Rebuild an RDKit mol from the stored fields.
+
+   This is the inverse of what the converter stores, and is what makes the
+   round-trip testable: if a molecule survives db -> dataset -> here with its
+   canonical SMILES intact, the bond pipeline is lossless.
+
+   Pass ``coords`` to recover stereochemistry, which lives in the geometry
+   rather than in the bond table.
+
+   Measured on 2000 real QM9 molecules: **99.9%** canonical-SMILES round-trip.
+   The residue is carbenes and similar radicals (``[CH]``), where ``(z, bonds,
+   formal_charge)`` alone cannot distinguish a radical from a missing hydrogen
+   without a radical-electron count. MiDi's ``build_molecule`` has the same
+   ambiguity, and neither target model consumes such a field, so it is not
+   stored.
+
+
+.. py:function:: graph3d_dense_collate(batch: List[Dict[str, Any]]) -> Dict[str, Any]
+
+   Pad a batch into MiDi's dense shapes.
+
+   ``bond_type`` comes back as **integer class ids** ``(B,N,N)``, not a
+   ``(B,N,N,5)`` one-hot: one-hotting is ``F.one_hot(E, 5)`` on the model side
+   (exactly where MiDi does it, in ``to_one_hot``), and at GEOM sizes the
+   int8-equivalent dense matrix is ~20x smaller than the float one-hot.
+
+
+.. py:function:: kekulize_bonds(atomic_numbers, bond_index, bond_type, formal_charge=None)
+
+   Aromatic (class 4) bonds -> alternating SINGLE/DOUBLE.
+
+   Kekulization is a *ring-level* operation, not a per-bond relabel, so this
+   round-trips through RDKit. It runs once at dataset-build time (the result is
+   cached in the processed pickle / chunks), never per ``__getitem__``.
+
+   Storage always keeps the aromatic form; this exists so a model trained on a
+   Kekule distribution -- MiDi's published QM9 run reads gdb9 with
+   ``sanitize=False``, so its bond class 4 is never populated -- can be
+   reproduced without a second copy of the dataset.
+
+   Returns the bond_type array unchanged if there is nothing aromatic to do, or
+   if RDKit cannot kekulize the molecule.
+
+
+.. py:function:: rdkit_bond_types()
+
+   Index -> ``Chem.BondType``, for rebuilding molecules. Requires RDKit.
+
+
+.. py:function:: remap_bonds_after_atom_removal(bond_index, bond_type, keep_mask)
+
+   Drop bonds touching removed atoms and renumber the survivors.
+
+   ``keep_mask`` is the boolean array over the *original* atom order returned by
+   :func:`~MolecularDiffusion.data.component.dataset._drop_hydrogens`, whose
+   docstring states it exists precisely so parallel per-atom data can be
+   filtered identically.
+
+   ``i < j`` is preserved because the remap is monotone on kept indices.
+
+
+.. py:data:: BOND_ORDER_TO_CLASS
+   :type:  Dict[float, int]
+
+.. py:data:: BOND_VOCAB
+   :type:  List[Optional[str]]
+   :value: [None, 'SINGLE', 'DOUBLE', 'TRIPLE', 'AROMATIC']
+
+
+.. py:data:: Chem
+   :value: None
+
+
+.. py:data:: N_BOND_CLASSES
+   :value: 5
+
+
+.. py:data:: logger
+

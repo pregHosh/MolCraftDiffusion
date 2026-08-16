@@ -1,0 +1,160 @@
+MolecularDiffusion.modules.models.midi.layers
+=============================================
+
+.. py:module:: MolecularDiffusion.modules.models.midi.layers
+
+.. autoapi-nested-parse::
+
+   Dense-tensor building blocks for MiDi's relational graph transformer.
+
+   These live here rather than in ``modules/layers/`` on purpose: every one of
+   them is hardcoded to MiDi's dense ``(B,N,·)`` / ``(B,N,N,·)`` layout and is
+   reused by nothing else in the platform.
+
+   Upstream's ``SetNorm``/``GraphNorm`` are omitted -- they are commented out at
+   every call site in ``midi/models/transformer_model.py`` (lines 38-39, 50-51,
+   89, 97, 106, 111) in favour of plain ``LayerNorm``, so they carry no weights
+   in any released checkpoint.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.midi.layers.EtoX
+   MolecularDiffusion.modules.models.midi.layers.Etoy
+   MolecularDiffusion.modules.models.midi.layers.PositionsMLP
+   MolecularDiffusion.modules.models.midi.layers.SE3Norm
+   MolecularDiffusion.modules.models.midi.layers.Xtoy
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.midi.layers.masked_softmax
+
+
+Module Contents
+---------------
+
+.. py:class:: EtoX(de: int, dx: int)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Pool edge features over the second axis into node features.
+
+
+   .. py:method:: forward(E: torch.Tensor, e_mask2: torch.Tensor) -> torch.Tensor
+
+      ``E (B,N,N,de)`` -> ``(B,N,dx)``.
+
+
+
+   .. py:attribute:: lin
+
+
+.. py:class:: Etoy(d: int, dy: int)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Pool edge features (mean/min/max/std) into the global feature.
+
+
+   .. py:method:: forward(E: torch.Tensor, e_mask1: torch.Tensor, e_mask2: torch.Tensor) -> torch.Tensor
+
+      ``E (B,N,N,de)`` -> ``(B,dy)``.
+
+
+
+   .. py:attribute:: lin
+
+
+.. py:class:: PositionsMLP(hidden_dim: int, eps: float = 1e-05)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Rescale coordinates by a learned function of their norm (SE(3)-safe).
+
+
+   .. py:method:: forward(pos: torch.Tensor, node_mask: torch.Tensor) -> torch.Tensor
+
+      ``pos (B,N,3)``, ``node_mask (B,N)`` -> rescaled, re-centred pos.
+
+
+
+   .. py:attribute:: eps
+      :value: 1e-05
+
+
+
+   .. py:attribute:: mlp
+
+
+.. py:class:: SE3Norm(eps: float = 1e-05, device: torch.device | None = None, dtype: torch.dtype | None = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Normalize positions by their mean norm over real nodes.
+
+
+   .. py:method:: extra_repr() -> str
+
+      Describe the layer for ``repr``.
+
+
+
+   .. py:method:: forward(pos: torch.Tensor, node_mask: torch.Tensor) -> torch.Tensor
+
+      ``pos (B,N,3)``, ``node_mask (B,N,1)`` -> normalized positions.
+
+
+
+   .. py:method:: reset_parameters() -> None
+
+      Reset the single scale parameter to one.
+
+
+
+   .. py:attribute:: eps
+      :value: 1e-05
+
+
+
+   .. py:attribute:: normalized_shape
+      :value: (1,)
+
+
+
+   .. py:attribute:: weight
+
+
+.. py:class:: Xtoy(dx: int, dy: int)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Pool node features (mean/min/max/std) into the global feature.
+
+
+   .. py:method:: forward(X: torch.Tensor, x_mask: torch.Tensor) -> torch.Tensor
+
+      ``X (B,N,dx)``, ``x_mask (B,N,1)`` -> ``(B,dy)``.
+
+
+
+   .. py:attribute:: lin
+
+
+.. py:function:: masked_softmax(x: torch.Tensor, mask: torch.Tensor, **kwargs: object) -> torch.Tensor
+
+   Softmax over ``x`` with ``mask == 0`` entries driven to zero.
+
+

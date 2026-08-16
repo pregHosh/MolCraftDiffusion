@@ -1,0 +1,132 @@
+MolecularDiffusion.runmodes.data.graph3d_import
+===============================================
+
+.. py:module:: MolecularDiffusion.runmodes.data.graph3d_import
+
+.. autoapi-nested-parse::
+
+   Convert MiDi's raw QM9 / GEOM-Drugs data into the platform's 3D-graph ASE db.
+
+   The platform's existing dbs (e.g. ``data/qm9.db``) store SMILES but no
+   ``mol_block``, so they carry no bond ground truth, and SMILES atom order does
+   not match the xyz order. Rather than perceive bonds from geometry, this imports
+   from MiDi's sources, which have real bond orders.
+
+   Storage schema, one row per molecule/conformer::
+
+       Atoms  -> explicit H, RAW uncentered positions, RDKit atom order
+       data   -> smiles          canonical
+                 bond_index      (2, E) int32, UPPER-TRIANGULAR (i < j), real bonds only
+                 bond_type       (E,)  int8, 1=SINGLE 2=DOUBLE 3=TRIPLE 4=AROMATIC
+                 formal_charge   (N,)  int8, RAW SIGNED
+                 source          "qm9" | "geom"
+                 split           MiDi's split label, or ""
+
+   Bond class 0 ("no bond") is never stored: absence from ``bond_index`` means no
+   bond, and the no-bond count is derived at statistics/materialization time.
+
+   ## Aromaticity
+
+   MiDi reads gdb9 with ``sanitize=False``, so RDKit performs no aromatic
+   perception and its QM9 bond class 4 is never populated (verified: benzene
+   yields bond orders {1.0, 2.0} unsanitized vs {1.0, 1.5} sanitized). We
+   deliberately sanitize instead, so the db keeps the richer aromatic form, and
+   reproduce MiDi's Kekule distribution on demand via the dataset's
+   ``kekulize=True`` load flag rather than by storing a second lossy copy.
+   ``--no-sanitize`` restores exact MiDi parity if you need it.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.data.graph3d_import.QM9_RAW_ARTEFACTS
+   MolecularDiffusion.runmodes.data.graph3d_import.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.data.graph3d_import.delete_raw
+   MolecularDiffusion.runmodes.data.graph3d_import.ensure_qm9_splits
+   MolecularDiffusion.runmodes.data.graph3d_import.iter_geom
+   MolecularDiffusion.runmodes.data.graph3d_import.iter_qm9
+   MolecularDiffusion.runmodes.data.graph3d_import.main
+   MolecularDiffusion.runmodes.data.graph3d_import.mol_to_row
+   MolecularDiffusion.runmodes.data.graph3d_import.verify_db
+   MolecularDiffusion.runmodes.data.graph3d_import.write_graph3d_db
+
+
+Module Contents
+---------------
+
+.. py:function:: delete_raw(raw_dir: str, artefacts) -> None
+
+   Remove ONLY the named download artefacts under ``raw_dir``.
+
+   Never touches the produced db and never leaves ``raw_dir``. Prints every
+   path before unlinking, because this is irreversible.
+
+
+.. py:function:: ensure_qm9_splits(raw_dir: str) -> None
+
+   Materialize MiDi's published QM9 split csvs if they are not already there.
+
+   Byte-for-byte the procedure in ``QM9Dataset.download``
+   (``others/midi/midi/datasets/qm9_dataset.py:121-134``): shuffle
+   ``gdb9.sdf.csv`` with ``random_state=42`` and cut at 100k train / remainder
+   val / 10% test. Reproduced here rather than imported so the converter does
+   not depend on MiDi being importable -- but it must stay in sync, or
+   published numbers stop being comparable.
+
+
+.. py:function:: iter_geom(pickle_dir: str, max_conformers: int = 5, sanitize: bool = True) -> Iterator[Tuple[object, str]]
+
+   Yield ``(mol, split)`` from MiDi's GEOM-Drugs pickles.
+
+   Each pickle is a list of ``(smiles, [conformers])``; MiDi caps at 5
+   conformers per molecule (``geom_dataset.py:90-91``).
+
+
+.. py:function:: iter_qm9(raw_dir: str, sanitize: bool = True) -> Iterator[Tuple[object, str]]
+
+   Yield ``(mol, split)`` from MiDi's gdb9 raw directory.
+
+   Skips the indices listed in ``uncharacterized.txt``, exactly as
+   ``others/midi/midi/datasets/qm9_dataset.py:141-143`` does.
+
+
+.. py:function:: main(argv=None) -> int
+
+.. py:function:: mol_to_row(mol, sanitize_failed_ok: bool = False)
+
+   RDKit mol -> ``(Atoms, data_dict)`` for :func:`ase.db.core.Database.write`.
+
+   Returns ``None`` when the molecule carries a bond type outside the canonical
+   vocabulary (DATIVE, UNSPECIFIED, ...). Such molecules are counted and
+   skipped rather than silently coerced to SINGLE.
+
+
+.. py:function:: verify_db(out_path: str, expected: int, n_check: int = 25) -> None
+
+   Re-open the db and round-trip a sample back through RDKit.
+
+   Raises if the db does not contain what we think it does. This gates the
+   ``--delete-raw`` step, so it must be strict.
+
+
+.. py:function:: write_graph3d_db(mol_iter, out_path: str, source: str, limit: Optional[int] = None, verbose: bool = True) -> dict
+
+   Write rows to an ASE db. Returns a counts dict.
+
+
+.. py:data:: QM9_RAW_ARTEFACTS
+   :value: ('gdb9.sdf', 'gdb9.sdf.csv', 'uncharacterized.txt')
+
+
+.. py:data:: logger
+
