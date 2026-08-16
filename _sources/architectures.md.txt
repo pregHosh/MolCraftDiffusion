@@ -11,18 +11,21 @@ are not listed separately.
 
 ## 1. De novo 3D generation
 
-Whole-molecule generators trained on a plain 3D molecule dataset. No
-conditioning input beyond the atom count.
+Whole-molecule generators trained on a plain 3D molecule dataset. The first
+four can also be steered towards a target property value; the rest generate
+freely.
 
 | Task config | `task_type` | Model | Notes |
 | :--- | :--- | :--- | :--- |
-| `diffusion.yaml` | `diffusion` | EDM (E(n)-equivariant diffusion, EGCL backbone) | **Start here.** The default and best-tested path; the Hugging Face checkpoints for this repo use it. |
-| `diffusion_egt.yaml` | `diffusion` | EGT (equivariant graph transformer) | Same objective as the default, with a transformer backbone instead of message passing. |
-| `diffusion_gfmdiff.yaml` | `diffusion` | GFMDiff | Alternative de novo backbone; drop-in swap for the default. |
-| `diffusion_painn.yaml` | `diffusion` | PaiNN (scalar+vector message passing) | Same objective again, with the backbone from OM-Diff's organometallic work. |
-| `diffusion_tabasco.yaml` | `diffusion_tabasco` | TABASCO | Pick this when you care about **speed and clean geometry** — it is the simplified, physics-tuned option. |
-| `diffusion_equifm.yaml` | `diffusion_equifm` | EquiFM (flow matching, EGNN backbone) | Flow matching, so sampling honours `num_steps` and can go short. Caveat: upstream released sampling code only, so **training here follows the paper, not an official implementation** — treat locally trained results as unverified. The converted QM9 checkpoint needs `discrete_path: HB_path`. |
-| `diffusion_flowmol.yaml` | `diffusion_flowmol` | FlowMol (SE(3)-equivariant GVP) | Flow matching that also generates formal charges. Needs the `[flowmol]` extra (DGL). Bond-free variant only. |
+| `diffusion.yaml` | `diffusion` | EDM (E(n)-equivariant diffusion, EGCL backbone) | **Start here.** The default and best-tested path; the Hugging Face checkpoints for this repo use it. Also the slowest to sample. |
+| `diffusion_egt.yaml` | `diffusion` | EGT (equivariant graph transformer) | Behaves like the default — same conditioning, roughly twice as fast to sample. Worth a try if the default underfits your data. |
+| `diffusion_gfmdiff.yaml` | `diffusion` | GFMDiff | Another same-behaviour alternative to the default, also about twice as fast to sample. |
+| `diffusion_painn.yaml` | `diffusion` | PaiNN (scalar+vector message passing) | Same again, using the backbone from OM-Diff's organometallic work — the one to try on metal-containing systems. |
+| `diffusion_tabasco.yaml` | `diffusion_tabasco` | TABASCO | **The fast one** — around nine times fewer steps than the default, with cleaner geometry. Trade-off: no property targeting, so it only generates freely. |
+| `diffusion_equifm.yaml` | `diffusion_equifm` | EquiFM (flow matching, EGNN backbone) | Flow matching rather than diffusion. Note it is **not faster** than the default out of the box — pick TABASCO if speed is what you want. Stick to the shipped checkpoint; results from training it yourself are unverified. |
+| `diffusion_flowmol.yaml` | `diffusion_flowmol` | FlowMol (SE(3)-equivariant GVP) | The earlier, smaller FlowMol: no bonds, and trained for neutral molecules. Use FlowMol3 below unless you have a reason not to. |
+| `diffusion_midi.yaml` | `diffusion_midi` | MiDi (relational graph transformer with equivariant coordinate updates) | The one that **draws the bonds for you**. Everything above gives you atoms in space and leaves you to guess the chemistry afterwards; this one hands you a finished molecule. Best on small, QM9-like molecules. Two things to know: it needs a bond-aware dataset built in advance, and you must ask for SDF output or the bonds are thrown away. |
+| `diffusion_flowmol_graph3d.yaml` | `diffusion_flowmol_graph3d` | FlowMol3 (SE(3)-equivariant GVP, CTMC discrete flow matching) | Same idea as MiDi, but for **drug-sized molecules** — pick MiDi instead when your molecules are small. It trims the atom count you ask for but never exceeds it. Most setup work of anything here: you build the drug-scale dataset yourself, and you must ask for SDF output or the bonds are thrown away. |
 
 ## 2. Latent-space diffusion (two-stage)
 
@@ -31,66 +34,70 @@ Train an autoencoder first, then diffuse in its latent space. Each family needs
 
 | Family | Stage 1 — VAE | Stage 2 — diffusion | Notes |
 | :--- | :--- | :--- | :--- |
-| GeoLDM | `vae_geoldm.yaml` (`vae_geoldm`) | `diffusion_geoldm.yaml` (`diffusion_geoldm`) | The established latent option. Diffusing in latent space is cheaper per step than Cartesian EDM, at the cost of training two models. |
-| ADiT | `vae_transformer.yaml` (`vae_transformer`) or `vae_equiformer.yaml` (`vae_equiformer`) | `diffusion_adit.yaml` (`diffusion_adit`) | Transformer-scale latent diffusion; the encoder is your choice (plain transformer is cheaper, Equiformer is equivariant). Aimed at scaling up rather than small datasets. |
+| GeoLDM | `vae_geoldm.yaml` (`vae_geoldm`) | `diffusion_geoldm.yaml` (`diffusion_geoldm`) | The established latent option, but you train two models and the autoencoder here uses the setup the original authors themselves reported as unstable — expect worse than the published numbers. The default EDM is the safer choice. |
+| ADiT | `vae_transformer.yaml` (`vae_transformer`) or `vae_equiformer.yaml` (`vae_equiformer`) | `diffusion_adit.yaml` (`diffusion_adit`) | For **large datasets and long training runs**, not for a few thousand molecules. Two encoder choices: the plain transformer is cheaper, Equiformer is more robust to how the molecule is oriented. Nothing here is pre-trained — you train both stages yourself. |
 
 ## 3. Conditional and structure-aware generation
 
 Generation steered by an external input — a shape, a pocket, a set of fragments,
 a pharmacophore. These need **paired** data (the condition alongside the
-molecule); a plain molecule dataset is not enough. The shape- and
-pocket-conditioned models all generate heavy atoms only, with no bonds —
-bonds are perceived afterwards.
+molecule); a plain molecule dataset is not enough. Except for ShEPhERD, none
+of them generate bonds — you get atoms in space and the chemistry is perceived
+afterwards. Most are heavy-atom only; KGDiff, PMDM and Apo2Mol also place
+hydrogens.
 
 | Task config | `task_type` | Conditioned on | Notes |
 | :--- | :--- | :--- | :--- |
-| `diffusion_diffsmol.yaml` | `diffusion_diffsmol` | Molecular **shape** | For **shape-matching / bioisostere** work: give it a reference molecule's surface, get different chemistry with the same shape. No protein needed. Requires an offline shape cache (`[shape]` extra). |
-| `diffusion_diffsbdd.yaml` | `diffusion_diffsbdd` | **Protein pocket** | The **reference SBDD choice** — best documented, most flexible. Use the recommended `pocket_conditioning` mode; the `joint` mode needs `diffusion_diffsbdd_joint_moad.yaml`, since the CrossDocked joint weights are defective upstream. Uniquely here, it also does **scaffold hopping** by inpainting part of a known ligand (`gen_diffsbdd_inpaint.yaml`). |
-| `diffusion_diffpharma.yaml` | `diffusion_diffpharma` | **Protein pocket** + pharmacophore particles | SBDD for when you know the **interaction pattern** you want, not just the pocket. Needs pocket-paired training data; a ligand-only dataset cannot train it. Novel pockets from raw PDB+SDF need the `[bio]` extra. |
-| `diffusion_diffint.yaml` | `diffusion_diffint` | **Protein pocket** + hydrogen-bond interaction particles | SBDD steered by an **explicit H-bond pattern**: two pseudo-atoms per detected donor–acceptor pair are added to the pocket, so generation is biased towards reproducing that interaction geometry. Unlike every other pocket model here, sampling **requires a reference ligand pose** — the H-bonds are protein↔ligand, so a bare pocket is not enough. The pocket is CA-only (one node per residue). Needs pocket-paired training data and the `[bio]` extra. |
-| `diffusion_pmdm.yaml` | `diffusion_pmdm` | **Protein pocket** | Plain pocket-conditioned SBDD with a dual short/long-range design. Also targets **lead optimisation**. Needs pocket-paired data. No scaffold hopping or linker sampling. |
-| `diffusion_kgdiff.yaml` | `diffusion_kgdiff` | **Protein pocket** | Choose this when you want samples **steered towards predicted binding affinity** — its affinity head guides its own sampling, no second model to train. The same config **also runs [TargetDiff](https://arxiv.org/abs/2303.03543)** (`use_classifier_guide=false`, `guide_mode=wo`), so it doubles as the unguided baseline. |
-| `diffusion_ipdiff.yaml` | `diffusion_ipdiff` | **Protein pocket** | Like KGDiff's lineage, but binding awareness is **baked into training** via a frozen interaction prior rather than applied at sampling. Prior weights ship with it and are mandatory. Caveat before you trust it: the released checkpoint is carbon-saturated (93% C against 64% in real ligands). |
-| `diffusion_apo2mol.yaml` | `diffusion_apo2mol` | **Apo protein pocket** | The one for **flexible receptors**: condition on an **apo** (ligand-free) structure — what you actually have when there is no known binder — and it generates the ligand *and* the pocket's induced-fit conformation together. All the others assume a fixed, ligand-shaped pocket. Needs apo/holo **paired** training data. Generated pockets are written as `.pdb` sidecars next to the ligands. **Sample with the full schedule** (leave `num_steps` unset): unlike the flow-matching models, truncating it degrades the chemistry badly — 205 of 1000 steps returns near-random elements. |
-| `diffusion_difflinker.yaml` | `diffusion_difflinker` | **Fragments** to join | **Linker design / fragment growing**: hold fragments fixed, generate the atoms connecting them. |
-| `diffusion_diffdec.yaml` | `diffusion_diffdec` | **Scaffold** + anchor atom + **protein pocket** | **R-group decoration**: hold a 3D scaffold fixed, pick one anchor atom on it, and grow a substituent off that atom inside the pocket. Choose it over DiffLinker when you have a growth *vector* rather than two fragments to bridge, and over DiffSBDD's inpainting when the attachment point is already decided. R-group size is not configured — the model picks it. Single R-group, conditional only. |
-| `pharmacophore.yaml` | `diffusion_pharmacophore` | **Pharmacophore** points | ShEPhERD. Ligand-based design when you have a pharmacophore hypothesis but **no protein structure**. Requires `open3d`. |
+| `diffusion_diffsmol.yaml` | `diffusion_diffsmol` | Molecular **shape** | Intended for **shape-matching / bioisostere** work, but as shipped the pretrained model **ignores the shape you give it** — the original authors released an incomplete shape encoder. Treat it as a plain generator, or a starting point for your own training. For working shape-based design use ShEPhERD below. |
+| `diffusion_diffsbdd.yaml` | `diffusion_diffsbdd` | **Protein pocket** | **Start here for pocket-based design** — the best-tested and most flexible of the SBDD options. It is also the only one that does **scaffold hopping**: keep part of a known ligand and regenerate the rest — though the part you keep has to be chosen from a ligand already in your converted dataset. |
+| `diffusion_diffpharma.yaml` | `diffusion_diffpharma` | **Protein pocket** + pharmacophore particles | Give it a pocket **plus a known binder's pose**; it reads that binder's contacts and designs new molecules that reproduce them. You cannot hand-author the interaction pattern yourself. |
+| `diffusion_diffint.yaml` | `diffusion_diffint` | **Protein pocket** + hydrogen-bond interaction particles | Narrower than DiffPharma: it keeps only the **hydrogen bonds** a known binder makes, rather than its full contact pattern. Like DiffPharma it needs that binder's pose, not just a pocket. If no hydrogen bonds are found it quietly degrades to plain DiffSBDD. |
+| `diffusion_pmdm.yaml` | `diffusion_pmdm` | **Protein pocket** | Straightforward pocket-conditioned design, and a reasonable second opinion alongside DiffSBDD. De novo generation only here — the paper's lead-optimisation and linker modes were not ported. |
+| `diffusion_kgdiff.yaml` | `diffusion_kgdiff` | **Protein pocket** | Choose this when you want samples **pushed towards better predicted binding affinity** — it scores and steers itself, with no second model to train. Turning that steering off gives you plain [TargetDiff](https://arxiv.org/abs/2303.03543), so this config doubles as the unguided baseline to compare against. The steering only means anything if your training set carries **real measured affinities**. |
+| `diffusion_ipdiff.yaml` | `diffusion_ipdiff` | **Protein pocket** | Binding awareness is learned during training rather than steered at sampling, so there is no knob to turn. The heaviest sampler here, and the shipped checkpoint tends to produce carbon-heavy, chemically dull molecules — check your output before trusting it. |
+| `diffusion_apo2mol.yaml` | `diffusion_apo2mol` | **Apo protein pocket** | The one for **targets with no known binder**: it takes a ligand-free structure and reshapes the pocket as it designs, instead of assuming the pocket is already the right shape. Run the full sampling schedule: shorten it and the pocket never moves, which defeats the point. On the one complex tested, the shipped weights moved the pocket *away* from the true bound shape — validate before relying on it. |
+| `diffusion_difflinker.yaml` | `diffusion_difflinker` | **Fragments** to join | **Linker design**: hold fragments fixed, generate the atoms joining them. You choose the linker length — it does not pick one for you. No pocket and no pretrained weights, so you train it yourself; use DiffDec instead if you need either. |
+| `diffusion_diffdec.yaml` | `diffusion_diffdec` | **Scaffold** + anchor atom + **protein pocket** | **R-group decoration**: keep a scaffold fixed, pick one attachment point, and grow a substituent there inside the pocket. Choose it over DiffLinker when you are growing off a scaffold rather than bridging two fragments. One R-group per run, and the model picks its size for you, up to about 10 heavy atoms. |
+| `pharmacophore.yaml` | `diffusion_pharmacophore` | **Pharmacophore** points, electrostatics, shape | ShEPhERD — ligand-based design when you have a reference molecule but **no protein structure**, and the one option here whose conditioning actually works end to end. Shape matching needs to be trained in; the shipped setup covers pharmacophores and electrostatics. It is also the only model in this table that generates bonds. |
 
 ## 4. Transition-metal complex generation
 
 Ligand design *around a metal centre*: freeze the metal and the retained
-ligands, re-diffuse the rest. Both are bond-free, conditional-only (every
-sample needs an input complex), generate via the bundled `outpaint` mode, and
-need a dataset built with `data.use_row_data_features: true` for their
-per-atom conditioning columns.
+ligands, re-diffuse the rest. Neither generates bonds, every run starts from an
+input complex, and both need complexes prepared with the bundled converter — a
+plain coordinate file is not enough. The shipped weights for both only ever saw
+the metals Cr through Zn.
 
 | Task config | `task_type` | Regenerates | Notes |
 | :--- | :--- | :--- | :--- |
-| `diffusion_ligandiff.yaml` | `diffusion_ligandiff` | Exactly **one** ligand per run | Swap a single ligand for new chemistry while the rest of the complex stays put — the coordination geometry is preserved, since the slot to fill is given. Generating from the released weights needs `diffusion_noise_schedule: learned`. |
-| `diffusion_ligandiff_multi.yaml` | `diffusion_ligandiff_multi` | **Any subset**, one ligand up to the whole coordination sphere | The broader option: retain *k* ligands and regenerate the rest, or retain none and build a complex from a bare metal. It also decides the **number of new ligands and their denticities**, so use it when the coordination sphere itself is up for redesign. Released weights cover Cr–Zn only. |
+| `diffusion_ligandiff.yaml` | `diffusion_ligandiff` | Exactly **one** ligand per run | Swap **one** ligand for new chemistry while the rest of the complex stays put; the coordination geometry is preserved. Ligand assignments ship for one published dataset — bringing your own complexes needs molSimplify. |
+| `diffusion_ligandiff_multi.yaml` | `diffusion_ligandiff_multi` | **Any subset**, one ligand up to the whole coordination sphere | The broader option: keep any number of ligands and regenerate the rest, so use it when more of the coordination sphere is up for redesign. **Octahedral complexes only.** How the free sites are divided between new ligands is chosen at random unless you specify it — the model does not predict it. |
 
 ## 5. Property prediction and guidance
 
 Not generators. `regression` predicts a property; `guidance` exposes the same
-head as a gradient signal to steer a diffusion sampler.
+head as a gradient signal to steer a diffusion sampler. Only EGCL and eSEN can
+be used for that steering.
 
-| Task config | `task_type` | Backbone |
-| :--- | :--- | :--- |
-| `regression.yaml` / `guidance.yaml` | `regression` / `guidance` | EGCL. **Default.** |
-| `regression_esen.yaml` / `guidance_esen.yaml` | `regression` / `guidance` | eSEN. |
-| `regression_equiformer.yaml` | `regression` | EquiformerV2. No `guidance` config for this backbone yet. |
+| Task config | `task_type` | Backbone | Notes |
+| :--- | :--- | :--- | :--- |
+| `regression.yaml` / `guidance.yaml` | `regression` / `guidance` | EGCL | **Start here.** Fastest to train, lightest on memory, and the safest choice for steering generation. |
+| `regression_esen.yaml` / `guidance_esen.yaml` | `regression` / `guidance` | eSEN | Slower and heavier; reach for it when EGCL's accuracy plateaus. |
+| `regression_equiformer.yaml` | `regression` | EquiformerV2 | The most expensive option, for prediction runs where accuracy matters more than cost. It **cannot** steer generation. |
 
 ## 6. Self-supervised pretraining
 
-Pretrain a backbone on unlabeled 3D structures, then fine-tune for regression or
-guidance.
+Train a backbone on unlabeled 3D structures. The resulting checkpoint is usable
+today as a **molecular featuriser** (`MolCraftDiff analyze featurize --backend
+ssl3d`); fine-tuning one into a regression or guidance model is **not wired up
+yet** and will be refused.
 
-| Task config | `task_type` | Backbone |
-| :--- | :--- | :--- |
-| `ssl3d_egcl.yaml` | `ssl3d` | EGCL |
-| `ssl3d_egt.yaml` | `ssl3d` | EGT |
-| `ssl3d_esen.yaml` | `ssl3d` | eSEN |
-| `ssl3d_equiformer.yaml` | `ssl3d_equiformer` | EquiformerV2 |
+| Task config | `task_type` | Backbone | Notes |
+| :--- | :--- | :--- | :--- |
+| `ssl3d_egcl.yaml` | `ssl3d` | EGCL | **Start here** — cheap enough to sweep settings on. |
+| `ssl3d_egt.yaml` | `ssl3d` | EGT | Looks at every atom pair, so memory grows with the square of the molecule size — keep molecules small. |
+| `ssl3d_esen.yaml` | `ssl3d` | eSEN | Slower; pick it to match an eSEN model downstream. |
+| `ssl3d_equiformer.yaml` | `ssl3d_equiformer` | EquiformerV2 | The slowest run here; only worth it to match an EquiformerV2 model downstream. |
 
 ## References
 
@@ -114,6 +121,20 @@ Backbones and objectives integrated here are based on the following work.
 - **FlowMol** — Dunn & Koes. *Mixed Continuous and Categorical Flow Matching
   for 3D De Novo Molecule Generation.* 2024.
   [arXiv:2404.19739](https://arxiv.org/abs/2404.19739)
+- **FlowMol3** — Dunn & Koes. *FlowMol3: Flow Matching for 3D De Novo
+  Small-Molecule Generation.* 2025.
+  [arXiv:2508.12629](https://arxiv.org/abs/2508.12629) — the bond-generating
+  successor to **FlowMol** (above), adding self-conditioning, fake atoms and
+  train-time geometry distortion. The discrete CTMC flow matching that carries
+  its bond, atom-type and charge modalities comes from the intermediate
+  *Exploring Discrete Flow Matching for 3D De Novo Molecule Generation*,
+  MLSB @ NeurIPS 2024
+  ([arXiv:2411.16644](https://arxiv.org/abs/2411.16644)).
+- **MiDi** — Vignac, Osman, Toni & Frossard. *MiDi: Mixed Graph and 3D Denoising
+  Diffusion for Molecule Generation.* ECML PKDD 2023.
+  [arXiv:2302.09048](https://arxiv.org/abs/2302.09048) — the same paper the
+  **EGT** backbone (above) is taken from; `diffusion_midi.yaml` ports the full
+  joint graph-and-coordinate diffusion objective rather than the backbone alone.
 - **EquiFM** — Song, Gong, Xu, Cao, Lan, Ermon, Zhou & Ma. *Equivariant Flow
   Matching with Hybrid Probability Transport for 3D Molecule Generation.*
   NeurIPS 2023. [arXiv:2312.07168](https://arxiv.org/abs/2312.07168)

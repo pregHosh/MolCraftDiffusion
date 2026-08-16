@@ -460,8 +460,9 @@ model</strong>; configs that differ only in hyperparameters or a starting checkp
 are not listed separately.</p>
 <section id="de-novo-3d-generation">
 <h2>1. De novo 3D generation<a class="headerlink" href="#de-novo-3d-generation" title="Link to this heading">¶</a></h2>
-<p>Whole-molecule generators trained on a plain 3D molecule dataset. No
-conditioning input beyond the atom count.</p>
+<p>Whole-molecule generators trained on a plain 3D molecule dataset. The first
+four can also be steered towards a target property value; the rest generate
+freely.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -475,37 +476,47 @@ conditioning input beyond the atom count.</p>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion</span></code></p></td>
 <td class="text-left"><p>EDM (E(n)-equivariant diffusion, EGCL backbone)</p></td>
-<td class="text-left"><p><strong>Start here.</strong> The default and best-tested path; the Hugging Face checkpoints for this repo use it.</p></td>
+<td class="text-left"><p><strong>Start here.</strong> The default and best-tested path; the Hugging Face checkpoints for this repo use it. Also the slowest to sample.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_egt.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion</span></code></p></td>
 <td class="text-left"><p>EGT (equivariant graph transformer)</p></td>
-<td class="text-left"><p>Same objective as the default, with a transformer backbone instead of message passing.</p></td>
+<td class="text-left"><p>Behaves like the default — same conditioning, roughly twice as fast to sample. Worth a try if the default underfits your data.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_gfmdiff.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion</span></code></p></td>
 <td class="text-left"><p>GFMDiff</p></td>
-<td class="text-left"><p>Alternative de novo backbone; drop-in swap for the default.</p></td>
+<td class="text-left"><p>Another same-behaviour alternative to the default, also about twice as fast to sample.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_painn.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion</span></code></p></td>
 <td class="text-left"><p>PaiNN (scalar+vector message passing)</p></td>
-<td class="text-left"><p>Same objective again, with the backbone from OM-Diff’s organometallic work.</p></td>
+<td class="text-left"><p>Same again, using the backbone from OM-Diff’s organometallic work — the one to try on metal-containing systems.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_tabasco.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_tabasco</span></code></p></td>
 <td class="text-left"><p>TABASCO</p></td>
-<td class="text-left"><p>Pick this when you care about <strong>speed and clean geometry</strong> — it is the simplified, physics-tuned option.</p></td>
+<td class="text-left"><p><strong>The fast one</strong> — around nine times fewer steps than the default, with cleaner geometry. Trade-off: no property targeting, so it only generates freely.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_equifm.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_equifm</span></code></p></td>
 <td class="text-left"><p>EquiFM (flow matching, EGNN backbone)</p></td>
-<td class="text-left"><p>Flow matching, so sampling honours <code class="docutils literal notranslate"><span class="pre">num_steps</span></code> and can go short. Caveat: upstream released sampling code only, so <strong>training here follows the paper, not an official implementation</strong> — treat locally trained results as unverified. The converted QM9 checkpoint needs <code class="docutils literal notranslate"><span class="pre">discrete_path:</span> <span class="pre">HB_path</span></code>.</p></td>
+<td class="text-left"><p>Flow matching rather than diffusion. Note it is <strong>not faster</strong> than the default out of the box — pick TABASCO if speed is what you want. Stick to the shipped checkpoint; results from training it yourself are unverified.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_flowmol.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_flowmol</span></code></p></td>
 <td class="text-left"><p>FlowMol (SE(3)-equivariant GVP)</p></td>
-<td class="text-left"><p>Flow matching that also generates formal charges. Needs the <code class="docutils literal notranslate"><span class="pre">[flowmol]</span></code> extra (DGL). Bond-free variant only.</p></td>
+<td class="text-left"><p>The earlier, smaller FlowMol: no bonds, and trained for neutral molecules. Use FlowMol3 below unless you have a reason not to.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_midi.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_midi</span></code></p></td>
+<td class="text-left"><p>MiDi (relational graph transformer with equivariant coordinate updates)</p></td>
+<td class="text-left"><p>The one that <strong>draws the bonds for you</strong>. Everything above gives you atoms in space and leaves you to guess the chemistry afterwards; this one hands you a finished molecule. Best on small, QM9-like molecules. Two things to know: it needs a bond-aware dataset built in advance, and you must ask for SDF output or the bonds are thrown away.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_flowmol_graph3d.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_flowmol_graph3d</span></code></p></td>
+<td class="text-left"><p>FlowMol3 (SE(3)-equivariant GVP, CTMC discrete flow matching)</p></td>
+<td class="text-left"><p>Same idea as MiDi, but for <strong>drug-sized molecules</strong> — pick MiDi instead when your molecules are small. It trims the atom count you ask for but never exceeds it. Most setup work of anything here: you build the drug-scale dataset yourself, and you must ask for SDF output or the bonds are thrown away.</p></td>
 </tr>
 </tbody>
 </table>
@@ -528,12 +539,12 @@ conditioning input beyond the atom count.</p>
 <tr class="row-even"><td class="text-left"><p>GeoLDM</p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">vae_geoldm.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">vae_geoldm</span></code>)</p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_geoldm.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">diffusion_geoldm</span></code>)</p></td>
-<td class="text-left"><p>The established latent option. Diffusing in latent space is cheaper per step than Cartesian EDM, at the cost of training two models.</p></td>
+<td class="text-left"><p>The established latent option, but you train two models and the autoencoder here uses the setup the original authors themselves reported as unstable — expect worse than the published numbers. The default EDM is the safer choice.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p>ADiT</p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">vae_transformer.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">vae_transformer</span></code>) or <code class="docutils literal notranslate"><span class="pre">vae_equiformer.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">vae_equiformer</span></code>)</p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_adit.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">diffusion_adit</span></code>)</p></td>
-<td class="text-left"><p>Transformer-scale latent diffusion; the encoder is your choice (plain transformer is cheaper, Equiformer is equivariant). Aimed at scaling up rather than small datasets.</p></td>
+<td class="text-left"><p>For <strong>large datasets and long training runs</strong>, not for a few thousand molecules. Two encoder choices: the plain transformer is cheaper, Equiformer is more robust to how the molecule is oriented. Nothing here is pre-trained — you train both stages yourself.</p></td>
 </tr>
 </tbody>
 </table>
@@ -543,9 +554,10 @@ conditioning input beyond the atom count.</p>
 <h2>3. Conditional and structure-aware generation<a class="headerlink" href="#conditional-and-structure-aware-generation" title="Link to this heading">¶</a></h2>
 <p>Generation steered by an external input — a shape, a pocket, a set of fragments,
 a pharmacophore. These need <strong>paired</strong> data (the condition alongside the
-molecule); a plain molecule dataset is not enough. The shape- and
-pocket-conditioned models all generate heavy atoms only, with no bonds —
-bonds are perceived afterwards.</p>
+molecule); a plain molecule dataset is not enough. Except for ShEPhERD, none
+of them generate bonds — you get atoms in space and the chemistry is perceived
+afterwards. Most are heavy-atom only; KGDiff, PMDM and Apo2Mol also place
+hydrogens.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -559,57 +571,57 @@ bonds are perceived afterwards.</p>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffsmol.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffsmol</span></code></p></td>
 <td class="text-left"><p>Molecular <strong>shape</strong></p></td>
-<td class="text-left"><p>For <strong>shape-matching / bioisostere</strong> work: give it a reference molecule’s surface, get different chemistry with the same shape. No protein needed. Requires an offline shape cache (<code class="docutils literal notranslate"><span class="pre">[shape]</span></code> extra).</p></td>
+<td class="text-left"><p>Intended for <strong>shape-matching / bioisostere</strong> work, but as shipped the pretrained model <strong>ignores the shape you give it</strong> — the original authors released an incomplete shape encoder. Treat it as a plain generator, or a starting point for your own training. For working shape-based design use ShEPhERD below.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffsbdd.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffsbdd</span></code></p></td>
 <td class="text-left"><p><strong>Protein pocket</strong></p></td>
-<td class="text-left"><p>The <strong>reference SBDD choice</strong> — best documented, most flexible. Use the recommended <code class="docutils literal notranslate"><span class="pre">pocket_conditioning</span></code> mode; the <code class="docutils literal notranslate"><span class="pre">joint</span></code> mode needs <code class="docutils literal notranslate"><span class="pre">diffusion_diffsbdd_joint_moad.yaml</span></code>, since the CrossDocked joint weights are defective upstream. Uniquely here, it also does <strong>scaffold hopping</strong> by inpainting part of a known ligand (<code class="docutils literal notranslate"><span class="pre">gen_diffsbdd_inpaint.yaml</span></code>).</p></td>
+<td class="text-left"><p><strong>Start here for pocket-based design</strong> — the best-tested and most flexible of the SBDD options. It is also the only one that does <strong>scaffold hopping</strong>: keep part of a known ligand and regenerate the rest — though the part you keep has to be chosen from a ligand already in your converted dataset.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffpharma.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffpharma</span></code></p></td>
 <td class="text-left"><p><strong>Protein pocket</strong> + pharmacophore particles</p></td>
-<td class="text-left"><p>SBDD for when you know the <strong>interaction pattern</strong> you want, not just the pocket. Needs pocket-paired training data; a ligand-only dataset cannot train it. Novel pockets from raw PDB+SDF need the <code class="docutils literal notranslate"><span class="pre">[bio]</span></code> extra.</p></td>
+<td class="text-left"><p>Give it a pocket <strong>plus a known binder’s pose</strong>; it reads that binder’s contacts and designs new molecules that reproduce them. You cannot hand-author the interaction pattern yourself.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffint.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffint</span></code></p></td>
 <td class="text-left"><p><strong>Protein pocket</strong> + hydrogen-bond interaction particles</p></td>
-<td class="text-left"><p>SBDD steered by an <strong>explicit H-bond pattern</strong>: two pseudo-atoms per detected donor–acceptor pair are added to the pocket, so generation is biased towards reproducing that interaction geometry. Unlike every other pocket model here, sampling <strong>requires a reference ligand pose</strong> — the H-bonds are protein↔ligand, so a bare pocket is not enough. The pocket is CA-only (one node per residue). Needs pocket-paired training data and the <code class="docutils literal notranslate"><span class="pre">[bio]</span></code> extra.</p></td>
+<td class="text-left"><p>Narrower than DiffPharma: it keeps only the <strong>hydrogen bonds</strong> a known binder makes, rather than its full contact pattern. Like DiffPharma it needs that binder’s pose, not just a pocket. If no hydrogen bonds are found it quietly degrades to plain DiffSBDD.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_pmdm.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_pmdm</span></code></p></td>
 <td class="text-left"><p><strong>Protein pocket</strong></p></td>
-<td class="text-left"><p>Plain pocket-conditioned SBDD with a dual short/long-range design. Also targets <strong>lead optimisation</strong>. Needs pocket-paired data. No scaffold hopping or linker sampling.</p></td>
+<td class="text-left"><p>Straightforward pocket-conditioned design, and a reasonable second opinion alongside DiffSBDD. De novo generation only here — the paper’s lead-optimisation and linker modes were not ported.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_kgdiff.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_kgdiff</span></code></p></td>
 <td class="text-left"><p><strong>Protein pocket</strong></p></td>
-<td class="text-left"><p>Choose this when you want samples <strong>steered towards predicted binding affinity</strong> — its affinity head guides its own sampling, no second model to train. The same config <strong>also runs <a class="reference external" href="https://arxiv.org/abs/2303.03543">TargetDiff</a></strong> (<code class="docutils literal notranslate"><span class="pre">use_classifier_guide=false</span></code>, <code class="docutils literal notranslate"><span class="pre">guide_mode=wo</span></code>), so it doubles as the unguided baseline.</p></td>
+<td class="text-left"><p>Choose this when you want samples <strong>pushed towards better predicted binding affinity</strong> — it scores and steers itself, with no second model to train. Turning that steering off gives you plain <a class="reference external" href="https://arxiv.org/abs/2303.03543">TargetDiff</a>, so this config doubles as the unguided baseline to compare against. The steering only means anything if your training set carries <strong>real measured affinities</strong>.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_ipdiff.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_ipdiff</span></code></p></td>
 <td class="text-left"><p><strong>Protein pocket</strong></p></td>
-<td class="text-left"><p>Like KGDiff’s lineage, but binding awareness is <strong>baked into training</strong> via a frozen interaction prior rather than applied at sampling. Prior weights ship with it and are mandatory. Caveat before you trust it: the released checkpoint is carbon-saturated (93% C against 64% in real ligands).</p></td>
+<td class="text-left"><p>Binding awareness is learned during training rather than steered at sampling, so there is no knob to turn. The heaviest sampler here, and the shipped checkpoint tends to produce carbon-heavy, chemically dull molecules — check your output before trusting it.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_apo2mol.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_apo2mol</span></code></p></td>
 <td class="text-left"><p><strong>Apo protein pocket</strong></p></td>
-<td class="text-left"><p>The one for <strong>flexible receptors</strong>: condition on an <strong>apo</strong> (ligand-free) structure — what you actually have when there is no known binder — and it generates the ligand <em>and</em> the pocket’s induced-fit conformation together. All the others assume a fixed, ligand-shaped pocket. Needs apo/holo <strong>paired</strong> training data. Generated pockets are written as <code class="docutils literal notranslate"><span class="pre">.pdb</span></code> sidecars next to the ligands. <strong>Sample with the full schedule</strong> (leave <code class="docutils literal notranslate"><span class="pre">num_steps</span></code> unset): unlike the flow-matching models, truncating it degrades the chemistry badly — 205 of 1000 steps returns near-random elements.</p></td>
+<td class="text-left"><p>The one for <strong>targets with no known binder</strong>: it takes a ligand-free structure and reshapes the pocket as it designs, instead of assuming the pocket is already the right shape. Run the full sampling schedule: shorten it and the pocket never moves, which defeats the point. On the one complex tested, the shipped weights moved the pocket <em>away</em> from the true bound shape — validate before relying on it.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_difflinker.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_difflinker</span></code></p></td>
 <td class="text-left"><p><strong>Fragments</strong> to join</p></td>
-<td class="text-left"><p><strong>Linker design / fragment growing</strong>: hold fragments fixed, generate the atoms connecting them.</p></td>
+<td class="text-left"><p><strong>Linker design</strong>: hold fragments fixed, generate the atoms joining them. You choose the linker length — it does not pick one for you. No pocket and no pretrained weights, so you train it yourself; use DiffDec instead if you need either.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffdec.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffdec</span></code></p></td>
 <td class="text-left"><p><strong>Scaffold</strong> + anchor atom + <strong>protein pocket</strong></p></td>
-<td class="text-left"><p><strong>R-group decoration</strong>: hold a 3D scaffold fixed, pick one anchor atom on it, and grow a substituent off that atom inside the pocket. Choose it over DiffLinker when you have a growth <em>vector</em> rather than two fragments to bridge, and over DiffSBDD’s inpainting when the attachment point is already decided. R-group size is not configured — the model picks it. Single R-group, conditional only.</p></td>
+<td class="text-left"><p><strong>R-group decoration</strong>: keep a scaffold fixed, pick one attachment point, and grow a substituent there inside the pocket. Choose it over DiffLinker when you are growing off a scaffold rather than bridging two fragments. One R-group per run, and the model picks its size for you, up to about 10 heavy atoms.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">pharmacophore.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_pharmacophore</span></code></p></td>
-<td class="text-left"><p><strong>Pharmacophore</strong> points</p></td>
-<td class="text-left"><p>ShEPhERD. Ligand-based design when you have a pharmacophore hypothesis but <strong>no protein structure</strong>. Requires <code class="docutils literal notranslate"><span class="pre">open3d</span></code>.</p></td>
+<td class="text-left"><p><strong>Pharmacophore</strong> points, electrostatics, shape</p></td>
+<td class="text-left"><p>ShEPhERD — ligand-based design when you have a reference molecule but <strong>no protein structure</strong>, and the one option here whose conditioning actually works end to end. Shape matching needs to be trained in; the shipped setup covers pharmacophores and electrostatics. It is also the only model in this table that generates bonds.</p></td>
 </tr>
 </tbody>
 </table>
@@ -618,10 +630,10 @@ bonds are perceived afterwards.</p>
 <section id="transition-metal-complex-generation">
 <h2>4. Transition-metal complex generation<a class="headerlink" href="#transition-metal-complex-generation" title="Link to this heading">¶</a></h2>
 <p>Ligand design <em>around a metal centre</em>: freeze the metal and the retained
-ligands, re-diffuse the rest. Both are bond-free, conditional-only (every
-sample needs an input complex), generate via the bundled <code class="docutils literal notranslate"><span class="pre">outpaint</span></code> mode, and
-need a dataset built with <code class="docutils literal notranslate"><span class="pre">data.use_row_data_features:</span> <span class="pre">true</span></code> for their
-per-atom conditioning columns.</p>
+ligands, re-diffuse the rest. Neither generates bonds, every run starts from an
+input complex, and both need complexes prepared with the bundled converter — a
+plain coordinate file is not enough. The shipped weights for both only ever saw
+the metals Cr through Zn.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -635,12 +647,12 @@ per-atom conditioning columns.</p>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_ligandiff.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_ligandiff</span></code></p></td>
 <td class="text-left"><p>Exactly <strong>one</strong> ligand per run</p></td>
-<td class="text-left"><p>Swap a single ligand for new chemistry while the rest of the complex stays put — the coordination geometry is preserved, since the slot to fill is given. Generating from the released weights needs <code class="docutils literal notranslate"><span class="pre">diffusion_noise_schedule:</span> <span class="pre">learned</span></code>.</p></td>
+<td class="text-left"><p>Swap <strong>one</strong> ligand for new chemistry while the rest of the complex stays put; the coordination geometry is preserved. Ligand assignments ship for one published dataset — bringing your own complexes needs molSimplify.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_ligandiff_multi.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_ligandiff_multi</span></code></p></td>
 <td class="text-left"><p><strong>Any subset</strong>, one ligand up to the whole coordination sphere</p></td>
-<td class="text-left"><p>The broader option: retain <em>k</em> ligands and regenerate the rest, or retain none and build a complex from a bare metal. It also decides the <strong>number of new ligands and their denticities</strong>, so use it when the coordination sphere itself is up for redesign. Released weights cover Cr–Zn only.</p></td>
+<td class="text-left"><p>The broader option: keep any number of ligands and regenerate the rest, so use it when more of the coordination sphere is up for redesign. <strong>Octahedral complexes only.</strong> How the free sites are divided between new ligands is chosen at random unless you specify it — the model does not predict it.</p></td>
 </tr>
 </tbody>
 </table>
@@ -649,27 +661,32 @@ per-atom conditioning columns.</p>
 <section id="property-prediction-and-guidance">
 <h2>5. Property prediction and guidance<a class="headerlink" href="#property-prediction-and-guidance" title="Link to this heading">¶</a></h2>
 <p>Not generators. <code class="docutils literal notranslate"><span class="pre">regression</span></code> predicts a property; <code class="docutils literal notranslate"><span class="pre">guidance</span></code> exposes the same
-head as a gradient signal to steer a diffusion sampler.</p>
+head as a gradient signal to steer a diffusion sampler. Only EGCL and eSEN can
+be used for that steering.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head text-left"><p>Task config</p></th>
 <th class="head text-left"><p><code class="docutils literal notranslate"><span class="pre">task_type</span></code></p></th>
 <th class="head text-left"><p>Backbone</p></th>
+<th class="head text-left"><p>Notes</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression.yaml</span></code> / <code class="docutils literal notranslate"><span class="pre">guidance.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression</span></code> / <code class="docutils literal notranslate"><span class="pre">guidance</span></code></p></td>
-<td class="text-left"><p>EGCL. <strong>Default.</strong></p></td>
+<td class="text-left"><p>EGCL</p></td>
+<td class="text-left"><p><strong>Start here.</strong> Fastest to train, lightest on memory, and the safest choice for steering generation.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression_esen.yaml</span></code> / <code class="docutils literal notranslate"><span class="pre">guidance_esen.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression</span></code> / <code class="docutils literal notranslate"><span class="pre">guidance</span></code></p></td>
-<td class="text-left"><p>eSEN.</p></td>
+<td class="text-left"><p>eSEN</p></td>
+<td class="text-left"><p>Slower and heavier; reach for it when EGCL’s accuracy plateaus.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression_equiformer.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">regression</span></code></p></td>
-<td class="text-left"><p>EquiformerV2. No <code class="docutils literal notranslate"><span class="pre">guidance</span></code> config for this backbone yet.</p></td>
+<td class="text-left"><p>EquiformerV2</p></td>
+<td class="text-left"><p>The most expensive option, for prediction runs where accuracy matters more than cost. It <strong>cannot</strong> steer generation.</p></td>
 </tr>
 </tbody>
 </table>
@@ -677,32 +694,38 @@ head as a gradient signal to steer a diffusion sampler.</p>
 </section>
 <section id="self-supervised-pretraining">
 <h2>6. Self-supervised pretraining<a class="headerlink" href="#self-supervised-pretraining" title="Link to this heading">¶</a></h2>
-<p>Pretrain a backbone on unlabeled 3D structures, then fine-tune for regression or
-guidance.</p>
+<p>Train a backbone on unlabeled 3D structures. The resulting checkpoint is usable
+today as a <strong>molecular featuriser</strong> (<code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">analyze</span> <span class="pre">featurize</span> <span class="pre">--backend</span> <span class="pre">ssl3d</span></code>); fine-tuning one into a regression or guidance model is <strong>not wired up
+yet</strong> and will be refused.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head text-left"><p>Task config</p></th>
 <th class="head text-left"><p><code class="docutils literal notranslate"><span class="pre">task_type</span></code></p></th>
 <th class="head text-left"><p>Backbone</p></th>
+<th class="head text-left"><p>Notes</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">ssl3d_egcl.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">ssl3d</span></code></p></td>
 <td class="text-left"><p>EGCL</p></td>
+<td class="text-left"><p><strong>Start here</strong> — cheap enough to sweep settings on.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">ssl3d_egt.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">ssl3d</span></code></p></td>
 <td class="text-left"><p>EGT</p></td>
+<td class="text-left"><p>Looks at every atom pair, so memory grows with the square of the molecule size — keep molecules small.</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">ssl3d_esen.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">ssl3d</span></code></p></td>
 <td class="text-left"><p>eSEN</p></td>
+<td class="text-left"><p>Slower; pick it to match an eSEN model downstream.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">ssl3d_equiformer.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">ssl3d_equiformer</span></code></p></td>
 <td class="text-left"><p>EquiformerV2</p></td>
+<td class="text-left"><p>The slowest run here; only worth it to match an EquiformerV2 model downstream.</p></td>
 </tr>
 </tbody>
 </table>
@@ -730,6 +753,20 @@ Model for Molecular Generation with Improved Physical Quality.</em> 2025.
 <li><p><strong>FlowMol</strong> — Dunn &amp; Koes. <em>Mixed Continuous and Categorical Flow Matching
 for 3D De Novo Molecule Generation.</em> 2024.
 <a class="reference external" href="https://arxiv.org/abs/2404.19739">arXiv:2404.19739</a></p></li>
+<li><p><strong>FlowMol3</strong> — Dunn &amp; Koes. <em>FlowMol3: Flow Matching for 3D De Novo
+Small-Molecule Generation.</em> 2025.
+<a class="reference external" href="https://arxiv.org/abs/2508.12629">arXiv:2508.12629</a> — the bond-generating
+successor to <strong>FlowMol</strong> (above), adding self-conditioning, fake atoms and
+train-time geometry distortion. The discrete CTMC flow matching that carries
+its bond, atom-type and charge modalities comes from the intermediate
+<em>Exploring Discrete Flow Matching for 3D De Novo Molecule Generation</em>,
+MLSB &#64; NeurIPS 2024
+(<a class="reference external" href="https://arxiv.org/abs/2411.16644">arXiv:2411.16644</a>).</p></li>
+<li><p><strong>MiDi</strong> — Vignac, Osman, Toni &amp; Frossard. <em>MiDi: Mixed Graph and 3D Denoising
+Diffusion for Molecule Generation.</em> ECML PKDD 2023.
+<a class="reference external" href="https://arxiv.org/abs/2302.09048">arXiv:2302.09048</a> — the same paper the
+<strong>EGT</strong> backbone (above) is taken from; <code class="docutils literal notranslate"><span class="pre">diffusion_midi.yaml</span></code> ports the full
+joint graph-and-coordinate diffusion objective rather than the backbone alone.</p></li>
 <li><p><strong>EquiFM</strong> — Song, Gong, Xu, Cao, Lan, Ermon, Zhou &amp; Ma. <em>Equivariant Flow
 Matching with Hybrid Probability Transport for 3D Molecule Generation.</em>
 NeurIPS 2023. <a class="reference external" href="https://arxiv.org/abs/2312.07168">arXiv:2312.07168</a></p></li>
