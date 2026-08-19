@@ -1,0 +1,210 @@
+MolecularDiffusion.modules.models.gcdm.gcp_utils
+================================================
+
+.. py:module:: MolecularDiffusion.modules.models.gcdm.gcp_utils
+
+.. autoapi-nested-parse::
+
+   Geometry helpers and small containers used by the GCP blocks.
+
+   Near-verbatim port of the pieces of the GCDM repo that ``gcpnet.py`` imports:
+
+   - ``src/models/components/__init__.py`` -> ``centralize``, ``localize``,
+     ``scalarize``, ``vectorize``, ``safe_norm``, ``norm_no_nan``,
+     ``is_identity``, ``ScalarVector``, ``VectorDropout``, ``GCPDropout``,
+     ``GCPLayerNorm``
+   - ``src/models/__init__.py`` -> ``get_nonlinearity``
+   - ``src/datamodules/components/helper.py`` -> ``_normalize``
+   - ``src/datamodules/components/protein_graph_dataset.py`` -> ``_orientations``
+   - ``src/datamodules/components/edm_dataset.py`` -> ``_node_features`` /
+     ``_edge_features``
+
+   Changes from upstream, all mechanical:
+   - ``torchtyping`` / ``typeguard`` decorators stripped (neither is a platform
+     dependency); the shapes they documented are kept as docstrings.
+   - the plotting / PyMOL / wandb / ProDy helpers that shared the upstream module
+     are not ported -- nothing in the denoiser touches them.
+   - ``_node_features`` / ``_edge_features`` are reduced to the ``edm_sampling``
+     path, the only one the denoiser calls.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.gcdm.gcp_utils.GCPDropout
+   MolecularDiffusion.modules.models.gcdm.gcp_utils.GCPLayerNorm
+   MolecularDiffusion.modules.models.gcdm.gcp_utils.ScalarVector
+   MolecularDiffusion.modules.models.gcdm.gcp_utils.VectorDropout
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.gcdm.gcp_utils.centralize
+   MolecularDiffusion.modules.models.gcdm.gcp_utils.edge_features
+   MolecularDiffusion.modules.models.gcdm.gcp_utils.get_nonlinearity
+   MolecularDiffusion.modules.models.gcdm.gcp_utils.is_identity
+   MolecularDiffusion.modules.models.gcdm.gcp_utils.localize
+   MolecularDiffusion.modules.models.gcdm.gcp_utils.node_vector_features
+   MolecularDiffusion.modules.models.gcdm.gcp_utils.norm_no_nan
+   MolecularDiffusion.modules.models.gcdm.gcp_utils.safe_norm
+   MolecularDiffusion.modules.models.gcdm.gcp_utils.scalarize
+   MolecularDiffusion.modules.models.gcdm.gcp_utils.vectorize
+
+
+Module Contents
+---------------
+
+.. py:class:: GCPDropout(drop_rate: float, use_gcp_dropout: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   From https://github.com/drorlab/gvp-pytorch.
+
+
+   .. py:method:: forward(x: Union[torch.Tensor, ScalarVector])
+
+
+   .. py:attribute:: scalar_dropout
+
+
+   .. py:attribute:: vector_dropout
+
+
+.. py:class:: GCPLayerNorm(dims: ScalarVector, eps: float = 1e-08, use_gcp_norm: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   From https://github.com/drorlab/gvp-pytorch.
+
+
+   .. py:method:: forward(x: Union[torch.Tensor, ScalarVector])
+
+
+   .. py:method:: norm_vector(v: torch.Tensor, use_gcp_norm: bool = True, eps: float = 1e-08) -> torch.Tensor
+      :staticmethod:
+
+
+
+   .. py:attribute:: eps
+      :value: 1e-08
+
+
+
+   .. py:attribute:: scalar_norm
+
+
+   .. py:attribute:: use_gcp_norm
+      :value: True
+
+
+
+.. py:class:: ScalarVector
+
+   Bases: :py:obj:`tuple`
+
+
+   From https://github.com/sarpaykent/GBPNet.
+
+   Initialize self.  See help(type(self)) for accurate signature.
+
+
+   .. py:method:: clone()
+
+
+   .. py:method:: concat(others, dim=-1)
+
+
+   .. py:method:: flatten()
+
+
+   .. py:method:: idx(idx)
+
+
+   .. py:method:: mask(node_mask: torch.Tensor)
+
+
+   .. py:method:: recover(x, vector_dim)
+      :staticmethod:
+
+
+
+   .. py:method:: repeat(n, c=1, y=1)
+
+
+   .. py:method:: vs()
+
+
+   .. py:property:: scalar
+
+
+   .. py:property:: vector
+
+
+.. py:class:: VectorDropout(drop_rate: float)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   From https://github.com/drorlab/gvp-pytorch.
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: drop_rate
+
+
+.. py:function:: centralize(batch: Any, key: str, batch_index: torch.Tensor, node_mask: Optional[torch.Tensor] = None, edm: bool = False) -> Tuple[torch.Tensor, torch.Tensor]
+
+   Return ``(centroid, centered)`` for ``batch[key]``.
+
+   ``node_mask``: ``(batch_num_nodes,)`` bool.
+
+
+.. py:function:: edge_features(coords: torch.Tensor, edge_index: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+
+   ``(e, xi)`` -- squared distance and unit displacement per edge.
+
+
+.. py:function:: get_nonlinearity(nonlinearity: Optional[str] = None, slope: float = 0.01, return_functional: bool = False) -> Any
+
+.. py:function:: is_identity(nonlinearity: Optional[Union[Callable, torch.nn.Module]] = None) -> bool
+
+.. py:function:: localize(x: torch.Tensor, edge_index: torch.Tensor, norm_x_diff: bool = True, node_mask: Optional[torch.Tensor] = None) -> torch.Tensor
+
+   Build the complete local frame of every edge.
+
+   ``x``: ``(batch_num_nodes, 3)``; ``edge_index``: ``(2, batch_num_edges)``.
+   Returns ``(batch_num_edges, 3, 3)``.
+
+
+.. py:function:: node_vector_features(coords: torch.Tensor) -> torch.Tensor
+
+   ``chi`` -- the 2 equivariant node channels GCPNet embeds.
+
+
+.. py:function:: norm_no_nan(x: torch.Tensor, dim: int = -1, keepdim: bool = False, eps: float = 1e-08, sqrt: bool = True) -> torch.Tensor
+
+   From https://github.com/drorlab/gvp-pytorch.
+
+
+.. py:function:: safe_norm(x: torch.Tensor, dim: int = -1, eps: float = 1e-08, keepdim: bool = False, sqrt: bool = True) -> torch.Tensor
+
+.. py:function:: scalarize(vector_rep: torch.Tensor, edge_index: torch.Tensor, frames: torch.Tensor, node_inputs: bool, dim_size: int, node_mask: Optional[torch.Tensor] = None) -> torch.Tensor
+
+   Project ``(N, 3, 3)`` equivariant values onto local frames -> ``(N, 9)``.
+
+
+.. py:function:: vectorize(gate: torch.Tensor, edge_index: torch.Tensor, frames: torch.Tensor, node_inputs: bool, dim_size: int, node_mask: Optional[torch.Tensor] = None) -> torch.Tensor
+
+   Turn ``(N, 9)`` frame-space gates back into ``(N, 3, 3)`` vectors.
+
+

@@ -1,0 +1,160 @@
+MolecularDiffusion.modules.models.gcdm.dynamics
+===============================================
+
+.. py:module:: MolecularDiffusion.modules.models.gcdm.dynamics
+
+.. autoapi-nested-parse::
+
+   Adapter binding GCDM's GCPNet denoiser to the platform's dense point-cloud
+   diffusion contract.
+
+   ``EnVariationalDiffusion.phi`` (``modules/models/en_diffusion.py:234``) calls
+   ``dynamics._forward(t, xh, node_mask, edge_mask, context)`` with **dense,
+   padded** tensors::
+
+       xh        (B, N, 3 + in_node_nf)
+       node_mask (B, N, 1)
+       edge_mask (B, N*N, 1)      -- discarded here, see below
+       context   (B, N, C) or None
+       t         (B, 1) or a 0-d/1-element tensor
+
+   GCDM's ``GCPNetDynamics.atom_types_and_coords_forward``
+   (``src/models/components/gcpnet.py:1069``) instead consumes the **flat,
+   unpadded** node list of a PyG ``Batch``.  :class:`GCDMDynamics` bridges the
+   two by *compacting* the padded batch down to its real atoms, running the
+   ported network, and scattering the prediction back into the padded layout.
+
+   Compaction rather than a plain ``reshape(B*N, ...)`` is deliberate and
+   load-bearing for checkpoint fidelity: GCDM's equivariant node channel
+   ``chi`` is ``_orientations`` -- forward/backward displacements between
+   *consecutive rows of the flat node list* -- so padding rows interleaved
+   between molecules would change those features.  Row-major compaction of a
+   dense ``(B, N, ...)`` batch reproduces exactly the concatenated node
+   ordering ``Batch.from_data_list`` gives upstream.
+
+   ``edge_mask`` is discarded because GCPNet rebuilds its own fully-connected
+   intra-molecule edge list every step from the batch index
+   (``get_fully_connected_edge_index``, ``gcpnet.py:1056``); the platform's
+   ``edge_mask`` is the identical mask outer-product.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.gcdm.dynamics.GCDMDynamics
+
+
+Module Contents
+---------------
+
+.. py:class:: GCDMDynamics(in_node_nf: int, context_node_nf: int = 0, n_dims: int = 3, num_encoder_layers: int = 9, h_hidden_dim: int = 256, chi_hidden_dim: int = 32, e_hidden_dim: int = 64, xi_hidden_dim: int = 16, chi_input_dim: int = 2, e_input_dim: int = 1, xi_input_dim: int = 1, dropout: float = 0.0, condition_on_time: bool = True, self_condition: bool = False, module_cfg: Optional[MolecularDiffusion.modules.models.gcdm.gcp_layers.GCPModuleConfig] = None, layer_cfg: Optional[MolecularDiffusion.modules.models.gcdm.gcp_layers.GCPLayerConfig] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   GCPNet denoiser, ported from ``GCPNetDynamics`` (``gcpnet.py:933``).
+
+   All five upstream ``DictConfig`` arguments are flattened into named
+   keyword arguments; the defaults below are the shipped QM9 preset
+   (``configs/model/model_cfg/qm9_mol_gen_ddpm_gcp_model.yaml``).
+
+   :param in_node_nf: Number of node scalar channels the diffusion latent carries -- i.e.
+                      ``len(atom_vocab) + int(include_charges)``.  Upstream's
+                      ``num_atom_types + include_charges``.
+   :param context_node_nf: Number of property-conditioning channels (upstream
+                           ``len(module_cfg.conditioning)``).  ``0`` disables context
+                           conditioning entirely.
+   :param n_dims: Spatial dimensionality (3).
+   :param num_encoder_layers: Number of :class:`GCPInteractions` blocks (QM9: 9, GEOM: 4).
+   :param h_hidden_dim / chi_hidden_dim / e_hidden_dim / xi_hidden_dim: Hidden scalar/vector widths for nodes and edges.
+   :param chi_input_dim / e_input_dim / xi_input_dim: Input widths of the geometric features GCPNet builds itself.
+   :param self_condition: Ported for completeness; ``False`` in every shipped upstream config
+                          and doubles the input widths when on.
+
+
+   .. py:method:: forward(t, xh, node_mask, edge_mask, context=None)
+      :abstractmethod:
+
+
+
+   .. py:method:: get_fully_connected_edge_index(batch_index: torch.Tensor, node_mask: Optional[torch.Tensor] = None) -> torch.Tensor
+      :staticmethod:
+
+
+      ``gcpnet.py:1056``. Every intra-molecule ordered pair, self loops
+      included.
+
+
+
+   .. py:method:: unwrap_forward()
+
+
+   .. py:method:: wrap_forward(node_mask, edge_mask, context)
+
+
+   .. py:attribute:: condition_on_context
+
+
+   .. py:attribute:: condition_on_time
+      :value: True
+
+
+
+   .. py:attribute:: edge_dims
+
+
+   .. py:attribute:: edge_input_dims
+
+
+   .. py:attribute:: gcp_embedding
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: interaction_layers
+
+
+   .. py:attribute:: layer_cfg
+
+
+   .. py:attribute:: module_cfg
+
+
+   .. py:attribute:: n_dims
+      :value: 3
+
+
+
+   .. py:attribute:: node_dims
+
+
+   .. py:attribute:: node_input_dims
+
+
+   .. py:attribute:: norm_x_diff
+      :value: True
+
+
+
+   .. py:attribute:: num_context_node_features
+      :value: 0
+
+
+
+   .. py:attribute:: num_x_dims
+      :value: 3
+
+
+
+   .. py:attribute:: scalar_node_projection_gcp
+
+
+   .. py:attribute:: self_condition
+      :value: False
+
+
+

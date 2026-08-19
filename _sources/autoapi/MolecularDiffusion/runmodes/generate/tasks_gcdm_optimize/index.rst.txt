@@ -1,0 +1,177 @@
+MolecularDiffusion.runmodes.generate.tasks_gcdm_optimize
+========================================================
+
+.. py:module:: MolecularDiffusion.runmodes.generate.tasks_gcdm_optimize
+
+.. autoapi-nested-parse::
+
+   GCDM property optimization -- refine molecules you already have towards a
+   property target.
+
+   This is an ADDITIVE sibling of ``GenerativeFactory``, not a modification of
+   it. ``cli/generate.py`` does
+   ``hydra.utils.instantiate(cfg.interference, task=task)`` followed by
+   ``generator.run()``; the ``GenerativeFactory`` annotation on that line is
+   cosmetic and there is no registry, so a new class in a new file plugs in
+   purely through its ``_target_``.
+
+   WHAT IT DOES (and what it is NOT)
+
+       Port of GCDM's ``mol_gen_optimize``
+       (``others/bio-diffusion/src/models/components/variational_diffusion.py:1416``),
+       driven from ``src/mol_gen_eval_optimization_qm9.py:152``.
+
+       It is a **time-compressed reverse loop seeded with a real molecule**:
+
+       1. The clean molecule is normalized, then forward-diffused to
+          ``t0 = noise_level`` via ``q(z_t0 | x)`` -- SDEdit-style. See
+          DEVIATION below for why this step exists.
+       2. The ordinary reverse loop then runs for ``num_optimization_timesteps``
+          (K = 100) steps, with the **time axis rescaled by K rather than by the
+          model's T = 1000** and truncated at ``t0`` -- so step K-1 is presented
+          to the network as ``t = t0``. Upstream calls the rescaling
+          ``norm_with_original_timesteps=False`` and its own comment marks it as
+          "important": dividing by ``self.model.T`` instead would compress the
+          trajectory into the last 10% of the schedule and produce a near-no-op.
+       3. The context vector is the desired property value, so the reverse loop
+          pulls the molecule towards it.
+       4. The whole thing repeats ``iterations`` times, each round re-seeded
+          with the previous round's output. Upstream applies **no filtering or
+          selection between rounds** and neither does this.
+
+       DEVIATION FROM UPSTREAM (deliberate, attempt 2)
+
+       Upstream hands the *clean* normalized latent straight to
+       ``sample_p_zs_given_zt`` at ``t = 1.0``
+       (``variational_diffusion.py:1455-1470``); the caller
+       (``mol_gen_eval_optimization_qm9.py:161-171``) does no forward noising
+       either, so upstream really has no ``q(z_t | x)`` step. That is a
+       signal/noise-scale mismatch: over the whole chain the reverse process
+       multiplies the latent by ``1 / alpha(t=1) ~ 300``, which is only
+       cancelled when the seed is drawn from ``N(0, I)``. Reproduced faithfully
+       in attempt 1 it blew molecules apart (135 A median nearest-neighbour
+       distance, 0/20 connected), while the *same* checkpoint through the
+       ordinary conditional sampler from a Gaussian seed gave 8/8 connected at
+       1.03 A. So the loop and the weights are fine and the seed is not.
+       Forward-diffusing to ``t0`` puts the seed on the scale the network was
+       trained to see at ``t0``, which is the standard way to edit an existing
+       sample with a diffusion model. ``noise_level = 1.0`` restores upstream's
+       literal behaviour (full noise, i.e. the seed only sets the atom count).
+
+       **The default 0.5 remains UNVALIDATED.** It is a reasonable middle value
+       chosen to make the mode usable (``alpha(0.5) = 0.75``, so the seed keeps
+       most of its signal), not a tuned optimum. A 0.1/0.3/0.5/0.7 sweep has
+       since been run (attempt-2 smoke test) -- its main result was that
+       ``noise_level`` was NOT the cause of the failure being chased at the
+       time, since every value failed identically. On the *corrected* code path
+       a follow-up at K=100 measured 0.3 as marginally better than 0.5 (4/4 vs
+       3/4 connected, comparable ~1.02 A median nearest-neighbour distance), but
+       that is n=4 on one property with one checkpoint -- far too weak to call
+       an optimum, so 0.5 stands as the default. Do not read either number as a
+       result. Sweep it for your property before quoting anything that depends
+       on it.
+
+       No property classifier is loaded. GCDM's EGNN classifiers only *score*
+       finished samples for the paper's table (``src/__init__.py:208``); no
+       gradient ever flows through them into the loop. Scoring the result is out
+       of scope here -- the platform already has a scoring seam at
+       ``GenerativeFactory.property_prediction``.
+
+   REQUIREMENTS
+       A property-conditional checkpoint (GCDM ships six for QM9: alpha, gap,
+       homo, lumo, mu, Cv) and a directory of ``.xyz`` starting molecules.
+       Nothing generates those here on purpose -- feed it the output of an
+       ordinary ``MolCraftDiff generate`` run, exactly as GCDM's own README does
+       in two stages (README:181 then :184).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.generate.tasks_gcdm_optimize.GCDMOptimizeFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: GCDMOptimizeFactory(task, condition_configs: Optional[dict] = None, target_values: Sequence[float] = (), property_names: Sequence[str] = (), iterations: int = 1, num_optimization_timesteps: int = 100, noise_level: float = 0.5, batch_size: int = 8, seed: int = 86, output_path: str = 'gcdm_optimized', save_every_iteration: bool = True, **kwargs)
+
+   Interference-side entry point for GCDM property optimization.
+
+   :param task: The loaded ``GeomMolecularGenerative`` task (injected by
+                ``cli/generate.py``).
+   :param condition_configs: ``input_mols_dir`` (required), plus ``iterations`` and
+                             ``num_optimization_timesteps`` if not given at the top level.
+   :param target_values / property_names: The property target, in the property's own units. Normalized through
+                                          the task's existing ``prop_dist_model`` exactly as
+                                          ``GenerativeFactory`` does.
+   :param iterations: Optimization rounds (upstream default 1 --
+                      ``mol_gen_eval_optimization_qm9.yaml:27``).
+   :param num_optimization_timesteps: K, the compressed trajectory length (upstream default 100 --
+                                      ``mol_gen_eval_optimization_qm9.yaml:28``; the ``num_timesteps: 10``
+                                      two lines above it belongs to the *initial unconditional generation*
+                                      at ``mol_gen_eval_optimization_qm9.py:335``, not to this loop). Note
+                                      K is deliberately NOT the model's T.
+   :param noise_level: ``t0`` in ``(0, 1]`` -- how far the input is forward-diffused before
+                       the reverse walk starts. Low = stays close to the input molecule,
+                       1.0 = full noise (the input then only fixes the atom count). See the
+                       module docstring's DEVIATION note.
+
+
+   .. py:method:: run() -> None
+
+
+   .. py:attribute:: batch_size
+      :value: 8
+
+
+
+   .. py:attribute:: condition_configs
+
+
+   .. py:attribute:: device
+
+
+   .. py:attribute:: input_mols_dir
+
+
+   .. py:attribute:: iterations
+
+
+   .. py:attribute:: noise_level
+
+
+   .. py:attribute:: num_optimization_timesteps
+
+
+   .. py:attribute:: output_path
+      :value: 'gcdm_optimized'
+
+
+
+   .. py:attribute:: property_names
+      :value: []
+
+
+
+   .. py:attribute:: save_every_iteration
+      :value: True
+
+
+
+   .. py:attribute:: seed
+      :value: 86
+
+
+
+   .. py:attribute:: target_values
+      :value: []
+
+
+
+   .. py:attribute:: task
+
+

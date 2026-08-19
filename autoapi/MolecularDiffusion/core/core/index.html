@@ -326,6 +326,7 @@
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../runmodes/generate/index.html">MolecularDiffusion.runmodes.generate</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.generate" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/generate/sweep/index.html">MolecularDiffusion.runmodes.generate.sweep</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/generate/tasks_gcdm_optimize/index.html">MolecularDiffusion.runmodes.generate.tasks_gcdm_optimize</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/generate/tasks_generate/index.html">MolecularDiffusion.runmodes.generate.tasks_generate</a></li>
 </ul>
 </li>
@@ -337,6 +338,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/train/tasks_egt/index.html">MolecularDiffusion.runmodes.train.tasks_egt</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/train/tasks_equiformer/index.html">MolecularDiffusion.runmodes.train.tasks_equiformer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/train/tasks_esen/index.html">MolecularDiffusion.runmodes.train.tasks_esen</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/train/tasks_gcdm/index.html">MolecularDiffusion.runmodes.train.tasks_gcdm</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/train/tasks_gfmdiff/index.html">MolecularDiffusion.runmodes.train.tasks_gfmdiff</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/train/tasks_painn/index.html">MolecularDiffusion.runmodes.train.tasks_painn</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/train/trainer/index.html">MolecularDiffusion.runmodes.train.trainer</a></li>
@@ -524,17 +526,17 @@ This is convenient for building models from configuration files.</p>
 <ol class="arabic simple">
 <li><p>Create a model according to a string.</p></li>
 </ol>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gcn</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;GCN&quot;</span><span class="p">)(</span><span class="mi">128</span><span class="p">,</span> <span class="p">[</span><span class="mi">128</span><span class="p">])</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gcn</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">"GCN"</span><span class="p">)(</span><span class="mi">128</span><span class="p">,</span> <span class="p">[</span><span class="mi">128</span><span class="p">])</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="2">
 <li><p>Register a customize hook to the package.</p></li>
 </ol>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@R</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;features.atom.my_feature&quot;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@R</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">"features.atom.my_feature"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">my_featurizer</span><span class="p">(</span><span class="n">atom</span><span class="p">):</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="o">...</span>
 <span class="gp">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">Molecule</span><span class="o">.</span><span class="n">from_smiles</span><span class="p">(</span><span class="s2">&quot;C1=CC=CC=C1&quot;</span><span class="p">,</span> <span class="n">atom_feature</span><span class="o">=</span><span class="s2">&quot;my_feature&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">Molecule</span><span class="o">.</span><span class="n">from_smiles</span><span class="p">(</span><span class="s2">"C1=CC=CC=C1"</span><span class="p">,</span> <span class="n">atom_feature</span><span class="o">=</span><span class="s2">"my_feature"</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="py method">

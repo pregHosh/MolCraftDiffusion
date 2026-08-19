@@ -12,7 +12,7 @@ are not listed separately.
 ## 1. De novo 3D generation
 
 Whole-molecule generators trained on a plain 3D molecule dataset. The first
-four can also be steered towards a target property value; the rest generate
+five can also be steered towards a target property value; the rest generate
 freely.
 
 | Task config | `task_type` | Model | Notes |
@@ -21,6 +21,7 @@ freely.
 | `diffusion_egt.yaml` | `diffusion` | EGT (equivariant graph transformer) | Behaves like the default — same conditioning, roughly twice as fast to sample. Worth a try if the default underfits your data. |
 | `diffusion_gfmdiff.yaml` | `diffusion` | GFMDiff | Another same-behaviour alternative to the default, also about twice as fast to sample. |
 | `diffusion_painn.yaml` | `diffusion` | PaiNN (scalar+vector message passing) | Same again, using the backbone from OM-Diff's organometallic work — the one to try on metal-containing systems. |
+| `diffusion_gcdm.yaml` | `diffusion` | GCDM (GCPNet backbone) | **The one that edits existing molecules** — refines structures towards a property target instead of generating from scratch. Trade-off: slowest to sample of these backbones. |
 | `diffusion_tabasco.yaml` | `diffusion_tabasco` | TABASCO | **The fast one** — around nine times fewer steps than the default, with cleaner geometry. Trade-off: no property targeting, so it only generates freely. |
 | `diffusion_equifm.yaml` | `diffusion_equifm` | EquiFM (flow matching, EGNN backbone) | Flow matching rather than diffusion. Note it is **not faster** than the default out of the box — pick TABASCO if speed is what you want. Stick to the shipped checkpoint; results from training it yourself are unverified. |
 | `diffusion_flowmol.yaml` | `diffusion_flowmol` | FlowMol (SE(3)-equivariant GVP) | The earlier, smaller FlowMol: no bonds, and trained for neutral molecules. Use FlowMol3 below unless you have a reason not to. |
@@ -115,6 +116,11 @@ Backbones and objectives integrated here are based on the following work.
   of **PaiNN**: Schütt, Unke & Gastegger, *Equivariant message passing for the
   prediction of tensorial properties and molecular spectra*, ICML 2021
   ([arXiv:2102.03150](https://arxiv.org/abs/2102.03150)).
+- **GCDM** — Morehead & Cheng. *Geometry-Complete Diffusion for 3D Molecule
+  Generation and Optimization.* Communications Chemistry 7, 150 (2024).
+  [arXiv:2302.04313](https://arxiv.org/abs/2302.04313) — the same diffusion
+  objective as **EDM** (above) with the EGNN backbone replaced by the
+  geometry-complete GCPNet, plus the property-optimization mode.
 - **TABASCO** — Vonessen, Harris, Cretu & Liò. *TABASCO: A Fast, Simplified
   Model for Molecular Generation with Improved Physical Quality.* 2025.
   [arXiv:2507.00899](https://arxiv.org/abs/2507.00899)

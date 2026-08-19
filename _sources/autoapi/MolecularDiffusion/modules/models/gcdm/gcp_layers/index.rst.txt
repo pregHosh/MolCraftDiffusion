@@ -1,0 +1,389 @@
+MolecularDiffusion.modules.models.gcdm.gcp_layers
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.models.gcdm.gcp_layers
+
+.. autoapi-nested-parse::
+
+   Geometry-Complete Perceptron (GCP) blocks.
+
+   Near-verbatim port of ``src/models/components/gcpnet.py:35-931`` from
+   https://github.com/BioinfoMachineLearning/bio-diffusion (commit
+   ``a328950c``), which adapts
+   https://github.com/BioinfoMachineLearning/GCPNet.
+
+   Changes from upstream, all mechanical -- **no module is renamed and no
+   ``nn.Parameter`` shape changes**, so the published GCDM checkpoints map onto
+   these classes one-to-one:
+
+   - ``torchtyping``/``typeguard`` decorators stripped.
+   - the five ``omegaconf.DictConfig`` objects upstream threads through every
+     constructor are replaced by two plain dataclasses, :class:`GCPModuleConfig`
+     and :class:`GCPLayerConfig`, with the shipped QM9/GEOM values as defaults.
+     ``copy.copy`` + attribute assignment (which upstream relies on for its
+     ``soft_cfg`` / ``ff_cfg`` variants) still works on them.
+   - ``module_cfg.selected_GCP``, upstream a Hydra ``_partial_`` pointing at
+     :class:`GCP2`, becomes a plain ``gcp_version: "GCP" | "GCP2"`` string.
+   - upstream's ``mp_cfg`` sub-config is flattened into
+     :class:`GCPLayerConfig` (it only ever carried three used fields).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.gcdm.gcp_layers.GCP
+   MolecularDiffusion.modules.models.gcdm.gcp_layers.GCP2
+   MolecularDiffusion.modules.models.gcdm.gcp_layers.GCPEmbedding
+   MolecularDiffusion.modules.models.gcdm.gcp_layers.GCPInteractions
+   MolecularDiffusion.modules.models.gcdm.gcp_layers.GCPLayerConfig
+   MolecularDiffusion.modules.models.gcdm.gcp_layers.GCPMessagePassing
+   MolecularDiffusion.modules.models.gcdm.gcp_layers.GCPModuleConfig
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.gcdm.gcp_layers.get_GCP_with_custom_cfg
+
+
+Module Contents
+---------------
+
+.. py:class:: GCP(input_dims: MolecularDiffusion.modules.models.gcdm.gcp_utils.ScalarVector, output_dims: MolecularDiffusion.modules.models.gcdm.gcp_utils.ScalarVector, nonlinearities: Tuple[Optional[str], Optional[str]] = ('silu', 'silu'), scalar_out_nonlinearity: Optional[str] = 'silu', scalar_gate: int = 0, vector_gate: bool = True, frame_gate: bool = False, sigma_frame_gate: bool = False, feedforward_out: bool = False, bottleneck: int = 1, vector_residual: bool = False, vector_frame_residual: bool = False, ablate_frame_updates: bool = False, ablate_scalars: bool = False, ablate_vectors: bool = False, scalarization_vectorization_output_dim: int = 3, **kwargs)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: create_zero_vector(scalar_rep)
+
+
+   .. py:method:: forward(s_maybe_v, edge_index, frames, node_inputs: bool = False, node_mask=None)
+
+
+   .. py:method:: process_vector(scalar_rep, v_pre, vector_hidden_rep)
+
+
+   .. py:method:: process_vector_frames(scalar_rep, v_pre, edge_index, frames, node_inputs, node_mask=None)
+
+
+   .. py:attribute:: ablate_frame_updates
+      :value: False
+
+
+
+.. py:class:: GCP2(input_dims: MolecularDiffusion.modules.models.gcdm.gcp_utils.ScalarVector, output_dims: MolecularDiffusion.modules.models.gcdm.gcp_utils.ScalarVector, nonlinearities: Tuple[Optional[str], Optional[str]] = ('silu', 'silu'), scalar_out_nonlinearity: Optional[str] = 'silu', scalar_gate: int = 0, vector_gate: bool = True, frame_gate: bool = False, sigma_frame_gate: bool = False, feedforward_out: bool = False, bottleneck: int = 1, vector_residual: bool = False, vector_frame_residual: bool = False, ablate_frame_updates: bool = False, ablate_scalars: bool = False, ablate_vectors: bool = False, scalarization_vectorization_output_dim: int = 3, **kwargs)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: create_zero_vector(scalar_rep)
+
+
+   .. py:method:: forward(s_maybe_v, edge_index, frames, node_inputs: bool = False, node_mask=None)
+
+
+   .. py:method:: process_vector_with_frames(scalar_rep, v_pre, vector_hidden_rep, edge_index, frames, node_inputs, node_mask=None)
+
+
+   .. py:method:: process_vector_without_frames(scalar_rep, v_pre, vector_hidden_rep)
+
+
+   .. py:attribute:: ablate_frame_updates
+      :value: False
+
+
+
+.. py:class:: GCPEmbedding(edge_input_dims: MolecularDiffusion.modules.models.gcdm.gcp_utils.ScalarVector, node_input_dims: MolecularDiffusion.modules.models.gcdm.gcp_utils.ScalarVector, edge_hidden_dims: MolecularDiffusion.modules.models.gcdm.gcp_utils.ScalarVector, node_hidden_dims: MolecularDiffusion.modules.models.gcdm.gcp_utils.ScalarVector, num_atom_types: int, nonlinearities: Tuple[Optional[str], Optional[str]] = ('silu', 'silu'), cfg: Optional[GCPModuleConfig] = None, pre_norm: bool = True, use_gcp_norm: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(batch: Any)
+
+
+   .. py:attribute:: edge_embedding
+
+
+   .. py:attribute:: node_embedding
+
+
+   .. py:attribute:: pre_norm
+      :value: True
+
+
+
+.. py:class:: GCPInteractions(node_dims: MolecularDiffusion.modules.models.gcdm.gcp_utils.ScalarVector, edge_dims: MolecularDiffusion.modules.models.gcdm.gcp_utils.ScalarVector, cfg: GCPModuleConfig, layer_cfg: GCPLayerConfig, dropout: float = 0.0, nonlinearities: Optional[Tuple[Any, Any]] = None, update_node_positions: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: derive_x_update(node_rep, edge_index, f_ij, node_mask=None)
+
+
+   .. py:method:: forward(node_rep, edge_rep, edge_index, frames, node_mask=None, node_pos=None)
+
+
+   .. py:attribute:: feedforward_network
+
+
+   .. py:attribute:: gcp_dropout
+
+
+   .. py:attribute:: gcp_norm
+
+
+   .. py:attribute:: interaction
+
+
+   .. py:attribute:: node_positions_weight
+
+
+   .. py:attribute:: pre_norm
+
+
+   .. py:attribute:: update_node_positions
+      :value: False
+
+
+
+   .. py:attribute:: update_positions_with_vector_sum
+
+
+.. py:class:: GCPLayerConfig
+
+   Flattened ``layer_cfg/*_gcp_interaction_layer.yaml`` + its ``mp_cfg``.
+
+   Defaults are the shipped QM9/GEOM values (the two files are identical).
+
+
+   .. py:attribute:: dropout
+      :type:  float
+      :value: 0.0
+
+
+
+   .. py:attribute:: nonlinearity_slope
+      :type:  float
+      :value: 0.01
+
+
+
+   .. py:attribute:: num_feedforward_layers
+      :type:  int
+      :value: 1
+
+
+
+   .. py:attribute:: num_message_layers
+      :type:  int
+      :value: 4
+
+
+
+   .. py:attribute:: pre_norm
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: self_message
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: use_gcp_dropout
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: use_gcp_norm
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: use_residual_message_gcp
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: use_scalar_message_attention
+      :type:  bool
+      :value: True
+
+
+
+.. py:class:: GCPMessagePassing(input_dims: MolecularDiffusion.modules.models.gcdm.gcp_utils.ScalarVector, output_dims: MolecularDiffusion.modules.models.gcdm.gcp_utils.ScalarVector, edge_dims: MolecularDiffusion.modules.models.gcdm.gcp_utils.ScalarVector, cfg: GCPModuleConfig, mp_cfg: GCPLayerConfig, reduce_function: str = 'sum', use_scalar_message_attention: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: aggregate(message, edge_index, dim_size: int)
+
+
+   .. py:method:: forward(node_rep, edge_rep, edge_index, frames, node_mask=None)
+
+
+   .. py:method:: message(node_rep, edge_rep, edge_index, frames, node_mask=None)
+
+
+   .. py:attribute:: conv_cfg
+
+
+   .. py:attribute:: message_fusion
+
+
+   .. py:attribute:: reduce_function
+      :value: 'sum'
+
+
+
+   .. py:attribute:: self_message
+
+
+   .. py:attribute:: use_residual_message_gcp
+
+
+   .. py:attribute:: use_scalar_message_attention
+      :value: True
+
+
+
+.. py:class:: GCPModuleConfig
+
+   Flattened ``configs/model/module_cfg/*_gcp_module.yaml``.
+
+   Defaults are the values shipped for **both** QM9 and GEOM (the two
+   upstream files are identical apart from their ``conditioning`` list).
+
+
+   .. py:attribute:: ablate_frame_updates
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: ablate_scalars
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: ablate_vectors
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: bottleneck
+      :type:  int
+      :value: 4
+
+
+
+   .. py:attribute:: default_bottleneck
+      :type:  int
+      :value: 4
+
+
+
+   .. py:attribute:: default_vector_residual
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: frame_gate
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: gcp_version
+      :type:  str
+      :value: 'GCP2'
+
+
+
+   .. py:attribute:: node_positions_weight
+      :type:  float
+      :value: 1.0
+
+
+
+   .. py:attribute:: nonlinearities
+      :type:  Optional[Tuple[Optional[str], Optional[str]]]
+      :value: None
+
+
+
+   .. py:attribute:: norm_x_diff
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: scalar_gate
+      :type:  int
+      :value: 0
+
+
+
+   .. py:attribute:: scalar_nonlinearity
+      :type:  Optional[str]
+      :value: 'silu'
+
+
+
+   .. py:property:: selected_gcp
+
+
+   .. py:attribute:: sigma_frame_gate
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: update_positions_with_vector_sum
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: vector_frame_residual
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: vector_gate
+      :type:  bool
+      :value: True
+
+
+
+   .. py:attribute:: vector_nonlinearity
+      :type:  Optional[str]
+      :value: 'silu'
+
+
+
+   .. py:attribute:: vector_residual
+      :type:  bool
+      :value: False
+
+
+
+.. py:function:: get_GCP_with_custom_cfg(input_dims, output_dims, cfg: GCPModuleConfig, **kwargs)
+
+   Upstream ``gcpnet.py:606``, with ``OmegaConf`` swapped for dataclasses.
+
+

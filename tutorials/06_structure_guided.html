@@ -326,6 +326,7 @@
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/generate/index.html">MolecularDiffusion.runmodes.generate</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.generate" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/generate/sweep/index.html">MolecularDiffusion.runmodes.generate.sweep</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/generate/tasks_gcdm_optimize/index.html">MolecularDiffusion.runmodes.generate.tasks_gcdm_optimize</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/generate/tasks_generate/index.html">MolecularDiffusion.runmodes.generate.tasks_generate</a></li>
 </ul>
 </li>
@@ -337,6 +338,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_egt/index.html">MolecularDiffusion.runmodes.train.tasks_egt</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_equiformer/index.html">MolecularDiffusion.runmodes.train.tasks_equiformer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_esen/index.html">MolecularDiffusion.runmodes.train.tasks_esen</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_gcdm/index.html">MolecularDiffusion.runmodes.train.tasks_gcdm</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html">MolecularDiffusion.runmodes.train.tasks_gfmdiff</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html">MolecularDiffusion.runmodes.train.tasks_painn</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/trainer/index.html">MolecularDiffusion.runmodes.train.trainer</a></li>
@@ -647,8 +649,8 @@ difference is <strong>what happens to the reference atoms during denoising</stro
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">interference</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gen_inpaint</span><span class="w"> </span><span class="c1"># Base template bundled with package</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">_self_</span>
 
-<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;akatsuki&quot;</span>
-<span class="nt">chkpt_directory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;models/edm_pretrained/&quot;</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"akatsuki"</span>
+<span class="nt">chkpt_directory</span><span class="p">:</span><span class="w"> </span><span class="s">"models/edm_pretrained/"</span>
 <span class="nt">atom_vocab</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">H</span><span class="p p-Indicator">,</span><span class="nv">B</span><span class="p p-Indicator">,</span><span class="nv">C</span><span class="p p-Indicator">,</span><span class="nv">N</span><span class="p p-Indicator">,</span><span class="nv">O</span><span class="p p-Indicator">,</span><span class="nv">F</span><span class="p p-Indicator">,</span><span class="nv">Al</span><span class="p p-Indicator">,</span><span class="nv">Si</span><span class="p p-Indicator">,</span><span class="nv">P</span><span class="p p-Indicator">,</span><span class="nv">S</span><span class="p p-Indicator">,</span><span class="nv">Cl</span><span class="p p-Indicator">,</span><span class="nv">As</span><span class="p p-Indicator">,</span><span class="nv">Se</span><span class="p p-Indicator">,</span><span class="nv">Br</span><span class="p p-Indicator">,</span><span class="nv">I</span><span class="p p-Indicator">,</span><span class="nv">Hg</span><span class="p p-Indicator">,</span><span class="nv">Bi</span><span class="p p-Indicator">]</span>
 <span class="nt">diffusion_steps</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">600</span>
 <span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9</span>
@@ -656,9 +658,9 @@ difference is <strong>what happens to the reference atoms during denoising</stro
 <span class="nt">interference</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">num_generate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
 <span class="w">  </span><span class="nt">mol_size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">50</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">60</span><span class="p p-Indicator">]</span>
-<span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;results/my_inpainting_run&quot;</span>
+<span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="s">"results/my_inpainting_run"</span>
 <span class="w">  </span><span class="nt">condition_configs</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">reference_structure_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/your_molecule.xyz&quot;</span><span class="w">   </span><span class="c1"># your own XYZ file</span>
+<span class="w">    </span><span class="nt">reference_structure_path</span><span class="p">:</span><span class="w"> </span><span class="s">"path/to/your_molecule.xyz"</span><span class="w">   </span><span class="c1"># your own XYZ file</span>
 <span class="w">    </span><span class="nt">condition_component</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">xh</span>
 <span class="w">    </span><span class="nt">inpaint_cfgs</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">mask_node_index</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">30</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">31</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">6</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">7</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">45</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">8</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">32</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">10</span><span class="p p-Indicator">]</span><span class="w">   </span><span class="c1"># ... the atom indices to regenerate</span>
@@ -751,8 +753,8 @@ apply no bonding constraint and use the keys alone.</p>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">interference</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gen_outpaint</span><span class="w"> </span><span class="c1"># Base template bundled with package</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">_self_</span>
 
-<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;akatsuki&quot;</span>
-<span class="nt">chkpt_directory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;models/edm_pretrained/&quot;</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"akatsuki"</span>
+<span class="nt">chkpt_directory</span><span class="p">:</span><span class="w"> </span><span class="s">"models/edm_pretrained/"</span>
 <span class="nt">atom_vocab</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">H</span><span class="p p-Indicator">,</span><span class="nv">B</span><span class="p p-Indicator">,</span><span class="nv">C</span><span class="p p-Indicator">,</span><span class="nv">N</span><span class="p p-Indicator">,</span><span class="nv">O</span><span class="p p-Indicator">,</span><span class="nv">F</span><span class="p p-Indicator">,</span><span class="nv">Al</span><span class="p p-Indicator">,</span><span class="nv">Si</span><span class="p p-Indicator">,</span><span class="nv">P</span><span class="p p-Indicator">,</span><span class="nv">S</span><span class="p p-Indicator">,</span><span class="nv">Cl</span><span class="p p-Indicator">,</span><span class="nv">As</span><span class="p p-Indicator">,</span><span class="nv">Se</span><span class="p p-Indicator">,</span><span class="nv">Br</span><span class="p p-Indicator">,</span><span class="nv">I</span><span class="p p-Indicator">,</span><span class="nv">Hg</span><span class="p p-Indicator">,</span><span class="nv">Bi</span><span class="p p-Indicator">]</span>
 <span class="nt">diffusion_steps</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">600</span>
 <span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9</span>
@@ -760,9 +762,9 @@ apply no bonding constraint and use the keys alone.</p>
 <span class="nt">interference</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">num_generate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
 <span class="w">  </span><span class="nt">mol_size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">30</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">40</span><span class="p p-Indicator">]</span>
-<span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;results/my_outpainting_run&quot;</span>
+<span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="s">"results/my_outpainting_run"</span>
 <span class="w">  </span><span class="nt">condition_configs</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">reference_structure_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/your_fragment.xyz&quot;</span><span class="w">   </span><span class="c1"># your own XYZ file</span>
+<span class="w">    </span><span class="nt">reference_structure_path</span><span class="p">:</span><span class="w"> </span><span class="s">"path/to/your_fragment.xyz"</span><span class="w">   </span><span class="c1"># your own XYZ file</span>
 <span class="w">    </span><span class="nt">condition_component</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">xh</span>
 <span class="w">    </span><span class="nt">outpaint_cfgs</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">connectors</span><span class="p">:</span>
@@ -793,7 +795,7 @@ apply no bonding constraint and use the keys alone.</p>
 different approach from the two modes above: <strong>nothing is frozen</strong>. Every atom
 stays mobile for the whole trajectory, and at each reverse step the latent is
 nudged a little way towards a freshly re-noised copy of the reference:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>z̃ₜ = αₜ · reference + σₜ · ε          (reference re-noised at this step&#39;s noise level)
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>z̃ₜ = αₜ · reference + σₜ · ε          (reference re-noised at this step's noise level)
 z  ← z − (z · αₜ · ref_mask) · rate + (z̃ₜ · ref_mask) · rate
 </pre></div>
 </div>
@@ -868,8 +870,8 @@ Generation.</em> J. Chem. Inf. Model. <strong>2023</strong>, 63 (19), 5996–600
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">interference</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gen_silvr</span><span class="w"> </span><span class="c1"># Base template bundled with package</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">_self_</span>
 
-<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;akatsuki&quot;</span>
-<span class="nt">chkpt_directory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;models/edm_pretrained/&quot;</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"akatsuki"</span>
+<span class="nt">chkpt_directory</span><span class="p">:</span><span class="w"> </span><span class="s">"models/edm_pretrained/"</span>
 <span class="nt">atom_vocab</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">H</span><span class="p p-Indicator">,</span><span class="nv">B</span><span class="p p-Indicator">,</span><span class="nv">C</span><span class="p p-Indicator">,</span><span class="nv">N</span><span class="p p-Indicator">,</span><span class="nv">O</span><span class="p p-Indicator">,</span><span class="nv">F</span><span class="p p-Indicator">,</span><span class="nv">Al</span><span class="p p-Indicator">,</span><span class="nv">Si</span><span class="p p-Indicator">,</span><span class="nv">P</span><span class="p p-Indicator">,</span><span class="nv">S</span><span class="p p-Indicator">,</span><span class="nv">Cl</span><span class="p p-Indicator">,</span><span class="nv">As</span><span class="p p-Indicator">,</span><span class="nv">Se</span><span class="p p-Indicator">,</span><span class="nv">Br</span><span class="p p-Indicator">,</span><span class="nv">I</span><span class="p p-Indicator">,</span><span class="nv">Hg</span><span class="p p-Indicator">,</span><span class="nv">Bi</span><span class="p p-Indicator">]</span>
 <span class="nt">diffusion_steps</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">900</span>
 <span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9</span>
@@ -878,9 +880,9 @@ Generation.</em> J. Chem. Inf. Model. <strong>2023</strong>, 63 (19), 5996–600
 <span class="w">  </span><span class="nt">num_generate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
 <span class="w">  </span><span class="nt">batch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
 <span class="w">  </span><span class="nt">mol_size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">30</span><span class="p p-Indicator">]</span><span class="w">          </span><span class="c1"># reference atoms + atoms SILVR may invent</span>
-<span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;results/my_silvr_run&quot;</span>
+<span class="w">  </span><span class="nt">output_path</span><span class="p">:</span><span class="w"> </span><span class="s">"results/my_silvr_run"</span>
 <span class="w">  </span><span class="nt">condition_configs</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">reference_structure_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/your_fragments.xyz&quot;</span><span class="w">   </span><span class="c1"># your own XYZ file</span>
+<span class="w">    </span><span class="nt">reference_structure_path</span><span class="p">:</span><span class="w"> </span><span class="s">"path/to/your_fragments.xyz"</span><span class="w">   </span><span class="c1"># your own XYZ file</span>
 <span class="w">    </span><span class="nt">condition_component</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">xh</span>
 <span class="w">    </span><span class="nt">n_retrys</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
 <span class="w">    </span><span class="nt">silvr_cfgs</span><span class="p">:</span>

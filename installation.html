@@ -326,6 +326,7 @@
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/generate/index.html">MolecularDiffusion.runmodes.generate</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.generate" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/generate/sweep/index.html">MolecularDiffusion.runmodes.generate.sweep</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/generate/tasks_gcdm_optimize/index.html">MolecularDiffusion.runmodes.generate.tasks_gcdm_optimize</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/generate/tasks_generate/index.html">MolecularDiffusion.runmodes.generate.tasks_generate</a></li>
 </ul>
 </li>
@@ -337,6 +338,7 @@
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_egt/index.html">MolecularDiffusion.runmodes.train.tasks_egt</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_equiformer/index.html">MolecularDiffusion.runmodes.train.tasks_equiformer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_esen/index.html">MolecularDiffusion.runmodes.train.tasks_esen</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_gcdm/index.html">MolecularDiffusion.runmodes.train.tasks_gcdm</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html">MolecularDiffusion.runmodes.train.tasks_gfmdiff</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html">MolecularDiffusion.runmodes.train.tasks_painn</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/trainer/index.html">MolecularDiffusion.runmodes.train.trainer</a></li>
@@ -477,20 +479,20 @@ pip<span class="w"> </span>install<span class="w"> </span>molcraftdiffusion<span
 </div>
 <p>The base package does not install every data-processing or analysis dependency. Add the feature groups you need:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Data preparation, augmentation, and featurisation commands</span>
-pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[data]&#39;</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'molcraftdiffusion[data]'</span>
 
 <span class="c1"># Analysis and post-processing commands (metrics, compare, xyz2mol, xtb-electronic, featurise SOAP)</span>
-pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[analyze]&#39;</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'molcraftdiffusion[analyze]'</span>
 
 <span class="c1"># Backbone-specific groups</span>
-pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[bio]&#39;</span><span class="w">      </span><span class="c1"># DiffPharma: build a pocket + pharmacophore</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'molcraftdiffusion[bio]'</span><span class="w">      </span><span class="c1"># DiffPharma: build a pocket + pharmacophore</span>
 <span class="w">                                          </span><span class="c1"># particles from a raw PDB+SDF pair. Not needed</span>
 <span class="w">                                          </span><span class="c1"># to train or generate from converted ASE dbs.</span>
-pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[sbdd]&#39;</span><span class="w">     </span><span class="c1"># AutoDock Vina scoring of generated ligands</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'molcraftdiffusion[sbdd]'</span><span class="w">     </span><span class="c1"># AutoDock Vina scoring of generated ligands</span>
 <span class="w">                                          </span><span class="c1"># against a protein pocket. Pure pip: no conda,</span>
 <span class="w">                                          </span><span class="c1"># no external binaries.</span>
-pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[shape]&#39;</span><span class="w">    </span><span class="c1"># DiffSMol: offline shape-cache precompute only</span>
-pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[flowmol]&#39;</span><span class="w">  </span><span class="c1"># FlowMol: DGL (install the CUDA build matching</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'molcraftdiffusion[shape]'</span><span class="w">    </span><span class="c1"># DiffSMol: offline shape-cache precompute only</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'molcraftdiffusion[flowmol]'</span><span class="w">  </span><span class="c1"># FlowMol: DGL (install the CUDA build matching</span>
 <span class="w">                                          </span><span class="c1"># your torch, see pyproject.toml)</span>
 
 <span class="c1"># xTB is used by optimise, compare, and xtb-electronic — best installed from conda-forge:</span>
@@ -507,8 +509,8 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <span class="w">    </span>--find-links<span class="w"> </span>https://data.pyg.org/whl/torch-2.6.0+cu124.html
 
 <span class="c1"># Add optional groups for editable development when needed:</span>
-pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[data]&#39;</span>
-pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[analyze]&#39;</span>
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">'.[data]'</span>
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">'.[analyze]'</span>
 </pre></div>
 </div>
 </section>
@@ -558,17 +560,17 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <section id="optional-dependencies">
 <h2>Optional dependencies<a class="headerlink" href="#optional-dependencies" title="Link to this heading">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Data utilities (includes dscribe for SOAP featurisation)</span>
-pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[data]&#39;</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'molcraftdiffusion[data]'</span>
 
 <span class="c1"># Analysis utilities (PoseBusters/RDKit/OpenBabel Python bindings)</span>
-pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[analyze]&#39;</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'molcraftdiffusion[analyze]'</span>
 
 <span class="c1"># DiffPharma novel-pocket preprocessing (Biopython + ODDT)</span>
-pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[bio]&#39;</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'molcraftdiffusion[bio]'</span>
 
 <span class="c1"># AutoDock Vina scoring of generated ligands against a protein pocket</span>
 <span class="c1"># (`MolCraftDiff analyze metrics ... --metrics sbdd`)</span>
-pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;molcraftdiffusion[sbdd]&#39;</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'molcraftdiffusion[sbdd]'</span>
 
 <span class="c1"># xTB executable for xTB-backed analysis</span>
 conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="nv">xtb</span><span class="o">==</span><span class="m">6</span>.7.1<span class="w"> </span>-y
@@ -617,7 +619,7 @@ We recommend starting from these for any downstream application.</p>
 <h3><code class="docutils literal notranslate"><span class="pre">torch_scatter</span></code> / <code class="docutils literal notranslate"><span class="pre">torch_sparse</span></code> import errors<a class="headerlink" href="#torch-scatter-torch-sparse-import-errors" title="Link to this heading">¶</a></h3>
 <p>PyTorch Geometric sparse extensions must be compiled against your <strong>exact</strong> PyTorch + CUDA version. If you see <code class="docutils literal notranslate"><span class="pre">ImportError:</span> <span class="pre">…</span> <span class="pre">torch_scatter</span></code>, rebuild from the correct wheel:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check your torch version first</span>
-python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import torch; print(torch.__version__, torch.version.cuda)&quot;</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import torch; print(torch.__version__, torch.version.cuda)"</span>
 
 <span class="c1"># Then install matching wheels (replace cu124/torch-2.6.0 as needed)</span>
 pip<span class="w"> </span>install<span class="w"> </span>torch-scatter<span class="w"> </span>torch-sparse<span class="w"> </span><span class="se">\</span>

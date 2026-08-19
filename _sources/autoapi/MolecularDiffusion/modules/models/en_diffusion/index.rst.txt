@@ -31,6 +31,7 @@ Functions
 
 .. autoapisummary::
 
+   MolecularDiffusion.modules.models.en_diffusion.atomic_numbers
    MolecularDiffusion.modules.models.en_diffusion.cdf_standard_gaussian
    MolecularDiffusion.modules.models.en_diffusion.clip_noise_schedule
    MolecularDiffusion.modules.models.en_diffusion.cosine_beta_schedule
@@ -40,6 +41,9 @@ Functions
    MolecularDiffusion.modules.models.en_diffusion.gaussian_entropy
    MolecularDiffusion.modules.models.en_diffusion.polynomial_schedule
    MolecularDiffusion.modules.models.en_diffusion.softplus
+   MolecularDiffusion.modules.models.en_diffusion.split_feature_axis
+   MolecularDiffusion.modules.models.en_diffusion.split_frame
+   MolecularDiffusion.modules.models.en_diffusion.split_z
    MolecularDiffusion.modules.models.en_diffusion.sum_except_batch
    MolecularDiffusion.modules.models.en_diffusion.vp_issnr_schedule
    MolecularDiffusion.modules.models.en_diffusion.vp_smld_schedule
@@ -1086,6 +1090,17 @@ Module Contents
    .. py:attribute:: dim
 
 
+.. py:function:: atomic_numbers(model: torch.nn.Module, h_int: torch.Tensor, h_cat: torch.Tensor) -> torch.Tensor
+
+   Per-atom atomic numbers for the geometry/quality checks.
+
+   Returns the model's integer channel when it has one -- the same tensor
+   object callers used before. Models built with ``include_charges=False``
+   carry no such channel, so the numbers are decoded from the categorical
+   one-hot through ``atom_vocab`` instead, falling back to the empty
+   integer block when no vocabulary was configured.
+
+
 .. py:function:: cdf_standard_gaussian(x)
 
 .. py:function:: clip_noise_schedule(alphas2, clip_value=0.001)
@@ -1134,6 +1149,30 @@ Module Contents
 
 
 .. py:function:: softplus(x: torch.Tensor) -> torch.Tensor
+
+.. py:function:: split_feature_axis(model: torch.nn.Module, t: torch.Tensor, n_cat: int) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+
+   Split ``[..., n_dims | n_cat | n_int]`` along the last axis.
+
+   The integer block is empty for models built with
+   ``include_charges=False``, which keeps every downstream ``cat`` / mask /
+   ``sum_except_batch`` shape-correct without per-site branching. With
+   ``include_charges=True`` these slices are exactly the ``[..., :-1]`` /
+   ``[..., -1:]`` arithmetic they replace.
+
+
+.. py:function:: split_frame(model: torch.nn.Module, xh: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+
+   Split an unnormalized chain frame into ``(x, h_cat, h_int)``.
+
+   ``unnormalize_z`` strips the extra-feature block, so frames carry only
+   the core categorical features.
+
+
+.. py:function:: split_z(model: torch.nn.Module, z: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+
+   Split a normalized latent into ``(x, h_cat (+extra), h_int)``.
+
 
 .. py:function:: sum_except_batch(x)
 

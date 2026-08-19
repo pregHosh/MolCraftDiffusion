@@ -326,6 +326,7 @@
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/generate/index.html">MolecularDiffusion.runmodes.generate</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.generate" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/generate/sweep/index.html">MolecularDiffusion.runmodes.generate.sweep</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/generate/tasks_gcdm_optimize/index.html">MolecularDiffusion.runmodes.generate.tasks_gcdm_optimize</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/generate/tasks_generate/index.html">MolecularDiffusion.runmodes.generate.tasks_generate</a></li>
 </ul>
 </li>
@@ -337,6 +338,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_egt/index.html">MolecularDiffusion.runmodes.train.tasks_egt</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_equiformer/index.html">MolecularDiffusion.runmodes.train.tasks_equiformer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_esen/index.html">MolecularDiffusion.runmodes.train.tasks_esen</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_gcdm/index.html">MolecularDiffusion.runmodes.train.tasks_gcdm</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html">MolecularDiffusion.runmodes.train.tasks_gfmdiff</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html">MolecularDiffusion.runmodes.train.tasks_painn</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/trainer/index.html">MolecularDiffusion.runmodes.train.trainer</a></li>
@@ -1295,8 +1297,8 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="n">features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;gen_xyz/features.npy&quot;</span><span class="p">)</span>        <span class="c1"># (N, D) float32</span>
-<span class="n">index</span>    <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;gen_xyz/features.csv&quot;</span><span class="p">)</span>    <span class="c1"># maps row → file/frame</span>
+<span class="n">features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"gen_xyz/features.npy"</span><span class="p">)</span>        <span class="c1"># (N, D) float32</span>
+<span class="n">index</span>    <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">"gen_xyz/features.csv"</span><span class="p">)</span>    <span class="c1"># maps row → file/frame</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">features</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>   <span class="c1"># e.g. (160, 81396) for SOAP, (160, 128) for UMA</span>
 </pre></div>
@@ -1308,9 +1310,9 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 
 <span class="c1"># SOAP</span>
 <span class="n">features</span> <span class="o">=</span> <span class="n">run_featurize</span><span class="p">(</span>
-    <span class="n">input_dir</span><span class="o">=</span><span class="s2">&quot;gen_xyz/&quot;</span><span class="p">,</span>
-    <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;soap&quot;</span><span class="p">,</span>
-    <span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;gen_xyz/soap_features&quot;</span><span class="p">,</span>
+    <span class="n">input_dir</span><span class="o">=</span><span class="s2">"gen_xyz/"</span><span class="p">,</span>
+    <span class="n">backend</span><span class="o">=</span><span class="s2">"soap"</span><span class="p">,</span>
+    <span class="n">output_path</span><span class="o">=</span><span class="s2">"gen_xyz/soap_features"</span><span class="p">,</span>
     <span class="n">n_max</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
     <span class="n">l_max</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
 <span class="p">)</span>
@@ -1319,16 +1321,16 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 <span class="kn">from</span><span class="w"> </span><span class="nn">MolecularDiffusion.runmodes.analyze.uma_embeddings</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_uma_molecule_embeddings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">ase.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">read</span>
 
-<span class="n">atoms_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;gen_xyz/molecule_0000.xyz&quot;</span><span class="p">),</span> <span class="n">read</span><span class="p">(</span><span class="s2">&quot;gen_xyz/molecule_0001.xyz&quot;</span><span class="p">)]</span>
+<span class="n">atoms_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">read</span><span class="p">(</span><span class="s2">"gen_xyz/molecule_0000.xyz"</span><span class="p">),</span> <span class="n">read</span><span class="p">(</span><span class="s2">"gen_xyz/molecule_0001.xyz"</span><span class="p">)]</span>
 <span class="n">results</span> <span class="o">=</span> <span class="n">get_uma_molecule_embeddings</span><span class="p">(</span>
     <span class="n">source</span><span class="o">=</span><span class="n">atoms_list</span><span class="p">,</span>
-    <span class="n">checkpoint_path</span><span class="o">=</span><span class="s2">&quot;training_outputs/uma-s-1p2.pt&quot;</span><span class="p">,</span>
-    <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
+    <span class="n">checkpoint_path</span><span class="o">=</span><span class="s2">"training_outputs/uma-s-1p2.pt"</span><span class="p">,</span>
+    <span class="n">device</span><span class="o">=</span><span class="s2">"cpu"</span><span class="p">,</span>
     <span class="n">charge</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
     <span class="n">spin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">mol_emb</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;molecule_embedding&quot;</span><span class="p">]</span>   <span class="c1"># torch.Tensor, shape (128,)</span>
-<span class="n">node_emb</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;node_embedding&quot;</span><span class="p">]</span>      <span class="c1"># torch.Tensor, shape (n_atoms, 128)</span>
+<span class="n">mol_emb</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"molecule_embedding"</span><span class="p">]</span>   <span class="c1"># torch.Tensor, shape (128,)</span>
+<span class="n">node_emb</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"node_embedding"</span><span class="p">]</span>      <span class="c1"># torch.Tensor, shape (n_atoms, 128)</span>
 </pre></div>
 </div>
 </section>
@@ -1385,18 +1387,18 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 
 <span class="c1"># Compute electronic properties for single file</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">compute_xtb_electronic</span><span class="p">(</span>
-    <span class="s2">&quot;molecule.xyz&quot;</span><span class="p">,</span>
+    <span class="s2">"molecule.xyz"</span><span class="p">,</span>
     <span class="n">method</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">properties</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">,</span> <span class="s2">&quot;charges&quot;</span><span class="p">]</span>
+    <span class="n">properties</span><span class="o">=</span><span class="p">[</span><span class="s2">"energy"</span><span class="p">,</span> <span class="s2">"charges"</span><span class="p">]</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;homo&quot;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;lumo&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"homo"</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">"lumo"</span><span class="p">])</span>
 
 <span class="c1"># Batch processing</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">batch_xtb_electronic</span><span class="p">(</span>
-    <span class="n">input_dir</span><span class="o">=</span><span class="s2">&quot;gen_xyz/&quot;</span><span class="p">,</span>
-    <span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;results.csv&quot;</span><span class="p">,</span>
-    <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span>
-    <span class="n">properties</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">,</span> <span class="s2">&quot;reactivity&quot;</span><span class="p">],</span>
+    <span class="n">input_dir</span><span class="o">=</span><span class="s2">"gen_xyz/"</span><span class="p">,</span>
+    <span class="n">output_path</span><span class="o">=</span><span class="s2">"results.csv"</span><span class="p">,</span>
+    <span class="n">output_format</span><span class="o">=</span><span class="s2">"csv"</span><span class="p">,</span>
+    <span class="n">properties</span><span class="o">=</span><span class="p">[</span><span class="s2">"energy"</span><span class="p">,</span> <span class="s2">"reactivity"</span><span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
 </div>

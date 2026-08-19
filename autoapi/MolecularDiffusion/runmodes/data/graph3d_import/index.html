@@ -326,6 +326,7 @@
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../generate/index.html">MolecularDiffusion.runmodes.generate</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.generate" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../generate/sweep/index.html">MolecularDiffusion.runmodes.generate.sweep</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../generate/tasks_gcdm_optimize/index.html">MolecularDiffusion.runmodes.generate.tasks_gcdm_optimize</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../generate/tasks_generate/index.html">MolecularDiffusion.runmodes.generate.tasks_generate</a></li>
 </ul>
 </li>
@@ -337,6 +338,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../../train/tasks_egt/index.html">MolecularDiffusion.runmodes.train.tasks_egt</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../train/tasks_equiformer/index.html">MolecularDiffusion.runmodes.train.tasks_equiformer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../train/tasks_esen/index.html">MolecularDiffusion.runmodes.train.tasks_esen</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../train/tasks_gcdm/index.html">MolecularDiffusion.runmodes.train.tasks_gcdm</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../train/tasks_gfmdiff/index.html">MolecularDiffusion.runmodes.train.tasks_gfmdiff</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../train/tasks_painn/index.html">MolecularDiffusion.runmodes.train.tasks_painn</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../train/trainer/index.html">MolecularDiffusion.runmodes.train.trainer</a></li>
@@ -462,8 +464,8 @@ from MiDi’s sources, which have real bond orders.</p>
           <span class="n">bond_index</span>      <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">E</span><span class="p">)</span> <span class="n">int32</span><span class="p">,</span> <span class="n">UPPER</span><span class="o">-</span><span class="n">TRIANGULAR</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">j</span><span class="p">),</span> <span class="n">real</span> <span class="n">bonds</span> <span class="n">only</span>
           <span class="n">bond_type</span>       <span class="p">(</span><span class="n">E</span><span class="p">,)</span>  <span class="n">int8</span><span class="p">,</span> <span class="mi">1</span><span class="o">=</span><span class="n">SINGLE</span> <span class="mi">2</span><span class="o">=</span><span class="n">DOUBLE</span> <span class="mi">3</span><span class="o">=</span><span class="n">TRIPLE</span> <span class="mi">4</span><span class="o">=</span><span class="n">AROMATIC</span>
           <span class="n">formal_charge</span>   <span class="p">(</span><span class="n">N</span><span class="p">,)</span>  <span class="n">int8</span><span class="p">,</span> <span class="n">RAW</span> <span class="n">SIGNED</span>
-          <span class="n">source</span>          <span class="s2">&quot;qm9&quot;</span> <span class="o">|</span> <span class="s2">&quot;geom&quot;</span>
-          <span class="n">split</span>           <span class="n">MiDi</span><span class="s1">&#39;s split label, or &quot;&quot;</span>
+          <span class="n">source</span>          <span class="s2">"qm9"</span> <span class="o">|</span> <span class="s2">"geom"</span>
+          <span class="n">split</span>           <span class="n">MiDi</span><span class="s1">'s split label, or ""</span>
 </pre></div>
 </div>
 <p>Bond class 0 (“no bond”) is never stored: absence from <code class="docutils literal notranslate"><span class="pre">bond_index</span></code> means no

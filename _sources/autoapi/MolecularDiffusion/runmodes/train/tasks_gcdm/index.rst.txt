@@ -1,0 +1,144 @@
+MolecularDiffusion.runmodes.train.tasks_gcdm
+============================================
+
+.. py:module:: MolecularDiffusion.runmodes.train.tasks_gcdm
+
+.. autoapi-nested-parse::
+
+   Factory wiring the ported GCDM/GCPNet backbone into the existing,
+   unmodified diffusion task.
+
+   Structured like ``runmodes/train/tasks_gfmdiff.py`` -- a new dynamics network
+   dropped into ``EnVariationalDiffusion`` + ``GeomMolecularGenerative``, with
+   zero edits to either.
+
+   Per the approved integration plan (revision 2) this is a §1 backbone swap:
+   GCDM's own ~1800-line ``variational_diffusion.py`` is a line-for-line EDM
+   re-implementation of maths the platform already has, so only
+   ``GCPNetDynamics`` is ported.
+
+   The one thing this factory does that its four siblings
+   (``tasks_{egcl,egt,gfmdiff,painn}.py``) do not is read ``include_charges``
+   from config instead of hardcoding ``True``: GCDM's GEOM checkpoint and its six
+   per-property conditional QM9 checkpoints were all trained with
+   ``include_charges: false`` (atom one-hot only, no atomic-number scalar).
+   Defaults to ``True``, so nothing about the other backbones changes.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.tasks_gcdm.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.tasks_gcdm.ModelTaskFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: ModelTaskFactory(task_type: str, train_set=None, atom_vocab=None, task_names: list = [], condition_names: list = [], include_charges: bool = True, num_encoder_layers: int = 9, hidden_dims: dict = {}, module_cfg: dict = {}, layer_cfg: dict = {}, chkpt_path: str = None, **kwargs)
+
+   Build the GCDM-backbone diffusion model + task.
+
+   :param task_type: must be ``"diffusion"``.
+   :type task_type: str
+   :param train_set: unused; kept for interface parity with the other
+                     factories (GCPNet needs no dataset statistics at build time).
+   :param atom_vocab: atom vocabulary used for one-hot encoding.
+   :type atom_vocab: list
+   :param task_names: conditional labels (context columns).
+   :type task_names: list
+   :param condition_names: condition names for conditional generation.
+   :type condition_names: list
+   :param include_charges: whether the diffusion latent carries the
+                           atomic-number scalar channel. ``True`` matches GCDM's
+                           unconditional QM9 preset; ``False`` matches its GEOM and
+                           conditional-QM9 presets.
+   :type include_charges: bool
+   :param num_encoder_layers: number of ``GCPInteractions`` blocks.
+   :type num_encoder_layers: int
+   :param hidden_dims: ``h_hidden_dim`` / ``chi_hidden_dim`` /
+                       ``e_hidden_dim`` / ``xi_hidden_dim``.
+   :type hidden_dims: dict
+   :param module_cfg: overrides for :class:`GCPModuleConfig`.
+   :type module_cfg: dict
+   :param layer_cfg: overrides for :class:`GCPLayerConfig`.
+   :type layer_cfg: dict
+   :param chkpt_path: optional path to a model checkpoint.
+   :type chkpt_path: str
+   :param \*\*kwargs: diffusion keyword arguments (see ``diffusion_gcdm.yaml``).
+
+
+   .. py:method:: build()
+
+      Build and return the ``GeomMolecularGenerative`` task.
+
+
+
+   .. py:attribute:: atom_vocab
+      :value: None
+
+
+
+   .. py:attribute:: chkpt_path
+      :value: None
+
+
+
+   .. py:attribute:: condition_names
+      :value: []
+
+
+
+   .. py:attribute:: context_node_nf
+
+
+   .. py:attribute:: hidden_dims
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: include_charges
+      :value: True
+
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: layer_cfg
+
+
+   .. py:attribute:: module_cfg
+
+
+   .. py:attribute:: num_encoder_layers
+      :value: 9
+
+
+
+   .. py:attribute:: task_names
+      :value: []
+
+
+
+   .. py:attribute:: task_type
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+.. py:data:: logger
+

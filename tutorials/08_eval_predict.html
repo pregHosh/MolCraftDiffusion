@@ -326,6 +326,7 @@
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/generate/index.html">MolecularDiffusion.runmodes.generate</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.generate" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/generate/sweep/index.html">MolecularDiffusion.runmodes.generate.sweep</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/generate/tasks_gcdm_optimize/index.html">MolecularDiffusion.runmodes.generate.tasks_gcdm_optimize</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/generate/tasks_generate/index.html">MolecularDiffusion.runmodes.generate.tasks_generate</a></li>
 </ul>
 </li>
@@ -337,6 +338,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_egt/index.html">MolecularDiffusion.runmodes.train.tasks_egt</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_equiformer/index.html">MolecularDiffusion.runmodes.train.tasks_equiformer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_esen/index.html">MolecularDiffusion.runmodes.train.tasks_esen</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_gcdm/index.html">MolecularDiffusion.runmodes.train.tasks_gcdm</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html">MolecularDiffusion.runmodes.train.tasks_gfmdiff</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html">MolecularDiffusion.runmodes.train.tasks_painn</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/trainer/index.html">MolecularDiffusion.runmodes.train.trainer</a></li>
@@ -500,25 +502,25 @@
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">_self_</span>
 
 <span class="c1"># 1. Run Name (used for logging)</span>
-<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;screening_run&quot;</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"screening_run"</span>
 
 <span class="c1"># 2. Model Checkpoint</span>
 <span class="c1"># Path to the .pkl file of your trained model.</span>
-<span class="c1"># Note: Even though the parameter is named &#39;directory&#39;, it expects a file path.</span>
-<span class="nt">chkpt_directory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;trained_models/guidance-epoch=195-metric=0.1975.pkl&quot;</span>
+<span class="c1"># Note: Even though the parameter is named 'directory', it expects a file path.</span>
+<span class="nt">chkpt_directory</span><span class="p">:</span><span class="w"> </span><span class="s">"trained_models/guidance-epoch=195-metric=0.1975.pkl"</span>
 
 <span class="c1"># 3. Input Data</span>
 <span class="c1"># Directory containing your .xyz files.</span>
-<span class="nt">xyz_directory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;test_xyz_pred/&quot;</span>
+<span class="nt">xyz_directory</span><span class="p">:</span><span class="w"> </span><span class="s">"test_xyz_pred/"</span>
 
 <span class="c1"># 4. Output Location</span>
-<span class="nt">output_directory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;test_output/my_predictions&quot;</span>
+<span class="nt">output_directory</span><span class="p">:</span><span class="w"> </span><span class="s">"test_output/my_predictions"</span>
 
 <span class="c1"># 5. Model Specifics</span>
 <span class="c1"># These must match the configuration used during training.</span>
-<span class="c1"># If unknown, check the &#39;atom_vocab&#39; and &#39;node_feature&#39; in your training config.</span>
+<span class="c1"># If unknown, check the 'atom_vocab' and 'node_feature' in your training config.</span>
 <span class="nt">atom_vocab</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">H</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">B</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">C</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">N</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">O</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">F</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Al</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Si</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">P</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">S</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Cl</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">As</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Se</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Br</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">I</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Hg</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Bi</span><span class="p p-Indicator">]</span>
-<span class="nt">node_feature</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w">  </span><span class="c1"># e.g., null, &quot;atom_geom&quot;, &quot;atom_topological&quot;</span>
+<span class="nt">node_feature</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w">  </span><span class="c1"># e.g., null, "atom_geom", "atom_topological"</span>
 
 <span class="c1"># 6. Constraints</span>
 <span class="c1"># Skip molecules larger than this size to avoid memory issues</span>
@@ -560,25 +562,25 @@
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">hydra</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">_self_</span>
 
-<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;benchmark_run&quot;</span>
-<span class="nt">output_directory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;output_pred/benchmark&quot;</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">"benchmark_run"</span>
+<span class="nt">output_directory</span><span class="p">:</span><span class="w"> </span><span class="s">"output_pred/benchmark"</span>
 
 <span class="c1"># 1. Data Configuration</span>
 <span class="nt">data</span><span class="p">:</span>
 <span class="w">  </span><span class="c1"># Path where processed data (.pt files) are stored/cached</span>
-<span class="w">  </span><span class="nt">root</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;data/processed/&quot;</span>
+<span class="w">  </span><span class="nt">root</span><span class="p">:</span><span class="w"> </span><span class="s">"data/processed/"</span>
 <span class="w">  </span>
 <span class="w">  </span><span class="c1"># Path to the CSV file containing ground truth labels</span>
-<span class="w">  </span><span class="nt">filename</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;data/test_set.csv&quot;</span>
+<span class="w">  </span><span class="nt">filename</span><span class="p">:</span><span class="w"> </span><span class="s">"data/test_set.csv"</span>
 <span class="w">  </span>
-<span class="w">  </span><span class="c1"># Unique name for this dataset (cached as &#39;processed_data_test_set_benchmark.pt&#39;)</span>
-<span class="w">  </span><span class="nt">dataset_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;test_set_benchmark&quot;</span>
+<span class="w">  </span><span class="c1"># Unique name for this dataset (cached as 'processed_data_test_set_benchmark.pt')</span>
+<span class="w">  </span><span class="nt">dataset_name</span><span class="p">:</span><span class="w"> </span><span class="s">"test_set_benchmark"</span>
 <span class="w">  </span>
 <span class="w">  </span><span class="c1"># Directory containing corresponding .xyz files</span>
-<span class="w">  </span><span class="nt">xyz_dir</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;data/test_xyz/&quot;</span>
+<span class="w">  </span><span class="nt">xyz_dir</span><span class="p">:</span><span class="w"> </span><span class="s">"data/test_xyz/"</span>
 <span class="w">  </span>
 <span class="w">  </span><span class="nt">max_atom</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
-<span class="w">  </span><span class="nt">data_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pyg</span><span class="w"> </span><span class="c1"># Keep as &#39;pyg&#39; for regression/guidance tasks</span>
+<span class="w">  </span><span class="nt">data_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pyg</span><span class="w"> </span><span class="c1"># Keep as 'pyg' for regression/guidance tasks</span>
 <span class="w">  </span>
 <span class="w">  </span><span class="c1"># CRITICAL: Set train_ratio to 0.0 to treat the whole file as a test set</span>
 <span class="w">  </span><span class="nt">train_ratio</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span><span class="w"> </span>
@@ -587,10 +589,10 @@
 <span class="c1"># 2. Task &amp; Model Configuration</span>
 <span class="nt">tasks</span><span class="p">:</span>
 <span class="w">  </span><span class="c1"># Path to the trained model checkpoint</span>
-<span class="w">  </span><span class="nt">chkpt_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;trained_models/guidance-epoch=195-metric=0.1975.pkl&quot;</span>
+<span class="w">  </span><span class="nt">chkpt_path</span><span class="p">:</span><span class="w"> </span><span class="s">"trained_models/guidance-epoch=195-metric=0.1975.pkl"</span>
 <span class="w">  </span>
 <span class="w">  </span><span class="c1"># List of tasks/columns to evaluate against</span>
-<span class="w">  </span><span class="nt">task_learn</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;gap&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;homo&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;lumo&quot;</span><span class="p p-Indicator">]</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">task_learn</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"gap"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"homo"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"lumo"</span><span class="p p-Indicator">]</span><span class="w"> </span>
 
 <span class="c1"># 3. Reproducibility</span>
 <span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9</span>

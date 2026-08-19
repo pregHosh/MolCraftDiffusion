@@ -1,0 +1,36 @@
+MolecularDiffusion.modules.models.gcdm
+======================================
+
+.. py:module:: MolecularDiffusion.modules.models.gcdm
+
+.. autoapi-nested-parse::
+
+   GCDM (Geometry-Complete Diffusion Model) backbone.
+
+   Ported from https://github.com/BioinfoMachineLearning/bio-diffusion
+   (commit ``a328950c5d23ed4333df9a10830913450d9d71a9``), which in turn adapts
+   GCPNet (https://github.com/BioinfoMachineLearning/GCPNet).
+
+   Reference: Morehead, A. & Cheng, J. *Geometry-complete diffusion for 3D
+   molecule generation and optimization.* Communications Chemistry 7(1), 150
+   (2024). https://doi.org/10.1038/s42004-024-01233-z
+
+   Only the *denoiser* is ported. The diffusion objective, noise schedule and
+   sampler are the platform's existing
+   ``modules.models.en_diffusion.EnVariationalDiffusion`` /
+   ``modules.tasks.diffusion.GeomMolecularGenerative``, which are
+   mathematically identical to GCDM's own EDM re-implementation.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/gcdm/dynamics/index
+   /autoapi/MolecularDiffusion/modules/models/gcdm/gcp_layers/index
+   /autoapi/MolecularDiffusion/modules/models/gcdm/gcp_utils/index
+
+
