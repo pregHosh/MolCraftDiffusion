@@ -1,0 +1,115 @@
+MolecularDiffusion.runmodes.analyze.conformer_metrics
+=====================================================
+
+.. py:module:: MolecularDiffusion.runmodes.analyze.conformer_metrics
+
+.. autoapi-nested-parse::
+
+   Paired generated-vs-reference conformer metrics.
+
+   This is the home for every metric that needs a *pair* of structures -- a
+   generated one and the reference it is supposed to correspond to -- rather than
+   a bare directory of samples. It replaces the old ``analyze compare`` command
+   and the dead ``--check-strain`` flag, and adds the one genuinely missing
+   metric: stereochemistry preservation.
+
+   Two input layouts are accepted, detected from the directory:
+
+   1. **SDF pairs** (primary), as written by
+      ``runmodes/generate/tasks_conformer.py:ConformerFactory``::
+
+          <input>/conformers.csv
+          <input>/mol_0000/{conformers.sdf,reference.sdf,conformer_000.xyz,...}
+
+      Both molecules of a pair come from the same graph3d item via
+      ``build_rdkit_mol``, so atom and bond ordering match by construction --
+      which is what makes stereo descriptors comparable.
+
+   2. **xyz + optimized** (legacy), what ``analyze compare`` consumed::
+
+          <input>/*.xyz
+          <input>/optimized_xyz/<stem>_opt.xyz
+
+      Here the two molecules are perceived independently from coordinates, so
+      the orderings are not guaranteed to agree and **stereo columns are not
+      emitted**.
+
+   Layout 1 is never routed through xyz2mol/openbabel: re-perceiving bonds from
+   coordinates destroys exactly the stereochemistry this group measures.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.conformer_metrics.HARTREE_TO_KCAL
+   MolecularDiffusion.runmodes.analyze.conformer_metrics.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.conformer_metrics.compare_stereo
+   MolecularDiffusion.runmodes.analyze.conformer_metrics.compute_conformer_metrics
+   MolecularDiffusion.runmodes.analyze.conformer_metrics.detect_layout
+   MolecularDiffusion.runmodes.analyze.conformer_metrics.get_stereochemistry_descriptor
+   MolecularDiffusion.runmodes.analyze.conformer_metrics.prepare_mol_for_conformer_eval
+   MolecularDiffusion.runmodes.analyze.conformer_metrics.stereo_scores
+   MolecularDiffusion.runmodes.analyze.conformer_metrics.xtb_available
+
+
+Module Contents
+---------------
+
+.. py:function:: compare_stereo(mol: Any, ref_mol: Any) -> dict | None
+
+   Score one generated molecule against its reference.
+
+   Returns ``None`` when either molecule cannot be prepared. ``rs_ok`` /
+   ``ez_ok`` are ``None`` when the *reference* has nothing of that kind to
+   preserve -- that is "not applicable", not "wrong".
+
+
+.. py:function:: compute_conformer_metrics(input_path: str | pathlib.Path, rmsd_threshold: float = 0.5, charge: int = 0, level: str = 'gfn2', timeout: int = 120) -> tuple[pandas.DataFrame, dict]
+
+   Per-conformer metrics table plus the summary payload.
+
+
+.. py:function:: detect_layout(input_path: str | pathlib.Path) -> str
+
+   ``"sdf_pairs"`` or ``"xyz_optimized"``; raises for anything else.
+
+
+.. py:function:: get_stereochemistry_descriptor(mol: Any) -> tuple[str, str, str]
+
+   ``(rs, inverted_rs, ez)`` descriptor strings for one molecule.
+
+
+.. py:function:: prepare_mol_for_conformer_eval(mol: Any, *, assign_from_3d: bool = True) -> Any
+
+   Sanitized, Kekule-form copy with CIP tags assigned. ``None`` if bad.
+
+
+.. py:function:: stereo_scores(molecules: list, reference_molecules: list) -> dict
+
+   RS / EZ preservation scores over paired lists.
+
+   Scores are ``None`` when nothing in the reference set carried that kind of
+   stereochemistry, so an empty denominator can never masquerade as 0.0.
+
+
+.. py:function:: xtb_available() -> bool
+
+   Explicit probe -- ``get_xtb_energy`` swallows a missing binary.
+
+
+.. py:data:: HARTREE_TO_KCAL
+   :value: 627.5094740631
+
+
+.. py:data:: logger
+

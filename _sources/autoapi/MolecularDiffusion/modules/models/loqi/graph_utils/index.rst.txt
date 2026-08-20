@@ -1,0 +1,76 @@
+MolecularDiffusion.modules.models.loqi.graph_utils
+==================================================
+
+.. py:module:: MolecularDiffusion.modules.models.loqi.graph_utils
+
+.. autoapi-nested-parse::
+
+   LoQI edge-graph construction: stereo augmentation + fully-connected edges.
+
+   Two functions, both ported verbatim (NVIDIA, Apache-2.0):
+
+   * :func:`derive_stereo_edges` -- ``data_processing/utils_data.py::add_stereo_bonds``.
+     Emits LoQI's auxiliary edge classes 5-8, which encode E/Z and R/S. These are
+     **not bonds**: they are directed (class 8 deliberately asymmetric -- the
+     direction *is* the R/S signal), so the platform's symmetric,
+     upper-triangular ``bond_index``/``bond_type`` storage cannot hold them. The
+     approved plan therefore re-derives them per batch from the geometry, using the
+     same ``AssignStereochemistryFrom3D`` that produced them upstream.
+
+   * :func:`make_graph_fully_connected` --
+     ``src/megalodon/data/batch_preprocessor_conf.py:8-40``. Merges the directed
+     real-bond + stereo edge list into a fully-connected directed edge list,
+     materializing class 0 ("no bond") for every remaining pair. Where a stereo
+     edge lands on a real bond, ``coalesce(reduce="min")`` on the bond list first,
+     then ``reduce="max"`` against the zero-filled complete graph, means the bond
+     order wins -- upstream's behaviour, preserved.
+
+   Canonical edge vocabulary here (9 classes):
+   ``0=none 1=SINGLE 2=DOUBLE 3=TRIPLE 4=AROMATIC 5=E 6=Z 7=chirality(sym)
+   8=chirality(directed)``. Class 4 never occurs for LoQI: the pipeline kekulizes.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.loqi.graph_utils.CHI_BONDS
+   MolecularDiffusion.modules.models.loqi.graph_utils.N_EDGE_CLASSES
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.loqi.graph_utils.derive_stereo_edges
+   MolecularDiffusion.modules.models.loqi.graph_utils.make_graph_fully_connected
+
+
+Module Contents
+---------------
+
+.. py:function:: derive_stereo_edges(mol, chi_bonds: tuple[int, int] = CHI_BONDS, ez_bonds: dict | None = None, from_3D: bool = True) -> list[tuple[int, int, int]]
+
+   RDKit mol (with a conformer) -> list of ``(i, j, class)`` stereo edges.
+
+   Returns an empty list for an achiral, non-E/Z molecule. Duplicated entries
+   are possible and intentional -- upstream re-emits a stereocentre's block
+   once per incident bond, and the later ``coalesce`` deduplicates.
+
+
+.. py:function:: make_graph_fully_connected(edge_index: torch.Tensor, edge_attr: torch.Tensor, batch: torch.Tensor)
+
+   Directed real+stereo edges -> fully-connected directed edges + 9 classes.
+
+
+.. py:data:: CHI_BONDS
+   :value: (7, 8)
+
+
+.. py:data:: N_EDGE_CLASSES
+   :value: 9
+
+

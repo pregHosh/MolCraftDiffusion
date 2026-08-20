@@ -44,8 +44,7 @@ Generation steered by an external input — a shape, a pocket, a set of fragment
 a pharmacophore. These need **paired** data (the condition alongside the
 molecule); a plain molecule dataset is not enough. Except for ShEPhERD, none
 of them generate bonds — you get atoms in space and the chemistry is perceived
-afterwards. Most are heavy-atom only; KGDiff, PMDM and Apo2Mol also place
-hydrogens.
+afterwards. Most are heavy-atom only; KGDiff, PMDM and Apo2Mol also place hydrogens.
 
 | Task config | `task_type` | Conditioned on | Notes |
 | :--- | :--- | :--- | :--- |
@@ -61,7 +60,26 @@ hydrogens.
 | `diffusion_diffdec.yaml` | `diffusion_diffdec` | **Scaffold** + anchor atom + **protein pocket** | **R-group decoration**: keep a scaffold fixed, pick one attachment point, and grow a substituent there inside the pocket. Choose it over DiffLinker when you are growing off a scaffold rather than bridging two fragments. One R-group per run, and the model picks its size for you, up to about 10 heavy atoms. |
 | `pharmacophore.yaml` | `diffusion_pharmacophore` | **Pharmacophore** points, electrostatics, shape | ShEPhERD — ligand-based design when you have a reference molecule but **no protein structure**, and the one option here whose conditioning actually works end to end. Shape matching needs to be trained in; the shipped setup covers pharmacophores and electrostatics. It is also the only model in this table that generates bonds. |
 
-## 4. Transition-metal complex generation
+## 4. Conformer generation
+
+The odd one out: these do not design molecules. You already know *what* the
+molecule is — you want to know what **shape** it takes. Everything else on this
+page invents new chemistry; this section keeps yours exactly as drawn and only
+works out the geometry. That also means an ordinary molecule dataset is enough
+to train on, with no paired conditions to assemble.
+
+Because the molecule is yours, you ask for a number of shapes **per molecule**
+rather than a total, and there is no molecule size to set — your structure
+already fixes that. Results come back in one folder per input molecule, next to
+a table listing every shape produced, which molecule it belongs to, and how far
+it moved from the structure you supplied.
+
+| Task config | `task_type` | Notes |
+| :--- | :--- | :--- |
+| `diffusion_loqi_flow.yaml` | `diffusion_loqi_flow` | **Start here.** Hand it a structure and it gives back realistic, low-energy 3D shapes of that same molecule, keeping the left/right-handedness and double-bond geometry you drew. Reach for it when the quick built-in conformer tools are not good enough — flexible molecules, large rings, and anything you are about to dock or minimise. You can dial sampling up for quality or down for speed. |
+| `diffusion_loqi.yaml` | `diffusion_loqi` | The same model trained a different way. Slightly rougher structures than the above and fixed to one sampling setting, so prefer the flow version unless you specifically want this checkpoint. |
+
+## 5. Transition-metal complex generation
 
 Ligand design *around a metal centre*: freeze the metal and the retained
 ligands, re-diffuse the rest. Neither generates bonds, every run starts from an
@@ -74,7 +92,7 @@ the metals Cr through Zn.
 | `diffusion_ligandiff.yaml` | `diffusion_ligandiff` | Exactly **one** ligand per run | Swap **one** ligand for new chemistry while the rest of the complex stays put; the coordination geometry is preserved. Ligand assignments ship for one published dataset — bringing your own complexes needs molSimplify. |
 | `diffusion_ligandiff_multi.yaml` | `diffusion_ligandiff_multi` | **Any subset**, one ligand up to the whole coordination sphere | The broader option: keep any number of ligands and regenerate the rest, so use it when more of the coordination sphere is up for redesign. **Octahedral complexes only.** How the free sites are divided between new ligands is chosen at random unless you specify it — the model does not predict it. |
 
-## 5. Property prediction and guidance
+## 6. Property prediction and guidance
 
 Not generators. `regression` predicts a property; `guidance` exposes the same
 head as a gradient signal to steer a diffusion sampler. Only EGCL and eSEN can
@@ -86,7 +104,7 @@ be used for that steering.
 | `regression_esen.yaml` / `guidance_esen.yaml` | `regression` / `guidance` | eSEN | Slower and heavier; reach for it when EGCL's accuracy plateaus. |
 | `regression_equiformer.yaml` | `regression` | EquiformerV2 | The most expensive option, for prediction runs where accuracy matters more than cost. It **cannot** steer generation. |
 
-## 6. Self-supervised pretraining
+## 7. Self-supervised pretraining
 
 Train a backbone on unlabeled 3D structures. The resulting checkpoint is usable
 today as a **molecular featuriser** (`MolCraftDiff analyze featurize --backend
@@ -212,3 +230,10 @@ Backbones and objectives integrated here are based on the following work.
 - **ShEPhERD** — Adams, Abeywardane, Fromer & Coley. *ShEPhERD: Diffusing shape,
   electrostatics, and pharmacophores for bioisosteric drug design.* ICLR 2025.
   [arXiv:2411.04130](https://arxiv.org/abs/2411.04130)
+- **LoQI** — Nikitin, Anstine, Zubatyuk, Paliwal & Isayev. *Scalable
+  Low-Energy Molecular Conformer Generation with Quantum Mechanical Accuracy.*
+  ChemRxiv 2025.
+  [doi:10.26434/chemrxiv-2025-k4h7v](https://doi.org/10.26434/chemrxiv-2025-k4h7v)
+  — built on the **Megalodon** co-design architecture: Reidenbach, Nikitin,
+  Isayev & Paliwal, *Applications of Modular Co-Design for De Novo 3D Molecule
+  Generation*, 2025 ([arXiv:2505.18392](https://arxiv.org/abs/2505.18392)).

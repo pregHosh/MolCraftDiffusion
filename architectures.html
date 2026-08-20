@@ -313,6 +313,7 @@
 <li class="toctree-l4 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/index.html">MolecularDiffusion.runmodes.analyze</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.analyze" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/compare_to_optimized/index.html">MolecularDiffusion.runmodes.analyze.compare_to_optimized</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/compute_metrics/index.html">MolecularDiffusion.runmodes.analyze.compute_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/conformer_metrics/index.html">MolecularDiffusion.runmodes.analyze.conformer_metrics</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/docking/index.html">MolecularDiffusion.runmodes.analyze.docking</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/druglike/index.html">MolecularDiffusion.runmodes.analyze.druglike</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html">MolecularDiffusion.runmodes.analyze.featurize</a></li>
@@ -326,6 +327,7 @@
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/generate/index.html">MolecularDiffusion.runmodes.generate</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.generate" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/generate/sweep/index.html">MolecularDiffusion.runmodes.generate.sweep</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/generate/tasks_conformer/index.html">MolecularDiffusion.runmodes.generate.tasks_conformer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/generate/tasks_gcdm_optimize/index.html">MolecularDiffusion.runmodes.generate.tasks_gcdm_optimize</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/generate/tasks_generate/index.html">MolecularDiffusion.runmodes.generate.tasks_generate</a></li>
 </ul>
@@ -563,8 +565,7 @@ freely.</p>
 a pharmacophore. These need <strong>paired</strong> data (the condition alongside the
 molecule); a plain molecule dataset is not enough. Except for ShEPhERD, none
 of them generate bonds — you get atoms in space and the chemistry is perceived
-afterwards. Most are heavy-atom only; KGDiff, PMDM and Apo2Mol also place
-hydrogens.</p>
+afterwards. Most are heavy-atom only; KGDiff, PMDM and Apo2Mol also place hydrogens.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -634,8 +635,41 @@ hydrogens.</p>
 </table>
 </div>
 </section>
+<section id="conformer-generation">
+<h2>4. Conformer generation<a class="headerlink" href="#conformer-generation" title="Link to this heading">¶</a></h2>
+<p>The odd one out: these do not design molecules. You already know <em>what</em> the
+molecule is — you want to know what <strong>shape</strong> it takes. Everything else on this
+page invents new chemistry; this section keeps yours exactly as drawn and only
+works out the geometry. That also means an ordinary molecule dataset is enough
+to train on, with no paired conditions to assemble.</p>
+<p>Because the molecule is yours, you ask for a number of shapes <strong>per molecule</strong>
+rather than a total, and there is no molecule size to set — your structure
+already fixes that. Results come back in one folder per input molecule, next to
+a table listing every shape produced, which molecule it belongs to, and how far
+it moved from the structure you supplied.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Task config</p></th>
+<th class="head text-left"><p><code class="docutils literal notranslate"><span class="pre">task_type</span></code></p></th>
+<th class="head text-left"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_loqi_flow.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_loqi_flow</span></code></p></td>
+<td class="text-left"><p><strong>Start here.</strong> Hand it a structure and it gives back realistic, low-energy 3D shapes of that same molecule, keeping the left/right-handedness and double-bond geometry you drew. Reach for it when the quick built-in conformer tools are not good enough — flexible molecules, large rings, and anything you are about to dock or minimise. You can dial sampling up for quality or down for speed.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_loqi.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_loqi</span></code></p></td>
+<td class="text-left"><p>The same model trained a different way. Slightly rougher structures than the above and fixed to one sampling setting, so prefer the flow version unless you specifically want this checkpoint.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="transition-metal-complex-generation">
-<h2>4. Transition-metal complex generation<a class="headerlink" href="#transition-metal-complex-generation" title="Link to this heading">¶</a></h2>
+<h2>5. Transition-metal complex generation<a class="headerlink" href="#transition-metal-complex-generation" title="Link to this heading">¶</a></h2>
 <p>Ligand design <em>around a metal centre</em>: freeze the metal and the retained
 ligands, re-diffuse the rest. Neither generates bonds, every run starts from an
 input complex, and both need complexes prepared with the bundled converter — a
@@ -666,7 +700,7 @@ the metals Cr through Zn.</p>
 </div>
 </section>
 <section id="property-prediction-and-guidance">
-<h2>5. Property prediction and guidance<a class="headerlink" href="#property-prediction-and-guidance" title="Link to this heading">¶</a></h2>
+<h2>6. Property prediction and guidance<a class="headerlink" href="#property-prediction-and-guidance" title="Link to this heading">¶</a></h2>
 <p>Not generators. <code class="docutils literal notranslate"><span class="pre">regression</span></code> predicts a property; <code class="docutils literal notranslate"><span class="pre">guidance</span></code> exposes the same
 head as a gradient signal to steer a diffusion sampler. Only EGCL and eSEN can
 be used for that steering.</p>
@@ -700,7 +734,7 @@ be used for that steering.</p>
 </div>
 </section>
 <section id="self-supervised-pretraining">
-<h2>6. Self-supervised pretraining<a class="headerlink" href="#self-supervised-pretraining" title="Link to this heading">¶</a></h2>
+<h2>7. Self-supervised pretraining<a class="headerlink" href="#self-supervised-pretraining" title="Link to this heading">¶</a></h2>
 <p>Train a backbone on unlabeled 3D structures. The resulting checkpoint is usable
 today as a <strong>molecular featuriser</strong> (<code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">analyze</span> <span class="pre">featurize</span> <span class="pre">--backend</span> <span class="pre">ssl3d</span></code>); fine-tuning one into a regression or guidance model is <strong>not wired up
 yet</strong> and will be refused.</p>
@@ -850,6 +884,13 @@ Transformer for Scaling to Higher-Degree Representations.</em> ICLR 2024. <a cla
 <li><p><strong>ShEPhERD</strong> — Adams, Abeywardane, Fromer &amp; Coley. <em>ShEPhERD: Diffusing shape,
 electrostatics, and pharmacophores for bioisosteric drug design.</em> ICLR 2025.
 <a class="reference external" href="https://arxiv.org/abs/2411.04130">arXiv:2411.04130</a></p></li>
+<li><p><strong>LoQI</strong> — Nikitin, Anstine, Zubatyuk, Paliwal &amp; Isayev. <em>Scalable
+Low-Energy Molecular Conformer Generation with Quantum Mechanical Accuracy.</em>
+ChemRxiv 2025.
+<a class="reference external" href="https://doi.org/10.26434/chemrxiv-2025-k4h7v">doi:10.26434/chemrxiv-2025-k4h7v</a>
+— built on the <strong>Megalodon</strong> co-design architecture: Reidenbach, Nikitin,
+Isayev &amp; Paliwal, <em>Applications of Modular Co-Design for De Novo 3D Molecule
+Generation</em>, 2025 (<a class="reference external" href="https://arxiv.org/abs/2505.18392">arXiv:2505.18392</a>).</p></li>
 </ul>
 </section>
 </section>
@@ -930,9 +971,10 @@ electrostatics, and pharmacophores for bioisosteric drug design.</em> ICLR 2025.
 <li><a class="reference internal" href="#de-novo-3d-generation">1. De novo 3D generation</a></li>
 <li><a class="reference internal" href="#latent-space-diffusion-two-stage">2. Latent-space diffusion (two-stage)</a></li>
 <li><a class="reference internal" href="#conditional-and-structure-aware-generation">3. Conditional and structure-aware generation</a></li>
-<li><a class="reference internal" href="#transition-metal-complex-generation">4. Transition-metal complex generation</a></li>
-<li><a class="reference internal" href="#property-prediction-and-guidance">5. Property prediction and guidance</a></li>
-<li><a class="reference internal" href="#self-supervised-pretraining">6. Self-supervised pretraining</a></li>
+<li><a class="reference internal" href="#conformer-generation">4. Conformer generation</a></li>
+<li><a class="reference internal" href="#transition-metal-complex-generation">5. Transition-metal complex generation</a></li>
+<li><a class="reference internal" href="#property-prediction-and-guidance">6. Property prediction and guidance</a></li>
+<li><a class="reference internal" href="#self-supervised-pretraining">7. Self-supervised pretraining</a></li>
 <li><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>

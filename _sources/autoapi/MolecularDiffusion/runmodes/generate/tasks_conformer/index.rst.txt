@@ -1,0 +1,160 @@
+MolecularDiffusion.runmodes.generate.tasks_conformer
+====================================================
+
+.. py:module:: MolecularDiffusion.runmodes.generate.tasks_conformer
+
+.. autoapi-nested-parse::
+
+   Conformer generation -- k 3D shapes of each molecule you already have.
+
+   This is an ADDITIVE sibling of ``GenerativeFactory``, not a modification of
+   it, following the same route as ``tasks_gcdm_optimize.py``:
+   ``cli/generate.py`` does ``hydra.utils.instantiate(cfg.interference,
+   task=task)`` then ``generator.run()``, the ``GenerativeFactory`` annotation on
+   that line is cosmetic, and there is no registry -- so a new class in a new
+   file plugs in purely through its ``_target_``. Nothing in
+   ``tasks_generate.py`` is touched.
+
+   WHY IT EXISTS
+
+       A conformer generator is handed a molecule and returns 3D shapes OF THAT
+       MOLECULE. Run through ``gen_unconditional`` that is mis-modelled in four
+       ways:
+
+       1. ``mol_size`` chooses a molecule SIZE, but a conformer generator's size
+          is dictated by its input. For LoQI the drawn size is only used to snap
+          to the nearest pool molecule, so ``mol_size`` silently selects WHICH
+          molecule you get.
+       2. ``num_generate`` is a flat sample count, so "20 conformers of THIS
+          molecule" is inexpressible.
+       3. Output is ``molecule_0.xyz``, ``molecule_1.xyz`` ... with nothing
+          recording which input each conformer belongs to -- and ``.xyz`` has no
+          bond channel, so that mapping is the only link back to the chemistry.
+       4. De-novo metrics (uniqueness, novelty) are ~0 BY CONSTRUCTION here.
+
+       This mode asks for ``conformers_per_molecule``, refuses ``mol_size``
+       rather than accepting-and-ignoring it, groups output per input molecule,
+       and scores with conformer metrics.
+
+   TASK CONTRACT (duck-typed, no registry, no base class)
+
+       A task works with this mode if it exposes:
+
+       * ``conditioning_pool() -> list[Data]`` -- the input molecules, as
+         ``graph3d`` per-item ``Data`` (``pos``, ``z``, ``atom_idx``, ``fc``,
+         ``bond_index``, ``bond_type``, ``n_nodes``);
+       * ``sample(mols=[...])`` -- generate one conformer per entry of ``mols``,
+         returning the platform tuple ``(one_hot, charges, coords, node_mask)``.
+
+       Anything else raises a clear TypeError at construction.
+
+   OUTPUT LAYOUT
+
+       output_path/
+         mol_0000/conformer_000.xyz ...   <- one .xyz per conformer (what every
+                                             analyze/ command already reads)
+         mol_0000/conformers.sdf          <- the SAME conformers WITH bonds and
+                                             formal charges, multi-conformer sdf
+         mol_0000/reference.sdf           <- the input molecule + its geometry
+         conformers.csv                   <- one row per conformer: which input it
+                                             came from, its SMILES, its metrics
+
+       The per-molecule directory is the mapping (3), the .sdf carries the bond
+       channel .xyz cannot (also 3), and the .csv is the machine-readable index.
+       Molecule building reuses ``build_rdkit_mol`` from the graph3d dataset and
+       coordinate writing reuses ``save_xyz_file``; no parallel writer.
+
+   METRICS (and what is deliberately NOT computed)
+
+       Per conformer, against the INPUT molecule's own geometry:
+
+       * ``rmsd`` -- heavy-atom symmetry-corrected RMSD (``GetBestRMS`` after
+         ``RemoveHs``), the GEOM/conformer-benchmark convention.
+       * ``energy`` -- xTB single-point, opt-in (``xtb_energy: true``) and only
+         if the ``xtb`` binary is on PATH; reuses ``analyze.compare_to_optimized
+         .get_xtb_energy``. Otherwise the column is empty, never a made-up
+         number.
+
+       Aggregated per molecule and logged: ``rmsd_min`` (the MAT-style matching
+       number) and ``coverage`` (fraction of conformers within
+       ``rmsd_threshold``, precision-style).
+
+       NOT computed: recall-side COV-R / MAT-R. Those need a reference ENSEMBLE
+       of experimentally/CREST-derived conformers per molecule, and the input
+       pool carries exactly one geometry per molecule. Reporting them off a
+       single reference would be a meaningless number.
+
+       HONESTY CAVEAT: ``rmsd`` is RMSD to the input geometry. That is a true
+       reference only when the input carried real 3D (.sdf, or a graph3d .db).
+       A SMILES input has an ETKDG conformer embedded for it, so the "reference"
+       is itself a prediction -- the run logs a warning when it detects this.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.generate.tasks_conformer.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.generate.tasks_conformer.ConformerFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: ConformerFactory(task: Any, conformers_per_molecule: int = 10, batch_size: int = 8, max_molecules: int = 0, rmsd_threshold: float = 0.5, xtb_energy: bool = False, seed: int | None = None, output_path: str = 'generated_conformers', **kwargs: Any)
+
+   Generate ``conformers_per_molecule`` conformers of every input molecule.
+
+   Deliberately does NOT accept ``mol_size`` or ``num_generate``: the input
+   molecule dictates its own atom count, and the request here is per-molecule,
+   not a flat total. Passing either raises rather than being ignored.
+
+
+   .. py:method:: run() -> None
+
+
+   .. py:attribute:: batch_size
+
+
+   .. py:attribute:: conformers_per_molecule
+      :value: 10
+
+
+
+   .. py:attribute:: max_molecules
+      :value: 0
+
+
+
+   .. py:attribute:: output_path
+      :value: 'generated_conformers'
+
+
+
+   .. py:attribute:: rmsd_threshold
+
+
+   .. py:attribute:: seed
+      :value: None
+
+
+
+   .. py:attribute:: task
+
+
+   .. py:attribute:: xtb_energy
+      :value: False
+
+
+
+.. py:data:: logger
+

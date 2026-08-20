@@ -1,0 +1,349 @@
+MolecularDiffusion.modules.tasks.diffusion_loqi
+===============================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_loqi
+
+.. autoapi-nested-parse::
+
+   LoQI -- low-energy conformer generation on a fixed molecular graph.
+
+   One module, two task types, because upstream is one model with two configs:
+
+   =========================  =======================================  ============
+   ``task_type``              interpolant                              weights
+   =========================  =======================================  ============
+   ``diffusion_loqi``         VDM diffusion, 25 discrete steps,        ``loqi.ckpt``
+                              cosine-adaptive, self-conditioned
+   ``diffusion_loqi_flow``    continuous flow matching, velocity       ``loqi_flow.ckpt``
+                              prediction, rigid (Kabsch) OT, linear
+   =========================  =======================================  ============
+
+   **This is not de-novo generation.** Only ``x`` (coordinates) is ever noised.
+   Atom types, formal charges, bond orders and stereochemistry are supplied
+   un-noised as network input at every step and come straight back out of
+   ``sample()`` unchanged. Every sample therefore needs an input molecule; see
+   ``sample_input`` below.
+
+   Data path: ``data_type: graph3d`` with ``bond_collate: raw`` (a PyG ``Batch``)
+   and ``kekulize: true``.
+
+   Bond representation mapping
+   ---------------------------
+   LoQI's network consumes a **fully-connected directed** edge list with a 9-class
+   label: ``0=none 1=SINGLE 2=DOUBLE 3=TRIPLE 4=AROMATIC 5=E 6=Z
+   7=chirality(sym) 8=chirality(directed)``. Classes 5-8 are not bonds -- they are
+   a stereochemistry encoding laid over the bond graph, and the class-8 edges are
+   deliberately asymmetric (the direction *is* the R/S signal), so they cannot be
+   stored in the platform's symmetric upper-triangular ``bond_index``/``bond_type``.
+
+   So storage keeps the canonical five, and :class:`Graph3DToLoQIAdapter`
+   reconstructs the rest per batch:
+
+   1. mirror the stored upper-triangular bonds into a directed list (reproducing
+      upstream's ``adj.nonzero()``);
+   2. rebuild the molecule with ``build_rdkit_mol`` -- which calls
+      ``AssignStereochemistryFrom3D``, the *same* source of truth upstream's
+      ``add_stereo_bonds(from_3D=True)`` used -- and derive classes 5-8 from it;
+   3. run upstream's own ``make_graph_fully_connected`` to materialize class 0.
+
+   Class 4 never appears: the LoQI pipeline kekulizes (``process_chembl3d.py:216``,
+   ``sample_conformers.py:84``), so the released weights have never seen one.
+
+   There is no per-item cache for step 2 in this first pass. If RDKit dominates
+   step time, the fix is a cache keyed on the dataset index, which needs the
+   dataset to carry one -- a separate change.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_loqi.CHARGE_OFFSET
+   MolecularDiffusion.modules.tasks.diffusion_loqi.FULL_ATOM_ENCODER
+   MolecularDiffusion.modules.tasks.diffusion_loqi.N_CHARGE_CLASSES
+   MolecularDiffusion.modules.tasks.diffusion_loqi.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_loqi.Graph3DToLoQIAdapter
+   MolecularDiffusion.modules.tasks.diffusion_loqi.LoQIConformerTask
+   MolecularDiffusion.modules.tasks.diffusion_loqi.LoQINodeDistribution
+   MolecularDiffusion.modules.tasks.diffusion_loqi.ModelTaskFactory
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_loqi.load_conditioning_pool
+
+
+Module Contents
+---------------
+
+.. py:class:: Graph3DToLoQIAdapter(atom_vocab: list[str])
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   ``graph3d`` PyG ``Batch`` -> LoQI's flat conditioning dict.
+
+   Output keys: ``batch`` (N,), ``x`` (N,3) COM-free, ``h`` (N,17) one-hot in
+   ``FULL_ATOM_ENCODER`` order, ``charges`` (N,6) one-hot of ``fc + 2``,
+   ``edge_index`` (2,E) fully connected directed, ``edge_attr`` (E,9) one-hot.
+
+
+   .. py:method:: build_edges(pyg: Any, device) -> tuple[torch.Tensor, torch.Tensor]
+
+      Mirror stored bonds, append derived stereo edges, then densify.
+
+
+
+   .. py:method:: forward(batch: Any) -> dict
+
+
+   .. py:method:: vocab_map(device) -> torch.Tensor
+
+      Platform ``atom_idx`` -> LoQI ``FULL_ATOM_ENCODER`` index.
+
+      Built by SYMBOL, never by position: the platform's ``atom_vocab`` order
+      is a data-config choice, LoQI's is fixed by the pretrained
+      ``atom_embedder``'s input columns. Getting this wrong loads silently and
+      mislabels every atom.
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+.. py:class:: LoQIConformerTask(task_type: str, atom_vocab: list[str], interpolant_config: dict, dynamics_config: dict, self_cond_config: dict | None, timesteps: int, loss_scale: float, loss_clamp: float | None, return_step_output: bool, sample_input: str | collections.abc.Sequence[str] | None, sample_pool_limit: int, n_atoms_hist: dict, conditioning_pool: list)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   LoQI wrapped in the platform's duck-typed Task contract (§2.1).
+
+
+   .. py:method:: conditioning_pool() -> list
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor)
+
+
+   .. py:method:: forward(batch: Any) -> tuple[torch.Tensor, dict]
+
+
+   .. py:method:: predict_and_target(batch: Any)
+
+
+   .. py:method:: sample(batch_size: int | None = None, nodesxsample: torch.Tensor | None = None, num_steps: int | None = None, batch: dict | None = None, mode: str | None = None, n_frames: int = 0, mols: list | None = None, **kwargs: Any)
+
+      Generate conformers for a batch of conditioning molecules.
+
+      Returns the platform tuple ``(one_hot (B,N,V), charges (B,N),
+      coords (B,N,3), node_mask (B,N))`` with ``V = len(atom_vocab)``. Atom
+      types and charges are the conditioning molecule's -- inputs, not
+      predictions.
+
+      ``nodesxsample`` is honoured as a *count*, and molecules are size-matched
+      to it where the pool allows. ``mode`` is accepted and ignored.
+
+      ``mols`` names the conditioning molecules EXPLICITLY (a list of the
+      pool's ``Data`` items, repeats allowed) and bypasses the size-matched
+      draw entirely -- that is how the conformer mode asks for "k conformers
+      of THIS molecule", which a size draw cannot express. When it is None
+      (every pre-existing caller) nothing changes.
+
+
+
+   .. py:attribute:: T
+
+
+   .. py:attribute:: adapter
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:property:: device
+      :type: torch.device
+
+
+
+   .. py:attribute:: dynamics
+
+
+   .. py:attribute:: interpolant
+
+
+   .. py:attribute:: loss_clamp
+
+
+   .. py:attribute:: loss_scale
+
+
+   .. py:property:: model
+      :type: LoQIConformerTask
+
+
+
+   .. py:property:: n_node_dist
+      :type: dict
+
+
+
+   .. py:attribute:: node_dist_model
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: return_step_output
+
+
+   .. py:attribute:: sample_input
+
+
+   .. py:attribute:: sample_pool_limit
+
+
+   .. py:attribute:: self_cond
+
+
+   .. py:attribute:: task_type
+
+
+   .. py:attribute:: timesteps
+
+
+.. py:class:: LoQINodeDistribution(histogram: dict)
+
+   Histogram sampler over ``train_set.graph3d_stats.n_atoms_hist``.
+
+   Only used so ``mol_size: [0, 0]`` works in a generate config; the actual
+   molecule sizes always come from the conditioning molecules.
+
+
+   .. py:method:: sample(n_samples: int) -> torch.Tensor
+
+
+   .. py:attribute:: histogram
+
+
+   .. py:attribute:: n_node_dist
+
+
+.. py:class:: ModelTaskFactory(task_type: str = 'diffusion_loqi', interpolant: dict | None = None, dynamics: dict | None = None, self_conditioning: dict | None = None, timesteps: int = 25, loss_scale: float = 3.0, loss_clamp: float | None = 10.0, return_step_output: bool = False, sample_input: str | collections.abc.Sequence[str] | None = None, sample_pool_limit: int = 2000, dataset_stats: dict | None = None, atom_vocab: list | None = None, train_set: torch.utils.data.Dataset | None = None, **kwargs: Any)
+
+   Instantiated by ``cli/train.py`` / ``cli/generate.py`` from Hydra.
+
+   ``train_set`` is a declared parameter, which is what makes the declarative
+   injection seam (docs/adding_new_models.md §2.5) hand over the dataset --
+   needed for the size histogram and the default conditioning pool.
+
+
+   .. py:method:: build() -> LoQIConformerTask
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: dataset_stats
+
+
+   .. py:attribute:: dynamics
+
+
+   .. py:attribute:: generation_time_keys
+      :value: ('sample_input', 'sample_pool_limit')
+
+
+
+   .. py:attribute:: interpolant
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: loss_clamp
+      :value: 10.0
+
+
+
+   .. py:attribute:: loss_scale
+
+
+   .. py:attribute:: return_step_output
+      :value: False
+
+
+
+   .. py:attribute:: sample_input
+      :value: None
+
+
+
+   .. py:attribute:: sample_pool_limit
+      :value: 2000
+
+
+
+   .. py:attribute:: self_conditioning
+      :value: None
+
+
+
+   .. py:attribute:: task
+      :type:  LoQIConformerTask | None
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_loqi'
+
+
+
+   .. py:attribute:: timesteps
+      :value: 25
+
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+.. py:function:: load_conditioning_pool(sample_input: str | collections.abc.Sequence[str], atom_vocab: list[str], limit: int | None = None) -> list[torch_geometric.data.Data]
+
+   Load conditioning molecules.
+
+   ``sample_input`` is either a path -- ``.sdf``, ``.smi``/``.txt``, or an
+   ASE ``.db`` written by the graph3d converter -- or a plain list of
+   SMILES strings given inline in the generate config.
+
+   Both SMILES forms go through :func:`_pool_from_smiles`.
+
+
+.. py:data:: CHARGE_OFFSET
+   :value: 2
+
+
+.. py:data:: FULL_ATOM_ENCODER
+   :type:  dict[str, int]
+
+.. py:data:: N_CHARGE_CLASSES
+   :value: 6
+
+
+.. py:data:: logger
+

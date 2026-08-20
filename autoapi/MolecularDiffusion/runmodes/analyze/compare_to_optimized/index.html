@@ -313,6 +313,7 @@
 <li class="toctree-l4 current has-children"><a class="reference internal" href="../index.html">MolecularDiffusion.runmodes.analyze</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.analyze" checked="" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l5 current current-page"><a class="current reference internal" href="#">MolecularDiffusion.runmodes.analyze.compare_to_optimized</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../compute_metrics/index.html">MolecularDiffusion.runmodes.analyze.compute_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../conformer_metrics/index.html">MolecularDiffusion.runmodes.analyze.conformer_metrics</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../docking/index.html">MolecularDiffusion.runmodes.analyze.docking</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../druglike/index.html">MolecularDiffusion.runmodes.analyze.druglike</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../featurize/index.html">MolecularDiffusion.runmodes.analyze.featurize</a></li>
@@ -326,6 +327,7 @@
 </li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../generate/index.html">MolecularDiffusion.runmodes.generate</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.generate" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../generate/sweep/index.html">MolecularDiffusion.runmodes.generate.sweep</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../generate/tasks_conformer/index.html">MolecularDiffusion.runmodes.generate.tasks_conformer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../generate/tasks_gcdm_optimize/index.html">MolecularDiffusion.runmodes.generate.tasks_gcdm_optimize</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../generate/tasks_generate/index.html">MolecularDiffusion.runmodes.generate.tasks_generate</a></li>
 </ul>
@@ -453,24 +455,17 @@
         <article role="main" id="furo-main-content">
           <section id="module-MolecularDiffusion.runmodes.analyze.compare_to_optimized">
 <span id="moleculardiffusion-runmodes-analyze-compare-to-optimized"></span><h1>MolecularDiffusion.runmodes.analyze.compare_to_optimized<a class="headerlink" href="#module-MolecularDiffusion.runmodes.analyze.compare_to_optimized" title="Link to this heading">¶</a></h1>
-<p>Compute unified comparison metrics (RMSD, xTB Energy, Bond Geometry) between
-initial XYZ files and their optimized counterparts in the <cite>optimized_xyz</cite> subdirectory.</p>
-<p>Features:
-- Validates connectivity (skip disjoint graphs)
-- Computes RMSD and Energy difference (via xTB)
-- Computes Bond Length, Angle, and Torsion differences (via OpenBabel/xyz2mol)</p>
-<section id="attributes">
-<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.parser" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.parser"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parser</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
+<p>Helpers for comparing an initial geometry with an optimized counterpart.</p>
+<p>This is an internal helper library, not a command. The directory-walking
+front end that used to live here is now the <code class="docutils literal notranslate"><span class="pre">xyz+optimized</span></code> layout of
+<code class="docutils literal notranslate"><span class="pre">--metrics</span> <span class="pre">conformer</span></code> (see <code class="docutils literal notranslate"><span class="pre">conformer_metrics.py</span></code>).</p>
+<p>Two consumers depend on it:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">conformer_metrics.py</span></code> – <code class="docutils literal notranslate"><span class="pre">compute_all_metrics</span></code> for the legacy layout;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">runmodes/generate/tasks_conformer.py</span></code> – <code class="docutils literal notranslate"><span class="pre">get_xtb_energy</span></code> for the
+optional energy column. Removing that function breaks conformer
+<em>generation</em>, not just analysis.</p></li>
+</ul>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -485,13 +480,10 @@ initial XYZ files and their optimized counterparts in the <cite>optimized_xyz</c
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.get_xtb_energy" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.get_xtb_energy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_xtb_energy</span></code></a>(→ Optional[float])</p></td>
 <td><p>Compute xTB single-point energy for an XYZ file (returns Hartree).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.run_compare_analysis" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.run_compare_analysis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_compare_analysis</span></code></a>(args)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_converter" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_converter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz2mol_converter</span></code></a>(→ Optional[rdkit.Chem.Mol])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_converter" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_converter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz2mol_converter</span></code></a>(→ Optional[rdkit.Chem.Mol])</p></td>
 <td><p>Convert XYZ to RDKit Mol using xyz2mol logic.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_openbabel" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_openbabel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz2mol_openbabel</span></code></a>(→ Optional[rdkit.Chem.Mol])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_openbabel" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_openbabel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz2mol_openbabel</span></code></a>(→ Optional[rdkit.Chem.Mol])</p></td>
 <td><p>Convert XYZ to RDKit Mol using OpenBabel (via pybel).</p></td>
 </tr>
 </tbody>
@@ -519,11 +511,6 @@ initial XYZ files and their optimized counterparts in the <cite>optimized_xyz</c
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.runmodes.analyze.compare_to_optimized.run_compare_analysis">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.analyze.compare_to_optimized.</span></span><span class="sig-name descname"><span class="pre">run_compare_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.14)"><span class="pre">argparse.Namespace</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.run_compare_analysis" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_converter">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.analyze.compare_to_optimized.</span></span><span class="sig-name descname"><span class="pre">xyz2mol_converter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">rdkit.Chem.Mol</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_converter" title="Link to this definition">¶</a></dt>
 <dd><p>Convert XYZ to RDKit Mol using xyz2mol logic.</p>
@@ -534,11 +521,6 @@ initial XYZ files and their optimized counterparts in the <cite>optimized_xyz</c
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.analyze.compare_to_optimized.</span></span><span class="sig-name descname"><span class="pre">xyz2mol_openbabel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">rdkit.Chem.Mol</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_openbabel" title="Link to this definition">¶</a></dt>
 <dd><p>Convert XYZ to RDKit Mol using OpenBabel (via pybel).</p>
 </dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="MolecularDiffusion.runmodes.analyze.compare_to_optimized.parser">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.analyze.compare_to_optimized.</span></span><span class="sig-name descname"><span class="pre">parser</span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.parser" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </section>
 </section>
@@ -616,16 +598,13 @@ initial XYZ files and their optimized counterparts in the <cite>optimized_xyz</c
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">MolecularDiffusion.runmodes.analyze.compare_to_optimized</a><ul>
-<li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.compute_all_metrics"><code class="docutils literal notranslate"><span class="pre">compute_all_metrics()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.compute_coord_rmsd"><code class="docutils literal notranslate"><span class="pre">compute_coord_rmsd()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.get_xtb_energy"><code class="docutils literal notranslate"><span class="pre">get_xtb_energy()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.run_compare_analysis"><code class="docutils literal notranslate"><span class="pre">run_compare_analysis()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_converter"><code class="docutils literal notranslate"><span class="pre">xyz2mol_converter()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_openbabel"><code class="docutils literal notranslate"><span class="pre">xyz2mol_openbabel()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.parser"><code class="docutils literal notranslate"><span class="pre">parser</span></code></a></li>
 </ul>
 </li>
 </ul>

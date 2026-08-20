@@ -17,13 +17,12 @@ This tutorial covers the **analyse** command group, which provides tools for pos
 
 ## Overview
 
-The analysis command group includes six subcommands:
+The analysis command group includes five subcommands:
 
 | Command | Description |
 |---------|-------------|
 | `optimize` | XTB geometry optimisation |
-| `metrics` | Validity/connectivity metrics |
-| `compare` | RMSD and energy comparison |
+| `metrics` | Validity/connectivity metrics, plus the paired `conformer` set |
 | `xyz2mol` | XYZ to SMILES + fingerprints |
 | `xtb-electronic` | XTB electronic properties |
 | `featurize` | Fixed-size molecular feature vectors (SOAP / UMA / SSL3D) |
@@ -57,7 +56,7 @@ MolCraftDiff analyze optimize gen_xyz/ --level gfn2 --charge 0
 
 ### Output
 
-Optimised XYZ files are saved to `output_dir/`, each with an `_opt` suffix (e.g. `mol_0000.xyz` → `mol_0000_opt.xyz`). Part 3's `compare` expects exactly these `*_opt.xyz` files.
+Optimised XYZ files are saved to `output_dir/`, each with an `_opt` suffix (e.g. `mol_0000.xyz` → `mol_0000_opt.xyz`). Part 3's `--metrics conformer` expects exactly these `*_opt.xyz` files.
 
 ---
 
@@ -114,7 +113,6 @@ to process). Sweeps pick this file up automatically.
 | `-o, --output` | None | Output CSV file |
 | `-m, --metrics` | `all` | Metric type to compute |
 | `--recheck-topo` | False | Recheck topology using RDKit |
-| `--check-strain` | False | Check strain via XTB optimisation |
 | `--mol-converter` | `xyz2mol` | XYZ to mol converter |
 | `-s, --split` | `1` | Deterministic splits for mean±std summary logging |
 | `-p, --portion` | `1.0` | Fraction of XYZ files to process |
@@ -123,6 +121,8 @@ to process). Sweeps pick this file up automatically.
 | `--receptor` | None | Protein receptor for `sbdd`: a `.pdbqt`, or a `.pdb` that meeko prepares |
 | `--ref-ligand` | None | Reference ligand `.sdf`; its own affinity becomes the bar for `high_affinity` |
 | `--dock-mode` | `dock` | `score` (in place) / `min` (+ local optimisation) / `dock` (full redock) |
+| `--rmsd-threshold` | `0.5` | `conformer`: RMSD cutoff (Å) for the coverage metric |
+| `-c, --charge` / `-l, --level` / `--xtb-timeout` | `0` / `gfn2` / `120` | `conformer`: xTB settings for the strain column (ignored when `xtb` is not installed) |
 | `--exhaustiveness` | `8` | Vina search effort for `--dock-mode dock` |
 | `-r, --reference-mol` / `--mol-idx` | None / `0` | Reference `.pkl`/`.sdf` (and index) for `similarity3d`; `--mol-idx -1` picks a random reference per molecule |
 | `--rdkit-rmsd` / `--rmsd-n-conf` | off / `20` | `druglike`: RMSD of the pose against UFF-optimised RDKit conformers (slow) |
@@ -198,32 +198,63 @@ Two things worth knowing:
 
 ---
 
-## Part 3: Compare to Optimised Geometries
+## Part 3: Conformer Metrics (paired generated-vs-reference)
 
-Compare generated structures with their optimised counterparts.
+`--metrics conformer` is the home for every metric that needs a **pair** of
+structures — a generated one and the reference it should correspond to. It
+replaces the old `analyze compare` command and the removed `--check-strain`
+flag.
 
-### Prerequisites
+It is **exclusive**: it is not part of `--metrics all`, because a plain
+directory of samples has no reference to pair against.
 
-Run optimisation first to create the `optimized_xyz/` subdirectory:
+### Two accepted input layouts
+
+**1. SDF pairs** — what conformer generation writes:
+
+```
+generated_conformers/
+  conformers.csv
+  mol_0000/{conformers.sdf, reference.sdf, conformer_000.xyz, ...}
+```
+
+```bash
+MolCraftDiff generate my_conformer_config.yaml
+MolCraftDiff analyze metrics generated_conformers/ --metrics conformer
+```
+
+Both molecules of a pair are built from the same molecular graph, so atom and
+bond ordering match — which is what makes stereochemistry comparable. This
+layout is never routed through xyz2mol/OpenBabel: re-perceiving bonds from
+coordinates would destroy the stereochemistry being measured.
+
+**2. xyz + optimised** — the layout Part 1 produces:
+
 ```bash
 MolCraftDiff analyze optimize gen_xyz/
+MolCraftDiff analyze metrics gen_xyz/ --metrics conformer
 ```
 
-### Usage
+Here each structure is perceived from coordinates independently, so atom
+ordering is not guaranteed to agree and **stereo columns are not emitted**
+(the run logs the reason).
 
-```bash
-MolCraftDiff analyze compare gen_xyz/ --level gfn2
-```
+### Computed metrics
 
-### Computed Metrics
-
-- **RMSD**: Root Mean Square Deviation between original and optimised
-- **Energy Difference**: xTB energy change
-- **Bond Geometry**: Bond length and angle deviations
+| Column | Meaning |
+|--------|---------|
+| `rs_ok`, `ez_ok`, `n_stereocentres` | Stereochemistry preserved vs the reference (layout 1 only). All-or-nothing per molecule; the reference's **full enantiomer counts as correct**, matching the convention the conformer literature reports. `None` when the reference has no stereochemistry of that kind — never 0. |
+| `rmsd` | Read from `conformers.csv` (heavy-atom, symmetry-corrected), not recomputed |
+| `bond_length_mean`, `bond_angle_mean`, `torsion_angle_mean` | Mean paired deviation, weighted across bond/angle/torsion types |
+| `mmff_strain_kcal` | MMFF94 energy drop on relaxation — always available |
+| `xtb_strain_kcal` | Same at the xTB level. Empty with a warning when the `xtb` binary is not on `PATH`; never a fabricated number |
 
 ### Output
 
-Results saved to CSV with per-molecule metrics.
+`conformer_metrics.csv` (one row per conformer) plus a
+`conformer_metrics_summary.json` with `rs_score`, `ez_score`, `n_rs_scored`,
+`n_skipped`, `rmsd_median`, `rmsd_best_per_mol_mean`,
+`coverage_at_threshold`, and the geometry / strain means.
 
 ---
 
@@ -481,8 +512,8 @@ MolCraftDiff analyze optimize gen_xyz/ -l gfn2 -o gen_xyz/optimized_xyz
 # 3. Compute validity metrics
 MolCraftDiff analyze metrics gen_xyz/optimized_xyz -o metrics.csv
 
-# 4. Compare to optimised structures
-MolCraftDiff analyze compare gen_xyz/
+# 4. Paired generated-vs-optimised metrics
+MolCraftDiff analyze metrics gen_xyz/ --metrics conformer
 
 # 5. Convert to SMILES for downstream analysis
 MolCraftDiff analyze xyz2mol gen_xyz/optimized_xyz
@@ -514,8 +545,10 @@ from MolecularDiffusion.runmodes.analyze import (
     get_xtb_optimized_xyz,
     compute_xtb_electronic,
     batch_xtb_electronic,
-    run_compare_analysis,
     run_xyz2mol,
+)
+from MolecularDiffusion.runmodes.analyze.conformer_metrics import (
+    compute_conformer_metrics,
 )
 from MolecularDiffusion.runmodes.analyze.featurize import run_featurize
 from MolecularDiffusion.runmodes.analyze.uma_embeddings import get_uma_molecule_embeddings

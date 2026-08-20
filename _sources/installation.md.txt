@@ -29,7 +29,7 @@ The base package does not install every data-processing or analysis dependency. 
 # Data preparation, augmentation, and featurisation commands
 pip install 'molcraftdiffusion[data]'
 
-# Analysis and post-processing commands (metrics, compare, xyz2mol, xtb-electronic, featurise SOAP)
+# Analysis and post-processing commands (metrics, xyz2mol, xtb-electronic, featurise SOAP)
 pip install 'molcraftdiffusion[analyze]'
 
 # Backbone-specific groups
@@ -43,7 +43,7 @@ pip install 'molcraftdiffusion[shape]'    # DiffSMol: offline shape-cache precom
 pip install 'molcraftdiffusion[flowmol]'  # FlowMol: DGL (install the CUDA build matching
                                           # your torch, see pyproject.toml)
 
-# xTB is used by optimise, compare, and xtb-electronic — best installed from conda-forge:
+# xTB is used by optimise, xtb-electronic, and the `conformer` strain column — best installed from conda-forge:
 conda install -c conda-forge xtb==6.7.1 -y
 conda install xtb-python -y
 ```
@@ -72,7 +72,7 @@ Use this table to decide which optional groups to install before you start:
 | Train or generate only (no data prep, no analysis) | *(base `[gpu]` or `[cpu]` is enough)* |
 | Compile raw XYZ files into an ASE database | `[data]` |
 | Featurise molecules with SOAP descriptors | `[data]` |
-| Run validity/connectivity metrics, xyz2mol, RMSD compare | `[analyze]` |
+| Run validity/connectivity metrics, xyz2mol, paired `conformer` metrics | `[analyze]` |
 | Run `analyze optimize` or `xtb-electronic` | `[analyze]` + conda `xtb` |
 | Run geometric-shape metrics (`--metrics geom_revised` or `all`) | `[analyze]` |
 | Score generated ligands against a protein pocket (`--metrics sbdd`) | `[analyze]` + `[sbdd]` |

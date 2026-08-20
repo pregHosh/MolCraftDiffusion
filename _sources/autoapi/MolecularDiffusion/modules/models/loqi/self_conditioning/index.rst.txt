@@ -1,0 +1,70 @@
+MolecularDiffusion.modules.models.loqi.self_conditioning
+========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.loqi.self_conditioning
+
+.. autoapi-nested-parse::
+
+   LoQI self-conditioning module (diffusion variant only).
+
+   Ported from ``others/LoQI/src/megalodon/models/self_conditioning.py`` (NVIDIA,
+   Apache-2.0), narrowed to the single variable LoQI self-conditions on: ``x``,
+   with ``vector: True``. In that mode the fusion is a 2-in / 1-out linear stack
+   applied along a stacked last axis -- i.e. a learned mix of the current noisy
+   coordinates and the previous step's prediction. ``loqi_flow.yaml`` has no
+   ``self_conditioning`` block at all, so the flow task builds this as ``None``.
+
+   ``modules_dict`` and its ``x`` key are load-bearing: they are the
+   ``self_conditioning_module.*.modules_dict.x.*`` keys of the released weights.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.loqi.self_conditioning.BaseSelfConditioningModule
+
+
+Module Contents
+---------------
+
+.. py:class:: BaseSelfConditioningModule(variables: list[dict])
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Fuse ``<var>_t`` with the previous step's ``<var>_hat``.
+
+
+   .. py:method:: forward(batch: dict, cond_batch: dict)
+
+
+   .. py:attribute:: clamps
+      :type:  list[tuple]
+      :value: []
+
+
+
+   .. py:attribute:: fuse_softmax
+      :type:  list[bool]
+      :value: []
+
+
+
+   .. py:attribute:: keys
+      :type:  list[str]
+      :value: []
+
+
+
+   .. py:attribute:: modules_dict
+
+
+   .. py:attribute:: vector_mask
+      :type:  list[bool]
+      :value: []
+
+
+

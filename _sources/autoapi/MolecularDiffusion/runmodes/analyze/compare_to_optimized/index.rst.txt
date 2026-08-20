@@ -5,22 +5,19 @@ MolecularDiffusion.runmodes.analyze.compare_to_optimized
 
 .. autoapi-nested-parse::
 
-   Compute unified comparison metrics (RMSD, xTB Energy, Bond Geometry) between
-   initial XYZ files and their optimized counterparts in the `optimized_xyz` subdirectory.
+   Helpers for comparing an initial geometry with an optimized counterpart.
 
-   Features:
-   - Validates connectivity (skip disjoint graphs)
-   - Computes RMSD and Energy difference (via xTB)
-   - Computes Bond Length, Angle, and Torsion differences (via OpenBabel/xyz2mol)
+   This is an internal helper library, not a command. The directory-walking
+   front end that used to live here is now the ``xyz+optimized`` layout of
+   ``--metrics conformer`` (see ``conformer_metrics.py``).
 
+   Two consumers depend on it:
 
+   * ``conformer_metrics.py`` -- ``compute_all_metrics`` for the legacy layout;
+   * ``runmodes/generate/tasks_conformer.py`` -- ``get_xtb_energy`` for the
+     optional energy column. Removing that function breaks conformer
+     *generation*, not just analysis.
 
-Attributes
-----------
-
-.. autoapisummary::
-
-   MolecularDiffusion.runmodes.analyze.compare_to_optimized.parser
 
 
 Functions
@@ -31,7 +28,6 @@ Functions
    MolecularDiffusion.runmodes.analyze.compare_to_optimized.compute_all_metrics
    MolecularDiffusion.runmodes.analyze.compare_to_optimized.compute_coord_rmsd
    MolecularDiffusion.runmodes.analyze.compare_to_optimized.get_xtb_energy
-   MolecularDiffusion.runmodes.analyze.compare_to_optimized.run_compare_analysis
    MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_converter
    MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_openbabel
 
@@ -54,8 +50,6 @@ Module Contents
    Compute xTB single-point energy for an XYZ file (returns Hartree).
 
 
-.. py:function:: run_compare_analysis(args: argparse.Namespace)
-
 .. py:function:: xyz2mol_converter(xyz_file: str, timeout: int = 10) -> Optional[rdkit.Chem.Mol]
 
    Convert XYZ to RDKit Mol using xyz2mol logic.
@@ -65,6 +59,4 @@ Module Contents
 
    Convert XYZ to RDKit Mol using OpenBabel (via pybel).
 
-
-.. py:data:: parser
 

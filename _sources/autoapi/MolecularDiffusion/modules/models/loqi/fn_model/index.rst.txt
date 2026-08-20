@@ -1,0 +1,348 @@
+MolecularDiffusion.modules.models.loqi.fn_model
+===============================================
+
+.. py:module:: MolecularDiffusion.modules.models.loqi.fn_model
+
+.. autoapi-nested-parse::
+
+   LoQI / Megalodon ``MegaFNV3Conf`` backbone.
+
+   Ported from ``others/LoQI/src/megalodon/dynamics/fn_model.py`` (NVIDIA,
+   Apache-2.0). A 10-layer interleaved stack of ``DiTeBlock`` (DiT-with-edges,
+   invariant) and ``XEGNNK`` (coordinate-only EGNN, equivariant). Only the
+   coordinate head exists: this model denoises ``x`` against a *fixed* conditioning
+   graph (atom types, formal charges, bond orders, stereo edges), so upstream's
+   ``MegaFNV3`` atom/edge prediction heads and ``BondRefine`` are not ported --
+   ``MegaFNV3Conf`` never instantiates them, and porting dead modules would only
+   add state-dict keys the released weights do not have.
+
+   Two deliberate deviations from upstream, both behaviour-preserving:
+
+   1. ``einops`` is replaced by plain ``unflatten``/``transpose``/``flatten``
+      (upstream lines 512 and 541). ``einops`` is not installed in this
+      environment, and the precedent for this substitution is
+      ``modules/models/pmdm/encoders.py:15``.
+   2. ``BondRefine``/``MegaFNV3``/``PredictionHead`` are not ported (dead here).
+
+   Module names and construction order are load-bearing: they are the state-dict
+   keys the converted pretrained checkpoint is remapped onto.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.loqi.fn_model.NONLINEARITIES
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.loqi.fn_model.DiTeBlock
+   MolecularDiffusion.modules.models.loqi.fn_model.E3Norm
+   MolecularDiffusion.modules.models.loqi.fn_model.MLP
+   MolecularDiffusion.modules.models.loqi.fn_model.MegaFNV3Conf
+   MolecularDiffusion.modules.models.loqi.fn_model.SwiGLU
+   MolecularDiffusion.modules.models.loqi.fn_model.TimestepEmbedder
+   MolecularDiffusion.modules.models.loqi.fn_model.XEGNNK
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.loqi.fn_model.coord2distfn
+   MolecularDiffusion.modules.models.loqi.fn_model.modulate
+   MolecularDiffusion.modules.models.loqi.fn_model.swiglu_correction_fn
+   MolecularDiffusion.modules.models.loqi.fn_model.swiglu_ffn
+   MolecularDiffusion.modules.models.loqi.fn_model.swiglu_ffn_edge
+
+
+Module Contents
+---------------
+
+.. py:class:: DiTeBlock(hidden_size: int, edge_hidden_size: int, num_heads: int, mlp_expansion_ratio: float = 4.0, use_z: bool = True, mask_z: bool = True, use_rotary: bool = False, n_vector_features: int = 128, dist_size: int = 128, **block_kwargs)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   DiT block with an edge channel, PyG-batched (batch dim of 1 + attn mask).
+
+
+   .. py:method:: forward(batch: torch.Tensor, x: torch.Tensor, t_emb_h: torch.Tensor, edge_attr: torch.Tensor | None = None, edge_index: torch.Tensor | None = None, t_emb_e: torch.Tensor | None = None, dist: torch.Tensor | None = None, edge_batch: torch.Tensor | None = None, Z: torch.Tensor | None = None)
+
+
+   .. py:attribute:: adaLN_edge_modulation
+
+
+   .. py:attribute:: adaLN_modulation
+
+
+   .. py:attribute:: d_head
+
+
+   .. py:attribute:: edge_hidden_size
+
+
+   .. py:attribute:: feature_embedder
+
+
+   .. py:attribute:: ffn
+
+
+   .. py:attribute:: ffn_edge
+
+
+   .. py:attribute:: ffn_norm
+
+
+   .. py:attribute:: ffn_norm_edge
+
+
+   .. py:attribute:: hidden_size
+
+
+   .. py:attribute:: lin_edge0
+
+
+   .. py:attribute:: lin_edge1
+
+
+   .. py:attribute:: norm1
+
+
+   .. py:attribute:: norm1_edge
+
+
+   .. py:attribute:: norm2
+
+
+   .. py:attribute:: norm2_edge
+
+
+   .. py:attribute:: norm_k
+
+
+   .. py:attribute:: norm_q
+
+
+   .. py:attribute:: num_heads
+
+
+   .. py:attribute:: out_projection
+
+
+   .. py:attribute:: qkv_proj
+
+
+   .. py:attribute:: use_rotary
+      :value: False
+
+
+
+.. py:class:: E3Norm(n_vector_features: int = 1, eps: float = 1e-05)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Per-channel norm over the 3-vector axis, mean-normalized per molecule.
+
+
+   .. py:method:: forward(pos: torch.Tensor, batch: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: eps
+      :value: 1e-05
+
+
+
+.. py:class:: MLP(input_dim: int, hidden_size: int, output_dim: int, num_hidden_layers: int = 0, activation: str = 'silu', dropout: float = 0.0, last_act: str | None = None, bias: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Upstream's ``fn_model.MLP`` (note: the ``bias`` flag, unlike the copy in
+   ``dynamics/utils.py``).
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: act_layer
+
+
+   .. py:attribute:: layers
+
+
+.. py:class:: MegaFNV3Conf(num_layers: int = 8, equivariant_node_feature_dim: int = 3, invariant_node_feat_dim: int = 256, invariant_edge_feat_dim: int = 256, atom_classes: int = 16, edge_classes: int = 5, num_heads: int = 16, n_vector_features: int = 128, scale_dist_features: int = 4, dist_size: int = 4, prune_edges: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   The conformer backbone: coordinates out, conditioning graph in.
+
+   ``forward(batch, X, H, E_idx, E, t) -> {"x_hat": (N,3), "H": (N,D)}``,
+   with ``x_hat`` centre-of-mass free.
+
+
+   .. py:method:: forward(batch, X, H, E_idx, E, t)
+
+
+   .. py:attribute:: atom_embedder
+
+
+   .. py:attribute:: coord_emb
+
+
+   .. py:attribute:: coord_pred
+
+
+   .. py:attribute:: dist_projection
+
+
+   .. py:attribute:: dit_layers
+
+
+   .. py:attribute:: edge_embedder
+
+
+   .. py:attribute:: edge_time_embedding
+
+
+   .. py:attribute:: egnn_layers
+
+
+   .. py:attribute:: n_vector_features
+      :value: 128
+
+
+
+   .. py:attribute:: node_time_embedding
+
+
+   .. py:attribute:: num_atom_classes
+      :value: 16
+
+
+
+   .. py:attribute:: num_edge_classes
+      :value: 5
+
+
+
+   .. py:attribute:: scale_dist_features
+      :value: 4
+
+
+
+.. py:class:: SwiGLU
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+.. py:class:: TimestepEmbedder(hidden_size: int, frequency_embedding_size: int = 256)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Sinusoidal timestep embedding + 2-layer MLP.
+
+
+   .. py:method:: forward(t: torch.Tensor, batch=None) -> torch.Tensor
+
+
+   .. py:method:: timestep_embedding(t: torch.Tensor, dim: int, max_period: int = 10000) -> torch.Tensor
+      :staticmethod:
+
+
+
+   .. py:attribute:: frequency_embedding_size
+      :value: 256
+
+
+
+   .. py:attribute:: mlp
+
+
+.. py:class:: XEGNNK(invariant_node_feat_dim: int = 64, invariant_edge_feat_dim: int = 64, n_vector_features: int = 128, dist_size: int = 4, prune_edges: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Coordinate-only EGNN update (``X`` in, ``X`` out), with a cross-product
+   term. Node features are read but never written.
+
+
+   .. py:method:: forward(batch, X, H, edge_index, edge_attr=None, te=None)
+
+
+   .. py:attribute:: coor_update_clamp_value
+      :value: 10.0
+
+
+
+   .. py:attribute:: coord_projection
+
+
+   .. py:attribute:: h_norm
+
+
+   .. py:attribute:: h_projection
+
+
+   .. py:attribute:: message_input_size
+      :value: 260
+
+
+
+   .. py:attribute:: phi_message
+
+
+   .. py:attribute:: phi_x
+
+
+   .. py:attribute:: phi_x_cross
+
+
+   .. py:attribute:: prune_edges
+      :value: False
+
+
+
+   .. py:attribute:: use_cross_product
+      :value: True
+
+
+
+   .. py:attribute:: x_norm
+
+
+.. py:function:: coord2distfn(x, edge_index, scale_dist_features=1, batch=None)
+
+   Pairwise squared distances per vector channel, plus optional extras.
+
+
+.. py:function:: modulate(x: torch.Tensor, shift: torch.Tensor, scale: torch.Tensor)
+
+.. py:function:: swiglu_correction_fn(expansion_ratio: float, d_model: int) -> int
+
+   Nearest multiple of 256 after the expansion ratio (from ESM3).
+
+
+.. py:function:: swiglu_ffn(d_model: int, expansion_ratio: float, bias: bool) -> torch.nn.Sequential
+
+.. py:function:: swiglu_ffn_edge(d_model: int, bias: bool) -> torch.nn.Sequential
+
+.. py:data:: NONLINEARITIES
+

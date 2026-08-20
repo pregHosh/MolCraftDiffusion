@@ -13,7 +13,6 @@ Attributes
    MolecularDiffusion.runmodes.analyze.compute_metrics.RDLogger
    MolecularDiffusion.runmodes.analyze.compute_metrics.SCALE_FACTOR
    MolecularDiffusion.runmodes.analyze.compute_metrics.SCORES_THRESHOLD
-   MolecularDiffusion.runmodes.analyze.compute_metrics.parser
 
 
 Functions
@@ -44,6 +43,4 @@ Module Contents
 .. py:data:: SCORES_THRESHOLD
    :value: 3.0
 
-
-.. py:data:: parser
 

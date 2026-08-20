@@ -9,8 +9,7 @@ MolecularDiffusion.cli.analyze
 
    Provides subcommands for:
    - optimize: xTB geometry optimization
-   - metrics: Validity/connectivity metrics
-   - compare: RMSD, energy, and optional bond analysis
+   - metrics: Validity/connectivity metrics (incl. the paired `conformer` set)
    - xyz2mol: XYZ to SMILES conversion + fingerprints
    - featurize: fixed-size feature vectors for XYZ molecules
    - xtb-electronic: xTB electronic properties
@@ -31,7 +30,6 @@ Functions
 .. autoapisummary::
 
    MolecularDiffusion.cli.analyze.analyze
-   MolecularDiffusion.cli.analyze.compare
    MolecularDiffusion.cli.analyze.featurize
    MolecularDiffusion.cli.analyze.metrics
    MolecularDiffusion.cli.analyze.optimize
@@ -50,20 +48,9 @@ Module Contents
    Subcommands:
      optimize        xTB geometry optimization
      metrics         Validity/connectivity metrics
-     compare         RMSD, energy, and bond analysis
      xyz2mol         Convert XYZ to SMILES + fingerprints
      featurize       Fixed-size feature vectors for XYZ molecules
      xtb-electronic  xTB electronic properties
-
-
-.. py:function:: compare(directory, mol_converter, n_subsets, csv_path, charge, level, timeout)
-
-   Compare XYZ files with their optimized counterparts.
-
-   Computes RMSD, xTB Energy Difference, and Bond Geometry Metrics.
-   Enforces strict connectivity checks.
-
-   Requires 'optimized_xyz' subdirectory with *_opt.xyz files.
 
 
 .. py:function:: featurize(input_dir, backend, output, recursive, r_cut, n_max, l_max, sigma, autodetect_species, species, pooling, soap_jobs, checkpoint, task_name, device, batch_size, all_components, charge, spin, ssl3d_checkpoint, edge_radius)
@@ -88,7 +75,7 @@ Module Contents
    MolCraftDiff analyze featurize gen_xyz/ --backend ssl3d --ssl3d-checkpoint runs/last.ckpt --device cuda
 
 
-.. py:function:: metrics(input_path, output, filter_column, filtered_output, metrics_type, recheck_topo, check_strain, check_neutrality, portion, mol_converter, skip_atoms, split, timeout, reference_mol, mol_idx, train_smiles, receptor, ref_ligand, dock_mode, exhaustiveness, rdkit_rmsd, rmsd_n_conf)
+.. py:function:: metrics(input_path, output, filter_column, filtered_output, metrics_type, recheck_topo, check_neutrality, portion, mol_converter, skip_atoms, split, timeout, reference_mol, mol_idx, train_smiles, receptor, ref_ligand, dock_mode, exhaustiveness, rdkit_rmsd, rmsd_n_conf, rmsd_threshold, charge, level, xtb_timeout)
 
    Compute validity and connectivity metrics for XYZ files or ASE DB rows.
 
@@ -104,6 +91,12 @@ Module Contents
      similarity3d Shape / ESP / pharmacophore similarity to --reference-mol
      sbdd         AutoDock Vina affinity against a protein pocket
                   (needs --receptor and the [sbdd] extra)
+     conformer    Paired generated-vs-reference conformer metrics: stereo
+                  preservation (R/S, E/Z), RMSD / coverage, bond-length /
+                  angle / torsion deviation, MMFF (and xTB) strain.
+                  Exclusive -- not part of 'all'; needs paired input, either
+                  conformers.csv + mol_XXXX/*.sdf (conformer generation) or
+                  *.xyz + optimized_xyz/<stem>_opt.xyz (analyze optimize).
 
    
    .. rubric:: Examples
@@ -117,6 +110,8 @@ Module Contents
    MolCraftDiff analyze metrics gen_xyz/ --split 4
    MolCraftDiff analyze metrics gen_xyz/ --metrics similarity3d -r reference.sdf --mol-idx 0
    MolCraftDiff analyze metrics gen_xyz/ --metrics sbdd --receptor pocket.pdbqt --ref-ligand ref.sdf
+   MolCraftDiff analyze metrics generated_conformers/ --metrics conformer
+   MolCraftDiff analyze metrics gen_xyz/ --metrics conformer   # after 'analyze optimize'
 
 
 .. py:function:: optimize(input_path, output_path, charge, level, timeout, scale_factor, csv_path, filter_column, inherit_attributes)

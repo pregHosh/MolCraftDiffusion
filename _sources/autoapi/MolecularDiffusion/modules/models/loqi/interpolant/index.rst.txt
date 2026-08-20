@@ -1,0 +1,298 @@
+MolecularDiffusion.modules.models.loqi.interpolant
+==================================================
+
+.. py:module:: MolecularDiffusion.modules.models.loqi.interpolant
+
+.. autoapi-nested-parse::
+
+   LoQI coordinate interpolants: VDM diffusion and continuous flow matching.
+
+   Ported from ``others/LoQI/src/megalodon/interpolant/`` (NVIDIA, Apache-2.0),
+   narrowed to the two paths both LoQI configs actually take:
+
+   * ``ContinuousDiffusionInterpolant`` with ``diffusion_type: vdm`` -- the
+     discrete-time, cosine-adaptive VDM schedule of ``loqi.yaml``. The ``ddpm``
+     branch is not ported (no LoQI config selects it).
+   * ``ContinuousFlowMatchingInterpolant`` with a ``linear`` continuous-time
+     schedule, ``prediction_type: velocity`` and ``optimal_transport: 'rigid'`` --
+     ``loqi_flow.yaml``. The ``vpe`` schedule and the permutation OT branch are
+     ported because they cost three lines and share code paths, but no LoQI config
+     reaches them.
+
+   The **discrete** interpolants are deliberately absent: LoQI marks ``h``,
+   ``edge_attr`` and ``charges`` as ``discrete_null``, i.e. supplied un-noised as
+   conditioning, so nothing here ever noises a categorical variable.
+
+   Buffer names are load-bearing -- they are the ``interpolants.x.*`` keys of the
+   released checkpoints.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.loqi.interpolant.ContinuousDiffusionInterpolant
+   MolecularDiffusion.modules.models.loqi.interpolant.ContinuousFlowMatchingInterpolant
+   MolecularDiffusion.modules.models.loqi.interpolant.CosineSchedule
+   MolecularDiffusion.modules.models.loqi.interpolant.Interpolant
+   MolecularDiffusion.modules.models.loqi.interpolant.LinearSchedule
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.loqi.interpolant.align_prior
+   MolecularDiffusion.modules.models.loqi.interpolant.build_interpolant
+   MolecularDiffusion.modules.models.loqi.interpolant.build_scheduler
+   MolecularDiffusion.modules.models.loqi.interpolant.rigid_alignment
+
+
+Module Contents
+---------------
+
+.. py:class:: ContinuousDiffusionInterpolant(prior_type: str = 'gaussian', diffusion_type: str = 'vdm', solver_type: str = 'sde', timesteps: int = 500, time_type: str = 'discrete', num_classes: int = 3, scheduler_type: str = 'cosine_adaptive', s: float = 0.008, sqrt: bool = False, nu: float = 1.0, clip: bool = True, com_free: bool = True, cut: bool = False)
+
+   Bases: :py:obj:`Interpolant`
+
+
+   VDM continuous Gaussian diffusion over coordinates, discrete time.
+
+
+   .. py:method:: forward_schedule(batch, time)
+
+
+   .. py:method:: interpolate(batch, x1, time)
+
+
+   .. py:method:: loss_weight_t(time)
+
+
+   .. py:method:: prior(batch, shape, device, x1=None)
+
+
+   .. py:method:: reverse_schedule(batch, time)
+
+
+   .. py:method:: snr(time)
+
+
+   .. py:method:: step(batch, xt, x_hat, x0=None, time=None, dt=None)
+
+
+   .. py:attribute:: com_free
+      :value: True
+
+
+
+   .. py:attribute:: diffusion_type
+      :value: 'vdm'
+
+
+
+   .. py:attribute:: num_classes
+      :value: 3
+
+
+
+.. py:class:: ContinuousFlowMatchingInterpolant(prior_type: str = 'gaussian', vector_field_type: str = 'standard', solver_type: str = 'ode', timesteps: int = 500, min_t: float = 0.01, time_type: str = 'continuous', num_classes: int = 3, scheduler_type: str = 'linear', s: float = 0.008, sqrt: bool = False, nu: float = 1.0, clip: bool = True, com_free: bool = True, noise_sigma: float = 0.0, optimal_transport: str | None = None, clip_t: float = 0.9, loss_weight_type: str = 'uniform', loss_t_scale: float = 0.1, inference_noise_sigma: float | None = None, prediction_type: str = 'data')
+
+   Bases: :py:obj:`Interpolant`
+
+
+   Linear continuous-time flow matching with velocity prediction + rigid OT.
+
+
+   .. py:method:: equivariant_ot_prior(batch, data_chunk, permutation: bool = True)
+
+
+   .. py:method:: forward_schedule(batch, time)
+
+
+   .. py:method:: interpolate(batch, x1, time)
+
+
+   .. py:method:: loss_weight_t(time)
+
+      ``None`` means "no per-molecule weighting"; the loss function treats
+      a ``None`` batch weight as 1 (upstream ``InterpolantLossFunction``
+      line 175). ``loss_weight_type`` defaults to ``'standard'`` through
+      upstream's builder, which falls through every branch and returns
+      ``None`` -- reproduced here rather than silently changed.
+
+
+
+   .. py:method:: prior(batch, shape, device, x1=None)
+
+
+   .. py:method:: prior_func(batch, shape, device, x1=None)
+
+
+   .. py:method:: step(batch, xt, x_hat, x0=None, time=None, dt=None)
+
+
+   .. py:method:: update_weight(t)
+
+
+   .. py:method:: vector_field(batch, x1, xt, time)
+
+
+   .. py:attribute:: clip_t
+      :value: 0.9
+
+
+
+   .. py:attribute:: com_free
+      :value: True
+
+
+
+   .. py:attribute:: inference_noise_sigma
+
+
+   .. py:attribute:: loss_t_scale
+      :value: 0.1
+
+
+
+   .. py:attribute:: loss_weight_type
+      :value: 'uniform'
+
+
+
+   .. py:attribute:: max_t
+      :value: 0.99
+
+
+
+   .. py:attribute:: min_t
+      :value: 0.01
+
+
+
+   .. py:attribute:: noise_sigma
+      :value: 0.0
+
+
+
+   .. py:attribute:: num_classes
+      :value: 3
+
+
+
+   .. py:attribute:: optimal_transport
+      :value: None
+
+
+
+   .. py:attribute:: prediction_type
+      :value: 'data'
+
+
+
+   .. py:attribute:: schedule_type
+      :value: 'linear'
+
+
+
+   .. py:attribute:: vector_field_type
+      :value: 'standard'
+
+
+
+.. py:class:: CosineSchedule(num_diffusion_timesteps: int, s: float = 0.008, sqrt: bool = False, nu: float = 1.0, clip: bool = True, cut: bool = False, **kwargs)
+
+   Bases: :py:obj:`_Schedule`
+
+
+   MiDi-style adaptive cosine schedule (``nu`` reshapes the time axis).
+
+
+   .. py:method:: compute_alphas() -> torch.Tensor
+
+
+   .. py:attribute:: clip
+      :value: True
+
+
+
+   .. py:attribute:: cut
+      :value: False
+
+
+
+   .. py:attribute:: nu
+      :value: 1.0
+
+
+
+   .. py:attribute:: num_diffusion_timesteps
+
+
+   .. py:attribute:: s
+      :value: 0.008
+
+
+
+   .. py:attribute:: sqrt
+      :value: False
+
+
+
+.. py:class:: Interpolant(prior_type: str, solver_type: str = 'sde', timesteps: int = 500, time_type: str = 'discrete')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: sample_time(num_samples: int, method: str = 'uniform', device: str | torch.device = 'cpu', mean: float = 0.0, scale: float = 0.81, min_t: float = 0.0) -> torch.Tensor
+
+      Only ``uniform`` is ported -- both LoQI configs use it.
+
+
+
+   .. py:attribute:: prior_type
+
+
+   .. py:attribute:: solver_type
+      :value: 'sde'
+
+
+
+   .. py:attribute:: time_type
+      :value: 'discrete'
+
+
+
+   .. py:attribute:: timesteps
+      :value: 500
+
+
+
+.. py:class:: LinearSchedule(num_diffusion_timesteps: int, **kwargs)
+
+   Bases: :py:obj:`_Schedule`
+
+
+   .. py:method:: compute_alphas() -> torch.Tensor
+
+
+   .. py:attribute:: num_diffusion_timesteps
+
+
+.. py:function:: align_prior(prior_feat: torch.Tensor, dst_feat: torch.Tensor, permutation: bool = False, rigid_body: bool = False, n_alignments: int = 1) -> torch.Tensor
+
+.. py:function:: build_interpolant(interpolant_type: str, **kwargs)
+
+   The two coordinate interpolants LoQI selects, by config string.
+
+
+.. py:function:: build_scheduler(scheduler_type: str, num_diffusion_timesteps: int, s: float = 0.008, sqrt: bool = False, nu: float = 1.0, clip: bool = True, cut: bool = True)
+
+.. py:function:: rigid_alignment(x_0: torch.Tensor, x_1: torch.Tensor) -> torch.Tensor
+
+   Kabsch-align ``x_0`` onto ``x_1``; reflection-safe (``det(R) = 1``).
+
+

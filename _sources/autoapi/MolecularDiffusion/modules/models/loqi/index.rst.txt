@@ -1,0 +1,42 @@
+MolecularDiffusion.modules.models.loqi
+======================================
+
+.. py:module:: MolecularDiffusion.modules.models.loqi
+
+.. autoapi-nested-parse::
+
+   LoQI: low-energy molecular conformer generation on a fixed 2D graph.
+
+   Ported from https://github.com/.../LoQI (NVIDIA / Megalodon lineage,
+   Apache-2.0). Unlike every other generative model in this package, LoQI does not
+   invent molecules: it takes a molecule you already have -- atom types, formal
+   charges, bond orders and stereochemistry -- and denoises only its 3D
+   coordinates. Two variants share the same backbone:
+
+   * ``diffusion_loqi``      -- VDM diffusion, 25 discrete steps, self-conditioned
+   * ``diffusion_loqi_flow`` -- continuous flow matching, velocity prediction,
+     rigid (Kabsch) optimal transport, no self-conditioning
+
+   .. rubric:: References
+
+   Nikitin, Anstine, Zubatyuk, Paliwal, Isayev, "Scalable Low-Energy Molecular
+   Conformer Generation with Quantum Mechanical Accuracy" (2025),
+   DOI 10.26434/chemrxiv-2025-k4h7v.
+
+   Reidenbach, Nikitin, Isayev, Paliwal, "Applications of Modular Co-Design for
+   De Novo 3D Molecule Generation" (Megalodon), arXiv:2505.18392 (2025).
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/loqi/fn_model/index
+   /autoapi/MolecularDiffusion/modules/models/loqi/graph_utils/index
+   /autoapi/MolecularDiffusion/modules/models/loqi/interpolant/index
+   /autoapi/MolecularDiffusion/modules/models/loqi/self_conditioning/index
+
+
