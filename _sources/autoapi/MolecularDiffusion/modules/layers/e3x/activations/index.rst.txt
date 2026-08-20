@@ -1,0 +1,75 @@
+MolecularDiffusion.modules.layers.e3x.activations
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.e3x.activations
+
+.. autoapi-nested-parse::
+
+   e3x gated-linear activations.
+
+   **Every** activation exported from ``e3x.nn`` is a gated linear::
+
+       _gated_linear(g, x) = g(x[..., 0:1, 0:1, :]) * x
+
+   The gate is computed from the **even-parity scalar channel only** (``0+``) and
+   broadcast over the whole ``(P, (L+1)**2, F)`` tensor, including the ``l=0``
+   block itself. The odd-parity scalar is deliberately excluded -- gating on a
+   pseudoscalar would break parity. There is no norm pooling over ``m`` and no
+   unit-variance correction constant.
+
+   Do **not** conflate these with ``jax.nn.<name>``: DiTMC's plain ``MLP`` uses the
+   elementwise ``jax.nn`` versions, and ``E3MLP`` uses these. Same names, different
+   functions.
+
+   ``gelu`` here (and ``jax.nn.gelu``) defaults to ``approximate=True``, the tanh
+   form -- ``torch.nn.GELU()`` defaults to the exact erf form.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.e3x.activations.swish
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.e3x.activations.gelu
+   MolecularDiffusion.modules.layers.e3x.activations.get_activation_fn
+   MolecularDiffusion.modules.layers.e3x.activations.get_e3x_activation_fn
+   MolecularDiffusion.modules.layers.e3x.activations.identity
+   MolecularDiffusion.modules.layers.e3x.activations.silu
+
+
+Module Contents
+---------------
+
+.. py:function:: gelu(x: torch.Tensor, *, approximate: bool = True) -> torch.Tensor
+
+   Gated linear with a GELU-CDF gate; tanh approximation by default.
+
+
+.. py:function:: get_activation_fn(name: str)
+
+   Port of ``backbones/utils.get_activation_fn`` (elementwise ``jax.nn``).
+
+
+.. py:function:: get_e3x_activation_fn(name: str)
+
+   Port of ``backbones/utils.get_e3x_activation_fn``.
+
+
+.. py:function:: identity(x: torch.Tensor) -> torch.Tensor
+
+.. py:function:: silu(x: torch.Tensor) -> torch.Tensor
+
+   Gated linear with a sigmoid gate (``jax.scipy.special.expit``).
+
+
+.. py:data:: swish
+

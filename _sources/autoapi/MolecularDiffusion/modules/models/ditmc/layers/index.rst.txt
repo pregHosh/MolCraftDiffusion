@@ -1,0 +1,198 @@
+MolecularDiffusion.modules.models.ditmc.layers
+==============================================
+
+.. py:module:: MolecularDiffusion.modules.models.ditmc.layers
+
+.. autoapi-nested-parse::
+
+   Shared building blocks for DiTMC. Port of ``dit_mc/backbones/utils.py``.
+
+   Parity traps carried in here from the plan, all load-bearing:
+
+   * Flax ``nn.LayerNorm`` defaults to ``epsilon=1e-6``; PyTorch's default is
+     ``1e-5``. Every LayerNorm below pins ``1e-6``.
+   * Flax ``nn.Dense``'s default kernel init is ``lecun_normal`` -- a **truncated**
+     normal, not PyTorch's uniform default.
+   * ``GaussianRandomFourierFeatures`` interleaves ``cos, sin`` (stack-then-reshape),
+     it does **not** concatenate halves.
+   * adaLN-Zero ``Dense`` layers stay zero-initialized.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ditmc.layers.LAYERNORM_EPS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ditmc.layers.E3MLP
+   MolecularDiffusion.modules.models.ditmc.layers.EquivariantLayerNorm
+   MolecularDiffusion.modules.models.ditmc.layers.GaussianRandomFourierFeatures
+   MolecularDiffusion.modules.models.ditmc.layers.MLP
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ditmc.layers.flax_dense
+   MolecularDiffusion.modules.models.ditmc.layers.flax_layer_norm
+   MolecularDiffusion.modules.models.ditmc.layers.get_max_degree_from_tensor_e3x
+   MolecularDiffusion.modules.models.ditmc.layers.modulate_E3adaLN
+   MolecularDiffusion.modules.models.ditmc.layers.modulate_adaLN
+
+
+Module Contents
+---------------
+
+.. py:class:: E3MLP(in_features: int, num_features: int | collections.abc.Sequence[int], max_degree: int, num_parity: int, num_layers: int = 2, activation_fn: str = 'identity', use_bias: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Equivariant MLP: e3x ``Dense`` layers with a **gated** activation.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: activation_fn
+
+
+   .. py:attribute:: layers
+
+
+   .. py:attribute:: num_layers
+      :value: 2
+
+
+
+   .. py:attribute:: out_features
+
+
+.. py:class:: EquivariantLayerNorm(num_features: int, max_degree: int, num_parity: int, *, use_scale: bool = True, use_bias: bool = True, epsilon: float = LAYERNORM_EPS)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Layer norm that respects degree/parity structure.
+
+   The ``l=0`` block goes through an ordinary ``LayerNorm``. The ``l>0``
+   channels are **not** mean-subtracted: the per-``(parity, degree)`` norm over
+   the order index is computed, its variance over the *feature* axis is taken,
+   and the block is multiplied by ``rsqrt(var + eps)`` (times an optional
+   learnable ``scales_lm``). ``epsilon = 1e-6``.
+
+   DiTMC instantiates this only with ``use_scale=False, use_bias=False``, so in
+   the shipped models it carries no parameters at all.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: epsilon
+      :value: 1e-06
+
+
+
+   .. py:attribute:: has_pseudotensors
+
+
+   .. py:attribute:: has_ylms
+
+
+   .. py:attribute:: max_degree
+
+
+   .. py:attribute:: norm00
+
+
+   .. py:attribute:: num_features
+
+
+   .. py:attribute:: num_parity
+
+
+   .. py:attribute:: use_bias
+      :value: True
+
+
+
+   .. py:attribute:: use_scale
+      :value: True
+
+
+
+.. py:class:: GaussianRandomFourierFeatures(in_features: int, features: int, sigma: float = 1.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   ``gamma(x) = [cos(2π bᵀx), sin(2π bᵀx)]`` **interleaved**.
+
+   ``b`` has shape ``(d, features//2)`` and is initialized ``normal(sigma)``.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: b
+
+
+.. py:class:: MLP(in_features: int, num_features: int | collections.abc.Sequence[int], num_layers: int = 2, activation_fn: str = 'identity', use_bias: bool = True, output_is_zero_at_init: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Plain (elementwise-activation) MLP. Port of ``backbones/utils.MLP``.
+
+   Uses ``get_activation_fn`` (the ``jax.nn.<name>`` family), **not** the e3x
+   gated ones -- ``DiTLayer`` uses this and ``SO3DiTLayer`` uses
+   :class:`E3MLP`, and they are different functions with the same names.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: activation_fn
+
+
+   .. py:attribute:: layers
+
+
+   .. py:attribute:: num_layers
+      :value: 2
+
+
+
+   .. py:attribute:: out_features
+
+
+.. py:function:: flax_dense(in_features: int, out_features: int, *, bias: bool = True, zero_init: bool = False) -> torch.nn.Linear
+
+   ``flax.linen.Dense`` equivalent: lecun-normal kernel, zero bias.
+
+
+.. py:function:: flax_layer_norm(num_features: int, *, use_scale: bool = True, use_bias: bool = True) -> torch.nn.LayerNorm
+
+   ``nn.LayerNorm`` with Flax's defaults (eps 1e-6, last axis only).
+
+
+.. py:function:: get_max_degree_from_tensor_e3x(x: torch.Tensor) -> int
+
+.. py:function:: modulate_E3adaLN(x: torch.Tensor, shift: torch.Tensor, scale: torch.Tensor) -> torch.Tensor
+
+.. py:function:: modulate_adaLN(x: torch.Tensor, shift: torch.Tensor, scale: torch.Tensor) -> torch.Tensor
+
+.. py:data:: LAYERNORM_EPS
+   :value: 1e-06
+
+

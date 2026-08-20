@@ -1,0 +1,65 @@
+MolecularDiffusion.modules.layers.e3x.indexed
+=============================================
+
+.. py:module:: MolecularDiffusion.modules.layers.e3x.indexed
+
+.. autoapi-nested-parse::
+
+   Sparse indexed (segment) ops. Port of the ``e3x/ops/indexed.py`` surface.
+
+   Only the sparse ``dst_idx``/``src_idx`` path is ported; DiTMC never uses the
+   dense adjacency form.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.e3x.indexed.gather_dst
+   MolecularDiffusion.modules.layers.e3x.indexed.gather_src
+   MolecularDiffusion.modules.layers.e3x.indexed.indexed_max
+   MolecularDiffusion.modules.layers.e3x.indexed.indexed_softmax
+   MolecularDiffusion.modules.layers.e3x.indexed.indexed_sum
+   MolecularDiffusion.modules.layers.e3x.indexed.segment_mean
+
+
+Module Contents
+---------------
+
+.. py:function:: gather_dst(inputs: torch.Tensor, dst_idx: torch.Tensor) -> torch.Tensor
+
+   ``inputs[dst_idx]`` along the leading axis.
+
+
+.. py:function:: gather_src(inputs: torch.Tensor, src_idx: torch.Tensor) -> torch.Tensor
+
+   ``inputs[src_idx]`` along the leading axis.
+
+
+.. py:function:: indexed_max(inputs: torch.Tensor, dst_idx: torch.Tensor, num_segments: int) -> torch.Tensor
+
+   Segment max over the leading axis; empty segments give ``-inf``.
+
+
+.. py:function:: indexed_softmax(inputs: torch.Tensor, dst_idx: torch.Tensor, num_segments: int, multiplicative_mask: torch.Tensor | None = None) -> torch.Tensor
+
+   Softmax over each ``dst_idx`` segment.
+
+   The per-segment maximum is subtracted for numerical stability **under
+   ``stop_gradient``** (``detach()``), and an optional multiplicative mask is
+   applied to the raw exponentials *before* normalization -- both exactly as
+   e3x does.
+
+
+.. py:function:: indexed_sum(inputs: torch.Tensor, dst_idx: torch.Tensor, num_segments: int) -> torch.Tensor
+
+   Segment sum over the leading axis.
+
+
+.. py:function:: segment_mean(inputs: torch.Tensor, segment_ids: torch.Tensor, num_segments: int) -> torch.Tensor
+
+   Segment mean; empty segments give 0 (``jraph.segment_mean`` semantics).
+
+

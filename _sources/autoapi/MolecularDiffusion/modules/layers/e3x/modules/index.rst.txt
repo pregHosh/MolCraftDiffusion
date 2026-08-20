@@ -1,0 +1,196 @@
+MolecularDiffusion.modules.layers.e3x.modules
+=============================================
+
+.. py:module:: MolecularDiffusion.modules.layers.e3x.modules
+
+.. autoapi-nested-parse::
+
+   e3x ``Dense``, ``Tensor`` and ``SelfAttention``, in PyTorch.
+
+   Flax modules infer their input shapes lazily; PyTorch cannot, so every class
+   here takes the input ``(num_parity, max_degree, in_features)`` explicitly. The
+   *parameter* layout is unchanged, which is what makes the published Orbax
+   checkpoints convertible:
+
+   ======================================================  ==============================
+   Flax path                                               here
+   ======================================================  ==============================
+   ``<mod>/query/<l><parity>/kernel``  ``(in, out)``        ``query.dense['<l><parity>'].weight`` (transposed)
+   ``<mod>/out/0+/bias``                                   ``out.dense['0+'].bias`` (only l=0 has one)
+   ``<mod>/relative_positional_encoding/kernel``           ``rel_pos.weight`` (transposed, no bias)
+   ``<mod>/tensor/kernel``  ``(P1,L1+1,P2,L2+1,P3,L3+1,F)`` ``tensor.kernel`` (**no** transpose)
+   ======================================================  ==============================
+
+   Port of the ``e3x/nn/modules.py`` surface DiTMC reaches. ``FusedTensor``,
+   ``MessagePass`` and ``TensorDense`` are deliberately not ported -- no DiTMC
+   config path calls them (``use_fused_tensor=False`` at both call sites).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.e3x.modules.Dense
+   MolecularDiffusion.modules.layers.e3x.modules.SelfAttention
+   MolecularDiffusion.modules.layers.e3x.modules.Tensor
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.e3x.modules.duplication_indices_for_max_degree
+   MolecularDiffusion.modules.layers.e3x.modules.resolve_tensor_output
+
+
+Module Contents
+---------------
+
+.. py:class:: Dense(in_features: int, out_features: int, max_degree: int, num_parity: int, use_bias: bool = True, zero_init: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Per-degree (and per-parity) linear map over the feature axis.
+
+   e3x's ``Dense`` is **not one kernel**: it instantiates one ``nn.Linear`` per
+   degree (and per parity when ``P=2``), applied to the slice
+   ``inputs[..., l**2:(l+1)**2, :]``. A bias exists **only on the ``l=0``
+   sublayer**, and only when ``use_bias=True``; odd-parity sublayers never get
+   one.
+
+
+   .. py:method:: forward(inputs: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: reset_parameters(zero_init: bool = False) -> None
+
+
+   .. py:attribute:: dense
+
+
+   .. py:attribute:: in_features
+
+
+   .. py:attribute:: max_degree
+
+
+   .. py:attribute:: num_parity
+
+
+   .. py:attribute:: out_features
+
+
+   .. py:attribute:: use_bias
+      :value: True
+
+
+
+.. py:class:: SelfAttention(in_features: int, in_max_degree: int, in_num_parity: int, num_heads: int, max_degree: int | None = None, include_pseudotensors: bool = True, num_basis: int | None = None, basis_max_degree: int = 0, basis_num_parity: int = 1, qkv_features: int | None = None, out_features: int | None = None, use_relative_positional_encoding_qk: bool = True, use_relative_positional_encoding_v: bool = True, use_basis_bias: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Equivariant multi-head self-attention over a sparse edge list.
+
+   Reproduces ``e3x.nn.SelfAttention`` -> ``MultiHeadAttention`` -> ``_Conv``,
+   including three behaviours that are arbitrary but load-bearing:
+
+   1. **The q/k head fold and the value-weight fold disagree.** ``query``/
+      ``key`` are reshaped to ``(..., head_dim, num_heads)``, so feature ``f``
+      belongs to head ``f % num_heads``; the attention weight is then
+      ``repeat_interleave``-d, so **value** feature ``f`` is weighted by head
+      ``f // head_dim``. Both conventions are upstream's; neither is a bug to
+      fix here.
+   2. **The ``1/sqrt(depth)`` scale includes parity and ``(L+1)**2``**:
+      ``depth = P · (L_qk+1)**2 · head_dim``. Only at ``max_degree=0, P=1``
+      does it reduce to ``1/sqrt(head_dim)``.
+   3. **The relative positional encoding is multiplicative, not additive**: it
+      enters as the third factor of an elementwise triple-product einsum, a
+      learned per-degree per-feature distance-dependent gate on each ``q·k``
+      term. It is fed **only the scalar slice** ``basis[..., 0, 0, :]``.
+
+
+   .. py:method:: forward(inputs: torch.Tensor, basis: torch.Tensor | None = None, *, dst_idx: torch.Tensor, src_idx: torch.Tensor, num_segments: int, cutoff_value: torch.Tensor | None = None) -> torch.Tensor
+
+
+   .. py:attribute:: head_dim
+
+
+   .. py:attribute:: key
+
+
+   .. py:attribute:: max_degree_qk
+
+
+   .. py:attribute:: num_heads
+
+
+   .. py:attribute:: num_parity_qk
+
+
+   .. py:attribute:: out
+
+
+   .. py:attribute:: qkv_features
+
+
+   .. py:attribute:: query
+
+
+   .. py:attribute:: rpe_qk
+      :value: True
+
+
+
+   .. py:attribute:: rpe_v
+      :value: True
+
+
+
+   .. py:attribute:: value
+
+
+.. py:class:: Tensor(features: int, max_degree1: int, num_parity1: int, max_degree2: int, num_parity2: int, max_degree: int | None = None, include_pseudotensors: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Learnable tensor product of two equivariant feature representations.
+
+   ``einsum('...plf,...qmf,plqmrnf,lmn->...rnf', inputs1, inputs2, kernel, cg)``
+   with the kernel expanded per-degree and masked on parity-forbidden paths.
+
+   At ``max_degree=0`` with ``P=1`` everywhere (the non-equivariant DiT path)
+   this does **not** collapse to the identity: the kernel is ``(1,1,1,1,1,1,F)``
+   and ``cg[0,0,0] == 1``, so it is a learnable **per-feature multiplicative
+   gate**, initialized by ``tensor_lecun_normal`` with ``fan_in = 1`` -- a
+   truncated normal with stddev ~1.1368, not 1.0. Dropping it would neither
+   match a checkpoint nor train the same way.
+
+
+   .. py:method:: forward(inputs1: torch.Tensor, inputs2: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: features
+
+
+   .. py:attribute:: kernel
+
+
+   .. py:attribute:: mixed_coupling_paths
+
+
+.. py:function:: duplication_indices_for_max_degree(max_degree: int) -> torch.Tensor
+
+   ``[0, 1,1,1, 2,2,2,2,2, ...]`` -- degree ``l`` repeated ``2l+1`` times.
+
+
+.. py:function:: resolve_tensor_output(max_degree1: int, num_parity1: int, max_degree2: int, num_parity2: int, max_degree: int | None, include_pseudotensors: bool) -> tuple[int, int]
+
+   ``(num_parity3, max_degree3)`` a :class:`Tensor` will emit.
+
+

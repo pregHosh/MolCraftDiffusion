@@ -1,0 +1,89 @@
+MolecularDiffusion.modules.layers.e3x.so3
+=========================================
+
+.. py:module:: MolecularDiffusion.modules.layers.e3x.so3
+
+.. autoapi-nested-parse::
+
+   SO(3) irreps: real spherical harmonics and Clebsch-Gordan coefficients.
+
+   A direct PyTorch reimplementation of the `e3x <https://github.com/google-research/e3x>`_
+   surface DiTMC calls (Apache-2.0). **Not** e3nn: e3x's ordering, normalization
+   and parity layout are all different, and matching them is what makes the
+   published DiTMC checkpoints convertible.
+
+   Conventions, all pinned here and never left implicit (``e3x/config.py`` sets
+   ``cartesian_order=True``, ``normalization='racah'``, ``use_fused_tensor=False``):
+
+   * **Racah / Schmidt semi-normalization** -- the normalization constant is
+     literally ``1``, i.e. ``∫ Y_lm Y_l'm' dΩ = 4π/(2l+1)·δδ``.
+   * **No Condon-Shortley phase.**
+   * **Cartesian order** within a degree: ``m = +l, -l, +(l-1), -(l-1), ..., 0``.
+     So degree 1 evaluates to ``(x, y, z)`` -- *not* the ``(y, z, x)`` an
+     m-ascending convention (e3nn's) would give.
+
+   The coefficient tables in ``_tables.npz`` are produced by
+   ``docs/model_integrations/ditmc/scripts/generate_e3x_tables.py``, which runs
+   e3x's own SymPy generator verbatim.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.e3x.so3.cartesian_permutation
+   MolecularDiffusion.modules.layers.e3x.so3.cartesian_permutation_for_degree
+   MolecularDiffusion.modules.layers.e3x.so3.clebsch_gordan
+   MolecularDiffusion.modules.layers.e3x.so3.random_rotation
+   MolecularDiffusion.modules.layers.e3x.so3.spherical_harmonics
+
+
+Module Contents
+---------------
+
+.. py:function:: cartesian_permutation(max_degree: int) -> numpy.ndarray
+
+   Permutation to Cartesian order for all degrees ``0..max_degree``.
+
+
+.. py:function:: cartesian_permutation_for_degree(l: int) -> numpy.ndarray
+
+   Permutation from m-ascending to Cartesian order, for one degree.
+
+   Verbatim port of ``e3x/so3/_common._cartesian_permutation_for_degree``.
+   For ``l=2`` this is ``[4, 0, 3, 1, 2]``.
+
+
+.. py:function:: clebsch_gordan(max_degree1: int, max_degree2: int, max_degree3: int, *, dtype: torch.dtype = torch.float32, device: torch.device | None = None) -> torch.Tensor
+
+   Real-SH Clebsch-Gordan coefficients, Cartesian order.
+
+   Shape ``((L1+1)**2, (L2+1)**2, (L3+1)**2)``. ``cg[0, 0, 0] == 1`` exactly.
+
+
+.. py:function:: random_rotation(num: int = 1, *, generator: torch.Generator | None = None, device: torch.device | None = None, dtype: torch.dtype = torch.float32) -> torch.Tensor
+
+   Haar-uniform ``SO(3)`` rotation matrices, ``(num, 3, 3)``.
+
+   Shoemake's uniform-quaternion construction, same as
+   ``e3x.so3.random_rotation`` at ``perturbation=1.0`` (the only value DiTMC
+   uses). The RNG stream cannot match JAX's, so this is a distributional
+   match, not a bit-level one -- which is all rotation augmentation needs.
+
+
+.. py:function:: spherical_harmonics(r: torch.Tensor, max_degree: int, *, r_is_normalized: bool = True) -> torch.Tensor
+
+   Real spherical harmonics, Racah-normalized, Cartesian order.
+
+   :param r: ``(..., 3)`` Cartesian vectors.
+   :param max_degree: maximum degree ``L``.
+   :param r_is_normalized: if ``False``, ``r`` is normalized first.
+
+   :returns: ``(..., (L+1)**2)``. Degree ``l`` occupies ``[l**2, (l+1)**2)``.
+             For a unit vector ``(x, y, z)``: index 0 is ``1``; indices 1..3 are
+             ``x, y, z``; indices 4..8 are
+             ``√3/2(x²−y²), √3xy, √3xz, √3yz, (3z²−1)/2``.
+
+

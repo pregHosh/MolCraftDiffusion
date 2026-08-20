@@ -1,0 +1,76 @@
+MolecularDiffusion.modules.models.ditmc.meshgraphnet
+====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.ditmc.meshgraphnet
+
+.. autoapi-nested-parse::
+
+   MeshGraphNet bond-graph conditioner.
+
+   Port of ``neural_network_layer.MeshGraphNetLayer`` + ``encoder.EncoderModel``.
+   This is the only place the covalent bonds enter as message passing; the DiT
+   attention itself runs over the *fully connected* latent graph.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ditmc.meshgraphnet.MeshGraphNetEncoder
+   MolecularDiffusion.modules.models.ditmc.meshgraphnet.MeshGraphNetLayer
+
+
+Module Contents
+---------------
+
+.. py:class:: MeshGraphNetEncoder(node_attr_dim: int, num_layers: int, num_features: int, activation_fn: str = 'silu')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   ``make_graph_mesh_net_encoder``: embeddings + a stack of layers.
+
+
+   .. py:method:: forward(graph: MolecularDiffusion.modules.models.ditmc.graphs.CondGraph) -> torch.Tensor
+
+      Returns node features in e3x form, ``(N, 1, 1, num_features)``.
+
+
+
+   .. py:attribute:: edge_embedding
+
+
+   .. py:attribute:: layers
+
+
+   .. py:attribute:: node_embedding
+
+
+   .. py:attribute:: num_features
+
+
+.. py:class:: MeshGraphNetLayer(num_node_features: int, num_edge_features: int, activation_fn: str = 'silu')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   One edge update followed by one node update, both LayerNorm-then-MLP.
+
+
+   .. py:method:: forward(graph: MolecularDiffusion.modules.models.ditmc.graphs.CondGraph, node_features: torch.Tensor, edge_features: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]
+
+
+   .. py:attribute:: edge_mlp
+
+
+   .. py:attribute:: edge_norm
+
+
+   .. py:attribute:: node_mlp
+
+
+   .. py:attribute:: node_norm
+
+

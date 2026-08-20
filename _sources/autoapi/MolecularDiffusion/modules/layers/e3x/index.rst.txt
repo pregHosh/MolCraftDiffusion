@@ -1,0 +1,37 @@
+MolecularDiffusion.modules.layers.e3x
+=====================================
+
+.. py:module:: MolecularDiffusion.modules.layers.e3x
+
+.. autoapi-nested-parse::
+
+   A faithful PyTorch reimplementation of the ``e3x`` surface DiTMC calls.
+
+   Scope is deliberately "the call sites, not the library". Not ported, because no
+   DiTMC config path reaches them: ``FusedTensor`` (both call sites pass
+   ``use_fused_tensor=False``), the cutoff functions (``dit_so3`` sets
+   ``cutoff_fn: null`` and the factory raises otherwise), ``e3x.nn.Embed``,
+   ``MessagePass``, ``TensorDense``, ``ExponentialBasis``, ``damping_fn``, and the
+   ``sinc``/``gaussian``/``chebyshev``/``exponential_*`` radial families.
+
+   Global e3x config pins, hard-coded here rather than left implicit:
+   ``cartesian_order = True``, ``normalization = 'racah'``,
+   ``use_fused_tensor = False``.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/layers/e3x/activations/index
+   /autoapi/MolecularDiffusion/modules/layers/e3x/features/index
+   /autoapi/MolecularDiffusion/modules/layers/e3x/indexed/index
+   /autoapi/MolecularDiffusion/modules/layers/e3x/initializers/index
+   /autoapi/MolecularDiffusion/modules/layers/e3x/modules/index
+   /autoapi/MolecularDiffusion/modules/layers/e3x/radial/index
+   /autoapi/MolecularDiffusion/modules/layers/e3x/so3/index
+
+

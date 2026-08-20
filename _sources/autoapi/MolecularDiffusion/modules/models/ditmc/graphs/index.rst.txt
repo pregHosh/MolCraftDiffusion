@@ -1,0 +1,154 @@
+MolecularDiffusion.modules.models.ditmc.graphs
+==============================================
+
+.. py:module:: MolecularDiffusion.modules.models.ditmc.graphs
+
+.. autoapi-nested-parse::
+
+   The three graphs DiTMC consumes, as plain dataclasses.
+
+   Upstream splits every sample into three ``jraph.GraphsTuple``s
+   (``data_loader/utils.py:504-531``). Nothing about jraph is needed here beyond
+   the field layout, so these are dataclasses of flat tensors instead.
+
+   Two conventions inherited from upstream that silently produce wrong models if
+   reversed:
+
+   * **``senders = j``, ``receivers = i``.** ``create_graph_latent`` does
+     ``receivers=centers, senders=others`` where ``centers`` is the row index.
+     ``DiTEdgeEmbed`` and ``RadialSphericalEdgeEmbedding`` then compute
+     ``displacements = positions[senders] - positions[receivers]``, i.e.
+     :math:`\vec r_j - \vec r_i`. Reversing this flips the sign of every odd-``l``
+     spherical harmonic.
+   * **The all-pairs edge list is in C-order over ``(i, j)``**, which is the only
+     reason ``shortest_hops`` (extracted as ``M[~eye]``) lines up with it
+     element-for-element.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ditmc.graphs.CondGraph
+   MolecularDiffusion.modules.models.ditmc.graphs.LatentGraph
+   MolecularDiffusion.modules.models.ditmc.graphs.PriorGraph
+
+
+Module Contents
+---------------
+
+.. py:class:: CondGraph
+
+   The covalent-bond graph the MeshGraphNet conditioner runs over.
+
+
+   .. py:attribute:: edge_attr
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: node_attr
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: receivers
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: senders
+      :type:  torch.Tensor
+
+
+.. py:class:: LatentGraph
+
+   The fully connected graph the DiT attention runs over.
+
+
+   .. py:method:: replace(**kwargs) -> LatentGraph
+
+
+   .. py:attribute:: atomic_numbers
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: batch_segments
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: cond_scaling_edges
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: cond_scaling_nodes
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: node_attr
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: num_graphs
+      :type:  int
+
+
+   .. py:property:: num_nodes
+      :type: int
+
+
+
+   .. py:attribute:: positions
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: receivers
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: self_cond
+      :type:  torch.Tensor | None
+      :value: None
+
+
+
+   .. py:attribute:: senders
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: shortest_hops
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: x1
+      :type:  torch.Tensor | None
+      :value: None
+
+
+
+.. py:class:: PriorGraph
+
+   Bond-graph Laplacian eigendecomposition, for the harmonic prior.
+
+   Stored in upstream's sparse form: ``node_attr`` is :math:`1/\sqrt{\lambda}`
+   per eigen-index (with the zero modes set to 0, which is what removes the
+   centre of mass), and ``edge_attr`` is the flattened eigenvector matrix over
+   a complete per-molecule index grid, so a segment sum evaluates
+   :math:`P\,\mathrm{diag}(1/\sqrt\lambda)\,z`.
+
+
+   .. py:attribute:: edge_attr
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: node_attr
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: receivers
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: senders
+      :type:  torch.Tensor
+
+

@@ -1,0 +1,249 @@
+MolecularDiffusion.modules.models.ditmc.embedding
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.models.ditmc.embedding
+
+.. autoapi-nested-parse::
+
+   Node, edge and time embeddings. Port of ``dit_mc/backbones/embedding.py``.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ditmc.embedding.NUM_ATOMIC_NUMBERS
+   MolecularDiffusion.modules.models.ditmc.embedding.NUM_SHORTEST_HOPS
+   MolecularDiffusion.modules.models.ditmc.embedding.UNREACHABLE_HOPS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ditmc.embedding.DiTEdgeEmbed
+   MolecularDiffusion.modules.models.ditmc.embedding.DiTNodeEmbed
+   MolecularDiffusion.modules.models.ditmc.embedding.EdgeAttributeEmbedding
+   MolecularDiffusion.modules.models.ditmc.embedding.NodeAttributeEmbedding
+   MolecularDiffusion.modules.models.ditmc.embedding.RadialSphericalEdgeEmbedding
+   MolecularDiffusion.modules.models.ditmc.embedding.TimeEmbedding
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ditmc.embedding.build_cond_embeddings
+   MolecularDiffusion.modules.models.ditmc.embedding.flax_embedding
+   MolecularDiffusion.modules.models.ditmc.embedding.get_index_embedding
+   MolecularDiffusion.modules.models.ditmc.embedding.get_pos_indices
+
+
+Module Contents
+---------------
+
+.. py:class:: DiTEdgeEmbed(num_features: int, activation_fn: str, embed_distances_bool: bool = True, embed_shortest_hops_bool: bool = True, radial_basis_bool: bool | None = None, num_radial_basis: int | None = None, max_frequency: float | None = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Non-equivariant relative edge embedding (``dit_ape`` / ``dit_rpe``).
+
+   ``embed_shortest_hops_bool`` is ``True`` in ``globals``, which is why
+   ``relative_embedding_bool`` is True for **both** ``dit_ape`` and
+   ``dit_rpe``; they differ only in ``embed_distances_bool``.
+
+   The shortest-hops MLP deliberately keeps ``use_bias=True`` -- upstream's own
+   comment: "we need a bias here s.t. the output is non-zero in case of CFG".
+
+
+   .. py:method:: forward(graph: MolecularDiffusion.modules.models.ditmc.graphs.LatentGraph) -> torch.Tensor
+
+
+   .. py:attribute:: embed_distances_bool
+      :value: True
+
+
+
+   .. py:attribute:: embed_shortest_hops_bool
+      :value: True
+
+
+
+   .. py:attribute:: max_frequency
+      :value: None
+
+
+
+   .. py:attribute:: num_features
+
+
+   .. py:attribute:: num_radial_basis
+      :value: None
+
+
+
+   .. py:attribute:: radial_basis_bool
+      :value: False
+
+
+
+.. py:class:: DiTNodeEmbed(num_features: int, activation_fn: str, self_conditioning_bool: bool, positional_encoding_bool: bool, positional_embedding_bool: bool)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Atomic-number embedding, optionally plus self-conditioning / positions.
+
+
+   .. py:method:: forward(graph: MolecularDiffusion.modules.models.ditmc.graphs.LatentGraph) -> torch.Tensor
+
+
+   .. py:attribute:: embed
+
+
+   .. py:attribute:: num_features
+
+
+   .. py:attribute:: pos_mlp
+
+
+   .. py:attribute:: positional_embedding_bool
+
+
+   .. py:attribute:: positional_encoding_bool
+
+
+   .. py:attribute:: sc_mlp
+
+
+   .. py:attribute:: self_conditioning_bool
+
+
+.. py:class:: EdgeAttributeEmbedding(in_features: int, num_features: int, activation_fn: str)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   MeshGraphNet edge encoder over the 4-class bond one-hot.
+
+
+   .. py:method:: forward(edge_attr: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: mlp
+
+
+   .. py:attribute:: norm
+
+
+.. py:class:: NodeAttributeEmbedding(in_features: int, num_features: int, activation_fn: str)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   MeshGraphNet node encoder: 2-layer MLP + LayerNorm.
+
+
+   .. py:method:: forward(node_attr: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: mlp
+
+
+   .. py:attribute:: norm
+
+
+.. py:class:: RadialSphericalEdgeEmbedding(max_degree: int, activation_fn: str, cutoff: float | None = None, embed_shortest_hops_bool: bool = False, scale_spherical_basis_with_shortest_hops_bool: bool = False, radial_basis: str = 'reciprocal_bernstein', num_radial_basis: int = 32, radial_basis_kwargs: dict | None = None, cutoff_fn: str | None = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   SO(3)-equivariant edge basis (``dit_so3``).
+
+   ``e3x.nn.basis`` with ``reciprocal_bernstein`` radial functions and no
+   cutoff (``dit_so3`` sets ``cutoff: null``; the factory raises otherwise).
+   The shortest-hops term is zero-initialized so it starts as a pure identity
+   scaling, and is gated by ``cond_scaling`` for classifier-free guidance.
+
+
+   .. py:method:: forward(graph: MolecularDiffusion.modules.models.ditmc.graphs.LatentGraph) -> torch.Tensor
+
+
+   .. py:attribute:: embed_shortest_hops_bool
+      :value: False
+
+
+
+   .. py:attribute:: max_degree
+
+
+   .. py:attribute:: num_radial_basis
+      :value: 32
+
+
+
+   .. py:attribute:: radial_fn
+
+
+   .. py:attribute:: scale_with_hops
+      :value: False
+
+
+
+.. py:class:: TimeEmbedding(num_features: int, num_features_fourier: int | None = None, activation_fn: str = 'silu')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Fourier features of the latent time, then a 2-layer MLP.
+
+
+   .. py:method:: forward(time_latent: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: ff
+
+
+   .. py:attribute:: mlp
+
+
+.. py:function:: build_cond_embeddings(node_attr_dim: int, num_features: int, activation_fn: str) -> tuple[NodeAttributeEmbedding, EdgeAttributeEmbedding]
+
+   Convenience pair used by the MeshGraphNet encoder.
+
+
+.. py:function:: flax_embedding(num_embeddings: int, features: int) -> torch.nn.Embedding
+
+   ``flax.linen.Embed``: ``variance_scaling(1.0, 'fan_in', 'normal')``.
+
+   For a ``(num_embeddings, features)`` table with ``out_axis=0`` this resolves
+   to ``fan_in = features`` and a **plain** (not truncated) normal.
+
+
+.. py:function:: get_index_embedding(indices: torch.Tensor, emb_dim: int, max_len: int = 256) -> torch.Tensor
+
+   Sinusoidal positional embedding from per-molecule atom offsets.
+
+
+.. py:function:: get_pos_indices(batch_segments: torch.Tensor, num_graphs: int) -> torch.Tensor
+
+   Index of each atom within its own molecule.
+
+
+.. py:data:: NUM_ATOMIC_NUMBERS
+   :value: 119
+
+
+.. py:data:: NUM_SHORTEST_HOPS
+   :value: 512
+
+
+.. py:data:: UNREACHABLE_HOPS
+   :value: 510
+
+

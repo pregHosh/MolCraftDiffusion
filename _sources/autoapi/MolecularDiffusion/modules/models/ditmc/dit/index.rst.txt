@@ -1,0 +1,201 @@
+MolecularDiffusion.modules.models.ditmc.dit
+===========================================
+
+.. py:module:: MolecularDiffusion.modules.models.ditmc.dit
+
+.. autoapi-nested-parse::
+
+   DiT blocks and the top-level generative model.
+
+   Port of ``dit_mc/backbones/neural_network_layer.{DiTLayer,SO3DiTLayer}`` and
+   ``backbones/generative_model.GenerativeModel``. ``IdentityMerger`` is a literal
+   no-op upstream (``merger.py:13-23``) and is dropped; the ``GenerativeLayer``
+   namedtuple collapses to a plain module list.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ditmc.dit.DiTLayer
+   MolecularDiffusion.modules.models.ditmc.dit.GenerativeModel
+   MolecularDiffusion.modules.models.ditmc.dit.SO3DiTLayer
+
+
+Module Contents
+---------------
+
+.. py:class:: DiTLayer(num_features: int, num_heads: int, num_features_mlp: int, activation_fn_mlp: str = 'gelu', activation_fn: str = 'silu', relative_embedding_qk_bool: bool = True, relative_embedding_v_bool: bool = True, act_dense_correct_bool: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Non-equivariant DiT block with adaLN-Zero conditioning.
+
+   ``act_dense_correct_bool`` is ``True`` in ``globals``, so the shipped models
+   compute ``Dense(act_fn(c))``; the zero-init makes the modulation vector zero
+   at init either way. Both branches are ported.
+
+
+   .. py:method:: forward(graph: MolecularDiffusion.modules.models.ditmc.graphs.LatentGraph, features_nodes: torch.Tensor, features_edges: torch.Tensor | None, features_cond: torch.Tensor | None, features_time: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: act_dense_correct_bool
+      :value: False
+
+
+
+   .. py:attribute:: act_fn
+
+
+   .. py:attribute:: ada_dense
+
+
+   .. py:attribute:: attention
+
+
+   .. py:attribute:: cond_norm
+
+
+   .. py:attribute:: mlp
+
+
+   .. py:attribute:: norm1
+
+
+   .. py:attribute:: norm2
+
+
+   .. py:attribute:: num_features
+
+
+.. py:class:: GenerativeModel(node_embedding: torch.nn.Module, time_embedding: torch.nn.Module, layers: torch.nn.ModuleList, readout: torch.nn.Module, edge_embedding: torch.nn.Module | None = None, conditioner: torch.nn.Module | None = None, conditioning_bool: bool = False, variant: str = 'dit')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   ``conditioner -> embeddings -> DiT blocks -> readout``.
+
+   Returns ``(drift, noise)`` when ``output='drift_and_noise'``, otherwise a
+   single ``(N, 3)`` tensor.
+
+
+   .. py:method:: forward(time_latent: torch.Tensor, graph_latent: MolecularDiffusion.modules.models.ditmc.graphs.LatentGraph, graph_cond: MolecularDiffusion.modules.models.ditmc.graphs.CondGraph | None = None)
+
+
+   .. py:attribute:: conditioner
+      :value: None
+
+
+
+   .. py:attribute:: conditioning_bool
+      :value: False
+
+
+
+   .. py:attribute:: edge_embedding
+      :value: None
+
+
+
+   .. py:attribute:: layers
+
+
+   .. py:attribute:: node_embedding
+
+
+   .. py:property:: output
+      :type: str
+
+
+
+   .. py:attribute:: readout
+
+
+   .. py:attribute:: time_embedding
+
+
+   .. py:attribute:: variant
+      :value: 'dit'
+
+
+
+.. py:class:: SO3DiTLayer(num_features: int, num_heads: int, num_features_mlp: int, max_degree: int, include_pseudotensors: bool, in_max_degree: int, in_num_parity: int, num_radial_basis: int, basis_max_degree: int, activation_fn_mlp: str = 'gelu', activation_fn: str = 'silu', act_dense_correct_bool: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   SO(3)-equivariant DiT block.
+
+   Unlike :class:`DiTLayer`, the input shape *changes* between layer 0 and the
+   rest: the node embedding is ``(N, 1, 1, F)``, and after one block the skip
+   connection has widened it to ``(N, P_out, (L+1)**2, F)``. ``in_max_degree``
+   / ``in_num_parity`` therefore differ per layer and are supplied by
+   ``build.py`` rather than inferred lazily as Flax does.
+
+
+   .. py:method:: forward(graph: MolecularDiffusion.modules.models.ditmc.graphs.LatentGraph, features_nodes: torch.Tensor, features_edges: torch.Tensor, features_cond: torch.Tensor | None, features_time: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: act_dense_correct_bool
+      :value: False
+
+
+
+   .. py:attribute:: act_fn
+
+
+   .. py:attribute:: ada_dense
+
+
+   .. py:attribute:: att_num_parity
+      :value: 2
+
+
+
+   .. py:attribute:: attention
+
+
+   .. py:attribute:: cond_norm
+
+
+   .. py:attribute:: in_max_degree
+
+
+   .. py:attribute:: in_num_parity
+
+
+   .. py:attribute:: max_degree
+
+
+   .. py:attribute:: mid_max_degree
+
+
+   .. py:attribute:: mid_num_parity
+
+
+   .. py:attribute:: mlp
+
+
+   .. py:attribute:: norm1
+
+
+   .. py:attribute:: norm2
+
+
+   .. py:attribute:: num_features
+
+
+   .. py:attribute:: out_max_degree
+
+
+   .. py:attribute:: out_num_parity
+
+
+   .. py:attribute:: parity_output
+      :value: 2
+
+
+

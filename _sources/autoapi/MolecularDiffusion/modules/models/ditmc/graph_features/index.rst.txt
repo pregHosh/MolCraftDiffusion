@@ -1,0 +1,140 @@
+MolecularDiffusion.modules.models.ditmc.graph_features
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.models.ditmc.graph_features
+
+.. autoapi-nested-parse::
+
+   Per-molecule featurization: ``node_attr``, shortest hops, Laplacian eigen.
+
+   Port of the parts of ``dit_mc/prepare_dataset.py`` that produce what the model
+   consumes. Upstream computes these once at dataset-build time and caches by
+   SMILES; so does this module, with an in-process LRU rather than a pickle.
+
+   The three quantities:
+
+   ``node_attr``
+       The 64-d (QM9) / 94-d (Drugs) RDKit atom featurization, reproduced column
+       for column from ``get_node_attr_from_mol`` -- see :data:`NODE_ATTR_BLOCKS`
+       for the exact layout. ``one_hot_encoding`` always appends a trailing "misc"
+       slot **except** for the atom-symbol block, which upstream slices with
+       ``[:-1]``.
+
+   ``shortest_hops``
+       Floyd-Warshall over the bond adjacency, off-diagonal entries in C-order
+       over ``(i, j)`` -- the same order the all-pairs edge list is built in, which
+       is the only reason the two line up element for element. Unreachable pairs
+       get the sentinel **510** (``algos.pyx:28-34``), hence the 512-row embedding.
+
+   ``D, P``
+       Eigendecomposition of the bond-graph Laplacian ``L = D - A``, with
+       ``D = 1/sqrt(lambda)`` and the zero modes set to 0 -- which is what removes
+       the centre of mass from the harmonic prior. The number of zero modes is the
+       number of RDKit fragments.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ditmc.graph_features.ATOMIC_TYPES
+   MolecularDiffusion.modules.models.ditmc.graph_features.NODE_ATTR_BLOCKS
+   MolecularDiffusion.modules.models.ditmc.graph_features.UNREACHABLE_HOPS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ditmc.graph_features.MoleculeFeatureCache
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ditmc.graph_features.adjacency_from_bonds
+   MolecularDiffusion.modules.models.ditmc.graph_features.all_pairs_edges
+   MolecularDiffusion.modules.models.ditmc.graph_features.get_node_attr_from_mol
+   MolecularDiffusion.modules.models.ditmc.graph_features.laplacian_eigen
+   MolecularDiffusion.modules.models.ditmc.graph_features.node_attr_dim
+   MolecularDiffusion.modules.models.ditmc.graph_features.shortest_hops_from_adjacency
+
+
+Module Contents
+---------------
+
+.. py:class:: MoleculeFeatureCache(dataset: str = 'qm9', maxsize: int = 200000)
+
+   SMILES-keyed cache of the three per-molecule quantities.
+
+   Upstream caches by SMILES at dataset-build time. Here the cache is
+   in-process and bounded; a miss just recomputes.
+
+
+   .. py:method:: get(item) -> tuple
+
+      ``item`` is one PyG ``Data`` from the graph3d dataset.
+
+
+
+   .. py:attribute:: dataset
+      :value: 'qm9'
+
+
+
+.. py:function:: adjacency_from_bonds(bond_index: numpy.ndarray, n_nodes: int) -> numpy.ndarray
+
+   Symmetric 0/1 adjacency from an upper-triangular bond index.
+
+
+.. py:function:: all_pairs_edges(n_nodes: int, device=None)
+
+   All ordered pairs excluding self-loops, **C-order over ``(i, j)``**.
+
+   Returns ``(receivers, senders) = (i, j)``. Matching this ordering to
+   ``shortest_hops`` is not optional -- upstream relies on both being C-order.
+
+
+.. py:function:: get_node_attr_from_mol(mol, dataset: str) -> numpy.ndarray
+
+   Reproduce ``prepare_dataset.get_node_attr_from_mol`` exactly.
+
+
+.. py:function:: laplacian_eigen(adj: numpy.ndarray, num_components: int | None = None, threshold: float = 0.0001)
+
+   ``(D, P)`` for the harmonic prior: ``D = 1/sqrt(lambda)``, zero modes 0.
+
+   ``eigh`` returns ascending eigenvalues, so the ``num_components`` smallest
+   are the zero modes (one per connected fragment). Eigenvector sign ambiguity
+   is not a fidelity risk: the prior draws ``P diag(D) z`` with ``z`` standard
+   normal, whose distribution is invariant under column sign flips.
+
+
+.. py:function:: node_attr_dim(dataset: str) -> int
+
+   Width of ``node_attr`` for a dataset name.
+
+
+.. py:function:: shortest_hops_from_adjacency(adj: numpy.ndarray) -> numpy.ndarray
+
+   Off-diagonal Floyd-Warshall distances, C-order over ``(i, j)``.
+
+   ``scipy.sparse.csgraph.floyd_warshall`` replaces the Cython ``algos.pyx``;
+   ``inf`` is clamped to the same 510 sentinel upstream writes.
+
+
+.. py:data:: ATOMIC_TYPES
+
+.. py:data:: NODE_ATTR_BLOCKS
+   :value: (('chiral_tag', 5), ('total_num_h', 6), ('num_radical_electrons', 6), ('atom_symbol', None),...
+
+
+.. py:data:: UNREACHABLE_HOPS
+   :value: 510
+
+

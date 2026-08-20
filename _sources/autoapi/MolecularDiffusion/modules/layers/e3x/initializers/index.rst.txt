@@ -1,0 +1,78 @@
+MolecularDiffusion.modules.layers.e3x.initializers
+==================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.e3x.initializers
+
+.. autoapi-nested-parse::
+
+   Flax/e3x initializers, reproduced exactly.
+
+   Two of these are parity traps that a naive PyTorch port gets wrong:
+
+   * Flax's ``lecun_normal`` is a **truncated** normal with stddev
+     ``sqrt(1/fan_in) / 0.87962566103423978`` (0.8796... is the stddev of a
+     standard normal truncated to ``(-2, 2)``), truncated at ``±2·stddev``.
+     Neither ``normal_(std=sqrt(1/fan_in))`` nor ``nn.Linear``'s own default
+     ``U(-1/√fan_in, 1/√fan_in)`` matches it.
+   * ``tensor_lecun_normal`` computes ``fan_in`` as the number of **allowed
+     ``(l1,l2) -> l3`` coupling paths** for each output ``(p3, l3)``, not from the
+     kernel shape, and hard-masks parity-/triangle-forbidden paths to zero.
+
+   Port of ``e3x/nn/initializers.py``.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.e3x.initializers.TRUNCATED_NORMAL_STDDEV
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.e3x.initializers.compute_tensor_fans_and_mask
+   MolecularDiffusion.modules.layers.e3x.initializers.lecun_normal_
+   MolecularDiffusion.modules.layers.e3x.initializers.tensor_lecun_normal_
+   MolecularDiffusion.modules.layers.e3x.initializers.tensor_product_mask
+
+
+Module Contents
+---------------
+
+.. py:function:: compute_tensor_fans_and_mask(shape)
+
+   ``(fan_in, fan_out, mask)`` for a ``(P1,L1,P2,L2,P3,L3,F)`` kernel.
+
+   A coupling path is forbidden when the parities do not compose
+   (``(d1 + d2) % 2 != d3``) or the degrees violate the triangle inequality
+   (``not abs(l1-l2) <= l3 <= l1+l2``).
+
+
+.. py:function:: lecun_normal_(tensor: torch.Tensor, fan_in: int) -> torch.Tensor
+
+   Flax ``jax.nn.initializers.lecun_normal()``, in place.
+
+
+.. py:function:: tensor_lecun_normal_(tensor: torch.Tensor) -> torch.Tensor
+
+   e3x ``tensor_lecun_normal()``: variance ``1/fan_in``, then masked.
+
+
+.. py:function:: tensor_product_mask(shape) -> numpy.ndarray
+
+   ``e3x/nn/modules._make_tensor_product_mask``: **parity only**.
+
+   Deliberately weaker than :func:`compute_tensor_fans_and_mask`, which also
+   applies the triangle rule -- e3x uses the parity-only mask in the forward
+   pass and the stronger one in the initializer. Reproduced as-is.
+
+
+.. py:data:: TRUNCATED_NORMAL_STDDEV
+   :value: 0.8796256610342398
+
+

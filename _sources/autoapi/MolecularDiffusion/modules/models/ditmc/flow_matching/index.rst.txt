@@ -1,0 +1,154 @@
+MolecularDiffusion.modules.models.ditmc.flow_matching
+=====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.ditmc.flow_matching
+
+.. autoapi-nested-parse::
+
+   Flow matching with a constant-noise interpolant. Port of
+   ``dit_mc/generative_process/flow_matching.py`` (+ the Kabsch / augmentation /
+   loss-reduction helpers from ``dit_mc/training/utils.py``).
+
+   The interpolant is
+
+   .. math::  x_\tau = (1-\tau)\,x_0 + \tau\,x_1 + \sigma z,\qquad \sigma = 0.5
+
+   with :math:`x_0` from the harmonic prior, **Kabsch-aligned to** :math:`x_1`
+   before interpolating, and every quantity centre-of-mass centred. With the
+   default ``regress_x1_bool=True`` the network regresses the clean :math:`x_1` and
+   the drift is recovered as :math:`v_t = (\hat x_1 - x_\tau)/(1-\tau)`.
+
+   Three reductions that are easy to get wrong and are pinned here:
+
+   * **The loss is a mean over x/y/z and a mean over atoms**, then a per-graph
+     weight, then a sum divided by the number of graphs. A sum over xyz would
+     scale it by 3N (``training/utils.py:91-125``).
+   * The per-graph weight is :math:`1/(1-\min(\tau, 0.9))^2`, using the
+     **per-graph** tau, not the per-node one.
+   * Classifier-free guidance draws **one** Bernoulli per batch, not per molecule
+     (``flow_matching.py:271``).
+
+   Rotation augmentation is **on by default** upstream
+   (``globals.augmentation_bool: True``). Without it ``dit_ape``/``dit_rpe``, which
+   are not equivariant by construction, train on a different distribution.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ditmc.flow_matching.FlowMatching
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ditmc.flow_matching.aggregate_node_error
+   MolecularDiffusion.modules.models.ditmc.flow_matching.center_data
+   MolecularDiffusion.modules.models.ditmc.flow_matching.kabsch_align
+   MolecularDiffusion.modules.models.ditmc.flow_matching.rotation_augmentation
+
+
+Module Contents
+---------------
+
+.. py:class:: FlowMatching(prior, sigma: float = 0.5, align_bool: bool = True, conditioning_bool: bool = True, regress_x1_bool: bool = True, weighted_loss_bool: bool = True, mixture_tau_bool: bool = False, free_guidance_bool: bool = False, free_guidance_prob: float = 0.1, self_conditioning_bool: bool = False, self_conditioning_prob: float = 0.5)
+
+   The generative process. Holds no parameters -- the network is passed in.
+
+
+   .. py:method:: clean_prediction(nn_out, graph_latent: MolecularDiffusion.modules.models.ditmc.graphs.LatentGraph, time_latent)
+
+      ``(x1_pred, vt)`` from the raw network output.
+
+
+
+   .. py:method:: loss(net, graph_latent: MolecularDiffusion.modules.models.ditmc.graphs.LatentGraph, graph_prior, graph_cond, *, generator: torch.Generator | None = None) -> tuple[torch.Tensor, dict]
+
+      One training step. ``graph_latent.x1`` must be set.
+
+
+
+   .. py:method:: sample(net, graph_latent: MolecularDiffusion.modules.models.ditmc.graphs.LatentGraph, graph_prior, graph_cond, *, num_steps: int = 50, free_guidance_scale: float = 1.0, logarithmic_time_bool: bool = False, return_trajectory: bool = False, generator: torch.Generator | None = None)
+
+      Explicit Euler integration of ``v_t`` from ``tau=0`` to ``tau=1``.
+
+
+
+   .. py:attribute:: align_bool
+      :value: True
+
+
+
+   .. py:attribute:: conditioning_bool
+      :value: True
+
+
+
+   .. py:attribute:: free_guidance_bool
+      :value: False
+
+
+
+   .. py:attribute:: free_guidance_prob
+      :value: 0.1
+
+
+
+   .. py:attribute:: mixture_tau_bool
+      :value: False
+
+
+
+   .. py:attribute:: prior
+
+
+   .. py:attribute:: regress_x1_bool
+      :value: True
+
+
+
+   .. py:attribute:: self_conditioning_bool
+      :value: False
+
+
+
+   .. py:attribute:: self_conditioning_prob
+      :value: 0.5
+
+
+
+   .. py:attribute:: sigma
+      :value: 0.5
+
+
+
+   .. py:attribute:: weighted_loss_bool
+      :value: True
+
+
+
+.. py:function:: aggregate_node_error(node_error: torch.Tensor, batch_segments: torch.Tensor, num_graphs: int, graph_weight=1.0, scale: float = 1.0) -> torch.Tensor
+
+   Mean over trailing dims, segment-mean per graph, weight, sum / #graphs.
+
+
+.. py:function:: center_data(x: torch.Tensor, batch_segments: torch.Tensor, num_graphs: int) -> torch.Tensor
+
+   Subtract the per-molecule centre of mass.
+
+
+.. py:function:: kabsch_align(p: torch.Tensor, q: torch.Tensor, batch_segments: torch.Tensor, num_graphs: int) -> torch.Tensor
+
+   Rigidly align ``p`` onto ``q`` per molecule (proper rotations only).
+
+
+.. py:function:: rotation_augmentation(tensors: dict[str, torch.Tensor], batch_segments: torch.Tensor, num_graphs: int, *, generator: torch.Generator | None = None) -> tuple[dict[str, torch.Tensor], torch.Tensor]
+
+   One Haar-uniform rotation per molecule, applied to every ``(N, 3)`` field.
+
+

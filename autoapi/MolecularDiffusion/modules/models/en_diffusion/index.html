@@ -759,13 +759,13 @@ if the current molecule is “unclean”. Defaults to 4.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>Tensor</em>) – [B, N, 3] atom positions</p></li>
+<li><p><strong>x</strong> (<a class="reference internal" href="../../layers/e3x/modules/index.html#MolecularDiffusion.modules.layers.e3x.modules.Tensor" title="MolecularDiffusion.modules.layers.e3x.modules.Tensor"><em>Tensor</em></a>) – [B, N, 3] atom positions</p></li>
 <li><p><strong>h</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – dictionary with ‘categorical’, ‘integer’, and optionally ‘extra’ features</p></li>
-<li><p><strong>node_mask</strong> (<em>Tensor</em>) – [B, N, 1] indicating which nodes are valid</p></li>
-<li><p><strong>edge_mask</strong> (<em>Tensor</em>) – [B, N, N] adjacency mask</p></li>
-<li><p><strong>context</strong> (<em>Tensor</em><em> or </em><em>None</em>) – [B, N, D] per-node context or None</p></li>
+<li><p><strong>node_mask</strong> (<a class="reference internal" href="../../layers/e3x/modules/index.html#MolecularDiffusion.modules.layers.e3x.modules.Tensor" title="MolecularDiffusion.modules.layers.e3x.modules.Tensor"><em>Tensor</em></a>) – [B, N, 1] indicating which nodes are valid</p></li>
+<li><p><strong>edge_mask</strong> (<a class="reference internal" href="../../layers/e3x/modules/index.html#MolecularDiffusion.modules.layers.e3x.modules.Tensor" title="MolecularDiffusion.modules.layers.e3x.modules.Tensor"><em>Tensor</em></a>) – [B, N, N] adjacency mask</p></li>
+<li><p><strong>context</strong> (<a class="reference internal" href="../../layers/e3x/modules/index.html#MolecularDiffusion.modules.layers.e3x.modules.Tensor" title="MolecularDiffusion.modules.layers.e3x.modules.Tensor"><em>Tensor</em></a><em> or </em><em>None</em>) – [B, N, D] per-node context or None</p></li>
 <li><p><strong>t0_always</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – whether to explicitly include the loss at t = 0</p></li>
-<li><p><strong>reference_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> or </em><em>Tensor</em><em>, </em><em>optional</em>) – atom indices to freeze during loss</p></li>
+<li><p><strong>reference_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> or </em><a class="reference internal" href="../../layers/e3x/modules/index.html#MolecularDiffusion.modules.layers.e3x.modules.Tensor" title="MolecularDiffusion.modules.layers.e3x.modules.Tensor"><em>Tensor</em></a><em>, </em><em>optional</em>) – atom indices to freeze during loss</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -873,9 +873,9 @@ compute it so that you see it when you’ve made a mistake in your noise schedul
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>Tensor</em>) – [B, N, 3] coordinates</p></li>
+<li><p><strong>x</strong> (<a class="reference internal" href="../../layers/e3x/modules/index.html#MolecularDiffusion.modules.layers.e3x.modules.Tensor" title="MolecularDiffusion.modules.layers.e3x.modules.Tensor"><em>Tensor</em></a>) – [B, N, 3] coordinates</p></li>
 <li><p><strong>h</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – {‘categorical’, ‘integer’, ‘extra’ (optional)}</p></li>
-<li><p><strong>node_mask</strong> (<em>Tensor</em>) – [B, N, 1] mask</p></li>
+<li><p><strong>node_mask</strong> (<a class="reference internal" href="../../layers/e3x/modules/index.html#MolecularDiffusion.modules.layers.e3x.modules.Tensor" title="MolecularDiffusion.modules.layers.e3x.modules.Tensor"><em>Tensor</em></a>) – [B, N, 1] mask</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1404,10 +1404,10 @@ sigma t given s = sqrt(1 - (alpha t given s) ^2 ).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>Tensor</em>) – [B, N, 3]</p></li>
-<li><p><strong>h_cat</strong> (<em>Tensor</em>) – [B, N, C+E]</p></li>
-<li><p><strong>h_int</strong> (<em>Tensor</em>) – [B, N, 1]</p></li>
-<li><p><strong>node_mask</strong> (<em>Tensor</em>) – [B, N, 1]</p></li>
+<li><p><strong>x</strong> (<a class="reference internal" href="../../layers/e3x/modules/index.html#MolecularDiffusion.modules.layers.e3x.modules.Tensor" title="MolecularDiffusion.modules.layers.e3x.modules.Tensor"><em>Tensor</em></a>) – [B, N, 3]</p></li>
+<li><p><strong>h_cat</strong> (<a class="reference internal" href="../../layers/e3x/modules/index.html#MolecularDiffusion.modules.layers.e3x.modules.Tensor" title="MolecularDiffusion.modules.layers.e3x.modules.Tensor"><em>Tensor</em></a>) – [B, N, C+E]</p></li>
+<li><p><strong>h_int</strong> (<a class="reference internal" href="../../layers/e3x/modules/index.html#MolecularDiffusion.modules.layers.e3x.modules.Tensor" title="MolecularDiffusion.modules.layers.e3x.modules.Tensor"><em>Tensor</em></a>) – [B, N, 1]</p></li>
+<li><p><strong>node_mask</strong> (<a class="reference internal" href="../../layers/e3x/modules/index.html#MolecularDiffusion.modules.layers.e3x.modules.Tensor" title="MolecularDiffusion.modules.layers.e3x.modules.Tensor"><em>Tensor</em></a>) – [B, N, 1]</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1423,8 +1423,8 @@ sigma t given s = sqrt(1 - (alpha t given s) ^2 ).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>z</strong> (<em>Tensor</em>) – [B, N, D]</p></li>
-<li><p><strong>node_mask</strong> (<em>Tensor</em>) – [B, N, 1]</p></li>
+<li><p><strong>z</strong> (<a class="reference internal" href="../../layers/e3x/modules/index.html#MolecularDiffusion.modules.layers.e3x.modules.Tensor" title="MolecularDiffusion.modules.layers.e3x.modules.Tensor"><em>Tensor</em></a>) – [B, N, D]</p></li>
+<li><p><strong>node_mask</strong> (<a class="reference internal" href="../../layers/e3x/modules/index.html#MolecularDiffusion.modules.layers.e3x.modules.Tensor" title="MolecularDiffusion.modules.layers.e3x.modules.Tensor"><em>Tensor</em></a>) – [B, N, 1]</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

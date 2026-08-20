@@ -1,0 +1,44 @@
+MolecularDiffusion.modules.models.ditmc
+=======================================
+
+.. py:module:: MolecularDiffusion.modules.models.ditmc
+
+.. autoapi-nested-parse::
+
+   DiTMC -- graph-conditioned Diffusion Transformer conformer generator.
+
+   Frank, Ripken, Lied, Mueller, Unke, Chmiela. *Sampling 3D Molecular Conformers
+   with Diffusion Transformers.* NeurIPS 2025. arXiv:2506.15378.
+   Data + checkpoints: doi:10.5281/zenodo.15489212.
+
+   Unlike every other generator in this repo, DiTMC does **not** invent molecules:
+   you hand it a molecule you already have (atoms and bonds) and it returns 3D
+   conformers of exactly that molecule. No atom types, bonds or charges come out.
+
+   A faithful PyTorch port of all three published variants (``dit_ape``,
+   ``dit_rpe``, ``dit_so3``), including classifier-free guidance, self-conditioning
+   and sampler trajectories. The ``e3x`` surface ``dit_so3`` depends on is
+   reimplemented directly in ``modules/layers/e3x`` -- not substituted with e3nn,
+   whose irrep ordering and normalization would make the published checkpoints
+   unconvertible.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/ditmc/build/index
+   /autoapi/MolecularDiffusion/modules/models/ditmc/dit/index
+   /autoapi/MolecularDiffusion/modules/models/ditmc/embedding/index
+   /autoapi/MolecularDiffusion/modules/models/ditmc/flow_matching/index
+   /autoapi/MolecularDiffusion/modules/models/ditmc/graph_features/index
+   /autoapi/MolecularDiffusion/modules/models/ditmc/graphs/index
+   /autoapi/MolecularDiffusion/modules/models/ditmc/layers/index
+   /autoapi/MolecularDiffusion/modules/models/ditmc/meshgraphnet/index
+   /autoapi/MolecularDiffusion/modules/models/ditmc/priors/index
+   /autoapi/MolecularDiffusion/modules/models/ditmc/readout/index
+
+

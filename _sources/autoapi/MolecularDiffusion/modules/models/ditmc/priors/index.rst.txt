@@ -1,0 +1,93 @@
+MolecularDiffusion.modules.models.ditmc.priors
+==============================================
+
+.. py:module:: MolecularDiffusion.modules.models.ditmc.priors
+
+.. autoapi-nested-parse::
+
+   Priors for the flow-matching interpolant. Port of ``generative_process/priors.py``.
+
+   The harmonic prior is the default and the interesting one: it draws
+   :math:`x_0 = P\,\mathrm{diag}(1/\sqrt\lambda)\,z` where :math:`P, \lambda` are the
+   eigenvectors/values of the **bond-graph Laplacian**, so the prior sample is
+   already a plausible-looking chain rather than a Gaussian blob.
+
+   Upstream evaluates this as a segment sum over a complete per-molecule index grid
+   (``prior_senders = j``, ``prior_receivers = i``, ``edge_attr = P.flatten()``):
+
+       sample[i] = sum_j P[i][j] * D[j] * z[j]
+
+   which is exactly the matrix product above. The sparse form is kept here so the
+   batching is identical to upstream's, including the ``nan_to_num`` that zeroes
+   the :math:`\lambda = 0` modes -- **that** is what removes the centre of mass.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ditmc.priors.PRIORS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ditmc.priors.GaussianPrior
+   MolecularDiffusion.modules.models.ditmc.priors.HarmonicPrior
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ditmc.priors.build_prior
+
+
+Module Contents
+---------------
+
+.. py:class:: GaussianPrior(mu: float = 0.0, sigma: float = 1.0)
+
+   ``mu + sigma * N(0, 1)``. Ignores the graph entirely.
+
+
+   .. py:method:: sample(shape, graph_prior: MolecularDiffusion.modules.models.ditmc.graphs.PriorGraph | None = None, *, device=None, dtype=torch.float32, generator: torch.Generator | None = None) -> torch.Tensor
+
+
+   .. py:attribute:: mu
+      :value: 0.0
+
+
+
+   .. py:attribute:: name
+      :value: 'GaussianPrior'
+
+
+
+   .. py:attribute:: sigma
+      :value: 1.0
+
+
+
+.. py:class:: HarmonicPrior
+
+   Gaussian shaped by the bond-graph Laplacian's pseudo-inverse.
+
+
+   .. py:method:: sample(shape, graph_prior: MolecularDiffusion.modules.models.ditmc.graphs.PriorGraph, *, device=None, dtype=torch.float32, generator: torch.Generator | None = None) -> torch.Tensor
+
+
+   .. py:attribute:: name
+      :value: 'HarmonicPrior'
+
+
+
+.. py:function:: build_prior(name: str, **kwargs)
+
+.. py:data:: PRIORS
+

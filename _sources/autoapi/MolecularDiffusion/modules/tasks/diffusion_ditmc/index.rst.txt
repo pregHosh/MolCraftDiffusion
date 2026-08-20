@@ -1,0 +1,302 @@
+MolecularDiffusion.modules.tasks.diffusion_ditmc
+================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_ditmc
+
+.. autoapi-nested-parse::
+
+   DiTMC conformer-generation task (``task_type: diffusion_ditmc``).
+
+   Wraps ``modules/models/ditmc`` in the platform's duck-typed ``Task`` contract
+   (docs/adding_new_models.md 2.1) and adapts the ``graph3d`` PyG ``Batch``
+   (``bond_collate: raw``) into the three graphs DiTMC consumes.
+
+   **This model does not invent molecules.** You hand it a molecule you already
+   have -- its atoms and its bonds -- and it returns 3D conformers of exactly that
+   molecule. Nothing about the composition is generated, so:
+
+   * :meth:`DiTMCTask.sample` **raises**. There is no unconditional mode: without a
+     molecular graph there is nothing to place in 3D, and the platform's
+     ``(one_hot, charges, coords, node_mask)`` return contract has no meaning here.
+     Generation goes through :class:`DiTMCConformerGenerator`, pointed at by
+     ``configs/interference/gen_ditmc_conformers.yaml`` -- the same route
+     ``gen_diffdec_scaffold.yaml`` and ``gen_apo2mol_pocket.yaml`` take.
+   * ``node_dist_model`` / ``n_node_dist`` are deliberately absent. They exist to
+     let ``GenerativeFactory`` choose a molecule size; DiTMC's size is dictated by
+     the input molecule.
+
+   Bond mapping (canonical -> DiTMC): ``ditmc_class = canonical_class - 1``, so
+   ``1=SINGLE -> 0``, ``2=DOUBLE -> 1``, ``3=TRIPLE -> 2``, ``4=AROMATIC -> 3``.
+   Canonical class 0 ("no bond") is simply never an edge of the conditioner graph,
+   which is exactly the platform's storage rule -- a pass-through. **Do not set
+   ``kekulize: true``**: upstream trains on RDKit's aromatic perception and
+   aromatic is a real class in its 4-wide vocabulary.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_ditmc.ModelTaskFactory
+   MolecularDiffusion.modules.tasks.diffusion_ditmc.N_BOND_CLASSES
+   MolecularDiffusion.modules.tasks.diffusion_ditmc.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_ditmc.DiTMCConformerGenerator
+   MolecularDiffusion.modules.tasks.diffusion_ditmc.DiTMCTask
+   MolecularDiffusion.modules.tasks.diffusion_ditmc.DiTMCTaskFactory
+   MolecularDiffusion.modules.tasks.diffusion_ditmc.Graph3DBatchToDiTMCAdapter
+
+
+Module Contents
+---------------
+
+.. py:class:: DiTMCConformerGenerator(task: Any, smiles: Any = None, db_path: str | None = None, indices: Any = None, num_generate: int = 5, batch_size: int = 8, num_steps: int = 50, free_guidance_scale: float = 1.0, logarithmic_time_bool: bool = False, use_chirality_correction: bool = False, n_frames: int = 0, max_atom: int = 200, seed: int = 42, device: str | None = None, output_path: str = 'generated_ditmc')
+
+   Generate conformers of molecules you supply.
+
+   ``cli/generate.py`` does ``instantiate(cfg.interference, task=task)`` then
+   ``.run()``, so every key in the interference YAML lands in ``__init__``.
+
+   Inputs, in priority order: ``smiles`` (a string, a list, or a path to a file
+   with one SMILES per line) or ``db_path`` (a graph3d ASE db) + ``indices``.
+   SMILES are embedded with RDKit **only to get atoms and bonds** -- never
+   coordinates; the coordinates are what the model produces.
+
+
+   .. py:method:: run() -> str
+
+
+   .. py:attribute:: batch_size
+      :value: 8
+
+
+
+   .. py:attribute:: db_path
+      :value: None
+
+
+
+   .. py:attribute:: device
+
+
+   .. py:attribute:: free_guidance_scale
+      :value: 1.0
+
+
+
+   .. py:attribute:: indices
+      :value: None
+
+
+
+   .. py:attribute:: logarithmic_time_bool
+      :value: False
+
+
+
+   .. py:attribute:: max_atom
+      :value: 200
+
+
+
+   .. py:attribute:: n_frames
+      :value: 0
+
+
+
+   .. py:attribute:: num_generate
+      :value: 5
+
+
+
+   .. py:attribute:: num_steps
+      :value: 50
+
+
+
+   .. py:attribute:: output_path
+      :value: 'generated_ditmc'
+
+
+
+   .. py:attribute:: seed
+      :value: 42
+
+
+
+   .. py:attribute:: smiles
+      :value: None
+
+
+
+   .. py:attribute:: task
+
+
+   .. py:attribute:: use_chirality_correction
+      :value: False
+
+
+
+.. py:class:: DiTMCTask(variant: str, dataset: str, model_kwargs: dict, flow_kwargs: dict, prior: str = 'harmonic', augmentation_bool: bool = True, atom_vocab: list | None = None, task_type: str = 'diffusion_ditmc')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   DiTMC in the platform's Task contract.
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor)
+
+
+   .. py:method:: forward(batch: Any)
+
+
+   .. py:method:: generate_conformers(items: list, *, num_steps: int = 50, free_guidance_scale: float = 1.0, logarithmic_time_bool: bool = False, return_trajectory: bool = False, generator: torch.Generator | None = None)
+
+
+   .. py:method:: predict_and_target(batch: Any, all_loss=None, metric=None)
+
+
+   .. py:method:: sample(*args, **kwargs)
+
+
+   .. py:attribute:: adapter
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: augmentation_bool
+      :value: True
+
+
+
+   .. py:attribute:: dataset
+
+
+   .. py:property:: device
+      :type: torch.device
+
+
+
+   .. py:property:: model
+      :type: DiTMCTask
+
+
+
+   .. py:attribute:: net
+
+
+   .. py:attribute:: process
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_ditmc'
+
+
+
+   .. py:attribute:: variant
+
+
+.. py:class:: DiTMCTaskFactory(task_type: str = 'diffusion_ditmc', variant: str = 'so3', dataset: str = 'qm9', model: dict | None = None, flow: dict | None = None, prior: str = 'harmonic', augmentation_bool: bool = True, atom_vocab: list | None = None, **kwargs: Any)
+
+   Factory instantiated by ``cli/train.py``.
+
+   ``train_set`` is deliberately **not** declared: DiTMC needs no dataset
+   statistics at construction (no marginals, no valency table, no size
+   histogram), so the declarative injection seam simply does not fire.
+
+
+   .. py:method:: build() -> DiTMCTask
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: augmentation_bool
+      :value: True
+
+
+
+   .. py:attribute:: dataset
+      :value: 'qm9'
+
+
+
+   .. py:attribute:: flow_kwargs
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: model_kwargs
+
+
+   .. py:attribute:: prior
+      :value: 'harmonic'
+
+
+
+   .. py:attribute:: task
+      :type:  DiTMCTask | None
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_ditmc'
+
+
+
+   .. py:attribute:: variant
+      :value: 'so3'
+
+
+
+.. py:class:: Graph3DBatchToDiTMCAdapter(dataset: str = 'qm9')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   One ``graph3d`` PyG ``Batch`` -> ``(LatentGraph, CondGraph, PriorGraph)``.
+
+   Everything derived per molecule (``node_attr``, shortest hops, the Laplacian
+   eigendecomposition) is cached by SMILES, exactly as upstream caches it at
+   dataset-build time.
+
+   The one featurization column that is *derived* rather than copied is the
+   chiral tag: upstream reads it off the GEOM mol, and here it is recovered by
+   RDKit from the stored coordinates. It is the first thing to check if a
+   converted pretrained checkpoint underperforms.
+
+
+   .. py:method:: build(items: list, device=None)
+
+
+   .. py:method:: forward(batch: Any)
+
+
+   .. py:attribute:: cache
+
+
+   .. py:attribute:: dataset
+      :value: 'qm9'
+
+
+
+.. py:data:: ModelTaskFactory
+
+.. py:data:: N_BOND_CLASSES
+   :value: 4
+
+
+.. py:data:: logger
+

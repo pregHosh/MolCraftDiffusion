@@ -1,0 +1,66 @@
+MolecularDiffusion.modules.layers.e3x.radial
+============================================
+
+.. py:module:: MolecularDiffusion.modules.layers.e3x.radial
+
+.. autoapi-nested-parse::
+
+   Radial basis functions and the radial-angular ``basis`` wrapper.
+
+   Only the families DiTMC's shipped configs reach are ported:
+   ``reciprocal_bernstein`` (``dit_so3``) and ``basic_fourier`` (``dit_rpe``'s
+   optional ``rpe_radial_basis_bool``, off in every shipped config but kept for
+   completeness). Port of ``e3x/nn/functions/{bernstein,trigonometric,mappings}.py``
+   and ``e3x/nn/wrappers.basis``.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.e3x.radial.basic_fourier
+   MolecularDiffusion.modules.layers.e3x.radial.basis
+   MolecularDiffusion.modules.layers.e3x.radial.get_radial_fn
+   MolecularDiffusion.modules.layers.e3x.radial.reciprocal_bernstein
+   MolecularDiffusion.modules.layers.e3x.radial.reciprocal_mapping
+
+
+Module Contents
+---------------
+
+.. py:function:: basic_fourier(x: torch.Tensor, num: int, limit: float = 1.0) -> torch.Tensor
+
+   ``cos(k·π·x/limit)`` for ``k = 0..num-1``.
+
+   ``k`` starts at **0**, so channel 0 is the constant 1. No normalization
+   constant.
+
+
+.. py:function:: basis(r: torch.Tensor, *, max_degree: int, num: int, radial_fn, cutoff_fn=None) -> torch.Tensor
+
+   Radial-angular basis, ``(..., 1, (L+1)**2, num)``.
+
+   **Angular on axis -2, radial on axis -1** -- transposing these two is the
+   classic silent bug. A parity axis of size 1 is appended at -3; ``basis``
+   never emits ``P = 2``.
+
+   ``dit_so3`` sets ``cutoff_fn: null`` and the factory raises if a cutoff is
+   given, so no cutoff function is ever applied in practice.
+
+
+.. py:function:: get_radial_fn(name: str)
+
+.. py:function:: reciprocal_bernstein(x: torch.Tensor, num: int, kind: str = 'shifted', use_reciprocal_weighting: bool = False) -> torch.Tensor
+
+   ``_bernstein(1 - reciprocal_mapping(x), num)``.
+
+   DiTMC's ``dit_so3`` calls this with ``num=64`` and both defaults.
+
+
+.. py:function:: reciprocal_mapping(x: torch.Tensor, kind: str = 'shifted') -> torch.Tensor
+
+   Map ``[0, inf)`` to ``(0, 1]``. ``'shifted'`` is ``1/(x+1)``.
+
+

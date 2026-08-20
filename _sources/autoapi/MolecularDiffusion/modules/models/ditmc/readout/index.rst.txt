@@ -1,0 +1,111 @@
+MolecularDiffusion.modules.models.ditmc.readout
+===============================================
+
+.. py:module:: MolecularDiffusion.modules.models.ditmc.readout
+
+.. autoapi-nested-parse::
+
+   Readouts. Port of ``dit_mc/backbones/readout.py``.
+
+   Note a quirk that is reproduced deliberately: neither readout applies
+   ``cond_scaling``. The conditioner's features enter the readout **unscaled**,
+   so classifier-free guidance does not zero them here even when it zeroes them in
+   every DiT block. That is upstream behaviour.
+
+   Neither readout branches on ``act_dense_correct_bool`` either -- both always
+   use ``act_fn(Dense(c))``.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.ditmc.readout.EquivariantReadout
+   MolecularDiffusion.modules.models.ditmc.readout.SimpleReadout
+
+
+Module Contents
+---------------
+
+.. py:class:: EquivariantReadout(num_features: int, activation_fn: str, output: str = 'drift_and_noise', in_max_degree: int = 1, in_num_parity: int = 2)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   SO(3)-equivariant readout (``dit_so3``).
+
+   ``y[:, 0] + y[:, 1]`` deliberately mixes the even and odd parity blocks --
+   it breaks O(3) but leaves the output SO(3)-equivariant, which is what a
+   coordinate model needs. The ``l=1`` block (indices 1:4) is the answer;
+   index 0 (the scalar) is discarded.
+
+
+   .. py:method:: forward(features_nodes: torch.Tensor, features_time: torch.Tensor, features_cond: torch.Tensor | None = None)
+
+
+   .. py:attribute:: act_fn
+
+
+   .. py:attribute:: ada_dense
+
+
+   .. py:attribute:: cond_norm
+
+
+   .. py:attribute:: head
+
+
+   .. py:attribute:: in_max_degree
+      :value: 1
+
+
+
+   .. py:attribute:: in_num_parity
+      :value: 2
+
+
+
+   .. py:attribute:: norm
+
+
+   .. py:attribute:: num_features
+
+
+   .. py:attribute:: output
+      :value: 'drift_and_noise'
+
+
+
+.. py:class:: SimpleReadout(num_features: int, activation_fn: str, output: str = 'drift_and_noise')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Non-equivariant readout (``dit_ape`` / ``dit_rpe``).
+
+
+   .. py:method:: forward(features_nodes: torch.Tensor, features_time: torch.Tensor, features_cond: torch.Tensor | None = None)
+
+
+   .. py:attribute:: act_fn
+
+
+   .. py:attribute:: ada_dense
+
+
+   .. py:attribute:: head
+
+
+   .. py:attribute:: norm
+
+
+   .. py:attribute:: num_features
+
+
+   .. py:attribute:: output
+      :value: 'drift_and_noise'
+
+
+

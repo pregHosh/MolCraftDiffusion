@@ -1,0 +1,86 @@
+MolecularDiffusion.modules.layers.e3x.features
+==============================================
+
+.. py:module:: MolecularDiffusion.modules.layers.e3x.features
+
+.. autoapi-nested-parse::
+
+   Shape/parity bookkeeping for e3x rank-4 feature tensors.
+
+   Every equivariant tensor is ``(..., P, (L+1)**2, F)``:
+
+   * axis ``-3`` -- **parity**, size 1 or 2. Index ``0`` is even (``p = +1``),
+     index ``1`` is odd (``p = -1``).
+   * axis ``-2`` -- **degree/order**, size ``(L+1)**2``, degree ``l`` occupying the
+     contiguous slice ``[l**2, (l+1)**2)``, degrees ascending.
+   * ``P = 1`` is the "proper tensors only" form: parity is implicit,
+     ``p = (-1)**l``.
+   * axis ``-1`` -- features.
+
+   Port of ``e3x/nn/features.py``.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.e3x.features.add
+   MolecularDiffusion.modules.layers.e3x.features.broadcast_equivariant_multiplication
+   MolecularDiffusion.modules.layers.e3x.features.change_max_degree_or_type
+   MolecularDiffusion.modules.layers.e3x.features.extract_max_degree
+   MolecularDiffusion.modules.layers.e3x.features.promote_to_e3x
+   MolecularDiffusion.modules.layers.e3x.features.reflect
+
+
+Module Contents
+---------------
+
+.. py:function:: add(*inputs: torch.Tensor) -> torch.Tensor
+
+   Union-broadcast addition of equivariant features.
+
+   ``L = max(L_i)``, ``P = 2`` if any operand has ``P = 2``; smaller operands
+   are **zero-padded up**, never truncated. Raises on batch/feature/dtype
+   mismatch rather than silently broadcasting a size-1 axis, which is the
+   whole point of the function existing.
+
+
+.. py:function:: broadcast_equivariant_multiplication(factor: torch.Tensor, tensor: torch.Tensor) -> torch.Tensor
+
+   Per-``(parity, degree)`` scaling of an equivariant tensor.
+
+   ``factor`` is ``(n, P, L+1, F)`` (one value per degree), ``tensor`` is
+   ``(n, P, (L+1)**2, F)``. Port of
+   ``backbones/utils.broadcast_equivariant_multiplication``.
+
+
+.. py:function:: change_max_degree_or_type(x: torch.Tensor, max_degree: int | None = None, include_pseudotensors: bool | None = None) -> torch.Tensor
+
+   Pad with zeros / slice away degree and parity channels.
+
+   Growing ``max_degree`` zero-pads axis -2; shrinking it slices. ``P=1 -> 2``
+   routes even degrees into the even block and odd degrees into the odd block,
+   zeros elsewhere; ``P=2 -> 1`` keeps the proper-tensor slot ``l % 2`` of each
+   degree.
+
+
+.. py:function:: extract_max_degree(shape) -> int
+
+   ``max_degree`` from a feature shape, with e3x's validity checks.
+
+
+.. py:function:: promote_to_e3x(x: torch.Tensor) -> torch.Tensor
+
+   ``(n, F) -> (n, 1, 1, F)``. Port of ``backbones/utils.promote_to_e3x``.
+
+
+.. py:function:: reflect(x: torch.Tensor) -> torch.Tensor
+
+   Apply a parity inversion to equivariant features.
+
+   ``P=2``: negate the odd-parity block. ``P=1``: negate the odd-``l`` blocks.
+   Used only by the fidelity suite.
+
+
