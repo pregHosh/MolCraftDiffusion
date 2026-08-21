@@ -77,14 +77,6 @@ Classes
    MolecularDiffusion.modules.tasks.diffusion_loqi.ModelTaskFactory
 
 
-Functions
----------
-
-.. autoapisummary::
-
-   MolecularDiffusion.modules.tasks.diffusion_loqi.load_conditioning_pool
-
-
 Module Contents
 ---------------
 
@@ -321,17 +313,6 @@ Module Contents
    .. py:attribute:: train_set
       :value: None
 
-
-
-.. py:function:: load_conditioning_pool(sample_input: str | collections.abc.Sequence[str], atom_vocab: list[str], limit: int | None = None) -> list[torch_geometric.data.Data]
-
-   Load conditioning molecules.
-
-   ``sample_input`` is either a path -- ``.sdf``, ``.smi``/``.txt``, or an
-   ASE ``.db`` written by the graph3d converter -- or a plain list of
-   SMILES strings given inline in the generate config.
-
-   Both SMILES forms go through :func:`_pool_from_smiles`.
 
 
 .. py:data:: CHARGE_OFFSET

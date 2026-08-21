@@ -1,0 +1,138 @@
+MolecularDiffusion.modules.models.nextmol.dgt
+=============================================
+
+.. py:module:: MolecularDiffusion.modules.models.nextmol.dgt
+
+.. autoapi-nested-parse::
+
+   DMT -- the Diffusion Molecular Transformer, NExT-Mol's 3D half.
+
+   Ported from ``others/NExT-Mol/model/diffusion_model_dgt.py`` (``DGTDiffusion``).
+   A relational graph transformer over the **fully connected** node-pair graph with
+   paired node and edge tracks, Gaussian-basis distance edge features, adaLN-style
+   time modulation, and an MLP head that predicts the position noise.
+
+   **Only coordinates are diffused.** ``x`` (atom features) and ``edge_attr`` (bond
+   one-hots) are fixed conditioning on every forward and every sampling step.
+
+   Deliberately not ported (all "explicitly out of scope" in INTEGRATION_PLAN.md,
+   and none of them appear in the released checkpoints' 275 tensors):
+
+   * ``enable_equiv`` / ``use_original_dgt`` -- the equivariant-coordinate-update
+     variants (``CondEquiUpdate``, ``CoorsNorm``, ``dist_gbf2``). Dead for the
+     released weights, which set both False.
+   * ``use_llm`` / ``llm_cond`` / ``delta_train`` -- MoLlama hidden states as extra
+     node features (``ExtendedProjector``, ``projector``). A different use of the
+     LM than the de-novo pipeline, and the path with no published weights.
+   * ``context`` property conditioning (``cond_mlp`` / ``cond_lin`` and the EGNN
+     MAE classifier). Note these two submodules are built unconditionally upstream
+     but are **absent from the released checkpoints**, so keeping them here would
+     make every conversion report bogus missing keys.
+   * ``torch.compile`` decorators and the AMD-GPU probe
+     (``torch.cuda.get_device_name(0)`` at import time, which raises on a CPU-only
+     box). Pure speed, no numerics.
+
+   The module tree below is otherwise **name-for-name** with upstream, which is
+   what makes checkpoint conversion a plain ``diffusion_model.`` -> ``net.`` prefix
+   swap with zero dropped tensors.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.nextmol.dgt.DGTDiffusion
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.nextmol.dgt.coord2dist
+   MolecularDiffusion.modules.models.nextmol.dgt.get_align_noise
+   MolecularDiffusion.modules.models.nextmol.dgt.kabsch_batch
+   MolecularDiffusion.modules.models.nextmol.dgt.remove_mean
+   MolecularDiffusion.modules.models.nextmol.dgt.sample_com_rand_pos
+
+
+Module Contents
+---------------
+
+.. py:class:: DGTDiffusion(in_node_features: int = 44, in_edge_features: int = 4, hidden_size: int = 512, n_blocks: int = 10, n_heads: int = 8, dropout: float = 0.1, mlp_ratio: int = 4, disable_com: bool = True, not_pair_update: bool = False, fuse_qkv: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Predicts the position noise (and the implied clean positions).
+
+   ``forward(data) -> (pred_pos, pred_noise)``, where ``data`` is a PyG
+   ``Batch`` carrying ``x, pos, edge_index, edge_attr, batch, smiles,
+   max_seqlen, t_cond, alpha_t, sigma_t``.
+
+   Sizes: DMT-B = ``hidden_size 512, n_blocks 10``; DMT-L = ``768 / 12``.
+
+
+   .. py:method:: forward(data)
+
+
+   .. py:attribute:: disable_com
+      :value: True
+
+
+
+   .. py:attribute:: dist_gbf
+
+
+   .. py:attribute:: edge_emb
+
+
+   .. py:attribute:: final_linear
+
+
+   .. py:attribute:: n_blocks
+      :value: 10
+
+
+
+   .. py:attribute:: node_emb
+
+
+   .. py:attribute:: pair_update
+      :value: True
+
+
+
+   .. py:attribute:: time_mlp
+
+
+.. py:function:: coord2dist(x: torch.Tensor, edge_index: torch.Tensor) -> torch.Tensor
+
+   Squared interatomic distance per edge -- upstream's edge distance feat.
+
+
+.. py:function:: get_align_noise(pos_t: torch.Tensor, pos_0: torch.Tensor, alpha_t: torch.Tensor, sigma_t: torch.Tensor, batch_mask: torch.Tensor | None = None, translation_correction: bool = False) -> torch.Tensor
+
+   Rotation-aligned epsilon target (``model/diffusion_pl.py:136``).
+
+   ``align_prediction`` is not ported: it is False for every released
+   checkpoint (``get_noise_loss`` is only ever called with the default).
+
+
+.. py:function:: kabsch_batch(coords_pred: torch.Tensor, coords_tar: torch.Tensor) -> torch.Tensor
+
+   Batched Kabsch rotation (``model/diffusion_pl.py:107``).
+
+
+.. py:function:: remove_mean(pos: torch.Tensor, batch: torch.Tensor) -> torch.Tensor
+
+   Subtract the per-molecule centre of mass from a flat ``(sum N_i, 3)``.
+
+
+.. py:function:: sample_com_rand_pos(pos_shape, batch: torch.Tensor) -> torch.Tensor
+
+   COM-free Gaussian noise (``diffusion_data_module.py:23``).
+
+

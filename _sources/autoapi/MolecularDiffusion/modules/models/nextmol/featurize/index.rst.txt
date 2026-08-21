@@ -1,0 +1,84 @@
+MolecularDiffusion.modules.models.nextmol.featurize
+===================================================
+
+.. py:module:: MolecularDiffusion.modules.models.nextmol.featurize
+
+.. autoapi-nested-parse::
+
+   Upstream's RDKit node/edge featurization (``mol_utils/featurization.py``).
+
+   ``featurize_mol`` produces the exact ``x`` layout DMT was trained on. Getting a
+   single column wrong is silent: the model still runs and still emits plausible
+   coordinates.
+
+   Layout of ``x`` (QM9: 5 + 39 = 44 columns; GEOM-Drugs: 35 + 39 = 74):
+
+   ===========  =====  ===========================================================
+   columns      width  content
+   ===========  =====  ===========================================================
+   0..T         |T|    atom-symbol one-hot over ``qm9_types`` / ``drugs_types``
+   +0            1     atomic number, as a RAW INTEGER (not one-hot, not scaled)
+   +1            1     is-aromatic flag
+   +2..+9        8     degree, ``one_k_encoding(.., [0..6])`` -> 7 + 1 catch-all
+   +10..+15      6     hybridization over SP/SP2/SP3/SP3D/SP3D2 -> 5 + 1
+   +16..+23      8     implicit valence over [0..6] -> 7 + 1
+   +24..+27      4     FORMAL CHARGE over [-1, 0, +1] -> 3 + 1 catch-all
+   +28..+33      6     in-ring-of-size 3,4,5,6,7,8 flags
+   +34..+38      5     number of rings the atom is in, over [0,1,2,3] -> 4 + 1
+   ===========  =====  ===========================================================
+
+   ``one_k_encoding`` puts anything outside ``choices`` in the LAST slot, which is
+   how a formal charge of, say, +2 is represented -- there is no separate charge
+   head, charges are input-only conditioning.
+
+   Bond classes are upstream's four: ``SINGLE=0, DOUBLE=1, TRIPLE=2, AROMATIC=3``.
+   "No bond" is NOT class 0 -- it is the all-zero 4-vector that
+   ``to_dense_adj`` leaves on every non-bonded node pair. The platform's canonical
+   vocabulary maps onto it as ``nextmol_col = canonical_class - 1``, a pass-through
+   of the "class 0 is never materialized" storage rule.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.nextmol.featurize.BOND_CLASSES
+   MolecularDiffusion.modules.models.nextmol.featurize.drugs_types
+   MolecularDiffusion.modules.models.nextmol.featurize.qm9_types
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.nextmol.featurize.atom_types_for
+   MolecularDiffusion.modules.models.nextmol.featurize.featurize_mol
+
+
+Module Contents
+---------------
+
+.. py:function:: atom_types_for(dataset: str) -> dict
+
+   ``'qm9' | 'drugs'`` -> the symbol->index map DMT was trained with.
+
+
+.. py:function:: featurize_mol(mol, types=drugs_types)
+
+   RDKit mol -> ``(x, z, edge_index, edge_attr)``.
+
+   ``edge_index`` is **directed, both directions** ``(2, 2E)`` over real bonds
+   only, with the same ``edge_attr`` on both -- which is how upstream enforces
+   bond symmetry. There is no symmetry assertion anywhere downstream, so an
+   unmirrored edge list would silently produce an asymmetric dense adjacency.
+
+
+.. py:data:: BOND_CLASSES
+
+.. py:data:: drugs_types
+
+.. py:data:: qm9_types
+

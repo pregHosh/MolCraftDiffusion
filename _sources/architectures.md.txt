@@ -27,6 +27,7 @@ freely.
 | `diffusion_flowmol.yaml` | `diffusion_flowmol` | FlowMol (SE(3)-equivariant GVP) | The earlier, smaller FlowMol: no bonds, and trained for neutral molecules. Use FlowMol3 below unless you have a reason not to. |
 | `diffusion_midi.yaml` | `diffusion_midi` | MiDi (relational graph transformer with equivariant coordinate updates) | The one that **draws the bonds for you**. Everything above gives you atoms in space and leaves you to guess the chemistry afterwards; this one hands you a finished molecule. Best on small, QM9-like molecules. Two things to know: it needs a bond-aware dataset built in advance, and you must ask for SDF output or the bonds are thrown away. |
 | `diffusion_flowmol_graph3d.yaml` | `diffusion_flowmol_graph3d` | FlowMol3 (SE(3)-equivariant GVP, CTMC discrete flow matching) | Same idea as MiDi, but for **drug-sized molecules** — pick MiDi instead when your molecules are small. It trims the atom count you ask for but never exceeds it. Most setup work of anything here: you build the drug-scale dataset yourself, and you must ask for SDF output or the bonds are thrown away. |
+| `diffusion_nextmol.yaml` | `diffusion_nextmol` | NExT-Mol (MoLlama language model + DMT diffusion transformer) | The one that **writes the molecule down before building it in 3D** — a language model proposes the molecule, then diffusion places it in space, so you can read and filter the molecule list before any 3D work starts. Two things to know: the molecules follow general drug-like chemistry rather than your dataset, and anything containing S, Cl or Br is dropped and reported. |
 
 ## 2. Latent-space diffusion (two-stage)
 
@@ -78,6 +79,7 @@ it moved from the structure you supplied.
 | :--- | :--- | :--- |
 | `diffusion_loqi_flow.yaml` | `diffusion_loqi_flow` | **Start here.** Hand it a structure and it gives back realistic, low-energy 3D shapes of that same molecule, keeping the left/right-handedness and double-bond geometry you drew. Reach for it when the quick built-in conformer tools are not good enough — flexible molecules, large rings, and anything you are about to dock or minimise. You can dial sampling up for quality or down for speed. |
 | `diffusion_loqi.yaml` | `diffusion_loqi` | The same model trained a different way. Slightly rougher structures than the above and fixed to one sampling setting, so prefer the flow version unless you specifically want this checkpoint. |
+| `diffusion_ditmc.yaml` | `diffusion_ditmc` | A transformer alternative to the two above, worth a second opinion on floppy molecules. Give it a molecule and it returns 3D poses of exactly that molecule. Nothing ready-made comes with it, so you must train it first — on a multi-conformer set — and start with LoQi if you cannot. |
 
 ## 5. Transition-metal complex generation
 
@@ -162,6 +164,12 @@ Backbones and objectives integrated here are based on the following work.
 - **EquiFM** — Song, Gong, Xu, Cao, Lan, Ermon, Zhou & Ma. *Equivariant Flow
   Matching with Hybrid Probability Transport for 3D Molecule Generation.*
   NeurIPS 2023. [arXiv:2312.07168](https://arxiv.org/abs/2312.07168)
+- **NExT-Mol** — Liu, Luo, Huang, Zhang, Li, Fang, Shi, Wang, Kawaguchi &
+  Chua. *NExT-Mol: 3D Diffusion Meets 1D Language Modeling for 3D Molecule
+  Generation.* ICLR 2025. [arXiv:2502.12638](https://arxiv.org/abs/2502.12638)
+  — pairs the paper's own DMT relational graph transformer, which diffuses
+  coordinates onto a fixed 2D graph, with the released MoLlama SELFIES
+  language model that writes that graph.
 - **GeoLDM** — Xu, Powers, Dror, Ermon & Leskovec. *Geometric Latent
   Diffusion Models for 3D Molecule Generation.* ICML 2023. [arXiv:2305.01140](https://arxiv.org/abs/2305.01140)
 - **ADiT** — Joshi et al. *All-atom Diffusion Transformers: Unified generative
@@ -237,3 +245,8 @@ Backbones and objectives integrated here are based on the following work.
   — built on the **Megalodon** co-design architecture: Reidenbach, Nikitin,
   Isayev & Paliwal, *Applications of Modular Co-Design for De Novo 3D Molecule
   Generation*, 2025 ([arXiv:2505.18392](https://arxiv.org/abs/2505.18392)).
+- **DiTMC** — Frank, Ripken, Lied, Müller, Unke & Chmiela. *Sampling 3D
+  Molecular Conformers with Diffusion Transformers.* NeurIPS 2025.
+  [arXiv:2506.15378](https://arxiv.org/abs/2506.15378) — like **ADiT** (above)
+  it builds on the **DiT** backbone of Peebles & Xie, here conditioned on the
+  input molecule's bond graph rather than generating composition.

@@ -1,0 +1,85 @@
+MolecularDiffusion.modules.models.nextmol.scheduler
+===================================================
+
+.. py:module:: MolecularDiffusion.modules.models.nextmol.scheduler
+
+.. autoapi-nested-parse::
+
+   Continuous-time VP noise schedule (``NoiseScheduleVPV2``, DPM-Solver).
+
+   Ported from ``others/NExT-Mol/data_provider/diffusion_scheduler.py:24``.
+
+   Only the ``cosine`` and ``linear`` branches are here. The ``discrete`` /
+   ``discrete_poly`` branches need a 1000-step table and an interpolation helper,
+   and every released DMT checkpoint was trained with ``noise_scheduler: cosine``
+   and ``discrete_schedule: False`` -- so porting them would be dead code today.
+   Note the cosine schedule's ``T = 0.9946``, not 1.0: t=1 has numerical issues.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.nextmol.scheduler.NoiseScheduleVPV2
+
+
+Module Contents
+---------------
+
+.. py:class:: NoiseScheduleVPV2(schedule: str = 'cosine', continuous_beta_0: float = 0.1, continuous_beta_1: float = 20.0, discrete_mode: bool = False)
+
+   ``marginal_prob(t) -> (alpha_t, sigma_t)`` for a VP forward SDE.
+
+
+   .. py:method:: marginal_alpha(t)
+
+
+   .. py:method:: marginal_log_mean_coeff(t)
+
+
+   .. py:method:: marginal_prob(t)
+
+
+   .. py:method:: marginal_std(t)
+
+
+   .. py:attribute:: T
+      :value: 0.9946
+
+
+
+   .. py:attribute:: beta_0
+      :value: 0.1
+
+
+
+   .. py:attribute:: beta_1
+      :value: 20.0
+
+
+
+   .. py:attribute:: cosine_log_alpha_0
+
+
+   .. py:attribute:: cosine_s
+      :value: 0.008
+
+
+
+   .. py:attribute:: discrete_mode
+      :value: False
+
+
+
+   .. py:attribute:: schedule
+      :value: 'cosine'
+
+
+
+   .. py:attribute:: total_N
+      :value: 1000
+
+
+

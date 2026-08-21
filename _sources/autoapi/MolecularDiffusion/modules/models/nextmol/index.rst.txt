@@ -1,0 +1,29 @@
+MolecularDiffusion.modules.models.nextmol
+=========================================
+
+.. py:module:: MolecularDiffusion.modules.models.nextmol
+
+.. autoapi-nested-parse::
+
+   NExT-Mol: 3D diffusion (DMT) meets 1D language modeling (MoLlama).
+
+   Liu*, Luo*, Huang et al., *NExT-Mol: 3D Diffusion Meets 1D Language Modeling
+   for 3D Molecule Generation*, ICLR 2025 (arXiv:2502.12638).
+
+   The two halves are fully decoupled -- their only interface is a flat list of
+   SMILES. :mod:`mollama` writes the molecule down; :mod:`dgt` places it in 3D.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/nextmol/dgt/index
+   /autoapi/MolecularDiffusion/modules/models/nextmol/featurize/index
+   /autoapi/MolecularDiffusion/modules/models/nextmol/mollama/index
+   /autoapi/MolecularDiffusion/modules/models/nextmol/scheduler/index
+
+

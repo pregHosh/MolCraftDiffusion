@@ -38,15 +38,32 @@ MolecularDiffusion.runmodes.generate.tasks_conformer
 
    TASK CONTRACT (duck-typed, no registry, no base class)
 
-       A task works with this mode if it exposes:
+       A task works with this mode if it exposes ONE of:
 
-       * ``conditioning_pool() -> list[Data]`` -- the input molecules, as
-         ``graph3d`` per-item ``Data`` (``pos``, ``z``, ``atom_idx``, ``fc``,
-         ``bond_index``, ``bond_type``, ``n_nodes``);
-       * ``sample(mols=[...])`` -- generate one conformer per entry of ``mols``,
-         returning the platform tuple ``(one_hot, charges, coords, node_mask)``.
+       * ``generate_conformers(items, **sampler_kwargs)`` -- returns
+         ``(positions, batch_segments)``, flat and concatenated, coordinates
+         only. Preferred, and what a model whose de-novo ``sample()`` cannot
+         exist implements (DiTMC, NExT-Mol);
+       * ``sample(mols=[...])`` -- one conformer per entry of ``mols``,
+         returning the platform tuple ``(one_hot, charges, coords, node_mask)``
+         (LoQI).
 
        Anything else raises a clear TypeError at construction.
+
+       The input molecules come from either:
+
+       * ``interference.sample_input`` -- THE standard: a ``.sdf``, a
+         ``.smi``/``.txt``, a graph3d ASE ``.db``, or an inline SMILES list,
+         loaded by ``utils/conformer_pool.load_conditioning_pool``. A model
+         needs no pool code of its own; or
+       * ``conditioning_pool() -> list[Data]`` on the task -- the older seam,
+         still honoured (LoQI takes its pool from ``tasks.sample_input`` so it
+         can also fall back to the training set).
+
+       ``sampler_kwargs`` is an opaque dict forwarded to
+       ``generate_conformers``. Per-model knobs (``num_steps``,
+       ``free_guidance_scale``, ...) go there, so this config never accretes the
+       union of every model's hyperparameters.
 
    OUTPUT LAYOUT
 
@@ -110,7 +127,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: ConformerFactory(task: Any, conformers_per_molecule: int = 10, batch_size: int = 8, max_molecules: int = 0, rmsd_threshold: float = 0.5, xtb_energy: bool = False, seed: int | None = None, output_path: str = 'generated_conformers', **kwargs: Any)
+.. py:class:: ConformerFactory(task: Any, conformers_per_molecule: int = 10, batch_size: int = 8, max_molecules: int = 0, rmsd_threshold: float = 0.5, xtb_energy: bool = False, seed: int | None = None, output_path: str = 'generated_conformers', sample_input: Any = None, indices: Any = None, sampler_kwargs: Any = None, **kwargs: Any)
 
    Generate ``conformers_per_molecule`` conformers of every input molecule.
 
@@ -130,6 +147,11 @@ Module Contents
 
 
 
+   .. py:attribute:: indices
+      :value: None
+
+
+
    .. py:attribute:: max_molecules
       :value: 0
 
@@ -141,6 +163,14 @@ Module Contents
 
 
    .. py:attribute:: rmsd_threshold
+
+
+   .. py:attribute:: sample_input
+      :value: None
+
+
+
+   .. py:attribute:: sampler_kwargs
 
 
    .. py:attribute:: seed

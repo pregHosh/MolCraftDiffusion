@@ -350,6 +350,7 @@
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../utils/index.html">MolecularDiffusion.utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../utils/comm/index.html">MolecularDiffusion.utils.comm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../utils/conformer_pool/index.html">MolecularDiffusion.utils.conformer_pool</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../utils/diffusion_utils/index.html">MolecularDiffusion.utils.diffusion_utils</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../utils/file/index.html">MolecularDiffusion.utils.file</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../utils/geom_analyzer/index.html">MolecularDiffusion.utils.geom_analyzer</a></li>
@@ -547,18 +548,6 @@ dataset to carry one – a separate change.</p>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_loqi.ModelTaskFactory" title="MolecularDiffusion.modules.tasks.diffusion_loqi.ModelTaskFactory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModelTaskFactory</span></code></a></p></td>
 <td><p>Instantiated by <code class="docutils literal notranslate"><span class="pre">cli/train.py</span></code> / <code class="docutils literal notranslate"><span class="pre">cli/generate.py</span></code> from Hydra.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="functions">
-<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_loqi.load_conditioning_pool" title="MolecularDiffusion.modules.tasks.diffusion_loqi.load_conditioning_pool"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_conditioning_pool</span></code></a>(→ list[torch_geometric.data.Data])</p></td>
-<td><p>Load conditioning molecules.</p></td>
 </tr>
 </tbody>
 </table>
@@ -853,16 +842,6 @@ needed for the size histogram and the default conditioning pool.</p>
 
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_loqi.load_conditioning_pool">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.diffusion_loqi.</span></span><span class="sig-name descname"><span class="pre">load_conditioning_pool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.14)"><span class="pre">collections.abc.Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_vocab</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">torch_geometric.data.Data</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_loqi.load_conditioning_pool" title="Link to this definition">¶</a></dt>
-<dd><p>Load conditioning molecules.</p>
-<p><code class="docutils literal notranslate"><span class="pre">sample_input</span></code> is either a path – <code class="docutils literal notranslate"><span class="pre">.sdf</span></code>, <code class="docutils literal notranslate"><span class="pre">.smi</span></code>/<code class="docutils literal notranslate"><span class="pre">.txt</span></code>, or an
-ASE <code class="docutils literal notranslate"><span class="pre">.db</span></code> written by the graph3d converter – or a plain list of
-SMILES strings given inline in the generate config.</p>
-<p>Both SMILES forms go through <code class="xref py py-func docutils literal notranslate"><span class="pre">_pool_from_smiles()</span></code>.</p>
-</dd></dl>
-
 <dl class="py data">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_loqi.CHARGE_OFFSET">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.diffusion_loqi.</span></span><span class="sig-name descname"><span class="pre">CHARGE_OFFSET</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_loqi.CHARGE_OFFSET" title="Link to this definition">¶</a></dt>
@@ -944,7 +923,6 @@ SMILES strings given inline in the generate config.</p>
 <li><a class="reference internal" href="#bond-representation-mapping">Bond representation mapping</a></li>
 <li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#classes">Classes</a></li>
-<li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_loqi.Graph3DToLoQIAdapter"><code class="docutils literal notranslate"><span class="pre">Graph3DToLoQIAdapter</span></code></a><ul>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_loqi.Graph3DToLoQIAdapter.build_edges"><code class="docutils literal notranslate"><span class="pre">Graph3DToLoQIAdapter.build_edges()</span></code></a></li>
@@ -1005,7 +983,6 @@ SMILES strings given inline in the generate config.</p>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_loqi.ModelTaskFactory.train_set"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory.train_set</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_loqi.load_conditioning_pool"><code class="docutils literal notranslate"><span class="pre">load_conditioning_pool()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_loqi.CHARGE_OFFSET"><code class="docutils literal notranslate"><span class="pre">CHARGE_OFFSET</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_loqi.FULL_ATOM_ENCODER"><code class="docutils literal notranslate"><span class="pre">FULL_ATOM_ENCODER</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_loqi.N_CHARGE_CLASSES"><code class="docutils literal notranslate"><span class="pre">N_CHARGE_CLASSES</span></code></a></li>

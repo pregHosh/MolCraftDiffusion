@@ -18,8 +18,9 @@ MolecularDiffusion.modules.tasks.diffusion_ditmc
    * :meth:`DiTMCTask.sample` **raises**. There is no unconditional mode: without a
      molecular graph there is nothing to place in 3D, and the platform's
      ``(one_hot, charges, coords, node_mask)`` return contract has no meaning here.
-     Generation goes through :class:`DiTMCConformerGenerator`, pointed at by
-     ``configs/interference/gen_ditmc_conformers.yaml`` -- the same route
+     Generation goes through the shared
+     :class:`~MolecularDiffusion.runmodes.generate.tasks_conformer.ConformerFactory`,
+     pointed at by ``configs/interference/gen_conformer.yaml`` -- the same route
      ``gen_diffdec_scaffold.yaml`` and ``gen_apo2mol_pocket.yaml`` take.
    * ``node_dist_model`` / ``n_node_dist`` are deliberately absent. They exist to
      let ``GenerativeFactory`` choose a molecule size; DiTMC's size is dictated by
@@ -49,7 +50,6 @@ Classes
 
 .. autoapisummary::
 
-   MolecularDiffusion.modules.tasks.diffusion_ditmc.DiTMCConformerGenerator
    MolecularDiffusion.modules.tasks.diffusion_ditmc.DiTMCTask
    MolecularDiffusion.modules.tasks.diffusion_ditmc.DiTMCTaskFactory
    MolecularDiffusion.modules.tasks.diffusion_ditmc.Graph3DBatchToDiTMCAdapter
@@ -57,93 +57,6 @@ Classes
 
 Module Contents
 ---------------
-
-.. py:class:: DiTMCConformerGenerator(task: Any, smiles: Any = None, db_path: str | None = None, indices: Any = None, num_generate: int = 5, batch_size: int = 8, num_steps: int = 50, free_guidance_scale: float = 1.0, logarithmic_time_bool: bool = False, use_chirality_correction: bool = False, n_frames: int = 0, max_atom: int = 200, seed: int = 42, device: str | None = None, output_path: str = 'generated_ditmc')
-
-   Generate conformers of molecules you supply.
-
-   ``cli/generate.py`` does ``instantiate(cfg.interference, task=task)`` then
-   ``.run()``, so every key in the interference YAML lands in ``__init__``.
-
-   Inputs, in priority order: ``smiles`` (a string, a list, or a path to a file
-   with one SMILES per line) or ``db_path`` (a graph3d ASE db) + ``indices``.
-   SMILES are embedded with RDKit **only to get atoms and bonds** -- never
-   coordinates; the coordinates are what the model produces.
-
-
-   .. py:method:: run() -> str
-
-
-   .. py:attribute:: batch_size
-      :value: 8
-
-
-
-   .. py:attribute:: db_path
-      :value: None
-
-
-
-   .. py:attribute:: device
-
-
-   .. py:attribute:: free_guidance_scale
-      :value: 1.0
-
-
-
-   .. py:attribute:: indices
-      :value: None
-
-
-
-   .. py:attribute:: logarithmic_time_bool
-      :value: False
-
-
-
-   .. py:attribute:: max_atom
-      :value: 200
-
-
-
-   .. py:attribute:: n_frames
-      :value: 0
-
-
-
-   .. py:attribute:: num_generate
-      :value: 5
-
-
-
-   .. py:attribute:: num_steps
-      :value: 50
-
-
-
-   .. py:attribute:: output_path
-      :value: 'generated_ditmc'
-
-
-
-   .. py:attribute:: seed
-      :value: 42
-
-
-
-   .. py:attribute:: smiles
-      :value: None
-
-
-
-   .. py:attribute:: task
-
-
-   .. py:attribute:: use_chirality_correction
-      :value: False
-
-
 
 .. py:class:: DiTMCTask(variant: str, dataset: str, model_kwargs: dict, flow_kwargs: dict, prior: str = 'harmonic', augmentation_bool: bool = True, atom_vocab: list | None = None, task_type: str = 'diffusion_ditmc')
 

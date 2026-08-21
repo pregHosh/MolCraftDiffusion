@@ -1,0 +1,81 @@
+MolecularDiffusion.modules.models.nextmol.mollama
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.models.nextmol.mollama
+
+.. autoapi-nested-parse::
+
+   MoLlama -- NExT-Mol's 1D half, INFERENCE ONLY.
+
+   A ~970M-parameter ``LlamaForCausalLM`` over a 192-token **SELFIES** vocabulary
+   (``acharkq/MoLlama``). It is sampled from a bare BOS token with no conditioning
+   of any kind, so the published checkpoint works out of the box.
+
+   Ports ``sample_selfies`` (``model/llm_pl.py:446``), ``reencode_selfies``
+   (``llm_pl.py:508``) and the validity filter inside ``sample_molecules``
+   (``llm_pl.py:326-340``). Fine-tuning -- the LoRA/freeze branches of
+   ``init_llm``, the SELFIES datamodules and the ``unseen_selfies_tokens.txt``
+   vocabulary extension -- is deliberately out of scope; ``peft`` is therefore not
+   needed. Without fine-tuning the sampled molecules follow general drug-like
+   chemistry rather than a specific training distribution, so Novelty/FCD against
+   QM9-2014 or GEOM-Drugs will not reproduce the paper. Validity and everything
+   DMT is responsible for are unaffected.
+
+   Two traps this module exists to get right:
+
+   1. **``eos_token_id``.** ``generation_config.json`` says 0 and so does
+      ``config.json``; ``special_tokens_map.json`` maps BOTH ``bos_token`` and
+      ``eos_token`` to ``<s>`` = 0. Upstream reads ``tokenizer.bos_token_id`` /
+      ``tokenizer.eos_token_id``, which here are the same id, and that is correct:
+      MoLlama was pretrained with ``<s>`` terminating a sequence. Substituting
+      ``</s>`` = 2 (the id a generic Llama tokenizer would give) means generation
+      never terminates.
+   2. **``dtype=``.** ``transformers`` 5.x renamed ``from_pretrained(torch_dtype=)``
+      to ``dtype=``.
+
+   ``transformers`` is imported lazily so the rest of MolecularDiffusion still
+   imports without it.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.nextmol.mollama.load_mollama
+   MolecularDiffusion.modules.models.nextmol.mollama.reencode_selfies
+   MolecularDiffusion.modules.models.nextmol.mollama.sample_smiles
+
+
+Module Contents
+---------------
+
+.. py:function:: load_mollama(model_id: str, device, dtype=torch.bfloat16)
+
+   Load the LM and its fast tokenizer. Returns ``(model, tokenizer)``.
+
+
+.. py:function:: reencode_selfies(selfies: str) -> tuple[str, str, str]
+
+   ``(selfies, smiles_with_chirality, smiles_without_chirality)``.
+
+   Empty strings on any RDKit/SELFIES failure -- that is upstream's validity
+   signal (``llm_pl.py:508``). The **third** column is what the diffusion half
+   consumes (``qm9_jodo_dm.py:438``): DMT places atoms in 3D and derives
+   chirality from the geometry, so feeding it a chirality-tagged SMILES would
+   over-specify the input.
+
+
+.. py:function:: sample_smiles(model_id: str, n: int, *, device=None, temperature: float = 1.0, num_beams: int = 1, max_sf_tokens: int = DEFAULT_MAX_SF_TOKENS, batch_size: int = 200, max_loops: int = 200, dtype=torch.bfloat16) -> list[tuple[str, str, str]]
+
+   Sample until ``n`` valid molecules accumulate.
+
+   Returns ``(selfies, smiles_with_chirality, smiles_without_chirality)``
+   triples, sorted, exactly as upstream writes its TSV.
+
+   ``max_loops`` bounds what is an unbounded ``while True`` upstream. A LM that
+   emits nothing valid would otherwise hang forever; hitting the cap returns
+   whatever accumulated and logs a warning rather than pretending success.
+
+

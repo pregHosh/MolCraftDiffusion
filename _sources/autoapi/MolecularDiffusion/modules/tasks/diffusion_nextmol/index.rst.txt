@@ -1,0 +1,473 @@
+MolecularDiffusion.modules.tasks.diffusion_nextmol
+==================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_nextmol
+
+.. autoapi-nested-parse::
+
+   NExT-Mol de-novo 3D molecule generation (``task_type: diffusion_nextmol``).
+
+   Two decoupled halves, joined by nothing but a flat list of SMILES -- which is
+   upstream's own architecture, not a simplification of it:
+
+   1. **MoLlama** (1D) writes a molecule down as a SELFIES string, which is decoded
+      to SMILES and built into a 2D molecular graph by RDKit. Inference only; the
+      published ``acharkq/MoLlama`` checkpoint is sampled from a bare BOS token.
+      It is **not** part of this task's ``state_dict`` -- the generator loads it at
+      generation time, so the trained checkpoint stays DMT-only and does not grow
+      by 2 GB.
+   2. **DMT** (3D) takes that graph -- atoms and bonds, no coordinates -- and
+      diffuses coordinates onto it. This is the half that trains here.
+
+   So the training data path never sees a SELFIES string, and no new ``data_type``
+   is needed: ``graph3d`` already carries the explicit bond orders DMT conditions
+   on. See INTEGRATION_PLAN.md, "Representation Routing".
+
+   **Only coordinates are generated.** Atom types and bonds are fixed conditioning
+   on every forward and every sampling step, which is why:
+
+   * :meth:`NextMolTask.sample` **raises**. The de-novo pipeline is genuinely
+     unconditional, but ``GenerativeFactory.sample(batch_size, nodesxsample, ...)``
+     makes the *caller* choose the atom count -- whereas here the language model
+     chooses the molecule and therefore its size -- and the
+     ``(one_hot, charges, coords, node_mask)`` return contract throws away the
+     bonds MoLlama decided on. De-novo generation goes through
+     :class:`NextMolGenerator`, named by
+     ``configs/interference/gen_nextmol_denovo.yaml``. Conformers of molecules
+     you already have go through the shared
+     :class:`~MolecularDiffusion.runmodes.generate.tasks_conformer.ConformerFactory`
+     (``gen_conformer.yaml``), which drives :meth:`NextMolTask.generate_conformers`
+     -- the same route LoQI and DiTMC take.
+   * ``node_dist_model`` / ``n_node_dist`` are deliberately absent -- they exist to
+     let ``GenerativeFactory`` pick a size, and that route is bypassed.
+
+   Bond mapping (canonical -> NExT-Mol): ``nextmol_col = canonical_class - 1``, so
+   ``1=SINGLE -> 0``, ``2=DOUBLE -> 1``, ``3=TRIPLE -> 2``, ``4=AROMATIC -> 3``.
+   Canonical class 0 ("no bond") is never an edge; it is the all-zero 4-vector
+   ``to_dense_adj`` leaves on non-bonded pairs, so the platform's storage rule is a
+   pass-through. **Do not set ``kekulize: true``** -- aromatic is a real class in
+   the 4-wide vocabulary and kekulizing would change the conditioning distribution
+   the published weights were trained on.
+
+   ``pos_std`` must match the checkpoint's dataset (GEOM-QM9 1.4182, QM9-2014/JODO
+   1.7226, GEOM-Drugs 2.4777 / 2.3860) or every structure comes back mis-scaled.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_nextmol.ModelTaskFactory
+   MolecularDiffusion.modules.tasks.diffusion_nextmol.N_BOND_CLASSES
+   MolecularDiffusion.modules.tasks.diffusion_nextmol.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_nextmol.Graph3DBatchToNextMolAdapter
+   MolecularDiffusion.modules.tasks.diffusion_nextmol.MoleculeFeatureCache
+   MolecularDiffusion.modules.tasks.diffusion_nextmol.NextMolGenerator
+   MolecularDiffusion.modules.tasks.diffusion_nextmol.NextMolTask
+   MolecularDiffusion.modules.tasks.diffusion_nextmol.NextMolTaskFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: Graph3DBatchToNextMolAdapter(dataset: str = 'qm9', pos_std: float = 1.4182, noise_scheduler: MolecularDiffusion.modules.models.nextmol.NoiseScheduleVPV2 | None = None, aug_rotation: bool = True, t_cond: str = 't', disable_com: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   One ``graph3d`` PyG ``Batch`` -> the container ``DGTDiffusion`` wants.
+
+   Bond symmetry: ``featurize_mol`` emits every bond in **both** directions
+   with the same ``edge_attr``, which is upstream's only symmetry mechanism --
+   ``to_dense_adj`` would silently produce an asymmetric matrix from a
+   one-directional list. The mirroring therefore happens inside
+   ``featurize_mol``, on the rebuilt RDKit mol, not on the stored
+   upper-triangular ``bond_index``.
+
+
+   .. py:method:: add_noise(data)
+
+      Port of ``QM9Collater.add_noise`` (``diffusion_data_module.py:50``).
+
+      Runs on CPU tensors, as upstream's collate does, then the whole batch is
+      moved to the device in one go.
+
+
+
+   .. py:method:: collate(data_list: list, device=None, *, add_noise: bool = True)
+
+      Batch, then either noise (training) or seed from the prior (sampling).
+
+
+
+   .. py:method:: data_list(items: list) -> list
+
+      graph3d ``Data`` items -> upstream-shaped ``Data`` items.
+
+
+
+   .. py:method:: forward(batch: Any, device=None)
+
+
+   .. py:method:: seed_prior(data)
+
+      Port of ``QM9InferCollater.__call__`` -- coordinates from the prior.
+
+
+
+   .. py:attribute:: aug_rotation
+      :value: True
+
+
+
+   .. py:attribute:: cache
+
+
+   .. py:attribute:: dataset
+      :value: 'qm9'
+
+
+
+   .. py:attribute:: disable_com
+      :value: True
+
+
+
+   .. py:attribute:: noise_scheduler
+
+
+   .. py:attribute:: pos_std
+      :value: 1.4182
+
+
+
+   .. py:attribute:: t_cond
+      :value: 't'
+
+
+
+.. py:class:: MoleculeFeatureCache(dataset: str = 'qm9', maxsize: int = 200000)
+
+   SMILES-keyed cache of upstream's per-molecule RDKit featurization.
+
+   Rebuilding the mol and running ``featurize_mol`` is a full RDKit round-trip;
+   upstream does it once at dataset-build time, so doing it per batch here
+   would dominate the step. Same pattern as
+   ``modules/tasks/diffusion_ditmc.MoleculeFeatureCache``.
+
+
+   .. py:method:: get(item)
+
+      ``item`` is one PyG ``Data`` from the graph3d dataset.
+
+
+
+   .. py:attribute:: dataset
+      :value: 'qm9'
+
+
+
+   .. py:attribute:: types
+
+
+.. py:class:: NextMolGenerator(task: Any, mollama_model: str | None = None, num_molecules: int = 100, temperature: float = 1.0, num_beams: int = 1, max_sf_tokens: int = 30, lm_batch_size: int = 200, num_generate: int = 1, batch_size: int = 16, num_steps: int = 100, max_atom: int = 200, seed: int = 42, device: str | None = None, output_path: str = 'generated_nextmol')
+
+   The de-novo pipeline, and the conformer-only mode, in one class.
+
+   ``cli/generate.py`` does ``instantiate(cfg.interference, task=task)`` then
+   ``.run()``, so every key in the interference YAML lands in ``__init__``.
+
+   Where the SMILES come from is the ONLY difference between the two modes:
+
+   * ``mollama_model`` set -> **de novo**. Sample from the language model until
+     ``num_molecules`` valid molecules accumulate. The full
+     ``selfies\tsmiles_chiral\tsmiles`` TSV is written to
+     ``<output_path>/sampled_sequences.tsv`` so the intermediate 1D list is
+     inspectable, exactly as upstream saves it.
+   * ``mollama_model: null`` -> **conformers** of molecules you supply, via
+     ``smiles`` or ``db_path`` (+ ``indices``).
+
+   Either way RDKit supplies atoms and bonds ONLY; the coordinates are what the
+   model produces.
+
+
+   .. py:method:: run() -> str
+
+
+   .. py:attribute:: batch_size
+      :value: 16
+
+
+
+   .. py:attribute:: device
+
+
+   .. py:attribute:: lm_batch_size
+      :value: 200
+
+
+
+   .. py:attribute:: max_atom
+      :value: 200
+
+
+
+   .. py:attribute:: max_sf_tokens
+      :value: 30
+
+
+
+   .. py:attribute:: mollama_model
+      :value: None
+
+
+
+   .. py:attribute:: num_beams
+      :value: 1
+
+
+
+   .. py:attribute:: num_generate
+      :value: 1
+
+
+
+   .. py:attribute:: num_molecules
+      :value: 100
+
+
+
+   .. py:attribute:: num_steps
+      :value: 100
+
+
+
+   .. py:attribute:: output_path
+      :value: 'generated_nextmol'
+
+
+
+   .. py:attribute:: seed
+      :value: 42
+
+
+
+   .. py:attribute:: task
+
+
+   .. py:attribute:: temperature
+      :value: 1.0
+
+
+
+.. py:class:: NextMolTask(dataset: str = 'qm9', model_kwargs: dict | None = None, pos_std: float = 1.4182, noise_schedule: str = 'cosine', continuous_beta_0: float = 0.1, continuous_beta_1: float = 20.0, discrete_schedule: bool = False, sampling_steps: int = 100, t_cond: str = 't', aug_rotation: bool = True, align_loss: bool = True, reduce_node_mean: bool = False, disable_com: bool = True, atom_vocab: list | None = None, task_type: str = 'diffusion_nextmol')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   DMT in the platform's Task contract (docs/adding_new_models.md 2.1).
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor)
+
+
+   .. py:method:: forward(batch: Any)
+
+
+   .. py:method:: generate_conformers(data_list: list, *, num_steps: int | None = None)
+
+      Ancestral VP sampler (``model/uncond_gen_pl.py:96``).
+
+      ``data_list`` holds either upstream-shaped ``Data`` items (what the
+      de-novo path builds from MoLlama's SMILES) or plain ``graph3d`` items
+      (what ``ConformerFactory`` hands over from ``sample_input``); the
+      latter are featurized here through the adapter's existing seam. No
+      coordinates are needed either way -- they are seeded from the prior.
+      Returns ``(pos, batch_segments)``, ``pos`` already rescaled by
+      ``pos_std``.
+
+
+
+   .. py:method:: predict_and_target(batch: Any, all_loss=None, metric=None)
+
+
+   .. py:method:: sample(*args, **kwargs)
+
+
+   .. py:attribute:: adapter
+
+
+   .. py:attribute:: align_loss
+      :value: True
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: dataset
+      :value: 'qm9'
+
+
+
+   .. py:property:: device
+      :type: torch.device
+
+
+
+   .. py:attribute:: disable_com
+      :value: True
+
+
+
+   .. py:property:: model
+      :type: NextMolTask
+
+
+
+   .. py:attribute:: net
+
+
+   .. py:attribute:: noise_scheduler
+
+
+   .. py:attribute:: pos_std
+      :value: 1.4182
+
+
+
+   .. py:attribute:: reduce_node_mean
+      :value: False
+
+
+
+   .. py:attribute:: sampling_steps
+      :value: 100
+
+
+
+   .. py:attribute:: t_cond
+      :value: 't'
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_nextmol'
+
+
+
+.. py:class:: NextMolTaskFactory(task_type: str = 'diffusion_nextmol', dataset: str = 'qm9', model: dict | None = None, pos_std: float = 1.4182, noise_schedule: str = 'cosine', continuous_beta_0: float = 0.1, continuous_beta_1: float = 20.0, discrete_schedule: bool = False, sampling_steps: int = 100, t_cond: str = 't', aug_rotation: bool = True, align_loss: bool = True, reduce_node_mean: bool = False, disable_com: bool = True, atom_vocab: list | None = None, train_set: Any = None, **kwargs: Any)
+
+   Factory instantiated by ``cli/train.py``.
+
+   ``train_set`` is declared purely so the documented declarative injection
+   seam (docs/adding_new_models.md 2.5) can hand over the dataset for an
+   optional size histogram; DMT needs no construction-time statistics
+   (``pos_std`` is a config scalar, not a computed stat).
+
+
+   .. py:method:: build() -> NextMolTask
+
+
+   .. py:attribute:: align_loss
+      :value: True
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: aug_rotation
+      :value: True
+
+
+
+   .. py:attribute:: continuous_beta_0
+      :value: 0.1
+
+
+
+   .. py:attribute:: continuous_beta_1
+      :value: 20.0
+
+
+
+   .. py:attribute:: dataset
+      :value: 'qm9'
+
+
+
+   .. py:attribute:: disable_com
+      :value: True
+
+
+
+   .. py:attribute:: discrete_schedule
+      :value: False
+
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: model_kwargs
+
+
+   .. py:attribute:: noise_schedule
+      :value: 'cosine'
+
+
+
+   .. py:attribute:: pos_std
+      :value: 1.4182
+
+
+
+   .. py:attribute:: reduce_node_mean
+      :value: False
+
+
+
+   .. py:attribute:: sampling_steps
+      :value: 100
+
+
+
+   .. py:attribute:: t_cond
+      :value: 't'
+
+
+
+   .. py:attribute:: task
+      :type:  NextMolTask | None
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_nextmol'
+
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+.. py:data:: ModelTaskFactory
+
+.. py:data:: N_BOND_CLASSES
+   :value: 4
+
+
+.. py:data:: logger
+

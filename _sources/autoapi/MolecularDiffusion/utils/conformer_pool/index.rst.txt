@@ -1,0 +1,54 @@
+MolecularDiffusion.utils.conformer_pool
+=======================================
+
+.. py:module:: MolecularDiffusion.utils.conformer_pool
+
+.. autoapi-nested-parse::
+
+   Conditioning-molecule loading for conformer generation.
+
+   Shared by every conformer-generating model. Lifted verbatim out of
+   ``modules/tasks/diffusion_loqi.py``, which is where it was first written and
+   which still re-exports it for backward compatibility -- a loader used by
+   three models does not belong in one model's task module, and
+   ``runmodes/generate/tasks_conformer.py`` must be able to reach it without
+   importing a heavy model task.
+
+   ``load_conditioning_pool`` is the single documented way to turn a user's
+   ``sample_input`` (a ``.sdf``, a ``.smi``/``.txt``, a graph3d ASE ``.db``, or
+   an inline list of SMILES) into the platform's ``graph3d`` per-item ``Data``.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.conformer_pool.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.conformer_pool.load_conditioning_pool
+
+
+Module Contents
+---------------
+
+.. py:function:: load_conditioning_pool(sample_input: str | collections.abc.Sequence[str], atom_vocab: list[str], limit: int | None = None) -> list[torch_geometric.data.Data]
+
+   Load conditioning molecules.
+
+   ``sample_input`` is either a path -- ``.sdf``, ``.smi``/``.txt``, or an
+   ASE ``.db`` written by the graph3d converter -- or a plain list of
+   SMILES strings given inline in the generate config.
+
+   Both SMILES forms go through :func:`_pool_from_smiles`.
+
+
+.. py:data:: logger
+
