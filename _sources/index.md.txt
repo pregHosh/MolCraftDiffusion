@@ -45,6 +45,14 @@ MolCraftDiff generate my_gen_config
 MolCraftDiff analyze metrics generated_molecules/
 ```
 
+**No model of your own yet?** The [Model Zoo](model_zoo/index.md) ships pretrained weights, the datasets behind them, and a runnable config for every model on the platform — so you can generate molecules before training anything:
+
+```bash
+MolCraftDiff zoo list                        # see what is available
+MolCraftDiff zoo fetch --model kgdiff
+MolCraftDiff generate examples/kgdiff_generate.yaml
+```
+
 Ready-to-use template configuration files for common workflows are listed in [Configuration Templates](config_templates.md), with the full packaged Hydra defaults under `src/MolecularDiffusion/configs/`. Copy the relevant file, fill in your paths, and run:
 
 ```bash
@@ -64,6 +72,16 @@ MolCraftDiff generate my_gen
 
 installation
 architectures
+```
+
+```{toctree}
+:maxdepth: 1
+:caption: Model Zoo
+
+model_zoo/index
+model_zoo/models
+model_zoo/data
+model_zoo/registering
 ```
 
 ```{toctree}

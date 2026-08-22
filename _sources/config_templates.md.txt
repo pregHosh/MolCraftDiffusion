@@ -44,7 +44,7 @@ MolCraftDiff generate examples/kgdiff_generate.yaml \
     interference.num_generate=100 interference.output_path=my_run
 ```
 
-See the [model zoo quickstart](tutorials/quickstart_model_zoo.md) for the full
+See the [Model Zoo](model_zoo/index.md) for the full
 workflow, and [Model Architectures](architectures.md) for choosing a model.
 
 ---

@@ -32,7 +32,7 @@ the checkpoint you get. Three cases:
 - **Train it yourself** — difflinker and silvr have no pretrained weights at
   all. The zoo still carries their datasets and example configs.
 
-See the [model zoo quickstart](tutorials/quickstart_model_zoo.md) to get
+See the [Model Zoo](model_zoo/index.md) to get
 started.
 :::
 

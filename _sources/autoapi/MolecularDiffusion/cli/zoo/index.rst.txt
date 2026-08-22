@@ -84,9 +84,9 @@ Module Contents
    Show details for MODEL or MODEL/VARIANT.
 
 
-.. py:function:: list_cmd(tag, family, fetched, as_json)
+.. py:function:: list_cmd(tag, family, fetched, as_json, as_data)
 
-   List models in the zoo.
+   List models in the zoo, or corpora with ``--data``.
 
 
 .. py:function:: path_cmd(name)

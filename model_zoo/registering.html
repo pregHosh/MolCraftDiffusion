@@ -3,12 +3,12 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Tutorial 0: Data Preparation &amp; Management" href="00_data_preparation.html"><link rel="prev" title="Tutorials" href="index.html">
-        <link rel="canonical" href="https://preghosh.github.io/MolCraftDiffusion/tutorials/quickstart_model_zoo.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Tutorials" href="../tutorials/index.html"><link rel="prev" title="Using Zoo Datasets" href="data.html">
+        <link rel="canonical" href="https://preghosh.github.io/MolCraftDiffusion/model_zoo/registering.html">
         <link rel="prefetch" href="../_static/logo.png" as="image">
 
     <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
-        <title>Quickstart: Generate Your First Molecules - MolCraftDiffusion</title>
+        <title>Registering Your Own Model - MolCraftDiffusion</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -211,27 +211,38 @@
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../architectures.html">Model Architectures</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<p class="caption" role="heading"><span class="caption-text">Model Zoo</span></p>
 <ul class="current">
-<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Quickstart: Generate Your First Molecules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="00_data_preparation.html">Tutorial 0: Data Preparation &amp; Management</a></li>
-<li class="toctree-l2"><a class="reference internal" href="01_training_diffusion.html">Tutorial 1: Training a Diffusion Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="02_training_regressor.html">Tutorial 2: Training a Regressor Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="03_training_guidance.html">Tutorial 3: Training a Time-Aware Guidance Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="04_finetuning.html">Tutorial 4: Fine-Tuning a Diffusion Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="05_generation_overview.html">Tutorial 5: Molecule Generation Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="09_analyze.html">Tutorial 9: Analyse Module - 3D Molecular Structure Analysis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="10_generation_sweeps.html">Tutorial 10: Generation Parameter Sweeps</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Model Zoo</a><input aria-label="Toggle navigation of Model Zoo" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="models.html">Using a Pretrained Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.html">Using Zoo Datasets</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Registering Your Own Model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Using a Pretrained Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">Using Zoo Datasets</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Registering Your Own Model</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials/index.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/00_data_preparation.html">Tutorial 0: Data Preparation &amp; Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/01_training_diffusion.html">Tutorial 1: Training a Diffusion Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/02_training_regressor.html">Tutorial 2: Training a Regressor Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/03_training_guidance.html">Tutorial 3: Training a Time-Aware Guidance Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/04_finetuning.html">Tutorial 4: Fine-Tuning a Diffusion Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/05_generation_overview.html">Tutorial 5: Molecule Generation Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/09_analyze.html">Tutorial 9: Analyse Module - 3D Molecular Structure Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/10_generation_sweeps.html">Tutorial 10: Generation Parameter Sweeps</a></li>
 </ul>
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Applications</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../applications/index.html">Applications</a><input aria-label="Toggle navigation of Applications" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../applications/index.html">Applications</a><input aria-label="Toggle navigation of Applications" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../applications/local_chemical_space.html">Application: Local Chemical Space Exploration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../applications/library_design.html">Application: Library Design with Structure-Directed Generation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../applications/inverse_design.html">Application: Inverse Design</a></li>
@@ -240,7 +251,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Workflows</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../workflows/index.html">Workflows</a><input aria-label="Toggle navigation of Workflows" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../workflows/index.html">Workflows</a><input aria-label="Toggle navigation of Workflows" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
@@ -255,14 +266,14 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/index.html">MolecularDiffusion</a><input aria-label="Toggle navigation of MolecularDiffusion" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/index.html">MolecularDiffusion</a><input aria-label="Toggle navigation of MolecularDiffusion" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/MolecularDiffusion/assets/index.html">MolecularDiffusion.assets</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/callbacks/index.html">MolecularDiffusion.callbacks</a><input aria-label="Toggle navigation of MolecularDiffusion.callbacks" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/callbacks/index.html">MolecularDiffusion.callbacks</a><input aria-label="Toggle navigation of MolecularDiffusion.callbacks" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/callbacks/train_helper/index.html">MolecularDiffusion.callbacks.train_helper</a></li>
 </ul>
 </li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/cli/index.html">MolecularDiffusion.cli</a><input aria-label="Toggle navigation of MolecularDiffusion.cli" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/cli/index.html">MolecularDiffusion.cli</a><input aria-label="Toggle navigation of MolecularDiffusion.cli" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/cli/analyze/index.html">MolecularDiffusion.cli.analyze</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/cli/data/index.html">MolecularDiffusion.cli.data</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/cli/eval_predict/index.html">MolecularDiffusion.cli.eval_predict</a></li>
@@ -273,11 +284,11 @@
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/cli/zoo/index.html">MolecularDiffusion.cli.zoo</a></li>
 </ul>
 </li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/core/core/index.html">MolecularDiffusion.core.core</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/core/engine/index.html">MolecularDiffusion.core.engine</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/core/engine_lightning/index.html">MolecularDiffusion.core.engine_lightning</a></li>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/core/lightning_callbacks/index.html">MolecularDiffusion.core.lightning_callbacks</a><input aria-label="Toggle navigation of MolecularDiffusion.core.lightning_callbacks" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/core/lightning_callbacks/index.html">MolecularDiffusion.core.lightning_callbacks</a><input aria-label="Toggle navigation of MolecularDiffusion.core.lightning_callbacks" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/core/lightning_callbacks/ema_callback/index.html">MolecularDiffusion.core.lightning_callbacks.ema_callback</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/core/lightning_callbacks/generative_eval_callback/index.html">MolecularDiffusion.core.lightning_callbacks.generative_eval_callback</a></li>
 </ul>
@@ -286,8 +297,8 @@
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/core/meter/index.html">MolecularDiffusion.core.meter</a></li>
 </ul>
 </li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/data/index.html">MolecularDiffusion.data</a><input aria-label="Toggle navigation of MolecularDiffusion.data" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/data/component/index.html">MolecularDiffusion.data.component</a><input aria-label="Toggle navigation of MolecularDiffusion.data.component" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/data/index.html">MolecularDiffusion.data</a><input aria-label="Toggle navigation of MolecularDiffusion.data" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/data/component/index.html">MolecularDiffusion.data.component</a><input aria-label="Toggle navigation of MolecularDiffusion.data.component" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/data/component/apo2mol_data/index.html">MolecularDiffusion.data.component.apo2mol_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/data/component/dataset/index.html">MolecularDiffusion.data.component.dataset</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/data/component/diffdec_data/index.html">MolecularDiffusion.data.component.diffdec_data</a></li>
@@ -312,8 +323,8 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/MolecularDiffusion/molcraftdiff/index.html">MolecularDiffusion.molcraftdiff</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../autoapi/MolecularDiffusion/optional/index.html">MolecularDiffusion.optional</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/index.html">MolecularDiffusion.runmodes</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/index.html">MolecularDiffusion.runmodes.analyze</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.analyze" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/index.html">MolecularDiffusion.runmodes</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/index.html">MolecularDiffusion.runmodes.analyze</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.analyze" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/compare_to_optimized/index.html">MolecularDiffusion.runmodes.analyze.compare_to_optimized</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/compute_metrics/index.html">MolecularDiffusion.runmodes.analyze.compute_metrics</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/conformer_metrics/index.html">MolecularDiffusion.runmodes.analyze.conformer_metrics</a></li>
@@ -328,14 +339,14 @@
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/xyz2mol/index.html">MolecularDiffusion.runmodes.analyze.xyz2mol</a></li>
 </ul>
 </li>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/generate/index.html">MolecularDiffusion.runmodes.generate</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.generate" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/generate/index.html">MolecularDiffusion.runmodes.generate</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.generate" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/generate/sweep/index.html">MolecularDiffusion.runmodes.generate.sweep</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/generate/tasks_conformer/index.html">MolecularDiffusion.runmodes.generate.tasks_conformer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/generate/tasks_gcdm_optimize/index.html">MolecularDiffusion.runmodes.generate.tasks_gcdm_optimize</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/generate/tasks_generate/index.html">MolecularDiffusion.runmodes.generate.tasks_generate</a></li>
 </ul>
 </li>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/index.html">MolecularDiffusion.runmodes.train</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.train" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/index.html">MolecularDiffusion.runmodes.train</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.train" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/data/index.html">MolecularDiffusion.runmodes.train.data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/eval/index.html">MolecularDiffusion.runmodes.train.eval</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/train/logger/index.html">MolecularDiffusion.runmodes.train.logger</a></li>
@@ -351,7 +362,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/index.html">MolecularDiffusion.utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/index.html">MolecularDiffusion.utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/comm/index.html">MolecularDiffusion.utils.comm</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/conformer_pool/index.html">MolecularDiffusion.utils.conformer_pool</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/diffusion_utils/index.html">MolecularDiffusion.utils.diffusion_utils</a></li>
@@ -368,9 +379,9 @@
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/pretty/index.html">MolecularDiffusion.utils.pretty</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/sascore/index.html">MolecularDiffusion.utils.sascore</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shape_measure/index.html">MolecularDiffusion.utils.shape_measure</a></li>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/index.html">MolecularDiffusion.utils.shepherd_score</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l5 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/alignment/index.html">MolecularDiffusion.utils.shepherd_score.alignment</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.alignment" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l6 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/alignment/utils/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.alignment.utils" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/index.html">MolecularDiffusion.utils.shepherd_score</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/alignment/index.html">MolecularDiffusion.utils.shepherd_score.alignment</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.alignment" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/alignment/utils/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.alignment.utils" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l7"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/alignment/utils/pca/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils.pca</a></li>
 <li class="toctree-l7"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/alignment/utils/pca_np/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils.pca_np</a></li>
 <li class="toctree-l7"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/alignment/utils/se3/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils.se3</a></li>
@@ -381,12 +392,12 @@
 </li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/extract_profiles/index.html">MolecularDiffusion.utils.shepherd_score.extract_profiles</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/generate_point_cloud/index.html">MolecularDiffusion.utils.shepherd_score.generate_point_cloud</a></li>
-<li class="toctree-l5 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/pharm_utils/index.html">MolecularDiffusion.utils.shepherd_score.pharm_utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.pharm_utils" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/pharm_utils/index.html">MolecularDiffusion.utils.shepherd_score.pharm_utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.pharm_utils" class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l6"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/pharm_utils/pharmacophore/index.html">MolecularDiffusion.utils.shepherd_score.pharm_utils.pharmacophore</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/pharm_utils/pharmvec/index.html">MolecularDiffusion.utils.shepherd_score.pharm_utils.pharmvec</a></li>
 </ul>
 </li>
-<li class="toctree-l5 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/score/index.html">MolecularDiffusion.utils.shepherd_score.score</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.score" class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/score/index.html">MolecularDiffusion.utils.shepherd_score.score</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.score" class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l6"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/score/analytical_gradients/index.html">MolecularDiffusion.utils.shepherd_score.score.analytical_gradients</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/score/constants/index.html">MolecularDiffusion.utils.shepherd_score.score.constants</a></li>
 <li class="toctree-l6"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/shepherd_score/score/electrostatic_scoring/index.html">MolecularDiffusion.utils.shepherd_score.score.electrostatic_scoring</a></li>
@@ -404,7 +415,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/substituent_builder/index.html">MolecularDiffusion.utils.substituent_builder</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/substituent_geometries/index.html">MolecularDiffusion.utils.substituent_geometries</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/torch/index.html">MolecularDiffusion.utils.torch</a></li>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/xyz2mol/index.html">MolecularDiffusion.utils.xyz2mol</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.xyz2mol" class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/xyz2mol/index.html">MolecularDiffusion.utils.xyz2mol</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.xyz2mol" class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/xyz2mol/converter/index.html">MolecularDiffusion.utils.xyz2mol.converter</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/utils/xyz2mol/elements/index.html">MolecularDiffusion.utils.xyz2mol.elements</a></li>
 </ul>
@@ -435,12 +446,12 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="https://github.com/pregHosh/MolCraftDiffusion/blob/main/docs/tutorials/quickstart_model_zoo.md?plain=true" title="View this page">
+  <a class="muted-link" href="https://github.com/pregHosh/MolCraftDiffusion/blob/main/docs/model_zoo/registering.md?plain=true" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
 </div><div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/pregHosh/MolCraftDiffusion/edit/main/docs/tutorials/quickstart_model_zoo.md" rel="edit" title="Edit this page">
+  <a class="muted-link" href="https://github.com/pregHosh/MolCraftDiffusion/edit/main/docs/model_zoo/registering.md" rel="edit" title="Edit this page">
     <svg><use href="#svg-pencil"></use></svg>
     <span class="visually-hidden">Edit this page</span>
   </a>
@@ -457,297 +468,167 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="quickstart-generate-your-first-molecules">
-<h1>Quickstart: Generate Your First Molecules<a class="headerlink" href="#quickstart-generate-your-first-molecules" title="Link to this heading">¶</a></h1>
+          <section id="registering-your-own-model">
+<h1>Registering Your Own Model<a class="headerlink" href="#registering-your-own-model" title="Link to this heading">¶</a></h1>
 <blockquote>
-<div><p><strong>Prerequisites:</strong> <a class="reference internal" href="../installation.html"><span class="std std-doc">Installation</span></a> · <strong>You’ll learn:</strong> how to fetch a pretrained model and generate molecules without training anything · <strong>Next:</strong> <a class="reference internal" href="05_generation_overview.html"><span class="std std-doc">Tutorial 5 — Generation Overview</span></a> for more generation modes, or <a class="reference internal" href="00_data_preparation.html"><span class="std std-doc">Tutorial 0 — Data Preparation</span></a> to train your own</p>
+<div><p><strong>Prerequisites:</strong> a working integration — see <a class="reference internal" href="#../adding_new_models.md"><span class="xref myst">Adding New Models</span></a> · <strong>You’ll learn:</strong> how to register weights, data and an example config so someone else can fetch them</p>
 </div></blockquote>
-<section id="at-a-glance">
-<h2>At a Glance<a class="headerlink" href="#at-a-glance" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head text-left"><p></p></th>
-<th class="head text-left"><p></p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td class="text-left"><p><strong>Objective</strong></p></td>
-<td class="text-left"><p>Generate 3D molecules from a pretrained model, in three commands.</p></td>
-</tr>
-<tr class="row-odd"><td class="text-left"><p><strong>You need</strong></p></td>
-<td class="text-left"><p>A working installation. No data, no training, no GPU-hours.</p></td>
-</tr>
-<tr class="row-even"><td class="text-left"><p><strong>Main command</strong></p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">zoo</span> <span class="pre">fetch</span> <span class="pre">--model</span> <span class="pre">kgdiff</span></code> then <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">generate</span></code></p></td>
-</tr>
-<tr class="row-odd"><td class="text-left"><p><strong>Success looks like</strong></p></td>
-<td class="text-left"><p>A directory of <code class="docutils literal notranslate"><span class="pre">.xyz</span></code> files with chemically sensible geometry.</p></td>
-</tr>
-</tbody>
-</table>
+<p>An integration is not finished when generation works — it is finished when
+someone else can <em>get</em> your weights. Registering makes a model appear in
+<code class="docutils literal notranslate"><span class="pre">zoo</span> <span class="pre">list</span></code>, gives its assets fetchable names, and turns your config into one
+that runs on any machine.</p>
+<p>This page is for contributors. If you only want to <em>use</em> models, start at
+<a class="reference internal" href="models.html"><span class="std std-doc">Using a pretrained model</span></a>.</p>
+<hr class="docutils" />
+<section id="step-1-register-the-assets">
+<h2>Step 1 · Register the assets<a class="headerlink" href="#step-1-register-the-assets" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>add<span class="w"> </span>&lt;name&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--ckpt<span class="w"> </span>path/to/checkpoints/converted/<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--data<span class="w"> </span>path/to/data/<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--config<span class="w"> </span>configs/&lt;name&gt;_train.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--config<span class="w"> </span>configs/&lt;name&gt;_generate.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--task-type<span class="w"> </span>&lt;task_type&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--family<span class="w"> </span>&lt;family&gt;<span class="w"> </span>--tag<span class="w"> </span>&lt;tag&gt;<span class="w"> </span>--tag<span class="w"> </span>&lt;tag&gt;
+</pre></div>
 </div>
-<p>Training a 3D molecular diffusion model takes a prepared dataset and hours of
-GPU time. Before you commit to that, you can run an already-trained one.</p>
-<p>The <strong>model zoo</strong> ships pretrained weights, the datasets they need, and a
-ready-to-run configuration for every model in MolCraftDiffusion. You fetch a
-model by name and generate — nothing to download by hand, no paths to edit.</p>
+<p>This hashes every file, records its size, and writes the entry into
+<code class="docutils literal notranslate"><span class="pre">src/MolecularDiffusion/zoo.yaml</span></code>. Always use the command — hand-editing the
+manifest is how checksums drift out of sync with the files.</p>
 </section>
 <hr class="docutils" />
-<section id="three-commands">
-<h2>Three commands<a class="headerlink" href="#three-commands" title="Link to this heading">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>list<span class="w">                        </span><span class="c1"># see what is available</span>
-MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>fetch<span class="w"> </span>--model<span class="w"> </span>kgdiff<span class="w">        </span><span class="c1"># ~12 MB</span>
-MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>examples/kgdiff_generate.yaml
+<section id="step-2-classify-what-you-registered">
+<h2>Step 2 · Classify what you registered<a class="headerlink" href="#step-2-classify-what-you-registered" title="Link to this heading">¶</a></h2>
+<p>Three rules, and getting them wrong is the most common mistake:</p>
+<p><strong>An asset is a directory.</strong> Every file in one entry is fetched into the same
+directory. That is what keeps a checkpoint’s sidecars (<code class="docutils literal notranslate"><span class="pre">edm_stat.pkl</span></code>,
+<code class="docutils literal notranslate"><span class="pre">edm_chem.pkl</span></code>, a <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>) beside it, which <code class="docutils literal notranslate"><span class="pre">cli/generate.py</span></code> relies on
+when <code class="docutils literal notranslate"><span class="pre">chkpt_directory</span></code> names a directory. Do not split a checkpoint from its
+sidecars across two assets.</p>
+<p><strong>A sidecar reached by a different config key is its own asset.</strong> IPDiff’s
+interaction prior is read via <code class="docutils literal notranslate"><span class="pre">tasks.net_cond_ckpt</span></code>, not via
+<code class="docutils literal notranslate"><span class="pre">chkpt_directory</span></code>, so it is <code class="docutils literal notranslate"><span class="pre">ipdiff/ipnet</span></code> rather than a file inside
+<code class="docutils literal notranslate"><span class="pre">ipdiff/pretrained</span></code>.</p>
+<p><strong>Datasets are named by corpus, not by model.</strong> A corpus belongs to nobody, so
+it is keyed <code class="docutils literal notranslate"><span class="pre">data/&lt;corpus&gt;/&lt;variant&gt;</span></code> and every model that reads it references
+the same key:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># in your model's variant</span>
+<span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data/qm9/graph3d</span><span class="w">          </span><span class="c1"># not mymodel/data</span>
 </pre></div>
 </div>
-<p>That writes <code class="docutils literal notranslate"><span class="pre">.xyz</span></code> files into <code class="docutils literal notranslate"><span class="pre">generated_kgdiff/</span></code> in your current directory.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The zoo repositories are private during development. Set a HuggingFace token
-before fetching:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">HF_TOKEN</span><span class="o">=</span>hf_xxxxxxxx<span class="w">     </span><span class="c1"># or: hf auth login</span>
+<p>Before registering any dataset, check whether the corpus is already there:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>list<span class="w"> </span>--data
 </pre></div>
 </div>
-</div>
-<p>You can run this from <strong>any directory</strong> — the example configs are installed
-with the package, so <code class="docutils literal notranslate"><span class="pre">examples/kgdiff_generate.yaml</span></code> is not a file in your
-folder.</p>
+<p>If your model trains on a corpus another model already registered, reference
+that key rather than uploading a second copy — that duplication is exactly what
+corpus-first naming exists to prevent. Only register a new <code class="docutils literal notranslate"><span class="pre">data/...</span></code> entry if
+the corpus or its processing is genuinely new. Run inputs — a reference
+structure, one protein target, a precomputed cache keyed to your vocabulary —
+go under <code class="docutils literal notranslate"><span class="pre">inputs/&lt;model&gt;/...</span></code> instead, because those really are yours.</p>
 </section>
 <hr class="docutils" />
-<section id="step-1-find-a-model">
-<h2>Step 1 · Find a model<a class="headerlink" href="#step-1-find-a-model" title="Link to this heading">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>list
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="n">MODEL</span>                 <span class="n">SIZE</span>  <span class="n">FAMILY</span> <span class="o">/</span> <span class="n">TAGS</span>
-<span class="o">*</span> <span class="n">diffdec</span>             <span class="mf">7.0</span> <span class="n">MB</span>  <span class="n">scaffold</span><span class="o">-</span><span class="n">decoration</span>
-                              <span class="n">scaffold</span><span class="o">-</span><span class="n">decoration</span><span class="p">,</span> <span class="n">pocket</span><span class="o">-</span><span class="n">conditioned</span><span class="p">,</span> <span class="n">r</span><span class="o">-</span><span class="n">group</span>
-  <span class="n">kgdiff</span>             <span class="mf">13.0</span> <span class="n">MB</span>  <span class="n">pocket</span><span class="o">-</span><span class="n">conditioned</span><span class="o">-</span><span class="n">diffusion</span>
-                              <span class="n">pocket</span><span class="o">-</span><span class="n">conditioned</span><span class="p">,</span> <span class="nb">property</span><span class="o">-</span><span class="n">guided</span>
-  <span class="n">midi</span>              <span class="mf">101.8</span> <span class="n">MB</span>  <span class="n">bond</span><span class="o">-</span><span class="n">generating</span><span class="o">-</span><span class="n">diffusion</span>
-                              <span class="n">unconditional</span><span class="p">,</span> <span class="n">bond</span><span class="o">-</span><span class="n">generating</span><span class="p">,</span> <span class="n">qm9</span>
-  <span class="o">...</span>
-</pre></div>
-</div>
-<p>A <code class="docutils literal notranslate"><span class="pre">*</span></code> marks models you have already fetched. Narrow the list by capability:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>list<span class="w"> </span>--tag<span class="w"> </span>pocket-conditioned
-MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>list<span class="w"> </span>--tag<span class="w"> </span>unconditional
-</pre></div>
-</div>
-<p>Then read what a model actually does before spending time on it:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>info<span class="w"> </span>midi
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>midi  (bond-generating-diffusion)
-
-  MiDi is the first model in this platform that generates the molecular graph
-  itself — bond orders and formal charges are diffused jointly with the 3D
-  coordinates, so a sample arrives with an explicit bond table instead of
-  needing post-hoc perception.
-
-  tags     : unconditional, bond-generating, qm9
-  task_type: diffusion_midi
-
-  variant: default
-    checkpoint       midi/pretrained            92.1 MB  not fetched  MIT
-    data             midi/data                   5.2 MB  not fetched  CC0-1.0
-</pre></div>
-</div>
-<p><strong>Which model should you pick?</strong> It depends on what you want to make:</p>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head text-left"><p>You want</p></th>
-<th class="head text-left"><p>Try</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td class="text-left"><p>Novel drug-like molecules from nothing</p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">midi</span></code>, <code class="docutils literal notranslate"><span class="pre">flowmol_graph3d</span></code>, <code class="docutils literal notranslate"><span class="pre">gcdm</span></code></p></td>
-</tr>
-<tr class="row-odd"><td class="text-left"><p>Molecules that fit a protein pocket</p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">kgdiff</span></code>, <code class="docutils literal notranslate"><span class="pre">diffsbdd</span></code>, <code class="docutils literal notranslate"><span class="pre">ipdiff</span></code></p></td>
-</tr>
-<tr class="row-even"><td class="text-left"><p>3D conformers of a molecule you already have</p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">ditmc</span></code>, <code class="docutils literal notranslate"><span class="pre">loqi</span></code></p></td>
-</tr>
-<tr class="row-odd"><td class="text-left"><p>To grow a scaffold or link fragments</p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffdec</span></code>, <code class="docutils literal notranslate"><span class="pre">difflinker</span></code></p></td>
-</tr>
-<tr class="row-even"><td class="text-left"><p>Metal-complex ligands</p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">ligandiff</span></code></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<hr class="docutils" />
-<section id="step-2-fetch-it">
-<h2>Step 2 · Fetch it<a class="headerlink" href="#step-2-fetch-it" title="Link to this heading">¶</a></h2>
-<p>Fetch a whole model, or just one piece:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>fetch<span class="w"> </span>--model<span class="w"> </span>kgdiff<span class="w">        </span><span class="c1"># weights + data</span>
-MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>fetch<span class="w"> </span>kgdiff/pretrained<span class="w">     </span><span class="c1"># weights only</span>
-</pre></div>
-</div>
-<p>Check the cost before committing to a large one:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>fetch<span class="w"> </span>--model<span class="w"> </span>nextmol<span class="w"> </span>--dry-run
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="n">fetch</span>          <span class="n">nextmol</span><span class="o">/</span><span class="n">dmt</span>                   <span class="mi">213</span> <span class="n">MB</span>   <span class="n">MIT</span>
-  <span class="n">BUILD</span> <span class="n">LOCALLY</span>  <span class="n">nextmol</span><span class="o">/</span><span class="n">mollama</span>              <span class="mf">1.9</span> <span class="n">GB</span>   <span class="n">none</span> <span class="n">declared</span>
-  <span class="n">total</span><span class="p">:</span> <span class="mf">2.1</span> <span class="n">GB</span> <span class="n">across</span> <span class="mi">2</span> <span class="n">assets</span>
-</pre></div>
-</div>
-<p>Files land in <code class="docutils literal notranslate"><span class="pre">~/.cache/molcraft/zoo/</span></code>. Put them somewhere else if your home
-directory is small:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">MOLCRAFT_ASSETS</span><span class="o">=</span>/data/molcraft-zoo
-</pre></div>
-</div>
-<p>Every file is checked against a checksum as it downloads, and fetching again
-skips anything already correct.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Some models show <strong>BUILD LOCALLY</strong>. Their upstream projects do not grant
-permission to redistribute the weights, so the zoo ships the recipe instead of
-the file. Run <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">zoo</span> <span class="pre">recipe</span> <span class="pre">&lt;asset&gt;</span></code> and it prints the download URL,
-the conversion command and the expected checksum.</p>
-</div>
-</section>
-<hr class="docutils" />
-<section id="step-3-generate">
-<h2>Step 3 · Generate<a class="headerlink" href="#step-3-generate" title="Link to this heading">¶</a></h2>
-<p>Every model ships a runnable config:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>examples/kgdiff_generate.yaml
-</pre></div>
-</div>
-<p>Change any setting on the command line — no need to copy or edit the file:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>examples/kgdiff_generate.yaml<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>interference.num_generate<span class="o">=</span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>interference.output_path<span class="o">=</span>my_run
-</pre></div>
-</div>
-<p>If you forget to fetch something first, you get the command to fix it:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Asset</span> <span class="s1">'kgdiff/pretrained'</span> <span class="ow">not</span> <span class="n">found</span> <span class="n">at</span>
-  <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">you</span><span class="o">/.</span><span class="n">cache</span><span class="o">/</span><span class="n">molcraft</span><span class="o">/</span><span class="n">zoo</span><span class="o">/</span><span class="n">kgdiff</span><span class="o">/</span><span class="n">pretrained</span>
-<span class="n">Fetch</span> <span class="n">it</span> <span class="k">with</span><span class="p">:</span>
-  <span class="n">MolCraftDiff</span> <span class="n">zoo</span> <span class="n">fetch</span> <span class="n">kgdiff</span><span class="o">/</span><span class="n">pretrained</span>   <span class="p">(</span><span class="mf">11.0</span> <span class="n">MB</span><span class="p">,</span> <span class="n">MIT</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>To make permanent changes, copy the config into your own directory and edit it
-there — a local file of the same name takes precedence over the bundled one:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>config<span class="w"> </span>kgdiff_generate.yaml<span class="w"> </span>.<span class="w">   </span><span class="c1"># copy it out</span>
-MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>kgdiff_generate.yaml<span class="w">       </span><span class="c1"># your copy now wins</span>
-</pre></div>
-</div>
-</section>
-<hr class="docutils" />
-<section id="working-from-a-config">
-<h2>Working from a config<a class="headerlink" href="#working-from-a-config" title="Link to this heading">¶</a></h2>
-<p>If a colleague hands you a config and you do not know what it needs, ask the
-zoo to work it out:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>fetch<span class="w"> </span>--config<span class="w"> </span>their_run.yaml
-</pre></div>
-</div>
-<p>It reads the asset references out of the file and fetches exactly those — no
-more, and nothing you already have.</p>
-</section>
-<hr class="docutils" />
-<section id="how-assets-are-named">
-<h2>How assets are named<a class="headerlink" href="#how-assets-are-named" title="Link to this heading">¶</a></h2>
-<p>Three kinds of thing, three prefixes — so you can tell what something is from
-its name alone:</p>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head text-left"><p>Prefix</p></th>
-<th class="head text-left"><p>What it is</p></th>
-<th class="head text-left"><p>Example</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">data/</span></code></p></td>
-<td class="text-left"><p>a <strong>corpus</strong> — never named after a model</p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">data/qm9/graph3d</span></code></p></td>
-</tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">inputs/</span></code></p></td>
-<td class="text-left"><p>a <strong>run input</strong> — a reference structure, a single protein target</p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">inputs/templates</span></code></p></td>
-</tr>
-<tr class="row-even"><td class="text-left"><p><em>(model name)</em></p></td>
-<td class="text-left"><p><strong>weights</strong> and their sidecars</p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">kgdiff/pretrained</span></code></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Corpora are named <code class="docutils literal notranslate"><span class="pre">data/&lt;corpus&gt;/&lt;variant&gt;</span></code>: the corpus first, then how it was
-processed. So the CrossDocked pockets that KGDiff, IPDiff and DiffSBDD all read
-are <code class="docutils literal notranslate"><span class="pre">data/crossdocked/pockets10a</span></code> — not named after whichever model happened to
-use them first. Different processings of one corpus sit together:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="o">/</span><span class="n">qm9</span><span class="o">/</span><span class="n">ase</span>           <span class="n">data</span><span class="o">/</span><span class="n">qm9</span><span class="o">/</span><span class="n">graph3d</span>          <span class="n">data</span><span class="o">/</span><span class="n">geom</span><span class="o">/</span><span class="n">ase</span>
-<span class="n">data</span><span class="o">/</span><span class="n">qm9</span><span class="o">/</span><span class="n">ase</span><span class="o">-</span><span class="mi">4</span><span class="n">k</span>        <span class="n">data</span><span class="o">/</span><span class="n">qm9</span><span class="o">/</span><span class="n">graph3d</span><span class="o">-</span><span class="mi">4</span><span class="n">k</span>       <span class="n">data</span><span class="o">/</span><span class="n">geom</span><span class="o">/</span><span class="n">graph3d</span><span class="o">-</span><span class="n">val</span>
-</pre></div>
-</div>
-<p>Two practical consequences:</p>
+<section id="step-3-settle-the-licence">
+<h2>Step 3 · Settle the licence<a class="headerlink" href="#step-3-settle-the-licence" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">zoo</span> <span class="pre">add</span></code> deliberately leaves two fields as <code class="docutils literal notranslate"><span class="pre">TODO</span></code>, because they are human
+judgement and must not be guessed:</p>
 <ul class="simple">
-<li><p><strong>Fetch a second model that shares a corpus and the download is already
-done.</strong> <code class="docutils literal notranslate"><span class="pre">zoo</span> <span class="pre">fetch</span> <span class="pre">--model</span> <span class="pre">ipdiff</span></code> reuses <code class="docutils literal notranslate"><span class="pre">data/crossdocked/pockets10a</span></code> if
-kgdiff put it there.</p></li>
-<li><p><strong>A model’s own weights stay under its own name</strong>, because those genuinely
-belong to it. Only data moved.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">license</span></code></strong> — the upstream project’s licence. Check the repo’s <code class="docutils literal notranslate"><span class="pre">LICENSE</span></code>
+file <em>and</em> the GitHub Licensing API (<code class="docutils literal notranslate"><span class="pre">https://api.github.com/repos/&lt;owner&gt;/&lt;repo&gt;</span></code>
+→ <code class="docutils literal notranslate"><span class="pre">.license.spdx_id</span></code>); they sometimes disagree.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">redistribute</span></code></strong> — whether we may host the converted weights. Set <code class="docutils literal notranslate"><span class="pre">false</span></code>
+and add a <code class="docutils literal notranslate"><span class="pre">reason:</span></code> when we may not; the entry then ships the upstream URL,
+the conversion script and the sha256 instead of the bytes.</p></li>
 </ul>
-</section>
-<section id="command-summary">
-<h2>Command summary<a class="headerlink" href="#command-summary" title="Link to this heading">¶</a></h2>
+<p>How to read what you find:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
-<tr class="row-odd"><th class="head text-left"><p>Command</p></th>
-<th class="head text-left"><p>What it does</p></th>
+<tr class="row-odd"><th class="head text-left"><p>Finding</p></th>
+<th class="head text-left"><p>Verdict</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">zoo</span> <span class="pre">list</span> <span class="pre">[--tag</span> <span class="pre">T]</span> <span class="pre">[--fetched]</span></code></p></td>
-<td class="text-left"><p>List models, optionally filtered</p></td>
+<tr class="row-even"><td class="text-left"><p>MIT, BSD, Apache</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">redistribute:</span> <span class="pre">true</span></code>, record the SPDX id</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">zoo</span> <span class="pre">info</span> <span class="pre">&lt;model&gt;</span></code></p></td>
-<td class="text-left"><p>Description, variants, sizes, licences</p></td>
+<tr class="row-odd"><td class="text-left"><p>No licence at all</p></td>
+<td class="text-left"><p><strong>all rights reserved</strong> — <code class="docutils literal notranslate"><span class="pre">redistribute:</span> <span class="pre">false</span></code>, not “probably fine”</p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">zoo</span> <span class="pre">fetch</span> <span class="pre">--model</span> <span class="pre">&lt;m&gt;</span></code></p></td>
-<td class="text-left"><p>Download everything that model needs</p></td>
+<tr class="row-even"><td class="text-left"><p>Non-commercial (e.g. PolyForm)</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">redistribute:</span> <span class="pre">false</span></code>, name the licence</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">zoo</span> <span class="pre">fetch</span> <span class="pre">&lt;asset&gt;</span> <span class="pre">[--dry-run]</span></code></p></td>
-<td class="text-left"><p>Download one asset; preview the size first</p></td>
+<tr class="row-odd"><td class="text-left"><p>Gated dataset (HTTP 401)</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">redistribute:</span> <span class="pre">false</span></code></p></td>
 </tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">zoo</span> <span class="pre">fetch</span> <span class="pre">--config</span> <span class="pre">&lt;f.yaml&gt;</span></code></p></td>
-<td class="text-left"><p>Download exactly what a config references</p></td>
-</tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">zoo</span> <span class="pre">verify</span></code></p></td>
-<td class="text-left"><p>Re-check cached files against their checksums</p></td>
-</tr>
-<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">zoo</span> <span class="pre">path</span> <span class="pre">&lt;asset&gt;</span></code></p></td>
-<td class="text-left"><p>Print a local path, for use in shell scripts</p></td>
-</tr>
-<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">zoo</span> <span class="pre">recipe</span> <span class="pre">&lt;asset&gt;</span></code></p></td>
-<td class="text-left"><p>How to build an asset that cannot be redistributed</p></td>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">NOASSERTION</span></code> from the API</p></td>
+<td class="text-left"><p>the API could not classify it — read the file yourself</p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<p>Two traps, both of which have happened here:</p>
+<ul class="simple">
+<li><p><strong>Code licence ≠ data licence.</strong> A repo can be MIT while asserting different
+terms for the corpus it trains on. Audit them separately.</p></li>
+<li><p><strong>A model’s weights are not the same asset as an upstream corpus it bundles.</strong>
+Attach each verdict to the asset it actually describes.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">zoo</span> <span class="pre">verify</span> <span class="pre">--all</span></code> fails while any <code class="docutils literal notranslate"><span class="pre">TODO</span></code> remains, so an unaudited
+model cannot quietly reach a release.</p>
+</section>
+<hr class="docutils" />
+<section id="step-4-write-the-example-config">
+<h2>Step 4 · Write the example config<a class="headerlink" href="#step-4-write-the-example-config" title="Link to this heading">¶</a></h2>
+<p>Copy your working <code class="docutils literal notranslate"><span class="pre">configs/&lt;name&gt;_generate.yaml</span></code> into
+<code class="docutils literal notranslate"><span class="pre">src/MolecularDiffusion/configs/examples/</span></code> and rewrite every path-valued key to
+an <code class="docutils literal notranslate"><span class="pre">${asset:...}</span></code> reference:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">chkpt_directory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${asset:&lt;name&gt;/pretrained}</span>
+<span class="nt">ase_db_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${asset:data/&lt;corpus&gt;/&lt;variant&gt;/&lt;file&gt;.db}</span>
+</pre></div>
+</div>
+<p>Both forms resolve, so use whichever the key needs — <code class="docutils literal notranslate"><span class="pre">${asset:m/pretrained}</span></code>
+for a directory, <code class="docutils literal notranslate"><span class="pre">${asset:m/pretrained/file.ckpt}</span></code> for one file. Rewrite
+<em>values only</em>, never text inside comments. Leave <code class="docutils literal notranslate"><span class="pre">output_path</span></code> a plain relative
+directory: it is an output, and must never point into the asset cache.</p>
+<p>Literal paths keep working everywhere, so this file is purely additive — your
+original config stays exactly as it was.</p>
+</section>
+<hr class="docutils" />
+<section id="step-5-prove-it-runs">
+<h2>Step 5 · Prove it runs<a class="headerlink" href="#step-5-prove-it-runs" title="Link to this heading">¶</a></h2>
+<p>Registration that has not been exercised is a claim, not a fact. From a
+directory <strong>outside the repository</strong>, with a scratch cache:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">MOLCRAFT_ASSETS</span><span class="o">=</span>/tmp/zoo-check
+MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>fetch<span class="w"> </span>--config<span class="w"> </span>src/MolecularDiffusion/configs/examples/&lt;name&gt;_generate.yaml
+MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>examples/&lt;name&gt;_generate.yaml<span class="w"> </span>interference.num_generate<span class="o">=</span><span class="m">4</span>
+MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>verify<span class="w"> </span>--all
+</pre></div>
+</div>
+<p>Ask the config’s <code class="docutils literal notranslate"><span class="pre">interference:</span></code> group which keys it declares before reducing
+anything — some generation modes deliberately do not accept <code class="docutils literal notranslate"><span class="pre">num_steps</span></code> or
+<code class="docutils literal notranslate"><span class="pre">num_generate</span></code>, and overriding a key a group does not have produces a Hydra
+error that looks like a broken config but is not.</p>
+</section>
+<hr class="docutils" />
+<section id="publishing">
+<h2>Publishing<a class="headerlink" href="#publishing" title="Link to this heading">¶</a></h2>
+<p>Uploading is a separate, deliberate step; registering does not push anything.
+Once the licence is settled and the example config runs, stage and upload:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>scripts/build_zoo_manifest.py<span class="w"> </span>stage<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--manifest<span class="w"> </span>src/MolecularDiffusion/zoo.yaml<span class="w"> </span>--out<span class="w"> </span>.zoo-staging
+python<span class="w"> </span>scripts/build_zoo_manifest.py<span class="w"> </span>upload<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--manifest<span class="w"> </span>src/MolecularDiffusion/zoo.yaml<span class="w"> </span>--staging<span class="w"> </span>.zoo-staging
+</pre></div>
+</div>
+<p>Staging copies only the assets marked <code class="docutils literal notranslate"><span class="pre">redistribute:</span> <span class="pre">true</span></code>, so an asset you
+marked withheld cannot be uploaded by accident.</p>
 </section>
 <hr class="docutils" />
 <section id="where-to-go-next">
 <h2>Where to go next<a class="headerlink" href="#where-to-go-next" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p><strong>More generation modes</strong> — <a class="reference internal" href="05_generation_overview.html"><span class="std std-doc">Tutorial 5: Generation Overview</span></a>
-covers unconditional, structure-guided and property-directed sampling.</p></li>
-<li><p><strong>Judge what you made</strong> — <a class="reference internal" href="09_analyze.html"><span class="std std-doc">Tutorial 9: Analysis</span></a> scores
-validity, uniqueness and geometry.</p></li>
-<li><p><strong>Train your own</strong> — start at
-<a class="reference internal" href="00_data_preparation.html"><span class="std std-doc">Tutorial 0: Data Preparation</span></a>. A zoo checkpoint is
-also a good starting point for fine-tuning; see
-<a class="reference internal" href="04_finetuning.html"><span class="std std-doc">Tutorial 4: Fine-tuning</span></a>.</p></li>
+<li><p><strong>The full integration guide</strong> — <a class="reference internal" href="#../adding_new_models.md"><span class="xref myst">Adding New Models</span></a></p></li>
+<li><p><strong>What users will see</strong> — <a class="reference internal" href="models.html"><span class="std std-doc">Using a pretrained model</span></a></p></li>
 </ul>
 </section>
 </section>
@@ -757,23 +638,23 @@ also a good starting point for fine-tuning; see
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="00_data_preparation.html">
+          <a class="next-page" href="../tutorials/index.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Tutorial 0: Data Preparation &amp; Management</div>
+                <div class="title">Tutorials</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="index.html">
+          <a class="prev-page" href="data.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Tutorials</div>
+                <div class="title">Using Zoo Datasets</div>
                 
               </div>
             </a>
@@ -824,15 +705,13 @@ also a good starting point for fine-tuning; see
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Quickstart: Generate Your First Molecules</a><ul>
-<li><a class="reference internal" href="#at-a-glance">At a Glance</a></li>
-<li><a class="reference internal" href="#three-commands">Three commands</a></li>
-<li><a class="reference internal" href="#step-1-find-a-model">Step 1 · Find a model</a></li>
-<li><a class="reference internal" href="#step-2-fetch-it">Step 2 · Fetch it</a></li>
-<li><a class="reference internal" href="#step-3-generate">Step 3 · Generate</a></li>
-<li><a class="reference internal" href="#working-from-a-config">Working from a config</a></li>
-<li><a class="reference internal" href="#how-assets-are-named">How assets are named</a></li>
-<li><a class="reference internal" href="#command-summary">Command summary</a></li>
+<li><a class="reference internal" href="#">Registering Your Own Model</a><ul>
+<li><a class="reference internal" href="#step-1-register-the-assets">Step 1 · Register the assets</a></li>
+<li><a class="reference internal" href="#step-2-classify-what-you-registered">Step 2 · Classify what you registered</a></li>
+<li><a class="reference internal" href="#step-3-settle-the-licence">Step 3 · Settle the licence</a></li>
+<li><a class="reference internal" href="#step-4-write-the-example-config">Step 4 · Write the example config</a></li>
+<li><a class="reference internal" href="#step-5-prove-it-runs">Step 5 · Prove it runs</a></li>
+<li><a class="reference internal" href="#publishing">Publishing</a></li>
 <li><a class="reference internal" href="#where-to-go-next">Where to go next</a></li>
 </ul>
 </li>

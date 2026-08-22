@@ -12,7 +12,7 @@ New here? Start with [Installation](../installation.md), then work through **Dat
 :gutter: 3
 
 :::{grid-item-card} Quickstart · Generate Your First Molecules
-:link: quickstart_model_zoo
+:link: ../model_zoo/models
 :link-type: doc
 
 No data, no training. Fetch a pretrained model from the zoo and generate 3D
@@ -130,7 +130,6 @@ Grid and Bayesian sweeps over controlled-generation parameters with automatic me
 :hidden:
 :maxdepth: 1
 
-quickstart_model_zoo
 00_data_preparation
 01_training_diffusion
 02_training_regressor
