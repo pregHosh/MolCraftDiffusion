@@ -214,6 +214,7 @@
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="tutorials/index.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/quickstart_model_zoo.html">Quickstart: Generate Your First Molecules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/00_data_preparation.html">Tutorial 0: Data Preparation &amp; Management</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/01_training_diffusion.html">Tutorial 1: Training a Diffusion Model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/02_training_regressor.html">Tutorial 2: Training a Regressor Model</a></li>
@@ -256,6 +257,7 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/index.html">MolecularDiffusion</a><input aria-label="Toggle navigation of MolecularDiffusion" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/MolecularDiffusion/assets/index.html">MolecularDiffusion.assets</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/callbacks/index.html">MolecularDiffusion.callbacks</a><input aria-label="Toggle navigation of MolecularDiffusion.callbacks" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/callbacks/train_helper/index.html">MolecularDiffusion.callbacks.train_helper</a></li>
 </ul>
@@ -268,6 +270,7 @@
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/cli/main/index.html">MolecularDiffusion.cli.main</a></li>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/cli/predict/index.html">MolecularDiffusion.cli.predict</a></li>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/cli/train/index.html">MolecularDiffusion.cli.train</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/cli/zoo/index.html">MolecularDiffusion.cli.zoo</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -456,12 +459,72 @@
         <article role="main" id="furo-main-content">
           <section id="configuration-templates">
 <h1>Configuration Templates<a class="headerlink" href="#configuration-templates" title="Link to this heading">¶</a></h1>
-<p>Ready-to-use template configs live in the repository under <code class="docutils literal notranslate"><span class="pre">docs/cfg_examples/</span></code>.
-Copy the relevant file, fill in your checkpoint and data paths, and run it. The
-full packaged Hydra defaults these templates build on are under
-<code class="docutils literal notranslate"><span class="pre">src/MolecularDiffusion/configs/</span></code>.</p>
+<p>There are two kinds of ready-made config, and which one you want depends on
+whether you are bringing your own model or running one of ours.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p></p></th>
+<th class="head text-left"><p><strong>Model examples</strong></p></th>
+<th class="head text-left"><p><strong>Blank templates</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Run against</p></td>
+<td class="text-left"><p>a pretrained model from the zoo</p></td>
+<td class="text-left"><p>your own checkpoint and data</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Paths</p></td>
+<td class="text-left"><p>already resolved — nothing to edit</p></td>
+<td class="text-left"><p>you fill them in</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Where</p></td>
+<td class="text-left"><p>installed with the package</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">docs/cfg_examples/</span></code> in the repository</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Start with</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">generate</span> <span class="pre">examples/&lt;name&gt;.yaml</span></code></p></td>
+<td class="text-left"><p>copy, edit, run</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>New here? Use a <strong>model example</strong> — it runs as-is. Reach for a <strong>template</strong>
+once you have trained something of your own.</p>
+<hr class="docutils" />
+<section id="model-examples-ready-to-run">
+<h2>Model examples (ready to run)<a class="headerlink" href="#model-examples-ready-to-run" title="Link to this heading">¶</a></h2>
+<p>Every model in the zoo ships a config that already points at its weights and
+data, so it runs unedited on any machine:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>fetch<span class="w"> </span>--model<span class="w"> </span>kgdiff
+MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>examples/kgdiff_generate.yaml
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">examples/</span></code> is inside the installed package, not a folder in your working
+directory — so this works from anywhere. List what is there, and copy one out
+if you want to keep changes:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>config<span class="w">                              </span><span class="c1"># list them</span>
+MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>config<span class="w"> </span>kgdiff_generate.yaml<span class="w"> </span>.<span class="w">       </span><span class="c1"># copy into the current dir</span>
+</pre></div>
+</div>
+<p>A local file of the same name takes precedence over the bundled one, so an
+edited copy is picked up automatically.</p>
+<p>For one-off changes, skip copying and override on the command line:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>examples/kgdiff_generate.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>interference.num_generate<span class="o">=</span><span class="m">100</span><span class="w"> </span>interference.output_path<span class="o">=</span>my_run
+</pre></div>
+</div>
+<p>See the <a class="reference internal" href="tutorials/quickstart_model_zoo.html"><span class="std std-doc">model zoo quickstart</span></a> for the full
+workflow, and <a class="reference internal" href="architectures.html"><span class="std std-doc">Model Architectures</span></a> for choosing a model.</p>
+</section>
+<hr class="docutils" />
+<section id="blank-templates-bring-your-own-model">
+<h2>Blank templates (bring your own model)<a class="headerlink" href="#blank-templates-bring-your-own-model" title="Link to this heading">¶</a></h2>
+<p>These live in the repository under <code class="docutils literal notranslate"><span class="pre">docs/cfg_examples/</span></code>. Copy the relevant
+file, fill in your checkpoint and data paths, and run it. The packaged Hydra
+defaults they build on are under <code class="docutils literal notranslate"><span class="pre">src/MolecularDiffusion/configs/</span></code>.</p>
 <section id="training">
-<h2>Training<a class="headerlink" href="#training" title="Link to this heading">¶</a></h2>
+<h3>Training<a class="headerlink" href="#training" title="Link to this heading">¶</a></h3>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -490,7 +553,7 @@ full packaged Hydra defaults these templates build on are under
 </div>
 </section>
 <section id="generation">
-<h2>Generation<a class="headerlink" href="#generation" title="Link to this heading">¶</a></h2>
+<h3>Generation<a class="headerlink" href="#generation" title="Link to this heading">¶</a></h3>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -523,10 +586,18 @@ full packaged Hydra defaults these templates build on are under
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>docs/cfg_examples/gen_cfg
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The structure-guided templates (<code class="docutils literal notranslate"><span class="pre">gen_inpaint</span></code>, <code class="docutils literal notranslate"><span class="pre">gen_outpaint</span></code>) need a
+reference <code class="docutils literal notranslate"><span class="pre">.xyz</span></code>. Three are shipped with the zoo — fetch them with
+<code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">zoo</span> <span class="pre">fetch</span> <span class="pre">inputs/templates</span></code> — or point
+<code class="docutils literal notranslate"><span class="pre">condition_configs.reference_structure_path</span></code> at your own.</p>
+</div>
+<hr class="docutils" />
 <p>Config-driven commands accept Hydra-style dotted overrides, e.g.
 <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">generate</span> <span class="pre">docs/cfg_examples/gen_cfg</span> <span class="pre">interference.num_generate=200</span></code>.
-See <a class="reference internal" href="architectures.html"><span class="std std-doc">Model Architectures</span></a> for choosing a training backbone and
-<a class="reference internal" href="tutorials/index.html"><span class="std std-doc">Tutorials</span></a> for end-to-end walkthroughs.</p>
+See <a class="reference internal" href="tutorials/index.html"><span class="std std-doc">Tutorials</span></a> for end-to-end walkthroughs.</p>
+</section>
 </section>
 </section>
 
@@ -603,8 +674,12 @@ See <a class="reference internal" href="architectures.html"><span class="std std
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Configuration Templates</a><ul>
+<li><a class="reference internal" href="#model-examples-ready-to-run">Model examples (ready to run)</a></li>
+<li><a class="reference internal" href="#blank-templates-bring-your-own-model">Blank templates (bring your own model)</a><ul>
 <li><a class="reference internal" href="#training">Training</a></li>
 <li><a class="reference internal" href="#generation">Generation</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

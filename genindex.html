@@ -212,6 +212,7 @@
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="tutorials/index.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/quickstart_model_zoo.html">Quickstart: Generate Your First Molecules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/00_data_preparation.html">Tutorial 0: Data Preparation &amp; Management</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/01_training_diffusion.html">Tutorial 1: Training a Diffusion Model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/02_training_regressor.html">Tutorial 2: Training a Regressor Model</a></li>
@@ -254,6 +255,7 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/index.html">MolecularDiffusion</a><input aria-label="Toggle navigation of MolecularDiffusion" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/MolecularDiffusion/assets/index.html">MolecularDiffusion.assets</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/callbacks/index.html">MolecularDiffusion.callbacks</a><input aria-label="Toggle navigation of MolecularDiffusion.callbacks" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/callbacks/train_helper/index.html">MolecularDiffusion.callbacks.train_helper</a></li>
 </ul>
@@ -266,6 +268,7 @@
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/cli/main/index.html">MolecularDiffusion.cli.main</a></li>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/cli/predict/index.html">MolecularDiffusion.cli.predict</a></li>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/cli/train/index.html">MolecularDiffusion.cli.train</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/cli/zoo/index.html">MolecularDiffusion.cli.zoo</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -673,6 +676,8 @@
           <li><a href="autoapi/MolecularDiffusion/utils/geom_analyzer/index.html#MolecularDiffusion.utils.geom_analyzer.Histogram_discrete.add">(MolecularDiffusion.utils.geom_analyzer.Histogram_discrete method)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/MolecularDiffusion/cli/zoo/index.html#MolecularDiffusion.cli.zoo.add_cmd">add_cmd() (in module MolecularDiffusion.cli.zoo)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/runmodes/data/augmentation/index.html#MolecularDiffusion.runmodes.data.augmentation.add_h_unit">add_h_unit() (in module MolecularDiffusion.runmodes.data.augmentation)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsbdd/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator.add_n_nodes">add_n_nodes (MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator attribute)</a>
@@ -1024,6 +1029,8 @@
 </li>
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/difflinker/utils/index.html#MolecularDiffusion.modules.models.difflinker.utils.assert_partial_mean_zero_with_mask">assert_partial_mean_zero_with_mask() (in module MolecularDiffusion.modules.models.difflinker.utils)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/assets/index.html#MolecularDiffusion.assets.assets_root">assets_root() (in module MolecularDiffusion.assets)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/atomic_data/index.html#MolecularDiffusion.modules.layers.atomic_data.AtomicData.assign_batch_stats">assign_batch_stats() (MolecularDiffusion.modules.layers.atomic_data.AtomicData method)</a>
 </li>
@@ -1590,21 +1597,13 @@
 </li>
           <li><a href="autoapi/MolecularDiffusion/data/lightning_data_module/index.html#MolecularDiffusion.data.lightning_data_module.MolecularDiffusionDataModule.batch_size">(MolecularDiffusion.data.lightning_data_module.MolecularDiffusionDataModule attribute)</a>
 </li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_apo2mol/index.html#MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator.batch_size">(MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator attribute)</a>
-</li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffdec/index.html#MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator.batch_size">(MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffpharma/index.html#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.batch_size">(MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsbdd/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator.batch_size">(MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsmol/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolShapeGenerator.batch_size">(MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolShapeGenerator attribute)</a>
 </li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_kgdiff/index.html#MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator.batch_size">(MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator attribute)</a>
-</li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_nextmol/index.html#MolecularDiffusion.modules.tasks.diffusion_nextmol.NextMolGenerator.batch_size">(MolecularDiffusion.modules.tasks.diffusion_nextmol.NextMolGenerator attribute)</a>
 </li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_pmdm/index.html#MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator.batch_size">(MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator attribute)</a>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index.html#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.batch_size">(MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html#MolecularDiffusion.runmodes.analyze.featurize.SSL3DFeaturizer.batch_size">(MolecularDiffusion.runmodes.analyze.featurize.SSL3DFeaturizer attribute)</a>
 </li>
@@ -1886,6 +1885,8 @@
         <li><a href="autoapi/MolecularDiffusion/modules/models/ditmc/build/index.html#MolecularDiffusion.modules.models.ditmc.build.build_variant">build_variant() (in module MolecularDiffusion.modules.models.ditmc.build)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/geom_analyzer/index.html#MolecularDiffusion.utils.geom_analyzer.build_xae_molecule">build_xae_molecule() (in module MolecularDiffusion.utils.geom_analyzer)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/cli/zoo/index.html#MolecularDiffusion.cli.zoo.bundle_cmd">bundle_cmd() (in module MolecularDiffusion.cli.zoo)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -2769,6 +2770,8 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsmol/score_model/index.html#MolecularDiffusion.modules.models.diffsmol.score_model.ScorePosNet3D.config">config (MolecularDiffusion.modules.models.diffsmol.score_model.ScorePosNet3D attribute)</a>
 </li>
+        <li><a href="autoapi/MolecularDiffusion/cli/zoo/index.html#MolecularDiffusion.cli.zoo.config_cmd">config_cmd() (in module MolecularDiffusion.cli.zoo)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/runmodes/train/data/index.html#MolecularDiffusion.runmodes.train.data.DatasetConfigDict.config_dict">config_dict (MolecularDiffusion.runmodes.train.data.DatasetConfigDict attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/core/core/index.html#MolecularDiffusion.core.core.Configurable">Configurable (class in MolecularDiffusion.core.core)</a>
@@ -3329,6 +3332,18 @@
           <li><a href="autoapi/MolecularDiffusion/data/component/pmdm_data/index.html#MolecularDiffusion.data.component.pmdm_data.PMDMDataset.db_path">(MolecularDiffusion.data.component.pmdm_data.PMDMDataset attribute)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_apo2mol/index.html#MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator.db_required_msg">db_required_msg (MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsbdd/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator.db_required_msg">(MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator attribute)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_kgdiff/index.html#MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator.db_required_msg">(MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator attribute)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_pmdm/index.html#MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator.db_required_msg">(MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator attribute)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index.html#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.db_required_msg">(MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator attribute)</a>
+</li>
+        </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffpharma/index.html#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.ddpm_kwargs">ddpm_kwargs (MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory attribute)</a>
 
         <ul>
@@ -3524,19 +3539,13 @@
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_apo2mol/index.html#MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolDiffusionTask.device">(MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolDiffusionTask property)</a>
 </li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_apo2mol/index.html#MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator.device">(MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator attribute)</a>
-</li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffdec/index.html#MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator.device">(MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffdec/index.html#MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecTask.device">(MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecTask property)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_difflinker/index.html#MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.device">(MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask property)</a>
 </li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffpharma/index.html#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.device">(MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator attribute)</a>
-</li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffpharma/index.html#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.device">(MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask property)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsbdd/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator.device">(MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsbdd/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDTask.device">(MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDTask property)</a>
 </li>
@@ -3553,8 +3562,6 @@
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_ipdiff/index.html#MolecularDiffusion.modules.tasks.diffusion_ipdiff.IPDiffDiffusionTask.device">(MolecularDiffusion.modules.tasks.diffusion_ipdiff.IPDiffDiffusionTask property)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_kgdiff/index.html#MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffDiffusionTask.device">(MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffDiffusionTask property)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_kgdiff/index.html#MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator.device">(MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_ldm/index.html#MolecularDiffusion.modules.tasks.diffusion_ldm.FlowMatchingInterpolant.device">(MolecularDiffusion.modules.tasks.diffusion_ldm.FlowMatchingInterpolant attribute)</a>
 </li>
@@ -3574,9 +3581,9 @@
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_pmdm/index.html#MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMDiffusionTask.device">(MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMDiffusionTask property)</a>
 </li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_pmdm/index.html#MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator.device">(MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator attribute)</a>
-</li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_tabasco/index.html#MolecularDiffusion.modules.tasks.diffusion_tabasco.TabascoDiffusionTask.device">(MolecularDiffusion.modules.tasks.diffusion_tabasco.TabascoDiffusionTask property)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index.html#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.device">(MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/ssl3d/index.html#MolecularDiffusion.modules.tasks.ssl3d.SSL3D.device">(MolecularDiffusion.modules.tasks.ssl3d.SSL3D property)</a>
 </li>
@@ -3667,10 +3674,10 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsmol/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsmol.DIFFSMOL_AROMATIC_VOCAB">DIFFSMOL_AROMATIC_VOCAB (in module MolecularDiffusion.modules.tasks.diffusion_diffsmol)</a>
 </li>
-        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsmol/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsmol.DIFFSMOL_ATOM_VOCAB">DIFFSMOL_ATOM_VOCAB (in module MolecularDiffusion.modules.tasks.diffusion_diffsmol)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsmol/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsmol.DIFFSMOL_ATOM_VOCAB">DIFFSMOL_ATOM_VOCAB (in module MolecularDiffusion.modules.tasks.diffusion_diffsmol)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsmol/bond_tables/index.html#MolecularDiffusion.modules.models.diffsmol.bond_tables.DIFFSMOL_BOND_TABLES">DIFFSMOL_BOND_TABLES (in module MolecularDiffusion.modules.models.diffsmol.bond_tables)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsmol/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolDiffusionTask">DiffSMolDiffusionTask (class in MolecularDiffusion.modules.tasks.diffusion_diffsmol)</a>
@@ -4831,6 +4838,8 @@
           <li><a href="autoapi/MolecularDiffusion/data/component/pmdm_data/index.html#MolecularDiffusion.data.component.pmdm_data.PMDMDataset.entries">(MolecularDiffusion.data.component.pmdm_data.PMDMDataset attribute)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/MolecularDiffusion/assets/index.html#MolecularDiffusion.assets.entry">entry() (in module MolecularDiffusion.assets)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsbdd/en_diffusion/index.html#MolecularDiffusion.modules.models.diffsbdd.en_diffusion.EnVariationalDiffusion">EnVariationalDiffusion (class in MolecularDiffusion.modules.models.diffsbdd.en_diffusion)</a>
 
         <ul>
@@ -5458,6 +5467,10 @@
 </li>
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/shepherd_arch/equiformer_operations/index.html#MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.FeedForwardNetwork_equiformer">FeedForwardNetwork_equiformer (class in MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/assets/index.html#MolecularDiffusion.assets.fetch">fetch() (in module MolecularDiffusion.assets)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/cli/zoo/index.html#MolecularDiffusion.cli.zoo.fetch_cmd">fetch_cmd() (in module MolecularDiffusion.cli.zoo)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/ditmc/embedding/index.html#MolecularDiffusion.modules.models.ditmc.embedding.TimeEmbedding.ff">ff (MolecularDiffusion.modules.models.ditmc.embedding.TimeEmbedding attribute)</a>
 
@@ -8055,6 +8068,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/ligandiff/edm/index.html#MolecularDiffusion.modules.models.ligandiff.edm.EDM.inflate_batch_array">(MolecularDiffusion.modules.models.ligandiff.edm.EDM static method)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/MolecularDiffusion/cli/zoo/index.html#MolecularDiffusion.cli.zoo.info_cmd">info_cmd() (in module MolecularDiffusion.cli.zoo)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/equiformer_v2/module_list/index.html#MolecularDiffusion.modules.layers.equiformer_v2.module_list.ModuleListInfo.info_str">info_str (MolecularDiffusion.modules.layers.equiformer_v2.module_list.ModuleListInfo attribute)</a>
 
         <ul>
@@ -8173,6 +8188,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_kgdiff/index.html#MolecularDiffusion.modules.tasks.diffusion_kgdiff.INT_TYPE">(in module MolecularDiffusion.modules.tasks.diffusion_kgdiff)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_pmdm/index.html#MolecularDiffusion.modules.tasks.diffusion_pmdm.INT_TYPE">(in module MolecularDiffusion.modules.tasks.diffusion_pmdm)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index.html#MolecularDiffusion.modules.tasks.pocket_generator.INT_TYPE">(in module MolecularDiffusion.modules.tasks.pocket_generator)</a>
 </li>
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/flowmol/vector_field/index.html#MolecularDiffusion.modules.models.flowmol.vector_field.EndpointVectorField.integrate">integrate() (MolecularDiffusion.modules.models.flowmol.vector_field.EndpointVectorField method)</a>
@@ -8995,6 +9012,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/midi/transformer_model/index.html#MolecularDiffusion.modules.models.midi.transformer_model.XEyTransformerLayer.linX2">(MolecularDiffusion.modules.models.midi.transformer_model.XEyTransformerLayer attribute)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/MolecularDiffusion/cli/zoo/index.html#MolecularDiffusion.cli.zoo.list_cmd">list_cmd() (in module MolecularDiffusion.cli.zoo)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/utils/io/index.html#MolecularDiffusion.utils.io.literal_eval">literal_eval() (in module MolecularDiffusion.utils.io)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_nextmol/index.html#MolecularDiffusion.modules.tasks.diffusion_nextmol.NextMolGenerator.lm_batch_size">lm_batch_size (MolecularDiffusion.modules.tasks.diffusion_nextmol.NextMolGenerator attribute)</a>
@@ -9253,6 +9272,8 @@
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/gfmdiff/blocks/index.html#MolecularDiffusion.modules.layers.gfmdiff.blocks.local_geometry_calc">local_geometry_calc() (in module MolecularDiffusion.modules.layers.gfmdiff.blocks)</a>
 </li>
+        <li><a href="autoapi/MolecularDiffusion/assets/index.html#MolecularDiffusion.assets.local_path">local_path() (in module MolecularDiffusion.assets)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/gcdm/gcp_utils/index.html#MolecularDiffusion.modules.models.gcdm.gcp_utils.localize">localize() (in module MolecularDiffusion.modules.models.gcdm.gcp_utils)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/cli/eval_predict/index.html#MolecularDiffusion.cli.eval_predict.log">log (in module MolecularDiffusion.cli.eval_predict)</a>
@@ -9485,6 +9506,8 @@
           <li><a href="autoapi/MolecularDiffusion/cli/data/index.html#MolecularDiffusion.cli.data.logger">(in module MolecularDiffusion.cli.data)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/cli/main/index.html#MolecularDiffusion.cli.main.logger">(in module MolecularDiffusion.cli.main)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/cli/zoo/index.html#MolecularDiffusion.cli.zoo.logger">(in module MolecularDiffusion.cli.zoo)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/core/engine/index.html#MolecularDiffusion.core.engine.logger">(in module MolecularDiffusion.core.engine)</a>
 </li>
@@ -9815,6 +9838,10 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/ditmc/build/index.html#MolecularDiffusion.modules.models.ditmc.build.make_molecular_dit_so3">make_molecular_dit_so3() (in module MolecularDiffusion.modules.models.ditmc.build)</a>
 </li>
+        <li><a href="autoapi/MolecularDiffusion/assets/index.html#MolecularDiffusion.assets.MANIFEST">MANIFEST (in module MolecularDiffusion.assets)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/assets/index.html#MolecularDiffusion.assets.manifest">manifest() (in module MolecularDiffusion.assets)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/data/component/kgdiff_data/index.html#MolecularDiffusion.data.component.kgdiff_data.MAP_ATOM_TYPE_AROMATIC_TO_INDEX">MAP_ATOM_TYPE_AROMATIC_TO_INDEX (in module MolecularDiffusion.data.component.kgdiff_data)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/vn/vn_layers/index.html#MolecularDiffusion.modules.layers.vn.vn_layers.VNLeakyReLU.map_to_dir">map_to_dir (MolecularDiffusion.modules.layers.vn.vn_layers.VNLeakyReLU attribute)</a>
@@ -10064,7 +10091,11 @@
 </li>
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_pmdm/index.html#MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator.max_retries">max_retries (MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index.html#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.max_retries">(MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator attribute)</a>
 </li>
+        </ul></li>
         <li><a href="autoapi/MolecularDiffusion/utils/torch/index.html#MolecularDiffusion.utils.torch.MAX_SEED_VALUE">MAX_SEED_VALUE (in module MolecularDiffusion.utils.torch)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_nextmol/index.html#MolecularDiffusion.modules.tasks.diffusion_nextmol.NextMolGenerator.max_sf_tokens">max_sf_tokens (MolecularDiffusion.modules.tasks.diffusion_nextmol.NextMolGenerator attribute)</a>
@@ -10625,6 +10656,8 @@
         <ul>
           <li><a href="autoapi/MolecularDiffusion/index.html#module-MolecularDiffusion">MolecularDiffusion</a>
 </li>
+          <li><a href="autoapi/MolecularDiffusion/assets/index.html#module-MolecularDiffusion.assets">MolecularDiffusion.assets</a>
+</li>
           <li><a href="autoapi/MolecularDiffusion/callbacks/index.html#module-MolecularDiffusion.callbacks">MolecularDiffusion.callbacks</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/callbacks/train_helper/index.html#module-MolecularDiffusion.callbacks.train_helper">MolecularDiffusion.callbacks.train_helper</a>
@@ -10644,6 +10677,8 @@
           <li><a href="autoapi/MolecularDiffusion/cli/predict/index.html#module-MolecularDiffusion.cli.predict">MolecularDiffusion.cli.predict</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/cli/train/index.html#module-MolecularDiffusion.cli.train">MolecularDiffusion.cli.train</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/cli/zoo/index.html#module-MolecularDiffusion.cli.zoo">MolecularDiffusion.cli.zoo</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/core/index.html#module-MolecularDiffusion.core">MolecularDiffusion.core</a>
 </li>
@@ -11235,6 +11270,8 @@
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/pharmacophore/index.html#module-MolecularDiffusion.modules.tasks.pharmacophore">MolecularDiffusion.modules.tasks.pharmacophore</a>
 </li>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index.html#module-MolecularDiffusion.modules.tasks.pocket_generator">MolecularDiffusion.modules.tasks.pocket_generator</a>
+</li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/regression/index.html#module-MolecularDiffusion.modules.tasks.regression">MolecularDiffusion.modules.tasks.regression</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/ssl3d/index.html#module-MolecularDiffusion.modules.tasks.ssl3d">MolecularDiffusion.modules.tasks.ssl3d</a>
@@ -11448,18 +11485,10 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/tabasco/lightning_tabasco/index.html#MolecularDiffusion.modules.models.tabasco.lightning_tabasco.LightningTabasco.mol_metrics">mol_metrics (MolecularDiffusion.modules.models.tabasco.lightning_tabasco.LightningTabasco attribute)</a>
 </li>
-        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_apo2mol/index.html#MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator.mol_size">mol_size (MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator attribute)</a>
+        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsmol/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolShapeGenerator.mol_size">mol_size (MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolShapeGenerator attribute)</a>
 
         <ul>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffpharma/index.html#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.mol_size">(MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsbdd/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator.mol_size">(MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsmol/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolShapeGenerator.mol_size">(MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolShapeGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_kgdiff/index.html#MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator.mol_size">(MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_pmdm/index.html#MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator.mol_size">(MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator attribute)</a>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index.html#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.mol_size">(MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/generate/tasks_generate/index.html#MolecularDiffusion.runmodes.generate.tasks_generate.GenerativeFactory.mol_size">(MolecularDiffusion.runmodes.generate.tasks_generate.GenerativeFactory attribute)</a>
 </li>
@@ -11481,6 +11510,13 @@
 
         <ul>
           <li><a href="autoapi/MolecularDiffusion/index.html#module-MolecularDiffusion">module</a>
+</li>
+        </ul></li>
+        <li>
+    MolecularDiffusion.assets
+
+        <ul>
+          <li><a href="autoapi/MolecularDiffusion/assets/index.html#module-MolecularDiffusion.assets">module</a>
 </li>
         </ul></li>
         <li>
@@ -11553,6 +11589,13 @@
 
         <ul>
           <li><a href="autoapi/MolecularDiffusion/cli/train/index.html#module-MolecularDiffusion.cli.train">module</a>
+</li>
+        </ul></li>
+        <li>
+    MolecularDiffusion.cli.zoo
+
+        <ul>
+          <li><a href="autoapi/MolecularDiffusion/cli/zoo/index.html#module-MolecularDiffusion.cli.zoo">module</a>
 </li>
         </ul></li>
         <li>
@@ -13618,6 +13661,13 @@
 
         <ul>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/pharmacophore/index.html#module-MolecularDiffusion.modules.tasks.pharmacophore">module</a>
+</li>
+        </ul></li>
+        <li>
+    MolecularDiffusion.modules.tasks.pocket_generator
+
+        <ul>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index.html#module-MolecularDiffusion.modules.tasks.pocket_generator">module</a>
 </li>
         </ul></li>
         <li>
@@ -15824,22 +15874,14 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/kgdiff/common/index.html#MolecularDiffusion.modules.models.kgdiff.common.GaussianSmearing.num_gaussians">(MolecularDiffusion.modules.models.kgdiff.common.GaussianSmearing attribute)</a>
 </li>
         </ul></li>
-        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_apo2mol/index.html#MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator.num_generate">num_generate (MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator attribute)</a>
+        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffdec/index.html#MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator.num_generate">num_generate (MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator attribute)</a>
 
         <ul>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffdec/index.html#MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator.num_generate">(MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffpharma/index.html#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.num_generate">(MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsbdd/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator.num_generate">(MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator attribute)</a>
-</li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsmol/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolShapeGenerator.num_generate">(MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolShapeGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_kgdiff/index.html#MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator.num_generate">(MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_nextmol/index.html#MolecularDiffusion.modules.tasks.diffusion_nextmol.NextMolGenerator.num_generate">(MolecularDiffusion.modules.tasks.diffusion_nextmol.NextMolGenerator attribute)</a>
 </li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_pmdm/index.html#MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator.num_generate">(MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator attribute)</a>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index.html#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.num_generate">(MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/generate/tasks_generate/index.html#MolecularDiffusion.runmodes.generate.tasks_generate.GenerativeFactory.num_generate">(MolecularDiffusion.runmodes.generate.tasks_generate.GenerativeFactory attribute)</a>
 </li>
@@ -16132,22 +16174,14 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/shepherd_arch/equiformer_v2_encoder/index.html#MolecularDiffusion.modules.models.shepherd_arch.equiformer_v2_encoder.EquiformerV2.num_sphere_samples">(MolecularDiffusion.modules.models.shepherd_arch.equiformer_v2_encoder.EquiformerV2 attribute)</a>
 </li>
         </ul></li>
-        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_apo2mol/index.html#MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator.num_steps">num_steps (MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator attribute)</a>
+        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffdec/index.html#MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator.num_steps">num_steps (MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator attribute)</a>
 
         <ul>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffdec/index.html#MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator.num_steps">(MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffpharma/index.html#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.num_steps">(MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsbdd/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator.num_steps">(MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator attribute)</a>
-</li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsmol/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolShapeGenerator.num_steps">(MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolShapeGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_kgdiff/index.html#MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator.num_steps">(MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_nextmol/index.html#MolecularDiffusion.modules.tasks.diffusion_nextmol.NextMolGenerator.num_steps">(MolecularDiffusion.modules.tasks.diffusion_nextmol.NextMolGenerator attribute)</a>
 </li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_pmdm/index.html#MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator.num_steps">(MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator attribute)</a>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index.html#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.num_steps">(MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/generate/tasks_generate/index.html#MolecularDiffusion.runmodes.generate.tasks_generate.PharmacophoreConditionGenerator.num_steps">(MolecularDiffusion.runmodes.generate.tasks_generate.PharmacophoreConditionGenerator attribute)</a>
 </li>
@@ -16400,6 +16434,8 @@
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/tabasco/transformer_module/index.html#MolecularDiffusion.modules.layers.tabasco.transformer_module.TransformerModule.out_atom_type_linear">out_atom_type_linear (MolecularDiffusion.modules.layers.tabasco.transformer_module.TransformerModule attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/equiformer_v2/activation/index.html#MolecularDiffusion.modules.layers.equiformer_v2.activation.ScaledSwiGLU.out_channels">out_channels (MolecularDiffusion.modules.layers.equiformer_v2.activation.ScaledSwiGLU attribute)</a>
 
         <ul>
@@ -16414,8 +16450,6 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/pmdm/encoders/index.html#MolecularDiffusion.modules.models.pmdm.encoders.SchNetProteinEncoder.out_channels">(MolecularDiffusion.modules.models.pmdm.encoders.SchNetProteinEncoder property)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/esen/nn/so2_layers/index.html#MolecularDiffusion.modules.layers.esen.nn.so2_layers.SO2_m_Conv.out_channels_half">out_channels_half (MolecularDiffusion.modules.layers.esen.nn.so2_layers.SO2_m_Conv attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/tabasco/transformer_module/index.html#MolecularDiffusion.modules.layers.tabasco.transformer_module.TransformerModule.out_coord_linear">out_coord_linear (MolecularDiffusion.modules.layers.tabasco.transformer_module.TransformerModule attribute)</a>
@@ -16544,18 +16578,10 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsmol/uni_transformer/index.html#MolecularDiffusion.modules.models.diffsmol.uni_transformer.BaseGVPAttLayer.output_norm">output_norm (MolecularDiffusion.modules.models.diffsmol.uni_transformer.BaseGVPAttLayer attribute)</a>
 </li>
-        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_apo2mol/index.html#MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator.output_path">output_path (MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator attribute)</a>
+        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffdec/index.html#MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator.output_path">output_path (MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator attribute)</a>
 
         <ul>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffdec/index.html#MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator.output_path">(MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffpharma/index.html#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.output_path">(MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsbdd/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator.output_path">(MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator attribute)</a>
-</li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsmol/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolShapeGenerator.output_path">(MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolShapeGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_kgdiff/index.html#MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator.output_path">(MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_ldm/index.html#MolecularDiffusion.modules.tasks.diffusion_ldm.VAETask.output_path">(MolecularDiffusion.modules.tasks.diffusion_ldm.VAETask attribute)</a>
 </li>
@@ -16563,7 +16589,7 @@
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_nextmol/index.html#MolecularDiffusion.modules.tasks.diffusion_nextmol.NextMolGenerator.output_path">(MolecularDiffusion.modules.tasks.diffusion_nextmol.NextMolGenerator attribute)</a>
 </li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_pmdm/index.html#MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator.output_path">(MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator attribute)</a>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index.html#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.output_path">(MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/generate/tasks_conformer/index.html#MolecularDiffusion.runmodes.generate.tasks_conformer.ConformerFactory.output_path">(MolecularDiffusion.runmodes.generate.tasks_conformer.ConformerFactory attribute)</a>
 </li>
@@ -16671,6 +16697,8 @@
         <li><a href="autoapi/MolecularDiffusion/runmodes/analyze/xtb_optimization/index.html#MolecularDiffusion.runmodes.analyze.xtb_optimization.parser">parser (in module MolecularDiffusion.runmodes.analyze.xtb_optimization)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/sascore/index.html#MolecularDiffusion.utils.sascore.path">path (in module MolecularDiffusion.utils.sascore)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/cli/zoo/index.html#MolecularDiffusion.cli.zoo.path_cmd">path_cmd() (in module MolecularDiffusion.cli.zoo)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/shepherd_score/pharm_utils/pharmacophore/index.html#MolecularDiffusion.utils.shepherd_score.pharm_utils.pharmacophore.pattern_of_smarts">pattern_of_smarts() (in module MolecularDiffusion.utils.shepherd_score.pharm_utils.pharmacophore)</a>
 </li>
@@ -16796,32 +16824,14 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/ipdiff/bapnet/index.html#MolecularDiffusion.modules.models.ipdiff.bapnet.POCKET_ATOM_TYPES">(in module MolecularDiffusion.modules.models.ipdiff.bapnet)</a>
 </li>
         </ul></li>
-        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_apo2mol/index.html#MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator.pocket_db">pocket_db (MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator attribute)</a>
+        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffint/index.html#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.pocket_db">pocket_db (MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator attribute)</a>
 
         <ul>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffint/index.html#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.pocket_db">(MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffpharma/index.html#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.pocket_db">(MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsbdd/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator.pocket_db">(MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_kgdiff/index.html#MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator.pocket_db">(MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_pmdm/index.html#MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator.pocket_db">(MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator attribute)</a>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index.html#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.pocket_db">(MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator attribute)</a>
 </li>
         </ul></li>
-        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_apo2mol/index.html#MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator.pocket_index">pocket_index (MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator attribute)</a>
-
-        <ul>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffpharma/index.html#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.pocket_index">(MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator attribute)</a>
+        <li><a href="autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index.html#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.pocket_index">pocket_index (MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator attribute)</a>
 </li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsbdd/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator.pocket_index">(MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_kgdiff/index.html#MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator.pocket_index">(MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_pmdm/index.html#MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator.pocket_index">(MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator attribute)</a>
-</li>
-        </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffint/index.html#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.pocket_pdb">pocket_pdb (MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator attribute)</a>
 
         <ul>
@@ -16840,6 +16850,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/ipdiff/bapnet/index.html#MolecularDiffusion.modules.models.ipdiff.bapnet.BAPNet.pocket_type_fusion">(MolecularDiffusion.modules.models.ipdiff.bapnet.BAPNet attribute)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index.html#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator">PocketGenerator (class in MolecularDiffusion.modules.tasks.pocket_generator)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/apo2mol/pminet/index.html#MolecularDiffusion.modules.models.apo2mol.pminet.BAPNet.PocketGraph">PocketGraph (MolecularDiffusion.modules.models.apo2mol.pminet.BAPNet attribute)</a>
 
         <ul>
@@ -17024,8 +17036,6 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/kgdiff/score_model/index.html#MolecularDiffusion.modules.models.kgdiff.score_model.ScorePosNet3D.posterior_logvar">(MolecularDiffusion.modules.models.kgdiff.score_model.ScorePosNet3D attribute)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/models/apo2mol/score_model/index.html#MolecularDiffusion.modules.models.apo2mol.score_model.ScorePosNet3D.posterior_mean_c0_coef">posterior_mean_c0_coef (MolecularDiffusion.modules.models.apo2mol.score_model.ScorePosNet3D attribute)</a>
 
         <ul>
@@ -17034,6 +17044,8 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/kgdiff/score_model/index.html#MolecularDiffusion.modules.models.kgdiff.score_model.ScorePosNet3D.posterior_mean_c0_coef">(MolecularDiffusion.modules.models.kgdiff.score_model.ScorePosNet3D attribute)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/models/apo2mol/score_model/index.html#MolecularDiffusion.modules.models.apo2mol.score_model.ScorePosNet3D.posterior_mean_ct_coef">posterior_mean_ct_coef (MolecularDiffusion.modules.models.apo2mol.score_model.ScorePosNet3D attribute)</a>
 
         <ul>
@@ -17764,6 +17776,8 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/data/component/pharmacophore/index.html#MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset.recenter_x4">recenter_x4 (MolecularDiffusion.data.component.pharmacophore.PharmacophoreDataset attribute)</a>
 </li>
+        <li><a href="autoapi/MolecularDiffusion/cli/zoo/index.html#MolecularDiffusion.cli.zoo.recipe_cmd">recipe_cmd() (in module MolecularDiffusion.cli.zoo)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/e3x/radial/index.html#MolecularDiffusion.modules.layers.e3x.radial.reciprocal_bernstein">reciprocal_bernstein() (in module MolecularDiffusion.modules.layers.e3x.radial)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/e3x/radial/index.html#MolecularDiffusion.modules.layers.e3x.radial.reciprocal_mapping">reciprocal_mapping() (in module MolecularDiffusion.modules.layers.e3x.radial)</a>
@@ -17848,12 +17862,16 @@
           <li><a href="autoapi/MolecularDiffusion/modules/models/diffsbdd/egnn/index.html#MolecularDiffusion.modules.models.diffsbdd.egnn.EquivariantUpdate.reflection_equiv">(MolecularDiffusion.modules.models.diffsbdd.egnn.EquivariantUpdate attribute)</a>
 </li>
         </ul></li>
-        <li><a href="autoapi/MolecularDiffusion/core/core/index.html#MolecularDiffusion.core.core.Registry.register">register() (MolecularDiffusion.core.core.Registry class method)</a>
-</li>
-        <li><a href="autoapi/MolecularDiffusion/core/core/index.html#MolecularDiffusion.core.core.Registry">Registry (class in MolecularDiffusion.core.core)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="autoapi/MolecularDiffusion/assets/index.html#MolecularDiffusion.assets.register">register() (in module MolecularDiffusion.assets)</a>
+
+        <ul>
+          <li><a href="autoapi/MolecularDiffusion/core/core/index.html#MolecularDiffusion.core.core.Registry.register">(MolecularDiffusion.core.core.Registry class method)</a>
+</li>
+        </ul></li>
+        <li><a href="autoapi/MolecularDiffusion/core/core/index.html#MolecularDiffusion.core.core.Registry">Registry (class in MolecularDiffusion.core.core)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/shepherd_arch/ocp_compat/index.html#MolecularDiffusion.modules.models.shepherd_arch.ocp_compat.registry">registry (in module MolecularDiffusion.modules.models.shepherd_arch.ocp_compat)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/equiformer_v2/equiformer_v2_oc20/index.html#MolecularDiffusion.modules.layers.equiformer_v2.equiformer_v2_oc20.EquiformerV2_OC20.regress_forces">regress_forces (MolecularDiffusion.modules.layers.equiformer_v2.equiformer_v2_oc20.EquiformerV2_OC20 attribute)</a>
@@ -18018,6 +18036,8 @@
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/vn/vn_layers/index.html#MolecularDiffusion.modules.layers.vn.vn_layers.ResnetBlockFC">ResnetBlockFC (class in MolecularDiffusion.modules.layers.vn.vn_layers)</a>
 </li>
+        <li><a href="autoapi/MolecularDiffusion/assets/index.html#MolecularDiffusion.assets.resolve">resolve() (in module MolecularDiffusion.assets)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/utils/geom_constraint/index.html#MolecularDiffusion.utils.geom_constraint.resolve_connectors">resolve_connectors() (in module MolecularDiffusion.utils.geom_constraint)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/e3x/modules/index.html#MolecularDiffusion.modules.layers.e3x.modules.resolve_tensor_output">resolve_tensor_output() (in module MolecularDiffusion.modules.layers.e3x.modules)</a>
@@ -18108,24 +18128,14 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/e3x/modules/index.html#MolecularDiffusion.modules.layers.e3x.modules.SelfAttention.rpe_v">rpe_v (MolecularDiffusion.modules.layers.e3x.modules.SelfAttention attribute)</a>
 </li>
-        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_apo2mol/index.html#MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator.run">run() (MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator method)</a>
+        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffdec/index.html#MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator.run">run() (MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator method)</a>
 
         <ul>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffdec/index.html#MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator.run">(MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator method)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffpharma/index.html#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.run">(MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator method)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsbdd/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator.run">(MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator method)</a>
-</li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsmol/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolShapeGenerator.run">(MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolShapeGenerator method)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_ipdiff/index.html#MolecularDiffusion.modules.tasks.diffusion_ipdiff.IPDiffPocketGenerator.run">(MolecularDiffusion.modules.tasks.diffusion_ipdiff.IPDiffPocketGenerator method)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_kgdiff/index.html#MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator.run">(MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator method)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_nextmol/index.html#MolecularDiffusion.modules.tasks.diffusion_nextmol.NextMolGenerator.run">(MolecularDiffusion.modules.tasks.diffusion_nextmol.NextMolGenerator method)</a>
 </li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_pmdm/index.html#MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator.run">(MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator method)</a>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index.html#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.run">(MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator method)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/generate/tasks_conformer/index.html#MolecularDiffusion.runmodes.generate.tasks_conformer.ConformerFactory.run">(MolecularDiffusion.runmodes.generate.tasks_conformer.ConformerFactory method)</a>
 </li>
@@ -18852,22 +18862,14 @@
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/core/core/index.html#MolecularDiffusion.core.core.Registry.search">search() (MolecularDiffusion.core.core.Registry class method)</a>
 </li>
-        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_apo2mol/index.html#MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator.seed">seed (MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator attribute)</a>
+        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffdec/index.html#MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator.seed">seed (MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator attribute)</a>
 
         <ul>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffdec/index.html#MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator.seed">(MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffpharma/index.html#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.seed">(MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsbdd/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator.seed">(MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator attribute)</a>
-</li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsmol/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolShapeGenerator.seed">(MolecularDiffusion.modules.tasks.diffusion_diffsmol.DiffSMolShapeGenerator attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_kgdiff/index.html#MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator.seed">(MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_nextmol/index.html#MolecularDiffusion.modules.tasks.diffusion_nextmol.NextMolGenerator.seed">(MolecularDiffusion.modules.tasks.diffusion_nextmol.NextMolGenerator attribute)</a>
 </li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_pmdm/index.html#MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator.seed">(MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator attribute)</a>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index.html#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.seed">(MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/runmodes/generate/tasks_conformer/index.html#MolecularDiffusion.runmodes.generate.tasks_conformer.ConformerFactory.seed">(MolecularDiffusion.runmodes.generate.tasks_conformer.ConformerFactory attribute)</a>
 </li>
@@ -18880,6 +18882,14 @@
         </ul></li>
         <li><a href="autoapi/MolecularDiffusion/utils/torch/index.html#MolecularDiffusion.utils.torch.seed_everything">seed_everything() (in module MolecularDiffusion.utils.torch)</a>
 </li>
+        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffpharma/index.html#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.seed_numpy">seed_numpy (MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_pmdm/index.html#MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator.seed_numpy">(MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator attribute)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index.html#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.seed_numpy">(MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator attribute)</a>
+</li>
+        </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_nextmol/index.html#MolecularDiffusion.modules.tasks.diffusion_nextmol.Graph3DBatchToNextMolAdapter.seed_prior">seed_prior() (MolecularDiffusion.modules.tasks.diffusion_nextmol.Graph3DBatchToNextMolAdapter method)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/e3x/indexed/index.html#MolecularDiffusion.modules.layers.e3x.indexed.segment_mean">segment_mean() (in module MolecularDiffusion.modules.layers.e3x.indexed)</a>
@@ -19026,10 +19036,10 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsmol/shape_utils/index.html#MolecularDiffusion.modules.models.diffsmol.shape_utils.shape_from_atoms">shape_from_atoms() (in module MolecularDiffusion.modules.models.diffsmol.shape_utils)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsmol/uni_transformer/index.html#MolecularDiffusion.modules.models.diffsmol.uni_transformer.BaseGVPAttLayer.shape_in">shape_in (MolecularDiffusion.modules.models.diffsmol.uni_transformer.BaseGVPAttLayer attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsmol/uni_transformer/index.html#MolecularDiffusion.modules.models.diffsmol.uni_transformer.UniTransformerO2TwoUpdateGeneral.shape_latent_dim">shape_latent_dim (MolecularDiffusion.modules.models.diffsmol.uni_transformer.UniTransformerO2TwoUpdateGeneral attribute)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/utils/shape_measure/index.html#MolecularDiffusion.utils.shape_measure.shape_measure">shape_measure() (in module MolecularDiffusion.utils.shape_measure)</a>
@@ -19976,6 +19986,24 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/core/core/index.html#MolecularDiffusion.core.core.Registry.table">table (MolecularDiffusion.core.core.Registry attribute)</a>
 </li>
+        <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_apo2mol/index.html#MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator.tag">tag (MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator attribute)</a>
+
+        <ul>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffint/index.html#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.tag">(MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator attribute)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffpharma/index.html#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.tag">(MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator attribute)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsbdd/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator.tag">(MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator attribute)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_ipdiff/index.html#MolecularDiffusion.modules.tasks.diffusion_ipdiff.IPDiffPocketGenerator.tag">(MolecularDiffusion.modules.tasks.diffusion_ipdiff.IPDiffPocketGenerator attribute)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_kgdiff/index.html#MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator.tag">(MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator attribute)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_pmdm/index.html#MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator.tag">(MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator attribute)</a>
+</li>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index.html#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.tag">(MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator attribute)</a>
+</li>
+        </ul></li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/atomic_data/index.html#MolecularDiffusion.modules.layers.atomic_data.AtomicData.tags">tags (MolecularDiffusion.modules.layers.atomic_data.AtomicData attribute)</a>
 
         <ul>
@@ -20057,19 +20085,13 @@
         <ul>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion/index.html#MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction.task">(MolecularDiffusion.modules.tasks.diffusion.GuidanceModelPrediction attribute)</a>
 </li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_apo2mol/index.html#MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator.task">(MolecularDiffusion.modules.tasks.diffusion_apo2mol.Apo2MolPocketGenerator attribute)</a>
-</li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_apo2mol/index.html#MolecularDiffusion.modules.tasks.diffusion_apo2mol.ModelTaskFactory.task">(MolecularDiffusion.modules.tasks.diffusion_apo2mol.ModelTaskFactory attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffdec/index.html#MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator.task">(MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecScaffoldGenerator attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffdec/index.html#MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecTaskFactory.task">(MolecularDiffusion.modules.tasks.diffusion_diffdec.DiffDecTaskFactory attribute)</a>
 </li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffpharma/index.html#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.task">(MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator attribute)</a>
-</li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffpharma/index.html#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.task">(MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsbdd/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator.task">(MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsbdd/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsbdd.ModelTaskFactory.task">(MolecularDiffusion.modules.tasks.diffusion_diffsbdd.ModelTaskFactory attribute)</a>
 </li>
@@ -20080,8 +20102,6 @@
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_flowmol_graph3d/index.html#MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTaskFactory.task">(MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTaskFactory attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_ipdiff/index.html#MolecularDiffusion.modules.tasks.diffusion_ipdiff.ModelTaskFactory.task">(MolecularDiffusion.modules.tasks.diffusion_ipdiff.ModelTaskFactory attribute)</a>
-</li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_kgdiff/index.html#MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator.task">(MolecularDiffusion.modules.tasks.diffusion_kgdiff.KGDiffPocketGenerator attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_kgdiff/index.html#MolecularDiffusion.modules.tasks.diffusion_kgdiff.ModelTaskFactory.task">(MolecularDiffusion.modules.tasks.diffusion_kgdiff.ModelTaskFactory attribute)</a>
 </li>
@@ -20095,7 +20115,7 @@
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_pmdm/index.html#MolecularDiffusion.modules.tasks.diffusion_pmdm.ModelTaskFactory.task">(MolecularDiffusion.modules.tasks.diffusion_pmdm.ModelTaskFactory attribute)</a>
 </li>
-          <li><a href="autoapi/MolecularDiffusion/modules/tasks/diffusion_pmdm/index.html#MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator.task">(MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator attribute)</a>
+          <li><a href="autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index.html#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.task">(MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator attribute)</a>
 </li>
           <li><a href="autoapi/MolecularDiffusion/modules/tasks/regression/index.html#MolecularDiffusion.modules.tasks.regression.ProperyPrediction.task">(MolecularDiffusion.modules.tasks.regression.ProperyPrediction attribute)</a>
 </li>
@@ -20270,6 +20290,8 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/shepherd_arch/equiformer_operations/index.html#MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations.TensorProductRescale">TensorProductRescale (class in MolecularDiffusion.modules.models.shepherd_arch.equiformer_operations)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/data/lightning_data_module/index.html#MolecularDiffusion.data.lightning_data_module.MolecularDiffusionDataModule.test_dataloader">test_dataloader() (MolecularDiffusion.data.lightning_data_module.MolecularDiffusionDataModule method)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/data/component/apo2mol_data/index.html#MolecularDiffusion.data.component.apo2mol_data.Apo2MolDataModule.test_file">test_file (MolecularDiffusion.data.component.apo2mol_data.Apo2MolDataModule attribute)</a>
@@ -20288,8 +20310,6 @@
           <li><a href="autoapi/MolecularDiffusion/data/component/pmdm_data/index.html#MolecularDiffusion.data.component.pmdm_data.PMDMDataModule.test_file">(MolecularDiffusion.data.component.pmdm_data.PMDMDataModule attribute)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/core/engine/index.html#MolecularDiffusion.core.engine.Engine.test_set">test_set (MolecularDiffusion.core.engine.Engine attribute)</a>
 
         <ul>
@@ -21248,10 +21268,10 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/functional/index.html#MolecularDiffusion.modules.layers.functional.variadic_max">variadic_max() (in module MolecularDiffusion.modules.layers.functional)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/functional/index.html#MolecularDiffusion.modules.layers.functional.variadic_mean">variadic_mean() (in module MolecularDiffusion.modules.layers.functional)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/functional/index.html#MolecularDiffusion.modules.layers.functional.variadic_meshgrid">variadic_meshgrid() (in module MolecularDiffusion.modules.layers.functional)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/layers/functional/index.html#MolecularDiffusion.modules.layers.functional.variadic_randperm">variadic_randperm() (in module MolecularDiffusion.modules.layers.functional)</a>
@@ -21356,6 +21376,10 @@
           <li><a href="autoapi/MolecularDiffusion/runmodes/generate/tasks_generate/index.html#MolecularDiffusion.runmodes.generate.tasks_generate.PharmacophoreConditionGenerator.verbose">(MolecularDiffusion.runmodes.generate.tasks_generate.PharmacophoreConditionGenerator attribute)</a>
 </li>
         </ul></li>
+        <li><a href="autoapi/MolecularDiffusion/assets/index.html#MolecularDiffusion.assets.verify">verify() (in module MolecularDiffusion.assets)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/cli/zoo/index.html#MolecularDiffusion.cli.zoo.verify_cmd">verify_cmd() (in module MolecularDiffusion.cli.zoo)</a>
+</li>
         <li><a href="autoapi/MolecularDiffusion/runmodes/data/ase_ops/index.html#MolecularDiffusion.runmodes.data.ase_ops.verify_datapoint">verify_datapoint() (in module MolecularDiffusion.runmodes.data.ase_ops)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/runmodes/data/graph3d_import/index.html#MolecularDiffusion.runmodes.data.graph3d_import.verify_db">verify_db() (in module MolecularDiffusion.runmodes.data.graph3d_import)</a>
@@ -21760,13 +21784,15 @@
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/diffsmol/shape_ae/index.html#MolecularDiffusion.modules.models.diffsmol.shape_ae.DecoderInner.z_dim">z_dim (MolecularDiffusion.modules.models.diffsmol.shape_ae.DecoderInner attribute)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/models/tabasco/flow/time_factor/index.html#MolecularDiffusion.modules.models.tabasco.flow.time_factor.BaseTimeFactor.zero_before">zero_before (MolecularDiffusion.modules.models.tabasco.flow.time_factor.BaseTimeFactor attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="autoapi/MolecularDiffusion/modules/models/tabasco/sample/noise_schedule/index.html#MolecularDiffusion.modules.models.tabasco.sample.noise_schedule.ZeroSampleNoiseSchedule">ZeroSampleNoiseSchedule (class in MolecularDiffusion.modules.models.tabasco.sample.noise_schedule)</a>
 </li>
         <li><a href="autoapi/MolecularDiffusion/modules/models/tabasco/flow/time_factor/index.html#MolecularDiffusion.modules.models.tabasco.flow.time_factor.ZeroTimeFactor">ZeroTimeFactor (class in MolecularDiffusion.modules.models.tabasco.flow.time_factor)</a>
+</li>
+        <li><a href="autoapi/MolecularDiffusion/cli/zoo/index.html#MolecularDiffusion.cli.zoo.zoo">zoo() (in module MolecularDiffusion.cli.zoo)</a>
 </li>
     </ul></td>
   </tr></table>

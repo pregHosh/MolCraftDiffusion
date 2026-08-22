@@ -6,6 +6,21 @@ A hands-on walkthrough of MolCraftDiffusion, ordered as a learning path: **prepa
 New here? Start with [Installation](../installation.md), then work through **Data Preparation → Training a Diffusion Model → Generation Overview**. The rest are optional deep-dives you can reach for when you need them.
 :::
 
+## Start Here
+
+::::{grid} 1 1 1 1
+:gutter: 3
+
+:::{grid-item-card} Quickstart · Generate Your First Molecules
+:link: quickstart_model_zoo
+:link-type: doc
+
+No data, no training. Fetch a pretrained model from the zoo and generate 3D
+molecules in three commands — then come back and train your own.
+:::
+
+::::
+
 ## 1 · Prepare
 
 ::::{grid} 1 2 2 2
@@ -115,6 +130,7 @@ Grid and Bayesian sweeps over controlled-generation parameters with automatic me
 :hidden:
 :maxdepth: 1
 
+quickstart_model_zoo
 00_data_preparation
 01_training_diffusion
 02_training_regressor

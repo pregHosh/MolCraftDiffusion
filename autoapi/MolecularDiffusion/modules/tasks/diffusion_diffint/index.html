@@ -214,6 +214,7 @@
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../tutorials/index.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../tutorials/quickstart_model_zoo.html">Quickstart: Generate Your First Molecules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../tutorials/00_data_preparation.html">Tutorial 0: Data Preparation &amp; Management</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../tutorials/01_training_diffusion.html">Tutorial 1: Training a Diffusion Model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../tutorials/02_training_regressor.html">Tutorial 2: Training a Regressor Model</a></li>
@@ -256,6 +257,7 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../api.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../index.html">MolecularDiffusion</a><input aria-label="Toggle navigation of MolecularDiffusion" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../assets/index.html">MolecularDiffusion.assets</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../callbacks/index.html">MolecularDiffusion.callbacks</a><input aria-label="Toggle navigation of MolecularDiffusion.callbacks" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../callbacks/train_helper/index.html">MolecularDiffusion.callbacks.train_helper</a></li>
 </ul>
@@ -268,6 +270,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../cli/main/index.html">MolecularDiffusion.cli.main</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../cli/predict/index.html">MolecularDiffusion.cli.predict</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../cli/train/index.html">MolecularDiffusion.cli.train</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../cli/zoo/index.html">MolecularDiffusion.cli.zoo</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -545,6 +548,11 @@ instead.</p>
 <span class="sig-name descname"><span class="pre">ref_sdf</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.ref_sdf" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.tag">
+<span class="sig-name descname"><span class="pre">tag</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'diffint'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.tag" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -622,6 +630,7 @@ changes; see the module docstring.</p>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.pocket_db"><code class="docutils literal notranslate"><span class="pre">DiffIntPocketGenerator.pocket_db</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.pocket_pdb"><code class="docutils literal notranslate"><span class="pre">DiffIntPocketGenerator.pocket_pdb</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.ref_sdf"><code class="docutils literal notranslate"><span class="pre">DiffIntPocketGenerator.ref_sdf</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.tag"><code class="docutils literal notranslate"><span class="pre">DiffIntPocketGenerator.tag</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.ModelTaskFactory"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory</span></code></a></li>

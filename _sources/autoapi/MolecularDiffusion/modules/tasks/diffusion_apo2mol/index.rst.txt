@@ -166,6 +166,9 @@ Module Contents
 
 .. py:class:: Apo2MolPocketGenerator(task, pocket_db: Optional[str] = None, pocket_index: int = 0, num_generate: int = 20, batch_size: int = 2, num_steps: Optional[int] = None, mol_size: Optional[list] = None, use_holo_reference: bool = False, output_path: str = 'generated_apo2mol', seed: int = 42, device: Optional[str] = None, **kwargs: Any)
 
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator`
+
+
    Pocket-conditioned generation behind ``interference/gen_apo2mol_pocket``.
 
    The apo pocket comes from one row of a converted ASE db
@@ -186,54 +189,17 @@ Module Contents
    it to ``true`` on a db row converted from a real apo/holo pair to get a
    genuine accuracy number instead.
 
-
-   .. py:method:: run() -> None
-
-
-   .. py:attribute:: batch_size
-      :value: 2
+   The sampling loop itself lives in :class:`PocketGenerator`.
 
 
-
-   .. py:attribute:: device
-      :value: 'cuda'
+   .. py:attribute:: db_required_msg
+      :value: 'interference.pocket_db is required: Apo2Mol has no unconditional mode. Point it at a converted...
 
 
 
-   .. py:attribute:: mol_size
+   .. py:attribute:: tag
+      :value: 'apo2mol'
 
-
-   .. py:attribute:: num_generate
-      :value: 20
-
-
-
-   .. py:attribute:: num_steps
-      :value: None
-
-
-
-   .. py:attribute:: output_path
-      :value: 'generated_apo2mol'
-
-
-
-   .. py:attribute:: pocket_db
-      :value: None
-
-
-
-   .. py:attribute:: pocket_index
-      :value: 0
-
-
-
-   .. py:attribute:: seed
-      :value: 42
-
-
-
-   .. py:attribute:: task
 
 
    .. py:attribute:: use_holo_reference

@@ -99,6 +99,11 @@ Module Contents
 
 
 
+   .. py:attribute:: tag
+      :value: 'diffint'
+
+
+
 .. py:class:: ModelTaskFactory(task_type: str = 'diffusion_diffint', residue_nf: int = NUM_POCKET_CLASSES, max_n_pocket: int = 113, **kwargs: Any)
 
    Bases: :py:obj:`MolecularDiffusion.modules.tasks.diffusion_diffsbdd.ModelTaskFactory`

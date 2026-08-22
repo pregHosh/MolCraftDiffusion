@@ -9,6 +9,33 @@ Packaged task configs live in `src/MolecularDiffusion/configs/tasks/`. The table
 model**; configs that differ only in hyperparameters or a starting checkpoint
 are not listed separately.
 
+:::{tip}
+**You do not have to train these yourself to try them.** Most models below ship
+pretrained weights, the data they need, and a runnable config through the model
+zoo — fetch one by name and generate:
+
+```bash
+MolCraftDiff zoo list                        # what is available, with sizes
+MolCraftDiff zoo fetch --model kgdiff
+MolCraftDiff generate examples/kgdiff_generate.yaml
+```
+
+Where a row below says the shipped checkpoint behaves a certain way, that is
+the checkpoint you get. Three cases:
+
+- **Fetch and go** — apo2mol, diffdec, diffint, diffpharma, diffsbdd,
+  flowmol_graph3d, gcdm, ipdiff, kgdiff, ligandiff, ligandiff_multi, loqi, midi.
+- **Build locally** — diffsmol, ditmc, equifm, nextmol, pmdm. Weights exist,
+  but their upstream projects do not permit redistribution, so the zoo ships
+  the recipe instead: `MolCraftDiff zoo recipe <asset>` prints the download,
+  the conversion command and the expected checksum.
+- **Train it yourself** — difflinker and silvr have no pretrained weights at
+  all. The zoo still carries their datasets and example configs.
+
+See the [model zoo quickstart](tutorials/quickstart_model_zoo.md) to get
+started.
+:::
+
 ## 1. De novo 3D generation
 
 Whole-molecule generators trained on a plain 3D molecule dataset. The first

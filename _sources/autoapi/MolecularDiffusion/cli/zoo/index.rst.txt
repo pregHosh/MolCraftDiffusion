@@ -1,0 +1,117 @@
+MolecularDiffusion.cli.zoo
+==========================
+
+.. py:module:: MolecularDiffusion.cli.zoo
+
+.. autoapi-nested-parse::
+
+   Zoo CLI: discover, fetch and register pretrained weights and datasets.
+
+   `MolCraftDiff zoo list` shows what exists, `fetch` pulls only what you ask
+   for, and `add` registers a newly integrated model so the zoo stays current
+   instead of turning back into a pile of scattered files.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.cli.zoo.logger
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.cli.zoo.add_cmd
+   MolecularDiffusion.cli.zoo.bundle_cmd
+   MolecularDiffusion.cli.zoo.config_cmd
+   MolecularDiffusion.cli.zoo.fetch_cmd
+   MolecularDiffusion.cli.zoo.info_cmd
+   MolecularDiffusion.cli.zoo.list_cmd
+   MolecularDiffusion.cli.zoo.path_cmd
+   MolecularDiffusion.cli.zoo.recipe_cmd
+   MolecularDiffusion.cli.zoo.verify_cmd
+   MolecularDiffusion.cli.zoo.zoo
+
+
+Module Contents
+---------------
+
+.. py:function:: add_cmd(name, ckpt, data_paths, config_paths, variant, task_type, family, tag)
+
+   Register a newly integrated model's assets in zoo.yaml.
+
+   Hashes every file and writes the entry, leaving `license` and
+   `redistribute` as TODO for you to fill in -- `zoo verify` then fails
+   until they are, which is what stops the zoo drifting.
+
+
+.. py:function:: bundle_cmd(out, archive)
+
+   Build a self-contained, citable snapshot of the zoo.
+
+   Lays assets out in the CACHE layout, not the HuggingFace one, so the
+   unpacked archive is usable with a single `export MOLCRAFT_ASSETS=$(pwd)`
+   -- no unpacking logic and no special format. Only `redistribute: true`
+   assets are included; the manifest travels with them so the archive
+   records exactly what it holds.
+
+
+.. py:function:: config_cmd(name, dest)
+
+   Copy a bundled example config out so you can edit it.
+
+   With no NAME, lists what is available. The bundled configs live inside
+   the installed package, so copying one by hand means finding that
+   directory first -- this does it for you. A config of the same name in
+   your working directory takes precedence over the bundled one.
+
+
+.. py:function:: fetch_cmd(names, model_name, config_path, fetch_all, force, dry_run)
+
+   Download assets into the cache.
+
+   Nothing is downloaded unless you ask for it. Pick a granularity:
+   a single asset, one model, everything one config needs, or --all.
+
+
+.. py:function:: info_cmd(target)
+
+   Show details for MODEL or MODEL/VARIANT.
+
+
+.. py:function:: list_cmd(tag, family, fetched, as_json)
+
+   List models in the zoo.
+
+
+.. py:function:: path_cmd(name)
+
+   Print an asset's local path, for $(...) interop.
+
+
+.. py:function:: recipe_cmd(name)
+
+   Show how to build a non-redistributable asset locally.
+
+
+.. py:function:: verify_cmd(names, verify_all)
+
+   Re-hash cached assets, and check the manifest is complete.
+
+   Exits non-zero on any mismatch or any unaudited `redistribute: TODO`,
+   so a half-registered model fails `just check` instead of being
+   discovered a year later.
+
+
+.. py:function:: zoo()
+
+   Pretrained weights, datasets and example configs.
+
+
+.. py:data:: logger
+

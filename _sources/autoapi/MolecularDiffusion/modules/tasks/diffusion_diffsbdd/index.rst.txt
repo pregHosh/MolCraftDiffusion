@@ -84,6 +84,9 @@ Module Contents
 
 .. py:class:: DiffSBDDPocketGenerator(task, pocket_db: Optional[str] = None, pocket_index: int = 0, num_generate: int = 20, batch_size: int = 4, num_steps: Optional[int] = None, mol_size: Optional[list] = None, fixed_atom_indices: Optional[list] = None, add_n_nodes: Optional[int] = None, resamplings: int = 1, center: str = 'ligand', jump_length: int = 1, output_path: str = 'generated_diffsbdd', seed: int = 42, device: Optional[str] = None, **kwargs: Any)
 
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator`
+
+
    Pocket-conditioned generation and inpainting.
 
    One class behind both interference configs -- they differ only in whether
@@ -99,17 +102,11 @@ Module Contents
    (upstream's ``--fix_atoms "C1 N6 C5"``): the db has no atom names, and the
    same ``lig_fixed`` tensor reaches ``inpaint()`` either way.
 
-
-   .. py:method:: run() -> None
+   The sampling loop itself lives in :class:`PocketGenerator`.
 
 
    .. py:attribute:: add_n_nodes
       :value: None
-
-
-
-   .. py:attribute:: batch_size
-      :value: 4
 
 
 
@@ -118,8 +115,8 @@ Module Contents
 
 
 
-   .. py:attribute:: device
-      :value: 'cuda'
+   .. py:attribute:: db_required_msg
+      :value: 'interference.pocket_db is required: DiffSBDD has no unconditional mode. Point it at a converted...
 
 
 
@@ -131,45 +128,14 @@ Module Contents
 
 
 
-   .. py:attribute:: mol_size
-
-
-   .. py:attribute:: num_generate
-      :value: 20
-
-
-
-   .. py:attribute:: num_steps
-      :value: None
-
-
-
-   .. py:attribute:: output_path
-      :value: 'generated_diffsbdd'
-
-
-
-   .. py:attribute:: pocket_db
-      :value: None
-
-
-
-   .. py:attribute:: pocket_index
-      :value: 0
-
-
-
    .. py:attribute:: resamplings
       :value: 1
 
 
 
-   .. py:attribute:: seed
-      :value: 42
+   .. py:attribute:: tag
+      :value: 'diffsbdd'
 
-
-
-   .. py:attribute:: task
 
 
 .. py:class:: DiffSBDDTask(model: torch.nn.Module, mode: str = 'pocket_conditioning', atom_vocab: Optional[List[str]] = None)

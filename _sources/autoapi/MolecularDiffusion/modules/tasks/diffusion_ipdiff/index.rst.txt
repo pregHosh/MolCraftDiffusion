@@ -152,11 +152,13 @@ Module Contents
    same object (one row of an ASE db written by
    ``docs/model_integrations/kgdiff/scripts/convert_dataset.py``) and the
    tiling / size-drawing logic is identical. The only difference is that
-   IPDiff has no guidance knobs to pass through, so ``run`` is re-stated
-   without them.
+   IPDiff has no guidance knobs to pass through: its conditioning IS the
+   pretrained prior, so ``_sample_kwargs`` drops them.
 
 
-   .. py:method:: run() -> None
+   .. py:attribute:: tag
+      :value: 'ipdiff'
+
 
 
 .. py:class:: ModelTaskFactory(task_type: str = 'diffusion_ipdiff', net_cond_ckpt: str = DEFAULT_IPNET_CKPT, cond_dim: int = 128, pos_noise_std: float = 0.1, protein_atom_feature_dim: int = PROTEIN_FEATURE_DIM, ligand_atom_feature_dim: int = NUM_LIGAND_CLASSES, model_mean_type: str = 'C0', beta_schedule: str = 'sigmoid', beta_start: float = 1e-07, beta_end: float = 0.002, pos_beta_s: float = 0.01, v_beta_schedule: str = 'cosine', v_beta_s: float = 0.01, num_diffusion_timesteps: int = 1000, loss_v_weight: float = 100.0, sample_time_method: str = 'symmetric', time_emb_dim: int = 0, time_emb_mode: str = 'simple', center_pos_mode: str = 'protein', node_indicator: bool = True, model_type: str = 'uni_o2', num_blocks: int = 1, num_layers: int = 9, hidden_dim: int = 128, n_heads: int = 16, edge_feat_dim: int = 4, num_r_gaussian: int = 20, knn: int = 32, num_node_types: int = 8, act_fn: str = 'relu', norm: bool = True, cutoff_mode: str = 'knn', ew_net_type: str = 'global', num_x2h: int = 1, num_h2x: int = 1, r_max: float = 10.0, x2h_out_fc: bool = False, sync_twoup: bool = False, atom_vocab: Optional[List[str]] = None, **kwargs: Any)

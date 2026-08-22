@@ -1,0 +1,122 @@
+MolecularDiffusion.assets
+=========================
+
+.. py:module:: MolecularDiffusion.assets
+
+.. autoapi-nested-parse::
+
+   Resolve zoo assets (pretrained weights, datasets) by symbolic name.
+
+   A config says ``${asset:kgdiff/pretrained}`` instead of a machine-specific
+   path, and this module turns that into a real directory under the local
+   cache. The rest of the platform never learns the zoo exists: the resolver
+   hands back a plain path string, so ``cli/generate.py``'s file-or-directory
+   handling, its ``edm_chem.pkl`` / ``edm_stat.pkl`` sidecar lookups and its
+   ``../../config.yaml`` walk all keep working unchanged.
+
+   Three properties worth stating, because the design leans on them:
+
+   * **An asset is a directory.** Every file listed under one ``assets:`` entry
+     lands in the same directory, which is what preserves the sidecar
+     co-location contract that ``cli/generate.py`` depends on.
+   * **Literal paths still work.** ``${asset:...}`` is opt-in syntax. A config
+     carrying an ordinary path never reaches this module, so every existing
+     config behaves exactly as before.
+   * **Resolution never touches the network.** A cache hit is a
+     ``Path.exists()`` call. Fetching is explicit (``MolCraftDiff zoo fetch``),
+     because a config typo must not silently start a multi-gigabyte download
+     inside a Hydra compose.
+
+   The manifest lives in :data:`MANIFEST` (``zoo.yaml``, shipped in the wheel).
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.assets.MANIFEST
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.assets.assets_root
+   MolecularDiffusion.assets.entry
+   MolecularDiffusion.assets.fetch
+   MolecularDiffusion.assets.local_path
+   MolecularDiffusion.assets.manifest
+   MolecularDiffusion.assets.register
+   MolecularDiffusion.assets.resolve
+   MolecularDiffusion.assets.verify
+
+
+Module Contents
+---------------
+
+.. py:function:: assets_root() -> pathlib.Path
+
+   Where fetched assets live. ``$MOLCRAFT_ASSETS`` wins if set.
+
+
+.. py:function:: entry(name: str) -> dict[str, Any]
+
+   The manifest entry for ``name``, with aliases already resolved.
+
+
+.. py:function:: fetch(name: str, force: bool = False) -> pathlib.Path
+
+   Download an asset into the cache and verify every file's sha256.
+
+   Re-fetching is a no-op: a file already present with the right hash is
+   skipped. Pass ``force=True`` to redownload regardless.
+
+
+.. py:function:: local_path(name: str) -> pathlib.Path
+
+   Absolute cache path for ``name``.
+
+   Aliases resolve *before* the path is built, so ``ipdiff/data`` and
+   ``kgdiff/data`` are literally the same directory -- shared corpora are
+   stored once, never copied per model.
+
+
+.. py:function:: manifest() -> dict[str, Any]
+
+   The parsed ``zoo.yaml``, read once per process.
+
+
+.. py:function:: register() -> None
+
+   Register the ``${asset:...}`` OmegaConf resolver.
+
+   Called from ``MolecularDiffusion/__init__.py`` so it covers both the
+   CLI (which composes via ``cli/_hydra.py``) and plain library use
+   (``OmegaConf.load`` in a notebook, or ``cli/generate.py``'s own load of
+   a checkpoint's training config).
+
+
+.. py:function:: resolve(name: str) -> str
+
+   The ``${asset:...}`` resolver body. Returns an absolute path string.
+
+   Raises :class:`FileNotFoundError` naming the exact fetch command when
+   the asset is absent, rather than auto-downloading -- unless
+   ``MOLCRAFT_ASSETS_AUTOFETCH=1`` is set.
+
+
+.. py:function:: verify(name: str) -> list[tuple[str, str]]
+
+   Re-hash an asset's files. Returns ``[(relpath, status), ...]``.
+
+   Status is ``ok``, ``missing``, ``sha mismatch``, or ``no sha in
+   manifest``. This is what makes a locally-built, non-redistributable
+   asset trustworthy: the manifest ships the hash even when it cannot
+   ship the bytes.
+
+
+.. py:data:: MANIFEST
+

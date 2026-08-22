@@ -214,6 +214,7 @@
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="tutorials/index.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/quickstart_model_zoo.html">Quickstart: Generate Your First Molecules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/00_data_preparation.html">Tutorial 0: Data Preparation &amp; Management</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/01_training_diffusion.html">Tutorial 1: Training a Diffusion Model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/02_training_regressor.html">Tutorial 2: Training a Regressor Model</a></li>
@@ -256,6 +257,7 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="api.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/index.html">MolecularDiffusion</a><input aria-label="Toggle navigation of MolecularDiffusion" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/MolecularDiffusion/assets/index.html">MolecularDiffusion.assets</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/callbacks/index.html">MolecularDiffusion.callbacks</a><input aria-label="Toggle navigation of MolecularDiffusion.callbacks" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/callbacks/train_helper/index.html">MolecularDiffusion.callbacks.train_helper</a></li>
 </ul>
@@ -268,6 +270,7 @@
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/cli/main/index.html">MolecularDiffusion.cli.main</a></li>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/cli/predict/index.html">MolecularDiffusion.cli.predict</a></li>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/cli/train/index.html">MolecularDiffusion.cli.train</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/cli/zoo/index.html">MolecularDiffusion.cli.zoo</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -463,6 +466,31 @@ architecture never touches the core engine.</p>
 <p>Packaged task configs live in <code class="docutils literal notranslate"><span class="pre">src/MolecularDiffusion/configs/tasks/</span></code>. The tables below list one row per <strong>distinct
 model</strong>; configs that differ only in hyperparameters or a starting checkpoint
 are not listed separately.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><strong>You do not have to train these yourself to try them.</strong> Most models below ship
+pretrained weights, the data they need, and a runnable config through the model
+zoo — fetch one by name and generate:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>list<span class="w">                        </span><span class="c1"># what is available, with sizes</span>
+MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>fetch<span class="w"> </span>--model<span class="w"> </span>kgdiff
+MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>examples/kgdiff_generate.yaml
+</pre></div>
+</div>
+<p>Where a row below says the shipped checkpoint behaves a certain way, that is
+the checkpoint you get. Three cases:</p>
+<ul class="simple">
+<li><p><strong>Fetch and go</strong> — apo2mol, diffdec, diffint, diffpharma, diffsbdd,
+flowmol_graph3d, gcdm, ipdiff, kgdiff, ligandiff, ligandiff_multi, loqi, midi.</p></li>
+<li><p><strong>Build locally</strong> — diffsmol, ditmc, equifm, nextmol, pmdm. Weights exist,
+but their upstream projects do not permit redistribution, so the zoo ships
+the recipe instead: <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">zoo</span> <span class="pre">recipe</span> <span class="pre">&lt;asset&gt;</span></code> prints the download,
+the conversion command and the expected checksum.</p></li>
+<li><p><strong>Train it yourself</strong> — difflinker and silvr have no pretrained weights at
+all. The zoo still carries their datasets and example configs.</p></li>
+</ul>
+<p>See the <a class="reference internal" href="tutorials/quickstart_model_zoo.html"><span class="std std-doc">model zoo quickstart</span></a> to get
+started.</p>
+</div>
 <section id="de-novo-3d-generation">
 <h2>1. De novo 3D generation<a class="headerlink" href="#de-novo-3d-generation" title="Link to this heading">¶</a></h2>
 <p>Whole-molecule generators trained on a plain 3D molecule dataset. The first

@@ -179,6 +179,9 @@ Module Contents
 
 .. py:class:: PMDMPocketGenerator(task, pocket_db: Optional[str] = None, pocket_index: int = 0, num_generate: int = 20, batch_size: int = 4, num_steps: Optional[int] = None, mol_size: Optional[list] = None, sampling_type: str = 'generalized', step_lr: float = 1e-06, clip: float = 1000.0, clip_pos: Optional[float] = None, global_start_sigma: Optional[float] = None, w_global_pos: float = 1.0, w_global_node: float = 1.0, w_local_pos: float = 1.0, w_local_node: float = 1.0, output_path: str = 'generated_pmdm', seed: int = 42, device: Optional[str] = None, validity_filter: bool = True, max_retries: int = 10, **kwargs: Any)
 
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator`
+
+
    Pocket-conditioned generation behind ``interference/gen_pmdm_pocket``.
 
    The pocket comes from one row of a converted ASE db
@@ -186,17 +189,14 @@ Module Contents
    ``center=False`` so the sampled ligand comes back in that pocket's own
    frame.
 
+   The only generator that may write FEWER than ``num_generate``: unusable
+   samples are filtered out and resampled, bounded by ``max_retries``.
 
-   .. py:method:: run() -> None
-
-
-   .. py:attribute:: batch_size
-      :value: 4
+   The sampling loop itself lives in :class:`PocketGenerator`.
 
 
-
-   .. py:attribute:: device
-      :value: 'cuda'
+   .. py:attribute:: db_required_msg
+      :value: 'interference.pocket_db is required: PMDM has no unconditional mode. Point it at a converted ASE...
 
 
 
@@ -205,43 +205,17 @@ Module Contents
 
 
 
-   .. py:attribute:: mol_size
-
-
-   .. py:attribute:: num_generate
-      :value: 20
-
-
-
-   .. py:attribute:: num_steps
-      :value: None
-
-
-
-   .. py:attribute:: output_path
-      :value: 'generated_pmdm'
-
-
-
-   .. py:attribute:: pocket_db
-      :value: None
-
-
-
-   .. py:attribute:: pocket_index
-      :value: 0
-
-
-
    .. py:attribute:: sampler_kwargs
 
 
-   .. py:attribute:: seed
-      :value: 42
+   .. py:attribute:: seed_numpy
+      :value: False
 
 
 
-   .. py:attribute:: task
+   .. py:attribute:: tag
+      :value: 'pmdm'
+
 
 
    .. py:attribute:: validity_filter

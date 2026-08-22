@@ -52,6 +52,9 @@ Module Contents
 
 .. py:class:: DiffPharmaPocketGenerator(task, pocket_db: Optional[str] = None, pocket_index: int = 0, pocket_pdb: Optional[str] = None, ref_sdf: Optional[str] = None, num_generate: int = 20, batch_size: int = 4, num_steps: Optional[int] = None, mol_size: Optional[list] = None, output_path: str = 'generated_diffpharma', seed: int = 42, device: Optional[str] = None, **kwargs: Any)
 
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator`
+
+
    Pocket-conditioned generation behind ``interference/gen_diffpharma_pocket``.
 
    Two mutually exclusive pocket sources:
@@ -65,46 +68,7 @@ Module Contents
 
    Either way the downstream dict is identical.
 
-
-   .. py:method:: run() -> None
-
-
-   .. py:attribute:: batch_size
-      :value: 4
-
-
-
-   .. py:attribute:: device
-      :value: 'cuda'
-
-
-
-   .. py:attribute:: mol_size
-
-
-   .. py:attribute:: num_generate
-      :value: 20
-
-
-
-   .. py:attribute:: num_steps
-      :value: None
-
-
-
-   .. py:attribute:: output_path
-      :value: 'generated_diffpharma'
-
-
-
-   .. py:attribute:: pocket_db
-      :value: None
-
-
-
-   .. py:attribute:: pocket_index
-      :value: 0
-
+   The sampling loop itself lives in :class:`PocketGenerator`.
 
 
    .. py:attribute:: pocket_pdb
@@ -117,12 +81,14 @@ Module Contents
 
 
 
-   .. py:attribute:: seed
-      :value: 42
+   .. py:attribute:: seed_numpy
+      :value: False
 
 
 
-   .. py:attribute:: task
+   .. py:attribute:: tag
+      :value: 'diffpharma'
+
 
 
 .. py:class:: DiffPharmaTask(model: MolecularDiffusion.modules.models.diffpharma.ConditionalDDPM, atom_vocab: Optional[List[str]] = None)
