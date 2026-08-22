@@ -191,19 +191,7 @@ Module Contents
 
 
 
-   .. py:property:: sdf_output_path
-      :type: str | None
-
-
-      Where to write the bond sidecar, generate-config value winning.
-
-      Resolved once, lazily. For a checkpoint this platform trained, the task
-      is rebuilt from the *training-time* ``hyper_parameters.model_config`` and
-      only an allowlist of keys is taken from the generate config
-      (``cli/generate.py:277-281``) -- ``sdf_output_path`` is not on it, so the
-      training-time ``null`` would silently win and the bonds (the whole point
-      of this model) would be lost with no error. See MiDi's
-      ``_generate_config_override``, imported rather than copied.
+   .. py:attribute:: sdf_output_path
 
 
    .. py:attribute:: stochasticity
@@ -234,6 +222,11 @@ Module Contents
    (``cli/train.py:624-637``) hand over the dataset, which carries
    ``graph3d_stats`` and therefore the molecule-size histogram FlowMol needs
    for sampling.
+
+   ``sdf_output_path`` is declared generation-time (docs §2.5b): the task is
+   rebuilt from the checkpoint's training-time config, where it is ``null``,
+   so without this declaration the generate config's value never arrives and
+   the bond sidecar -- the whole 2D half of the model -- is silently dropped.
 
 
    .. py:method:: build() -> FlowMolGraph3DTask
@@ -272,6 +265,11 @@ Module Contents
 
    .. py:attribute:: fake_atom_std
       :value: 1.0
+
+
+
+   .. py:attribute:: generation_time_keys
+      :value: ('sdf_output_path',)
 
 
 

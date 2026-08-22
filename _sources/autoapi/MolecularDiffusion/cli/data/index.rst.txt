@@ -109,7 +109,7 @@ Module Contents
    Generate Mol Blocks, SMILES, and properties (SA, SC).
 
 
-.. py:function:: import_graph3d_cmd(source, raw_dir, out_db, limit, max_conformers, no_sanitize, delete_raw)
+.. py:function:: import_graph3d_cmd(source, raw_dir, out_db, limit, max_conformers, no_sanitize, targets, delete_raw)
 
    Convert MiDi's raw QM9/GEOM data into a 3D-graph ASE database with explicit bonds.
 

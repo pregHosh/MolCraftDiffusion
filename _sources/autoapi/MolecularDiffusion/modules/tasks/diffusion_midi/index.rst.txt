@@ -154,17 +154,7 @@ Module Contents
 
 
 
-   .. py:property:: sdf_output_path
-      :type: Optional[str]
-
-
-      Where to write the bond sidecar, generate-config value winning.
-
-      Resolved once, lazily (the CLI argv is fixed for the process). A
-      checkpoint this platform trained carries the *training-time* value here,
-      which is ``null`` for any normal training run -- see
-      ``_generate_config_override`` for why the generate config cannot reach
-      the task through the usual path.
+   .. py:attribute:: sdf_output_path
 
 
    .. py:attribute:: task_type
@@ -180,6 +170,11 @@ Module Contents
    training dataset: MiDi's noise model needs the atom/bond/charge marginals
    and the size histogram *at construction time*, and neither is an
    ``nn.Module`` buffer, so neither survives in a checkpoint.
+
+   ``sdf_output_path`` is declared generation-time (docs §2.5b): the task is
+   rebuilt from the checkpoint's training-time config, where it is ``null``,
+   so without this declaration the generate config's value never arrives and
+   the bond sidecar -- the whole 2D half of the model -- is silently dropped.
 
 
    .. py:method:: build() -> MidiDiffusionTask
@@ -203,6 +198,11 @@ Module Contents
 
    .. py:attribute:: diffusion_steps
       :value: 500
+
+
+
+   .. py:attribute:: generation_time_keys
+      :value: ('sdf_output_path',)
 
 
 

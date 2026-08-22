@@ -1,0 +1,74 @@
+MolecularDiffusion.modules.models.jodo.utils
+============================================
+
+.. py:module:: MolecularDiffusion.modules.models.jodo.utils
+
+.. autoapi-nested-parse::
+
+   Masking / centering / symmetric-noise helpers, ported verbatim from
+   JODO models/utils.py (the model registry and DataParallel factory are
+   dropped -- Hydra _target_ is this platform's registry).
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.jodo.utils.assert_correctly_masked
+   MolecularDiffusion.modules.models.jodo.utils.assert_mean_zero_with_mask
+   MolecularDiffusion.modules.models.jodo.utils.check_mask_correct
+   MolecularDiffusion.modules.models.jodo.utils.coord2diff
+   MolecularDiffusion.modules.models.jodo.utils.coord2diff_adj
+   MolecularDiffusion.modules.models.jodo.utils.coord2dist
+   MolecularDiffusion.modules.models.jodo.utils.get_rw_feat
+   MolecularDiffusion.modules.models.jodo.utils.remove_mean
+   MolecularDiffusion.modules.models.jodo.utils.remove_mean_with_mask
+   MolecularDiffusion.modules.models.jodo.utils.sample_center_gravity_zero_gaussian_with_mask
+   MolecularDiffusion.modules.models.jodo.utils.sample_combined_position_feature_noise
+   MolecularDiffusion.modules.models.jodo.utils.sample_gaussian_with_mask
+   MolecularDiffusion.modules.models.jodo.utils.sample_symmetric_edge_feature_noise
+   MolecularDiffusion.modules.models.jodo.utils.to_dense_edge_attr
+
+
+Module Contents
+---------------
+
+.. py:function:: assert_correctly_masked(variable, node_mask)
+
+.. py:function:: assert_mean_zero_with_mask(x, node_mask, eps=1e-10)
+
+.. py:function:: check_mask_correct(variables, node_mask)
+
+.. py:function:: coord2diff(x, edge_index, norm_constant=1)
+
+.. py:function:: coord2diff_adj(x, edge_index, spatial_th=2.0)
+
+.. py:function:: coord2dist(x, edge_index)
+
+.. py:function:: get_rw_feat(k_step, dense_adj)
+
+   Compute k_step Random Walk for given dense adjacency matrix.
+
+
+.. py:function:: remove_mean(x)
+
+.. py:function:: remove_mean_with_mask(x, node_mask)
+
+.. py:function:: sample_center_gravity_zero_gaussian_with_mask(size, device, node_mask)
+
+.. py:function:: sample_combined_position_feature_noise(n_samples, n_nodes, in_node_nf, node_mask)
+
+   Sample mean-centered normal noise for z_x, and standard normal noise for z_h.
+
+
+.. py:function:: sample_gaussian_with_mask(size, device, node_mask)
+
+.. py:function:: sample_symmetric_edge_feature_noise(n_samples, n_nodes, edge_ch, edge_mask)
+
+   sample symmetric normal noise for edge feature.
+
+
+.. py:function:: to_dense_edge_attr(edge_index, edge_attr, edge_final, bs, n_nodes)
+

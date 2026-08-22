@@ -1,0 +1,85 @@
+MolecularDiffusion.modules.models.jodo.noise_schedule
+=====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.jodo.noise_schedule
+
+.. autoapi-nested-parse::
+
+   JODO's VP noise schedule.
+
+   Ported from others/JODO/diffusion/noise_schedule.py (itself from DPM-Solver).
+   Only the two continuous schedules JODO's own configs use are kept -- `cosine`
+   (every released JODO config) and `linear`. The `discrete`/`discrete_poly`
+   branches and the DPM-Solver-only helpers (`inverse_lambda`,
+   `numerical_clip_alpha`, `interpolate_fn`) are dropped with the fast sampler
+   they exist for; ancestral sampling needs only `marginal_prob`.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.jodo.noise_schedule.NoiseScheduleVP
+
+
+Module Contents
+---------------
+
+.. py:class:: NoiseScheduleVP(schedule: str = 'cosine', continuous_beta_0: float = 0.1, continuous_beta_1: float = 20.0)
+
+   Continuous-time VP forward SDE, `alpha_t` / `sigma_t` of a label t.
+
+
+   .. py:method:: marginal_alpha(t: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: marginal_log_mean_coeff(t: torch.Tensor) -> torch.Tensor
+
+      log(alpha_t).
+
+
+
+   .. py:method:: marginal_prob(t: torch.Tensor)
+
+      (alpha_t, sigma_t).
+
+
+
+   .. py:method:: marginal_std(t: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: T
+      :value: 0.9946
+
+
+
+   .. py:attribute:: beta_0
+      :value: 0.1
+
+
+
+   .. py:attribute:: beta_1
+      :value: 20.0
+
+
+
+   .. py:attribute:: cosine_log_alpha_0
+
+
+   .. py:attribute:: cosine_s
+      :value: 0.008
+
+
+
+   .. py:attribute:: schedule
+      :value: 'cosine'
+
+
+
+   .. py:attribute:: total_N
+      :value: 1000
+
+
+

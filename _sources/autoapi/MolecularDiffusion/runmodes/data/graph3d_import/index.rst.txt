@@ -21,6 +21,9 @@ MolecularDiffusion.runmodes.data.graph3d_import
                  formal_charge   (N,)  int8, RAW SIGNED
                  source          "qm9" | "geom"
                  split           MiDi's split label, or ""
+                 <extra>         optional scalar per-molecule fields (QM9 property
+                                 targets + jodo_idx under ``--targets``); absent
+                                 unless asked for, so existing dbs are unchanged
 
    Bond class 0 ("no bond") is never stored: absence from ``bond_index`` means no
    bond, and the no-bond count is derived at statistics/materialization time.
@@ -57,6 +60,7 @@ Functions
    MolecularDiffusion.runmodes.data.graph3d_import.iter_qm9
    MolecularDiffusion.runmodes.data.graph3d_import.main
    MolecularDiffusion.runmodes.data.graph3d_import.mol_to_row
+   MolecularDiffusion.runmodes.data.graph3d_import.qm9_targets
    MolecularDiffusion.runmodes.data.graph3d_import.verify_db
    MolecularDiffusion.runmodes.data.graph3d_import.write_graph3d_db
 
@@ -92,23 +96,44 @@ Module Contents
    conformers per molecule (``geom_dataset.py:90-91``).
 
 
-.. py:function:: iter_qm9(raw_dir: str, sanitize: bool = True) -> Iterator[Tuple[object, str]]
+.. py:function:: iter_qm9(raw_dir: str, sanitize: bool = True, targets: bool = False) -> Iterator[Tuple]
 
-   Yield ``(mol, split)`` from MiDi's gdb9 raw directory.
+   Yield ``(mol, split)`` -- or ``(mol, split, extra)`` -- from gdb9.
 
    Skips the indices listed in ``uncharacterized.txt``, exactly as
    ``others/midi/midi/datasets/qm9_dataset.py:141-143`` does.
 
+   With ``targets=True`` each molecule additionally carries the 19 QM9
+   property targets under their csv names, plus ``jodo_idx`` -- the
+   *compacted* index of upstream's ``Data`` list (the SDF enumerated with
+   only the uncharacterized entries removed), so a published split file that
+   indexes into it is joinable.
+
 
 .. py:function:: main(argv=None) -> int
 
-.. py:function:: mol_to_row(mol, sanitize_failed_ok: bool = False)
+.. py:function:: mol_to_row(mol, sanitize_failed_ok: bool = False, extra: Optional[dict] = None)
 
    RDKit mol -> ``(Atoms, data_dict)`` for :func:`ase.db.core.Database.write`.
 
    Returns ``None`` when the molecule carries a bond type outside the canonical
    vocabulary (DATIVE, UNSPECIFIED, ...). Such molecules are counted and
    skipped rather than silently coerced to SINGLE.
+
+   ``extra`` merges caller-supplied *scalar* per-molecule fields (property
+   targets, an upstream row index, ...) into the written ``data`` dict. They
+   land in the row metadata, where the dataset reads them through
+   ``target_fields``. Default ``None`` -> the row schema is unchanged.
+
+
+.. py:function:: qm9_targets(raw_dir: str) -> Tuple[list, numpy.ndarray]
+
+   ``gdb9.sdf.csv`` -> ``(names, values)`` in PyG/JODO order and units.
+
+   ``values`` is indexed by *raw SDF index*, so it is joinable with the
+   ``enumerate`` in :func:`iter_qm9` before the uncharacterized skip. Names
+   come from the csv header rather than a hardcoded list, so they cannot
+   drift out of step with the columns they label.
 
 
 .. py:function:: verify_db(out_path: str, expected: int, n_check: int = 25) -> None

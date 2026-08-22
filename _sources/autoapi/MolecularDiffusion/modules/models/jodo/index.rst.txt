@@ -1,0 +1,26 @@
+MolecularDiffusion.modules.models.jodo
+======================================
+
+.. py:module:: MolecularDiffusion.modules.models.jodo
+
+.. autoapi-nested-parse::
+
+   JODO: joint 2D-graph + 3D-geometry diffusion (Huang et al., NeurIPS 2023).
+
+   Learning Joint 2D & 3D Diffusion Models for Complete Molecule Generation,
+   arXiv:2305.12347 -- https://github.com/GRAPH-0/JODO
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/jodo/layers/index
+   /autoapi/MolecularDiffusion/modules/models/jodo/mol_gnn/index
+   /autoapi/MolecularDiffusion/modules/models/jodo/noise_schedule/index
+   /autoapi/MolecularDiffusion/modules/models/jodo/utils/index
+
+

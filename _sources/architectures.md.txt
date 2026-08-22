@@ -55,6 +55,7 @@ freely.
 | `diffusion_midi.yaml` | `diffusion_midi` | MiDi (relational graph transformer with equivariant coordinate updates) | The one that **draws the bonds for you**. Everything above gives you atoms in space and leaves you to guess the chemistry afterwards; this one hands you a finished molecule. Best on small, QM9-like molecules. Two things to know: it needs a bond-aware dataset built in advance, and you must ask for SDF output or the bonds are thrown away. |
 | `diffusion_flowmol_graph3d.yaml` | `diffusion_flowmol_graph3d` | FlowMol3 (SE(3)-equivariant GVP, CTMC discrete flow matching) | Same idea as MiDi, but for **drug-sized molecules** — pick MiDi instead when your molecules are small. It trims the atom count you ask for but never exceeds it. Most setup work of anything here: you build the drug-scale dataset yourself, and you must ask for SDF output or the bonds are thrown away. |
 | `diffusion_nextmol.yaml` | `diffusion_nextmol` | NExT-Mol (MoLlama language model + DMT diffusion transformer) | The one that **writes the molecule down before building it in 3D** — a language model proposes the molecule, then diffusion places it in space, so you can read and filter the molecule list before any 3D work starts. Two things to know: the molecules follow general drug-like chemistry rather than your dataset, and anything containing S, Cl or Br is dropped and reported. |
+| `diffusion_jodo.yaml` | `diffusion_jodo` | JODO (diffusion graph transformer, joint 2D+3D) | Draws the bonds for you, like MiDi, and can aim at a target property (gap, dipole, polarizability, HOMO, LUMO, heat capacity). Small or drug-sized molecules. Ask for SDF output or the bonds are dropped. |
 
 ## 2. Latent-space diffusion (two-stage)
 
@@ -188,6 +189,12 @@ Backbones and objectives integrated here are based on the following work.
   [arXiv:2302.09048](https://arxiv.org/abs/2302.09048) — the same paper the
   **EGT** backbone (above) is taken from; `diffusion_midi.yaml` ports the full
   joint graph-and-coordinate diffusion objective rather than the backbone alone.
+- **JODO** — Huang, Sun, Du & Lv. *Learning Joint 2D & 3D Diffusion Models
+  for Complete Molecule Generation.* 2023.
+  [arXiv:2305.12347](https://arxiv.org/abs/2305.12347) — diffuses atoms,
+  coordinates, formal charges and the bond graph together, the same joint
+  objective **MiDi** (above) takes, with a relational graph transformer and
+  an optional property-conditional variant. MIT licensed.
 - **EquiFM** — Song, Gong, Xu, Cao, Lan, Ermon, Zhou & Ma. *Equivariant Flow
   Matching with Hybrid Probability Transport for 3D Molecule Generation.*
   NeurIPS 2023. [arXiv:2312.07168](https://arxiv.org/abs/2312.07168)

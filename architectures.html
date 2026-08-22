@@ -561,6 +561,11 @@ freely.</p>
 <td class="text-left"><p>NExT-Mol (MoLlama language model + DMT diffusion transformer)</p></td>
 <td class="text-left"><p>The one that <strong>writes the molecule down before building it in 3D</strong> — a language model proposes the molecule, then diffusion places it in space, so you can read and filter the molecule list before any 3D work starts. Two things to know: the molecules follow general drug-like chemistry rather than your dataset, and anything containing S, Cl or Br is dropped and reported.</p></td>
 </tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_jodo.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_jodo</span></code></p></td>
+<td class="text-left"><p>JODO (diffusion graph transformer, joint 2D+3D)</p></td>
+<td class="text-left"><p>Draws the bonds for you, like MiDi, and can aim at a target property (gap, dipole, polarizability, HOMO, LUMO, heat capacity). Small or drug-sized molecules. Ask for SDF output or the bonds are dropped.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -851,6 +856,12 @@ Diffusion for Molecule Generation.</em> ECML PKDD 2023.
 <a class="reference external" href="https://arxiv.org/abs/2302.09048">arXiv:2302.09048</a> — the same paper the
 <strong>EGT</strong> backbone (above) is taken from; <code class="docutils literal notranslate"><span class="pre">diffusion_midi.yaml</span></code> ports the full
 joint graph-and-coordinate diffusion objective rather than the backbone alone.</p></li>
+<li><p><strong>JODO</strong> — Huang, Sun, Du &amp; Lv. <em>Learning Joint 2D &amp; 3D Diffusion Models
+for Complete Molecule Generation.</em> 2023.
+<a class="reference external" href="https://arxiv.org/abs/2305.12347">arXiv:2305.12347</a> — diffuses atoms,
+coordinates, formal charges and the bond graph together, the same joint
+objective <strong>MiDi</strong> (above) takes, with a relational graph transformer and
+an optional property-conditional variant. MIT licensed.</p></li>
 <li><p><strong>EquiFM</strong> — Song, Gong, Xu, Cao, Lan, Ermon, Zhou &amp; Ma. <em>Equivariant Flow
 Matching with Hybrid Probability Transport for 3D Molecule Generation.</em>
 NeurIPS 2023. <a class="reference external" href="https://arxiv.org/abs/2312.07168">arXiv:2312.07168</a></p></li>

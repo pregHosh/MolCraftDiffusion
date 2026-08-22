@@ -1,0 +1,430 @@
+MolecularDiffusion.modules.tasks.diffusion_jodo
+===============================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_jodo
+
+.. autoapi-nested-parse::
+
+   JODO task: joint continuous diffusion over coordinates, atom types, formal
+   charges *and* an explicit bond tensor.
+
+   JODO (Huang et al., NeurIPS 2023, arXiv:2305.12347) diffuses the 2D molecular
+   graph and the 3D geometry together in one continuous VP process: a sample
+   arrives with real bond orders and formal charges, no geometry-based perception
+   needed. What separates it from MiDi -- the platform's other bond-generating
+   model -- is that bonds are *continuous* here, not categorical: a bond is two
+   (or three) float channels that get thresholded back to a class at decode time.
+
+   Data path: ``data_type: graph3d`` with ``bond_collate: dense``.
+   ``graph3d_dense_collate`` already emits the padded ``(B,N,N)`` integer bond
+   matrix, so the adapter below is a handful of vectorized lines -- upstream's
+   ``collate_edge`` / ``EdgeComCondTransform`` are not needed at all.
+
+   Bond mapping (identity on the class ids, then JODO's compressed encoding)::
+
+       canonical   JODO class   channels (exist, order[, aromatic])
+       0 = none    0            (0, 0   [, 0])
+       1 = SINGLE  1            (1, 1/3 [, 0])
+       2 = DOUBLE  2            (1, 2/3 [, 0])
+       3 = TRIPLE  3            (1, 1   [, 0])
+       4 = AROMATIC 4           (1, 0   ,  1)     -- only when edge_ch == 3
+
+   ``edge_ch: 2`` (QM9) has no aromatic channel, so the data config MUST set
+   ``kekulize: true``; an aromatic bond would otherwise silently become "no bond"
+   (upstream ``datasets/build_dataset.py:151``). ``edge_ch: 3`` (GEOM) keeps
+   aromatic and takes ``kekulize: false``.
+
+   Formal charges are the one place JODO differs from MiDi: there is no
+   categorical charge head. The raw signed charge goes into a single float
+   channel divided by ``fc_charge_norm`` and is rounded back at decode.
+
+   Conditional generation rides the platform's existing
+   ``GenerativeFactory.conditional_generation`` seam -- ``condition: [gap]``
+   selects ``Cond_DGT_concat`` and this class implements ``sample_conditonal``.
+
+   Out of scope this pass (see the integration plan): multi-property
+   conditioning, the EGNN property classifiers (an evaluation tool, not the
+   model), 2D-only mode, DPM-solver fast sampling, and trajectories/inpainting.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_jodo.Chem
+   MolecularDiffusion.modules.tasks.diffusion_jodo.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_jodo.JodoDiffusionTask
+   MolecularDiffusion.modules.tasks.diffusion_jodo.ModelTaskFactory
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_jodo.expand_dims
+   MolecularDiffusion.modules.tasks.diffusion_jodo.get_align_position
+   MolecularDiffusion.modules.tasks.diffusion_jodo.kabsch_batch
+
+
+Module Contents
+---------------
+
+.. py:class:: JodoDiffusionTask(atom_vocab: list, nf: int, n_layers: int, n_heads: int, n_extra_heads: int, dropout: float, mlp_ratio: int, spatial_cut_off: float, edge_ch: int, include_fc_charge: bool, cond_time: bool, dist_gbf: bool, gbf_name: str, trans_name: str, softmax_inf: bool, edge_quan_th: float, com: bool, pred_data: bool, self_cond: bool, noise_align: bool, centered: bool, normalize_factors: list, loss_weights: list, reduce_mean: bool, noise_schedule: str, beta_0: float, beta_1: float, sampling_steps: int, condition: list, normalize_condition: str, sdf_output_path: Optional[str], n_atoms_hist: dict, prop_dist_model: Optional[MolecularDiffusion.modules.models.en_diffusion.DistributionProperty] = None, property_norms: Optional[dict] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   JODO wrapped in the platform's duck-typed Task contract (§2.1).
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor) -> dict
+
+
+   .. py:method:: forward(batch: dict) -> tuple[torch.Tensor, dict]
+
+      One training step: port of ``losses.py:285-382``.
+
+
+
+   .. py:method:: predict_and_target(batch: dict) -> tuple[torch.Tensor, torch.Tensor]
+
+      Pure-generative stub: the loss is both prediction and target.
+
+
+
+   .. py:method:: sample(batch_size: Optional[int] = None, nodesxsample: Optional[torch.Tensor] = None, num_steps: Optional[int] = None, batch: Optional[dict] = None, mode: Optional[str] = None, n_frames: int = 0, context: Optional[torch.Tensor] = None, **kwargs: Any) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]
+
+      Ancestral sampling; port of ``sampling.py:518-597`` + ``post_process``.
+
+      Returns the platform's ``(one_hot, charges, coords, node_mask)``.
+      ``charges`` carries **signed formal charges** (FlowMol/MiDi precedent).
+      The generated bond matrix has no slot in that tuple, so it is stashed on
+      ``self.last_bond_types`` and, when ``sdf_output_path`` is set, written
+      as an ``.sdf`` sidecar alongside the platform's ``.xyz``.
+
+
+
+   .. py:method:: sample_conditonal(nodesxsample: torch.Tensor = None, target_value: Optional[list] = None, n_frames: int = 0, mode: Optional[str] = None, num_steps: Optional[int] = None, **kwargs: Any)
+
+      Property-conditional sampling.
+
+      Called by ``GenerativeFactory.conditional_generation``
+      (``runmodes/generate/tasks_generate.py:536``) -- the misspelling is the
+      platform's, not a typo here. Turns raw target values into the
+      normalized ``context`` the conditional backbone was trained on.
+
+
+
+   .. py:attribute:: T
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: backbone
+
+
+   .. py:attribute:: centered
+
+
+   .. py:attribute:: condition
+
+
+   .. py:property:: device
+      :type: torch.device
+
+
+
+   .. py:attribute:: edge_ch
+
+
+   .. py:attribute:: include_fc_charge
+
+
+   .. py:attribute:: last_bond_types
+      :type:  Optional[torch.Tensor]
+      :value: None
+
+
+
+   .. py:attribute:: loss_weights
+
+
+   .. py:property:: model
+      :type: JodoDiffusionTask
+
+
+      ``tasks_generate.py`` reads ``task.model.T``; self is the model.
+
+
+   .. py:attribute:: n_atom_types
+
+
+   .. py:property:: n_node_dist
+      :type: dict
+
+
+
+   .. py:attribute:: node_dist_model
+
+
+   .. py:attribute:: noise_align
+
+
+   .. py:attribute:: noise_scheduler
+
+
+   .. py:attribute:: normalize_condition
+
+
+   .. py:attribute:: pred_data
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: property_norms
+      :value: None
+
+
+
+   .. py:attribute:: reduce_mean
+
+
+   .. py:attribute:: sdf_output_path
+
+
+   .. py:attribute:: self_cond
+
+
+.. py:class:: ModelTaskFactory(task_type: str = 'diffusion_jodo', nf: int = 256, n_layers: int = 8, n_heads: int = 16, n_extra_heads: int = 2, dropout: float = 0.1, mlp_ratio: int = 2, spatial_cut_off: float = 2.0, edge_ch: int = 2, include_fc_charge: bool = True, cond_time: bool = True, dist_gbf: bool = True, gbf_name: str = 'CondGaussianLayer', trans_name: str = 'TransMixLayer', softmax_inf: bool = True, edge_quan_th: float = 0.0, com: bool = True, pred_data: bool = True, self_cond: bool = True, noise_align: bool = True, centered: bool = True, normalize_factors: Optional[list] = None, loss_weights: Optional[list] = None, reduce_mean: bool = False, noise_schedule: str = 'cosine', beta_0: float = 0.1, beta_1: float = 20.0, sampling_steps: int = 1000, condition: Optional[list] = None, normalize_condition: str = 'mad', sdf_output_path: Optional[str] = None, atom_vocab: Optional[list] = None, train_set: Optional[torch.utils.data.Dataset] = None, **kwargs: Any)
+
+   Hydra entry point for JODO (``configs/tasks/diffusion_jodo.yaml``).
+
+   Declares ``train_set`` so ``cli/train.py``'s declarative seam injects the
+   training dataset: the molecule-size histogram (and, for the conditional
+   variant, the property distribution + mean/MAD normalizer) is needed at
+   construction time and is not an ``nn.Module`` buffer.
+
+   ``sdf_output_path`` is declared generation-time (docs §2.5b): the task is
+   rebuilt from the checkpoint's training-time config, where it is ``null``,
+   so without this declaration the generate config's value never arrives and
+   the bond sidecar -- JODO's whole 2D half -- is silently dropped.
+
+
+   .. py:method:: build() -> JodoDiffusionTask
+
+      Construct the task, deriving size/property priors from the data.
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: beta_0
+      :value: 0.1
+
+
+
+   .. py:attribute:: beta_1
+      :value: 20.0
+
+
+
+   .. py:attribute:: centered
+      :value: True
+
+
+
+   .. py:attribute:: com
+      :value: True
+
+
+
+   .. py:attribute:: cond_time
+      :value: True
+
+
+
+   .. py:attribute:: condition
+      :value: []
+
+
+
+   .. py:attribute:: dist_gbf
+      :value: True
+
+
+
+   .. py:attribute:: dropout
+      :value: 0.1
+
+
+
+   .. py:attribute:: edge_ch
+      :value: 2
+
+
+
+   .. py:attribute:: edge_quan_th
+      :value: 0.0
+
+
+
+   .. py:attribute:: gbf_name
+      :value: 'CondGaussianLayer'
+
+
+
+   .. py:attribute:: generation_time_keys
+      :value: ('sdf_output_path',)
+
+
+
+   .. py:attribute:: include_fc_charge
+      :value: True
+
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: loss_weights
+      :value: [1.0, 0.25, 0.1]
+
+
+
+   .. py:attribute:: mlp_ratio
+      :value: 2
+
+
+
+   .. py:attribute:: n_extra_heads
+      :value: 2
+
+
+
+   .. py:attribute:: n_heads
+      :value: 16
+
+
+
+   .. py:attribute:: n_layers
+      :value: 8
+
+
+
+   .. py:attribute:: nf
+      :value: 256
+
+
+
+   .. py:attribute:: noise_align
+      :value: True
+
+
+
+   .. py:attribute:: noise_schedule
+      :value: 'cosine'
+
+
+
+   .. py:attribute:: normalize_condition
+      :value: 'mad'
+
+
+
+   .. py:attribute:: normalize_factors
+      :value: [1, 4, 4, 1]
+
+
+
+   .. py:attribute:: pred_data
+      :value: True
+
+
+
+   .. py:attribute:: reduce_mean
+      :value: False
+
+
+
+   .. py:attribute:: sampling_steps
+      :value: 1000
+
+
+
+   .. py:attribute:: sdf_output_path
+      :value: None
+
+
+
+   .. py:attribute:: self_cond
+      :value: True
+
+
+
+   .. py:attribute:: softmax_inf
+      :value: True
+
+
+
+   .. py:attribute:: spatial_cut_off
+      :value: 2.0
+
+
+
+   .. py:attribute:: task
+      :type:  Optional[JodoDiffusionTask]
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_jodo'
+
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+   .. py:attribute:: trans_name
+      :value: 'TransMixLayer'
+
+
+
+.. py:function:: expand_dims(v: torch.Tensor, dims: int) -> torch.Tensor
+
+   ``v`` of shape ``[N]`` -> ``[N, 1, ..., 1]`` with ``dims`` dimensions.
+
+
+.. py:function:: get_align_position(z_t: torch.Tensor, xh: torch.Tensor) -> torch.Tensor
+
+   Rotate the clean positions onto the noisy ones (``losses.py:403``).
+
+
+.. py:function:: kabsch_batch(coords_pred: torch.Tensor, coords_tar: torch.Tensor) -> torch.Tensor
+
+   Batched Kabsch rotation, port of upstream ``losses.py:424``.
+
+
+.. py:data:: Chem
+   :value: None
+
+
+.. py:data:: logger
+

@@ -702,18 +702,10 @@ shortfall is upstream behaviour, not a port defect.</p>
 <span class="sig-name descname"><span class="pre">prop_dist_model</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTask.prop_dist_model" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTask.sdf_output_path">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sdf_output_path</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTask.sdf_output_path" title="Link to this definition">¶</a></dt>
-<dd><p>Where to write the bond sidecar, generate-config value winning.</p>
-<p>Resolved once, lazily. For a checkpoint this platform trained, the task
-is rebuilt from the <em>training-time</em> <code class="docutils literal notranslate"><span class="pre">hyper_parameters.model_config</span></code> and
-only an allowlist of keys is taken from the generate config
-(<code class="docutils literal notranslate"><span class="pre">cli/generate.py:277-281</span></code>) – <code class="docutils literal notranslate"><span class="pre">sdf_output_path</span></code> is not on it, so the
-training-time <code class="docutils literal notranslate"><span class="pre">null</span></code> would silently win and the bonds (the whole point
-of this model) would be lost with no error. See MiDi’s
-<code class="docutils literal notranslate"><span class="pre">_generate_config_override</span></code>, imported rather than copied.</p>
-</dd></dl>
+<span class="sig-name descname"><span class="pre">sdf_output_path</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTask.sdf_output_path" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTask.stochasticity">
@@ -755,6 +747,10 @@ of this model) would be lost with no error. See MiDi’s
 (<code class="docutils literal notranslate"><span class="pre">cli/train.py:624-637</span></code>) hand over the dataset, which carries
 <code class="docutils literal notranslate"><span class="pre">graph3d_stats</span></code> and therefore the molecule-size histogram FlowMol needs
 for sampling.</p>
+<p><code class="docutils literal notranslate"><span class="pre">sdf_output_path</span></code> is declared generation-time (docs §2.5b): the task is
+rebuilt from the checkpoint’s training-time config, where it is <code class="docutils literal notranslate"><span class="pre">null</span></code>,
+so without this declaration the generate config’s value never arrives and
+the bond sidecar – the whole 2D half of the model – is silently dropped.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTaskFactory.build">
 <span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTask" title="MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTask"><span class="pre">FlowMolGraph3DTask</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTaskFactory.build" title="Link to this definition">¶</a></dt>
@@ -798,6 +794,11 @@ for sampling.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTaskFactory.fake_atom_std">
 <span class="sig-name descname"><span class="pre">fake_atom_std</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTaskFactory.fake_atom_std" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTaskFactory.generation_time_keys">
+<span class="sig-name descname"><span class="pre">generation_time_keys</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('sdf_output_path',)</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTaskFactory.generation_time_keys" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1064,6 +1065,7 @@ step that materializes bond class 0 (“no bond”), which is never stored;</p><
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTaskFactory.distort_t"><code class="docutils literal notranslate"><span class="pre">FlowMolGraph3DTaskFactory.distort_t</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTaskFactory.fake_atom_p"><code class="docutils literal notranslate"><span class="pre">FlowMolGraph3DTaskFactory.fake_atom_p</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTaskFactory.fake_atom_std"><code class="docutils literal notranslate"><span class="pre">FlowMolGraph3DTaskFactory.fake_atom_std</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTaskFactory.generation_time_keys"><code class="docutils literal notranslate"><span class="pre">FlowMolGraph3DTaskFactory.generation_time_keys</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTaskFactory.high_confidence_threshold"><code class="docutils literal notranslate"><span class="pre">FlowMolGraph3DTaskFactory.high_confidence_threshold</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTaskFactory.interpolant_scheduler_config"><code class="docutils literal notranslate"><span class="pre">FlowMolGraph3DTaskFactory.interpolant_scheduler_config</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_flowmol_graph3d.FlowMolGraph3DTaskFactory.kwargs"><code class="docutils literal notranslate"><span class="pre">FlowMolGraph3DTaskFactory.kwargs</span></code></a></li>

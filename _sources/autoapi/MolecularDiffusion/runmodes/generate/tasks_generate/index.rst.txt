@@ -24,7 +24,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: GenerativeFactory(task: MolecularDiffusion.modules.tasks.task.Task, task_type: str = 'unconditional', sampling_mode: str = 'ddpm', num_generate: int = 100, mol_size: List[int] = [0, 0], target_values: List[float] = [], property_names: List[str] = [], negative_target_values: List[float] = [], batch_size: int = 1, seed: int = 86, n_frames: int = 0, output_path: str = 'generated_mol', save_xyzrender_figures: bool = False, condition_configs={}, max_mol_size: int = 0, **kwargs)
+.. py:class:: GenerativeFactory(task: MolecularDiffusion.modules.tasks.task.Task, task_type: str = 'unconditional', sampling_mode: str = 'ddpm', num_generate: int = 100, mol_size: List[int] = [0, 0], target_values: List[float] = [], property_names: List[str] = [], negative_target_values: List[float] = [], batch_size: int = 1, seed: int = 86, n_frames: int = 0, output_path: str = 'generated_mol', save_xyzrender_figures: bool = False, condition_configs={}, max_mol_size: int = 0, sdf_per_molecule: bool = False, **kwargs)
 
    .. py:method:: conditional_generation()
 
@@ -117,6 +117,11 @@ Module Contents
 
 
    .. py:attribute:: save_xyzrender_figures
+      :value: False
+
+
+
+   .. py:attribute:: sdf_per_molecule
       :value: False
 
 

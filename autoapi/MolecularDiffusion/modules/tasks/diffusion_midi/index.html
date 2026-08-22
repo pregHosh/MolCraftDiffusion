@@ -623,16 +623,10 @@ set, written as an <code class="docutils literal notranslate"><span class="pre">
 <span class="sig-name descname"><span class="pre">prop_dist_model</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_midi.MidiDiffusionTask.prop_dist_model" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_midi.MidiDiffusionTask.sdf_output_path">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sdf_output_path</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_midi.MidiDiffusionTask.sdf_output_path" title="Link to this definition">¶</a></dt>
-<dd><p>Where to write the bond sidecar, generate-config value winning.</p>
-<p>Resolved once, lazily (the CLI argv is fixed for the process). A
-checkpoint this platform trained carries the <em>training-time</em> value here,
-which is <code class="docutils literal notranslate"><span class="pre">null</span></code> for any normal training run – see
-<code class="docutils literal notranslate"><span class="pre">_generate_config_override</span></code> for why the generate config cannot reach
-the task through the usual path.</p>
-</dd></dl>
+<span class="sig-name descname"><span class="pre">sdf_output_path</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_midi.MidiDiffusionTask.sdf_output_path" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_midi.MidiDiffusionTask.task_type">
@@ -649,6 +643,10 @@ the task through the usual path.</p>
 training dataset: MiDi’s noise model needs the atom/bond/charge marginals
 and the size histogram <em>at construction time</em>, and neither is an
 <code class="docutils literal notranslate"><span class="pre">nn.Module</span></code> buffer, so neither survives in a checkpoint.</p>
+<p><code class="docutils literal notranslate"><span class="pre">sdf_output_path</span></code> is declared generation-time (docs §2.5b): the task is
+rebuilt from the checkpoint’s training-time config, where it is <code class="docutils literal notranslate"><span class="pre">null</span></code>,
+so without this declaration the generate config’s value never arrives and
+the bond sidecar – the whole 2D half of the model – is silently dropped.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_midi.ModelTaskFactory.build">
 <span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_midi.MidiDiffusionTask" title="MolecularDiffusion.modules.tasks.diffusion_midi.MidiDiffusionTask"><span class="pre">MidiDiffusionTask</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_midi.ModelTaskFactory.build" title="Link to this definition">¶</a></dt>
@@ -673,6 +671,11 @@ and the size histogram <em>at construction time</em>, and neither is an
 <dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_midi.ModelTaskFactory.diffusion_steps">
 <span class="sig-name descname"><span class="pre">diffusion_steps</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">500</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_midi.ModelTaskFactory.diffusion_steps" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_midi.ModelTaskFactory.generation_time_keys">
+<span class="sig-name descname"><span class="pre">generation_time_keys</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('sdf_output_path',)</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_midi.ModelTaskFactory.generation_time_keys" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -838,6 +841,7 @@ and the size histogram <em>at construction time</em>, and neither is an
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_midi.ModelTaskFactory.charge_offset"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory.charge_offset</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_midi.ModelTaskFactory.diffusion_noise_schedule"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory.diffusion_noise_schedule</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_midi.ModelTaskFactory.diffusion_steps"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory.diffusion_steps</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_midi.ModelTaskFactory.generation_time_keys"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory.generation_time_keys</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_midi.ModelTaskFactory.hidden_dims"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory.hidden_dims</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_midi.ModelTaskFactory.hidden_mlp_dims"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory.hidden_mlp_dims</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_midi.ModelTaskFactory.kwargs"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory.kwargs</span></code></a></li>

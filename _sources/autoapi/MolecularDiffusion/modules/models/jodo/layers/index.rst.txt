@@ -1,0 +1,294 @@
+MolecularDiffusion.modules.models.jodo.layers
+=============================================
+
+.. py:module:: MolecularDiffusion.modules.models.jodo.layers
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.jodo.layers.CondCoorsNorm
+   MolecularDiffusion.modules.models.jodo.layers.CondGaussianLayer
+   MolecularDiffusion.modules.models.jodo.layers.CoorsNorm
+   MolecularDiffusion.modules.models.jodo.layers.EdgeGateTransLayer
+   MolecularDiffusion.modules.models.jodo.layers.GaussianLayer
+   MolecularDiffusion.modules.models.jodo.layers.LearnedSinusodialposEmb
+   MolecularDiffusion.modules.models.jodo.layers.TransMixLayer
+   MolecularDiffusion.modules.models.jodo.layers.Trans_Layer
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.jodo.layers.gaussian
+
+
+Module Contents
+---------------
+
+.. py:class:: CondCoorsNorm(time_dim, eps=1e-08)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(coors, time_emb)
+
+
+   .. py:attribute:: eps
+      :value: 1e-08
+
+
+
+   .. py:attribute:: time_emb
+
+
+.. py:class:: CondGaussianLayer(K, time_dim)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Gaussian basis function layer for 3D distance features, with time embedding condition
+
+
+   .. py:method:: forward(x, time_emb=None)
+
+
+   .. py:attribute:: K
+
+
+   .. py:attribute:: means
+
+
+   .. py:attribute:: stds
+
+
+   .. py:attribute:: time_mlp
+
+
+.. py:class:: CoorsNorm(eps=1e-08, scale_init=1.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(coors)
+
+
+   .. py:attribute:: eps
+      :value: 1e-08
+
+
+
+   .. py:attribute:: scale
+
+
+.. py:class:: EdgeGateTransLayer(x_channels: int, out_channels: int, heads: int = 1, dropout: float = 0.0, edge_dim: Optional[int] = None, bias: bool = True, **kwargs)
+
+   Bases: :py:obj:`torch_geometric.nn.conv.MessagePassing`
+
+
+   The version of edge feature gating.
+
+
+   .. py:method:: forward(x: torch_geometric.typing.OptTensor, edge_index: torch_geometric.typing.Adj, edge_attr: torch_geometric.typing.OptTensor = None) -> torch.Tensor
+
+
+   .. py:method:: message(query_i: torch.Tensor, key_j: torch.Tensor, value_j: torch.Tensor, edge_attr: torch_geometric.typing.OptTensor, index: torch.Tensor, ptr: torch_geometric.typing.OptTensor, size_i: Optional[int]) -> Tuple[torch.Tensor, torch.Tensor]
+
+
+   .. py:method:: reset_parameters()
+
+
+   .. py:attribute:: dropout
+      :value: 0.0
+
+
+
+   .. py:attribute:: edge_dim
+      :value: None
+
+
+
+   .. py:attribute:: heads
+      :value: 1
+
+
+
+   .. py:attribute:: lin_edge0
+
+
+   .. py:attribute:: lin_edge1
+
+
+   .. py:attribute:: lin_key
+
+
+   .. py:attribute:: lin_query
+
+
+   .. py:attribute:: lin_value
+
+
+   .. py:attribute:: out_channels
+
+
+   .. py:attribute:: x_channels
+
+
+.. py:class:: GaussianLayer(K, *args, **kwargs)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Gaussian basis function layer for 3D distance features
+
+
+   .. py:method:: forward(x, *args, **kwargs)
+
+
+   .. py:attribute:: K
+
+
+   .. py:attribute:: means
+
+
+   .. py:attribute:: stds
+
+
+.. py:class:: LearnedSinusodialposEmb(dim)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   following @crowsonkb 's lead with learned sinusoidal pos emb
+   https://github.com/crowsonkb/v-diffusion-jax/blob/master/diffusion/models/danbooru_128.py#L8
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: weights
+
+
+.. py:class:: TransMixLayer(x_channels: int, out_channels: int, extra_heads: int = 2, heads: int = 4, dropout: float = 0.0, edge_dim: Optional[int] = None, bias: bool = True, inf: bool = False, **kwargs)
+
+   Bases: :py:obj:`torch_geometric.nn.conv.MessagePassing`
+
+
+   The version for involving the edge feature. Multiply Msg. Without FFN and norm.
+   Extra attention heads from adjacency matrix.
+
+
+   .. py:method:: forward(x: torch_geometric.typing.OptTensor, edge_index: torch_geometric.typing.Adj, edge_attr: torch_geometric.typing.OptTensor, extra_heads: torch_geometric.typing.OptTensor) -> torch.Tensor
+
+
+   .. py:method:: message(query_i: torch.Tensor, key_j: torch.Tensor, value_j: torch.Tensor, edge_attr: torch_geometric.typing.OptTensor, extra_heads: torch_geometric.typing.OptTensor, index: torch.Tensor, ptr: torch_geometric.typing.OptTensor, size_i: Optional[int]) -> Tuple[torch.Tensor, torch.Tensor]
+
+
+   .. py:method:: reset_parameters()
+
+
+   .. py:attribute:: dropout
+      :value: 0.0
+
+
+
+   .. py:attribute:: edge_dim
+      :value: None
+
+
+
+   .. py:attribute:: extra_heads
+      :value: 2
+
+
+
+   .. py:attribute:: heads
+      :value: 4
+
+
+
+   .. py:attribute:: lin_edge0
+
+
+   .. py:attribute:: lin_edge1
+
+
+   .. py:attribute:: lin_key
+
+
+   .. py:attribute:: lin_query
+
+
+   .. py:attribute:: lin_value
+
+
+   .. py:attribute:: out_channels
+
+
+   .. py:attribute:: set_inf
+      :value: False
+
+
+
+   .. py:attribute:: x_channels
+
+
+.. py:class:: Trans_Layer(x_channels: int, out_channels: int, heads: int = 1, dropout: float = 0.0, edge_dim: Optional[int] = None, bias: bool = True, **kwargs)
+
+   Bases: :py:obj:`torch_geometric.nn.conv.MessagePassing`
+
+
+   The version for involving the edge feature. Multiply Msg. Without FFN and norm.
+
+
+   .. py:method:: forward(x: torch_geometric.typing.OptTensor, edge_index: torch_geometric.typing.Adj, edge_attr: torch_geometric.typing.OptTensor = None) -> torch.Tensor
+
+
+   .. py:method:: message(query_i: torch.Tensor, key_j: torch.Tensor, value_j: torch.Tensor, edge_attr: torch_geometric.typing.OptTensor, index: torch.Tensor, ptr: torch_geometric.typing.OptTensor, size_i: Optional[int]) -> Tuple[torch.Tensor, torch.Tensor]
+
+
+   .. py:method:: reset_parameters()
+
+
+   .. py:attribute:: dropout
+      :value: 0.0
+
+
+
+   .. py:attribute:: edge_dim
+      :value: None
+
+
+
+   .. py:attribute:: heads
+      :value: 1
+
+
+
+   .. py:attribute:: lin_edge0
+
+
+   .. py:attribute:: lin_edge1
+
+
+   .. py:attribute:: lin_key
+
+
+   .. py:attribute:: lin_query
+
+
+   .. py:attribute:: lin_value
+
+
+   .. py:attribute:: out_channels
+
+
+   .. py:attribute:: x_channels
+
+
+.. py:function:: gaussian(x, mean, std)
+

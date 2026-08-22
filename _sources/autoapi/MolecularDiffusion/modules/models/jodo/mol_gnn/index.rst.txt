@@ -1,0 +1,366 @@
+MolecularDiffusion.modules.models.jodo.mol_gnn
+==============================================
+
+.. py:module:: MolecularDiffusion.modules.models.jodo.mol_gnn
+
+.. autoapi-nested-parse::
+
+   JODO's Diffusion Graph Transformer (DGT), ported from the target repo.
+
+   Source: others/JODO/models/mol_gnn.py, commit 0e6326a. Ported verbatim apart
+   from three mechanical changes:
+
+     * the `@utils.register_model` decorators are dropped (Hydra `_target_` is
+       this platform's registry);
+     * `from .layers import *` becomes explicit imports and the two `eval(name)`
+       lookups become a small dict, so ruff/mypy can see the names;
+     * `DGT_concat_2D` and `DGT_concat_sim` are not ported -- the 2D-only variant
+       has no coordinates (nothing for the platform's 3D pipeline) and `_sim` is
+       an ablation with no released weights.
+
+   Both `DGT_concat` (unconditional) and `Cond_DGT_concat` (property-conditional)
+   take one config namespace with `.data` and `.model` attributes, exactly as
+   upstream, so the ported code stays diffable against JODO.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.jodo.mol_gnn.CondEquiUpdate
+   MolecularDiffusion.modules.models.jodo.mol_gnn.Cond_DGT_concat
+   MolecularDiffusion.modules.models.jodo.mol_gnn.DGT_concat
+   MolecularDiffusion.modules.models.jodo.mol_gnn.EquivariantBlock
+   MolecularDiffusion.modules.models.jodo.mol_gnn.EquivariantMixBlock
+   MolecularDiffusion.modules.models.jodo.mol_gnn.MultiCondEquiUpdate
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.jodo.mol_gnn.modulate
+
+
+Module Contents
+---------------
+
+.. py:class:: CondEquiUpdate(hidden_dim, edge_dim, dist_dim, time_dim)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Update atom coordinates equivariantly, use time emb condition.
+
+
+   .. py:method:: forward(h, pos, edge_index, edge_attr, dist, time_emb)
+
+
+   .. py:attribute:: coord_mlp
+
+
+   .. py:attribute:: coord_norm
+
+
+   .. py:attribute:: input_lin
+
+
+   .. py:attribute:: ln
+
+
+   .. py:attribute:: time_mlp
+
+
+.. py:class:: Cond_DGT_concat(config)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Conditional Diffusion Graph Transformer with self-conditioning.
+
+
+   .. py:method:: forward(t, xh, node_mask, edge_mask, context=None, *args, **kwargs)
+
+      :param t:
+      :type t: [B] time steps in [0, 1]
+      :param xh:
+      :type xh: [B, N, ch1] atom feature (positions, types, formal charges)
+      :param node_mask:
+      :type node_mask: [B, N, 1]
+      :param edge_mask:
+      :type edge_mask: [B*N*N, 1]
+      :param context:
+      :param kwargs:
+      :type kwargs: 'edge_x' [B, N, N, ch2]
+
+
+
+   .. py:attribute:: CoM
+
+
+   .. py:attribute:: cond_lin
+
+
+   .. py:attribute:: cond_mlp
+
+
+   .. py:attribute:: dist_dim
+
+
+   .. py:attribute:: edge_emb
+
+
+   .. py:attribute:: edge_exist_mlp
+
+
+   .. py:attribute:: edge_th
+
+
+   .. py:attribute:: edge_type_mlp
+
+
+   .. py:attribute:: node_emb
+
+
+   .. py:attribute:: node_pred_mlp
+
+
+   .. py:attribute:: pred_data
+
+
+   .. py:attribute:: spatial_cut_off
+
+
+.. py:class:: DGT_concat(config)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Diffusion Graph Transformer with self-conditioning.
+
+
+   .. py:method:: forward(t, xh, node_mask, edge_mask, context=None, *args, **kwargs)
+
+      :param t:
+      :type t: [B] time steps in [0, 1]
+      :param xh:
+      :type xh: [B, N, ch1] atom feature (positions, types, formal charges)
+      :param node_mask:
+      :type node_mask: [B, N, 1]
+      :param edge_mask:
+      :type edge_mask: [B*N*N, 1]
+      :param context:
+      :param kwargs:
+      :type kwargs: 'edge_x' [B, N, N, ch2]
+
+
+
+   .. py:attribute:: CoM
+
+
+   .. py:attribute:: dist_dim
+
+
+   .. py:attribute:: edge_emb
+
+
+   .. py:attribute:: edge_exist_mlp
+
+
+   .. py:attribute:: edge_th
+
+
+   .. py:attribute:: edge_type_mlp
+
+
+   .. py:attribute:: node_emb
+
+
+   .. py:attribute:: node_pred_mlp
+
+
+   .. py:attribute:: pred_data
+
+
+   .. py:attribute:: spatial_cut_off
+
+
+.. py:class:: EquivariantBlock(node_dim, edge_dim, time_dim, num_heads, cond_time, dist_gbf, softmax_inf, mlp_ratio=2, act=nn.SiLU(), dropout=0.0, gbf_name='GaussianLayer')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Equivariant block based on graph relational transformer layer, without extra heads.
+
+
+   .. py:method:: forward(pos, h, edge_attr, edge_index, node_mask, node_time_emb=None, edge_time_emb=None)
+
+      Params:
+          pos: [B*N, 3]
+          h: [B*N, hid_dim]
+          edge_attr: [N_edge, edge_hid_dim]
+          edge_index: [2, N_edge]
+          node_mask: [B*N, 1]
+          extra_heads: [N_edge, extra_heads]
+
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: attn_mpnn
+
+
+   .. py:attribute:: cond_time
+
+
+   .. py:attribute:: dist_gbf
+
+
+   .. py:attribute:: dropout
+
+
+   .. py:attribute:: edge_emb
+
+
+   .. py:attribute:: edge_time_mlp
+
+
+   .. py:attribute:: equi_update
+
+
+   .. py:attribute:: ff_linear1
+
+
+   .. py:attribute:: ff_linear2
+
+
+   .. py:attribute:: ff_linear3
+
+
+   .. py:attribute:: ff_linear4
+
+
+   .. py:attribute:: node2edge_lin
+
+
+   .. py:attribute:: node_time_mlp
+
+
+   .. py:attribute:: norm1_edge
+
+
+   .. py:attribute:: norm1_node
+
+
+   .. py:attribute:: norm2_edge
+
+
+   .. py:attribute:: norm2_node
+
+
+.. py:class:: EquivariantMixBlock(node_dim, edge_dim, time_dim, num_extra_heads, num_heads, cond_time, dist_gbf, softmax_inf, mlp_ratio=2, act=nn.SiLU(), dropout=0.0, gbf_name='GaussianLayer', trans_name='TransMixLayer')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Equivariant block based on graph relational transformer layer.
+
+
+   .. py:method:: forward(pos, h, edge_attr, edge_index, node_mask, extra_heads, node_time_emb=None, edge_time_emb=None)
+
+      Params:
+          pos: [B*N, 3]
+          h: [B*N, hid_dim]
+          edge_attr: [N_edge, edge_hid_dim]
+          edge_index: [2, N_edge]
+          node_mask: [B*N, 1]
+          extra_heads: [N_edge, extra_heads]
+
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: attn_mpnn
+
+
+   .. py:attribute:: cond_time
+
+
+   .. py:attribute:: dist_gbf
+
+
+   .. py:attribute:: dropout
+
+
+   .. py:attribute:: edge_emb
+
+
+   .. py:attribute:: edge_time_mlp
+
+
+   .. py:attribute:: equi_update
+
+
+   .. py:attribute:: ff_linear1
+
+
+   .. py:attribute:: ff_linear2
+
+
+   .. py:attribute:: ff_linear3
+
+
+   .. py:attribute:: ff_linear4
+
+
+   .. py:attribute:: node2edge_lin
+
+
+   .. py:attribute:: node_time_mlp
+
+
+   .. py:attribute:: norm1_edge
+
+
+   .. py:attribute:: norm1_node
+
+
+   .. py:attribute:: norm2_edge
+
+
+   .. py:attribute:: norm2_node
+
+
+.. py:class:: MultiCondEquiUpdate(hidden_dim, edge_dim, dist_dim, time_dim, extra_heads)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Update atom coordinates equivariantly, use time emb condition.
+
+
+   .. py:method:: forward(h, pos, edge_index, edge_attr, dist, time_emb, adj_extra)
+
+
+   .. py:attribute:: coord_mlp
+
+
+   .. py:attribute:: coord_norm
+
+
+   .. py:attribute:: input_lin
+
+
+   .. py:attribute:: ln
+
+
+   .. py:attribute:: time_mlp
+
+
+.. py:function:: modulate(x, shift, scale)
+
