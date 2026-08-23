@@ -1,0 +1,43 @@
+MolecularDiffusion.modules.models.syncogen.data.utils
+=====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.data.utils
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.data.utils.encode_no_edge
+   MolecularDiffusion.modules.models.syncogen.data.utils.to_dense_bonds
+   MolecularDiffusion.modules.models.syncogen.data.utils.to_dense_coords
+   MolecularDiffusion.modules.models.syncogen.data.utils.to_dense_graph
+   MolecularDiffusion.modules.models.syncogen.data.utils.to_dense_pharmacophores
+
+
+Module Contents
+---------------
+
+.. py:function:: encode_no_edge(edges_onehot: torch.Tensor) -> torch.Tensor
+
+.. py:function:: to_dense_bonds(bonds, bonds_len, max_num_bonds: int = None)
+
+   Densify variable-length per-graph bonds lists into a padded batch.
+
+
+.. py:function:: to_dense_coords(coordinates, coords_mask, batch, max_num_nodes)
+
+   Densify coordinates and coordinate masks if present.
+
+
+.. py:function:: to_dense_graph(x, edge_index, edge_attr, batch, max_num_nodes)
+
+   Densify node and edge tensors and produce padding masks. Returns indices.
+
+
+.. py:function:: to_dense_pharmacophores(pharm_types, pharm_pos, pharm_len, max_num_pharm: int = None)
+
+   Densify variable-length per-graph pharmacophores into padded batches.
+
+

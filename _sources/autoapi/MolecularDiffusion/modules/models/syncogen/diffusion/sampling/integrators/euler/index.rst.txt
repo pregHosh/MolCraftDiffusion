@@ -1,0 +1,77 @@
+MolecularDiffusion.modules.models.syncogen.diffusion.sampling.integrators.euler
+===============================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.diffusion.sampling.integrators.euler
+
+.. autoapi-nested-parse::
+
+   Euler integrator for flow matching.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.sampling.integrators.euler.EulerIntegrator
+
+
+Module Contents
+---------------
+
+.. py:class:: EulerIntegrator(inference_annealing: bool = False, annealing_coef: float = 1.0)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.models.syncogen.diffusion.sampling.integrators.base.IntegratorBase`
+
+
+   Simple Euler integrator for flow matching.
+
+   Updates coordinates using: C_{t-dt} = C_t + v_theta(C_t, t) * dt
+   where v_theta is the velocity field pointing from C_t toward C_0.
+
+   Initialize Euler integrator.
+
+   :param inference_annealing: Whether to apply inference annealing
+   :param annealing_coef: Coefficient for inference annealing
+
+
+   .. py:method:: compute_velocity(C: torch.Tensor, C0_pred: torch.Tensor, t: torch.Tensor) -> torch.Tensor
+
+      Compute the velocity field v_theta at time t.
+
+      For flow matching: v_t = (C_0 - C_t) / t
+      This points from C_t toward C_0.
+
+      :param C: Current noisy coordinates
+      :param C0_pred: Predicted clean coordinates
+      :param t: Current timestep
+
+      :returns: Velocity tensor
+
+
+
+   .. py:method:: step(coords: MolecularDiffusion.modules.models.syncogen.api.atomics.coordinates.Coordinates, C0_pred: torch.Tensor, t: torch.Tensor, dt: float) -> torch.Tensor
+
+      Perform one Euler integration step.
+
+      :param coords: Coordinates object with current noisy state
+      :param C0_pred: Predicted clean coordinates
+      :param t: Current timestep
+      :param dt: Time step size
+
+      :returns: Updated coordinates tensor
+      :rtype: C_next
+
+
+
+   .. py:attribute:: annealing_coef
+      :value: 1.0
+
+
+
+   .. py:attribute:: inference_annealing
+      :value: False
+
+
+

@@ -1,0 +1,91 @@
+MolecularDiffusion.modules.models.syncogen.models.semla_utils
+=============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.models.semla_utils
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.models.semla_utils.adj_from_node_mask
+   MolecularDiffusion.modules.models.syncogen.models.semla_utils.calc_distances
+   MolecularDiffusion.modules.models.syncogen.models.semla_utils.edges_from_adj
+   MolecularDiffusion.modules.models.syncogen.models.semla_utils.edges_from_nodes
+
+
+Module Contents
+---------------
+
+.. py:function:: adj_from_node_mask(node_mask, self_connect=False)
+
+   Creates an edge mask from a given node mask assuming all nodes are fully connected excluding self-connections
+
+   :param node_mask: Node mask tensor, shape [batch_size, num_nodes], 1 for real node 0 otherwise
+   :type node_mask: torch.Tensor
+   :param self_connect: Whether to include self connections in the adjacency
+   :type self_connect: bool
+
+   :returns: Adjacency tensor, shape [batch_size, num_nodes, num_nodes], 1 for real edge 0 otherwise
+   :rtype: torch.Tensor
+
+
+.. py:function:: calc_distances(coords, edges=None, sqrd=False, eps=1e-06)
+
+   Computes distances between connected nodes
+
+   Takes an optional edges argument. If edges is None this will calculate distances between all nodes and return the
+   distances in a batched square matrix [batch_size, num_nodes, num_nodes]. If edges is provided the distances are
+   returned for each edge in a batched 1D format [batch_size, num_edges].
+
+   :param coords: Coordinate tensor, shape [batch_size, num_nodes, 3]
+   :type coords: torch.Tensor
+   :param edges: Two-tuple of connected node indices, each tensor has shape [batch_size, num_edges]
+   :type edges: tuple
+   :param sqrd: Whether to return the squared distances
+   :type sqrd: bool
+   :param eps: Epsilon to add before taking the square root for numical stability in the gradients
+   :type eps: float
+
+   :returns: Distances tensor, the shape depends on whether edges is provided (see above).
+   :rtype: torch.Tensor
+
+
+.. py:function:: edges_from_adj(adj_matrix)
+
+   Flatten an adjacency matrix into a 1D edge representation
+
+   :param adj_matrix: Batched adjacency matrix, shape [batch_size, num_nodes, num_nodes]. It can contain
+                      any non-zero integer for connected nodes but must be 0 for unconnected nodes.
+   :type adj_matrix: torch.Tensor
+
+   :returns: A tuple of the edge tensor and the edge mask tensor. The edge tensor has shape [batch_size, max_num_edges, 2]
+             and the mask [batch_size, max_num_edges]. The mask contains 1 for real edges, 0 otherwise.
+
+
+.. py:function:: edges_from_nodes(coords, k=None, node_mask=None, edge_format='adjacency')
+
+   Constuct edges from node coords
+
+   Connects a node to its k nearest nodes. If k is None then connects each node to all its neighbours. A node is
+   never connected to itself.
+
+   :param coords: Node coords, shape [batch_size, num_nodes, 3]
+   :type coords: torch.Tensor
+   :param k: Number of neighbours to connect each node to, None means connect to all nodes except itself
+   :type k: int
+   :param node_mask: Node mask, shape [batch_size, num_nodes], 1 for real nodes 0 otherwise
+   :type node_mask: torch.Tensor
+   :param edge_format: Edge format, should be either 'adjacency' or 'list'
+   :type edge_format: str
+
+   :returns: If format is 'adjacency' this returns an adjacency matrix, shape [batch_size, num_nodes, num_nodes] which
+             contains 1 for connected nodes and 0 otherwise. Note that if a value for k is provided the adjacency matrix
+             may not be symmetric and should always be used s.t. 'from nodes' are in dim 1 and 'to nodes' are in dim 2.
+
+             If format is 'list' this returns the tuple (edges, edge mask), edges is also a two-tuple of tensors, each of
+             shape [batch_size, num_edges], specifying node indices for each edge. The edge mask has shape
+             [batch_size, num_edges] and contains 1 for 'real' edges and 0 otherwise.
+
+

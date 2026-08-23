@@ -1,0 +1,110 @@
+MolecularDiffusion.modules.models.syncogen.diffusion.loss.base
+==============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.diffusion.loss.base
+
+.. autoapi-nested-parse::
+
+   Base loss class for diffusion models.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.loss.base.LossMode
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.loss.base.LossBase
+   MolecularDiffusion.modules.models.syncogen.diffusion.loss.base.LossList
+
+
+Module Contents
+---------------
+
+.. py:class:: LossBase(mode: LossMode = 'both', coef: float = 1.0, time_weighted: bool = False, square_time_weight: bool = False, name: str = None, t_threshold: float = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Base class for all loss functions with built-in coefficient and optional time weighting.
+
+
+   .. py:method:: apply_coef(loss: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: apply_t_threshold(loss: torch.Tensor, t: Optional[torch.Tensor]) -> torch.Tensor
+
+      Optionally mask loss to timesteps t <= t_threshold.
+
+
+
+   .. py:method:: apply_time_weight(loss: torch.Tensor, t: Optional[torch.Tensor]) -> torch.Tensor
+
+      Optionally apply time weighting. Loss shapes are broadcast-compatible.
+      NLLLoss should not call this (it has its own sigma weighting).
+
+
+
+   .. py:method:: forward(*args, **kwargs)
+      :abstractmethod:
+
+
+
+   .. py:attribute:: coef
+      :value: 1.0
+
+
+
+   .. py:attribute:: mode
+      :value: 'both'
+
+
+
+   .. py:property:: name
+      :type: str
+
+
+      Return loss name. Defaults to class name if not explicitly set.
+
+
+   .. py:attribute:: square_time_weight
+      :value: False
+
+
+
+   .. py:attribute:: t_threshold
+      :value: None
+
+
+
+   .. py:attribute:: time_weighted
+      :value: False
+
+
+
+.. py:class:: LossList(losses: Sequence[LossBase] = ())
+
+   Aggregates multiple losses and returns dicts with individual values + totals.
+
+
+   .. py:method:: compute_coords(coords_pred, coords_gt, t) -> dict[str, torch.Tensor]
+
+
+   .. py:method:: compute_graph(log_p_X, log_p_E, node_mask, sigma_factor) -> dict[str, torch.Tensor]
+
+
+   .. py:attribute:: losses
+      :value: []
+
+
+
+.. py:data:: LossMode
+

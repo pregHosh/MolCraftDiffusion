@@ -1,0 +1,59 @@
+MolecularDiffusion.modules.models.syncogen.diffusion.interpolation.base
+=======================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.diffusion.interpolation.base
+
+.. autoapi-nested-parse::
+
+   Base interpolator class.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.interpolation.base.InterpolatorBase
+
+
+Module Contents
+---------------
+
+.. py:class:: InterpolatorBase
+
+   Bases: :py:obj:`abc.ABC`, :py:obj:`torch.nn.Module`
+
+
+   Base interpolator class for flow matching.
+
+   Interpolators define how to interpolate between two coordinate sets C0 and C1
+   at time t in [0, 1], where t=0 corresponds to C0 and t=1 corresponds to C1.
+
+
+   .. py:method:: forward(C0: torch.Tensor, C1: torch.Tensor, t: torch.Tensor) -> torch.Tensor
+
+      Interpolate between C0 and C1 at time t.
+
+      :param C0: Initial coordinates tensor, shape [B, N, 3] or [B, N, M, 3]
+      :param C1: Final coordinates tensor, shape [B, N, 3] or [B, N, M, 3]
+      :param t: Time tensor, shape [B] or [B, 1, ...]
+
+      :returns: Interpolated coordinates at time t, same shape as C0/C1
+
+
+
+   .. py:method:: interpolate(C0: torch.Tensor, C1: torch.Tensor, t: torch.Tensor) -> torch.Tensor
+      :abstractmethod:
+
+
+      Compute interpolated coordinates.
+
+      :param C0: Initial coordinates tensor
+      :param C1: Final coordinates tensor
+      :param t: Time tensor
+
+      :returns: Interpolated coordinates
+
+
+

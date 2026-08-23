@@ -1,0 +1,20 @@
+MolecularDiffusion.modules.models.syncogen.api.rdkit
+====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.api.rdkit
+
+.. autoapi-nested-parse::
+
+   RDKit-based molecule assembly and utilities.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/syncogen/api/rdkit/assembly/index
+
+

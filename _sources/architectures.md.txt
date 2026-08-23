@@ -57,7 +57,22 @@ freely.
 | `diffusion_nextmol.yaml` | `diffusion_nextmol` | NExT-Mol (MoLlama language model + DMT diffusion transformer) | The one that **writes the molecule down before building it in 3D** — a language model proposes the molecule, then diffusion places it in space, so you can read and filter the molecule list before any 3D work starts. Two things to know: the molecules follow general drug-like chemistry rather than your dataset, and anything containing S, Cl or Br is dropped and reported. |
 | `diffusion_jodo.yaml` | `diffusion_jodo` | JODO (diffusion graph transformer, joint 2D+3D) | Draws the bonds for you, like MiDi, and can aim at a target property (gap, dipole, polarizability, HOMO, LUMO, heat capacity). Small or drug-sized molecules. Ask for SDF output or the bonds are dropped. |
 
-## 2. Latent-space diffusion (two-stage)
+## 2. Synthesizable / retroanalysis-constrained generation
+
+Molecules are **assembled**, not drawn atom by atom: the model picks catalogue
+building blocks and the reactions that join them, and generates the coordinates
+at the same time. So every result arrives with a synthesis route and its bonds
+already drawn. The trade-off is the catalogue — these models can only ever make
+what their building blocks and reactions allow, and they need their own
+reaction-graph dataset rather than a plain molecule set. Ask for SDF output or
+the bonds are thrown away.
+
+| Task config | `task_type` | Conditioned on | Notes |
+| :--- | :--- | :--- | :--- |
+| `diffusion_syncogen.yaml` | `diffusion_syncogen` | nothing — generates freely | **The one whose molecules come with a synthesis route** — you get something you can order and make. The catalogue is the constraint: 93 building blocks, 19 reactions, at most five blocks per molecule. |
+| `diffusion_syncogen_pharm.yaml` | `diffusion_syncogen_pharm` | **Pharmacophore** points from a reference ligand | The same generator steered to match a reference molecule's pharmacophore — pick it over ShEPhERD in section 4 when the result has to be makeable, and ShEPhERD when you also need shape and electrostatics. |
+
+## 3. Latent-space diffusion (two-stage)
 
 Train an autoencoder first, then diffuse in its latent space. Each family needs
 **both** of its configs, VAE first.
@@ -67,13 +82,15 @@ Train an autoencoder first, then diffuse in its latent space. Each family needs
 | GeoLDM | `vae_geoldm.yaml` (`vae_geoldm`) | `diffusion_geoldm.yaml` (`diffusion_geoldm`) | The established latent option, but you train two models and the autoencoder here uses the setup the original authors themselves reported as unstable — expect worse than the published numbers. The default EDM is the safer choice. |
 | ADiT | `vae_transformer.yaml` (`vae_transformer`) or `vae_equiformer.yaml` (`vae_equiformer`) | `diffusion_adit.yaml` (`diffusion_adit`) | For **large datasets and long training runs**, not for a few thousand molecules. Two encoder choices: the plain transformer is cheaper, Equiformer is more robust to how the molecule is oriented. Nothing here is pre-trained — you train both stages yourself. |
 
-## 3. Conditional and structure-aware generation
+## 4. Conditional and structure-aware generation
 
 Generation steered by an external input — a shape, a pocket, a set of fragments,
 a pharmacophore. These need **paired** data (the condition alongside the
 molecule); a plain molecule dataset is not enough. Except for ShEPhERD, none
 of them generate bonds — you get atoms in space and the chemistry is perceived
 afterwards. Most are heavy-atom only; KGDiff, PMDM and Apo2Mol also place hydrogens.
+
+Synthesizable generation can also be steered by a pharmacophore — see section 2.
 
 | Task config | `task_type` | Conditioned on | Notes |
 | :--- | :--- | :--- | :--- |
@@ -89,7 +106,7 @@ afterwards. Most are heavy-atom only; KGDiff, PMDM and Apo2Mol also place hydrog
 | `diffusion_diffdec.yaml` | `diffusion_diffdec` | **Scaffold** + anchor atom + **protein pocket** | **R-group decoration**: keep a scaffold fixed, pick one attachment point, and grow a substituent there inside the pocket. Choose it over DiffLinker when you are growing off a scaffold rather than bridging two fragments. One R-group per run, and the model picks its size for you, up to about 10 heavy atoms. |
 | `pharmacophore.yaml` | `diffusion_pharmacophore` | **Pharmacophore** points, electrostatics, shape | ShEPhERD — ligand-based design when you have a reference molecule but **no protein structure**, and the one option here whose conditioning actually works end to end. Shape matching needs to be trained in; the shipped setup covers pharmacophores and electrostatics. It is also the only model in this table that generates bonds. |
 
-## 4. Conformer generation
+## 5. Conformer generation
 
 The odd one out: these do not design molecules. You already know *what* the
 molecule is — you want to know what **shape** it takes. Everything else on this
@@ -110,7 +127,7 @@ it moved from the structure you supplied.
 | `diffusion_ditmc.yaml` | `diffusion_ditmc` | A transformer alternative to the two above, worth a second opinion on floppy molecules. Give it a molecule and it returns 3D poses of exactly that molecule. Nothing ready-made comes with it, so you must train it first — on a multi-conformer set — and start with LoQi if you cannot. |
 | `diffusion_etflow.yaml` | `diffusion_etflow` | Another second opinion alongside DiTMC, but this one **comes with ready-made weights** — one set for small molecules, one for drug-sized ones — so there is nothing to train first. It needs a **single connected molecule**: given a salt or anything in two pieces it returns a hugely exploded structure instead of stopping with an error, so split those off first. |
 
-## 5. Transition-metal complex generation
+## 6. Transition-metal complex generation
 
 Ligand design *around a metal centre*: freeze the metal and the retained
 ligands, re-diffuse the rest. Neither generates bonds, every run starts from an
@@ -123,7 +140,7 @@ the metals Cr through Zn.
 | `diffusion_ligandiff.yaml` | `diffusion_ligandiff` | Exactly **one** ligand per run | Swap **one** ligand for new chemistry while the rest of the complex stays put; the coordination geometry is preserved. Ligand assignments ship for one published dataset — bringing your own complexes needs molSimplify. |
 | `diffusion_ligandiff_multi.yaml` | `diffusion_ligandiff_multi` | **Any subset**, one ligand up to the whole coordination sphere | The broader option: keep any number of ligands and regenerate the rest, so use it when more of the coordination sphere is up for redesign. **Octahedral complexes only.** How the free sites are divided between new ligands is chosen at random unless you specify it — the model does not predict it. |
 
-## 6. Property prediction and guidance
+## 7. Property prediction and guidance
 
 Not generators. `regression` predicts a property; `guidance` exposes the same
 head as a gradient signal to steer a diffusion sampler. Only EGCL and eSEN can
@@ -135,7 +152,7 @@ be used for that steering.
 | `regression_esen.yaml` / `guidance_esen.yaml` | `regression` / `guidance` | eSEN | Slower and heavier; reach for it when EGCL's accuracy plateaus. |
 | `regression_equiformer.yaml` | `regression` | EquiformerV2 | The most expensive option, for prediction runs where accuracy matters more than cost. It **cannot** steer generation. |
 
-## 7. Self-supervised pretraining
+## 8. Self-supervised pretraining
 
 Train a backbone on unlabeled 3D structures. The resulting checkpoint is usable
 today as a **molecular featuriser** (`MolCraftDiff analyze featurize --backend
@@ -205,6 +222,15 @@ Backbones and objectives integrated here are based on the following work.
   — pairs the paper's own DMT relational graph transformer, which diffuses
   coordinates onto a fixed 2D graph, with the released MoLlama SELFIES
   language model that writes that graph.
+- **SynCoGen** — Rekesh, Cretu, Shevchuk, Somnath, Liò, Batey, Tyers,
+  Koziarski & Liu. *SynCoGen: Synthesizable 3D Molecule Generation via Joint
+  Reaction and Coordinate Modeling.* 2025.
+  [arXiv:2507.11818](https://arxiv.org/abs/2507.11818) — generates a
+  building-block and reaction graph jointly with the coordinates, so the
+  bonds fall out of the assembled molecule instead of being diffused. The
+  masked discrete diffusion over those two channels is **MDLM**: Sahoo et
+  al., *Simple and Effective Masked Diffusion Language Models*, NeurIPS 2024
+  ([arXiv:2406.07524](https://arxiv.org/abs/2406.07524)).
 - **GeoLDM** — Xu, Powers, Dror, Ermon & Leskovec. *Geometric Latent
   Diffusion Models for 3D Molecule Generation.* ICML 2023. [arXiv:2305.01140](https://arxiv.org/abs/2305.01140)
 - **ADiT** — Joshi et al. *All-atom Diffusion Transformers: Unified generative

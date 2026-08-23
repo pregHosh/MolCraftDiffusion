@@ -1,0 +1,73 @@
+MolecularDiffusion.modules.models.syncogen.diffusion.noise.cosine
+=================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.diffusion.noise.cosine
+
+.. autoapi-nested-parse::
+
+   Cosine noise schedules.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.noise.cosine.CosineNoise
+   MolecularDiffusion.modules.models.syncogen.diffusion.noise.cosine.CosineSqrNoise
+
+
+Module Contents
+---------------
+
+.. py:class:: CosineNoise(eps: float = 0.001)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.models.syncogen.diffusion.noise.base.NoiseBase`
+
+
+   Cosine noise schedule.
+
+
+   .. py:method:: rate_noise(t)
+
+      Rate of change of noise.
+
+
+
+   .. py:method:: total_noise(t)
+
+      Total noise.
+
+
+
+   .. py:attribute:: eps
+      :value: 0.001
+
+
+
+.. py:class:: CosineSqrNoise(eps: float = 0.001)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.models.syncogen.diffusion.noise.base.NoiseBase`
+
+
+   Squared cosine noise schedule.
+
+
+   .. py:method:: rate_noise(t)
+
+      Rate of change of noise.
+
+
+
+   .. py:method:: total_noise(t)
+
+      Total noise.
+
+
+
+   .. py:attribute:: eps
+      :value: 0.001
+
+
+

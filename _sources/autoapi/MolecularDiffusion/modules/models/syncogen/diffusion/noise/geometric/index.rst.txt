@@ -1,0 +1,45 @@
+MolecularDiffusion.modules.models.syncogen.diffusion.noise.geometric
+====================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.diffusion.noise.geometric
+
+.. autoapi-nested-parse::
+
+   Geometric noise schedule.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.noise.geometric.GeometricNoise
+
+
+Module Contents
+---------------
+
+.. py:class:: GeometricNoise(sigma_min: float = 0.001, sigma_max: float = 1)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.models.syncogen.diffusion.noise.base.NoiseBase`
+
+
+   Geometric noise schedule.
+
+
+   .. py:method:: rate_noise(t)
+
+      Rate of change of noise.
+
+
+
+   .. py:method:: total_noise(t)
+
+      Total noise.
+
+
+
+   .. py:attribute:: sigmas
+
+

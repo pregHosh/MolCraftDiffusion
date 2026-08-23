@@ -1,0 +1,41 @@
+MolecularDiffusion.modules.models.syncogen.diffusion.loss.nll
+=============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.diffusion.loss.nll
+
+.. autoapi-nested-parse::
+
+   Negative log likelihood loss combining node and edge terms.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.loss.nll.NLLLoss
+
+
+Module Contents
+---------------
+
+.. py:class:: NLLLoss(coef: float = 1.0)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.models.syncogen.diffusion.loss.base.LossBase`
+
+
+   Combined masked NLL for nodes and edges.
+
+   Expects log probabilities of the ground-truth class per node (B,N) and per edge (B,N,N).
+   Supports optional time weighting; uses LossBase.coef to scale the sum.
+
+
+   .. py:method:: forward(log_p_theta_X: torch.Tensor, log_p_theta_E: torch.Tensor, node_padding_mask: torch.Tensor, sigma_factor: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]
+
+      Return positive NLL components (nodes, edges), weighted by sigma_factor (mandatory).
+
+      The caller (LossList) will aggregate these into the graph total.
+
+
+

@@ -1,0 +1,34 @@
+MolecularDiffusion.modules.models.syncogen
+==========================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen
+
+.. autoapi-nested-parse::
+
+   SynCoGen: synthesizable 3D molecule generation over a building-block vocabulary.
+
+   Ported from https://github.com/andreirekesh/SynCoGen (commit
+   ``6b38eec26ccc687b32808c37aefdf75a4a30f1da``, MIT). See ``vocab.py`` for the one
+   rule that governs importing anything in here: **call ``ensure_vocabulary`` before
+   importing any other submodule.** This module deliberately re-exports only that
+   function, so a plain ``import ...models.syncogen`` cannot trip the ordering.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/syncogen/api/index
+   /autoapi/MolecularDiffusion/modules/models/syncogen/constants/index
+   /autoapi/MolecularDiffusion/modules/models/syncogen/core/index
+   /autoapi/MolecularDiffusion/modules/models/syncogen/data/index
+   /autoapi/MolecularDiffusion/modules/models/syncogen/datamodule/index
+   /autoapi/MolecularDiffusion/modules/models/syncogen/diffusion/index
+   /autoapi/MolecularDiffusion/modules/models/syncogen/models/index
+   /autoapi/MolecularDiffusion/modules/models/syncogen/utils/index
+   /autoapi/MolecularDiffusion/modules/models/syncogen/vocab/index
+
+

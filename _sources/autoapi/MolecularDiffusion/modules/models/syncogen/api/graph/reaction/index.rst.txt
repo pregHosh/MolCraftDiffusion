@@ -1,0 +1,23 @@
+MolecularDiffusion.modules.models.syncogen.api.graph.reaction
+=============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.api.graph.reaction
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.api.graph.reaction.Reaction
+
+
+Module Contents
+---------------
+
+.. py:class:: Reaction(smarts_or_tuple: Union[str, Tuple[int, int, int, int, int]])
+
+   Reaction class that can be initialized either from SMARTS pattern or from a 5-tuple
+   (reaction_idx, node1_idx, node2_idx, center1_idx, center2_idx).
+
+

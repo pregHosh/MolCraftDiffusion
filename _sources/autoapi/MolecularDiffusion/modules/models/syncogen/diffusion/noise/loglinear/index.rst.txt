@@ -1,0 +1,62 @@
+MolecularDiffusion.modules.models.syncogen.diffusion.noise.loglinear
+====================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.diffusion.noise.loglinear
+
+.. autoapi-nested-parse::
+
+   Log-linear noise schedule.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.noise.loglinear.LogLinearNoise
+
+
+Module Contents
+---------------
+
+.. py:class:: LogLinearNoise(eps: float = 0.001)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.models.syncogen.diffusion.noise.base.NoiseBase`
+
+
+   Log-linear noise schedule.
+
+   Built such that 1 - 1/e^(n(t)) interpolates between 0 and ~1
+   when t varies from 0 to 1.
+
+
+   .. py:method:: importance_sampling_transformation(t)
+
+      Transform timesteps for importance sampling.
+
+
+
+   .. py:method:: rate_noise(t)
+
+      Rate of change of noise.
+
+
+
+   .. py:method:: total_noise(t)
+
+      Total noise.
+
+
+
+   .. py:attribute:: eps
+      :value: 0.001
+
+
+
+   .. py:attribute:: sigma_max
+
+
+   .. py:attribute:: sigma_min
+
+

@@ -1,0 +1,50 @@
+MolecularDiffusion.modules.models.syncogen.api.atomics.pharmacophores
+=====================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.api.atomics.pharmacophores
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.api.atomics.pharmacophores.ShepherdPharmacophores
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.api.atomics.pharmacophores.pharm_indices_to_onehot
+
+
+Module Contents
+---------------
+
+.. py:class:: ShepherdPharmacophores(pharm_coords, pharm_types, padding_mask, n_subset: int = None, pad_to: int = None, is_batched: bool = False)
+
+   Pharmacophores with unified batched/unbatched API.
+
+
+   .. py:method:: pad(n_pad)
+
+      Pad pharmacophores to fixed size n_pad.
+
+
+
+   .. py:method:: subset(n_subset)
+
+      Subset to at most n_subset and pad to exactly n_subset for uniform batching.
+
+
+
+   .. py:attribute:: is_batched
+
+
+.. py:function:: pharm_indices_to_onehot(indices)
+
+   Convert pharmacophore type indices to one-hot encoding.
+
+

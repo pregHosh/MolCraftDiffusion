@@ -1,0 +1,49 @@
+MolecularDiffusion.modules.models.syncogen.diffusion.sampling.discrete_strategies.utils
+=======================================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.diffusion.sampling.discrete_strategies.utils
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.sampling.discrete_strategies.utils.sample_categorical
+   MolecularDiffusion.modules.models.syncogen.diffusion.sampling.discrete_strategies.utils.sample_edges
+
+
+Module Contents
+---------------
+
+.. py:function:: sample_categorical(categorical_probs, temperature=1.0)
+
+   Sample from a categorical distribution with temperature scaling.
+
+   :param categorical_probs: Unnormalized probabilities
+   :param temperature: Temperature parameter for scaling logits. Higher values produce more uniform samples.
+
+   :returns: Sampled indices from the categorical distribution
+             normalized_probs: The normalized probabilities used for sampling
+   :rtype: samples
+
+
+.. py:function:: sample_edges(E: torch.Tensor, p_e0: torch.Tensor, lengths: torch.Tensor, argmax: bool = False) -> torch.Tensor
+
+   Build a one‑hot edge tensor that keeps any already‑denoised incoming edge
+   and, for nodes still missing one, samples exactly ONE (parent, type) pair
+   from the score logits.
+   :param E:
+   :type E: (B, n, n, R)  current (partly‑denoised) one‑hot edges
+   :param p_e0:
+   :type p_e0: (B, n, n, R)  score logits; last‑2 channels = [no‑edge, masked]
+   :param lengths:
+   :type lengths: (B,)          number of real nodes per graph (padding after that)
+   :param argmax:
+   :type argmax: bool          if True, take argmax instead of sampling (default False)
+
+   :returns: **E_out** -- • every j>0 has exactly one incoming edge i<j (or is padded)
+             • channel R‑2 holds "no‑edge", channel R‑1 left for "masked"
+   :rtype: (B, n, n, R)  one‑hot, upper/lower triangles mirrored, obeying
+
+

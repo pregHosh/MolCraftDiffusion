@@ -1,0 +1,52 @@
+MolecularDiffusion.modules.models.syncogen.diffusion.noise.brownian
+===================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.diffusion.noise.brownian
+
+.. autoapi-nested-parse::
+
+   Brownian bridge noise schedule.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.noise.brownian.BrownianBridgeNoise
+
+
+Module Contents
+---------------
+
+.. py:class:: BrownianBridgeNoise(eps: float = 0.001, weight: float = 0.1)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.models.syncogen.diffusion.noise.base.NoiseBase`
+
+
+   Brownian bridge noise schedule (from ETFlow).
+
+
+   .. py:method:: rate_noise(t)
+
+      Rate of change of noise.
+
+
+
+   .. py:method:: total_noise(t)
+
+      Total noise.
+
+
+
+   .. py:attribute:: eps
+      :value: 0.001
+
+
+
+   .. py:attribute:: weight
+      :value: 0.1
+
+
+

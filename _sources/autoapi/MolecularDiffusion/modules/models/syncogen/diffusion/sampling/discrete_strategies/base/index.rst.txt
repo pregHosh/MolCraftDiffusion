@@ -1,0 +1,79 @@
+MolecularDiffusion.modules.models.syncogen.diffusion.sampling.discrete_strategies.base
+======================================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.diffusion.sampling.discrete_strategies.base
+
+.. autoapi-nested-parse::
+
+   Base class for discrete sampling strategies.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.sampling.discrete_strategies.base.DiscreteStrategyBase
+
+
+Module Contents
+---------------
+
+.. py:class:: DiscreteStrategyBase(discrete_noise: Optional[Callable] = None, constrain_edge_sampling: bool = False)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Base class for discrete (graph) sampling strategies.
+
+   Samplers accept BBRxnGraph objects and extract what they need internally.
+   This keeps the call site clean and allows different strategies to access
+   different properties (masks, indices, etc.) as needed.
+
+   :param discrete_noise: Noise schedule function for discrete features.
+   :param constrain_edge_sampling: Whether to constrain edge sampling step.
+
+
+   .. py:method:: edge_mask_index(D_edge: int) -> int
+      :staticmethod:
+
+
+
+   .. py:method:: edge_no_edge_index(D_edge: int) -> int
+      :staticmethod:
+
+
+
+   .. py:method:: node_mask_index(D_node: int) -> int
+      :staticmethod:
+
+
+
+   .. py:method:: step(graph: MolecularDiffusion.modules.models.syncogen.api.graph.graph.BBRxnGraph, p_x0: torch.Tensor, p_e0: torch.Tensor, t: torch.Tensor, dt: torch.Tensor = None) -> Tuple[torch.Tensor, torch.Tensor]
+      :abstractmethod:
+
+
+      Perform one denoising step for discrete features.
+      :param graph: BBRxnGraph containing current noisy discrete features
+      :param p_x0: Predicted node probabilities (usually softmax/logits.exp) (B, N, D_node)
+      :param p_e0: Predicted edge probabilities (B, N, N, D_edge)
+      :param t: Current timestep (B, 1)
+      :param dt: Time step size (optional, some strategies may require it)
+
+      :returns: Updated node features (B, N, D_node)
+                E_next: Updated edge features (B, N, N, D_edge)
+      :rtype: X_next
+
+
+
+   .. py:attribute:: constrain_edge_sampling
+      :value: False
+
+
+
+   .. py:attribute:: discrete_noise
+      :value: None
+
+
+

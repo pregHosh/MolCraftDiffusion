@@ -1,0 +1,126 @@
+MolecularDiffusion.modules.models.syncogen.datamodule
+=====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.datamodule
+
+.. autoapi-nested-parse::
+
+   Task-owned data module for SynCoGen (integration plan, Option A).
+
+   SynCoGen's nodes are *reaction building blocks* and its edges are *reaction
+   templates*: there is no atom-type channel and no chemical-bond channel, so none
+   of the platform's three ``data_type`` shapes (``pointcloud``, ``pyg``,
+   ``graph3d``) describes it. Rather than add a fourth platform representation, the
+   approved plan routes ``configs/data/syncogen_dataset.yaml`` straight at this
+   class by ``_target_``. Nothing in ``MolecularDiffusion/data/`` is touched.
+
+   What ``cli/train.py`` actually needs off a data module is duck-typed and small
+   (``cli/train.py:273-277, 365, 600-604``)::
+
+       .load()  .train_set  .valid_set  .test_set  .batch_size  .collate_fn
+
+   Everything else it wants -- ``atom_vocab``, ``use_ohe_feature``,
+   ``allow_unknown``, ``node_feature_choice`` -- it reads off ``cfg.data``, never
+   off the object, which is why those keys live in the YAML and are swallowed here.
+
+   The batch handed to the task is upstream's own PyG ``Data``/``Batch`` throughout;
+   no adapter runs in the data layer.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.datamodule.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.datamodule.SyncogenDataModule
+
+
+Module Contents
+---------------
+
+.. py:class:: SyncogenDataModule(graphs_path: str | pathlib.Path, conformers_path: str | pathlib.Path, vocab_dir: str | pathlib.Path, pharmacophore_path: str | pathlib.Path | None = None, max_bbs: int = 5, batch_size: int = 4, eval_batch_size: int = 4, train_size: float = 0.9, validation_size: float = 0.1, test_size: float = 0.0, sample_conformer: bool = False, load_bonds: bool = True, load_pharmacophores: bool = False, shuffle_train: bool = True, coord_mask_value: float = 0.0, valid_seed: int | None = None, num_workers: int = 0, task_type: str | None = None, **kwargs: Any)
+
+   Wraps upstream's ``SyncogenDataManager`` in the platform's data-module surface.
+
+   Parameters mirror ``syncogen/data/dataloader.py::SyncogenDataManager`` one for
+   one, plus ``vocab_dir`` (which upstream passed on the command line and read
+   into process globals before importing anything).
+
+
+   .. py:method:: load() -> None
+
+      Build the train/validation/test splits and their datasets.
+
+
+
+   .. py:method:: num_fragments_probs() -> dict[int, float]
+
+      The train-split fragment-count histogram upstream caches on disk.
+
+      Not consumed by the task (which takes its own ``num_fragments_probs``
+      from the task config, so generation works with no dataset present), but
+      printed at load time so a config whose prior disagrees with the data it
+      is training on is visible in the log.
+
+
+
+   .. py:property:: atom_vocab
+      :type: Sequence[str]
+
+
+
+   .. py:attribute:: batch_size
+      :value: 4
+
+
+
+   .. py:property:: collate_fn
+
+      PyG's own collater -- the batch stays a ``torch_geometric.data.Batch``.
+
+
+   .. py:attribute:: manager
+
+
+   .. py:attribute:: num_workers
+      :value: 0
+
+
+
+   .. py:attribute:: task_type
+      :value: None
+
+
+
+   .. py:attribute:: test_set
+      :type:  Any
+      :value: None
+
+
+
+   .. py:attribute:: train_set
+      :type:  Any
+      :value: None
+
+
+
+   .. py:attribute:: valid_set
+      :type:  Any
+      :value: None
+
+
+
+   .. py:attribute:: vocab_dir
+
+
+.. py:data:: logger
+

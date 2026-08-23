@@ -1,0 +1,50 @@
+MolecularDiffusion.modules.models.syncogen.diffusion.loss.bond_length
+=====================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.diffusion.loss.bond_length
+
+.. autoapi-nested-parse::
+
+   Bond length preservation loss operating on Coordinates objects.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.loss.bond_length.BondLengthLoss
+
+
+Module Contents
+---------------
+
+.. py:class:: BondLengthLoss(sqrd: bool = False, coef: float = 1.0, time_weighted: bool = False, square_time_weight: bool = False, t_threshold: float = None)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.models.syncogen.diffusion.loss.base.LossBase`
+
+
+   Bond length preservation loss computed from attached bonds.
+
+   Expects pred and target as Coordinates. Assumes bonds (B, M, 3) and bonds_mask (B, M)
+   are attached to either pred or target Coordinates. Uses LossBase.coef for weighting.
+
+
+   .. py:method:: compute_loss(pred, target) -> torch.Tensor
+
+      Base per-graph bond-length loss (no time weighting or coef).
+
+
+
+   .. py:method:: forward(pred, target, t: torch.Tensor = None) -> torch.Tensor
+
+      Compute loss -> optional time weight -> threshold -> coef.
+
+
+
+   .. py:attribute:: sqrd
+      :value: False
+
+
+

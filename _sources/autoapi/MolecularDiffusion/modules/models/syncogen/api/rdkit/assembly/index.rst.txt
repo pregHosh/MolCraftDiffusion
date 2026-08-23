@@ -1,0 +1,122 @@
+MolecularDiffusion.modules.models.syncogen.api.rdkit.assembly
+=============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.api.rdkit.assembly
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.api.rdkit.assembly.BOND_TYPE_MAP
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.api.rdkit.assembly.FragmentInstance
+   MolecularDiffusion.modules.models.syncogen.api.rdkit.assembly.RDKitMoleculeAssembly
+
+
+Module Contents
+---------------
+
+.. py:class:: FragmentInstance(smiles: str, frag_order: int, global_frag_id: int)
+
+   A class to represent an instance of a fragment in our fragment set.
+
+
+   .. py:attribute:: atom_graph
+
+
+   .. py:attribute:: frag_order
+
+
+   .. py:attribute:: global_frag_id
+
+
+   .. py:attribute:: smiles
+
+
+.. py:class:: RDKitMoleculeAssembly(fragment_graph: networkx.Graph = None, atom_graph: networkx.Graph = None)
+
+   A class to represent a molecule assembly. Has both an underlying fragment graph and an underlying atom graph.
+   Fragment node ids are just the order in which they are added.
+   Each fragment knows about its reaction center occupation statuses.
+
+
+   .. py:method:: add_edge(node_a: FragmentInstance, node_b: FragmentInstance)
+
+
+   .. py:method:: add_fragment(new_frag_global_id: int, reaction_id: Optional[int] = None, self_frag_order: Optional[int] = None, self_reaction_center_idx: Optional[int] = None, other_reaction_center_idx: Optional[int] = None)
+
+      Add a new fragment to the molecule fragment graph.
+
+      :param new_frag_global_id: The global id of the new fragment as indexed by our vocabulary.
+      :type new_frag_global_id: int
+      :param reaction_id: The reaction id of the reaction used to add the new fragment.
+      :type reaction_id: int
+      :param self_frag_order: The fragment order in order of addition (0, 1, 2, 3) of the fragment in our graph that the new fragment is being added to.
+      :type self_frag_order: int
+      :param self_reaction_center_idx: The index of the reaction center we want to occupy on the fragment in our graph.
+      :type self_reaction_center_idx: int
+      :param other_reaction_center_idx: The index of the reaction center we want to occupy on the other fragment.
+      :type other_reaction_center_idx: int
+
+      :returns: The updated fragment and atom graphs.
+
+
+
+   .. py:method:: add_node(node: FragmentInstance, global_frag_id: int, rxn_center_available: List[bool])
+
+
+   .. py:method:: all_open_reaction_centers()
+
+      Returns a list of all open reaction centers in the molecule fragment graph.
+
+
+
+   .. py:method:: copy()
+
+      Return a deep copy of the molecule fragment graph, including both
+      the fragment graph and atom graph.
+
+
+
+   .. py:method:: frag_idx_to_atom_graph(frag_order: int)
+
+
+   .. py:method:: num_fragments()
+
+
+   .. py:method:: to_mol(sanitize: bool = True)
+
+      Converts the atom graph representation back to an RDKit molecule.
+      Reconstructs an RDKit molecule by mapping graph nodes to atoms while preserving
+      stereochemistry and formal charges.
+
+
+
+   .. py:method:: to_smiles()
+
+      Converts the atom graph representation back to a SMILES string.
+
+
+
+   .. py:method:: update_atom_graph(new_fragment_instance: FragmentInstance, reaction: str, self_frag_order: int, new_frag_order: int, self_reaction_center_idx: int, other_reaction_center_idx: int)
+
+      Update the atom graph to add a new fragment.
+
+
+
+   .. py:attribute:: atom_graph
+
+
+   .. py:attribute:: fragment_graph
+
+
+.. py:data:: BOND_TYPE_MAP
+

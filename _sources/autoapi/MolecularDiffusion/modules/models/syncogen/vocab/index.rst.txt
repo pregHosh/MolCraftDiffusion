@@ -1,0 +1,71 @@
+MolecularDiffusion.modules.models.syncogen.vocab
+================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.vocab
+
+.. autoapi-nested-parse::
+
+   Vocabulary loading for the SynCoGen port.
+
+   **Read this before importing anything else from this package.**
+
+   SynCoGen's vocabulary is process-global state: ``constants/constants.py`` starts
+   with every entry (``N_BUILDING_BLOCKS``, ``MAX_ATOMS_PER_BB``, ``COMPATIBILITY``,
+   ``FRAGMENT_ATOMFEATS``, ...) set to ``None`` and ``load_vocabulary(vocab_dir)``
+   fills them in. That is upstream's own design -- ``train.py`` calls it at module
+   scope with a ``### TODO: Hacky`` comment, before importing anything else.
+
+   The consequence carries over to this port, so it is spelled out here rather than
+   rediscovered: several ported modules bind those constants **at import time**
+   (``BBRxnGraph.VOCAB_NUM_BBS`` is a class attribute; ``constants/utils.py`` does
+   ``from ...constants import FRAGMENT_ATOMFEATS``; ``SemlaGenerator.__init__``
+   reads ``N_ATOM_FEATURES``). Import any of them before ``load_vocabulary`` and
+   they capture ``None`` permanently -- with no error at import, only a confusing
+   ``TypeError`` much later.
+
+   So both entry points into this package call ``ensure_vocabulary`` first and defer
+   their own imports until after it:
+
+   * ``modules/models/syncogen/datamodule.py``  (``SyncogenDataModule.__init__``)
+   * ``modules/tasks/diffusion_syncogen.py``    (``ModelTaskFactory.build``)
+
+   ponytail: one vocabulary per process. Loading a second one would leave
+   ``BBRxnGraph``'s class attributes pointing at the first. Fine for train and
+   generate, which each use exactly one; if a caller ever needs two vocabularies
+   side by side, the fix is to move those class attributes onto the instance rather
+   than to add a reload path here.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.vocab.REQUIRED_FILES
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.vocab.ensure_vocabulary
+
+
+Module Contents
+---------------
+
+.. py:function:: ensure_vocabulary(vocab_dir: str | pathlib.Path) -> dict[str, Any]
+
+   Load ``vocab_dir`` into the module-level constants, once per process.
+
+   Idempotent for a repeated call with the same directory. A call with a
+   *different* directory raises rather than silently half-reloading, because
+   the class attributes captured by the first load would not follow.
+
+
+.. py:data:: REQUIRED_FILES
+   :value: ('building_blocks.json', 'reactions.json', 'compatibility.pt', 'fragment_features.pt', 'meta.json')
+
+

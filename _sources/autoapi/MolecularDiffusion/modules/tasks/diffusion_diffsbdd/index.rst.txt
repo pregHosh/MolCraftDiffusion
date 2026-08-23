@@ -318,7 +318,7 @@ Module Contents
 .. py:data:: INT_TYPE
 
 .. py:data:: MODES
-   :type:  Tuple[str, Ellipsis]
+   :type:  Tuple[str, ...]
    :value: ('pocket_conditioning', 'joint')
 
 

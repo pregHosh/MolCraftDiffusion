@@ -1,0 +1,44 @@
+MolecularDiffusion.modules.models.syncogen.diffusion.interpolation.linear
+=========================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.diffusion.interpolation.linear
+
+.. autoapi-nested-parse::
+
+   Linear interpolator.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.interpolation.linear.LinearInterpolator
+
+
+Module Contents
+---------------
+
+.. py:class:: LinearInterpolator
+
+   Bases: :py:obj:`MolecularDiffusion.modules.models.syncogen.diffusion.interpolation.base.InterpolatorBase`
+
+
+   Linear interpolator for flow matching.
+
+   Implements simple linear interpolation: φ_t(C0, C1) = (1-t) * C0 + t * C1
+
+
+   .. py:method:: interpolate(C0: torch.Tensor, C1: torch.Tensor, t: torch.Tensor) -> torch.Tensor
+
+      Linearly interpolate between C0 and C1.
+
+      :param C0: Initial coordinates tensor
+      :param C1: Final coordinates tensor
+      :param t: Time tensor, shape [B] or [B, 1, ...]
+
+      :returns: Linearly interpolated coordinates
+
+
+

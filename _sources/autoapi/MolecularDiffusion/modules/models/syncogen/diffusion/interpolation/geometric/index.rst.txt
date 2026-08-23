@@ -1,0 +1,48 @@
+MolecularDiffusion.modules.models.syncogen.diffusion.interpolation.geometric
+============================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.diffusion.interpolation.geometric
+
+.. autoapi-nested-parse::
+
+   Geometric interpolator.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.interpolation.geometric.GeometricInterpolator
+
+
+Module Contents
+---------------
+
+.. py:class:: GeometricInterpolator
+
+   Bases: :py:obj:`MolecularDiffusion.modules.models.syncogen.diffusion.interpolation.base.InterpolatorBase`
+
+
+   Geometric interpolator for flow matching.
+
+   Implements geometric interpolation: φ_t(C0, C1) = C0^(1-t) * C1^t
+   where exponentiation is applied element-wise.
+
+   Note: This interpolator requires C0 and C1 to have the same sign.
+   For coordinates, you may want to use a linear interpolator instead.
+
+
+   .. py:method:: interpolate(C0: torch.Tensor, C1: torch.Tensor, t: torch.Tensor) -> torch.Tensor
+
+      Geometrically interpolate between C0 and C1.
+
+      :param C0: Initial coordinates tensor
+      :param C1: Final coordinates tensor
+      :param t: Time tensor, shape [B] or [B, 1, ...]
+
+      :returns: Geometrically interpolated coordinates
+
+
+

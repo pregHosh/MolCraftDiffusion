@@ -1,0 +1,51 @@
+MolecularDiffusion.modules.models.syncogen.diffusion.sampling.discrete_strategies.mdlm
+======================================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.diffusion.sampling.discrete_strategies.mdlm
+
+.. autoapi-nested-parse::
+
+   MDLM (Masked Diffusion Language Model) sampling strategy.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.sampling.discrete_strategies.mdlm.MDLM
+
+
+Module Contents
+---------------
+
+.. py:class:: MDLM(discrete_noise=None, constrain_edge_sampling=True)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.models.syncogen.diffusion.sampling.discrete_strategies.base.DiscreteStrategyBase`
+
+
+   MDLM sampling strategy for discrete graph features.
+
+   Uses the MDLM update rule: interpolate between staying masked
+   and transitioning to the predicted distribution.
+
+   :param discrete_noise: Noise schedule function for discrete features.
+   :param constrain_edge_sampling: Whether to constrain edge sampling step.
+
+
+   .. py:method:: step(graph: MolecularDiffusion.modules.models.syncogen.api.graph.graph.BBRxnGraph, p_x0: torch.Tensor, p_e0: torch.Tensor, t: torch.Tensor, dt: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+
+      Perform one MDLM denoising step.
+
+      :param graph: BBRxnGraph with current noisy state
+      :param p_x0: Predicted node probabilities (B, N, D_node)
+      :param p_e0: Predicted edge probabilities (B, N, N, D_edge)
+      :param t: Current timestep (B, 1)
+      :param dt: Time step size
+
+      :returns: Updated features
+      :rtype: X_next, E_next
+
+
+

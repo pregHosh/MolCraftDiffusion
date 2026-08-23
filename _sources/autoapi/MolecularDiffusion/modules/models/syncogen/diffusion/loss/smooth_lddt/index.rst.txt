@@ -1,0 +1,57 @@
+MolecularDiffusion.modules.models.syncogen.diffusion.loss.smooth_lddt
+=====================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.diffusion.loss.smooth_lddt
+
+.. autoapi-nested-parse::
+
+   Smooth LDDT-based loss that operates on Coordinates objects.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.loss.smooth_lddt.SmoothLDDTLoss
+
+
+Module Contents
+---------------
+
+.. py:class:: SmoothLDDTLoss(cutoff: float = 15.0, sqrd: bool = False, coef: float = 1.0, time_weighted: bool = False, square_time_weight: bool = False, t_threshold: float = None, normalize_threshold: bool = True)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.models.syncogen.diffusion.loss.base.LossBase`
+
+
+   Smooth LDDT-based loss.
+
+
+   .. py:method:: compute_loss(pred, target) -> torch.Tensor
+
+      Base per-graph smooth LDDT loss (no time weighting or coef).
+
+
+
+   .. py:method:: forward(pred, target, t: torch.Tensor = None) -> torch.Tensor
+
+      Compute loss -> optional time weight -> threshold -> coef.
+
+
+
+   .. py:attribute:: cutoff
+      :value: 15.0
+
+
+
+   .. py:attribute:: normalize_threshold
+      :value: True
+
+
+
+   .. py:attribute:: sqrd
+      :value: False
+
+
+

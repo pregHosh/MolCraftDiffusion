@@ -1,0 +1,207 @@
+MolecularDiffusion.modules.models.syncogen.core
+===============================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.core
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.core.Diffusion
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.core.get_backbone
+
+
+Module Contents
+---------------
+
+.. py:class:: Diffusion(data_manager: Any, losses: Sequence[MolecularDiffusion.modules.models.syncogen.diffusion.loss.LossBase] = (), device: Optional[torch.device] = torch.device('cuda' if torch.cuda.is_available() else 'cpu'), augmentations: Optional[list[str]] = ['center', 'normalize', 'random_rotate'], normalization_scale: Optional[float] = 1.0 / COORDS_STD, discrete_noise: Optional[MolecularDiffusion.modules.models.syncogen.diffusion.noise.NoiseBase] = LogLinearNoise(), interpolator: Optional[MolecularDiffusion.modules.models.syncogen.diffusion.interpolation.InterpolatorBase] = LinearInterpolator(), discrete_strategy: Optional[MolecularDiffusion.modules.models.syncogen.diffusion.sampling.discrete_strategies.DiscreteStrategyBase] = MDLM(), integrator: Optional[MolecularDiffusion.modules.models.syncogen.diffusion.sampling.integrators.IntegratorBase] = None, train_rot_align: bool = False, self_conditioning: bool = False, time_conditioning: bool = True, backbone: str = 'semla_pharm', use_compat: bool = True, sampling_eps: float = 0.001, importance_sampling: bool = False, antithetic_sampling: bool = True, sampling_noise_removal: bool = True, generate_eval_samples: bool = True, sample_every_n_epochs: int = 1, num_sample_steps: int = 100, ema_decay: float = 0.0, pharm_subset: int = 7, scale_noise: bool = False, scale_noise_factor: float = 0.2, num_fragments_probs: Optional[Dict[int, float]] = None, backbone_kwargs: Optional[Dict[str, Any]] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(Xt, Et, Ct, atom_mask, node_mask, cond=None, sampling=False)
+
+      Returns log score.
+
+
+
+   .. py:method:: get_pharm_cond(batch)
+
+      Extract and augment pharmacophore conditioning from a batch.
+
+
+
+   .. py:method:: restore_model_and_sample(num_steps: int, test_dataloader=None, cond: Optional[tuple] = None)
+
+      Generate samples under EMA weights, restoring training weights afterwards.
+
+      :param num_steps: Number of diffusion steps
+      :param test_dataloader: Optional dataloader for extracting pharmacophores (training mode)
+      :param cond: Optional (types, pos, mask) tuple for direct pharmacophore conditioning (sampling mode)
+
+
+
+   .. py:method:: sample(num_steps: int = 100, test_dataloader=None, cond: Optional[tuple] = None)
+
+      Sample a batch of graphs from the model.
+
+      :param num_steps: Number of diffusion steps
+      :param test_dataloader: Optional dataloader for extracting pharmacophores (training mode)
+      :param cond: Optional (types, pos, mask) tuple for direct pharmacophore conditioning (sampling mode)
+
+
+
+   .. py:attribute:: antithetic_sampling
+      :value: True
+
+
+
+   .. py:attribute:: augmentations
+      :value: ['center', 'normalize', 'random_rotate']
+
+
+
+   .. py:attribute:: backbone
+
+
+   .. py:property:: batch_size
+      :type: int
+
+
+      Training batch size.
+
+
+   .. py:attribute:: data_manager
+
+
+   .. py:property:: device
+      :type: torch.device
+
+
+
+   .. py:attribute:: discrete_noise
+
+
+   .. py:attribute:: discrete_strategy
+
+
+   .. py:attribute:: ema
+      :value: None
+
+
+
+   .. py:property:: eval_batch_size
+      :type: int
+
+
+      Evaluation/validation batch size.
+
+
+   .. py:attribute:: fast_forward_batches
+      :value: None
+
+
+
+   .. py:attribute:: fast_forward_epochs
+      :value: None
+
+
+
+   .. py:attribute:: generate_eval_samples
+      :value: True
+
+
+
+   .. py:attribute:: importance_sampling
+      :value: False
+
+
+
+   .. py:attribute:: integrator
+
+
+   .. py:attribute:: interpolator
+
+
+   .. py:attribute:: losses
+
+
+   .. py:attribute:: n_edge_features
+
+
+   .. py:attribute:: neg_infinity
+      :value: -25000.0
+
+
+
+   .. py:attribute:: normalization_scale
+      :value: 0.3576209484116885
+
+
+
+   .. py:attribute:: num_sample_steps
+      :value: 100
+
+
+
+   .. py:attribute:: pharm_subset
+      :value: 7
+
+
+
+   .. py:attribute:: sample_every_n_epochs
+      :value: 1
+
+
+
+   .. py:attribute:: sampling_eps
+      :value: 0.001
+
+
+
+   .. py:attribute:: sampling_noise_removal
+      :value: True
+
+
+
+   .. py:attribute:: scale_noise
+      :value: False
+
+
+
+   .. py:attribute:: scale_noise_factor
+      :value: 0.2
+
+
+
+   .. py:attribute:: self_conditioning
+      :value: False
+
+
+
+   .. py:attribute:: time_conditioning
+      :value: True
+
+
+
+   .. py:attribute:: train_rot_align
+      :value: False
+
+
+
+   .. py:attribute:: use_compat
+      :value: True
+
+
+
+.. py:function:: get_backbone(backbone: str, self_conditioning: bool, pharm_subset: int, **backbone_kwargs)
+

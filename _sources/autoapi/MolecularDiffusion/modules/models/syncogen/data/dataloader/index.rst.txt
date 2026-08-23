@@ -1,0 +1,252 @@
+MolecularDiffusion.modules.models.syncogen.data.dataloader
+==========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.data.dataloader
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.data.dataloader.FaultTolerantDistributedSampler
+   MolecularDiffusion.modules.models.syncogen.data.dataloader.RandomFaultTolerantSampler
+   MolecularDiffusion.modules.models.syncogen.data.dataloader.SyncogenDataManager
+   MolecularDiffusion.modules.models.syncogen.data.dataloader.SyncogenDataset
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.data.dataloader.expand_edge_indices_to_matrix
+
+
+Module Contents
+---------------
+
+.. py:class:: FaultTolerantDistributedSampler(*args, **kwargs)
+
+   Bases: :py:obj:`torch.utils.data.DistributedSampler`
+
+
+   .. py:method:: load_state_dict(state_dict)
+
+
+   .. py:method:: state_dict()
+
+
+   .. py:attribute:: counter
+      :value: 0
+
+
+
+   .. py:attribute:: restarting
+      :value: False
+
+
+
+.. py:class:: RandomFaultTolerantSampler(*args, generator=None, **kwargs)
+
+   Bases: :py:obj:`torch.utils.data.RandomSampler`
+
+
+   .. py:method:: load_state_dict(state_dict)
+
+
+   .. py:method:: state_dict()
+
+
+   .. py:attribute:: counter
+      :value: 0
+
+
+
+   .. py:attribute:: restarting
+      :value: False
+
+
+
+.. py:class:: SyncogenDataManager(*, graphs_path: Union[str, pathlib.Path], conformers_path: Optional[Union[str, pathlib.Path]] = None, pharmacophore_path: Optional[Union[str, pathlib.Path]] = None, train_size: float = 0.9, validation_size: float = 0.1, test_size: float = 0.0, overfit: bool = False, n_overfit: Optional[int] = None, batch_size: int = 32, eval_batch_size: int = 64, num_workers: int = 4, pin_memory: bool = True, shuffle_train: bool = True, sample_conformer: bool = False, load_pharmacophores: bool = False, load_bonds: bool = False, coord_mask_value: float = 0.0, valid_seed: Optional[int] = None, max_bbs=5)
+
+   .. py:method:: ensure_train_lengths_loaded()
+
+      Loads the train lengths/probs from the lengths_path.
+      Raises if path not present.
+
+
+
+   .. py:method:: get_dataloaders() -> Tuple[torch_geometric.loader.DataLoader, torch_geometric.loader.DataLoader]
+
+
+   .. py:method:: get_graph_data_splits() -> Dict[str, List[torch_geometric.data.Data]]
+
+
+   .. py:method:: get_lengths_path() -> pathlib.Path
+
+
+   .. py:method:: get_split_cache_dir() -> pathlib.Path
+
+
+   .. py:method:: get_split_path(split_name: str) -> pathlib.Path
+
+
+   .. py:method:: sample_n_nodes(batch_size: int) -> Optional[torch.Tensor]
+
+
+   .. py:attribute:: batch_size
+      :value: 32
+
+
+
+   .. py:attribute:: conformers_path
+      :value: None
+
+
+
+   .. py:attribute:: coord_mask_value
+      :value: 0.0
+
+
+
+   .. py:attribute:: eval_batch_size
+      :value: 64
+
+
+
+   .. py:attribute:: graphs_path
+
+
+   .. py:attribute:: load_bonds
+      :value: False
+
+
+
+   .. py:attribute:: load_pharmacophores
+      :value: False
+
+
+
+   .. py:attribute:: max_atoms
+
+
+   .. py:attribute:: max_bbs
+      :value: 5
+
+
+
+   .. py:attribute:: n_overfit
+      :value: None
+
+
+
+   .. py:attribute:: num_workers
+      :value: 4
+
+
+
+   .. py:attribute:: overfit
+      :value: False
+
+
+
+   .. py:attribute:: pharmacophore_path
+      :value: None
+
+
+
+   .. py:attribute:: pin_memory
+      :value: True
+
+
+
+   .. py:attribute:: sample_conformer
+      :value: False
+
+
+
+   .. py:attribute:: shuffle_train
+      :value: True
+
+
+
+   .. py:attribute:: test_size
+      :value: 0.0
+
+
+
+   .. py:attribute:: train_length_probs
+      :type:  Optional[torch.Tensor]
+      :value: None
+
+
+
+   .. py:attribute:: train_length_values
+      :type:  Optional[torch.Tensor]
+      :value: None
+
+
+
+   .. py:attribute:: train_size
+      :value: 0.9
+
+
+
+   .. py:attribute:: valid_seed
+      :value: None
+
+
+
+   .. py:attribute:: validation_size
+      :value: 0.1
+
+
+
+.. py:class:: SyncogenDataset(conformers_path: str, data_list: List[torch_geometric.data.Data], pharmacophore_path: Optional[str] = None, sample_conformer: bool = False, coord_mask_value: float = 0.0, load_pharmacophores: bool = False, load_bonds: bool = False)
+
+   Bases: :py:obj:`torch_geometric.data.Dataset`
+
+
+   .. py:method:: get(idx: int)
+
+
+   .. py:method:: len()
+
+
+   .. py:attribute:: conformers_path
+
+
+   .. py:attribute:: coord_mask_value
+      :value: 0.0
+
+
+
+   .. py:attribute:: data_list
+
+
+   .. py:attribute:: load_bonds
+      :value: False
+
+
+
+   .. py:attribute:: load_pharmacophores
+      :value: False
+
+
+
+   .. py:attribute:: pharmacophore_path
+      :value: None
+
+
+
+   .. py:attribute:: sample_conformer
+      :value: False
+
+
+
+.. py:function:: expand_edge_indices_to_matrix(edge_index, edge_attr, n_nodes, device)
+
+   Expand sparse edge indices to full (N, N) reaction index matrix.
+
+

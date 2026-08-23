@@ -1,0 +1,21 @@
+MolecularDiffusion.modules.models.syncogen.api.atomics
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.api.atomics
+
+.. autoapi-nested-parse::
+
+   Atomic coordinate and mask utilities.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/syncogen/api/atomics/coordinates/index
+   /autoapi/MolecularDiffusion/modules/models/syncogen/api/atomics/pharmacophores/index
+
+

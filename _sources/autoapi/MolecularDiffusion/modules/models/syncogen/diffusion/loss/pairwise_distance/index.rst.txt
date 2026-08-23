@@ -1,0 +1,54 @@
+MolecularDiffusion.modules.models.syncogen.diffusion.loss.pairwise_distance
+===========================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.diffusion.loss.pairwise_distance
+
+.. autoapi-nested-parse::
+
+   Pairwise distance loss for nearby atoms.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.loss.pairwise_distance.PairwiseDistanceLoss
+
+
+Module Contents
+---------------
+
+.. py:class:: PairwiseDistanceLoss(distance_threshold: float = 5.0, sqrd: bool = False, coef: float = 1.0, time_weighted: bool = False, square_time_weight: bool = False, t_threshold: float = None, normalize_threshold: bool = True)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.models.syncogen.diffusion.loss.base.LossBase`
+
+
+   Pairwise distance loss for nearby atoms.
+
+
+   .. py:method:: compute_loss(pred, target) -> torch.Tensor
+
+      Base per-graph pairwise distance loss (no time weighting or coef).
+
+      Uses target.atom_mask (ground truth mask) to only consider distances between real atoms.
+
+
+
+   .. py:method:: forward(pred, target, t: torch.Tensor = None) -> torch.Tensor
+
+      Compute loss -> optional time weight -> threshold -> coef.
+
+
+
+   .. py:attribute:: distance_threshold
+      :value: 5.0
+
+
+
+   .. py:attribute:: sqrd
+      :value: False
+
+
+

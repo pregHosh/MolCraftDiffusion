@@ -1,0 +1,49 @@
+MolecularDiffusion.modules.models.syncogen.diffusion.sampling.integrators.base
+==============================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.diffusion.sampling.integrators.base
+
+.. autoapi-nested-parse::
+
+   Base class for continuous (coordinate) integrators.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.sampling.integrators.base.IntegratorBase
+
+
+Module Contents
+---------------
+
+.. py:class:: IntegratorBase
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Base class for continuous integrators (coordinates).
+
+   Integrators accept Coordinates objects and extract what they need internally.
+   This keeps the call site clean and provides access to masks, pharmacophores, etc.
+
+
+   .. py:method:: step(coords: MolecularDiffusion.modules.models.syncogen.api.atomics.coordinates.Coordinates, C0_pred: torch.Tensor, t: torch.Tensor, dt: float) -> torch.Tensor
+      :abstractmethod:
+
+
+      Perform one integration step.
+
+      :param coords: Coordinates object with current noisy coordinates
+      :param C0_pred: Predicted clean coordinates from backbone
+      :param t: Current timestep (B, 1) or scalar
+      :param dt: Time step size
+
+      :returns: Updated coordinates tensor
+      :rtype: C_next
+
+
+

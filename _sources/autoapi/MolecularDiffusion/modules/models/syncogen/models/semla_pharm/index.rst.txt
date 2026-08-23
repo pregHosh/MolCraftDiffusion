@@ -1,0 +1,590 @@
+MolecularDiffusion.modules.models.syncogen.models.semla_pharm
+=============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.models.semla_pharm
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.models.semla_pharm.BondRefine
+   MolecularDiffusion.modules.models.syncogen.models.semla_pharm.CoordAttention
+   MolecularDiffusion.modules.models.syncogen.models.semla_pharm.CoordNorm
+   MolecularDiffusion.modules.models.syncogen.models.semla_pharm.EdgeMessages
+   MolecularDiffusion.modules.models.syncogen.models.semla_pharm.EquiInvDynamics
+   MolecularDiffusion.modules.models.syncogen.models.semla_pharm.EquiMessagePassingLayer
+   MolecularDiffusion.modules.models.syncogen.models.semla_pharm.EquivariantMLP
+   MolecularDiffusion.modules.models.syncogen.models.semla_pharm.LengthsMLP
+   MolecularDiffusion.modules.models.syncogen.models.semla_pharm.NodeAttention
+   MolecularDiffusion.modules.models.syncogen.models.semla_pharm.NodeFeedForward
+   MolecularDiffusion.modules.models.syncogen.models.semla_pharm.SemlaPharmGenerator
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.models.semla_pharm.adj_to_attn_mask
+
+
+Module Contents
+---------------
+
+.. py:class:: BondRefine(d_model, d_message, d_edge, d_ff=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(coords, node_feats, node_mask, atom_only_mask, edge_feats)
+
+      Refine the bond predictions with a message passing layer that only updates bonds
+
+      :param coords: Coordinate tensor without coord sets, shape [batch_size, n_nodes, 3]
+      :type coords: torch.Tensor
+      :param node_feats: Node feature tensor, shape [batch_size, n_nodes, d_model]
+      :type node_feats: torch.Tensor
+      :param node_mask: Mask for nodes, shape [batch_size, n_nodes], 1 for real, 0 otherwise
+      :type node_mask: torch.Tensor
+      :param atom_only_mask: Mask for atoms only, shape [batch_size, n_nodes], 1 for real, 0 otherwise
+      :type atom_only_mask: torch.Tensor
+      :param edge_feats: Current edge features, shape [batch_size, n_nodes, n_nodes, d_edge]
+      :type edge_feats: torch.Tensor
+
+      :returns: Bond predictions tensor, shape [batch_size, n_nodes, n_nodes, n_bond_types]
+      :rtype: torch.Tensor
+
+
+
+   .. py:attribute:: coord_norm
+
+
+   .. py:attribute:: edge_norm
+
+
+   .. py:attribute:: message_mlp
+
+
+   .. py:attribute:: node_norm
+
+
+   .. py:attribute:: node_proj
+
+
+.. py:class:: CoordAttention(n_coord_sets, proj_sets=None, coord_norm='length', eps=1e-06)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(coord_sets, messages, adj_matrix, node_mask, atom_only_mask)
+
+      Compute an attention update for coordinate sets
+
+      :param coord_sets: Coordinate tensor, shape [batch_size, n_sets, n_nodes, 3]
+      :type coord_sets: torch.Tensor
+      :param messages: Messages tensor, shape [batch_size, n_nodes, n_nodes, proj_sets]
+      :type messages: torch.Tensor
+      :param adj_matrix: Adjacency matrix, shape [batch_size, n_nodes, n_nodes]
+      :type adj_matrix: torch.Tensor
+      :param node_mask: Mask for nodes, shape [batch_size, n_sets, n_nodes], 1 for real, 0 otherwise
+      :type node_mask: torch.Tensor
+      :param atom_only_mask: Mask for atoms only, shape [batch_size, n_sets, n_nodes], 1 for real, 0 otherwise
+      :type atom_only_mask: torch.Tensor
+
+      :returns: Updated coordinate sets, shape [batch_size, n_sets, n_nodes, 3]
+      :rtype: torch.Tensor
+
+
+
+   .. py:attribute:: attn_proj
+
+
+   .. py:attribute:: coord_norm
+
+
+   .. py:attribute:: coord_proj
+
+
+   .. py:attribute:: eps
+      :value: 1e-06
+
+
+
+.. py:class:: CoordNorm(n_coord_sets, norm='length', eps=1e-06)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Coordinate normalisation layer for coordinate sets with inductive bias towards molecules
+
+   This layer allows 4 different types of coordinate normalisation (defined in the norm argument):
+       1. 'none' - The coordinates are zero-centred and multiplied by learnable weights
+       2. 'gvp' - Coords are zero-centred, scaled by learnable weights and each is scaled by sqrt(n_sets) / ||x_i||_2
+       3. 'length' - Coords are zero-centred, multiplied by learnable weights and scaled by 1 / avg vector length
+
+   Note that 'length' provides the same coordinate normalisation that is commonly used in current models but adapted
+   to multiple coordinate sets, thereby allowing easier comparison to existing approaches.
+
+
+   .. py:method:: forward(coord_sets, node_mask, atom_only_mask)
+
+      Apply coordinate normlisation layer
+
+      :param coord_sets: Coordinate tensor, shape [batch_size, n_sets, n_nodes, 3]
+      :type coord_sets: torch.Tensor
+      :param node_mask: Mask for nodes, shape [batch_size, n_sets, n_nodes], 1 for real, 0 otherwise
+      :type node_mask: torch.Tensor
+
+      :returns: Normalised coords, shape [batch_size, n_sets, n_nodes, 3]
+      :rtype: torch.Tensor
+
+
+
+   .. py:method:: reset_parameters()
+
+
+   .. py:attribute:: eps
+      :value: 1e-06
+
+
+
+   .. py:attribute:: n_coord_sets
+
+
+   .. py:attribute:: norm
+      :value: 'none'
+
+
+
+   .. py:attribute:: set_weights
+
+
+.. py:class:: EdgeMessages(d_model, d_message, d_out, n_coord_sets, d_ff=None, d_edge=None, eps=1e-06)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(coords, node_feats, node_mask, atom_only_mask, edge_feats=None)
+
+      Compute edge messages
+
+      :param coords: Coordinate tensor, shape [batch_size, n_sets, n_nodes, 3]
+      :type coords: torch.Tensor
+      :param node_feats: Node features, shape [batch_size, n_nodes, d_model]
+      :type node_feats: torch.Tensor
+      :param node_mask: Mask for nodes, shape [batch_size, n_sets, n_nodes], 1 for real, 0 otherwise
+      :type node_mask: torch.Tensor
+      :param atom_only_mask: Mask for atoms only, shape [batch_size, n_sets, n_nodes], 1 for real, 0 otherwise
+      :type atom_only_mask: torch.Tensor
+      :param edge_feats: Incoming edge features, shape [batch_size, n_nodes, n_nodes, d_edge]
+      :type edge_feats: torch.Tensor
+
+      :returns: Edge messages tensor, shape [batch_size, n_nodes, n_nodes, d_out]
+      :rtype: torch.Tensor
+
+
+
+   .. py:attribute:: coord_norm
+
+
+   .. py:attribute:: d_edge
+      :value: None
+
+
+
+   .. py:attribute:: edge_norm
+
+
+   .. py:attribute:: eps
+      :value: 1e-06
+
+
+
+   .. py:attribute:: message_mlp
+
+
+   .. py:attribute:: n_coord_sets
+
+
+   .. py:attribute:: node_norm
+
+
+   .. py:attribute:: node_proj
+
+
+.. py:class:: EquiInvDynamics(d_model, d_message, n_coord_sets, n_layers, n_attn_heads=None, d_message_hidden=None, d_edge=None, bond_refine=True, self_cond=False, coord_norm='length', eps=1e-06)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(coords, inv_feats, adj_matrix, atom_mask=None, atom_and_pharm_mask=None, edge_feats=None, cond_coords=None)
+
+      Generate molecular coordinates and atom features
+
+      :param coords: Input coordinates, shape [batch_size, n_atoms, 3]
+      :type coords: torch.Tensor
+      :param inv_feats: Invariant atom features, shape [batch_size, n_atoms, d_model]
+      :type inv_feats: torch.Tensor
+      :param adj_matrix: Adjacency matrix, shape [batch_size, n_atoms, n_atoms], 1 for connected
+      :type adj_matrix: torch.Tensor
+      :param atom_mask: Mask for atom padding, shape [batch_size, n_atoms], 1 for real atoms
+      :type atom_mask: torch.Tensor, Optional
+      :param atom_and_pharm_mask: Mask for atom/pharm padding, shape [batch_size, n_atoms], 1 for real atoms
+      :type atom_and_pharm_mask: torch.Tensor, Optional
+      :param edge_feats: In edge features, shape [batch_size, n_nodes, n_nodes, d_edge]
+      :type edge_feats: torch.Tensor, Optional
+      :param cond_coords: Conditional coords, shape [batch_size, n_nodes, 3]
+      :type cond_coords: torch.Tensor, Optional
+
+      :returns: (coords, atom feats, edge feats)
+                All torch.Tensor, shapes:
+                    Coordinates [batch_size, n_atoms, 3],
+                    Atom feats [batch_size, n_atoms, d_model]
+                    Edge feats [batch_size, n_atoms, n_atoms, d_edge]
+
+
+
+   .. py:attribute:: bond_refine
+
+
+   .. py:attribute:: coord_head
+
+
+   .. py:attribute:: coord_norm
+
+
+   .. py:attribute:: coord_proj
+
+
+   .. py:attribute:: d_edge
+      :value: None
+
+
+
+   .. py:attribute:: d_model
+
+
+   .. py:attribute:: final_ff_block
+
+
+   .. py:property:: hparams
+
+
+   .. py:attribute:: layers
+
+
+   .. py:attribute:: n_coord_sets
+
+
+   .. py:attribute:: self_cond
+      :value: False
+
+
+
+.. py:class:: EquiMessagePassingLayer(d_model, d_message, n_coord_sets, n_attn_heads=None, d_message_hidden=None, d_edge_in=None, d_edge_out=None, coord_norm='length', eps=1e-06)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(coords, node_feats, adj_matrix, node_mask, atom_only_mask, edge_feats=None)
+
+      Pass data through the layer
+
+      :param coords: Coordinate tensor, shape [batch_size, n_sets, n_nodes, 3]
+      :type coords: torch.Tensor
+      :param node_feats: Node features, shape [batch_size, n_nodes, d_model]
+      :type node_feats: torch.Tensor
+      :param adj_matrix: Adjacency matrix, shape [batch_size, n_nodes, n_nodes]
+      :type adj_matrix: torch.Tensor
+      :param node_mask: Mask for nodes, shape [batch_size, n_sets, n_nodes], 1 for real, 0 otherwise
+      :type node_mask: torch.Tensor
+      :param atom_only_mask: Mask for atoms only, shape [batch_size, n_sets, n_nodes], 1 for real, 0 otherwise
+      :type atom_only_mask: torch.Tensor
+      :param edge_feats: Incoming edge features, shape [batch_size, n_nodes, n_nodes, d_edge_in]
+      :type edge_feats: torch.Tensor
+
+      :returns: Either a two-tuple of the new node coordinates and the new node features, or a three-tuple of the new
+                node coords, new node features and new edge features.
+
+
+
+   .. py:attribute:: coord_attn
+
+
+   .. py:attribute:: d_coord_message
+
+
+   .. py:attribute:: d_edge_in
+      :value: None
+
+
+
+   .. py:attribute:: d_edge_out
+      :value: None
+
+
+
+   .. py:attribute:: d_message
+
+
+   .. py:attribute:: d_message_hidden
+      :value: None
+
+
+
+   .. py:attribute:: d_model
+
+
+   .. py:attribute:: eps
+      :value: 1e-06
+
+
+
+   .. py:property:: hparams
+
+
+   .. py:attribute:: message_ff
+
+
+   .. py:attribute:: n_attn_heads
+
+
+   .. py:attribute:: n_coord_sets
+
+
+   .. py:attribute:: node_attn
+
+
+   .. py:attribute:: node_ff
+
+
+.. py:class:: EquivariantMLP(d_model, n_coord_sets, proj_sets=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(coord_sets, node_feats)
+
+      Pass data through the layer
+
+      Assumes coords and node_feats have already been normalised
+
+      :param coord_sets: Coordinate tensor, shape [batch_size, n_sets, n_nodes, 3]
+      :type coord_sets: torch.Tensor
+      :param node_feats: Node feature tensor, shape [batch_size, n_nodes, d_model]
+      :type node_feats: torch.Tensor
+
+      :returns: Updated coord_sets, shape [batch_size, n_sets, n_nodes, 3]
+      :rtype: torch.Tensor
+
+
+
+   .. py:attribute:: attn_proj
+
+
+   .. py:attribute:: coord_proj
+
+
+   .. py:attribute:: node_proj
+
+
+.. py:class:: LengthsMLP(d_model, n_coord_sets, d_ff=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(coord_sets, node_feats)
+
+      Pass data through the layer
+
+      Assumes coords and node_feats have already been normalised
+
+      :param coord_sets: Coordinate tensor, shape [batch_size, n_sets, n_nodes, 3]
+      :type coord_sets: torch.Tensor
+      :param node_feats: Node feature tensor, shape [batch_size, n_nodes, d_model]
+      :type node_feats: torch.Tensor
+
+      :returns: Updated node features, shape [batch_size, n_nodes, d_model]
+      :rtype: torch.Tensor
+
+
+
+   .. py:attribute:: node_ff
+
+
+.. py:class:: NodeAttention(d_model, n_attn_heads, d_attn=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(node_feats, messages, adj_matrix)
+
+      Accumulate edge messages to each node using attention-based message passing
+
+      :param node_feats: Node feature tensor, shape [batch_size, n_nodes, d_model]
+      :type node_feats: torch.Tensor
+      :param messages: Messages tensor, shape [batch_size, n_nodes, n_nodes, d_message]
+      :type messages: torch.Tensor
+      :param adj_matrix: Adjacency matrix, shape [batch_size, n_nodes, n_nodes]
+      :type adj_matrix: torch.Tensor
+
+      :returns: Accumulated node features, shape [batch_size, n_nodes, d_model]
+      :rtype: torch.Tensor
+
+
+
+   .. py:attribute:: d_attn
+
+
+   .. py:attribute:: d_head
+
+
+   .. py:attribute:: d_model
+
+
+   .. py:attribute:: feat_norm
+
+
+   .. py:attribute:: in_proj
+
+
+   .. py:attribute:: n_attn_heads
+
+
+   .. py:attribute:: out_proj
+
+
+.. py:class:: NodeFeedForward(d_model, n_coord_sets, d_ff=None, proj_sets=None, coord_norm='length')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(coord_sets, node_feats, node_mask, atom_only_mask)
+
+      Pass data through the layer
+
+      :param coord_sets: Coordinate tensor, shape [batch_size, n_sets, n_nodes, 3]
+      :type coord_sets: torch.Tensor
+      :param node_feats: Node feature tensor, shape [batch_size, n_nodes, d_model]
+      :type node_feats: torch.Tensor
+      :param node_mask: Mask for nodes, shape [batch_size, n_sets, n_nodes], 1 for real, 0 otherwise
+      :type node_mask: torch.Tensor
+      :param atom_only_mask: Mask for atoms only, shape [batch_size, n_sets, n_nodes], 1 for real, 0 otherwise
+      :type atom_only_mask: torch.Tensor
+
+      :returns: Updates to coords and node features
+      :rtype: torch.Tensor, torch.Tensor
+
+
+
+   .. py:attribute:: coord_norm
+
+
+   .. py:attribute:: equivariant_mlp
+
+
+   .. py:attribute:: invariant_mlp
+
+
+   .. py:attribute:: node_norm
+
+
+.. py:class:: SemlaPharmGenerator(d_model=384, d_message=128, n_coord_sets=64, n_layers=12, n_head=32, d_message_hidden=128, d_edge=128, coord_norm='length', self_conditioning=False, size_emb=64, pos_emb=64, length=5, pharmacophore_subset=40)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(X, E, C, atom_mask, node_mask, pharm_types=None, pharm_pos=None, pharm_padding_mask=None)
+
+      Forward pass of the model.
+
+      :param X: Atom features tensor, shape [batch_size, n_fragments, n_atom_features]
+      :type X: torch.Tensor
+      :param E: Edge features tensor, shape [batch_size, n_fragments, n_fragments, n_edge_features]
+      :type E: torch.Tensor
+      :param C: Coordinates tensor, shape [batch_size, n_fragments * MAX_ATOMS_PER_BB, 3]
+      :type C: torch.Tensor
+      :param atom_mask: Atom mask tensor, shape [batch_size, n_fragments * MAX_ATOMS_PER_BB]
+      :type atom_mask: torch.Tensor
+      :param node_mask: Fragment mask tensor, shape [batch_size, n_fragments]
+      :type node_mask: torch.Tensor
+      :param pharm_types: Pharmacophore features, shape [batch_size, n_pharm, d_feat]  ### CHANGED
+      :type pharm_types: torch.Tensor, Optional
+      :param pharm_pos: Pharmacophore coordinates, shape [batch_size, n_pharm, 3]  ### CHANGED
+      :type pharm_pos: torch.Tensor, Optional
+      :param pharm_padding_mask: Pharmacophore mask, shape [batch_size, n_pharm]  ### CHANGED
+      :type pharm_padding_mask: torch.Tensor, Optional
+
+      :returns:
+
+                Contains:
+                    - node_logits (torch.Tensor): Predicted node type logits, shape [batch_size, n_fragments, n_node_types]
+                    - edge_logits (torch.Tensor): Predicted edge type logits, shape [batch_size, n_fragments, n_fragments, n_edge_types]
+                    - pred_coords (torch.Tensor): Predicted coordinates, shape [batch_size, n_fragments * MAX_ATOMS_PER_BB, 3]
+      :rtype: tuple
+
+
+
+   .. py:attribute:: E_atomtofrag_out
+
+
+   .. py:attribute:: X_atomtofrag_out
+
+
+   .. py:attribute:: dynamics
+
+
+   .. py:attribute:: edge_classifier_head
+
+
+   .. py:attribute:: edge_in_proj
+
+
+   .. py:attribute:: feat_proj
+
+
+   .. py:attribute:: length
+      :value: 5
+
+
+
+   .. py:attribute:: n_edge_types
+
+
+   .. py:attribute:: n_node_types
+
+
+   .. py:attribute:: n_pharm
+      :value: 9
+
+
+
+   .. py:attribute:: node_classifier_head
+
+
+   .. py:attribute:: pharm_cond_proj
+
+
+   .. py:attribute:: pharmacophore_subset
+      :value: 40
+
+
+
+   .. py:attribute:: pos_emb
+
+
+   .. py:attribute:: self_cond
+      :value: False
+
+
+
+   .. py:attribute:: size_emb
+
+
+.. py:function:: adj_to_attn_mask(adj_matrix, pos_inf=False)
+
+   Assumes adj_matrix is only 0s and 1s
+
+

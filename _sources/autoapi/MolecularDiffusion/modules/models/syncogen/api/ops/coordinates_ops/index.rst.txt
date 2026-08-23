@@ -1,0 +1,46 @@
+MolecularDiffusion.modules.models.syncogen.api.ops.coordinates_ops
+==================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.api.ops.coordinates_ops
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.api.ops.coordinates_ops.center
+   MolecularDiffusion.modules.models.syncogen.api.ops.coordinates_ops.kabsch_align
+   MolecularDiffusion.modules.models.syncogen.api.ops.coordinates_ops.random_rotate
+   MolecularDiffusion.modules.models.syncogen.api.ops.coordinates_ops.random_translate
+
+
+Module Contents
+---------------
+
+.. py:function:: center(coords: torch.Tensor, mask: torch.Tensor, custom_center: torch.Tensor = None, apply_mask: torch.Tensor = None) -> torch.Tensor
+
+   Center coordinates by mask; supports [N,3], [B,N,3], or [B,S,N,3].
+
+   :param coords: Coordinates tensor [N,3], [B,N,3], or [B,S,N,3]
+   :param mask: Mask for computing center
+   :param custom_center: Optional pre-computed center to subtract
+   :param apply_mask: Optional separate mask for zeroing after centering.
+                      If None, NO zeroing is applied (matches old behavior).
+
+
+.. py:function:: kabsch_align(src: torch.Tensor, ref: torch.Tensor, mask: torch.Tensor, weights: torch.Tensor = None, debug: bool = True) -> torch.Tensor
+
+   Align src to ref using Kabsch; supports [N,3] or [B,N,3].
+
+
+.. py:function:: random_rotate(coords: torch.Tensor, mask: torch.Tensor) -> torch.Tensor
+
+   Apply random rotation(s) to coords, preserving masked-out positions.
+
+
+.. py:function:: random_translate(coords: torch.Tensor, mask: torch.Tensor, scale: float = 1.0) -> torch.Tensor
+
+   Apply random translation(s) to coords, preserving masked-out positions.
+
+

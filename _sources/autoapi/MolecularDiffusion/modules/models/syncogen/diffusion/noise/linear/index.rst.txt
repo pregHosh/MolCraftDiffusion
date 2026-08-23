@@ -1,0 +1,54 @@
+MolecularDiffusion.modules.models.syncogen.diffusion.noise.linear
+=================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.diffusion.noise.linear
+
+.. autoapi-nested-parse::
+
+   Linear noise schedule.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.noise.linear.LinearNoise
+
+
+Module Contents
+---------------
+
+.. py:class:: LinearNoise(sigma_min: float = 0, sigma_max: float = 10, dtype=torch.float32)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.models.syncogen.diffusion.noise.base.NoiseBase`
+
+
+   Linear noise schedule.
+
+
+   .. py:method:: importance_sampling_transformation(t)
+
+      Transform timesteps for importance sampling.
+
+
+
+   .. py:method:: rate_noise(t)
+
+      Rate of change of noise.
+
+
+
+   .. py:method:: total_noise(t)
+
+      Total noise.
+
+
+
+   .. py:attribute:: sigma_max
+
+
+   .. py:attribute:: sigma_min
+
+

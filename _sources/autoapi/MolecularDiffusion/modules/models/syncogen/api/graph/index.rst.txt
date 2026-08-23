@@ -1,0 +1,22 @@
+MolecularDiffusion.modules.models.syncogen.api.graph
+====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.api.graph
+
+.. autoapi-nested-parse::
+
+   Graph representations for Syncogen.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/syncogen/api/graph/building_block/index
+   /autoapi/MolecularDiffusion/modules/models/syncogen/api/graph/graph/index
+   /autoapi/MolecularDiffusion/modules/models/syncogen/api/graph/reaction/index
+
+

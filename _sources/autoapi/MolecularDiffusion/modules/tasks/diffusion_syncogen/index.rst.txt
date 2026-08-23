@@ -1,0 +1,410 @@
+MolecularDiffusion.modules.tasks.diffusion_syncogen
+===================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_syncogen
+
+.. autoapi-nested-parse::
+
+   SynCoGen task: joint masked graph diffusion + coordinate flow matching.
+
+   SynCoGen generates molecules the way a chemist would *make* them: nodes are
+   catalogue building blocks, edges are reaction templates, and the 3D coordinates
+   are flow-matched alongside. Chemical bonds are never diffused -- they are a
+   *consequence* of the sampled reaction graph, recovered by RDKit assembly at the
+   end (``BBRxnGraph.build_rdkit`` -> ``RDKitMoleculeAssembly``).
+
+   Two things follow from that, and both shape this file.
+
+   **The batch is not a point cloud.** Training consumes upstream's own PyG
+   ``Data``/``Batch`` end to end, produced by the task-owned
+   ``modules/models/syncogen/datamodule.py``. No platform ``data_type`` is involved
+   and nothing under ``MolecularDiffusion/data/`` is touched.
+
+   **Generation is.** ``GenerativeFactory``'s ``unconditional`` loop wants
+   ``(one_hot, charges, coords, node_mask)`` plus a dense bond matrix on
+   ``last_bond_types``. So the *only* adapters in this integration live in
+   ``sample()``, converting the sampled ``(BBRxnGraph, Coordinates)`` pair into
+   those tensors -- see ``_assemble`` and ``_to_pointcloud``.
+
+   Two traps worth naming here rather than rediscovering:
+
+   * **``charges`` carries signed formal charges, not atomic numbers.** The channel
+     is overloaded in the platform: ``save_xyz_file`` would read it as atomic
+     numbers, but only when the model sets ``use_unknown_fallback`` (which this one
+     does not, so the value is unused there), while
+     ``GenerativeFactory._write_molecule_sdf`` passes it straight through as
+     ``formal_charge=`` (``runmodes/generate/tasks_generate.py:344``). Atomic
+     numbers here would silently stamp every SDF atom with a +6/+7/+8 charge.
+   * **Atom ordering is fixed by ``set_mol_coordinates``.** Upstream assigns the
+     masked coordinate rows positionally onto the assembled molecule's atoms, so
+     the point-cloud order and the RDKit atom order are the same order *by
+     construction*. ``one_hot``, ``charges``, ``coords`` and the bond matrix are all
+     built in that one order, or the ``.xyz`` and the ``.sdf`` would describe
+     different molecules.
+
+   Vocabulary loading is process-global and must happen before any other import
+   from the ported package -- see ``modules/models/syncogen/vocab.py``. That is why
+   every syncogen import in this file is deferred into a function body.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_syncogen.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_syncogen.ModelTaskFactory
+   MolecularDiffusion.modules.tasks.diffusion_syncogen.SyncogenDiffusionTask
+   MolecularDiffusion.modules.tasks.diffusion_syncogen.SyncogenSizePrior
+
+
+Module Contents
+---------------
+
+.. py:class:: ModelTaskFactory(task_type: str = 'diffusion_syncogen', vocab_dir: str | None = None, backbone: str = 'semla', d_model: int = 384, d_message: int = 128, n_coord_sets: int = 64, n_layers: int = 12, n_head: int = 32, d_message_hidden: int = 128, d_edge: int = 128, coord_norm: str = 'length', size_emb: int = 64, pos_emb: int = 64, max_bbs: int = 5, self_conditioning: bool = True, pharm_subset: int = 7, noise_sigma_min: float = 0.001, noise_sigma_max: float = 7.0, num_sample_steps: int = 100, sampling_eps: float = 0.001, antithetic_sampling: bool = True, importance_sampling: bool = False, sampling_noise_removal: bool = True, use_compat: bool = True, time_conditioning: bool = True, train_rot_align: bool = True, augmentations: Sequence[str] = ('center', 'random_rotate', 'normalize'), scale_noise: bool = True, scale_noise_factor: float = 0.2, inference_annealing: bool = True, annealing_coef: float = 10.0, ema_decay: float = 0.0, nll_coef: float = 1.0, mse_coef: float = 1.0, bond_length_coef: float = 0.2, pairwise_distance_coef: float = 0.4, pairwise_distance_threshold: float = 5.0, smooth_lddt_coef: float = 0.4, loss_t_threshold: float = 0.25, load_bonds: bool = True, load_pharmacophores: bool = False, num_fragments_probs: dict | None = None, eval_batch_size: int = 4, reference_ligand: str | None = None, sdf_output_path: str | None = None, max_sample_attempts: int = 5, atom_vocab: list | None = None, **kwargs: Any)
+
+   Instantiated by ``cli/train.py`` / ``cli/generate.py`` from Hydra.
+
+   No ``train_set`` parameter is declared, so the §2.5 injection seam stays
+   inert: SynCoGen's only construction-time statistic is the fragment-count
+   histogram, and that is config-owned (``num_fragments_probs``) precisely so
+   generation needs no dataset.
+
+
+   .. py:method:: build() -> SyncogenDiffusionTask
+
+
+   .. py:attribute:: annealing_coef
+
+
+   .. py:attribute:: antithetic_sampling
+      :value: True
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: augmentations
+
+
+   .. py:attribute:: backbone
+      :value: 'semla'
+
+
+
+   .. py:attribute:: backbone_kwargs
+
+
+   .. py:attribute:: ema_decay
+
+
+   .. py:attribute:: eval_batch_size
+      :value: 4
+
+
+
+   .. py:attribute:: generation_time_keys
+      :value: ('vocab_dir', 'reference_ligand', 'sdf_output_path', 'num_fragments_probs', 'eval_batch_size',...
+
+
+
+   .. py:attribute:: importance_sampling
+      :value: False
+
+
+
+   .. py:attribute:: inference_annealing
+      :value: True
+
+
+
+   .. py:attribute:: load_bonds
+      :value: True
+
+
+
+   .. py:attribute:: load_pharmacophores
+      :value: False
+
+
+
+   .. py:attribute:: loss_coefs
+
+
+   .. py:attribute:: max_bbs
+      :value: 5
+
+
+
+   .. py:attribute:: max_sample_attempts
+      :value: 5
+
+
+
+   .. py:attribute:: noise_sigma_max
+
+
+   .. py:attribute:: noise_sigma_min
+
+
+   .. py:attribute:: num_fragments_probs
+
+
+   .. py:attribute:: num_sample_steps
+      :value: 100
+
+
+
+   .. py:attribute:: pharm_subset
+      :value: 7
+
+
+
+   .. py:attribute:: reference_ligand
+      :value: None
+
+
+
+   .. py:attribute:: sampling_eps
+
+
+   .. py:attribute:: sampling_noise_removal
+      :value: True
+
+
+
+   .. py:attribute:: scale_noise
+      :value: True
+
+
+
+   .. py:attribute:: scale_noise_factor
+
+
+   .. py:attribute:: sdf_output_path
+      :value: None
+
+
+
+   .. py:attribute:: self_conditioning
+      :value: True
+
+
+
+   .. py:attribute:: task
+      :type:  SyncogenDiffusionTask | None
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_syncogen'
+
+
+
+   .. py:attribute:: time_conditioning
+      :value: True
+
+
+
+   .. py:attribute:: train_rot_align
+      :value: True
+
+
+
+   .. py:attribute:: use_compat
+      :value: True
+
+
+
+   .. py:attribute:: vocab_dir
+      :value: None
+
+
+
+.. py:class:: SyncogenDiffusionTask(core: torch.nn.Module, size_prior: SyncogenSizePrior, atom_vocab: list, task_type: str, num_sample_steps: int, pharm_subset: int, max_bbs: int, reference_ligand: str | None = None, sdf_output_path: str | None = None, max_sample_attempts: int = 5)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   The duck-typed ``Task`` object (docs/adding_new_models.md §2.1).
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor) -> dict
+
+
+   .. py:method:: forward(batch) -> tuple[torch.Tensor, dict]
+
+
+   .. py:method:: predict_and_target(batch) -> tuple[torch.Tensor, torch.Tensor]
+
+      Pure-generative stub: the loss is both prediction and target.
+
+
+
+   .. py:method:: sample(batch_size: int | None = None, nodesxsample: torch.Tensor | None = None, num_steps: int | None = None, mode: str | None = None, n_frames: int = 0, **kwargs: Any) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]
+
+      Return ``(one_hot, charges, coords, node_mask)`` for ``batch_size`` molecules.
+
+      ``nodesxsample`` is a **fragment** count per molecule, not an atom count
+      (see ``SyncogenSizePrior``). ``charges`` carries signed formal charges.
+
+      A sampled graph can come back with a reaction the assembler rejects, so a
+      round is retried up to ``max_sample_attempts`` times rather than emitting
+      an empty ``.xyz`` for the failed rows. All attempts exhausted -> raise, so
+      the generation loop counts the batch as failed instead of writing
+      nothing and exiting 0.
+
+
+
+   .. py:attribute:: T
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: core
+
+
+   .. py:property:: device
+      :type: torch.device
+
+
+
+   .. py:attribute:: last_bond_types
+      :type:  torch.Tensor | None
+      :value: None
+
+
+
+   .. py:attribute:: max_bbs
+
+
+   .. py:attribute:: max_sample_attempts
+      :value: 5
+
+
+
+   .. py:property:: model
+      :type: SyncogenDiffusionTask
+
+
+
+   .. py:property:: n_node_dist
+      :type: dict
+
+
+
+   .. py:property:: node_dist_model
+      :type: SyncogenSizePrior
+
+
+
+   .. py:attribute:: pharm_subset
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: reference_ligand
+      :value: None
+
+
+
+   .. py:attribute:: sdf_output_path
+      :value: None
+
+
+
+   .. py:attribute:: size_prior
+
+
+   .. py:attribute:: task_type
+
+
+.. py:class:: SyncogenSizePrior(num_fragments_probs: dict, max_bbs: int = 5, batch_size: int = 4, eval_batch_size: int = 4, load_bonds: bool = True, load_pharmacophores: bool = False)
+
+   Fragment-count prior, and the small surface ``core.Diffusion`` reads.
+
+   Serves three roles at once, which is why it is one object and not three:
+
+   1. ``task.node_dist_model`` -- ``.sample(n) -> LongTensor`` of per-molecule
+      sizes. For SynCoGen a "size" is a **fragment count** (typically 2-5), not
+      an atom count, so ``mol_size`` in a generate config must be ``[0, 0]`` or
+      a range inside ``[min, max_bbs]``. ``GenerativeFactory.__init__`` clamps
+      against ``max(n_node_dist)`` and raises with a clear message otherwise.
+   2. ``task.n_node_dist`` -- the ``{n_fragments: count}`` histogram that clamp
+      reads.
+   3. The stand-in for upstream's ``SyncogenDataManager`` inside
+      ``core.Diffusion``, which reaches for ``max_bbs``, ``batch_size``,
+      ``eval_batch_size``, ``load_bonds``, ``load_pharmacophores`` and
+      ``sample_n_nodes``. Keeping it config-owned rather than dataset-owned is
+      what lets generation run with no dataset present at all -- which is the
+      whole point for the released checkpoints, where the 6.3 GB SynSpace
+      download is not needed.
+
+
+   .. py:method:: sample(n: int) -> torch.Tensor
+
+
+   .. py:method:: sample_n_nodes(batch_size: int) -> torch.Tensor
+
+
+   .. py:attribute:: batch_size
+      :value: 4
+
+
+
+   .. py:attribute:: eval_batch_size
+      :value: 4
+
+
+
+   .. py:attribute:: forced_n_nodes
+      :type:  torch.Tensor | None
+      :value: None
+
+
+
+   .. py:attribute:: load_bonds
+      :value: True
+
+
+
+   .. py:attribute:: load_pharmacophores
+      :value: False
+
+
+
+   .. py:attribute:: max_bbs
+      :value: 5
+
+
+
+   .. py:property:: n_node_dist
+      :type: dict
+
+
+      ``{n_fragments: count}``. Counts are a scaled histogram; only the keys
+      and their relative sizes matter to ``GenerativeFactory``.
+
+
+   .. py:attribute:: train_length_probs
+
+
+   .. py:attribute:: train_length_values
+
+
+.. py:data:: logger
+

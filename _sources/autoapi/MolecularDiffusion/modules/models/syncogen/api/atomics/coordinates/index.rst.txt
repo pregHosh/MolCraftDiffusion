@@ -1,0 +1,272 @@
+MolecularDiffusion.modules.models.syncogen.api.atomics.coordinates
+==================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.api.atomics.coordinates
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.api.atomics.coordinates.Coordinates
+
+
+Module Contents
+---------------
+
+.. py:class:: Coordinates(coordinates: torch.Tensor, atom_mask: Optional[torch.Tensor] = None, is_batched: Optional[bool] = None)
+
+   Coordinates class for handling molecular coordinates.
+
+   Use factory methods for construction:
+       - Coordinates.from_tensor(coordinates, atom_mask)
+       - Coordinates.random(shape, atom_mask, device)
+
+   Or use the constructor directly with a coordinates tensor.
+
+   Initialize from coordinates tensor (canonical constructor).
+
+   :param coordinates: Coordinate tensor, shape (N, 3) or (B, N, 3)
+   :param atom_mask: Optional mask tensor, shape (N,) or (B, N). Defaults to all ones.
+   :param is_batched: Whether this is batched. Inferred from coordinates.dim() if None.
+
+
+   .. py:method:: apply_mask(mask: torch.Tensor)
+
+      Apply a mask to the coordinates tensor.
+
+      :param mask: Tensor of shape matching self.tensor up to the last dimension
+
+
+
+   .. py:method:: attach_bonds(bonds: torch.Tensor, bonds_mask: torch.Tensor)
+
+      Attach bonds to coordinates with explicit mask.
+
+      :param bonds: [..., n_bonds, 3] where each entry is (i_flat, j_flat, bond_type_index)
+      :param bonds_mask: [..., n_bonds] boolean mask of valid bonds
+
+
+
+   .. py:method:: attach_pharmacophores(pharm_coords: torch.Tensor, pharm_padding_mask: torch.Tensor)
+
+      Attach pharmacophores to coordinates with explicit mask.
+
+      - Keeps atoms and pharm as separate tensors internally
+      - Combined mask is computed dynamically via property
+
+
+
+   .. py:method:: center(custom_mask=None, custom_center=None)
+
+      Center using atom mask only; move pharmacophores along if attached.
+
+
+
+   .. py:method:: clone() -> Coordinates
+
+      Create a deep copy of this Coordinates object.
+
+
+
+   .. py:method:: from_tensor(coordinates: torch.Tensor, atom_mask: Optional[torch.Tensor] = None, is_batched: Optional[bool] = None) -> Coordinates
+      :classmethod:
+
+
+      Construct from existing coordinates tensor.
+
+      :param coordinates: Coordinate tensor, shape (N, 3) or (B, N, 3)
+      :param atom_mask: Optional mask tensor
+      :param is_batched: Whether batched (inferred if None)
+
+
+
+   .. py:method:: get_center(custom_mask=None)
+
+      Get the center of mass according to atom mask.
+
+
+
+   .. py:method:: is_centered(tol=1e-06)
+
+      Check if coordinates are centered according to atom mask.
+
+
+
+   .. py:method:: kabsch_align_to(reference: torch.Tensor, mask: torch.Tensor = None, weights: torch.Tensor = None)
+
+      Align (rotate) coordinates to reference using Kabsch (weighted rigid align).
+
+      :param reference: Tensor of shape [N, 3] to align to
+      :param mask: Optional mask of shape [N] for valid points
+      :param weights: Optional weights of shape [N]
+
+      :returns: self
+
+
+
+   .. py:method:: random(shape: Union[torch.Size, Tuple[int, ...]], atom_mask: Optional[torch.Tensor] = None, device: Optional[torch.device] = None, dtype: torch.dtype = torch.float32, is_batched: Optional[bool] = None) -> Coordinates
+      :classmethod:
+
+
+      Construct with random normal coordinates.
+
+      :param shape: Shape of coordinates tensor, e.g. (N, 3) or (B, N, 3)
+      :param atom_mask: Optional mask tensor. Defaults to all ones.
+      :param device: Target device
+      :param dtype: Data type for coordinates
+      :param is_batched: Whether batched (inferred from shape if None)
+
+
+
+   .. py:method:: random_rotate()
+
+      Apply random rotation to coordinates (and pharmacophores if attached).
+
+
+
+   .. py:method:: random_translate(scale: float = 1.0)
+
+      Apply random translation to coordinates (and pharmacophores if attached).
+
+
+
+   .. py:method:: scale(multiplier)
+
+      Scale coordinates (and pharmacophores if attached) by a multiplier.
+
+
+
+   .. py:method:: set_coordinates(coordinates: torch.Tensor, apply_mask: bool = True)
+
+      Replace coordinates tensor; must match existing tensor shape. Optionally re-apply mask zeroing.
+
+
+
+   .. py:method:: set_mask(atom_mask: torch.Tensor, apply_mask: bool = True)
+
+      Set a new atom mask; must match existing mask shape. Recomputes n_atoms and re-applies zeroing.
+
+
+
+   .. py:method:: to(device: Optional[torch.device] = None, dtype: Optional[torch.dtype] = None)
+
+      Move coordinates to specified device and/or dtype.
+
+      :param device: Target device (e.g., 'cuda', 'cpu')
+      :param dtype: Target dtype (e.g., torch.float32)
+
+
+
+   .. py:method:: to_numpy()
+
+      Convert coordinates to numpy array.
+
+
+
+   .. py:method:: to_torch()
+
+      Convert coordinates to torch tensor.
+
+
+
+   .. py:method:: uniform(shape: Union[torch.Size, Tuple[int, ...]], atom_mask: Optional[torch.Tensor] = None, device: Optional[torch.device] = None, dtype: torch.dtype = torch.float32, is_batched: Optional[bool] = None) -> Coordinates
+      :classmethod:
+
+
+      Construct with all-zero coordinates (a 'uniform' tensor of zeros).
+
+      :param shape: Shape of coordinates tensor, e.g. (N, 3) or (B, N, 3)
+      :param atom_mask: Optional mask tensor. Defaults to all ones.
+      :param device: Target device
+      :param dtype: Data type for coordinates
+      :param is_batched: Whether batched (inferred from shape if None)
+
+
+
+   .. py:method:: zeros(shape: Union[torch.Size, Tuple[int, ...]], atom_mask: Optional[torch.Tensor] = None, device: Optional[torch.device] = None, dtype: torch.dtype = torch.float32, is_batched: Optional[bool] = None) -> Coordinates
+      :classmethod:
+
+
+      Construct with zero coordinates.
+
+      :param shape: Shape of coordinates tensor
+      :param atom_mask: Optional mask tensor
+      :param device: Target device
+      :param dtype: Data type
+      :param is_batched: Whether batched
+
+
+
+   .. py:property:: atom_and_pharmacophore_mask
+
+      Dynamically compute concatenated atom + pharmacophore mask in atoms view.
+
+
+   .. py:property:: atom_coords
+
+      Get atom coordinates tensor.
+
+
+   .. py:attribute:: atom_mask
+
+
+   .. py:attribute:: bonds
+      :value: None
+
+
+
+   .. py:attribute:: bonds_mask
+      :value: None
+
+
+
+   .. py:property:: device
+
+      Get device of coordinates.
+
+
+   .. py:property:: dtype
+
+      Get dtype of coordinates.
+
+
+   .. py:attribute:: has_bonds
+      :value: False
+
+
+
+   .. py:attribute:: has_pharmacophores
+      :value: False
+
+
+
+   .. py:attribute:: is_batched
+      :value: None
+
+
+
+   .. py:attribute:: pharm_coords
+      :value: None
+
+
+
+   .. py:attribute:: pharm_padding_mask
+      :value: None
+
+
+
+   .. py:property:: pharmacophores
+
+      Get pharmacophore coordinates (everything after max_atoms).
+
+
+   .. py:property:: shape
+
+      Get shape of coordinates.
+
+
+   .. py:attribute:: tensor
+
+

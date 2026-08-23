@@ -1,0 +1,130 @@
+MolecularDiffusion.modules.models.syncogen.utils.rdkit
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.utils.rdkit
+
+.. autoapi-nested-parse::
+
+   RDKit utility functions for molecule building and validation.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.utils.rdkit.build_molecule
+   MolecularDiffusion.modules.models.syncogen.utils.rdkit.build_molecules_from_graphs
+   MolecularDiffusion.modules.models.syncogen.utils.rdkit.calc_energy
+   MolecularDiffusion.modules.models.syncogen.utils.rdkit.get_lipinski_descriptors
+   MolecularDiffusion.modules.models.syncogen.utils.rdkit.is_valid_action
+   MolecularDiffusion.modules.models.syncogen.utils.rdkit.is_valid_smiles
+   MolecularDiffusion.modules.models.syncogen.utils.rdkit.mol_to_pharm_cond
+   MolecularDiffusion.modules.models.syncogen.utils.rdkit.save_as_sdf
+   MolecularDiffusion.modules.models.syncogen.utils.rdkit.sdf_to_coordinates
+   MolecularDiffusion.modules.models.syncogen.utils.rdkit.set_mol_coordinates
+
+
+Module Contents
+---------------
+
+.. py:function:: build_molecule(nodes: torch.Tensor, decoded_edges: torch.Tensor, smiles: bool = False) -> str
+
+   Build a molecule from model outputs. Used in calculating pvalid.
+
+   :param nodes: Tensor of node indices [n_nodes]
+   :param decoded_edges: Tensor of decoded model outputs [n_edges, 5] containing
+                         (reaction_id, node1_order, node2_order, center1_idx, center2_idx).
+                         These are not the same as actions for adding to MFG and must be converted.
+   :param smiles: Whether to return a SMILES string or an RDKit molecule
+
+   :returns: SMILES string of the molecule
+
+
+.. py:function:: build_molecules_from_graphs(graphs: MolecularDiffusion.modules.models.syncogen.api.graph.graph.BBRxnGraph, coords: Optional[torch.Tensor] = None) -> List[Optional[rdkit.Chem.Mol]]
+
+   Build RDKit molecules from graphs with optional coordinates.
+
+   :param graphs: BBRxnGraph object (batched or unbatched)
+   :param coords: Optional [B, N, 3] coordinate tensor
+
+   :returns: List of RDKit molecules (None for failed reconstructions).
+             Each successful mol has coordinates set if coords was provided.
+
+
+.. py:function:: calc_energy(mol: rdkit.Chem.Mol, per_atom: bool = False) -> Optional[float]
+
+   Calculate MMFF94 or UFF energy for an RDKit molecule. Prefer MMFF if available, otherwise UFF. Return None if calculation fails.
+
+
+.. py:function:: get_lipinski_descriptors(mols) -> list
+
+   Get Lipinski descriptors for a molecule or batch of molecules (Rule of 5).
+
+   :param mols: RDKit molecule or list of RDKit molecules
+
+   :returns: List of dicts with Lipinski Rule of 5 descriptors (MW, LogP, HBD, HBA)
+   :rtype: list
+
+
+.. py:function:: is_valid_action(mfg: MolecularDiffusion.modules.models.syncogen.api.rdkit.assembly.RDKitMoleculeAssembly, action: list) -> bool
+
+   Check if an action is valid for the current molecule fragment graph.
+
+   :param mfg: Current molecule fragment graph
+   :param action: List of [new_fragment_global_id, reaction_id, existing_frag_idx, center1_idx, center2_idx]
+
+   :returns: Whether the action is valid
+   :rtype: bool
+
+
+.. py:function:: is_valid_smiles(smiles_or_mol)
+
+   Check if a SMILES string is valid and can be fully sanitized.
+
+
+.. py:function:: mol_to_pharm_cond(mol: rdkit.Chem.Mol, batch_size: int, n_subset: int, center: bool = True, normalize: bool = True) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+
+   Extract pharmacophore conditioning from a reference molecule.
+
+   :param mol: RDKit molecule with conformer
+   :param batch_size: Number of copies to create (for batched conditioning)
+   :param n_subset: Max pharmacophores per sample (randomly subsampled per batch element)
+   :param center: Center molecule coordinates before extraction
+   :param normalize: Normalize positions by COORDS_STD
+
+   :returns: [batch_size, n_subset, n_pharm_types] one-hot pharmacophore types
+             pos: [batch_size, n_subset, 3] pharmacophore positions
+             mask: [batch_size, n_subset] padding mask
+   :rtype: types
+
+
+.. py:function:: save_as_sdf(mol: rdkit.Chem.Mol, filepath: str, properties: Optional[dict] = None)
+
+   Save molecule to SDF file with optional properties.
+
+   :param mol: RDKit molecule with conformer
+   :param filepath: Output file path
+   :param properties: Optional dict of properties to add as SDF data fields
+
+
+.. py:function:: sdf_to_coordinates(sdf_path: str) -> torch.Tensor
+
+   Load coordinates from SDF file.
+
+   :param sdf_path: Path to SDF file
+
+   :returns: Tensor of shape [n_atoms, 3]
+
+
+.. py:function:: set_mol_coordinates(mol: rdkit.Chem.Mol, coords: torch.Tensor) -> rdkit.Chem.Mol
+
+   Set 3D coordinates on an RDKit molecule.
+
+   :param mol: RDKit molecule (will be modified in place)
+   :param coords: [n_atoms, 3] coordinate tensor
+
+   :returns: Molecule with updated conformer
+
+

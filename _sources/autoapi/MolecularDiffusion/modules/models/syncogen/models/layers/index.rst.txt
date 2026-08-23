@@ -1,0 +1,394 @@
+MolecularDiffusion.modules.models.syncogen.models.layers
+========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.models.layers
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.models.layers.CtoE
+   MolecularDiffusion.modules.models.syncogen.models.layers.CtoX
+   MolecularDiffusion.modules.models.syncogen.models.layers.Ctoy
+   MolecularDiffusion.modules.models.syncogen.models.layers.EtoC
+   MolecularDiffusion.modules.models.syncogen.models.layers.EtoX
+   MolecularDiffusion.modules.models.syncogen.models.layers.Etoy
+   MolecularDiffusion.modules.models.syncogen.models.layers.GraphNorm
+   MolecularDiffusion.modules.models.syncogen.models.layers.HierarchicalPositionalEmbedding
+   MolecularDiffusion.modules.models.syncogen.models.layers.PositionsMLP
+   MolecularDiffusion.modules.models.syncogen.models.layers.SE3Norm
+   MolecularDiffusion.modules.models.syncogen.models.layers.SetNorm
+   MolecularDiffusion.modules.models.syncogen.models.layers.SimplePositionalEmbedding
+   MolecularDiffusion.modules.models.syncogen.models.layers.SinusoidalPositionalEmbedding
+   MolecularDiffusion.modules.models.syncogen.models.layers.TimestepEmbedding
+   MolecularDiffusion.modules.models.syncogen.models.layers.Xtoy
+
+
+Module Contents
+---------------
+
+.. py:class:: CtoE(dc, de)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Map coordinate features to edge features using Principal Neighborhood Aggregation.
+
+
+   .. py:method:: forward(delta1, c_mask1, c_mask2)
+
+      :param delta1: bs, nm, nm, dc
+      :param c_mask1: bs, nm, 1, 1
+      :param c_mask2: bs, 1, nm, 1
+
+      :returns: bs, n, n, de
+      :rtype: out
+
+
+
+   .. py:attribute:: eps
+      :value: 1e-08
+
+
+
+   .. py:attribute:: lin
+
+
+.. py:class:: CtoX(dc, dx)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Map coordinate features to node features using Principal Neighborhood Aggregation.
+
+
+   .. py:method:: forward(delta1, c_mask1, c_mask2, e_mask2)
+
+      :param delta1: bs, n*m, n*m, dc
+      :param pos_mask: bs, n*m, n*m
+      :param e_mask2: bs, n, n
+
+      :returns: bs, n, dx
+      :rtype: out
+
+
+
+   .. py:attribute:: c_to_e
+
+
+   .. py:attribute:: e_to_x
+
+
+.. py:class:: Ctoy(dc, dy)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Map coordinate features to global features using Principal Neighborhood Aggregation.
+
+
+   .. py:method:: forward(delta1, c_mask1, c_mask2, e_mask1, e_mask2)
+
+      :param delta1: bs, n*m, n*m, dc
+      :param pos_mask: bs, n*m, n*m
+      :param e_mask2: bs, n, n
+
+      :returns: bs, dy
+      :rtype: out
+
+
+
+   .. py:attribute:: c_to_e
+
+
+   .. py:attribute:: e_to_y
+
+
+.. py:class:: EtoC(dy, dc)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Broadcast edge features to coordinate space and apply a linear layer.
+
+
+   .. py:method:: forward(E, e_mask1, e_mask2)
+
+      :param E: bs, n, n, dy
+      :param e_mask1: bs, n, 1, 1
+      :param e_mask2: bs, 1, n, 1
+
+      :returns: bs, nm, nm, dc
+      :rtype: out
+
+
+
+   .. py:attribute:: lin
+
+
+   .. py:attribute:: pe_m
+
+
+.. py:class:: EtoX(de, dx)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Map edge features to node features using Principal Neighborhood Aggregation.
+
+
+   .. py:method:: forward(E, e_mask2)
+
+      :param E: bs, n, n, de
+      :param e_mask2: bs, n, n
+
+      :returns: bs, n, dx
+      :rtype: out
+
+
+
+   .. py:attribute:: lin
+
+
+.. py:class:: Etoy(d, dy)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   
+   Map edge features to global features using Principal Neighborhood Aggregation.
+
+
+   .. py:method:: forward(E, e_mask1, e_mask2)
+
+      :param E: bs, n, n, de (Pairwise edge feature matrix with dimension de)
+      :param e_mask1: bs, n, 1, 1
+      :param e_mask2: bs, 1, n, 1
+
+      :returns: bs, dy (Global feature with dimension dy)
+      :rtype: out
+
+
+
+   .. py:attribute:: lin
+
+
+.. py:class:: GraphNorm(feature_dim=None, **kwargs)
+
+   Bases: :py:obj:`torch.nn.LayerNorm`
+
+
+   GraphNorm: A Layer Normalization for Graph Functions over pairwise edge matrix
+
+
+   .. py:method:: forward(E, emask1, emask2)
+
+
+   .. py:attribute:: biases
+
+
+   .. py:attribute:: weights
+
+
+.. py:class:: HierarchicalPositionalEmbedding(d_model, max_fragments=5, max_atoms_per_fragment=MAX_ATOMS_PER_BB)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Creates positional embeddings that respect the hierarchical structure of molecules:
+   fragments containing atoms.
+
+
+   .. py:method:: forward(fragment_features, atom_features=None)
+
+      :param fragment_features: Fragment-level features tensor [batch_size, n_fragments, feature_dim]
+      :param atom_features: Optional atom-level features tensor [batch_size, n_fragments*MAX_ATOMS, feature_dim]
+
+      :returns: Tuple of (fragment_pe, atom_pe) where each is positional embeddings matching input shapes
+
+
+
+   .. py:attribute:: atom_dim
+
+
+   .. py:attribute:: atom_embedding
+
+
+   .. py:attribute:: d_model
+
+
+   .. py:attribute:: fragment_dim
+
+
+   .. py:attribute:: fragment_embedding
+
+
+   .. py:attribute:: max_atoms
+      :value: None
+
+
+
+   .. py:attribute:: max_fragments
+      :value: 5
+
+
+
+.. py:class:: PositionsMLP(hidden_dim, eps=1e-05)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   
+   SE(3)-equivariant MLP layer for coordinate following:
+           PosMLP(R) = \prod^{CoM}(MLP(||R||)
+   rac{R}{||R||+\delta})
+
+
+
+   .. py:method:: forward(pos, node_mask)
+
+      :param pos: torch.Tensor, shape [bs, n, 3]
+      :param node_mask: torch.Tensor, shape [bs, n]
+
+      :returns: torch.Tensor, shape [bs, n, 3]
+      :rtype: new_pos
+
+
+
+   .. py:attribute:: eps
+      :value: 1e-05
+
+
+
+   .. py:attribute:: mlp
+
+
+.. py:class:: SE3Norm(eps: float = 1e-05, device=None, dtype=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   
+   SE(3)-equivariant layer normalization for coordinates:
+   Note: There is a relatively similar layer implemented by NVIDIA:
+   https://catalog.ngc.nvidia.com/orgs/nvidia/resources/se3transformer_for_pytorch.
+   It computes a ReLU on a mean-zero normalized norm, which I find surprising.
+
+
+   .. py:method:: extra_repr() -> str
+
+
+   .. py:method:: forward(pos, node_mask)
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: eps
+      :value: 1e-05
+
+
+
+   .. py:attribute:: normalized_shape
+      :value: (1,)
+
+
+
+   .. py:attribute:: weight
+
+
+.. py:class:: SetNorm(feature_dim=None, **kwargs)
+
+   Bases: :py:obj:`torch.nn.LayerNorm`
+
+
+   SetNorm: A Layer Normalization for Set Functions over unordered nodes
+
+
+   .. py:method:: forward(x, x_mask)
+
+
+   .. py:attribute:: biases
+
+
+   .. py:attribute:: weights
+
+
+.. py:class:: SimplePositionalEmbedding(dim, max_len, d_model)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: pe
+
+
+.. py:class:: SinusoidalPositionalEmbedding(d_model, max_len)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(positions)
+
+
+   .. py:attribute:: d_model
+
+
+.. py:class:: TimestepEmbedding(hidden_size, frequency_embedding_size=256)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Embeds scalar timesteps into vector representations.
+
+
+   .. py:method:: forward(t)
+
+
+   .. py:method:: timestep_embedding(t, dim, max_period=10000)
+      :staticmethod:
+
+
+      Create sinusoidal timestep embeddings.
+      :param t: a 1-D or 2-D Tensor of indices. These may be fractional.
+      :param dim: the dimension of the output.
+      :param max_period: controls the minimum frequency of the embeddings.
+      :return: a Tensor of positional embeddings with shape (..., D).
+
+
+
+   .. py:attribute:: frequency_embedding_size
+      :value: 256
+
+
+
+   .. py:attribute:: mlp
+
+
+.. py:class:: Xtoy(dx, dy)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   
+   Maps node features to global features using Principal Neighborhood Aggregation.
+   PNA(X)_i = W^T [mean, min, max, std]_j(x_ij) where j \in N(i)
+
+
+   .. py:method:: forward(X, x_mask)
+
+      :param X: bs, n, dx. (node features with dimension dx)
+      :param x_mask: bs, n. (node mask)
+
+      :returns: bs, dy. (global feature with dimension dy)
+      :rtype: out
+
+
+
+   .. py:attribute:: lin
+
+

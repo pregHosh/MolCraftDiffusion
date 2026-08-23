@@ -1,0 +1,43 @@
+MolecularDiffusion.modules.models.syncogen.diffusion.loss.mse
+=============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.diffusion.loss.mse
+
+.. autoapi-nested-parse::
+
+   MSE losses for coordinate diffusion.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.loss.mse.MSELoss
+
+
+Module Contents
+---------------
+
+.. py:class:: MSELoss(coef: float = 1.0, time_weighted: bool = False, square_time_weight: bool = False, t_threshold: float = None)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.models.syncogen.diffusion.loss.base.LossBase`
+
+
+   Mean squared error loss for coordinates with optional time weighting.
+
+   Uses LossBase.coef for weighting (no per-loss mse_coef).
+
+
+   .. py:method:: compute_loss(pred, target) -> tuple[torch.Tensor, torch.Tensor]
+
+      This is batchwise time-weighted MSE loss, but we can't do the full loss here because we need to time-weight by batch item.
+
+      Uses pred.atom_mask (partially noised mask) to only compute loss on atoms present in the noised state.
+
+
+
+   .. py:method:: forward(pred, target, t: torch.Tensor = None) -> torch.Tensor
+
+

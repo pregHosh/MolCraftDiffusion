@@ -1,0 +1,360 @@
+MolecularDiffusion.modules.models.syncogen.api.graph.graph
+==========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.api.graph.graph
+
+.. autoapi-nested-parse::
+
+   Building Block and Reaction Graph representation.
+
+   This module provides BBRxnGraph, a graph representation that stores both
+   building blocks (nodes) and reactions (edges) in one-hot format.
+
+   The canonical representation is one-hot tensors. Derived representations
+   (indices, tuples) are computed lazily and cached.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.api.graph.graph.BBRxnGraph
+
+
+Module Contents
+---------------
+
+.. py:class:: BBRxnGraph(bb_onehot: torch.Tensor, rxn_onehot: torch.Tensor, node_mask: torch.Tensor, bb_pad: int = 1, rxn_pad: int = 2)
+
+   Building block and reaction graph.
+
+   Stores graphs in one-hot format as the canonical representation.
+   Derived representations (indices, tuples) are computed lazily and cached.
+
+   Use factory methods for construction:
+       - BBRxnGraph.from_onehot(bb_onehot, rxn_onehot, node_mask) - node_mask required
+       - BBRxnGraph.from_indices(bb_indices, rxn_indices) - assumes all valid if no mask
+       - BBRxnGraph.from_tuple(bb_indices, rxn_tuple) - assumes all valid if no mask
+       - BBRxnGraph.masked(max_nodes, ...) - creates node_mask from n_nodes
+
+   Properties automatically update when bb_onehot or rxn_onehot are modified.
+
+   Initialize from one-hot tensors (canonical form).
+
+   Prefer using factory methods instead of calling __init__ directly.
+
+   :param bb_onehot: (N, D_bb) or (B, N, D_bb) building block one-hot
+   :param rxn_onehot: (N, N, D_rxn) or (B, N, N, D_rxn) reaction one-hot
+   :param node_mask: Optional (N,) or (B, N) mask for valid nodes
+   :param bb_pad: Number of padding dims in BB one-hot (default 1 for MASK)
+   :param rxn_pad: Number of padding dims in rxn one-hot (default 2 for NO-EDGE, PAD)
+
+
+   .. py:method:: apply_edge_givens() -> BBRxnGraph
+
+      Apply edge invariants: diagonals -> NO-EDGE, padding -> zeros.
+
+      Call this after any operation that might violate edge invariants
+      (e.g., noising, sampling steps).
+
+      :returns: Self (modified in-place) for chaining.
+
+
+
+   .. py:method:: build_rdkit(return_smiles: bool = False)
+
+      Build RDKit molecules/SMILES from this graph.
+
+      :param return_smiles: If True, return SMILES strings instead of Mol objects
+
+      :returns: Molecule/SMILES or None for single graph, list for batched.
+
+      :raises AssertionError: If any node or reaction is still masked.
+
+
+
+   .. py:method:: calculate_bonds(reindex: bool = True, as_onehot_adj_tensor: bool = False)
+
+      Get molecular bonds from graph structure.
+
+      Computes bonds for the final molecule by:
+      1. Getting intra-fragment bonds from each building block
+      2. Adding inter-fragment bonds from reactions (accounting for dropped atoms)
+
+      :param reindex: Whether to reindex atoms to contiguous indices starting from 0
+      :param as_onehot_adj_tensor: Whether to return as one-hot adjacency tensor
+
+      :returns:
+
+                - List of tuples (atom1_idx, atom2_idx, bond_type)
+                - Tensor [n_atoms, n_atoms, 5] with one-hot bond types:
+                  [single, double, triple, aromatic, masked]
+      :rtype: Either
+
+      .. note::
+
+         Only supports unbatched graphs. For batched graphs, index into
+         individual graphs first.
+
+
+
+   .. py:method:: clone() -> BBRxnGraph
+
+      Create a deep copy of this graph.
+
+
+
+   .. py:method:: from_indices(bb_indices: torch.Tensor, rxn_indices: torch.Tensor, node_mask: Optional[torch.Tensor] = None, bb_pad: int = 1, rxn_pad: int = 2) -> BBRxnGraph
+      :classmethod:
+
+
+      Construct from index tensors.
+
+      :param bb_indices: (N,) or (B, N) building block indices
+      :param rxn_indices: (N, N) or (B, N, N) flat reaction indices
+      :param node_mask: Optional (N,) or (B, N) mask. If None, assumes all nodes valid.
+      :param bb_pad: Number of padding dims in BB one-hot
+      :param rxn_pad: Number of padding dims in rxn one-hot
+
+
+
+   .. py:method:: from_onehot(bb_onehot: torch.Tensor, rxn_onehot: torch.Tensor, node_mask: torch.Tensor, bb_pad: int = 1, rxn_pad: int = 2) -> BBRxnGraph
+      :classmethod:
+
+
+      Construct from one-hot tensors.
+
+      :param bb_onehot: (N, D_bb) or (B, N, D_bb) building block one-hot
+      :param rxn_onehot: (N, N, D_rxn) or (B, N, N, D_rxn) reaction one-hot
+      :param node_mask: (N,) or (B, N) mask for valid nodes (REQUIRED)
+      :param bb_pad: Number of padding dims in BB one-hot
+      :param rxn_pad: Number of padding dims in rxn one-hot
+
+
+
+   .. py:method:: from_tuple(bb_indices: torch.Tensor, rxn_tuple: Union[torch.Tensor, List[torch.Tensor]], node_mask: Optional[torch.Tensor] = None, bb_pad: int = 1, rxn_pad: int = 2) -> BBRxnGraph
+      :classmethod:
+
+
+      Construct from BB indices and reaction tuples.
+
+      :param bb_indices: (N,) or (B, N) building block indices
+      :param rxn_tuple: (E, 5) or List[(E_i, 5)] reaction tuples
+                        Each tuple: [rxn_id, node1, node2, center1, center2]
+      :param node_mask: Optional (N,) or (B, N) mask. If None, assumes all nodes valid.
+      :param bb_pad: Number of padding dims in BB one-hot
+      :param rxn_pad: Number of padding dims in rxn one-hot
+
+
+
+   .. py:method:: masked(max_nodes: int, batch_size: Optional[int] = None, n_nodes: Optional[Union[int, List[int]]] = None, bb_pad: int = 1, rxn_pad: int = 2, device: Optional[torch.device] = None) -> BBRxnGraph
+      :classmethod:
+
+
+      Construct a fully masked graph.
+
+      :param max_nodes: Maximum number of nodes (padding length)
+      :param batch_size: Optional batch size for batched initialization
+      :param n_nodes: Actual number of nodes per sample
+      :param bb_pad: Number of padding dims in BB one-hot
+      :param rxn_pad: Number of padding dims in rxn one-hot
+      :param device: Target device for tensors
+
+
+
+   .. py:method:: to(device: torch.device) -> BBRxnGraph
+
+      Move graph to device.
+
+
+
+   .. py:attribute:: VOCAB_NUM_BBS
+      :value: None
+
+
+
+   .. py:attribute:: VOCAB_NUM_CENTERS
+      :value: None
+
+
+
+   .. py:attribute:: VOCAB_NUM_RXNS
+      :value: None
+
+
+
+   .. py:property:: batch_size
+      :type: int
+
+
+      Batch size (raises if not batched).
+
+
+   .. py:property:: bb_indices
+      :type: torch.Tensor
+
+
+      Building block indices (N,) or (B, N). Computed lazily.
+
+
+   .. py:property:: bb_onehot
+      :type: torch.Tensor
+
+
+      Building block one-hot tensor. Setting this invalidates BB caches.
+
+
+   .. py:property:: bb_onehot_dim
+      :type: int
+
+
+      Dimension of BB one-hot.
+
+
+   .. py:attribute:: bb_pad
+      :value: 1
+
+
+
+   .. py:property:: building_blocks
+      :type: Union[List[MolecularDiffusion.modules.models.syncogen.api.graph.building_block.BuildingBlock], List[List[MolecularDiffusion.modules.models.syncogen.api.graph.building_block.BuildingBlock]]]
+
+
+      BuildingBlock objects. Computed lazily.
+
+      :returns: list[BuildingBlock] if unbatched, list[list[BuildingBlock]] if batched.
+
+
+   .. py:property:: compatibility_masks
+      :type: Tuple[torch.Tensor, torch.Tensor]
+
+
+      Compatibility masks for nodes and edges.
+
+      :returns: (bb_mask, rxn_mask) boolean tensors of same shapes as one-hots
+
+
+   .. py:property:: device
+      :type: torch.device
+
+
+      Device of this graph (from primary tensor).
+
+
+   .. py:property:: dtype
+      :type: torch.dtype
+
+
+      Dtype of this graph (from primary tensor).
+
+
+   .. py:property:: ground_truth_atom_mask
+      :type: torch.Tensor
+
+
+      Ground-truth valid-atom mask (True = valid, False = removed/padded).
+
+      Shape: [n_nodes, MAX_ATOMS_PER_BB] for unbatched, or batched accordingly.
+
+
+   .. py:property:: is_batched
+      :type: bool
+
+
+      Whether this graph is batched.
+
+
+   .. py:property:: lengths
+      :type: torch.Tensor
+
+
+      Actual number of valid nodes per sample.
+
+
+   .. py:property:: node_mask
+      :type: torch.Tensor
+
+
+      Node validity mask.
+
+
+   .. py:property:: num_nodes
+      :type: int
+
+
+      Number of nodes (max nodes if batched).
+
+
+   .. py:property:: partial_atom_mask
+      :type: torch.Tensor
+
+
+      Partial validity mask for atoms per building block.
+
+      True indicates valid atom positions for current graph state.
+      - For non-mask building blocks: exactly num_atoms are True
+      - For mask building blocks: all MAX_ATOMS_PER_BB positions are True
+
+      Shape: [n_nodes, MAX_ATOMS_PER_BB] for unbatched, or batched accordingly.
+
+
+   .. py:property:: reactions
+      :type: Union[List[MolecularDiffusion.modules.models.syncogen.api.graph.reaction.Reaction], List[List[MolecularDiffusion.modules.models.syncogen.api.graph.reaction.Reaction]]]
+
+
+      Reaction objects. Computed lazily.
+
+      :returns: list[Reaction] if unbatched, list[list[Reaction]] if batched.
+
+
+   .. py:property:: rxn_indices
+      :type: torch.Tensor
+
+
+      Flat reaction indices (N, N) or (B, N, N). Computed lazily.
+
+
+   .. py:property:: rxn_onehot
+      :type: torch.Tensor
+
+
+      Reaction one-hot tensor. Setting this invalidates reaction caches.
+
+
+   .. py:property:: rxn_onehot_dim
+      :type: int
+
+
+      Dimension of reaction one-hot.
+
+
+   .. py:attribute:: rxn_pad
+      :value: 2
+
+
+
+   .. py:property:: rxn_tuple
+      :type: Union[torch.Tensor, List[torch.Tensor]]
+
+
+      Reaction tuples (E, 5) or List[(E_i, 5)]. Computed lazily.
+
+
+   .. py:property:: unmasked_bbs
+      :type: torch.Tensor
+
+
+      Boolean tensor indicating which BBs are unmasked (have a real building block).
+
+
+   .. py:property:: unmasked_rxns
+      :type: torch.Tensor
+
+
+      Boolean tensor indicating which reactions are not MASK.
+
+      Note: With padding as MASK (matching old code), we only check the MASK channel.
+
+

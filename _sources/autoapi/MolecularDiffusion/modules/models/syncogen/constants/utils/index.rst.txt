@@ -1,0 +1,40 @@
+MolecularDiffusion.modules.models.syncogen.constants.utils
+==========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.constants.utils
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.constants.utils.get_partial_atom_features
+   MolecularDiffusion.modules.models.syncogen.constants.utils.get_partial_bond_features
+   MolecularDiffusion.modules.models.syncogen.constants.utils.get_partial_maccs_keys
+
+
+Module Contents
+---------------
+
+.. py:function:: get_partial_atom_features(X_indices: torch.Tensor) -> torch.Tensor
+
+   Get atom features for a batch of molecules.
+
+
+.. py:function:: get_partial_bond_features(X_indices, mode='adj')
+
+   Constructs a batched adjacency matrix for the full atom graph from fragment adjacency matrices.
+
+   :param X_indices: Fragment indices tensor [BS, n_frags]
+   :param mode: String indicating which features to use - must be "adj" or "feats"
+
+   :returns: [single, double, triple, aromatic, is_masked]
+   :rtype: Adjacency matrix [BS, n_frags*max_atoms, n_frags*max_atoms, 5] where last dim is onehot
+
+
+.. py:function:: get_partial_maccs_keys(X_indices: torch.Tensor) -> torch.Tensor
+
+   Get MACCS keys for a batch of molecules.
+
+

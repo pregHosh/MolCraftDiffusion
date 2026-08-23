@@ -1,0 +1,173 @@
+MolecularDiffusion.modules.models.syncogen.api.ops.graph_ops
+============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.api.ops.graph_ops
+
+.. autoapi-nested-parse::
+
+   Pure tensor operations for graph representation conversions.
+
+   All conversion functions:
+   - Accept (N, ...) for single graphs or (B, N, ...) for batched
+   - Return tensors of matching batch structure
+   - Are stateless and side-effect free
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.api.ops.graph_ops.MASK_CHANNEL
+   MolecularDiffusion.modules.models.syncogen.api.ops.graph_ops.NO_EDGE_CHANNEL
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.api.ops.graph_ops.apply_edge_givens
+   MolecularDiffusion.modules.models.syncogen.api.ops.graph_ops.bb_indices_to_onehot
+   MolecularDiffusion.modules.models.syncogen.api.ops.graph_ops.bb_onehot_to_indices
+   MolecularDiffusion.modules.models.syncogen.api.ops.graph_ops.compute_compatibility_masks
+   MolecularDiffusion.modules.models.syncogen.api.ops.graph_ops.create_masked_graph
+   MolecularDiffusion.modules.models.syncogen.api.ops.graph_ops.rxn_indices_to_onehot
+   MolecularDiffusion.modules.models.syncogen.api.ops.graph_ops.rxn_onehot_to_indices
+   MolecularDiffusion.modules.models.syncogen.api.ops.graph_ops.rxn_onehot_to_tuple
+   MolecularDiffusion.modules.models.syncogen.api.ops.graph_ops.rxn_tuple_to_onehot
+
+
+Module Contents
+---------------
+
+.. py:function:: apply_edge_givens(rxn_onehot: torch.Tensor, node_mask: torch.Tensor) -> torch.Tensor
+
+   Apply edge invariants: diagonals are NO-EDGE.
+
+   :param rxn_onehot: (N, N, D) or (B, N, N, D) reaction one-hot tensor
+   :param node_mask: (N,) or (B, N) boolean/float mask where 1 = valid node (unused, kept for API)
+
+   :returns: rxn_onehot with diagonals set to NO-EDGE (modified in-place and returned)
+
+
+.. py:function:: bb_indices_to_onehot(bb_indices: torch.Tensor, vocab_size: int, pad: int = 1) -> torch.Tensor
+
+   Convert BB indices to one-hot.
+
+   :param bb_indices: (N,) or (B, N) tensor of indices
+   :param vocab_size: Number of building blocks in vocabulary
+   :param pad: Number of padding dimensions (e.g., 1 for MASK token)
+
+   :returns: (N, D) or (B, N, D) one-hot tensor where D = vocab_size + pad
+
+
+.. py:function:: bb_onehot_to_indices(bb_onehot: torch.Tensor) -> torch.Tensor
+
+   Convert BB one-hot to indices.
+
+   :param bb_onehot: (N, D) or (B, N, D)
+
+   :returns: (N,) or (B, N) tensor of indices
+
+
+.. py:function:: compute_compatibility_masks(bb_onehot: torch.Tensor, rxn_onehot: torch.Tensor, compatibility: torch.Tensor, no_edge_channel: int = -2)
+
+   Compute compatibility masks for nodes and edges given selected reactions and BBs.
+
+   Inputs are one-hot tensors; outputs are boolean masks of the same shapes.
+
+   :param bb_onehot: (N, D_bb) or (B, N, D_bb)
+   :param rxn_onehot: (N, N, D_rxn) or (B, N, N, D_rxn)
+   :param compatibility: (N_bbs, N_rxns, N_centers) tensor with values in {0,1,2,3}
+                         0 = incompatible
+                         1 = compatible as reactant 1
+                         2 = compatible as reactant 2
+                         3 = compatible as both
+   :param no_edge_channel: index of the NO-EDGE channel in rxn_onehot
+
+   :returns: bool tensor same shape as bb_onehot
+             compatibility_mask_rxn: bool tensor same shape as rxn_onehot
+   :rtype: compatibility_mask_bb
+
+
+.. py:function:: create_masked_graph(max_nodes: int, vocab_num_bbs: int, vocab_num_rxns: int, vocab_num_centers: int, bb_pad: int = 1, rxn_pad: int = 2, batch_size: Optional[int] = None, n_nodes: Optional[Union[int, List[int]]] = None, device: Optional[torch.device] = None) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+
+   Create masked graph one-hots and a node mask for padding.
+
+   Convention:
+   - ALL BBs (valid and padding): one-hot to MASK channel
+   - ALL edges (valid, padding, and diagonals): one-hot to MASK channel
+     Diagonals get set to NO-EDGE after the first sampling step via apply_edge_givens.
+
+   :param max_nodes: Maximum number of nodes (padding length)
+   :param vocab_num_bbs: Building block vocabulary size
+   :param vocab_num_rxns: Reaction vocabulary size
+   :param vocab_num_centers: Number of reaction centers
+   :param bb_pad: Extra dims for BB features (e.g., MASK token)
+   :param rxn_pad: Extra dims for reaction features (e.g., NO-EDGE, MASK)
+   :param batch_size: Optional batch size for batched initialization
+   :param n_nodes: Actual number of nodes per sample (int for single, list for batched)
+   :param device: Target device for tensors
+
+   :returns: (N, D_bb) or (B, N, D_bb) with MASK tokens for ALL nodes
+             rxn_onehot: (N, N, D_rxn) or (B, N, N, D_rxn) with MASK for ALL edges (including padding)
+             node_mask: (N,) or (B, N) boolean mask indicating valid nodes
+   :rtype: bb_onehot
+
+
+.. py:function:: rxn_indices_to_onehot(rxn_indices: torch.Tensor, vocab_num_rxns: int, vocab_num_centers: int, rxn_pad: int = 2) -> torch.Tensor
+
+   Convert reaction flat indices to one-hot.
+
+   :param rxn_indices: (N, N) or (B, N, N) tensor of flat indices
+   :param vocab_num_rxns: Number of reactions in vocabulary
+   :param vocab_num_centers: Number of reaction centers
+   :param rxn_pad: Number of padding dimensions (default 2 for NO-EDGE and PAD)
+
+   :returns: (N, N, D) or (B, N, N, D) one-hot tensor
+
+
+.. py:function:: rxn_onehot_to_indices(rxn_onehot: torch.Tensor) -> torch.Tensor
+
+   Convert reaction one-hot to flat indices.
+
+   :param rxn_onehot: (N, N, D) or (B, N, N, D)
+
+   :returns: (N, N) or (B, N, N) tensor of flat indices
+
+
+.. py:function:: rxn_onehot_to_tuple(rxn_onehot: torch.Tensor, n_centers: int) -> Union[torch.Tensor, List[torch.Tensor]]
+
+   Convert reaction one-hot to tuple format.
+
+   :param rxn_onehot: (N, N, D) or (B, N, N, D)
+   :param n_centers: Number of reaction centers
+
+   :returns: (E, 5) tensor with [rxn_id, node1, node2, center1, center2]
+             Batched: List of (E_i, 5) tensors
+   :rtype: Single
+
+
+.. py:function:: rxn_tuple_to_onehot(rxn_tuple: Union[torch.Tensor, List[torch.Tensor]], n_nodes: Union[int, List[int], torch.Tensor], vocab_num_rxns: int, vocab_num_centers: int, rxn_pad: int = 2) -> torch.Tensor
+
+   Convert reaction tuples to one-hot matrices.
+
+   :param rxn_tuple: (E, 5) for single or List[(E_i, 5)] for batched
+   :param n_nodes: Number of nodes (int for single, list/tensor for batched)
+   :param vocab_num_rxns: Number of reactions in vocabulary
+   :param vocab_num_centers: Number of reaction centers
+   :param rxn_pad: Number of padding dimensions
+
+   :returns: (N, N, D) or (B, N, N, D) one-hot tensor
+
+
+.. py:data:: MASK_CHANNEL
+   :value: -1
+
+
+.. py:data:: NO_EDGE_CHANNEL
+   :value: -2
+
+

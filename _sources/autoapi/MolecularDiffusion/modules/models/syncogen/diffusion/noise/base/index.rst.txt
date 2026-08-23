@@ -1,0 +1,52 @@
+MolecularDiffusion.modules.models.syncogen.diffusion.noise.base
+===============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.diffusion.noise.base
+
+.. autoapi-nested-parse::
+
+   Base noise schedule class.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.diffusion.noise.base.NoiseBase
+
+
+Module Contents
+---------------
+
+.. py:class:: NoiseBase
+
+   Bases: :py:obj:`abc.ABC`, :py:obj:`torch.nn.Module`
+
+
+   Base noise schedule class.
+
+
+   .. py:method:: forward(t)
+
+      Get total and rate of noise at timestep t.
+
+
+
+   .. py:method:: rate_noise(t)
+      :abstractmethod:
+
+
+      Rate of change of noise (g(t)).
+
+
+
+   .. py:method:: total_noise(t)
+      :abstractmethod:
+
+
+      Total noise (integral of g(t) from 0 to t + g(0)).
+
+
+

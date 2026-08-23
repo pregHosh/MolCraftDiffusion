@@ -1,0 +1,139 @@
+MolecularDiffusion.modules.models.syncogen.constants.constants
+==============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.constants.constants
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.constants.constants.ATOM_TYPES
+   MolecularDiffusion.modules.models.syncogen.constants.constants.BUILDING_BLOCKS
+   MolecularDiffusion.modules.models.syncogen.constants.constants.BUILDING_BLOCKS_IDX_TO_SMI
+   MolecularDiffusion.modules.models.syncogen.constants.constants.BUILDING_BLOCKS_SMI_TO_IDX
+   MolecularDiffusion.modules.models.syncogen.constants.constants.COMPATIBILITY
+   MolecularDiffusion.modules.models.syncogen.constants.constants.COORDS_STD
+   MolecularDiffusion.modules.models.syncogen.constants.constants.FRAGMENT_ATOMADJ
+   MolecularDiffusion.modules.models.syncogen.constants.constants.FRAGMENT_ATOMFEATS
+   MolecularDiffusion.modules.models.syncogen.constants.constants.FRAGMENT_BONDFEATS
+   MolecularDiffusion.modules.models.syncogen.constants.constants.FRAGMENT_MACCS
+   MolecularDiffusion.modules.models.syncogen.constants.constants.MAX_ATOMS_PER_BB
+   MolecularDiffusion.modules.models.syncogen.constants.constants.MAX_PHARM
+   MolecularDiffusion.modules.models.syncogen.constants.constants.N_ATOM_FEATURES
+   MolecularDiffusion.modules.models.syncogen.constants.constants.N_BOND_FEATURES
+   MolecularDiffusion.modules.models.syncogen.constants.constants.N_BUILDING_BLOCKS
+   MolecularDiffusion.modules.models.syncogen.constants.constants.N_CENTERS
+   MolecularDiffusion.modules.models.syncogen.constants.constants.N_PHARM
+   MolecularDiffusion.modules.models.syncogen.constants.constants.N_REACTIONS
+   MolecularDiffusion.modules.models.syncogen.constants.constants.REACTIONS
+   MolecularDiffusion.modules.models.syncogen.constants.constants.TRAIN_SMILES
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.constants.constants.get_vocab
+   MolecularDiffusion.modules.models.syncogen.constants.constants.is_vocab_loaded
+   MolecularDiffusion.modules.models.syncogen.constants.constants.load_vocabulary
+
+
+Module Contents
+---------------
+
+.. py:function:: get_vocab() -> Dict[str, Any]
+
+   Get loaded vocabulary or raise if not initialized.
+
+
+.. py:function:: is_vocab_loaded() -> bool
+
+.. py:function:: load_vocabulary(vocab_dir: pathlib.Path) -> Dict[str, Any]
+
+   Load vocabulary and update module-level constants.
+
+
+.. py:data:: ATOM_TYPES
+   :value: None
+
+
+.. py:data:: BUILDING_BLOCKS
+   :value: None
+
+
+.. py:data:: BUILDING_BLOCKS_IDX_TO_SMI
+   :value: None
+
+
+.. py:data:: BUILDING_BLOCKS_SMI_TO_IDX
+   :value: None
+
+
+.. py:data:: COMPATIBILITY
+   :value: None
+
+
+.. py:data:: COORDS_STD
+   :value: 2.7962567753408374
+
+
+.. py:data:: FRAGMENT_ATOMADJ
+   :value: None
+
+
+.. py:data:: FRAGMENT_ATOMFEATS
+   :value: None
+
+
+.. py:data:: FRAGMENT_BONDFEATS
+   :value: None
+
+
+.. py:data:: FRAGMENT_MACCS
+   :value: None
+
+
+.. py:data:: MAX_ATOMS_PER_BB
+   :value: None
+
+
+.. py:data:: MAX_PHARM
+   :value: 40
+
+
+.. py:data:: N_ATOM_FEATURES
+   :value: None
+
+
+.. py:data:: N_BOND_FEATURES
+   :value: None
+
+
+.. py:data:: N_BUILDING_BLOCKS
+   :value: None
+
+
+.. py:data:: N_CENTERS
+   :value: None
+
+
+.. py:data:: N_PHARM
+   :value: 8
+
+
+.. py:data:: N_REACTIONS
+   :value: None
+
+
+.. py:data:: REACTIONS
+   :value: None
+
+
+.. py:data:: TRAIN_SMILES
+   :type:  list[str]
+   :value: []
+
+

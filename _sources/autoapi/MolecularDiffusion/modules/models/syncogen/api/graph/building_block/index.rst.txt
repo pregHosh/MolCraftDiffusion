@@ -1,0 +1,33 @@
+MolecularDiffusion.modules.models.syncogen.api.graph.building_block
+===================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.api.graph.building_block
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.api.graph.building_block.BuildingBlock
+
+
+Module Contents
+---------------
+
+.. py:class:: BuildingBlock(smiles_or_mol_or_idx)
+
+   Building block.
+
+
+   .. py:method:: get_atom_idx(center_idx)
+
+
+   .. py:attribute:: is_mask
+      :value: False
+
+
+
+   .. py:attribute:: num_atoms
+
+

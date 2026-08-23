@@ -1,0 +1,136 @@
+MolecularDiffusion.modules.models.syncogen.utils.file_readers
+=============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.syncogen.utils.file_readers
+
+.. autoapi-nested-parse::
+
+   File readers for molecular structure files with building block annotations.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.syncogen.utils.file_readers.get_conformer_keys
+   MolecularDiffusion.modules.models.syncogen.utils.file_readers.get_coordinates
+   MolecularDiffusion.modules.models.syncogen.utils.file_readers.get_mol2_data
+   MolecularDiffusion.modules.models.syncogen.utils.file_readers.get_pharmacophores
+   MolecularDiffusion.modules.models.syncogen.utils.file_readers.mol2_to_bonds
+   MolecularDiffusion.modules.models.syncogen.utils.file_readers.mol2_to_coordinates
+   MolecularDiffusion.modules.models.syncogen.utils.file_readers.parse_mol2_file
+   MolecularDiffusion.modules.models.syncogen.utils.file_readers.select_conformer_key
+
+
+Module Contents
+---------------
+
+.. py:function:: get_conformer_keys(data_index: Union[str, int], lmdb_path: pathlib.Path) -> List[str]
+
+   Get list of available conformer keys for a molecule.
+
+   :param data_index: Base identifier for the molecule (e.g. "mol_0")
+   :param lmdb_path: Path to LMDB database
+
+   :returns: List of valid conformer keys for this molecule
+   :rtype: conformer_keys
+
+
+.. py:function:: get_coordinates(key: str, lmdb_path: pathlib.Path, filetype: str = 'mol2', mask_value: float = 0.0, return_bonds: bool = False, atom_mask: Optional[torch.Tensor] = None) -> Tuple[torch.Tensor, torch.Tensor, Optional[torch.Tensor]]
+
+   Read molecular coordinates and optionally bonds from MOL2 data.
+
+   :param key: Conformer key (e.g. "mol_0_final_conf_0")
+   :param lmdb_path: Path to LMDB database
+   :param filetype: File format ('mol2')
+   :param mask_value: Value to use for masked atoms
+   :param return_bonds: If True, also return bond information
+   :param atom_mask: Optional tensor of shape [n_fragments, MAX_ATOMS] indicating valid positions.
+                     If provided, atoms are placed skipping over invalid positions.
+
+   :returns: torch.Tensor of shape [n_fragments, max_atoms_per_fragment, 3]
+             coords_mask: torch.Tensor of shape [n_fragments, max_atoms_per_fragment]
+             bonds: Optional torch.Tensor of shape [n_bonds, 3] (if return_bonds=True)
+   :rtype: coords_tensor
+
+
+.. py:function:: get_mol2_data(key: str, lmdb_path: pathlib.Path) -> bytes
+
+   Get MOL2 data from LMDB database.
+
+   :param key: Key to look up in LMDB (e.g. "mol_0_final_conf_0")
+   :param lmdb_path: Path to LMDB database
+
+   :returns: MOL2 file contents as bytes
+   :rtype: mol2_data
+
+
+.. py:function:: get_pharmacophores(key: Union[str, int], lmdb_path: pathlib.Path) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]
+
+   Read raw pharmacophore data from LMDB database.
+
+   :param key: LMDB key to look up
+   :param lmdb_path: Path to LMDB database
+
+   :returns: Raw tensor of pharmacophore type indices
+             positions: Raw tensor of 3D coordinates for each pharmacophore
+             vectors: Raw tensor of pharmacophore vectors or None if not present
+   :rtype: types
+
+
+.. py:function:: mol2_to_bonds(mol2_data: bytes) -> torch.Tensor
+
+   Parse MOL2 data to extract bond information.
+
+   :param mol2_data: MOL2 file contents
+
+   :returns:
+
+             torch.Tensor of shape [n_bonds, 3] containing (atom1, atom2, bond_type)
+                    Bond types: 1=single, 2=double, 3=triple, 4=aromatic
+   :rtype: bonds
+
+
+.. py:function:: mol2_to_coordinates(mol2_data: bytes, mask_value: float = 0.0, return_bonds: bool = False, atom_mask: Optional[torch.Tensor] = None) -> Tuple[torch.Tensor, torch.Tensor, Optional[torch.Tensor]]
+
+   Parse MOL2 data into fragment-grouped coordinates, accounting for dropped atoms.
+
+   :param mol2_data: MOL2 file contents with building block annotations
+   :param mask_value: Value to use for masked atoms
+   :param return_bonds: If True, also return bonds mapped to flattened padded indices
+   :param atom_mask: Optional tensor of shape [n_fragments, MAX_ATOMS] indicating valid atom positions.
+                     If provided, atoms are placed skipping over invalid positions (dropped atoms).
+                     If None, atoms are placed sequentially (old behavior, incorrect for reactions).
+
+   :returns: torch.Tensor of shape [n_fragments, MAX_ATOMS, 3]
+             coords_mask: torch.Tensor of shape [n_fragments, MAX_ATOMS]
+             bonds: Optional torch.Tensor of shape [n_bonds, 3] containing (flat_i, flat_j, bond_type)
+   :rtype: coords_tensor
+
+
+.. py:function:: parse_mol2_file(mol2_data: bytes) -> Tuple[numpy.ndarray, List[Tuple[int, int, str]], Dict[int, Tuple[str, int, int]]]
+
+   Parse MOL2 data to extract coordinates, bonds, and building block annotations.
+
+   :param mol2_data: MOL2 file contents as bytes
+
+   :returns: numpy array of shape [n_atoms, 3] with atomic coordinates
+             bonds: List of (atom1_idx, atom2_idx, bond_type) tuples (0-indexed)
+             annotations: Dict mapping atom index to (element, bb_idx, order_idx)
+   :rtype: coords
+
+
+.. py:function:: select_conformer_key(data_index: Union[str, int], lmdb_path: pathlib.Path, random_conformer: bool = False) -> str
+
+   Select a conformer key for a molecule.
+
+   :param data_index: Base identifier for the molecule (e.g. "mol_0")
+   :param lmdb_path: Path to LMDB database
+   :param random_conformer: If True, randomly select a conformer, otherwise use conformer 0
+
+   :returns: Selected conformer key (e.g. "mol_0_final_conf_0")
+   :rtype: key
+
+
