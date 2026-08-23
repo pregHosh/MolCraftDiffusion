@@ -1,0 +1,40 @@
+MolecularDiffusion.modules.models.etflow
+========================================
+
+.. py:module:: MolecularDiffusion.modules.models.etflow
+
+.. autoapi-nested-parse::
+
+   ET-Flow: equivariant flow matching for molecular conformer generation.
+
+   Hassan, Shenoy, Lee, Stark, Thaler, Beaini, NeurIPS 2024, arXiv:2410.22388.
+   Upstream: https://github.com/shenoynikhil/ETFlow (MIT).
+
+   Three pieces land here and nothing else:
+
+   ``torchmd``
+       The time-conditioned TorchMD-ET transformer that is the vector field.
+       Module names match the released checkpoints exactly.
+   ``flow``
+       The harmonic prior over the bond-graph Laplacian, the Kabsch alignment
+       that makes the regression target rotation-free, the edge-set rebuild and
+       the batchwise L2 objective. Parameter-free.
+   ``features``
+       ET-Flow's 10-column atom featurization and its chiral-centre tensors.
+
+   Upstream's Lightning/optimizer plumbing, dataset code, CLI and evaluation
+   scripts are deliberately NOT ported -- the platform engine owns all of that.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/etflow/features/index
+   /autoapi/MolecularDiffusion/modules/models/etflow/flow/index
+   /autoapi/MolecularDiffusion/modules/models/etflow/torchmd/index
+
+

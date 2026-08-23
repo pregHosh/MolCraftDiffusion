@@ -1,0 +1,236 @@
+MolecularDiffusion.modules.tasks.diffusion_etflow
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_etflow
+
+.. autoapi-nested-parse::
+
+   ET-Flow conformer-generation task (``task_type: diffusion_etflow``).
+
+   Wraps ``modules/models/etflow`` in the platform's duck-typed ``Task`` contract
+   (docs/adding_new_models.md 2.1) and adapts a ``graph3d`` PyG ``Batch``
+   (``bond_collate: raw``) into the flat tensors ET-Flow's vector field consumes.
+
+   **This model does not invent molecules.** You hand it a molecule you already
+   have -- its atoms and its bonds -- and it returns 3D conformers of exactly that
+   molecule. Nothing about the composition is generated, so:
+
+   * :meth:`ETFlowTask.sample` **raises**. There is no unconditional mode: without
+     a molecular graph there is no bond Laplacian, hence no harmonic prior, no
+     node features and nothing to place. Generation goes through the shared
+     :class:`~MolecularDiffusion.runmodes.generate.tasks_conformer.ConformerFactory`,
+     pointed at by ``configs/interference/gen_conformer.yaml`` -- the same route
+     DiTMC and NExT-Mol take.
+   * ``node_dist_model`` / ``n_node_dist`` are deliberately absent. They exist to
+     let ``GenerativeFactory`` choose a molecule size; ET-Flow's size is dictated
+     by the input molecule.
+
+   BOND MAPPING (canonical -> ET-Flow). ET-Flow has **no bond vocabulary**. Every
+   canonical class ``1=SINGLE 2=DOUBLE 3=TRIPLE 4=AROMATIC`` maps to the same
+   model-side value -- ``edge_type = 1``, "these two atoms are bonded"
+   (``models/utils.py:54-56``, reached because upstream passes ``edge_attr=None``
+   on both its training and inference paths). Class 0 is never an edge, which is
+   the platform's storage rule -- a pass-through. Radius-graph edges take
+   ``edge_type = 0`` and are regenerated from the current coordinates at every
+   step. This is not a lossy adaptation on our side: it is upstream's shipped
+   behaviour, and bond order still reaches the model through ``node_attr``
+   (aromatic flag, hybridization, degree, implicit valence, H count).
+
+   **Do not set ``kekulize: true``**: it would zero the aromatic column and shift
+   hybridization for every ring atom, changing the conditioning distribution the
+   published weights were trained on.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_etflow.ModelTaskFactory
+   MolecularDiffusion.modules.tasks.diffusion_etflow.TIME_HIGH
+   MolecularDiffusion.modules.tasks.diffusion_etflow.TIME_LOW
+   MolecularDiffusion.modules.tasks.diffusion_etflow.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_etflow.ETFlowTask
+   MolecularDiffusion.modules.tasks.diffusion_etflow.ETFlowTaskFactory
+   MolecularDiffusion.modules.tasks.diffusion_etflow.Graph3DBatchToETFlowAdapter
+
+
+Module Contents
+---------------
+
+.. py:class:: ETFlowTask(model_kwargs: dict, sigma: float = 0.1, prior_type: str = 'harmonic', harmonic_alpha: float = 1.0, parity_switch: str | None = 'post_hoc', sample_time_dist: str = 'uniform', max_num_neighbors: int = 32, atom_vocab: list | None = None, task_type: str = 'diffusion_etflow')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   ET-Flow in the platform's Task contract.
+
+   ``self.network`` is named to match the released checkpoints exactly, so
+   ``scripts/convert_checkpoint.py`` is an identity remap that can assert a
+   strict bijection instead of guessing at a rename table.
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor)
+
+
+   .. py:method:: forward(batch: Any)
+
+
+   .. py:method:: generate_conformers(items: list, *, n_timesteps: int = 50, s_churn: float = 1.0, t_min: float = TIME_LOW, t_max: float = TIME_HIGH, std: float = 1.0, sampler_type: str = 'ode')
+
+      Euler-integrate the learned field; one output graph per input item.
+
+      With ``sampler_type: ode`` (upstream's shipped setting) the
+      ``t_min``/``t_max`` window is inert -- the churn branch below is only
+      reachable with ``sampler_type: stochastic``.
+
+
+
+   .. py:method:: predict_and_target(batch: Any, all_loss=None, metric=None)
+
+
+   .. py:method:: sample(*args, **kwargs)
+
+
+   .. py:attribute:: adapter
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: cutoff
+
+
+   .. py:property:: device
+      :type: torch.device
+
+
+
+   .. py:attribute:: harmonic_sampler
+
+
+   .. py:attribute:: max_num_neighbors
+      :value: 32
+
+
+
+   .. py:property:: model
+      :type: ETFlowTask
+
+
+
+   .. py:attribute:: network
+
+
+   .. py:attribute:: parity_switch
+      :value: 'post_hoc'
+
+
+
+   .. py:attribute:: prior_type
+      :value: 'harmonic'
+
+
+
+   .. py:attribute:: sample_time_dist
+      :value: 'uniform'
+
+
+
+   .. py:attribute:: sigma
+      :value: 0.1
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_etflow'
+
+
+
+.. py:class:: ETFlowTaskFactory(task_type: str = 'diffusion_etflow', model: dict | None = None, flow: dict | None = None, atom_vocab: list | None = None, **kwargs: Any)
+
+   Factory instantiated by ``cli/train.py``.
+
+   ``train_set`` is deliberately **not** declared: ET-Flow needs no dataset
+   statistics at construction (no marginals, no valency table, no size
+   histogram), so the declarative injection seam simply does not fire.
+
+
+   .. py:method:: build() -> ETFlowTask
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: flow_kwargs
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: model_kwargs
+
+
+   .. py:attribute:: task
+      :type:  ETFlowTask | None
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_etflow'
+
+
+
+.. py:class:: Graph3DBatchToETFlowAdapter
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   One ``graph3d`` PyG ``Batch`` (or a plain item list) -> flat tensors.
+
+   Two honesty caveats, carried from the integration plan:
+
+   1. **Chirality is recovered from geometry, not read from a SMILES.**
+      ``build_rdkit_mol(..., coords=...)`` runs ``AssignStereochemistryFrom3D``
+      (``data/component/graph3d_dataset.py:184-186``), so the chiral tags come
+      from the input conformer. Upstream reads them off the GEOM mol. This is
+      the first thing to check if a converted pretrained checkpoint
+      underperforms.
+   2. **Achiral molecules** yield ``chiral_index`` of shape ``(1, 0)``, and
+      every consumer downstream must treat that as a no-op rather than an
+      error.
+
+
+   .. py:method:: build(items: list, device: Any = None) -> dict
+
+      Flat, concatenated tensors in item-major order.
+
+
+
+   .. py:method:: forward(batch: Any) -> dict
+
+
+   .. py:attribute:: cache
+
+
+.. py:data:: ModelTaskFactory
+
+.. py:data:: TIME_HIGH
+   :value: 0.9999
+
+
+.. py:data:: TIME_LOW
+   :value: 0.0001
+
+
+.. py:data:: logger
+

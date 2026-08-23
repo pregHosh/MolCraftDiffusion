@@ -1,0 +1,453 @@
+MolecularDiffusion.modules.models.etflow.torchmd
+================================================
+
+.. py:module:: MolecularDiffusion.modules.models.etflow.torchmd
+
+.. autoapi-nested-parse::
+
+   TorchMD-ET equivariant transformer, time-conditioned (ET-Flow's backbone).
+
+   Ported near-verbatim from ET-Flow's ``etflow/networks/torchmd_net/`` (MIT,
+   (c) 2024 Majdi Hassan, Nikhil Shenoy, Jungyoon Lee), which is itself a fork of
+   torchmd-net's ``TorchMD_ET``. **Module names and attribute names are load
+   bearing**: they are exactly the ones in the released Zenodo checkpoints
+   (``network.representation_model.*`` / ``network.output_model.*``), so the
+   conversion in ``docs/model_integrations/etflow/scripts/convert_checkpoint.py``
+   is an identity remap and can assert a strict bijection. Renaming anything here
+   breaks that.
+
+   What differs from upstream's file, and why:
+
+   * ``Scalar``, ``EquivariantVectorAndScalarOutput``, ``Distance``,
+     ``GaussianSmearing``, ``ShiftedSoftplus`` and ``CoorsNorm`` are dropped.
+     None of them is reachable from ``ETFlowTask``: the output head is fixed to
+     ``EquivariantVectorOutput``, ``edge_index`` is always supplied, and
+     upstream's own checkpoint schema types ``rbf_type``/``activation`` as
+     ``Literal["expnorm"]``/``Literal["silu"]`` (``commons/configs.py:102,104``).
+     ``norm_coors`` was never settable from ``BaseFlow`` either
+     (``models/model.py:74-95`` does not pass it), so ``coors_norm`` was always
+     ``nn.Identity``. Dropping them changes no ``state_dict`` key.
+   * The abstract ``OutputModel`` base is flattened into
+     ``EquivariantVectorOutput`` -- it carried no parameters.
+
+   Two upstream quirks are kept deliberately, because the published weights were
+   trained with them and "fixing" either would silently invalidate the
+   checkpoints:
+
+   * ``edge_weight`` is the SQUARED interatomic distance, not the distance
+     (``r_ij`` below). It is what feeds the RBF expansion and the cosine cutoff.
+   * ``EquivariantVectorOutput.pre_reduce`` adds ``pos`` and
+     ``TorchMDDynamics.forward`` immediately subtracts it again.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.etflow.torchmd.act_class_mapping
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.etflow.torchmd.CosineCutoff
+   MolecularDiffusion.modules.models.etflow.torchmd.EquivariantMultiHeadAttention
+   MolecularDiffusion.modules.models.etflow.torchmd.EquivariantVectorOutput
+   MolecularDiffusion.modules.models.etflow.torchmd.ExpNormalSmearing
+   MolecularDiffusion.modules.models.etflow.torchmd.GatedEquivariantBlock
+   MolecularDiffusion.modules.models.etflow.torchmd.NeighborEmbedding
+   MolecularDiffusion.modules.models.etflow.torchmd.TorchMDDynamics
+   MolecularDiffusion.modules.models.etflow.torchmd.TorchMD_ET_dynamics
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.etflow.torchmd.center
+
+
+Module Contents
+---------------
+
+.. py:class:: CosineCutoff(cutoff_lower: float = 0.0, cutoff_upper: float = 5.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Smooth 1 -> 0 envelope. Parameter-free.
+
+
+   .. py:method:: forward(distances: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: cutoff_lower
+      :value: 0.0
+
+
+
+   .. py:attribute:: cutoff_upper
+      :value: 5.0
+
+
+
+.. py:class:: EquivariantMultiHeadAttention(hidden_channels: int, num_rbf: int, distance_influence: str, num_heads: int, activation, attn_activation: str, cutoff_lower: float, cutoff_upper: float, node_attr_dim: int = 0, qk_norm: bool = False, so3_equivariant: bool = False)
+
+   Bases: :py:obj:`torch_geometric.nn.MessagePassing`
+
+
+   One time-conditioned equivariant attention block.
+
+   Time does not get its own embedding: it is concatenated with the node
+   features and the projected ``node_attr`` and mixed by ``mixing_mlp``
+   INSIDE every block (upstream ``model_dynamics.py:116-118``).
+
+   ``so3_equivariant`` splits the value projection into 4 parts instead of 3,
+   adding a cross-product term -- SO(3)- rather than O(3)-equivariant, i.e.
+   chirality-aware by construction. False in both ``o3`` checkpoints.
+
+
+   .. py:method:: aggregate(features, index, ptr, dim_size)
+
+
+   .. py:method:: forward(x, vec, edge_index, r_ij, f_ij, d_ij, t, node_attr)
+
+
+   .. py:method:: message(q_i, k_j, v_j, vec_j, dk, dv, r_ij, d_ij)
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:method:: update(inputs)
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: attn_activation
+
+
+   .. py:attribute:: cutoff
+
+
+   .. py:attribute:: distance_influence
+
+
+   .. py:attribute:: dk_proj
+
+
+   .. py:attribute:: dv_proj
+
+
+   .. py:attribute:: head_dim
+
+
+   .. py:attribute:: hidden_channels
+
+
+   .. py:attribute:: layernorm
+
+
+   .. py:attribute:: mixing_mlp
+
+
+   .. py:attribute:: node_attr_dim
+      :value: 0
+
+
+
+   .. py:attribute:: num_heads
+
+
+   .. py:attribute:: o_proj
+
+
+   .. py:attribute:: qk_norm
+      :value: False
+
+
+
+   .. py:attribute:: so3_equivariant
+      :value: False
+
+
+
+   .. py:attribute:: v_proj
+
+
+   .. py:attribute:: vec_proj
+
+
+.. py:class:: EquivariantVectorOutput(hidden_channels: int, activation: str = 'silu', reduce_op: str = 'sum', layer_norm: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Two gated blocks mapping (scalar, vector) features to one 3-vector.
+
+
+   .. py:method:: pre_reduce(x, v, z, pos, batch)
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: output_network
+
+
+.. py:class:: ExpNormalSmearing(cutoff_lower: float = 0.0, cutoff_upper: float = 5.0, num_rbf: int = 50, trainable: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   PhysNet-style exponential-normal radial basis.
+
+   ``trainable=True`` (upstream's setting) registers ``means``/``betas`` as
+   parameters, which is why they appear in the released checkpoints.
+
+
+   .. py:method:: forward(dist: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: alpha
+      :value: 1.0
+
+
+
+   .. py:attribute:: cutoff_fn
+
+
+   .. py:attribute:: cutoff_lower
+      :value: 0.0
+
+
+
+   .. py:attribute:: cutoff_upper
+      :value: 5.0
+
+
+
+   .. py:attribute:: num_rbf
+      :value: 50
+
+
+
+   .. py:attribute:: trainable
+      :value: True
+
+
+
+.. py:class:: GatedEquivariantBlock(hidden_channels: int, out_channels: int, intermediate_channels: int | None = None, activation: str = 'silu', scalar_activation: bool = False, vector_output: bool = False, layer_norm: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Gated equivariant block (Schuett et al. 2021), TorchMD-ET variant.
+
+
+   .. py:method:: forward(x: torch.Tensor, v: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: layer_norm
+      :value: True
+
+
+
+   .. py:attribute:: out_channels
+
+
+   .. py:attribute:: update_net
+
+
+   .. py:attribute:: vec1_proj
+
+
+   .. py:attribute:: vec2_proj
+
+
+   .. py:attribute:: vector_output
+      :value: False
+
+
+
+.. py:class:: NeighborEmbedding(hidden_channels: int, num_rbf: int, cutoff_lower: float, cutoff_upper: float, max_z: int = 100)
+
+   Bases: :py:obj:`torch_geometric.nn.MessagePassing`
+
+
+   One distance-weighted neighbour aggregation before the transformer.
+
+
+   .. py:method:: forward(z, x, edge_index, edge_weight, edge_attr)
+
+
+   .. py:method:: message(x_j, W)
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: combine
+
+
+   .. py:attribute:: cutoff
+
+
+   .. py:attribute:: distance_proj
+
+
+   .. py:attribute:: embedding
+
+
+.. py:class:: TorchMDDynamics(hidden_channels: int = 128, num_layers: int = 8, num_rbf: int = 64, rbf_type: str = 'expnorm', trainable_rbf: bool = False, activation: str = 'silu', neighbor_embedding: bool = True, cutoff_lower: float = 0.0, cutoff_upper: float = 10.0, max_z: int = 100, node_attr_dim: int = 0, edge_attr_dim: int = 0, attn_activation: str = 'silu', num_heads: int = 8, distance_influence: str = 'both', reduce_op: str = 'sum', qk_norm: bool = False, output_layer_norm: bool = True, clip_during_norm: bool = False, so3_equivariant: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   ET-Flow's vector field: ``(z, t, pos, edge_index) -> (N, 3)``.
+
+   The returned field is centre-of-mass free per graph, which is what makes
+   the flow stay in the zero-COM subspace the harmonic prior lives in.
+
+
+   .. py:method:: forward(z: torch.Tensor, t: torch.Tensor, pos: torch.Tensor, edge_index: torch.Tensor, batch: torch.Tensor, edge_attr: Optional[torch.Tensor] = None, node_attr: Optional[torch.Tensor] = None) -> torch.Tensor
+
+      Args mirror upstream's; ``t`` arrives already broadcast per atom.
+
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: output_model
+
+
+   .. py:attribute:: representation_model
+
+
+.. py:class:: TorchMD_ET_dynamics(hidden_channels: int = 128, num_layers: int = 6, num_rbf: int = 50, rbf_type: str = 'expnorm', trainable_rbf: bool = True, activation: str = 'silu', attn_activation: str = 'silu', neighbor_embedding: bool = True, num_heads: int = 8, distance_influence: str = 'both', cutoff_lower: float = 0.0, cutoff_upper: float = 10.0, max_z: int = 100, node_attr_dim: int = 0, edge_attr_dim: int = 0, qk_norm: bool = False, clip_during_norm: bool = False, so3_equivariant: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   The stack of time-conditioned equivariant attention blocks.
+
+
+   .. py:method:: forward(z: torch.Tensor, t: torch.Tensor, pos: torch.Tensor, batch: torch.Tensor, edge_index: Optional[torch.Tensor] = None, node_attr: Optional[torch.Tensor] = None, edge_attr: Optional[torch.Tensor] = None)
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: activation
+      :value: 'silu'
+
+
+
+   .. py:attribute:: attention_layers
+
+
+   .. py:attribute:: attn_activation
+      :value: 'silu'
+
+
+
+   .. py:attribute:: clip_during_norm
+      :value: False
+
+
+
+   .. py:attribute:: cutoff_lower
+      :value: 0.0
+
+
+
+   .. py:attribute:: cutoff_upper
+      :value: 10.0
+
+
+
+   .. py:attribute:: distance_expansion
+
+
+   .. py:attribute:: distance_influence
+      :value: 'both'
+
+
+
+   .. py:attribute:: edge_attr_dim
+      :value: 0
+
+
+
+   .. py:attribute:: embedding
+
+
+   .. py:attribute:: hidden_channels
+      :value: 128
+
+
+
+   .. py:attribute:: max_z
+      :value: 100
+
+
+
+   .. py:attribute:: neighbor_embedding
+
+
+   .. py:attribute:: node_attr_dim
+      :value: 0
+
+
+
+   .. py:attribute:: num_heads
+      :value: 8
+
+
+
+   .. py:attribute:: num_layers
+      :value: 6
+
+
+
+   .. py:attribute:: num_rbf
+      :value: 50
+
+
+
+   .. py:attribute:: out_norm
+
+
+   .. py:attribute:: rbf_type
+      :value: 'expnorm'
+
+
+
+   .. py:attribute:: trainable_rbf
+      :value: True
+
+
+
+.. py:function:: center(pos: torch.Tensor, batch: torch.Tensor) -> torch.Tensor
+
+   Subtract each graph's centre of mass.
+
+
+.. py:data:: act_class_mapping
+

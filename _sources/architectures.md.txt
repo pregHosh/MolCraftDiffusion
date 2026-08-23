@@ -108,6 +108,7 @@ it moved from the structure you supplied.
 | `diffusion_loqi_flow.yaml` | `diffusion_loqi_flow` | **Start here.** Hand it a structure and it gives back realistic, low-energy 3D shapes of that same molecule, keeping the left/right-handedness and double-bond geometry you drew. Reach for it when the quick built-in conformer tools are not good enough — flexible molecules, large rings, and anything you are about to dock or minimise. You can dial sampling up for quality or down for speed. |
 | `diffusion_loqi.yaml` | `diffusion_loqi` | The same model trained a different way. Slightly rougher structures than the above and fixed to one sampling setting, so prefer the flow version unless you specifically want this checkpoint. |
 | `diffusion_ditmc.yaml` | `diffusion_ditmc` | A transformer alternative to the two above, worth a second opinion on floppy molecules. Give it a molecule and it returns 3D poses of exactly that molecule. Nothing ready-made comes with it, so you must train it first — on a multi-conformer set — and start with LoQi if you cannot. |
+| `diffusion_etflow.yaml` | `diffusion_etflow` | Another second opinion alongside DiTMC, but this one **comes with ready-made weights** — one set for small molecules, one for drug-sized ones — so there is nothing to train first. It needs a **single connected molecule**: given a salt or anything in two pieces it returns a hugely exploded structure instead of stopping with an error, so split those off first. |
 
 ## 5. Transition-metal complex generation
 
@@ -284,3 +285,8 @@ Backbones and objectives integrated here are based on the following work.
   [arXiv:2506.15378](https://arxiv.org/abs/2506.15378) — like **ADiT** (above)
   it builds on the **DiT** backbone of Peebles & Xie, here conditioned on the
   input molecule's bond graph rather than generating composition.
+- **ET-Flow** — Hassan, Shenoy, Lee, Stark, Thaler & Beaini. *ET-Flow:
+  Equivariant Flow-Matching for Molecular Conformer Generation.* NeurIPS 2024.
+  [arXiv:2410.22388](https://arxiv.org/abs/2410.22388) — like **DiTMC** (above)
+  it places an existing bond graph in 3D, but starts sampling from a prior
+  built out of that graph rather than from plain noise.

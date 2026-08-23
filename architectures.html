@@ -718,6 +718,10 @@ it moved from the structure you supplied.</p>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_ditmc</span></code></p></td>
 <td class="text-left"><p>A transformer alternative to the two above, worth a second opinion on floppy molecules. Give it a molecule and it returns 3D poses of exactly that molecule. Nothing ready-made comes with it, so you must train it first — on a multi-conformer set — and start with LoQi if you cannot.</p></td>
 </tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_etflow.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_etflow</span></code></p></td>
+<td class="text-left"><p>Another second opinion alongside DiTMC, but this one <strong>comes with ready-made weights</strong> — one set for small molecules, one for drug-sized ones — so there is nothing to train first. It needs a <strong>single connected molecule</strong>: given a salt or anything in two pieces it returns a hugely exploded structure instead of stopping with an error, so split those off first.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -962,6 +966,11 @@ Molecular Conformers with Diffusion Transformers.</em> NeurIPS 2025.
 <a class="reference external" href="https://arxiv.org/abs/2506.15378">arXiv:2506.15378</a> — like <strong>ADiT</strong> (above)
 it builds on the <strong>DiT</strong> backbone of Peebles &amp; Xie, here conditioned on the
 input molecule’s bond graph rather than generating composition.</p></li>
+<li><p><strong>ET-Flow</strong> — Hassan, Shenoy, Lee, Stark, Thaler &amp; Beaini. <em>ET-Flow:
+Equivariant Flow-Matching for Molecular Conformer Generation.</em> NeurIPS 2024.
+<a class="reference external" href="https://arxiv.org/abs/2410.22388">arXiv:2410.22388</a> — like <strong>DiTMC</strong> (above)
+it places an existing bond graph in 3D, but starts sampling from a prior
+built out of that graph rather than from plain noise.</p></li>
 </ul>
 </section>
 </section>

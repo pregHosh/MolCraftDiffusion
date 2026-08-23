@@ -1,0 +1,168 @@
+MolecularDiffusion.modules.models.etflow.flow
+=============================================
+
+.. py:module:: MolecularDiffusion.modules.models.etflow.flow
+
+.. autoapi-nested-parse::
+
+   ET-Flow's flow-matching pieces: harmonic prior, Kabsch alignment, loss.
+
+   Ported from ET-Flow's ``etflow/models/{utils,loss}.py`` and
+   ``etflow/commons/utils.py`` (MIT, (c) 2024 Majdi Hassan, Nikhil Shenoy,
+   Jungyoon Lee). The harmonic prior itself is adapted upstream from
+   FlowSite/HarmonicFlow (``models/utils.py:91-94``).
+
+   None of this carries parameters, so nothing here appears in a checkpoint.
+
+   The one deliberate change from upstream is the prior's cache key.
+   :class:`HarmonicSampler` upstream keys its eigendecomposition cache by SMILES
+   (``models/utils.py:128-141``), which is only safe if a SMILES pins the atom
+   ORDER too -- upstream's dataset guarantees that, ours does not (the platform
+   stores a canonical SMILES beside whatever atom order the source had, and
+   conformer-pool items carry ``smiles=None`` entirely). Here the caller supplies
+   an opaque per-molecule key derived from the bond graph itself, so a hit is
+   always the same graph in the same order. The cache is also bounded; upstream's
+   grows without limit for the life of the process.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.etflow.flow.UNSPECIFIED_EDGE_TYPE
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.etflow.flow.HarmonicSampler
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.etflow.flow.batchwise_l2_loss
+   MolecularDiffusion.modules.models.etflow.flow.center_of_mass
+   MolecularDiffusion.modules.models.etflow.flow.extend_bond_index
+   MolecularDiffusion.modules.models.etflow.flow.find_rigid_alignment
+   MolecularDiffusion.modules.models.etflow.flow.rmsd_align
+   MolecularDiffusion.modules.models.etflow.flow.signed_volume
+   MolecularDiffusion.modules.models.etflow.flow.switch_parity_of_pos
+   MolecularDiffusion.modules.models.etflow.flow.unsqueeze_like
+
+
+Module Contents
+---------------
+
+.. py:class:: HarmonicSampler(alpha: float = 1.0, cache_size: int = 20000)
+
+   Gaussian prior whose covariance is the bond-graph Laplacian's inverse.
+
+   A sample already looks roughly like a bonded molecule, which is why the
+   flow has so little work to do. A DISCONNECTED graph has extra zero
+   eigenvalues, ``1/sqrt(D)`` blows up, and the sample is NaN -- salts and
+   multi-fragment inputs genuinely do not work with this model.
+
+
+   .. py:method:: diagonalize(n_nodes: int, edges: torch.Tensor, batch: Optional[torch.Tensor] = None, keys: Optional[list] = None) -> tuple[torch.Tensor, torch.Tensor]
+
+      Eigendecompose the batched bond Laplacian, block by block.
+
+
+
+   .. py:method:: sample(size: torch.Size, edge_index: torch.Tensor, batch: Optional[torch.Tensor] = None, keys: Optional[list] = None) -> torch.Tensor
+
+      Draw one prior sample of shape ``size`` = ``(n_total_atoms, 3)``.
+
+
+
+   .. py:attribute:: alpha
+      :value: 1.0
+
+
+
+   .. py:attribute:: cache_size
+      :value: 20000
+
+
+
+   .. py:attribute:: eig_cache
+      :type:  dict
+
+
+.. py:function:: batchwise_l2_loss(prediction: torch.Tensor, target: torch.Tensor, batch: Optional[torch.Tensor] = None) -> torch.Tensor
+
+   Per-atom L2 NORM (not squared), meaned per molecule then over the batch.
+
+   Upstream's objective (``models/loss.py:61-78``). Swapping it for MSE
+   changes the gradient scale and is not a cosmetic difference.
+
+
+.. py:function:: center_of_mass(x: torch.Tensor, dim: int = 0, batch: Optional[torch.Tensor] = None) -> torch.Tensor
+
+   Subtract each graph's mean. ``batch=None`` treats ``x`` as one graph.
+
+
+.. py:function:: extend_bond_index(pos: torch.Tensor, bond_index: torch.Tensor, batch: torch.Tensor, cutoff: float = 10.0, max_num_neighbors: int = 32) -> tuple[torch.Tensor, torch.Tensor]
+
+   Bond edges union a radius graph over the CURRENT coordinates.
+
+   The edge set is therefore rebuilt at every integration step, not fixed.
+   Bond edges keep type 1, radius edges type 0; the two sparse adjacencies are
+   composed by ``coalesce``, which adds values -- so a radius edge coinciding
+   with a bond contributes 0 and the bond survives as 1.
+
+   The assertion is upstream's (``models/utils.py:72-74``). What it catches is
+   a DUPLICATED directed edge -- the realistic mistake here, since the platform
+   stores only the upper triangle and the adapter mirrors it: mirroring an
+   already-bidirectional list makes each edge coalesce to type 2, so the count
+   of positive types falls below the number of edges that went in.
+
+
+.. py:function:: find_rigid_alignment(a: torch.Tensor, b: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]
+
+   Kabsch: rotation+translation taking point cloud ``a`` onto ``b``.
+
+   Reflections are excluded (``det(R) < 0`` flips the last singular vector),
+   which is why aligning the prior to the data cannot launder a mirror image.
+
+
+.. py:function:: rmsd_align(pos: torch.Tensor, ref_pos: torch.Tensor, batch: torch.Tensor) -> torch.Tensor
+
+   Per-molecule Kabsch alignment of ``pos`` onto ``ref_pos``.
+
+   This is the "equivariant" in ET-Flow: aligning the prior sample to the data
+   conformer removes the global rotation from the regression target.
+
+
+.. py:function:: signed_volume(local_coords: torch.Tensor) -> torch.Tensor
+
+   Sign of the tetrahedron volume at each chiral centre (from GeoMol).
+
+   ``local_coords``: ``(n_centers, 4, n_confs, 3)``.
+
+
+.. py:function:: switch_parity_of_pos(pos: torch.Tensor, chiral_index: torch.Tensor, chiral_nbr_index: torch.Tensor, chiral_tag: torch.Tensor, batch: torch.Tensor) -> torch.Tensor
+
+   Post-hoc parity correction: mirror any molecule whose centres inverted.
+
+   Compares the signed volume at every tetrahedral centre with the input's
+   chiral tag and reflects the WHOLE molecule if any centre came out wrong.
+   A no-op for achiral inputs, where ``chiral_index`` is ``(1, 0)``.
+
+
+.. py:function:: unsqueeze_like(x: torch.Tensor, target: torch.Tensor) -> torch.Tensor
+
+   Reshape ``x`` to ``(x.size(0), 1, 1, ...)`` matching ``target.dim()``.
+
+
+.. py:data:: UNSPECIFIED_EDGE_TYPE
+   :value: 0
+
+

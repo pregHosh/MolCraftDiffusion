@@ -1,0 +1,112 @@
+MolecularDiffusion.modules.models.etflow.features
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.models.etflow.features
+
+.. autoapi-nested-parse::
+
+   ET-Flow's 10-column atom featurization and its chiral-centre tensors.
+
+   Ported from ``etflow/commons/utils.py`` (MIT, (c) 2024 Majdi Hassan, Nikhil
+   Shenoy, Jungyoon Lee). The vocabularies below are OGB's; **their order is the
+   offset the released weights were trained with**, so nothing here may be
+   reordered or extended.
+
+   Formal charge is column 2: ``safe_index`` into ``[-5..5] + ["misc"]``, i.e.
+   offset +5 and 12 classes, fed to the network as a raw float index (not a
+   one-hot) through one shared ``node_mlp``. That is the whole of ET-Flow's
+   charge handling -- there is no categorical head.
+
+   Aromaticity and hybridization are columns 7 and 5. This is how bond ORDER
+   reaches a network whose edge channel is a bare bonded/not-bonded flag, and it
+   is why the dataset config must keep ``kekulize: false``.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.etflow.features.NODE_ATTR_DIM
+   MolecularDiffusion.modules.models.etflow.features.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.etflow.features.ETFlowFeatureCache
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.etflow.features.atom_to_feature_vector
+   MolecularDiffusion.modules.models.etflow.features.chirality_sign
+   MolecularDiffusion.modules.models.etflow.features.get_chiral_tensors
+   MolecularDiffusion.modules.models.etflow.features.graph_key
+
+
+Module Contents
+---------------
+
+.. py:class:: ETFlowFeatureCache(maxsize: int = 100000)
+
+   Per-item featurization, cached on the item's exact bytes.
+
+   Both outputs depend on the COORDINATES as well as the graph: the platform
+   stores no chiral tags, so :func:`build_rdkit_mol` recovers them with
+   ``AssignStereochemistryFrom3D`` from the input conformer. Upstream instead
+   reads them off the GEOM mol. That is the first thing to check if a
+   converted pretrained checkpoint underperforms -- and it is why ``pos`` is
+   part of the cache key.
+
+   Conformer generation tiles ONE item into a batch, so the key is identical
+   across the batch and the cache is a straight hit after the first row.
+
+
+   .. py:method:: get(item) -> tuple
+
+      ``item`` is one ``graph3d`` PyG ``Data``.
+
+
+
+.. py:function:: atom_to_feature_vector(atom) -> list[int]
+
+   The 10 OGB-style integer columns ET-Flow feeds its ``node_mlp``.
+
+
+.. py:function:: chirality_sign(atom) -> float
+
+   +1 / -1 for a tagged tetrahedral centre, 0 otherwise.
+
+
+.. py:function:: get_chiral_tensors(mol) -> tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
+
+   Tetrahedral centres with exactly 4 neighbours, for the parity switch.
+
+   Returns ``(chiral_index (1, C), chiral_nbr_index (1, 4C), chiral_tag (C,))``
+   -- upstream's shapes. ``C == 0`` for an achiral molecule, which every
+   downstream consumer must treat as a no-op rather than an error.
+
+
+.. py:function:: graph_key(item) -> bytes
+
+   Cache key for the harmonic prior: the bond graph, coordinates excluded.
+
+   The Laplacian eigendecomposition depends on the bond graph and the atom
+   ORDER, and on nothing else -- so this, not the SMILES upstream uses, is the
+   key that cannot collide across two different molecules or two different
+   orderings of the same one.
+
+
+.. py:data:: NODE_ATTR_DIM
+   :value: 10
+
+
+.. py:data:: logger
+
