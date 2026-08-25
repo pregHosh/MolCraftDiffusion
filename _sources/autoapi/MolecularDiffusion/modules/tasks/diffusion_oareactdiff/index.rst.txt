@@ -1,0 +1,437 @@
+MolecularDiffusion.modules.tasks.diffusion_oareactdiff
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_oareactdiff
+
+.. autoapi-nested-parse::
+
+   OA-ReactDiff: transition-state generation given a reactant and a product.
+
+   Duan, Du, Jia & Kulik, *Accurate transition state generation with an
+   object-aware equivariant elementary reaction diffusion model*, Nature
+   Computational Science 3, 1045-1055 (2023). Ported from
+   https://github.com/chenruduan/OAReactDiff at commit 543aaa8 (MIT).
+
+   Three pieces live here:
+
+   :class:`OAReactDiffTask`
+       The platform task contract around ``EnVariationalDiffusion``. Its
+       ``forward`` reproduces upstream's ``DDPMModule.compute_loss``
+       (``trainer/pl_trainer.py:208-282``) -- the diffusion module returns raw
+       loss *terms*, and the ``pos_only`` denominators plus the per-object
+       ``scales`` weighting are applied here, where upstream applies them.
+
+   :class:`ModelTaskFactory`
+       Hydra entry point for ``configs/tasks/diffusion_oareactdiff.yaml``.
+
+   :class:`OAReactDiffTSGenerator`
+       A thin :class:`~MolecularDiffusion.modules.tasks.ts_generator.
+       TSGenerator` subclass. **It writes no ``run()`` loop and no reaction
+       plumbing.** "Load one fixed structural context, tile it to a batch,
+       sample the unknown part into it, write .xyz" is the shared pocket loop
+       (``pocket_generator.py``); reading one
+       :class:`~MolecularDiffusion.data.component.reaction_data.Reaction`,
+       sizing the transition state from it and writing the reference structures
+       beside the samples is the shared TS layer on top of it
+       (``ts_generator.py``). What is left here is OA-ReactDiff's own: which
+       corpus and filters, which collate, and the RePaint knobs.
+
+   Scope of this integration
+   -------------------------
+
+   **Transition state given a reactant and a product, and nothing else.** Not
+   in scope, each for a stated reason: unconditional whole-reaction generation
+   (``pos_only=True`` means the network cannot invent atom identities, and no
+   generation seam carries a chemical formula); the confidence / recommender
+   model that ranks 5 samples per reaction (no checkpoint for it ships);
+   React-OT (a separate repository and paper); energy-difference conditioning
+   (``condition_nf=1`` was fed constant zeros, so no trained conditional
+   variant exists); validation-time inpainting RMSD (deep-copies the model and
+   runs a 150-step inpaint per validation epoch); and trajectory frames (the
+   frame-saving lines are commented out inside upstream's own ``inpaint``).
+
+   Two facts from the released checkpoint that constrain everything
+   ----------------------------------------------------------------
+
+   * It is ``pos_only=True``: coordinates only. Atom identities are supplied by
+     the input reaction and copied straight through, never generated.
+   * ``ddpm.schedule.gamma_module.gamma`` is a non-learned ``nn.Parameter`` of
+     shape ``(5001,)`` living *in the state dict*, so training ``timesteps`` is
+     pinned at 5000 on load. Sampling does not use it: :meth:`OAReactDiffTask.
+     sample` builds a **fresh** ``polynomial_2`` schedule at ``num_steps`` (250
+     by default) and swaps it in for the duration of the call, which is exactly
+     what upstream's ``evaluate/utils.py:14-32 set_new_schedule`` does.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_oareactdiff.FRAG_FIXED
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_oareactdiff.ModelTaskFactory
+   MolecularDiffusion.modules.tasks.diffusion_oareactdiff.OAReactDiffTSGenerator
+   MolecularDiffusion.modules.tasks.diffusion_oareactdiff.OAReactDiffTask
+
+
+Module Contents
+---------------
+
+.. py:class:: ModelTaskFactory(task_type: str = 'diffusion_oareactdiff', model_config: Optional[Dict[str, Any]] = None, node_nfs: Sequence[int] = (9, 9, 9), edge_nf: int = 0, condition_nf: int = 1, fragment_names: Sequence[str] = ('R', 'TS', 'P'), pos_dim: int = 3, update_pocket_coords: bool = True, condition_time: bool = True, edge_cutoff: Optional[float] = None, norm_values: Sequence[float] = (1.0, 1.0, 1.0), norm_biases: Sequence[float] = (0.0, 0.0, 0.0), noise_schedule: str = 'cosine', timesteps: int = 5000, precision: float = 1e-05, loss_type: str = 'l2', pos_only: bool = True, scales: Sequence[float] = (1.0, 2.0, 1.0), fixed_idx: Optional[List[int]] = None, atom_vocab: Optional[List[str]] = None, **kwargs: Any)
+
+   Hydra entry point for ``configs/tasks/diffusion_oareactdiff.yaml``.
+
+   No ``train_set`` parameter: the only construction-time statistic
+   upstream has a slot for is ``size_histogram``, which is passed ``None``
+   and never read (``en_diffusion.py:31,42``; ``pl_trainer.py:117``). The
+   Section 2.5 seam is therefore not used and ``cli/train.py`` is untouched.
+
+
+   .. py:method:: build() -> OAReactDiffTask
+
+      Assemble dynamics + schedule + normaliser into the task.
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: condition_names
+      :type:  List[str]
+      :value: []
+
+
+
+   .. py:attribute:: condition_nf
+      :value: 1
+
+
+
+   .. py:attribute:: condition_time
+      :value: True
+
+
+
+   .. py:attribute:: edge_cutoff
+      :value: None
+
+
+
+   .. py:attribute:: edge_nf
+      :value: 0
+
+
+
+   .. py:attribute:: fixed_idx
+
+
+   .. py:attribute:: fragment_names
+
+
+   .. py:attribute:: generation_time_keys
+      :value: ('reaction_pkl',)
+
+
+
+   .. py:attribute:: loss_type
+      :value: 'l2'
+
+
+
+   .. py:attribute:: model_config
+
+
+   .. py:attribute:: node_nfs
+
+
+   .. py:attribute:: noise_schedule
+      :value: 'cosine'
+
+
+
+   .. py:attribute:: norm_biases
+
+
+   .. py:attribute:: norm_values
+
+
+   .. py:attribute:: pos_dim
+      :value: 3
+
+
+
+   .. py:attribute:: pos_only
+      :value: True
+
+
+
+   .. py:attribute:: precision
+
+
+   .. py:attribute:: scales
+
+
+   .. py:attribute:: task
+      :type:  Optional[OAReactDiffTask]
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_oareactdiff'
+
+
+
+   .. py:attribute:: timesteps
+      :value: 5000
+
+
+
+   .. py:attribute:: update_pocket_coords
+      :value: True
+
+
+
+.. py:class:: OAReactDiffTSGenerator(task: Any, reaction_index: int = 0, num_generate: int = 20, batch_size: int = 4, num_steps: Optional[int] = 250, resamplings: int = 5, jump_length: int = 5, noise_schedule: str = 'polynomial_2', output_path: str = 'generated_oareactdiff', seed: int = 42, device: Optional[str] = None, **kwargs: Any)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.ts_generator.TSGenerator`
+
+
+   Transition-state generation behind ``interference/gen_oareactdiff_ts``.
+
+   The shape of the request is identical to every other TS run -- *load one
+   reaction, tile it to a batch, sample the transition state into it, write
+   .xyz* -- so the loop is
+   :meth:`~MolecularDiffusion.modules.tasks.pocket_generator.
+   PocketGenerator.run`, the reaction plumbing is
+   :class:`~MolecularDiffusion.modules.tasks.ts_generator.TSGenerator`, and
+   what is left here is only what is OA-ReactDiff's: which corpus, which
+   filters, which collate, and the RePaint knobs.
+
+   The reaction comes from one row of an upstream Transition1x pickle, read
+   with the released training filters (``single_frag_only``,
+   ``use_by_ind``) but **without** ``swapping_react_prod``: a generator
+   should not silently hand back the reverse reaction. With
+   ``valid_addprop.pkl`` that makes ``reaction_index`` an index into the
+   783 held-out single-fragment reactions.
+
+   The output folder is self-describing: ``reactant.xyz``, ``product.xyz``
+   and ``reference_ts.xyz`` are written once alongside the generated
+   ``molecule_NNN.xyz`` files, so a sample can be judged against its own
+   inputs and against the DFT transition state without going back to the
+   pickle.
+
+   The corpus key is ``reaction_pkl`` (declared as
+   :attr:`~MolecularDiffusion.modules.tasks.ts_generator.TSGenerator.
+   source_key`, not as a constructor parameter, so there is exactly one of
+   it); the shared ``interference/gen_ts.yaml`` reaches the same slot as
+   ``reaction_source``. Either works, both together raise.
+
+   Configure the run.
+
+   :param task: the loaded TS task; its ``sample()`` is what gets called.
+   :param reaction_source: where reactions are read from, forwarded to the
+                           base as ``pocket_db``.
+   :param reaction_index: which reaction in that source to generate for.
+   :param num_generate: how many transition states to sample for it.
+   :param batch_size: how many of those to sample at once.
+   :param num_steps: reverse-process steps; ``None`` => the model's default.
+   :param output_path: directory for the .xyz files.
+   :param seed: torch/random/numpy seed.
+   :param device: ``None`` => cuda if available.
+   :param \*\*kwargs: rejected by the base, on purpose -- an unknown
+                      interference key is a typo, not a no-op.
+
+   .. note::
+
+      There is no ``mol_size``. A transition state has exactly the atoms
+      of its reaction, so a size prior would be a lie; :meth:`_sizes`
+      reads the count off the reaction instead.
+
+
+   .. py:attribute:: db_required_msg
+      :value: 'interference.reaction_pkl (or reaction_source, on the shared gen_ts.yaml) is required:...
+
+
+
+   .. py:attribute:: jump_length
+      :value: 5
+
+
+
+   .. py:attribute:: max_retries
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: noise_schedule
+      :value: 'polynomial_2'
+
+
+
+   .. py:attribute:: resamplings
+      :value: 5
+
+
+
+   .. py:attribute:: seed_numpy
+      :value: True
+
+
+
+   .. py:attribute:: source_key
+      :value: 'reaction_pkl'
+
+
+
+   .. py:attribute:: tag
+      :value: 'oareactdiff'
+
+
+
+.. py:class:: OAReactDiffTask(ddpm: MolecularDiffusion.modules.models.oareactdiff.EnVariationalDiffusion, scales: Sequence[float] = (1.0, 2.0, 1.0), loss_type: str = 'l2', pos_only: bool = True, precision: float = 1e-05, atom_vocab: Optional[List[str]] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Task contract around :class:`EnVariationalDiffusion`.
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor) -> Dict[str, torch.Tensor]
+
+      Validation metric.
+
+      Upstream's ``eval_inplaint_batch`` RMSD is deliberately not here: it
+      deep-copies the whole model and runs a 150-step inpaint every
+      ``eval_epochs``, which is far too heavy for a training loop.
+
+
+
+   .. py:method:: forward(batch: Tuple[List[Dict[str, torch.Tensor]], torch.Tensor]) -> Tuple[torch.Tensor, Dict[str, Any]]
+
+      One training/validation step.
+
+      Reproduces ``DDPMModule.compute_loss`` (``pl_trainer.py:208-282``).
+      The ``l2`` branch is taken only while training; validation always
+      takes the VLB branch, which is upstream's behaviour and is why the
+      reported validation loss is on a different scale from the training
+      loss.
+
+      :param batch: ``(representations, conditions)`` from
+                    :func:`~MolecularDiffusion.data.component.oareactdiff_data.
+                    oareactdiff_collate`.
+
+      :returns: ``(loss, stats)``; ``stats`` carries upstream's logged keys.
+
+
+
+   .. py:method:: predict_and_target(batch: Tuple[List[Dict[str, torch.Tensor]], torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+
+      Pure-generative stub: the loss is the prediction, target is zero.
+
+
+
+   .. py:method:: sample(batch_size: Optional[int] = None, nodesxsample: Optional[torch.Tensor] = None, num_steps: Optional[int] = None, batch: Optional[Dict[str, Any]] = None, resamplings: int = 5, jump_length: int = 5, noise_schedule: str = 'polynomial_2', **kwargs: Any) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]
+
+      Generate transition states for the reactions in ``batch``.
+
+      **The signature deviates from Section 2.1 the same way every
+      pocket-conditioned task's does**: the conditioning structure arrives
+      as ``batch``, because there is no channel for "which reaction" in
+      ``sample(batch_size, nodesxsample, ...)``.
+
+      :param batch_size: ignored; taken from ``batch``.
+      :param nodesxsample: accepted and *checked*, not used to choose. The
+                           transition state has exactly as many atoms as the reaction,
+                           so a value disagreeing with it is a caller bug worth
+                           surfacing rather than silently overriding.
+      :param num_steps: reverse-process steps. ``None`` falls back to
+                        ``self.T`` (5000) -- both shipped generate configs set 250,
+                        which is upstream's evaluation setting.
+      :param batch: ``{"representations": [...], "conditions": tensor}``.
+      :param resamplings: RePaint re-noise rounds per jump.
+      :param jump_length: steps to jump back on each resampling.
+      :param noise_schedule: the *sampling* schedule to build fresh.
+
+      :returns: ``(one_hot, charges, coords, node_mask)`` for the transition
+                state only, padded to ``(B, N, .)``.
+
+      :raises ValueError: if ``batch`` is missing, or ``nodesxsample``
+          disagrees with the reaction's atom count.
+
+
+
+   .. py:attribute:: T
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: ddpm
+
+
+   .. py:property:: device
+      :type: torch.device
+
+
+      Device of the first parameter.
+
+
+   .. py:attribute:: loss_type
+      :value: 'l2'
+
+
+
+   .. py:property:: model
+      :type: OAReactDiffTask
+
+
+      There is no separate inner module the generation code needs.
+
+
+   .. py:attribute:: n_fragments
+
+
+   .. py:attribute:: node_dist_model
+      :type:  Any
+      :value: None
+
+
+
+   .. py:attribute:: pos_only
+      :value: True
+
+
+
+   .. py:attribute:: precision
+      :value: 1e-05
+
+
+
+   .. py:attribute:: prop_dist_model
+      :type:  Any
+      :value: None
+
+
+
+   .. py:attribute:: scales
+
+
+   .. py:attribute:: split
+      :value: 'train'
+
+
+
+.. py:data:: FRAG_FIXED
+   :value: [0, 2]
+
+

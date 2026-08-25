@@ -1,0 +1,207 @@
+MolecularDiffusion.modules.models.reactot.schedule
+==================================================
+
+.. py:module:: MolecularDiffusion.modules.models.reactot.schedule
+
+.. autoapi-nested-parse::
+
+   The Schrodinger-bridge schedule React-OT replaces DDPM's noise with.
+
+   Vendored from ``reactot/diffusion/_schedule.py`` and
+   ``reactot/diffusion/_utils.py`` of
+   https://github.com/deepprinciple/react-ot at commit 6dfccd0.
+
+   :class:`SBSchedule` is a **plain Python class, not an** ``nn.Module``. It
+   holds no buffers and nothing of it reaches a state dict -- which is exactly
+   why React-OT's released checkpoint has 246 tensors where OA-ReactDiff's has
+   248 (OA carries two gamma buffers of 5001 + 151 values, and
+   10,651,063 - 10,645,911 = 5,152).
+
+   A load-bearing degeneracy in the released settings
+   --------------------------------------------------
+
+   At ``timesteps=3000`` / ``beta_max=0.3`` / ``power=0.5`` the schedule is
+   **constant**::
+
+       linear_end = beta_max / timesteps = 1e-4 = make_beta_schedule's own
+       hardcoded linear_start, so the linspace is degenerate; ** 0.5 keeps it
+       constant; the mirror-concatenate keeps it constant; and the final
+       renormalisation lands every entry on 5e-5.
+
+   :meth:`~MolecularDiffusion.modules.models.reactot.en_sb.EnSB.ode_sampling`
+   *asserts* that constancy (``en_sb.py:411`` upstream). Changing ``timesteps``
+   or ``beta_max`` therefore breaks the ODE solver with an assertion, and
+   changes the DDPM solver's meaning silently. Both must stay at 3000 / 0.3;
+   see the plan's Hyperparameter Provenance table.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.reactot.schedule.SBSchedule
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.reactot.schedule.compute_gaussian_product_coef
+   MolecularDiffusion.modules.models.reactot.schedule.make_beta_schedule
+   MolecularDiffusion.modules.models.reactot.schedule.space_indices
+   MolecularDiffusion.modules.models.reactot.schedule.unsqueeze_xdim
+
+
+Module Contents
+---------------
+
+.. py:class:: SBSchedule(timesteps: int = 1000, beta_max: float = 0.3, power: float = 1.0, inv_power: float = 1.0)
+
+   The bridge's variance schedule.
+
+   Not an ``nn.Module``: see the module docstring. Everything is derived
+   from ``betas``, so a task rebuilds it from four numbers at construction
+   and the checkpoint carries none of it.
+
+   .. attribute:: timesteps
+
+      grid length, taken from the built array rather than the
+      argument (the mirror-concatenate makes them equal for even
+      ``timesteps``, which 3000 is).
+
+   .. attribute:: betas
+
+      ``(T,)`` per-step variance increments.
+
+   .. attribute:: std_fwd
+
+      ``sqrt(cumsum(betas))``.
+
+   .. attribute:: std_bwd
+
+      ``sqrt(reverse cumsum(betas))``.
+
+   .. attribute:: std_sb
+
+      ``sqrt(var)`` of the bridge marginal.
+
+   .. attribute:: mu_x0
+
+      weight on the endpoint ``x0`` in ``q(x_t | x_0, x_1)``.
+
+   .. attribute:: mu_x1
+
+      weight on the endpoint ``x1``.
+
+   Build the schedule.
+
+   :param timesteps: grid length. **3000 for the released weights.**
+   :param beta_max: total variance. **0.3 for the released weights.**
+   :param power: exponent on the linspace.
+   :param inv_power: exponent on its endpoints.
+
+
+   .. py:method:: get_std_fwd(step: torch.Tensor, xdim: Any = None) -> torch.Tensor
+
+      ``std_fwd`` at ``step``, optionally broadcast to ``xdim``.
+
+      :param step: integer index tensor.
+      :param xdim: trailing shape to broadcast against; ``None`` => none.
+
+      :returns: The looked-up standard deviations.
+
+
+
+   .. py:method:: inflate_batch_array(array: torch.Tensor, target: torch.Tensor) -> torch.Tensor
+      :staticmethod:
+
+
+      Reshape a per-node vector to broadcast against ``target``.
+
+      :param array: ``(n,)`` (or ``(n, 1, ..., 1)``).
+      :param target: the tensor whose rank it must match.
+
+      :returns: ``array`` viewed as ``(n, 1, ..., 1)``.
+
+
+
+   .. py:attribute:: betas
+
+
+   .. py:attribute:: mu_x0
+
+
+   .. py:attribute:: mu_x1
+
+
+   .. py:attribute:: std_bwd
+
+
+   .. py:attribute:: std_fwd
+
+
+   .. py:attribute:: std_sb
+
+
+   .. py:attribute:: timesteps
+
+
+.. py:function:: compute_gaussian_product_coef(sigma1: Any, sigma2: Any) -> Tuple[Any, Any, Any]
+
+   Coefficients of the product of two Gaussians.
+
+   Given ``p1 = N(x_t | x_0, sigma1**2)`` and ``p2 = N(x_t | x_1,
+   sigma2**2)``, return ``(coef1, coef2, var)`` such that
+   ``p1 * p2 = N(x_t | coef1 * x0 + coef2 * x1, var)``.
+
+   Deliberately untyped in its operands: it is called both with numpy
+   arrays (schedule construction) and with torch tensors
+   (:meth:`EnSB.p_posterior`), and does nothing either cannot do.
+
+   :param sigma1: first standard deviation.
+   :param sigma2: second standard deviation.
+
+   :returns: ``(coef1, coef2, var)``.
+
+
+.. py:function:: make_beta_schedule(n_timestep: int = 1000, linear_start: float = 0.0001, linear_end: float = 0.02, power: float = 1.0, inv_power: float = 1.0) -> numpy.ndarray
+
+   Betas for the bridge, as upstream builds them.
+
+   :param n_timestep: length of the grid.
+   :param linear_start: first endpoint, before ``inv_power`` / ``power``.
+   :param linear_end: last endpoint; the caller passes ``beta_max/timesteps``.
+   :param power: exponent applied to the whole linspace.
+   :param inv_power: exponent applied to each endpoint first.
+
+   :returns: ``(n_timestep,)`` float64 array.
+
+
+.. py:function:: space_indices(num_steps: int, count: int) -> List[int]
+
+   ``count`` indices spread evenly over ``range(num_steps)``.
+
+   This is what turns React-OT's 3000-step grid into an ``nfe``-step
+   sampling schedule: ``space_indices(3000, nfe + 1)`` picks the ``nfe + 1``
+   grid points the sampler walks backwards through, so the number of
+   network evaluations is ``nfe``.
+
+   :param num_steps: size of the grid to sample from.
+   :param count: how many indices to take.
+
+   :returns: Ascending list of ``count`` indices, starting at 0.
+
+
+.. py:function:: unsqueeze_xdim(z: torch.Tensor, xdim: Sequence[int]) -> torch.Tensor
+
+   Append ``len(xdim)`` trailing singleton axes to ``z``.
+
+   :param z: tensor to broadcast.
+   :param xdim: the trailing shape it must broadcast against.
+
+   :returns: ``z`` viewed with the extra axes.
+
+

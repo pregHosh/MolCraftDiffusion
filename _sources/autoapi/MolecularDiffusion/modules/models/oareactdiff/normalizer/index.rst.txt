@@ -1,0 +1,76 @@
+MolecularDiffusion.modules.models.oareactdiff.normalizer
+========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.oareactdiff.normalizer
+
+.. autoapi-nested-parse::
+
+   Feature normalisation for OA-ReactDiff.
+
+   Ported verbatim from ``oa_reactdiff/diffusion/_normalizer.py``
+   (commit 543aaa8, MIT).
+
+   ``FEATURE_MAPPING`` is load-bearing beyond normalisation: it also fixes the
+   **column order** of the flat ``xh`` tensor every part of this package speaks
+   in -- ``[pos (3) | one_hot (5) | charge (1)]`` = 9 columns, which is the
+   ``node_nfs: [9, 9, 9]`` in the task config.
+
+   The released checkpoint was trained with ``norm_values=(1,1,1)`` and
+   ``norm_biases=(0,0,0)``, i.e. **no normalisation at all**; the class is kept
+   because the diffusion loss divides by ``norm_values`` in several places and
+   would need those branches anyway.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.oareactdiff.normalizer.FEATURE_MAPPING
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.oareactdiff.normalizer.Normalizer
+
+
+Module Contents
+---------------
+
+.. py:class:: Normalizer(norm_values: Tuple = (1.0, 1.0, 1.0), norm_biases: Tuple = (0.0, 0.0, 0.0), pos_dim: int = 3)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: normalize(representations: List[Dict]) -> List[Dict]
+
+
+   .. py:method:: unnormalize(x: torch.Tensor, ind: int) -> torch.Tensor
+
+
+   .. py:method:: unnormalize_z(z_combined: List[torch.Tensor]) -> List[torch.Tensor]
+
+
+   .. py:attribute:: norm_biases
+      :value: (0.0, 0.0, 0.0)
+
+
+
+   .. py:attribute:: norm_values
+      :value: (1.0, 1.0, 1.0)
+
+
+
+   .. py:attribute:: pos_dim
+      :value: 3
+
+
+
+.. py:data:: FEATURE_MAPPING
+   :value: ['pos', 'one_hot', 'charge']
+
+

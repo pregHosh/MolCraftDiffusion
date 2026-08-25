@@ -1,0 +1,47 @@
+MolecularDiffusion.modules.models.reactot
+=========================================
+
+.. py:module:: MolecularDiffusion.modules.models.reactot
+
+.. autoapi-nested-parse::
+
+   React-OT: a Schrodinger bridge that maps a reactant/product midpoint to
+   the transition state in ten deterministic network evaluations.
+
+   Duan, C.; Liu, G.-H.; Du, Y.; ...; Kulik, H. J., *Optimal transport for
+   generating transition states in chemical reactions*, Nature Machine
+   Intelligence (2025), doi:10.1038/s42256-025-01010-0. Preprint, under a
+   different title: arXiv:2404.13430, *React-OT: Optimal Transport for
+   Generating Transition State in Chemical Reactions*. Ported from
+   https://github.com/deepprinciple/react-ot at commit 6dfccd0.
+
+   **This package holds only what is new.** The network is the same
+   object-aware LEFTNet the ``oareactdiff`` package already ships -- verified
+   by ``diff -u``: identical constructor, and a forward differing only by two
+   periodic-boundary kwargs whose ``pbc=False`` path is the code already here.
+   So there is deliberately **no** ``leftnet.py``, ``dynamics.py``,
+   ``normalizer.py`` or ``graph_tools.py``; all four are imported from
+   ``modules/models/oareactdiff/``, which is not edited. Cross-model imports
+   under ``modules/models/`` are the in-tree pattern (``ipdiff`` imports
+   ``kgdiff``, ``flowmol_graph3d`` imports ``flowmol``, ``geoldm`` imports
+   ``en_diffusion``).
+
+   Its data layer is also shared: ``configs/data/reactot_ts1x_dataset.yaml``
+   points at the *existing* ``OAReactDiffDataModule``, and the task in
+   ``modules/tasks/diffusion_reactot.py`` imports ``_pad_ts`` from
+   ``modules/tasks/diffusion_oareactdiff.py``.
+
+   See ``docs/model_integrations/reactot/INTEGRATION_PLAN.md``.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/reactot/en_sb/index
+   /autoapi/MolecularDiffusion/modules/models/reactot/schedule/index
+
+

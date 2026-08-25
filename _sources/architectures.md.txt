@@ -57,6 +57,15 @@ freely.
 | `diffusion_nextmol.yaml` | `diffusion_nextmol` | NExT-Mol (MoLlama language model + DMT diffusion transformer) | The one that **writes the molecule down before building it in 3D** — a language model proposes the molecule, then diffusion places it in space, so you can read and filter the molecule list before any 3D work starts. Two things to know: the molecules follow general drug-like chemistry rather than your dataset, and anything containing S, Cl or Br is dropped and reported. |
 | `diffusion_jodo.yaml` | `diffusion_jodo` | JODO (diffusion graph transformer, joint 2D+3D) | Draws the bonds for you, like MiDi, and can aim at a target property (gap, dipole, polarizability, HOMO, LUMO, heat capacity). Small or drug-sized molecules. Ask for SDF output or the bonds are dropped. |
 
+Two families take the same de novo idea but split it into two stages: train an
+autoencoder first, then diffuse in its latent space instead of in coordinate
+space directly. Each needs **both** of its configs, VAE first.
+
+| Family | Stage 1 — VAE | Stage 2 — diffusion | Notes |
+| :--- | :--- | :--- | :--- |
+| GeoLDM | `vae_geoldm.yaml` (`vae_geoldm`) | `diffusion_geoldm.yaml` (`diffusion_geoldm`) | The established latent option, but you train two models and the autoencoder here uses the setup the original authors themselves reported as unstable — expect worse than the published numbers. The default EDM is the safer choice. |
+| ADiT | `vae_transformer.yaml` (`vae_transformer`) or `vae_equiformer.yaml` (`vae_equiformer`) | `diffusion_adit.yaml` (`diffusion_adit`) | For **large datasets and long training runs**, not for a few thousand molecules. Two encoder choices: the plain transformer is cheaper, Equiformer is more robust to how the molecule is oriented. Nothing here is pre-trained — you train both stages yourself. |
+
 ## 2. Synthesizable / retroanalysis-constrained generation
 
 Molecules are **assembled**, not drawn atom by atom: the model picks catalogue
@@ -70,19 +79,9 @@ the bonds are thrown away.
 | Task config | `task_type` | Conditioned on | Notes |
 | :--- | :--- | :--- | :--- |
 | `diffusion_syncogen.yaml` | `diffusion_syncogen` | nothing — generates freely | **The one whose molecules come with a synthesis route** — you get something you can order and make. The catalogue is the constraint: 93 building blocks, 19 reactions, at most five blocks per molecule. |
-| `diffusion_syncogen_pharm.yaml` | `diffusion_syncogen_pharm` | **Pharmacophore** points from a reference ligand | The same generator steered to match a reference molecule's pharmacophore — pick it over ShEPhERD in section 4 when the result has to be makeable, and ShEPhERD when you also need shape and electrostatics. |
+| `diffusion_syncogen_pharm.yaml` | `diffusion_syncogen_pharm` | **Pharmacophore** points from a reference ligand | The same generator steered to match a reference molecule's pharmacophore — pick it over ShEPhERD in section 3 when the result has to be makeable, and ShEPhERD when you also need shape and electrostatics. |
 
-## 3. Latent-space diffusion (two-stage)
-
-Train an autoencoder first, then diffuse in its latent space. Each family needs
-**both** of its configs, VAE first.
-
-| Family | Stage 1 — VAE | Stage 2 — diffusion | Notes |
-| :--- | :--- | :--- | :--- |
-| GeoLDM | `vae_geoldm.yaml` (`vae_geoldm`) | `diffusion_geoldm.yaml` (`diffusion_geoldm`) | The established latent option, but you train two models and the autoencoder here uses the setup the original authors themselves reported as unstable — expect worse than the published numbers. The default EDM is the safer choice. |
-| ADiT | `vae_transformer.yaml` (`vae_transformer`) or `vae_equiformer.yaml` (`vae_equiformer`) | `diffusion_adit.yaml` (`diffusion_adit`) | For **large datasets and long training runs**, not for a few thousand molecules. Two encoder choices: the plain transformer is cheaper, Equiformer is more robust to how the molecule is oriented. Nothing here is pre-trained — you train both stages yourself. |
-
-## 4. Conditional and structure-aware generation
+## 3. Conditional and structure-aware generation
 
 Generation steered by an external input — a shape, a pocket, a set of fragments,
 a pharmacophore. These need **paired** data (the condition alongside the
@@ -106,7 +105,7 @@ Synthesizable generation can also be steered by a pharmacophore — see section 
 | `diffusion_diffdec.yaml` | `diffusion_diffdec` | **Scaffold** + anchor atom + **protein pocket** | **R-group decoration**: keep a scaffold fixed, pick one attachment point, and grow a substituent there inside the pocket. Choose it over DiffLinker when you are growing off a scaffold rather than bridging two fragments. One R-group per run, and the model picks its size for you, up to about 10 heavy atoms. |
 | `pharmacophore.yaml` | `diffusion_pharmacophore` | **Pharmacophore** points, electrostatics, shape | ShEPhERD — ligand-based design when you have a reference molecule but **no protein structure**, and the one option here whose conditioning actually works end to end. Shape matching needs to be trained in; the shipped setup covers pharmacophores and electrostatics. It is also the only model in this table that generates bonds. |
 
-## 5. Conformer generation
+## 4. Conformer generation
 
 The odd one out: these do not design molecules. You already know *what* the
 molecule is — you want to know what **shape** it takes. Everything else on this
@@ -126,6 +125,26 @@ it moved from the structure you supplied.
 | `diffusion_loqi.yaml` | `diffusion_loqi` | The same model trained a different way. Slightly rougher structures than the above and fixed to one sampling setting, so prefer the flow version unless you specifically want this checkpoint. |
 | `diffusion_ditmc.yaml` | `diffusion_ditmc` | A transformer alternative to the two above, worth a second opinion on floppy molecules. Give it a molecule and it returns 3D poses of exactly that molecule. Nothing ready-made comes with it, so you must train it first — on a multi-conformer set — and start with LoQi if you cannot. |
 | `diffusion_etflow.yaml` | `diffusion_etflow` | Another second opinion alongside DiTMC, but this one **comes with ready-made weights** — one set for small molecules, one for drug-sized ones — so there is nothing to train first. It needs a **single connected molecule**: given a salt or anything in two pieces it returns a hugely exploded structure instead of stopping with an error, so split those off first. |
+
+## 5. Transition state generation
+
+Give these a reactant and a product and they give you back the transition
+state, in seconds rather than hours. Good enough to optimise from, or to
+screen a lot of reactions cheaply — not a final answer.
+
+These learn from **reactions**, so you need a reaction dataset, not a molecule
+one. Your reactant and product also have to be numbered the same way, atom for
+atom.
+
+| Task config | `task_type` | Takes | Notes |
+| :--- | :--- | :--- | :--- |
+| `diffusion_reactot.yaml` | `diffusion_reactot` | **Reactant + product** geometries | **Start here.** Roughly ten passes instead of a few hundred, so it is quick enough to run over a whole set of reactions. It also covers more ground than OA-ReactDiff: it was trained on reactions where two molecules come together or break apart, not just ones that stay in one piece. The catch is that it gives you the same structure every time you ask, so if an answer looks wrong, asking again will not help — use OA-ReactDiff instead. |
+| `diffusion_oareactdiff.yaml` | `diffusion_oareactdiff` | **Reactant + product** geometries | **Reach for this when one attempt is not enough.** It gives a different structure each time, so you can ask for a batch and keep the best — the usual way to rescue a reaction the fast model gets wrong. Narrower scope: small organic reactions made of H, C, N, O, up to about 23 atoms, with each side a single connected molecule. Slower, by roughly the ratio above. |
+
+Both usually land close enough to the true transition state to optimise from.
+They have not been compared head to head on the same reactions here, so treat
+the choice above as one of speed, coverage and whether you want more than one
+attempt — not as a ranking on accuracy.
 
 ## 6. Transition-metal complex generation
 
@@ -316,3 +335,23 @@ Backbones and objectives integrated here are based on the following work.
   [arXiv:2410.22388](https://arxiv.org/abs/2410.22388) — like **DiTMC** (above)
   it places an existing bond graph in 3D, but starts sampling from a prior
   built out of that graph rather than from plain noise.
+- **OA-ReactDiff** — Duan, Du, Jia & Kulik. *Accurate transition state
+  generation with an object-aware equivariant elementary reaction diffusion
+  model.* Nature Computational Science 3, 1045–1055 (2023).
+  [arXiv:2304.06174](https://arxiv.org/abs/2304.06174) — the **EDM** objective
+  (above) run over three objects at once, reactant and product held at their
+  own centres of mass while the transition state is denoised between them.
+  The backbone is **LEFTNet**: Du, Du, Wang, Feng, Wang, Ji, Gomes & Ma, *A
+  new perspective on building efficient and expressive 3D equivariant graph
+  neural networks*, NeurIPS 2023
+  ([arXiv:2304.04757](https://arxiv.org/abs/2304.04757)).
+- **React-OT** — Duan, Liu, Du, Chen, Zhao, Jia, Gomes, Theodorou & Kulik.
+  *Optimal transport for generating transition states in chemical reactions.*
+  Nature Machine Intelligence 7, 615–626 (2025).
+  [doi:10.1038/s42256-025-01010-0](https://doi.org/10.1038/s42256-025-01010-0)
+  — the successor to **OA-ReactDiff** (above), by the same authors and over the
+  same **LEFTNet** backbone, replacing the denoising diffusion with an
+  optimal-transport bridge that starts from the reactant/product midpoint
+  rather than from noise. The preprint carries a different title: *React-OT:
+  Optimal Transport for Generating Transition State in Chemical Reactions*
+  ([arXiv:2404.13430](https://arxiv.org/abs/2404.13430)).

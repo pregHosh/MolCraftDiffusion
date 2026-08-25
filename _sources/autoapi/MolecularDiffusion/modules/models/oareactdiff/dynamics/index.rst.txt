@@ -1,0 +1,216 @@
+MolecularDiffusion.modules.models.oareactdiff.dynamics
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.models.oareactdiff.dynamics
+
+.. autoapi-nested-parse::
+
+   The denoiser wrapper: three per-object encoder/decoder pairs + LEFTNet.
+
+   Ported from ``oa_reactdiff/dynamics/_base.py`` and
+   ``oa_reactdiff/dynamics/egnn_dynamics.py`` (commit 543aaa8, MIT).
+
+   What this layer actually does, since the name does not say it: the reactant,
+   transition state and product each get their **own** encoder MLP and their own
+   decoder MLP (``fragment_names = ["R", "TS", "P"]`` fixes the order and hence
+   which weights belong to which object). Their encoded node features are then
+   concatenated into one flat tensor, LEFTNet message-passes over the whole
+   thing with ``subgraph_mask`` telling it which edges are intra-object, and the
+   predicted displacement is split back apart and **centred per object** --
+   which is what keeps the three SE(3) frames independent.
+
+   Deviations from upstream, both non-behavioural:
+
+   * Upstream's ``EGNN`` backbone is not ported (OA-ReactDiff's released model is
+     LEFTNet-only), so ``LEFTNet`` is the default ``model=``. The factory passes
+     it explicitly anyway.
+   * Four unreachable methods are dropped: ``enpose_pbc`` (its only call site is
+     commented out at ``egnn_dynamics.py:170``) and the edge-attribute rebuild
+     trio ``adjust_edge_attr_on_new_eij`` / ``create_new_edge_attr`` /
+     ``init_edge_attr``. The latter need edge features, and this model has none
+     -- ``edge_nf`` is 0 in the checkpoint and every ``self.dynamics(...)`` call
+     in ``en_diffusion.py`` passes ``edge_attr=None`` literally. The
+     ``edge_encoder`` / ``edge_decoder`` build path is kept as-is.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.oareactdiff.dynamics.BaseDynamics
+   MolecularDiffusion.modules.models.oareactdiff.dynamics.EGNNDynamics
+
+
+Module Contents
+---------------
+
+.. py:class:: BaseDynamics(model_config: Dict, fragment_names: List[str], node_nfs: List[int], edge_nf: int, condition_nf: int = 0, pos_dim: int = 3, update_pocket_coords: bool = True, condition_time: bool = True, edge_cutoff: Optional[float] = None, model: Optional[torch.nn.Module] = LEFTNet, device: torch.device = torch.device('cuda'), enforce_same_encoding: Optional[List] = None, source: Optional[Dict] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   
+   Base dynamics class set up for denoising process.
+
+   :param model_config: config for the equivariant model.
+   :type model_config: Dict
+   :param fragment_names: list of names for fragments
+   :type fragment_names: List[str]
+   :param node_nfs: list of number of input node attributues.
+   :type node_nfs: List[int]
+   :param edge_nf: number of input edge attributes.
+   :type edge_nf: int
+   :param condition_nf: number of attributes for conditional generation.
+   :type condition_nf: int
+   :param Defaults to 0.:
+   :param pos_dim: dimension for position vector. Defaults to 3.
+   :type pos_dim: int
+   :param update_pocket_coords: whether to update positions of everything.
+                                Defaults to True.
+   :type update_pocket_coords: bool
+   :param condition_time: whether to condition on time. Defaults to True.
+   :type condition_time: bool
+   :param edge_cutoff: cutoff for building intra-fragment edges.
+                       Defaults to None.
+   :type edge_cutoff: Optional[float]
+   :param model: Module for equivariant model. Defaults to None.
+   :type model: Optional[nn.Module]
+
+
+   .. py:method:: build_encoders_decoders(enfoce_name_encoding: Optional[List] = None, source: Optional[Dict] = None)
+
+      Build encoders and decoders for nodes and edges.
+
+
+
+   .. py:method:: forward()
+      :abstractmethod:
+
+
+
+   .. py:attribute:: condition_nf
+      :value: 0
+
+
+
+   .. py:attribute:: condition_time
+      :value: True
+
+
+
+   .. py:attribute:: device
+
+
+   .. py:attribute:: dist_dim
+      :value: 0
+
+
+
+   .. py:attribute:: edge_cutoff
+      :value: None
+
+
+
+   .. py:attribute:: edge_embed_dim
+
+
+   .. py:attribute:: edge_nf
+
+
+   .. py:attribute:: embed_dim
+
+
+   .. py:attribute:: fragment_names
+
+
+   .. py:attribute:: model
+
+
+   .. py:attribute:: model_config
+
+
+   .. py:attribute:: node_nfs
+
+
+   .. py:attribute:: pos_dim
+      :value: 3
+
+
+
+   .. py:attribute:: update_pocket_coords
+      :value: True
+
+
+
+.. py:class:: EGNNDynamics(model_config: Dict, fragment_names: List[str], node_nfs: List[int], edge_nf: int, condition_nf: int = 0, pos_dim: int = 3, update_pocket_coords: bool = True, condition_time: bool = True, edge_cutoff: Optional[float] = None, model: Optional[torch.nn.Module] = LEFTNet, device: torch.device = torch.device('cuda'), enforce_same_encoding: Optional[List] = None, source: Optional[Dict] = None)
+
+   Bases: :py:obj:`BaseDynamics`
+
+
+   
+   Base dynamics class set up for denoising process.
+
+   :param model_config: config for the equivariant model.
+   :type model_config: Dict
+   :param fragment_names: list of names for fragments
+   :type fragment_names: List[str]
+   :param node_nfs: list of number of input node attributues.
+   :type node_nfs: List[int]
+   :param edge_nf: number of input edge attributes.
+   :type edge_nf: int
+   :param condition_nf: number of attributes for conditional generation.
+   :type condition_nf: int
+   :param Defaults to 0.:
+   :param pos_dim: dimension for position vector. Defaults to 3.
+   :type pos_dim: int
+   :param update_pocket_coords: whether to update positions of everything.
+                                Defaults to True.
+   :type update_pocket_coords: bool
+   :param condition_time: whether to condition on time. Defaults to True.
+   :type condition_time: bool
+   :param edge_cutoff: cutoff for building intra-fragment edges.
+                       Defaults to None.
+   :type edge_cutoff: Optional[float]
+   :param model: Module for equivariant model. Defaults to None.
+   :type model: Optional[nn.Module]
+
+
+   .. py:method:: compute_frag_index(n_frag_switch: torch.Tensor) -> numpy.ndarray
+      :staticmethod:
+
+
+
+   .. py:method:: forward(xh: List[torch.Tensor], edge_index: torch.Tensor, t: torch.Tensor, conditions: torch.Tensor, n_frag_switch: torch.Tensor, combined_mask: torch.Tensor, edge_attr: Optional[torch.Tensor] = None) -> Tuple[List[torch.Tensor], torch.Tensor]
+
+      predict noise /mu.
+
+      :param xh: list of concatenated tensors for pos and h
+      :type xh: List[Tensor]
+      :param edge_index: [n_edge, 2]
+      :type edge_index: Tensor
+      :param t: time tensor. If dim is 1, same for all samples;
+                otherwise different t for different samples
+      :type t: Tensor
+      :param conditions: condition tensors
+      :type conditions: Tensor
+      :param n_frag_switch: [n_nodes], fragment index for each nodes
+      :type n_frag_switch: Tensor
+      :param combined_mask: [n_nodes], sample index for each node
+      :type combined_mask: Tensor
+      :param edge_attr: [n_edge, dim_edge_attribute]. Defaults to None.
+      :type edge_attr: Optional[Tensor]
+
+      :raises NotImplementedError: The fragement-position-fixed mode is not implement.
+
+      :returns: updated pos-h and edge attributes
+      :rtype: Tuple[List[Tensor], Tensor]
+
+
+
+   .. py:method:: remove_mean_batch(x, indices)
+      :staticmethod:
+
+
+

@@ -1,0 +1,427 @@
+MolecularDiffusion.modules.models.reactot.en_sb
+===============================================
+
+.. py:module:: MolecularDiffusion.modules.models.reactot.en_sb
+
+.. autoapi-nested-parse::
+
+   React-OT's E(n) Schrodinger bridge over reactant / TS / product.
+
+   Vendored from ``reactot/diffusion/en_sb.py`` of
+   https://github.com/deepprinciple/react-ot at commit 6dfccd0.
+
+   Duan, C.; Liu, G.-H.; Du, Y.; ...; Kulik, H. J., *Optimal transport for
+   generating transition states in chemical reactions*, Nature Machine
+   Intelligence (2025), doi:10.1038/s42256-025-01010-0. Preprint (a **different
+   title**, same work): arXiv:2404.13430, *React-OT: Optimal Transport for
+   Generating Transition State in Chemical Reactions*.
+
+   This is **not** a diffusion model and not flow matching. It is a Schrodinger
+   bridge between two fixed endpoints, solved -- on the released settings --
+   as a deterministic optimal-transport ODE:
+
+   * ``x1`` is the **midpoint of the reactant and product coordinates**,
+     ``(r_pos + p_pos) / 2``;
+   * ``x0`` is the transition state;
+   * training draws ``t ~ U[0, T)``, interpolates
+     ``xt = mu_x0[t] * x0 + mu_x1[t] * x1``, writes ``xt`` into the TS object's
+     position columns, runs the network once and regresses
+     ``(xt - x0) / std_fwd[t]`` under plain ``F.mse_loss``;
+   * ``ot_ode=True`` and ``sigma=0.0`` mean **no Gaussian noise is drawn
+     anywhere**, in training or in sampling. Run it twice, get the same answer.
+
+   There is no ELBO, no KL prior, no ``loss_0`` term and no per-object
+   ``scales`` weighting -- ``scales`` reaches only upstream's dead ``DDPMModule``
+   path, never ``EnSB``. That is why
+   :class:`~MolecularDiffusion.modules.tasks.diffusion_reactot.ReactOTTask`'s
+   ``forward`` is four lines where OA-ReactDiff's is sixty.
+
+   What is reused rather than re-vendored
+   --------------------------------------
+
+   The **network is the same object-aware LEFTNet** OA-ReactDiff already ships,
+   verified by ``diff -u``: identical constructor (14 kwargs, same order, same
+   defaults) and a forward that differs only by two periodic-boundary kwargs
+   whose ``pbc=False`` path is the code already in the tree. So ``LEFTNet``,
+   ``EGNNDynamics``, ``Normalizer``/``FEATURE_MAPPING`` and every graph helper
+   are imported from ``modules/models/oareactdiff/``; nothing there is edited.
+   What is genuinely new -- the bridge and its schedule -- is what lives here.
+
+   Scope, and what was stripped when vendoring
+   -------------------------------------------
+
+   * **Only ``mapping="R+P->TS"`` with ``mapping_initial="RP"``.** The other
+     three mappings and five other initialisers have no released weights and no
+     data path; they raise rather than silently running.
+   * **No ``ei`` solver** (upstream's ``en_sb.py:552-666``): a research variant,
+     absent from the README, needing a 10,000-sample Monte-Carlo quadrature per
+     Adams-Bashforth coefficient. ``ddpm`` and ``ode`` cover every documented
+     use.
+   * **No ``torchdiffeq``.** :meth:`EnSB.ode_sampling` vendors the single
+     midpoint step -- see its ``ponytail:`` comment.
+   * Upstream's monkey-patched ``self.opt`` namespace (set from outside at
+     ``evaluation.py:56``) is replaced by real named arguments; ``ipdb``,
+     ``colored_traceback``, in-sampler ``tqdm`` (the platform's
+     ``PocketGenerator.run`` owns the progress bar) and the dead
+     ``return_timesteps=True`` branch are gone.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.reactot.en_sb.MAPPING
+   MolecularDiffusion.modules.models.reactot.en_sb.MAPPING_INITIAL
+   MolecularDiffusion.modules.models.reactot.en_sb.TS_IDX
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.reactot.en_sb.EnSB
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.reactot.en_sb.compute_scaled_err
+
+
+Module Contents
+---------------
+
+.. py:class:: EnSB(dynamics: MolecularDiffusion.modules.models.oareactdiff.dynamics.EGNNDynamics, schedule: MolecularDiffusion.modules.models.reactot.schedule.SBSchedule, normalizer: MolecularDiffusion.modules.models.oareactdiff.normalizer.Normalizer, size_histogram: Optional[Dict[str, Any]] = None, loss_type: str = 'l2', pos_only: bool = False, fixed_idx: Optional[List[int]] = None, mapping: str = MAPPING, mapping_initial: str = MAPPING_INITIAL, sigma: float = 0.0, ts_guess: Optional[Any] = None, idx: int = TS_IDX)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   The E(n) Schrodinger bridge module.
+
+   .. attribute:: dynamics
+
+      the object-aware ``EGNNDynamics`` wrapper around LEFTNet.
+
+   .. attribute:: schedule
+
+      the bridge's :class:`SBSchedule`. **Not** in the state
+      dict -- it is a plain Python object.
+
+   .. attribute:: normalizer
+
+      identity at the released ``(1,1,1)/(0,0,0)`` settings,
+      kept because it is on the path upstream.
+
+   .. attribute:: T
+
+      ``schedule.timesteps`` (3000 for the released weights).
+
+   Assemble the bridge.
+
+   :param dynamics: object-aware denoiser.
+   :param schedule: bridge schedule. Upstream spells this parameter
+                    ``schdule``; the typo is not preserved, because unlike
+                    OA-ReactDiff's ``EnVariationalDiffusion`` this class is not
+                    a verbatim vendoring and nothing constructs it by that name.
+   :param normalizer: feature normaliser.
+   :param size_histogram: accepted and ignored, exactly as upstream --
+                          it is passed ``None`` (``pl_trainer.py:813``) and never read,
+                          which is why no ``train_set`` is needed at build time.
+   :param loss_type: ``"vlb"`` or ``"l2"``; asserted, then unread.
+   :param pos_only: coordinates only. The released weights are ``True``.
+   :param fixed_idx: **inert**, recorded for fidelity. Upstream stores it
+                     (``en_sb.py:61``) and never reads it: freezing R and P is
+                     structural, since only ``xh_t[idx]``'s position columns are
+                     ever overwritten.
+   :param mapping: must be ``"R+P->TS"``.
+   :param mapping_initial: must be ``"RP"``.
+   :param sigma: endpoint jitter. ``0.0`` on the released weights, and the
+                 code paths that would use it are commented out upstream.
+   :param ts_guess: must be falsy -- ``ts_guess`` conditioning is out of
+                    scope and unreachable on the released checkpoint, whose
+                    ``hyper_parameters`` record ``ts_guess = None``.
+   :param idx: which object is generated; must be 1 (the TS).
+
+   :raises ValueError: for any out-of-scope mapping / initialiser /
+       ``ts_guess``.
+
+
+   .. py:method:: compute_label(step: torch.Tensor, x0: torch.Tensor, xt: torch.Tensor) -> torch.Tensor
+
+      The regression target ``(x_t - x_0) / std_fwd[t]`` (eq. 12).
+
+      :param step: per-row integer timestep.
+      :param x0: target endpoint.
+      :param xt: current bridge state.
+
+      :returns: The label the network is regressed onto.
+
+
+
+   .. py:method:: compute_pred_x0(step: torch.Tensor, xt: torch.Tensor, net_out: torch.Tensor, clip_denoise: bool = False, val: float = 10.0) -> torch.Tensor
+
+      Recover ``x_0`` from a network output -- the inverse of eq. 12.
+
+      :param step: per-row integer timestep.
+      :param xt: current bridge state.
+      :param net_out: what the network predicted at ``xt``.
+      :param clip_denoise: clamp the result into ``[-val, val]`` angstroms.
+      :param val: the clamp bound.
+
+      :returns: The predicted transition state.
+
+
+
+   .. py:method:: ddpm_sampling(steps: Sequence[int], pred_x0_fn: Callable[[torch.Tensor, int], torch.Tensor], x1: torch.Tensor, ot_ode: bool = True, log_steps: Optional[Sequence[int]] = None, cog_mask: Optional[torch.Tensor] = None) -> Tuple[torch.Tensor, torch.Tensor]
+
+      Walk the grid backwards with the Gaussian-product posterior.
+
+      Deterministic at ``ot_ode=True`` (the released setting): the
+      ``randn_like`` in :meth:`p_posterior` is skipped. This is what
+      upstream's shipped FastAPI service runs (``service_ot.py:49``) and
+      what its train script defaults to (``train_rpsb_ts1x.py:32``).
+
+      :param steps: ascending grid indices, ``steps[0] == 0``.
+      :param pred_x0_fn: ``(xt, step) -> predicted x0``.
+      :param x1: the starting structure (the R/P midpoint).
+      :param ot_ode: ``True`` => deterministic.
+      :param log_steps: which grid indices to record a frame at.
+      :param cog_mask: per-row scatter index for CoM removal.
+
+      :returns: ``(xs, pred_x0s)``, each ``(sum n, n_logged, 3)``.
+
+
+
+   .. py:method:: forward(representations: List[Dict[str, torch.Tensor]], conditions: torch.Tensor, ot_ode: bool = True) -> Dict[str, torch.Tensor]
+
+      One training step's loss terms.
+
+      :param representations: the three per-object dicts.
+      :param conditions: the constant-zero ``(B, 1)`` channel.
+      :param ot_ode: ``True`` => no noise is drawn.
+
+      :returns: ``{"loss", "scaled_err", "pred", "label"}``. ``loss`` is already
+                a 0-dim scalar (``F.mse_loss`` reduces by default), so the task
+                does not reduce again.
+
+
+
+   .. py:method:: ode_sampling(steps: Sequence[int], net_out_fn: Callable[[torch.Tensor, torch.Tensor], torch.Tensor], x1: torch.Tensor, t_size: int, method: str = 'midpoint', atol: float = 0.01, rtol: float = 0.01, log_steps: Optional[Sequence[int]] = None, cog_mask: Optional[torch.Tensor] = None) -> Tuple[torch.Tensor, torch.Tensor]
+
+      Integrate the probability-flow ODE backwards, one RK2 step a rung.
+
+      The drift is ``f(t, x) = net_out(x, t) * sqrt(beta / t)`` with
+      ``beta = betas[0] * T``, which is only well defined because the beta
+      schedule is constant -- asserted below, exactly as upstream does
+      (``en_sb.py:411``). See :mod:`~MolecularDiffusion.modules.models.
+      reactot.schedule` for why it is constant and what breaks it.
+
+      :param steps: ascending grid indices, ``steps[0] == 0``.
+      :param net_out_fn: ``(xt, t) -> network output`` with ``t`` of shape
+                         ``(B, 1)``.
+      :param x1: the starting structure (the R/P midpoint).
+      :param t_size: batch size, i.e. how wide ``t`` must be broadcast.
+      :param method: only ``"midpoint"``; anything else raises.
+      :param atol: accepted for signature fidelity and **unused** --
+                   torchdiffeq ignores tolerances for fixed-grid solvers, and
+                   upstream threads ``1e-2`` through to no effect.
+      :param rtol: as ``atol``.
+      :param log_steps: which grid indices to record a frame at.
+      :param cog_mask: per-row scatter index for CoM removal.
+
+      :returns: ``(xs, xs)`` -- upstream returns the trajectory twice here,
+                because the ODE path never computes ``pred_x0``.
+
+      :raises ValueError: for a non-``midpoint`` method, or a grid that does
+          not reach 0.
+      :raises AssertionError: if the beta schedule is not constant.
+
+
+
+   .. py:method:: p_posterior(nprev: int, n: int, x_n: torch.Tensor, x0: torch.Tensor, ot_ode: bool = True) -> torch.Tensor
+
+      Sample ``p(x_{nprev} | x_n, x_0)`` -- upstream's eq. 4.
+
+      :param nprev: the earlier grid index.
+      :param n: the current grid index.
+      :param x_n: state at ``n``.
+      :param x0: predicted endpoint.
+      :param ot_ode: ``True`` => deterministic, no Gaussian term.
+
+      :returns: State at ``nprev``.
+
+
+
+   .. py:method:: q_sample(step: torch.Tensor, x0: torch.Tensor, x1: torch.Tensor, ot_ode: bool = True, mask: Optional[torch.Tensor] = None) -> torch.Tensor
+
+      Sample ``q(x_t | x_0, x_1)`` -- upstream's eq. 11.
+
+      :param step: per-row integer timestep, already inflated to ``(n, 1)``.
+      :param x0: target endpoint (the transition state).
+      :param x1: source endpoint (the R/P midpoint).
+      :param ot_ode: ``True`` (the released setting) skips the Gaussian term
+                     entirely, which is what makes training deterministic.
+      :param mask: per-row scatter index; when given, the result is
+                   CoM-removed per sample.
+
+      :returns: ``x_t``.
+
+
+
+   .. py:method:: sample(representations: List[Dict[str, torch.Tensor]], conditions: torch.Tensor, clip_denoise: bool = True, nfe: Optional[int] = None, log_count: int = 10, ot_ode: bool = True, solver: str = 'ode', method: str = 'midpoint', atol: float = 0.01, rtol: float = 0.01) -> Tuple[torch.Tensor, torch.Tensor]
+
+      Generate transition states for a batch of reactions.
+
+      **``nfe`` is the number of network evaluations**, not a fraction of
+      a 3000-step schedule: ``space_indices(T, nfe + 1)`` picks ``nfe + 1``
+      rungs out of the grid and the loop walks them backwards. The README's
+      published command is ``--solver ode --nfe 10``.
+
+      Upstream's ``x1`` parameter is not reproduced: it is shadowed at
+      ``en_sb.py:477`` by :meth:`sample_batch`'s own return, so the caller
+      never had a say.
+
+      :param representations: the three per-object dicts. **Object 1's
+                              positions must already be the R/P midpoint, not a reference
+                              transition state** -- see
+                              :meth:`~MolecularDiffusion.modules.tasks.diffusion_reactot.
+                              ReactOTTask.sample`, which substitutes it.
+      :param conditions: the constant-zero ``(B, 1)`` channel.
+      :param clip_denoise: clamp each predicted ``x0`` into +/-10 A.
+      :param nfe: network evaluations; ``None`` => ``T - 1``, which is 2999
+                  and almost certainly not what you want.
+      :param log_count: how many trajectory frames to keep. Index 0 of the
+                        returned tensors is always the final structure.
+      :param ot_ode: ``True`` => deterministic.
+      :param solver: ``"ode"`` (the published default) or ``"ddpm"``.
+      :param method: ODE method; only ``"midpoint"``.
+      :param atol: dead for a fixed-grid method; threaded for fidelity.
+      :param rtol: as ``atol``.
+
+      :returns: ``(xs, pred_x0)``, each ``(sum n, n_logged, 3)`` -- **positions
+                only**, not the 9-wide concat. The generated structure is
+                ``xs[:, 0, :]``.
+
+      :raises ValueError: for an unknown solver or an out-of-range ``nfe``.
+
+
+
+   .. py:method:: sample_batch(representations: List[Dict[str, torch.Tensor]], conditions: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, Dict[str, torch.Tensor], torch.Tensor, torch.Tensor]
+
+      Endpoints and graph structure for one batch of reactions.
+
+      :param representations: the three per-object dicts, in ``[R, TS, P]``
+                              order, as :func:`~MolecularDiffusion.data.component.
+                              oareactdiff_data.oareactdiff_collate` builds them.
+      :param conditions: accepted and unused. Upstream reads
+                         ``conditions["ts_guess"]`` here only on the out-of-scope
+                         ``GUESS`` initialiser; on this path the channel is the
+                         constant-zero ``(B, 1)`` tensor the released weights saw.
+
+      :returns: ``(x0, x1, cond, x0_size, x0_other)`` -- the transition state,
+                the reactant/product midpoint (CoM-removed per sample), a dict
+                of graph tensors, the TS atom counts and the TS's non-positional
+                columns.
+
+
+
+   .. py:attribute:: T
+
+
+   .. py:attribute:: dynamics
+
+
+   .. py:attribute:: fixed_idx
+
+
+   .. py:attribute:: fragment_names
+
+
+   .. py:attribute:: idx
+      :value: 1
+
+
+
+   .. py:attribute:: loss_type
+      :value: 'l2'
+
+
+
+   .. py:attribute:: mapping
+      :value: 'R+P->TS'
+
+
+
+   .. py:attribute:: mapping_initial
+      :value: 'RP'
+
+
+
+   .. py:attribute:: node_nfs
+
+
+   .. py:attribute:: norm_biases
+
+
+   .. py:attribute:: norm_values
+
+
+   .. py:attribute:: normalizer
+
+
+   .. py:attribute:: pos_dim
+
+
+   .. py:attribute:: pos_only
+      :value: False
+
+
+
+   .. py:attribute:: schedule
+
+
+   .. py:attribute:: sigma
+      :value: 0.0
+
+
+
+   .. py:attribute:: size_histogram
+      :value: None
+
+
+
+   .. py:attribute:: ts_guess
+      :value: None
+
+
+
+.. py:function:: compute_scaled_err(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor
+
+   Mean absolute error scaled by the label's own magnitude.
+
+   Upstream's checkpoint callback monitors ``val_ep_scaled_err``, not the
+   loss, so this travels alongside it (``en_sb.py:26-28``).
+
+   :param x: prediction.
+   :param y: label.
+
+   :returns: 0-dim scalar.
+
+
+.. py:data:: MAPPING
+   :value: 'R+P->TS'
+
+
+.. py:data:: MAPPING_INITIAL
+   :value: 'RP'
+
+
+.. py:data:: TS_IDX
+   :value: 1
+
+

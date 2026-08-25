@@ -1,0 +1,122 @@
+MolecularDiffusion.modules.models.oareactdiff.graph_tools
+=========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.oareactdiff.graph_tools
+
+.. autoapi-nested-parse::
+
+   Graph + batched-tensor helpers for OA-ReactDiff's multi-object diffusion.
+
+   Ported verbatim from ``oa_reactdiff/utils/_graph_tools.py`` and
+   ``oa_reactdiff/diffusion/_utils.py`` (commit 543aaa8, MIT).
+
+   The one idea worth knowing before reading anything else in this package: a
+   "reaction" is **three separate node sets** (reactant, transition state,
+   product) flat-concatenated into one tensor, with two index vectors over the
+   rows --
+
+   ``combined_mask``  which *sample* in the batch a node belongs to
+   ``n_frag_switch``  which *object* (0=R, 1=TS, 2=P) a node belongs to
+
+   Edges are fully connected within a sample (``get_edges_index``), and
+   ``get_subgraph_mask`` then marks which of those edges stay inside one object.
+   That mask is what makes the network "object aware": the centre of gravity is
+   removed per object, not per sample, so each of R/TS/P keeps its own SE(3)
+   frame.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.oareactdiff.graph_tools.assert_mean_zero_with_mask
+   MolecularDiffusion.modules.models.oareactdiff.graph_tools.cdf_standard_gaussian
+   MolecularDiffusion.modules.models.oareactdiff.graph_tools.get_edges_index
+   MolecularDiffusion.modules.models.oareactdiff.graph_tools.get_mask_for_frag
+   MolecularDiffusion.modules.models.oareactdiff.graph_tools.get_n_frag_switch
+   MolecularDiffusion.modules.models.oareactdiff.graph_tools.get_subgraph_mask
+   MolecularDiffusion.modules.models.oareactdiff.graph_tools.remove_mean_batch
+   MolecularDiffusion.modules.models.oareactdiff.graph_tools.sample_center_gravity_zero_gaussian_batch
+   MolecularDiffusion.modules.models.oareactdiff.graph_tools.sample_gaussian
+   MolecularDiffusion.modules.models.oareactdiff.graph_tools.sum_except_batch
+
+
+Module Contents
+---------------
+
+.. py:function:: assert_mean_zero_with_mask(x, node_mask, eps=1e-10)
+
+.. py:function:: cdf_standard_gaussian(x)
+
+.. py:function:: get_edges_index(combined_mask: torch.Tensor, pos: Optional[torch.Tensor] = None, edge_cutoff: Optional[float] = None, remove_self_edge: bool = False) -> torch.Tensor
+
+   :param combined_mask: Combined mask for all fragments.
+                         Edges are built for nodes with the same indexes in the mask.
+   :type combined_mask: Tensor
+   :param pos: 3D coordinations of nodes. Defaults to None.
+   :type pos: Optional[Tensor]
+   :param edge_cutoff: cutoff for building edges within a fragment.
+                       Defaults to None.
+   :type edge_cutoff: Optional[float]
+   :param remove_self_edge: whether to remove self-connecting edge (i.e., ii).
+                            Defaults to False.
+   :type remove_self_edge: bool
+
+   :returns: [2, n_edges], i for node index.
+   :rtype: Tensor
+
+
+.. py:function:: get_mask_for_frag(natm: torch.Tensor) -> torch.Tensor
+
+   Get fragment index for each node
+   Example: Tensor([2, 0, 3]) -> [0, 0, 2, 2, 2]
+
+   :param natm: number of nodes per small fragment
+   :type natm: Tensor
+
+   :returns: [n_node], the natural index of fragment a node belongs to
+   :rtype: Tensor
+
+
+.. py:function:: get_n_frag_switch(natm_list: List[torch.Tensor]) -> torch.Tensor
+
+   Get the type of fragments to which each node belongs
+   Example: [Tensor(1, 1), Tensor(2, 1)] -> [0, 0, 1, 1 ,1]
+
+   :param natm_list: [Tensor([number of atoms per small fragment])]
+   :type natm_list: List[Tensor]
+
+   :returns: [n_nodes], type of fragment each node belongs to
+   :rtype: Tensor
+
+
+.. py:function:: get_subgraph_mask(edge_index: torch.Tensor, n_frag_switch: torch.Tensor) -> torch.Tensor
+
+   Filter out edges that have inter-fragment connections.
+   Example:
+   edge_index: [
+       [0, 0, 1, 1, 2, 2],
+       [1, 2, 0, 2, 0, 1],
+       ]
+   n_frag_switch: [0, 0, 1]
+   -> [1, 0, 1, 0, 0, 0]
+
+   :param edge_index: e_ij
+   :type edge_index: Tensor
+   :param n_frag_switch: fragment that a node belongs to
+   :type n_frag_switch: Tensor
+
+   :returns: [n_edge], 1 for inner- and 0 for inter-fragment edge
+   :rtype: Tensor
+
+
+.. py:function:: remove_mean_batch(x, indices)
+
+.. py:function:: sample_center_gravity_zero_gaussian_batch(size: List[int], indices: List[torch.Tensor]) -> torch.Tensor
+
+.. py:function:: sample_gaussian(size, device)
+
+.. py:function:: sum_except_batch(x, indices, dim_size)
+

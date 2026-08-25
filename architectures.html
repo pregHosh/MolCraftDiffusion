@@ -310,9 +310,11 @@
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/feature/index.html">MolecularDiffusion.data.component.feature</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/graph3d_dataset/index.html">MolecularDiffusion.data.component.graph3d_dataset</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/kgdiff_data/index.html">MolecularDiffusion.data.component.kgdiff_data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/oareactdiff_data/index.html">MolecularDiffusion.data.component.oareactdiff_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/pharmacophore/index.html">MolecularDiffusion.data.component.pharmacophore</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/pmdm_data/index.html">MolecularDiffusion.data.component.pmdm_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/pointcloud/index.html">MolecularDiffusion.data.component.pointcloud</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/reaction_data/index.html">MolecularDiffusion.data.component.reaction_data</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/data/dataloader/index.html">MolecularDiffusion.data.dataloader</a></li>
@@ -580,6 +582,32 @@ freely.</p>
 </tbody>
 </table>
 </div>
+<p>Two families take the same de novo idea but split it into two stages: train an
+autoencoder first, then diffuse in its latent space instead of in coordinate
+space directly. Each needs <strong>both</strong> of its configs, VAE first.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Family</p></th>
+<th class="head text-left"><p>Stage 1 — VAE</p></th>
+<th class="head text-left"><p>Stage 2 — diffusion</p></th>
+<th class="head text-left"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>GeoLDM</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">vae_geoldm.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">vae_geoldm</span></code>)</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_geoldm.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">diffusion_geoldm</span></code>)</p></td>
+<td class="text-left"><p>The established latent option, but you train two models and the autoencoder here uses the setup the original authors themselves reported as unstable — expect worse than the published numbers. The default EDM is the safer choice.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>ADiT</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">vae_transformer.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">vae_transformer</span></code>) or <code class="docutils literal notranslate"><span class="pre">vae_equiformer.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">vae_equiformer</span></code>)</p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_adit.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">diffusion_adit</span></code>)</p></td>
+<td class="text-left"><p>For <strong>large datasets and long training runs</strong>, not for a few thousand molecules. Two encoder choices: the plain transformer is cheaper, Equiformer is more robust to how the molecule is oriented. Nothing here is pre-trained — you train both stages yourself.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
 <section id="synthesizable-retroanalysis-constrained-generation">
 <h2>2. Synthesizable / retroanalysis-constrained generation<a class="headerlink" href="#synthesizable-retroanalysis-constrained-generation" title="Link to this heading">¶</a></h2>
@@ -608,42 +636,14 @@ the bonds are thrown away.</p>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_syncogen_pharm.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_syncogen_pharm</span></code></p></td>
 <td class="text-left"><p><strong>Pharmacophore</strong> points from a reference ligand</p></td>
-<td class="text-left"><p>The same generator steered to match a reference molecule’s pharmacophore — pick it over ShEPhERD in section 4 when the result has to be makeable, and ShEPhERD when you also need shape and electrostatics.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="latent-space-diffusion-two-stage">
-<h2>3. Latent-space diffusion (two-stage)<a class="headerlink" href="#latent-space-diffusion-two-stage" title="Link to this heading">¶</a></h2>
-<p>Train an autoencoder first, then diffuse in its latent space. Each family needs
-<strong>both</strong> of its configs, VAE first.</p>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head text-left"><p>Family</p></th>
-<th class="head text-left"><p>Stage 1 — VAE</p></th>
-<th class="head text-left"><p>Stage 2 — diffusion</p></th>
-<th class="head text-left"><p>Notes</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td class="text-left"><p>GeoLDM</p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">vae_geoldm.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">vae_geoldm</span></code>)</p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_geoldm.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">diffusion_geoldm</span></code>)</p></td>
-<td class="text-left"><p>The established latent option, but you train two models and the autoencoder here uses the setup the original authors themselves reported as unstable — expect worse than the published numbers. The default EDM is the safer choice.</p></td>
-</tr>
-<tr class="row-odd"><td class="text-left"><p>ADiT</p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">vae_transformer.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">vae_transformer</span></code>) or <code class="docutils literal notranslate"><span class="pre">vae_equiformer.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">vae_equiformer</span></code>)</p></td>
-<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_adit.yaml</span></code> (<code class="docutils literal notranslate"><span class="pre">diffusion_adit</span></code>)</p></td>
-<td class="text-left"><p>For <strong>large datasets and long training runs</strong>, not for a few thousand molecules. Two encoder choices: the plain transformer is cheaper, Equiformer is more robust to how the molecule is oriented. Nothing here is pre-trained — you train both stages yourself.</p></td>
+<td class="text-left"><p>The same generator steered to match a reference molecule’s pharmacophore — pick it over ShEPhERD in section 3 when the result has to be makeable, and ShEPhERD when you also need shape and electrostatics.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 </section>
 <section id="conditional-and-structure-aware-generation">
-<h2>4. Conditional and structure-aware generation<a class="headerlink" href="#conditional-and-structure-aware-generation" title="Link to this heading">¶</a></h2>
+<h2>3. Conditional and structure-aware generation<a class="headerlink" href="#conditional-and-structure-aware-generation" title="Link to this heading">¶</a></h2>
 <p>Generation steered by an external input — a shape, a pocket, a set of fragments,
 a pharmacophore. These need <strong>paired</strong> data (the condition alongside the
 molecule); a plain molecule dataset is not enough. Except for ShEPhERD, none
@@ -720,7 +720,7 @@ afterwards. Most are heavy-atom only; KGDiff, PMDM and Apo2Mol also place hydrog
 </div>
 </section>
 <section id="conformer-generation">
-<h2>5. Conformer generation<a class="headerlink" href="#conformer-generation" title="Link to this heading">¶</a></h2>
+<h2>4. Conformer generation<a class="headerlink" href="#conformer-generation" title="Link to this heading">¶</a></h2>
 <p>The odd one out: these do not design molecules. You already know <em>what</em> the
 molecule is — you want to know what <strong>shape</strong> it takes. Everything else on this
 page invents new chemistry; this section keeps yours exactly as drawn and only
@@ -759,6 +759,42 @@ it moved from the structure you supplied.</p>
 </tbody>
 </table>
 </div>
+</section>
+<section id="transition-state-generation">
+<h2>5. Transition state generation<a class="headerlink" href="#transition-state-generation" title="Link to this heading">¶</a></h2>
+<p>Give these a reactant and a product and they give you back the transition
+state, in seconds rather than hours. Good enough to optimise from, or to
+screen a lot of reactions cheaply — not a final answer.</p>
+<p>These learn from <strong>reactions</strong>, so you need a reaction dataset, not a molecule
+one. Your reactant and product also have to be numbered the same way, atom for
+atom.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Task config</p></th>
+<th class="head text-left"><p><code class="docutils literal notranslate"><span class="pre">task_type</span></code></p></th>
+<th class="head text-left"><p>Takes</p></th>
+<th class="head text-left"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_reactot.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_reactot</span></code></p></td>
+<td class="text-left"><p><strong>Reactant + product</strong> geometries</p></td>
+<td class="text-left"><p><strong>Start here.</strong> Roughly ten passes instead of a few hundred, so it is quick enough to run over a whole set of reactions. It also covers more ground than OA-ReactDiff: it was trained on reactions where two molecules come together or break apart, not just ones that stay in one piece. The catch is that it gives you the same structure every time you ask, so if an answer looks wrong, asking again will not help — use OA-ReactDiff instead.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_oareactdiff.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_oareactdiff</span></code></p></td>
+<td class="text-left"><p><strong>Reactant + product</strong> geometries</p></td>
+<td class="text-left"><p><strong>Reach for this when one attempt is not enough.</strong> It gives a different structure each time, so you can ask for a batch and keep the best — the usual way to rescue a reaction the fast model gets wrong. Narrower scope: small organic reactions made of H, C, N, O, up to about 23 atoms, with each side a single connected molecule. Slower, by roughly the ratio above.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Both usually land close enough to the true transition state to optimise from.
+They have not been compared head to head on the same reactions here, so treat
+the choice above as one of speed, coverage and whether you want more than one
+attempt — not as a ranking on accuracy.</p>
 </section>
 <section id="transition-metal-complex-generation">
 <h2>6. Transition-metal complex generation<a class="headerlink" href="#transition-metal-complex-generation" title="Link to this heading">¶</a></h2>
@@ -1014,6 +1050,26 @@ Equivariant Flow-Matching for Molecular Conformer Generation.</em> NeurIPS 2024.
 <a class="reference external" href="https://arxiv.org/abs/2410.22388">arXiv:2410.22388</a> — like <strong>DiTMC</strong> (above)
 it places an existing bond graph in 3D, but starts sampling from a prior
 built out of that graph rather than from plain noise.</p></li>
+<li><p><strong>OA-ReactDiff</strong> — Duan, Du, Jia &amp; Kulik. <em>Accurate transition state
+generation with an object-aware equivariant elementary reaction diffusion
+model.</em> Nature Computational Science 3, 1045–1055 (2023).
+<a class="reference external" href="https://arxiv.org/abs/2304.06174">arXiv:2304.06174</a> — the <strong>EDM</strong> objective
+(above) run over three objects at once, reactant and product held at their
+own centres of mass while the transition state is denoised between them.
+The backbone is <strong>LEFTNet</strong>: Du, Du, Wang, Feng, Wang, Ji, Gomes &amp; Ma, <em>A
+new perspective on building efficient and expressive 3D equivariant graph
+neural networks</em>, NeurIPS 2023
+(<a class="reference external" href="https://arxiv.org/abs/2304.04757">arXiv:2304.04757</a>).</p></li>
+<li><p><strong>React-OT</strong> — Duan, Liu, Du, Chen, Zhao, Jia, Gomes, Theodorou &amp; Kulik.
+<em>Optimal transport for generating transition states in chemical reactions.</em>
+Nature Machine Intelligence 7, 615–626 (2025).
+<a class="reference external" href="https://doi.org/10.1038/s42256-025-01010-0">doi:10.1038/s42256-025-01010-0</a>
+— the successor to <strong>OA-ReactDiff</strong> (above), by the same authors and over the
+same <strong>LEFTNet</strong> backbone, replacing the denoising diffusion with an
+optimal-transport bridge that starts from the reactant/product midpoint
+rather than from noise. The preprint carries a different title: <em>React-OT:
+Optimal Transport for Generating Transition State in Chemical Reactions</em>
+(<a class="reference external" href="https://arxiv.org/abs/2404.13430">arXiv:2404.13430</a>).</p></li>
 </ul>
 </section>
 </section>
@@ -1093,9 +1149,9 @@ built out of that graph rather than from plain noise.</p></li>
 <li><a class="reference internal" href="#">Model Architectures</a><ul>
 <li><a class="reference internal" href="#de-novo-3d-generation">1. De novo 3D generation</a></li>
 <li><a class="reference internal" href="#synthesizable-retroanalysis-constrained-generation">2. Synthesizable / retroanalysis-constrained generation</a></li>
-<li><a class="reference internal" href="#latent-space-diffusion-two-stage">3. Latent-space diffusion (two-stage)</a></li>
-<li><a class="reference internal" href="#conditional-and-structure-aware-generation">4. Conditional and structure-aware generation</a></li>
-<li><a class="reference internal" href="#conformer-generation">5. Conformer generation</a></li>
+<li><a class="reference internal" href="#conditional-and-structure-aware-generation">3. Conditional and structure-aware generation</a></li>
+<li><a class="reference internal" href="#conformer-generation">4. Conformer generation</a></li>
+<li><a class="reference internal" href="#transition-state-generation">5. Transition state generation</a></li>
 <li><a class="reference internal" href="#transition-metal-complex-generation">6. Transition-metal complex generation</a></li>
 <li><a class="reference internal" href="#property-prediction-and-guidance">7. Property prediction and guidance</a></li>
 <li><a class="reference internal" href="#self-supervised-pretraining">8. Self-supervised pretraining</a></li>

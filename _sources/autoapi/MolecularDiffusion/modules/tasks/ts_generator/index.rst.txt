@@ -1,0 +1,145 @@
+MolecularDiffusion.modules.tasks.ts_generator
+=============================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.ts_generator
+
+.. autoapi-nested-parse::
+
+   The one ``run()`` loop behind every transition-state generator.
+
+   A transition-state model asks for the same thing every pocket-conditioned
+   model asks for -- *load one fixed structural context, tile it to a batch,
+   sample the unknown part into it, write .xyz* -- so this is not a second
+   loop. :class:`TSGenerator` subclasses
+   :class:`~MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator`
+   and fills its hooks once, for the whole family, in terms of the shared
+   :class:`~MolecularDiffusion.data.component.reaction_data.Reaction`
+   container. A TS model then supplies two things and nothing else:
+
+   ==============  ================================================
+   hook            what it decides
+   ==============  ================================================
+   ``_reactions``  where reactions come from (which Dataset, which
+                   filters), as anything with ``__len__`` /
+                   ``__getitem__``
+   ``_collate``    how one reaction becomes a batch of ``n`` copies,
+                   in whatever layout that model's ``sample()`` reads
+   ==============  ================================================
+
+   and may override three more, all defaulted:
+   :meth:`~TSGenerator._label` (how the reaction prints),
+   :meth:`~TSGenerator._settings_note` (extra sampler knobs in the header) and
+   :meth:`~PocketGenerator._sample_kwargs` (the model-specific kwargs of
+   ``task.sample()``). Everything else -- seeding, the retry loop, size
+   selection, writing the samples, writing the reference structures beside
+   them -- is inherited.
+
+   **Why the context is a ``Reaction``, not a geometry.** Of the three TS
+   models surveyed when the container was designed, only OA-ReactDiff conditions
+   on reactant and product *coordinates*; GoFlow and RitS are connectivity-only
+   condensed graphs of reaction and never read an endpoint geometry at sampling
+   time. So this class must never assume a side has 3D. It asks
+   :attr:`~MolecularDiffusion.data.component.reaction_data.ReactionSide.
+   has_geometry` and writes ``reactant.xyz`` / ``product.xyz`` only for the
+   sides that actually have coordinates -- a connectivity-only model gets
+   ``reference_ts.xyz`` alone, and no lie on disk.
+
+   **What is deliberately NOT here.** No RMSD scoring and no best-of-N ranking.
+   Both siblings do rank samples, but offline, in their own analysis scripts and
+   against metrics they disagree about (GoFlow: permutation-matched, mirror-
+   allowed, median-consensus; RitS: none at all in the sampling path). Writing
+   ``reference_ts.xyz`` next to the samples is what a shared loop can honestly
+   do; the ranking belongs to whoever knows the metric.
+
+   **Interference-key naming.** The base takes ``reaction_source`` /
+   ``reaction_index``, not ``pocket_db`` / ``pocket_index``: a config should
+   never say "pocket" for a reaction. A subclass whose corpus has a more honest
+   name declares :attr:`TSGenerator.source_key` (OA-ReactDiff:
+   ``reaction_pkl``); both that name and ``reaction_source`` then work, so the
+   shared config drives every model and each model's own config keeps its own
+   vocabulary. Anything that is neither still raises.
+
+   **Two ways to reach a generator**, exactly as for pockets:
+
+   * ``interference/gen_<model>_ts.yaml`` names the concrete subclass and
+     carries that model's own knobs (OA-ReactDiff: RePaint's ``resamplings`` /
+     ``jump_length`` / ``noise_schedule``);
+   * ``interference/gen_ts.yaml`` names :class:`TSGenerator` itself and carries
+     only the keys every TS model shares -- the concrete subclass is then picked
+     off the loaded task (see :func:`_for_task`).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.ts_generator.ReactionSource
+   MolecularDiffusion.modules.tasks.ts_generator.TSGenerator
+
+
+Module Contents
+---------------
+
+.. py:class:: ReactionSource
+
+   Bases: :py:obj:`Protocol`
+
+
+   Anything indexable that yields :class:`Reaction` objects.
+
+   A ``torch.utils.data.Dataset`` of reactions satisfies this, which is what
+   every TS corpus in-tree already is. Declared structurally so a model whose
+   reactions come from somewhere else -- a list, an HDF5 view, a parsed
+   reaction SMARTS -- needs no base class.
+
+
+.. py:class:: TSGenerator(task: Any, reaction_source: Optional[str] = None, reaction_index: int = 0, num_generate: int = 20, batch_size: int = 4, num_steps: Optional[int] = None, output_path: str = 'generated_ts', seed: int = 42, device: Optional[str] = None, **kwargs: Any)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator`
+
+
+   Load one reaction, sample ``num_generate`` transition states.
+
+   Not instantiable from a config on its own -- :meth:`_reactions` and
+   :meth:`_collate` are the two things a model must supply. See the module
+   docstring for the full hook table.
+
+   Configure the run.
+
+   :param task: the loaded TS task; its ``sample()`` is what gets called.
+   :param reaction_source: where reactions are read from, forwarded to the
+                           base as ``pocket_db``.
+   :param reaction_index: which reaction in that source to generate for.
+   :param num_generate: how many transition states to sample for it.
+   :param batch_size: how many of those to sample at once.
+   :param num_steps: reverse-process steps; ``None`` => the model's default.
+   :param output_path: directory for the .xyz files.
+   :param seed: torch/random/numpy seed.
+   :param device: ``None`` => cuda if available.
+   :param \*\*kwargs: rejected by the base, on purpose -- an unknown
+                      interference key is a typo, not a no-op.
+
+   .. note::
+
+      There is no ``mol_size``. A transition state has exactly the atoms
+      of its reaction, so a size prior would be a lie; :meth:`_sizes`
+      reads the count off the reaction instead.
+
+
+   .. py:attribute:: db_required_msg
+      :value: "interference.reaction_source is required: a transition-state generator conditions on a...
+
+
+
+   .. py:attribute:: source_key
+      :value: 'reaction_source'
+
+
+
+   .. py:attribute:: tag
+      :value: 'ts'
+
+
+

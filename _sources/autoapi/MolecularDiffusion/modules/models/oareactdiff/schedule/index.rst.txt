@@ -1,0 +1,154 @@
+MolecularDiffusion.modules.models.oareactdiff.schedule
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.models.oareactdiff.schedule
+
+.. autoapi-nested-parse::
+
+   Noise schedules and the RePaint jump schedule for OA-ReactDiff.
+
+   Ported verbatim from ``oa_reactdiff/diffusion/_schedule.py``
+   (commit 543aaa8, MIT).
+
+   Two things here bite if you skim:
+
+   * ``PredefinedNoiseSchedule.gamma`` is a non-learned ``nn.Parameter`` of
+     shape ``(timesteps + 1,)``, so it lands *in the state dict*. The released
+     checkpoint therefore pins training ``timesteps`` at 5000 -- any other value
+     shape-mismatches on load. Sampling sidesteps this by building a **fresh**
+     ``polynomial_2`` schedule at 250 steps and swapping it in, exactly as
+     upstream's ``evaluate/utils.py:set_new_schedule`` does.
+   * ``get_repaint_schedule`` is the RePaint (Lugmayr et al. 2022) jump
+     schedule: it returns how many denoising steps to take before each jump back
+     up by ``jump_length``, which is what lets a fixed reactant/product be
+     re-noised and re-harmonised with the transition state being generated.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.oareactdiff.schedule.DiffSchedule
+   MolecularDiffusion.modules.models.oareactdiff.schedule.PredefinedNoiseSchedule
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.oareactdiff.schedule.ccosine_schedule
+   MolecularDiffusion.modules.models.oareactdiff.schedule.clip_noise_schedule
+   MolecularDiffusion.modules.models.oareactdiff.schedule.cosine_beta_schedule
+   MolecularDiffusion.modules.models.oareactdiff.schedule.get_repaint_schedule
+   MolecularDiffusion.modules.models.oareactdiff.schedule.linear_schedule
+   MolecularDiffusion.modules.models.oareactdiff.schedule.polynomial_schedule
+
+
+Module Contents
+---------------
+
+.. py:class:: DiffSchedule(gamma_module: torch.nn.Module, norm_values: Tuple[float])
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: SNR(gamma)
+      :staticmethod:
+
+
+      Computes signal to noise ratio (alpha^2/sigma^2) given gamma.
+
+
+
+   .. py:method:: alpha(gamma, target_tensor)
+
+      Computes alpha given gamma.
+
+
+
+   .. py:method:: check_issues_norm_values(num_stdevs=8)
+
+
+   .. py:method:: inflate_batch_array(array, target)
+      :staticmethod:
+
+
+      Inflates the batch array (array) with only a single axis
+      (i.e. shape = (batch_size,), or possibly more empty axes
+      (i.e. shape (batch_size, 1, ..., 1)) to match the target shape.
+
+
+
+   .. py:method:: sigma(gamma, target_tensor)
+
+      Computes sigma given gamma.
+
+
+
+   .. py:method:: sigma_and_alpha_t_given_s(gamma_t: torch.Tensor, gamma_s: torch.Tensor, target_tensor: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+
+      Computes sigma t given s, using gamma_t and gamma_s. Used during sampling.
+      These are defined as:
+          alpha t given s = alpha t / alpha s,
+          sigma t given s = sqrt(1 - (alpha t given s) ^2 ).
+
+
+
+   .. py:attribute:: gamma_module
+
+
+   .. py:attribute:: norm_values
+
+
+.. py:class:: PredefinedNoiseSchedule(noise_schedule: str, timesteps: int, precision: float)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Predefined noise schedule. Essentially creates a lookup array for predefined
+   (non-learned) noise schedules.
+
+
+   .. py:method:: forward(t)
+
+
+   .. py:attribute:: gamma
+
+
+   .. py:attribute:: timesteps
+
+
+.. py:function:: ccosine_schedule(timesteps, start=0, end=1, tau=1, clip_min=1e-09)
+
+.. py:function:: clip_noise_schedule(alphas2, clip_value=0.001)
+
+   For a noise schedule given by alpha^2, this clips alpha_t / alpha_t-1.
+   This may help improve stability during
+   sampling.
+
+
+.. py:function:: cosine_beta_schedule(timesteps, s=0.008, raise_to_power: float = 1)
+
+   cosine schedule
+   as proposed in https://openreview.net/forum?id=-NEXDKk8gZ
+
+
+.. py:function:: get_repaint_schedule(resamplings, jump_length, timesteps)
+
+   Each integer in the schedule list describes how many denoising steps
+   need to be applied before jumping back.
+
+   sum(out) - (len(out) -1) * jump_length = timesteps
+
+
+
+.. py:function:: linear_schedule(timesteps, clip_min=1e-09)
+
+.. py:function:: polynomial_schedule(timesteps: int, s=0.0001, power=3.0)
+
+   A noise schedule based on a simple polynomial equation: 1 - x^power.
+
+

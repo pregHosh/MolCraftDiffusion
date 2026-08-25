@@ -1,0 +1,238 @@
+MolecularDiffusion.data.component.reaction_data
+===============================================
+
+.. py:module:: MolecularDiffusion.data.component.reaction_data
+
+.. autoapi-nested-parse::
+
+   A shared, model-neutral container for a chemical reaction.
+
+   Transition-state generators all take the same thing -- *a reactant side, a
+   product side, and a transition state to predict* -- and disagree only about
+   which channel each side is carried in. This module is that shape, and
+   nothing more. It imports the platform's canonical bond vocabulary and
+   nothing from ``modules/``, so a model-specific data layer can sit beside it
+   (``oareactdiff_data.py``) without either one owning the other.
+
+   Three real reaction models were read at source to size this contract; every
+   field below is demanded by at least one of them.
+
+   ===========================  ============  ============  ==============
+                                OA-ReactDiff  GoFlow        RitS
+   ===========================  ============  ============  ==============
+   one shared atom ordering     yes           yes           yes
+   TS target                    3D coords     3D coords     3D coords
+   reactant/product side is     geometry      connectivity  connectivity
+   their 3D endpoints are used  **yes**       no            no
+   bonds                        none          22-class      9-class
+   stereo                       none          vestigial     bond classes
+   ===========================  ============  ============  ==============
+
+   Only OA-ReactDiff is implemented in this pass. The other two are recorded
+   because they are what makes the shape a contract rather than one model's
+   struct with a general-sounding name.
+
+   Two rules that are not fields
+   -----------------------------
+
+   **``bond_index`` is DIRECTED, and per side.** Deliberately *not* the
+   upper-triangular storage rule of ``graph3d_dataset.py``. RitS encodes
+   tetrahedral chirality as an antisymmetric directed 3-cycle ``a -> c -> b ->
+   a`` whose orientation is the only thing distinguishing R from S; symmetrising
+   or canonicalising to ``i < j`` would silently racemize a whole corpus.
+   Per-side rather than one shared union index, because a side has to be
+   self-describing -- the union edge set both siblings actually feed their
+   networks is ``(bmat_r + bmat_p).nonzero()``, derived in *their* collate.
+
+   **``pos`` is real geometry or it is ``None``.** Never a zero placeholder,
+   never a copy of the TS standing in for a missing endpoint. Both patterns
+   exist upstream in RitS, and a container that stored them would make
+   :attr:`ReactionSide.has_geometry` lie. The rule costs nothing and removes the
+   need for a per-slot validity flag.
+
+   Two PyG gotchas the layout dodges, both found live in GoFlow: PyG
+   node-offsets **any** attribute whose name contains ``"index"``, so scalar
+   metadata lives in :attr:`Reaction.meta` and is never named ``*_index``; and
+   PyG deletes attributes assigned ``None``, so optional fields need presence
+   checks rather than null checks once they reach a ``Data`` object.
+
+   What is deliberately absent
+   ---------------------------
+
+   *No representation enum.* The populated fields **are** the representation;
+   :attr:`ReactionSide.has_geometry` / :attr:`ReactionSide.has_connectivity`
+   derive it in one line each. A stored enum is a second source of truth that
+   can desync from the tensors it describes.
+
+   *No ``fc``.* None of the three models carries a per-atom signed formal
+   charge: OA-ReactDiff has no formal charge at all, GoFlow folds
+   ``GetFormalCharge`` into its ``feat`` one-hot, and RitS's ``charges`` is a
+   per-molecule net charge broadcast to every atom. :attr:`ReactionSide.feat`
+   and :attr:`Reaction.meta` cover both.
+
+   *No stereo channel -- yet.* RitS packs E/Z and chirality into bond classes
+   5-8, which are not bonds and do not belong in a channel every other model
+   reads as bond order. The honest fix, purely additive and deferred until a
+   model actually populates it, is one more optional pair on
+   :class:`ReactionSide`: ``stereo_index (2, S)``, directed, and
+   ``stereo_type (S,)`` over a separate ``{E, Z, CHI_STAR, CHI_CYCLE}``
+   vocabulary. Recorded here so that day is an addition, not a redesign.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.reaction_data.Reaction
+   MolecularDiffusion.data.component.reaction_data.ReactionSide
+
+
+Module Contents
+---------------
+
+.. py:class:: Reaction
+
+   One reaction: a shared atom set, two sides, and a TS target.
+
+   ``z`` is hoisted here rather than duplicated per side because all three
+   surveyed models guarantee a single shared atom ordering across reactant,
+   transition state and product. Making it one tensor makes that guarantee
+   structural instead of an assertion each model rewrites differently.
+
+   ``ts_pos`` is a bare tensor rather than a third :class:`ReactionSide`:
+   no surveyed model predicts TS *bonds*, so the symmetry would be
+   decoration. Promote it the day one does.
+
+   .. attribute:: z
+
+      ``(n,)`` atomic numbers. **This is the shared ordering** -- every
+      other per-atom tensor in the reaction is aligned to it.
+
+   .. attribute:: reactant
+
+      the reactant side.
+
+   .. attribute:: product
+
+      the product side.
+
+   .. attribute:: ts_pos
+
+      ``(n, 3)`` transition-state coordinates -- the prediction
+      target. ``None`` at inference time, when there is nothing to
+      predict against.
+
+   .. attribute:: meta
+
+      free-form per-reaction scalars and strings (reaction id,
+      SMILES, energies). Never batched, and never named ``*_index``
+      (PyG node-offsets any such key).
+
+
+   .. py:attribute:: meta
+      :type:  Dict[str, Any]
+
+
+   .. py:attribute:: product
+      :type:  ReactionSide
+
+
+   .. py:attribute:: reactant
+      :type:  ReactionSide
+
+
+   .. py:attribute:: ts_pos
+      :type:  Optional[torch.Tensor]
+      :value: None
+
+
+
+   .. py:attribute:: z
+      :type:  torch.Tensor
+
+
+.. py:class:: ReactionSide
+
+   One side of a reaction -- reactant or product.
+
+   Every field is optional because which ones are populated *is* the
+   representation. A side carrying only ``pos`` is a 3D endpoint
+   (OA-ReactDiff); a side carrying only bonds and ``feat`` is a
+   connectivity-only condition (GoFlow, RitS).
+
+   .. attribute:: pos
+
+      ``(n, 3)`` real 3D coordinates, or ``None``. Never a
+      placeholder -- see the module docstring.
+
+   .. attribute:: bond_index
+
+      ``(2, E)`` **directed** edges, this side's own bonds
+      only, or ``None``. Not upper-triangular.
+
+   .. attribute:: bond_type
+
+      ``(E,)`` classes over the canonical five-entry
+      :data:`BOND_VOCAB` (``0=none, 1=SINGLE, 2=DOUBLE, 3=TRIPLE,
+      4=AROMATIC``), aligned with ``bond_index``, or ``None``.
+
+   .. attribute:: feat
+
+      ``(n, F)`` per-atom descriptors, or ``None``. The vocabulary
+      behind ``F`` is dataset-derived and travels with the model's own
+      data module, not with this container.
+
+
+   .. py:method:: validate(n_atoms: int) -> None
+
+      Check every populated field against the reaction's atom count.
+
+      :param n_atoms: length of the owning :class:`Reaction`'s ``z``.
+
+      :raises ValueError: on any shape disagreement. These are all silent
+          corruption if they get through -- a mis-sized ``pos``
+          broadcasts, and a ``bond_index`` out of range indexes the
+          wrong atoms rather than erroring.
+
+
+
+   .. py:attribute:: bond_index
+      :type:  Optional[torch.Tensor]
+      :value: None
+
+
+
+   .. py:attribute:: bond_type
+      :type:  Optional[torch.Tensor]
+      :value: None
+
+
+
+   .. py:attribute:: feat
+      :type:  Optional[torch.Tensor]
+      :value: None
+
+
+
+   .. py:property:: has_connectivity
+      :type: bool
+
+
+      Whether this side carries bonds.
+
+
+   .. py:property:: has_geometry
+      :type: bool
+
+
+      Whether this side carries real 3D coordinates.
+
+
+   .. py:attribute:: pos
+      :type:  Optional[torch.Tensor]
+      :value: None
+
+
+

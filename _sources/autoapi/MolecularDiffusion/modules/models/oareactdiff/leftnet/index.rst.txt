@@ -1,0 +1,548 @@
+MolecularDiffusion.modules.models.oareactdiff.leftnet
+=====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.oareactdiff.leftnet
+
+.. autoapi-nested-parse::
+
+   LEFTNet -- the object-aware equivariant backbone behind OA-ReactDiff.
+
+   Ported from ``oa_reactdiff/model/leftnet.py`` (commit 543aaa8, MIT, (c) 2023
+   Chenru Duan). The blocks below (``RBFEmb``, ``NeighborEmb``, ``CFConvS2V``,
+   ``GCLMessage``, ``EquiMessage``, ``EquiUpdate``, ``vector``, ``EquiOutput``)
+   are used by nothing else in the tree, so they stay here rather than moving
+   to ``modules/layers/``.
+
+   ``object_aware=True`` is the paper's contribution: ``subgraph_mask`` gates
+   every message so intra-object and inter-object edges are treated
+   differently, which is what lets one network denoise a reactant, a transition
+   state and a product simultaneously while keeping each object's own SE(3)
+   frame.
+
+   Three deliberate deviations from the upstream file, none of them behavioural:
+
+   * ``MLP`` / ``ACTIVATION_MAPPING`` / ``unsorted_segment_sum`` are inlined
+     from ``oa_reactdiff/model/core.py`` and ``util_funcs.py`` instead of being
+     imported, so the port is two files instead of four. ``dynamics.py`` imports
+     ``MLP`` from here.
+   * ``EquiMessage(...).jittable()`` lost its ``.jittable()``: PyG >= 2.5 makes
+     it a deprecated no-op that only emits a warning per layer.
+   * ``torch.cross(a, b)`` became ``torch.cross(a, b, dim=1)``. Without ``dim``
+     torch picks the *first* axis of size 3, which is axis 1 for the ``(N, 3)``
+     tensors used here -- except when ``N == 3``, where it silently picks axis 0
+     and produces a non-equivariant result. Naming the axis is what upstream
+     means everywhere and removes the deprecation warning.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.oareactdiff.leftnet.ACTIVATION_MAPPING
+   MolecularDiffusion.modules.models.oareactdiff.leftnet.EPS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.oareactdiff.leftnet.CFConvS2V
+   MolecularDiffusion.modules.models.oareactdiff.leftnet.EquiMessage
+   MolecularDiffusion.modules.models.oareactdiff.leftnet.EquiOutput
+   MolecularDiffusion.modules.models.oareactdiff.leftnet.EquiUpdate
+   MolecularDiffusion.modules.models.oareactdiff.leftnet.GCLMessage
+   MolecularDiffusion.modules.models.oareactdiff.leftnet.GatedEquivariantBlock
+   MolecularDiffusion.modules.models.oareactdiff.leftnet.LEFTNet
+   MolecularDiffusion.modules.models.oareactdiff.leftnet.MLP
+   MolecularDiffusion.modules.models.oareactdiff.leftnet.NeighborEmb
+   MolecularDiffusion.modules.models.oareactdiff.leftnet.OneLayerActivation
+   MolecularDiffusion.modules.models.oareactdiff.leftnet.RBFEmb
+   MolecularDiffusion.modules.models.oareactdiff.leftnet.vector
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.oareactdiff.leftnet.assert_rot_equiv
+   MolecularDiffusion.modules.models.oareactdiff.leftnet.com
+   MolecularDiffusion.modules.models.oareactdiff.leftnet.nn_vector
+   MolecularDiffusion.modules.models.oareactdiff.leftnet.remove_mean_batch
+   MolecularDiffusion.modules.models.oareactdiff.leftnet.swish
+   MolecularDiffusion.modules.models.oareactdiff.leftnet.unsorted_segment_sum
+
+
+Module Contents
+---------------
+
+.. py:class:: CFConvS2V(hid_dim: int)
+
+   Bases: :py:obj:`torch_geometric.nn.conv.MessagePassing`
+
+
+   Scalar to vector.
+
+
+   .. py:method:: forward(s, v, edge_index, emb)
+
+      _summary_
+
+      :param s: _description_, [n_atom, n_z, n_embed]
+      :type s: _type_
+      :param v: _description_, [n_edge, n_pos, n_embed]
+      :type v: _type_
+      :param edge_index: _description_, [2, n_edge]
+      :type edge_index: _type_
+      :param emb: _description_, [n_edge, n_embed]
+      :type emb: _type_
+
+      :returns: _description_
+      :rtype: _type_
+
+
+
+   .. py:method:: message(x_j, norm)
+
+
+   .. py:attribute:: hid_dim
+
+
+   .. py:attribute:: lin1
+
+
+.. py:class:: EquiMessage(hidden_channels, num_radial, reflect_equiv)
+
+   Bases: :py:obj:`torch_geometric.nn.conv.MessagePassing`
+
+
+   .. py:method:: aggregate(features: Tuple[torch.Tensor, torch.Tensor], index: torch.Tensor, ptr: Optional[torch.Tensor], dim_size: Optional[int]) -> Tuple[torch.Tensor, torch.Tensor]
+
+
+   .. py:method:: forward(x, vec, edge_index, edge_rbf, weight, edge_vector, edge_cross)
+
+
+   .. py:method:: message(xh_j, xh_i, vec_j, rbfh_ij, r_ij, edge_cross)
+
+
+   .. py:method:: reset_parameters()
+
+
+   .. py:method:: update(inputs: Tuple[torch.Tensor, torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+
+
+   .. py:attribute:: dir_proj
+
+
+   .. py:attribute:: hidden_channels
+
+
+   .. py:attribute:: inv_sqrt_3
+
+
+   .. py:attribute:: inv_sqrt_h
+
+
+   .. py:attribute:: num_radial
+
+
+   .. py:attribute:: rbf_proj
+
+
+   .. py:attribute:: reflect_equiv
+
+
+   .. py:attribute:: x_layernorm
+
+
+   .. py:attribute:: x_proj
+
+
+.. py:class:: EquiOutput(hidden_channels, out_channels=1, single_layer_output=True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x, vec)
+
+
+   .. py:method:: reset_parameters()
+
+
+   .. py:attribute:: hidden_channels
+
+
+.. py:class:: EquiUpdate(hidden_channels, reflect_equiv: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x, vec, nodeframe)
+
+
+   .. py:method:: reset_parameters()
+
+
+   .. py:attribute:: hidden_channels
+
+
+   .. py:attribute:: inv_sqrt_2
+
+
+   .. py:attribute:: inv_sqrt_h
+
+
+   .. py:attribute:: lin3
+
+
+   .. py:attribute:: reflect_equiv
+      :value: True
+
+
+
+   .. py:attribute:: vec_proj
+
+
+   .. py:attribute:: xvec_proj
+
+
+.. py:class:: GCLMessage(hidden_channels, num_radial, act_fn: str = 'swish', legacy: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: edge_message(xh_i, xh_j, edgeh)
+
+
+   .. py:method:: forward(x, edge_index, weight)
+
+
+   .. py:method:: node_message(xh, edge_index, m_ij)
+
+
+   .. py:attribute:: att_mlp
+
+
+   .. py:attribute:: edge_mlp
+
+
+   .. py:attribute:: edge_out_trans
+
+
+   .. py:attribute:: node_mlp
+
+
+   .. py:attribute:: x_layernorm
+
+
+.. py:class:: GatedEquivariantBlock(hidden_channels, out_channels)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Gated Equivariant Block as defined in Schütt et al. (2021):
+   Equivariant message passing for the prediction of tensorial properties and molecular spectra.
+
+   Borrowed from TorchMD-Net
+
+
+   .. py:method:: forward(x, v)
+
+
+   .. py:method:: reset_parameters()
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: out_channels
+
+
+   .. py:attribute:: update_net
+
+
+   .. py:attribute:: vec1_proj
+
+
+   .. py:attribute:: vec2_proj
+
+
+.. py:class:: LEFTNet(pos_require_grad=False, cutoff=10.0, num_layers=4, hidden_channels=128, num_radial=96, in_hidden_channels: int = 8, reflect_equiv: bool = True, legacy: bool = True, update: bool = True, pos_grad: bool = False, single_layer_output: bool = True, for_conf: bool = False, ff: bool = False, object_aware: bool = True, **kwargs)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   LEFTNet
+
+   :param pos_require_grad: If set to :obj:`True`, will require to take derivative of model output with respect to the atomic positions. (default: :obj:`False`)
+   :type pos_require_grad: bool, optional
+   :param cutoff: Cutoff distance for interatomic interactions. (default: :obj:`5.0`)
+   :type cutoff: float, optional
+   :param num_layers: Number of building blocks. (default: :obj:`4`)
+   :type num_layers: int, optional
+   :param hidden_channels: Hidden embedding size. (default: :obj:`128`)
+   :type hidden_channels: int, optional
+   :param num_radial: Number of radial basis functions. (default: :obj:`96`)
+   :type num_radial: int, optional
+   :param y_mean: Mean value of the labels of training data. (default: :obj:`0`)
+   :type y_mean: float, optional
+   :param y_std: Standard deviation of the labels of training data. (default: :obj:`1`)
+   :type y_std: float, optional
+
+
+   .. py:method:: assemble_nodemask(edge_index: torch.Tensor, pos: torch.Tensor)
+      :staticmethod:
+
+
+
+   .. py:method:: forward(h: torch.Tensor, pos: torch.Tensor, edge_index: torch.Tensor, edge_attr: Optional[torch.Tensor] = None, node_mask: Optional[torch.Tensor] = None, edge_mask: Optional[torch.Tensor] = None, update_coords_mask: Optional[torch.Tensor] = None, subgraph_mask: Optional[torch.Tensor] = None)
+
+
+   .. py:method:: reset_parameters()
+
+
+   .. py:method:: scalarization(pos, edge_index)
+
+
+   .. py:attribute:: cutoff
+      :value: 10.0
+
+
+
+   .. py:attribute:: embedding
+
+
+   .. py:attribute:: embedding_out
+
+
+   .. py:attribute:: ff
+      :value: False
+
+
+
+   .. py:attribute:: for_conf
+      :value: False
+
+
+
+   .. py:attribute:: gcl_layers
+
+
+   .. py:attribute:: hidden_channels
+      :value: 128
+
+
+
+   .. py:attribute:: inv_sqrt_2
+
+
+   .. py:attribute:: last_layer
+
+
+   .. py:attribute:: legacy
+      :value: True
+
+
+
+   .. py:attribute:: lin3
+
+
+   .. py:attribute:: message_layers
+
+
+   .. py:attribute:: neighbor_emb
+
+
+   .. py:attribute:: num_layers
+      :value: 4
+
+
+
+   .. py:attribute:: object_aware
+      :value: True
+
+
+
+   .. py:attribute:: out_pos
+
+
+   .. py:attribute:: pos_expansion
+
+
+   .. py:attribute:: pos_grad
+      :value: False
+
+
+
+   .. py:attribute:: pos_require_grad
+      :value: False
+
+
+
+   .. py:attribute:: radial_emb
+
+
+   .. py:attribute:: radial_lin
+
+
+   .. py:attribute:: reflect_equiv
+      :value: True
+
+
+
+   .. py:attribute:: s2v
+
+
+   .. py:attribute:: update
+      :value: True
+
+
+
+   .. py:attribute:: update_layers
+
+
+   .. py:attribute:: vec
+
+
+.. py:class:: MLP(in_dim: int, out_dims: list, bias: bool = True, activation: Union[List[Union[str, None]], str, None] = 'swish', last_layer_no_activation: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Multi-layer perceptron. (``oa_reactdiff/model/core.py``)
+
+
+   .. py:method:: forward(input: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: mlp
+
+
+.. py:class:: NeighborEmb(hid_dim, in_hidden_channels=5)
+
+   Bases: :py:obj:`torch_geometric.nn.conv.MessagePassing`
+
+
+   Initialize node features based on neighboring nodes.
+
+
+   .. py:method:: forward(z, s, edge_index, embs)
+
+
+   .. py:method:: message(x_j, norm)
+
+
+   .. py:attribute:: embedding
+
+
+   .. py:attribute:: hid_dim
+
+
+   .. py:attribute:: ln_emb
+
+
+.. py:class:: OneLayerActivation(in_dim: int, out_dim: int, bias: int = True, activation=Union[str, None])
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   One layer NN with activation. (``oa_reactdiff/model/core.py``)
+
+
+   .. py:method:: forward(input: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: activation
+
+
+   .. py:attribute:: linear
+
+
+.. py:class:: RBFEmb(num_rbf, rbound_upper, rbf_trainable=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   radial basis function to embed distances
+   modified: delete cutoff with r
+
+
+   .. py:method:: forward(dist)
+
+
+   .. py:method:: reset_parameters()
+
+
+   .. py:attribute:: num_rbf
+
+
+   .. py:attribute:: rbf_trainable
+      :value: False
+
+
+
+   .. py:attribute:: rbound_lower
+      :value: 0
+
+
+
+   .. py:attribute:: rbound_upper
+
+
+.. py:class:: vector
+
+   Bases: :py:obj:`torch_geometric.nn.conv.MessagePassing`
+
+
+   .. py:method:: forward(vector, edge_index)
+
+
+.. py:function:: assert_rot_equiv(func: Callable, dist: torch.Tensor, edge_index: torch.Tensor, pos: torch.Tensor)
+
+   Added by Chenru: test a func for constructing y1 is equivariant.
+
+   :param func: _description_
+   :type func: Callable
+   :param dist: _description_
+   :type dist: Tensor
+   :param edge_index: _description_
+   :type edge_index: Tensor
+   :param pos: _description_
+   :type pos: Tensor
+
+
+.. py:function:: com(x)
+
+.. py:function:: nn_vector(dist: torch.Tensor, edge_index: torch.Tensor, pos: torch.Tensor)
+
+   Added by Chenru: Getting the nearest neighbor position to construct nodeframe.
+
+   :param dist: (n_edge)
+   :type dist: Tensor
+   :param edge_index: (2, n_edge)
+   :type edge_index: Tensor
+   :param pos: (n_atom, 3)
+   :type pos: Tensor
+
+   :returns: (n_atom, 3)
+   :rtype: Tensor
+
+
+.. py:function:: remove_mean_batch(x, indices)
+
+.. py:function:: swish(x)
+
+.. py:function:: unsorted_segment_sum(data, segment_ids, num_segments, normalization_factor, aggregation_method: str)
+
+   TensorFlow's ``unsorted_segment_sum``. (``model/util_funcs.py``)
+
+
+.. py:data:: ACTIVATION_MAPPING
+
+.. py:data:: EPS
+   :value: 1e-06
+
+

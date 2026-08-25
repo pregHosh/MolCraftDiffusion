@@ -1,0 +1,636 @@
+MolecularDiffusion.modules.tasks.diffusion_reactot
+==================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_reactot
+
+.. autoapi-nested-parse::
+
+   React-OT: transition states in ten deterministic network evaluations.
+
+   Duan, C.; Liu, G.-H.; Du, Y.; ...; Kulik, H. J., *Optimal transport for
+   generating transition states in chemical reactions*, Nature Machine
+   Intelligence (2025), doi:10.1038/s42256-025-01010-0. Preprint, under a
+   **different title**: arXiv:2404.13430, *React-OT: Optimal Transport for
+   Generating Transition State in Chemical Reactions*. Ported from
+   https://github.com/deepprinciple/react-ot at commit 6dfccd0.
+
+   Three pieces live here:
+
+   :class:`ReactOTTask`
+       The platform task contract around :class:`~MolecularDiffusion.modules.
+       models.reactot.en_sb.EnSB`. Its ``forward`` reproduces upstream's
+       ``SBModule.compute_loss`` (``pl_trainer.py:993-1004``) -- which is a
+       two-line unpacking, because the bridge returns a finished scalar. There
+       is no ELBO to reduce, no ``loss_0``, no ``kl_prior`` and no per-object
+       ``scales`` weighting, which is why this is a fraction of the size of
+       :class:`~MolecularDiffusion.modules.tasks.diffusion_oareactdiff.
+       OAReactDiffTask`'s.
+
+   :class:`ModelTaskFactory`
+       Hydra entry point for ``configs/tasks/diffusion_reactot.yaml``.
+
+   :class:`ReactOTTSGenerator`
+       A thin :class:`~MolecularDiffusion.modules.tasks.ts_generator.
+       TSGenerator` subclass. **No ``run()`` loop, and no ``PocketGenerator``
+       hook overridden.** The loop is the shared pocket loop, the reaction
+       plumbing is the shared TS layer, and what is left here is only React-OT's
+       own: which corpus and filters, which collate, and the solver knobs.
+
+   Relationship to OA-ReactDiff
+   ----------------------------
+
+   Same authors, same backbone, same corpus, same reactant/TS/product triple,
+   same batch layout -- so this integration **imports** rather than duplicates:
+   ``LEFTNet`` / ``EGNNDynamics`` / ``Normalizer`` / the graph helpers from
+   ``modules/models/oareactdiff/``, ``OAReactDiffTS1xDataset`` /
+   ``oareactdiff_collate`` / ``OAReactDiffDataModule`` from
+   ``data/component/oareactdiff_data.py``, and :func:`~MolecularDiffusion.
+   modules.tasks.diffusion_oareactdiff._pad_ts` from its task module. None of
+   those files is edited.
+
+   What differs is the *process*: OA-ReactDiff runs a stochastic reverse
+   diffusion with RePaint re-noising and ranks five samples afterwards;
+   React-OT integrates a Schrodinger bridge from the reactant/product midpoint
+   to the transition state, deterministically, in ``nfe`` network evaluations
+   (10 in the README's published command). Run it twice and you get the same
+   structure -- which is why ``gen_reactot_ts.yaml`` defaults ``num_generate:
+   1``.
+
+   The transition-state leak this class closes on purpose
+   ------------------------------------------------------
+
+   ``EnSB.sample`` builds its node features from ``representations[1]``, whose
+   position columns are the **reference** transition state when the batch comes
+   from a corpus. Upstream gets away with it because ``net_out_fn`` overwrites
+   those columns before every network call -- i.e. it does not leak today, but
+   only by accident, and it means upstream's sampler cannot be pointed at an
+   R/P pair with no known TS at all. :meth:`ReactOTTask.sample` substitutes the
+   midpoint into that slot explicitly, exactly as upstream's own R/P-only
+   deployment path does (``run_model.py:122``), so leak-freedom is structural.
+
+   Verified: on CPU, replacing ``representations[1]["pos"]`` with random noise
+   before sampling changes the output by **exactly 0.0 A**, and two identical
+   calls agree to **exactly 0.0 A**.
+
+   **On CUDA both of those become ~5e-3 A, and that is not a leak.** It is
+   ``torch_scatter``'s atomic-add nondeterminism (``remove_mean_batch`` and
+   LEFTNet's aggregations) amplified through ten ODE steps: the *repeat-run*
+   spread is the same size as the corrupted-slot spread, which is exactly what
+   noise looks like and exactly what information would not. Run the leak check
+   on CPU, where the answer is a clean zero. This is pre-existing platform
+   behaviour shared with OA-ReactDiff, not something this integration
+   introduced.
+
+   Scope of this integration
+   -------------------------
+
+   **Transition state given a reactant and a product, and nothing else.** Not
+   in scope, each for a stated reason: the ``ei`` exponential-integrator solver
+   (unpublished research variant needing a Monte-Carlo quadrature per
+   coefficient); the other three ``mapping`` modes and five other
+   ``mapping_initial`` values (no released weights, no data path); ``ts_guess``
+   conditioning (unreachable -- the checkpoint records ``ts_guess=None``); PBC /
+   zeolite support (a different corpus, and the part of the backbone the shared
+   vendored LEFTNet omits); validation-time sampling RMSD (runs a full sampler
+   inside the validation loop); the size-aware ``DynamicBatchSampler``; and the
+   GFN2-xTB-pretrained variant the NMI paper reports (no second checkpoint
+   ships, and its pretraining corpus is not in the Zenodo record).
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_reactot.FRAG_FIXED
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_reactot.ModelTaskFactory
+   MolecularDiffusion.modules.tasks.diffusion_reactot.ReactOTTSGenerator
+   MolecularDiffusion.modules.tasks.diffusion_reactot.ReactOTTask
+
+
+Module Contents
+---------------
+
+.. py:class:: ModelTaskFactory(task_type: str = 'diffusion_reactot', model_config: Optional[Dict[str, Any]] = None, node_nfs: Sequence[int] = (9, 9, 9), edge_nf: int = 0, condition_nf: int = 1, fragment_names: Sequence[str] = ('R', 'TS', 'P'), pos_dim: int = 3, update_pocket_coords: bool = True, condition_time: bool = True, edge_cutoff: Optional[float] = None, norm_values: Sequence[float] = (1.0, 1.0, 1.0), norm_biases: Sequence[float] = (0.0, 0.0, 0.0), timesteps: int = 3000, beta_max: float = 0.3, power: float = 0.5, inv_power: float = 1, noise_schedule: str = 'cosine', precision: float = 1e-05, loss_type: str = 'l2', pos_only: bool = True, scales: Sequence[float] = (1.0, 2.0, 1.0), fixed_idx: Optional[List[int]] = None, mapping: str = 'R+P->TS', mapping_initial: str = 'RP', sigma: float = 0.0, ts_guess: Optional[Any] = None, idx: int = 1, nfe: int = 10, ot_ode: bool = True, solver: str = 'ode', method: str = 'midpoint', atol: float = 0.01, rtol: float = 0.01, clip_denoise: bool = True, atom_vocab: Optional[List[str]] = None, **kwargs: Any)
+
+   Hydra entry point for ``configs/tasks/diffusion_reactot.yaml``.
+
+   No ``train_set`` parameter: the only construction-time statistic
+   upstream has a slot for is ``size_histogram``, which is passed ``None``
+   (``pl_trainer.py:813``) and never read (``en_sb.py:42,58``). The Section
+   2.5 seam is therefore not used and ``cli/train.py`` is untouched.
+
+   Record the released checkpoint's own hyperparameters.
+
+   Every default here is the released ``reactot-pretrained.ckpt``'s
+   ``hyper_parameters`` block, not the repo's ``train_rpsb_ts1x.py``;
+   where the two disagree the checkpoint wins. See the plan's
+   Hyperparameter Provenance table.
+
+   :param task_type: ``"diffusion_reactot"``.
+   :param model_config: LEFTNet's own architecture block. Required.
+   :param node_nfs: per-object input widths, ``[9, 9, 9]``.
+   :param edge_nf: 0; no edge features anywhere in this model.
+   :param condition_nf: 1, and **inert** -- fed constant zeros.
+   :param fragment_names: ``["R", "TS", "P"]``; the order binds each
+                          object to its encoder/decoder pair in the state dict.
+   :param pos_dim:
+                   3.
+   :param update_pocket_coords: ``False`` raises ``NotImplementedError``.
+   :param condition_time: ``True``.
+   :param edge_cutoff: ``None`` => fully connected within a reaction.
+   :param norm_values: ``(1,1,1)``: no normalisation.
+   :param norm_biases: ``(0,0,0)``.
+   :param timesteps: the bridge grid. **3000; do not change** -- nothing
+                     in the state dict pins it, so a wrong value loads silently
+                     and samples wrong, and it is what makes the ODE solver's
+                     constant-beta assertion hold.
+   :param beta_max: **0.3; do not change**, same assertion.
+   :param power: 0.5.
+   :param inv_power:
+                     1.
+   :param noise_schedule: recorded by the checkpoint and marked
+                          ``# not used`` in upstream's train script. Carried for
+                          fidelity; nothing reads it.
+   :param precision: as ``noise_schedule``.
+   :param loss_type: asserted in ``{"vlb", "l2"}``, then unread by
+                     ``EnSB``.
+   :param pos_only: coordinates only; atom identities are supplied by the
+                    input reaction and copied through.
+   :param scales: per-object loss weights -- **inert in ``EnSB``**. They
+                  reach only upstream's dead ``DDPMModule`` path. Recorded.
+   :param fixed_idx: ``[0, 2]`` -- **inert**; see :data:`FRAG_FIXED`.
+   :param mapping: only ``"R+P->TS"``.
+   :param mapping_initial: only ``"RP"``.
+   :param sigma: 0.0; no endpoint jitter.
+   :param ts_guess: must stay ``None``; out of scope.
+   :param idx: 1, the transition state.
+   :param nfe: default network evaluations at sampling time.
+   :param ot_ode: ``True`` -- **this is what makes it deterministic**.
+   :param solver: ``"ode"``, the README's published default.
+   :param method: ``"midpoint"``.
+   :param atol: dead for a fixed-grid method.
+   :param rtol: as ``atol``.
+   :param clip_denoise: clamp predicted structures into +/-10 A.
+   :param atom_vocab: defaults to ``[H, C, N, O, F]``.
+   :param \*\*kwargs: swallowed; ``cli/train.py`` injects ``node_feature*``.
+
+   :raises ValueError: if ``model_config`` is missing.
+
+
+   .. py:method:: build() -> ReactOTTask
+
+      Assemble dynamics + bridge schedule + normaliser into the task.
+
+      :returns: The built :class:`ReactOTTask`.
+
+
+
+   .. py:attribute:: atol
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: beta_max
+
+
+   .. py:attribute:: clip_denoise
+      :value: True
+
+
+
+   .. py:attribute:: condition_names
+      :type:  List[str]
+      :value: []
+
+
+
+   .. py:attribute:: condition_nf
+      :value: 1
+
+
+
+   .. py:attribute:: condition_time
+      :value: True
+
+
+
+   .. py:attribute:: edge_cutoff
+      :value: None
+
+
+
+   .. py:attribute:: edge_nf
+      :value: 0
+
+
+
+   .. py:attribute:: fixed_idx
+
+
+   .. py:attribute:: fragment_names
+
+
+   .. py:attribute:: generation_time_keys
+      :value: ('reaction_pkl',)
+
+
+
+   .. py:attribute:: idx
+      :value: 1
+
+
+
+   .. py:attribute:: inv_power
+
+
+   .. py:attribute:: loss_type
+      :value: 'l2'
+
+
+
+   .. py:attribute:: mapping
+      :value: 'R+P->TS'
+
+
+
+   .. py:attribute:: mapping_initial
+      :value: 'RP'
+
+
+
+   .. py:attribute:: method
+      :value: 'midpoint'
+
+
+
+   .. py:attribute:: model_config
+
+
+   .. py:attribute:: nfe
+      :value: 10
+
+
+
+   .. py:attribute:: node_nfs
+
+
+   .. py:attribute:: noise_schedule
+      :value: 'cosine'
+
+
+
+   .. py:attribute:: norm_biases
+
+
+   .. py:attribute:: norm_values
+
+
+   .. py:attribute:: ot_ode
+      :value: True
+
+
+
+   .. py:attribute:: pos_dim
+      :value: 3
+
+
+
+   .. py:attribute:: pos_only
+      :value: True
+
+
+
+   .. py:attribute:: power
+
+
+   .. py:attribute:: precision
+
+
+   .. py:attribute:: rtol
+
+
+   .. py:attribute:: scales
+
+
+   .. py:attribute:: sigma
+
+
+   .. py:attribute:: solver
+      :value: 'ode'
+
+
+
+   .. py:attribute:: task
+      :type:  Optional[ReactOTTask]
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_reactot'
+
+
+
+   .. py:attribute:: timesteps
+      :value: 3000
+
+
+
+   .. py:attribute:: ts_guess
+      :value: None
+
+
+
+   .. py:attribute:: update_pocket_coords
+      :value: True
+
+
+
+.. py:class:: ReactOTTSGenerator(task: Any, reaction_index: int = 0, num_generate: int = 1, batch_size: int = 1, num_steps: Optional[int] = 10, solver: str = 'ode', method: str = 'midpoint', atol: float = 0.01, rtol: float = 0.01, output_path: str = 'generated_reactot', seed: int = 42, device: Optional[str] = None, **kwargs: Any)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.ts_generator.TSGenerator`
+
+
+   Transition-state generation behind ``interference/gen_reactot_ts``.
+
+   The shape of the request is identical to every other TS run -- *load one
+   reaction, tile it to a batch, sample the transition state into it, write
+   .xyz* -- so the loop is
+   :meth:`~MolecularDiffusion.modules.tasks.pocket_generator.
+   PocketGenerator.run`, the reaction plumbing is
+   :class:`~MolecularDiffusion.modules.tasks.ts_generator.TSGenerator`, and
+   what is left here is only React-OT's: which corpus, which filters, which
+   collate, and the solver knobs. **No ``PocketGenerator`` hook is
+   overridden.**
+
+   **The sampler is deterministic** (``ot_ode=True``, ``sigma=0.0``), so
+   ``num_generate: N`` yields N identical structures. That is honest but
+   wasteful, which is why ``gen_reactot_ts.yaml`` defaults ``num_generate:
+   1`` / ``batch_size: 1`` and why :meth:`_settings_note` says so in the
+   header. It is a config default and a print statement, not a missing
+   hook.
+
+   The corpus filters differ from
+   :class:`~MolecularDiffusion.modules.tasks.diffusion_oareactdiff.
+   OAReactDiffTSGenerator` in exactly one value: ``single_frag_only=False``.
+   React-OT's checkpoint was trained on multi-fragment reactions too -- that
+   is its capability claim -- so its generator must be able to index them.
+   ``swapping_react_prod`` stays off for the same reason as OA-ReactDiff's:
+   a generator should not silently hand back the reverse reaction.
+
+   Configure the run.
+
+   :param task: the loaded :class:`ReactOTTask`.
+   :param reaction_index: which reaction in the corpus to generate for.
+   :param num_generate: how many transition states to sample. Defaults to
+                        1 because the sampler is deterministic.
+   :param batch_size: how many to sample at once.
+   :param num_steps: **this is upstream's ``--nfe``**: the number of
+                     network evaluations, 10 in the README's published command.
+   :param solver: ``"ode"`` (published) or ``"ddpm"`` (upstream's train
+                  script default, and what their FastAPI service runs).
+   :param method: ODE method; only ``"midpoint"`` is implemented.
+   :param atol: dead for a fixed-grid method; carried for fidelity.
+   :param rtol: as ``atol``.
+   :param output_path: directory for the .xyz files.
+   :param seed: torch/random/numpy seed. Does not affect the structure.
+   :param device: ``None`` => cuda if available.
+   :param \*\*kwargs: rejected by the base, on purpose.
+
+
+   .. py:attribute:: atol
+      :value: 0.01
+
+
+
+   .. py:attribute:: db_required_msg
+      :value: 'interference.reaction_pkl (or reaction_source, on the shared gen_ts.yaml) is required: React-OT...
+
+
+
+   .. py:attribute:: max_retries
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: method
+      :value: 'midpoint'
+
+
+
+   .. py:attribute:: rtol
+      :value: 0.01
+
+
+
+   .. py:attribute:: seed_numpy
+      :value: True
+
+
+
+   .. py:attribute:: solver
+      :value: 'ode'
+
+
+
+   .. py:attribute:: source_key
+      :value: 'reaction_pkl'
+
+
+
+   .. py:attribute:: tag
+      :value: 'reactot'
+
+
+
+.. py:class:: ReactOTTask(ddpm: MolecularDiffusion.modules.models.reactot.EnSB, nfe: int = 10, ot_ode: bool = True, solver: str = 'ode', method: str = 'midpoint', atol: float = 0.01, rtol: float = 0.01, clip_denoise: bool = True, atom_vocab: Optional[List[str]] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Task contract around :class:`EnSB`.
+
+   Bind the bridge to the platform's training/generation contract.
+
+   :param ddpm: the built bridge. Named ``ddpm`` for the same reason
+                upstream does (``SBModule.ddpm``): it is what the released
+                checkpoint's tensor prefix says, and renaming it would mean
+                remapping 246 keys for nothing. React-OT is not a diffusion
+                model.
+   :param nfe: default network evaluations per sample. The interference
+               config's ``num_steps`` overrides it.
+   :param ot_ode: ``True`` => fully deterministic, the released setting.
+   :param solver: ``"ode"`` (published default) or ``"ddpm"``.
+   :param method: ODE method; only ``"midpoint"`` is implemented.
+   :param atol: dead for a fixed-grid method; carried for fidelity.
+   :param rtol: as ``atol``.
+   :param clip_denoise: clamp each predicted ``x0`` into +/-10 A.
+   :param atom_vocab: output vocabulary; defaults to ``[H, C, N, O, F]``.
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor) -> Dict[str, torch.Tensor]
+
+      Validation metric.
+
+      Upstream's validation-time sampling RMSD is deliberately not here:
+      ``eval_sample_batch`` runs a full sampler inside the validation loop
+      every epoch, and ``eval_rmsd`` sweeps the whole no-swap loader every
+      ten (``pl_trainer.py:1087-1140``). Far too heavy for a training loop.
+
+      :param pred: what :meth:`predict_and_target` returned.
+      :param target: ignored.
+
+      :returns: ``{"val_loss": ...}``.
+
+
+
+   .. py:method:: forward(batch: Tuple[List[Dict[str, torch.Tensor]], torch.Tensor]) -> Tuple[torch.Tensor, Dict[str, Any]]
+
+      One training/validation step.
+
+      This is the whole of upstream's ``SBModule.compute_loss``
+      (``pl_trainer.py:993-1004``): unpack, call, report. ``loss`` is
+      already a 0-dim scalar (``F.mse_loss`` reduces by default), so
+      nothing is reduced again here.
+
+      :param batch: ``(representations, conditions)`` from
+                    :func:`~MolecularDiffusion.data.component.oareactdiff_data.
+                    oareactdiff_collate`.
+
+      :returns: ``(loss, stats)``. ``scaled_err`` is reported because it is what
+                upstream's checkpoint callback actually monitors
+                (``val_ep_scaled_err``).
+
+
+
+   .. py:method:: predict_and_target(batch: Tuple[List[Dict[str, torch.Tensor]], torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+
+      Pure-generative stub: the loss is the prediction, target is zero.
+
+      :param batch: as :meth:`forward`.
+
+      :returns: ``(pred, target)``, each ``(1,)``.
+
+
+
+   .. py:method:: sample(batch_size: Optional[int] = None, nodesxsample: Optional[torch.Tensor] = None, num_steps: Optional[int] = None, batch: Optional[Dict[str, Any]] = None, solver: Optional[str] = None, method: Optional[str] = None, atol: Optional[float] = None, rtol: Optional[float] = None, **kwargs: Any) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]
+
+      Generate transition states for the reactions in ``batch``.
+
+      **The signature deviates from Section 2.1 the same way every
+      pocket-conditioned task's does**: the conditioning structure arrives
+      as ``batch``, because ``sample(batch_size, nodesxsample, ...)`` has
+      no channel for "which reaction".
+
+      **``num_steps`` IS upstream's ``--nfe``** -- the number of network
+      evaluations, not a fraction of the 3000-step bridge grid. There is
+      deliberately no second key spelled ``nfe``; the family key carries
+      it and :meth:`ReactOTTSGenerator._settings_note` prints it as
+      ``nfe=`` so the run log speaks upstream's vocabulary.
+
+      :param batch_size: ignored; taken from ``batch``.
+      :param nodesxsample: accepted and *checked*, not used to choose. A
+                           transition state has exactly as many atoms as its reaction,
+                           so a disagreeing value is a caller bug worth surfacing.
+      :param num_steps: network evaluations. ``None`` => the task's ``nfe``.
+      :param batch: ``{"representations": [...], "conditions": tensor}``.
+      :param solver: ``"ode"`` / ``"ddpm"``; ``None`` => the task's default.
+      :param method: ODE method; ``None`` => the task's default.
+      :param atol: ``None`` => the task's default. Dead for ``midpoint``.
+      :param rtol: as ``atol``.
+      :param \*\*kwargs: swallowed, as every other task's ``sample`` does.
+
+      :returns: ``(one_hot, charges, coords, node_mask)`` for the transition
+                state only, padded to ``(B, N, .)``.
+
+      :raises ValueError: if ``batch`` is missing, or ``nodesxsample``
+          disagrees with the reaction's atom count.
+
+
+
+   .. py:attribute:: T
+
+
+   .. py:attribute:: atol
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: clip_denoise
+      :value: True
+
+
+
+   .. py:attribute:: ddpm
+
+
+   .. py:property:: device
+      :type: torch.device
+
+
+      Device of the first parameter.
+
+
+   .. py:attribute:: method
+      :value: 'midpoint'
+
+
+
+   .. py:property:: model
+      :type: ReactOTTask
+
+
+      There is no separate inner module the generation code needs.
+
+
+   .. py:attribute:: nfe
+      :value: 10
+
+
+
+   .. py:attribute:: node_dist_model
+      :type:  Any
+      :value: None
+
+
+
+   .. py:attribute:: ot_ode
+      :value: True
+
+
+
+   .. py:attribute:: prop_dist_model
+      :type:  Any
+      :value: None
+
+
+
+   .. py:attribute:: rtol
+
+
+   .. py:attribute:: solver
+      :value: 'ode'
+
+
+
+   .. py:attribute:: split
+      :value: 'train'
+
+
+
+.. py:data:: FRAG_FIXED
+   :value: [0, 2]
+
+

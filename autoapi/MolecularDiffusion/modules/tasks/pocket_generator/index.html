@@ -310,9 +310,11 @@
 <li class="toctree-l5"><a class="reference internal" href="../../../data/component/feature/index.html">MolecularDiffusion.data.component.feature</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../data/component/graph3d_dataset/index.html">MolecularDiffusion.data.component.graph3d_dataset</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../data/component/kgdiff_data/index.html">MolecularDiffusion.data.component.kgdiff_data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../data/component/oareactdiff_data/index.html">MolecularDiffusion.data.component.oareactdiff_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../data/component/pharmacophore/index.html">MolecularDiffusion.data.component.pharmacophore</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../data/component/pmdm_data/index.html">MolecularDiffusion.data.component.pmdm_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../data/component/pointcloud/index.html">MolecularDiffusion.data.component.pointcloud</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../data/component/reaction_data/index.html">MolecularDiffusion.data.component.reaction_data</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../data/dataloader/index.html">MolecularDiffusion.data.dataloader</a></li>
@@ -528,6 +530,11 @@ genuinely differs per model lives in a handful of hooks:</p>
 <p><strong>``seed_numpy`` is not a style knob.</strong> PMDM and DiffPharma have never seeded
 numpy, the other five always have. Seeding it everywhere would change what
 those two generate; that is a behaviour change, not a fix.</p>
+<p>The loop is not pocket-only. A second family rides it through
+<a class="reference internal" href="../ts_generator/index.html#MolecularDiffusion.modules.tasks.ts_generator.TSGenerator" title="MolecularDiffusion.modules.tasks.ts_generator.TSGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">TSGenerator</span></code></a>, which
+fills these hooks once for transition-state models – the fixed structural
+context there is a reaction rather than a protein pocket. Add a new TS model
+by subclassing <em>that</em>, not this.</p>
 <p>Two ways to reach a generator:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">interference/gen_&lt;model&gt;_pocket.yaml</span></code> names the concrete subclass, and

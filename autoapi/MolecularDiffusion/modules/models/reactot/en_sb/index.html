@@ -1,0 +1,1119 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../../../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../../../../genindex.html"><link rel="search" title="Search" href="../../../../../../search.html">
+        <link rel="canonical" href="https://preghosh.github.io/MolCraftDiffusion/autoapi/MolecularDiffusion/modules/models/reactot/en_sb/index.html">
+        <link rel="prefetch" href="../../../../../../_static/logo.png" as="image">
+
+    <!-- Generated with Sphinx 9.0.4 and Furo 2025.12.19 -->
+        <title>MolecularDiffusion.modules.models.reactot.en_sb - MolCraftDiffusion</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=e7d56144" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  --color-brand-primary: #4A90D9;
+  --color-brand-content: #4A90D9;
+  --font-stack: Inter, sans-serif;
+  --font-stack--monospace: JetBrains Mono, monospace;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #6BAAD9;
+  --color-brand-content: #6BAAD9;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #6BAAD9;
+  --color-brand-content: #6BAAD9;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../../../../index.html"><div class="brand">MolCraftDiffusion</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../../../index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../../../../_static/logo.png" alt="Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../../../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../architectures.html">Model Architectures</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Model Zoo</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../../model_zoo/index.html">Model Zoo</a><input aria-label="Toggle navigation of Model Zoo" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../model_zoo/models.html">Using a Pretrained Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../model_zoo/data.html">Using Zoo Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../model_zoo/registering.html">Registering Your Own Model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../model_zoo/models.html">Using a Pretrained Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../model_zoo/data.html">Using Zoo Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../model_zoo/registering.html">Registering Your Own Model</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../../tutorials/index.html">Tutorials</a><input aria-label="Toggle navigation of Tutorials" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../tutorials/00_data_preparation.html">Tutorial 0: Data Preparation &amp; Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../tutorials/01_training_diffusion.html">Tutorial 1: Training a Diffusion Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../tutorials/02_training_regressor.html">Tutorial 2: Training a Regressor Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../tutorials/03_training_guidance.html">Tutorial 3: Training a Time-Aware Guidance Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../tutorials/04_finetuning.html">Tutorial 4: Fine-Tuning a Diffusion Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../tutorials/05_generation_overview.html">Tutorial 5: Molecule Generation Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../tutorials/06_structure_guided.html">Tutorial 6: Structure-Guided Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../tutorials/07_property_directed.html">Tutorial 7: Property-Directed Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../tutorials/08_eval_predict.html">Tutorial 8: Prediction and Evaluation Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../tutorials/09_analyze.html">Tutorial 9: Analyse Module - 3D Molecular Structure Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../tutorials/10_generation_sweeps.html">Tutorial 10: Generation Parameter Sweeps</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../../applications/index.html">Applications</a><input aria-label="Toggle navigation of Applications" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../applications/local_chemical_space.html">Application: Local Chemical Space Exploration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../applications/library_design.html">Application: Library Design with Structure-Directed Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../applications/inverse_design.html">Application: Inverse Design</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Workflows</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../../workflows/index.html">Workflows</a><input aria-label="Toggle navigation of Workflows" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../workflows/generate_and_filter.html">Workflow Example: Generate and Filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../workflows/transfer_learning.html">Workflow Example: Transfer Learning and Generate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../workflows/conditioned_generation.html">Workflow Example: Conditioned Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../workflows/end_to_end.html">Workflow Example: End-to-End Design Loop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../../workflows/visualization.html">Workflow: Visualise the Generated Chemical Space</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration Templates</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../config_templates.html">Configuration Templates</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../../api.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../index.html">MolecularDiffusion</a><input aria-label="Toggle navigation of MolecularDiffusion" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../assets/index.html">MolecularDiffusion.assets</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../callbacks/index.html">MolecularDiffusion.callbacks</a><input aria-label="Toggle navigation of MolecularDiffusion.callbacks" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../callbacks/train_helper/index.html">MolecularDiffusion.callbacks.train_helper</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../cli/index.html">MolecularDiffusion.cli</a><input aria-label="Toggle navigation of MolecularDiffusion.cli" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/analyze/index.html">MolecularDiffusion.cli.analyze</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/data/index.html">MolecularDiffusion.cli.data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/eval_predict/index.html">MolecularDiffusion.cli.eval_predict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/generate/index.html">MolecularDiffusion.cli.generate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/main/index.html">MolecularDiffusion.cli.main</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/predict/index.html">MolecularDiffusion.cli.predict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/train/index.html">MolecularDiffusion.cli.train</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/zoo/index.html">MolecularDiffusion.cli.zoo</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/core/index.html">MolecularDiffusion.core.core</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/engine/index.html">MolecularDiffusion.core.engine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/engine_lightning/index.html">MolecularDiffusion.core.engine_lightning</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../core/lightning_callbacks/index.html">MolecularDiffusion.core.lightning_callbacks</a><input aria-label="Toggle navigation of MolecularDiffusion.core.lightning_callbacks" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../core/lightning_callbacks/ema_callback/index.html">MolecularDiffusion.core.lightning_callbacks.ema_callback</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../core/lightning_callbacks/generative_eval_callback/index.html">MolecularDiffusion.core.lightning_callbacks.generative_eval_callback</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/logger/index.html">MolecularDiffusion.core.logger</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/meter/index.html">MolecularDiffusion.core.meter</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../data/index.html">MolecularDiffusion.data</a><input aria-label="Toggle navigation of MolecularDiffusion.data" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../data/component/index.html">MolecularDiffusion.data.component</a><input aria-label="Toggle navigation of MolecularDiffusion.data.component" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/apo2mol_data/index.html">MolecularDiffusion.data.component.apo2mol_data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/dataset/index.html">MolecularDiffusion.data.component.dataset</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/diffdec_data/index.html">MolecularDiffusion.data.component.diffdec_data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/diffint_data/index.html">MolecularDiffusion.data.component.diffint_data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/diffint_prep/index.html">MolecularDiffusion.data.component.diffint_prep</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/diffpharma_data/index.html">MolecularDiffusion.data.component.diffpharma_data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/diffpharma_prep/index.html">MolecularDiffusion.data.component.diffpharma_prep</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/diffsbdd_data/index.html">MolecularDiffusion.data.component.diffsbdd_data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/feature/index.html">MolecularDiffusion.data.component.feature</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/graph3d_dataset/index.html">MolecularDiffusion.data.component.graph3d_dataset</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/kgdiff_data/index.html">MolecularDiffusion.data.component.kgdiff_data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/oareactdiff_data/index.html">MolecularDiffusion.data.component.oareactdiff_data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/pharmacophore/index.html">MolecularDiffusion.data.component.pharmacophore</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/pmdm_data/index.html">MolecularDiffusion.data.component.pmdm_data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/pointcloud/index.html">MolecularDiffusion.data.component.pointcloud</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/reaction_data/index.html">MolecularDiffusion.data.component.reaction_data</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../data/dataloader/index.html">MolecularDiffusion.data.dataloader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../data/dataset/index.html">MolecularDiffusion.data.dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../data/lightning_data_module/index.html">MolecularDiffusion.data.lightning_data_module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../data/valency_tables/index.html">MolecularDiffusion.data.valency_tables</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../molcraftdiff/index.html">MolecularDiffusion.molcraftdiff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../optional/index.html">MolecularDiffusion.optional</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../runmodes/index.html">MolecularDiffusion.runmodes</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../runmodes/analyze/index.html">MolecularDiffusion.runmodes.analyze</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.analyze" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/analyze/compare_to_optimized/index.html">MolecularDiffusion.runmodes.analyze.compare_to_optimized</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/analyze/compute_metrics/index.html">MolecularDiffusion.runmodes.analyze.compute_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/analyze/conformer_metrics/index.html">MolecularDiffusion.runmodes.analyze.conformer_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/analyze/docking/index.html">MolecularDiffusion.runmodes.analyze.docking</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/analyze/druglike/index.html">MolecularDiffusion.runmodes.analyze.druglike</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/analyze/featurize/index.html">MolecularDiffusion.runmodes.analyze.featurize</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/analyze/similarity3d/index.html">MolecularDiffusion.runmodes.analyze.similarity3d</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/analyze/ssl3d_embed/index.html">MolecularDiffusion.runmodes.analyze.ssl3d_embed</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/analyze/uma_embeddings/index.html">MolecularDiffusion.runmodes.analyze.uma_embeddings</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/analyze/xtb_electronic/index.html">MolecularDiffusion.runmodes.analyze.xtb_electronic</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/analyze/xtb_optimization/index.html">MolecularDiffusion.runmodes.analyze.xtb_optimization</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/analyze/xyz2mol/index.html">MolecularDiffusion.runmodes.analyze.xyz2mol</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../runmodes/generate/index.html">MolecularDiffusion.runmodes.generate</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.generate" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/generate/sweep/index.html">MolecularDiffusion.runmodes.generate.sweep</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/generate/tasks_conformer/index.html">MolecularDiffusion.runmodes.generate.tasks_conformer</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/generate/tasks_gcdm_optimize/index.html">MolecularDiffusion.runmodes.generate.tasks_gcdm_optimize</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/generate/tasks_generate/index.html">MolecularDiffusion.runmodes.generate.tasks_generate</a></li>
+</ul>
+</li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../runmodes/train/index.html">MolecularDiffusion.runmodes.train</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes.train" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/train/data/index.html">MolecularDiffusion.runmodes.train.data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/train/eval/index.html">MolecularDiffusion.runmodes.train.eval</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/train/logger/index.html">MolecularDiffusion.runmodes.train.logger</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/train/tasks_egcl/index.html">MolecularDiffusion.runmodes.train.tasks_egcl</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/train/tasks_egt/index.html">MolecularDiffusion.runmodes.train.tasks_egt</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/train/tasks_equiformer/index.html">MolecularDiffusion.runmodes.train.tasks_equiformer</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/train/tasks_esen/index.html">MolecularDiffusion.runmodes.train.tasks_esen</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/train/tasks_gcdm/index.html">MolecularDiffusion.runmodes.train.tasks_gcdm</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/train/tasks_gfmdiff/index.html">MolecularDiffusion.runmodes.train.tasks_gfmdiff</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/train/tasks_painn/index.html">MolecularDiffusion.runmodes.train.tasks_painn</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../runmodes/train/trainer/index.html">MolecularDiffusion.runmodes.train.trainer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../utils/index.html">MolecularDiffusion.utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/comm/index.html">MolecularDiffusion.utils.comm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/conformer_pool/index.html">MolecularDiffusion.utils.conformer_pool</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/diffusion_utils/index.html">MolecularDiffusion.utils.diffusion_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/file/index.html">MolecularDiffusion.utils.file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/geom_analyzer/index.html">MolecularDiffusion.utils.geom_analyzer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/geom_constant/index.html">MolecularDiffusion.utils.geom_constant</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/geom_constraint/index.html">MolecularDiffusion.utils.geom_constraint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/geom_metrics/index.html">MolecularDiffusion.utils.geom_metrics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/geom_stability/index.html">MolecularDiffusion.utils.geom_stability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/geom_utils/index.html">MolecularDiffusion.utils.geom_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/io/index.html">MolecularDiffusion.utils.io</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/molgraph_utils/index.html">MolecularDiffusion.utils.molgraph_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/plot_function/index.html">MolecularDiffusion.utils.plot_function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/pretty/index.html">MolecularDiffusion.utils.pretty</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/sascore/index.html">MolecularDiffusion.utils.sascore</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/shape_measure/index.html">MolecularDiffusion.utils.shape_measure</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../utils/shepherd_score/index.html">MolecularDiffusion.utils.shepherd_score</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../utils/shepherd_score/alignment/index.html">MolecularDiffusion.utils.shepherd_score.alignment</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.alignment" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6 has-children"><a class="reference internal" href="../../../../utils/shepherd_score/alignment/utils/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.alignment.utils" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" role="switch" type="checkbox"/><label for="toctree-checkbox-20"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../utils/shepherd_score/alignment/utils/pca/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils.pca</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../utils/shepherd_score/alignment/utils/pca_np/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils.pca_np</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../utils/shepherd_score/alignment/utils/se3/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils.se3</a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../utils/shepherd_score/alignment/utils/se3_np/index.html">MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../utils/shepherd_score/extract_profiles/index.html">MolecularDiffusion.utils.shepherd_score.extract_profiles</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../utils/shepherd_score/generate_point_cloud/index.html">MolecularDiffusion.utils.shepherd_score.generate_point_cloud</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../utils/shepherd_score/pharm_utils/index.html">MolecularDiffusion.utils.shepherd_score.pharm_utils</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.pharm_utils" class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" role="switch" type="checkbox"/><label for="toctree-checkbox-21"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../utils/shepherd_score/pharm_utils/pharmacophore/index.html">MolecularDiffusion.utils.shepherd_score.pharm_utils.pharmacophore</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../utils/shepherd_score/pharm_utils/pharmvec/index.html">MolecularDiffusion.utils.shepherd_score.pharm_utils.pharmvec</a></li>
+</ul>
+</li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../../../utils/shepherd_score/score/index.html">MolecularDiffusion.utils.shepherd_score.score</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.shepherd_score.score" class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" role="switch" type="checkbox"/><label for="toctree-checkbox-22"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../utils/shepherd_score/score/analytical_gradients/index.html">MolecularDiffusion.utils.shepherd_score.score.analytical_gradients</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../utils/shepherd_score/score/constants/index.html">MolecularDiffusion.utils.shepherd_score.score.constants</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../utils/shepherd_score/score/electrostatic_scoring/index.html">MolecularDiffusion.utils.shepherd_score.score.electrostatic_scoring</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../utils/shepherd_score/score/electrostatic_scoring_np/index.html">MolecularDiffusion.utils.shepherd_score.score.electrostatic_scoring_np</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../utils/shepherd_score/score/gaussian_overlap/index.html">MolecularDiffusion.utils.shepherd_score.score.gaussian_overlap</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../utils/shepherd_score/score/gaussian_overlap_np/index.html">MolecularDiffusion.utils.shepherd_score.score.gaussian_overlap_np</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../utils/shepherd_score/score/pharmacophore_scoring/index.html">MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../utils/shepherd_score/score/pharmacophore_scoring_np/index.html">MolecularDiffusion.utils.shepherd_score.score.pharmacophore_scoring_np</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/shepherd_utils/index.html">MolecularDiffusion.utils.shepherd_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/smilify/index.html">MolecularDiffusion.utils.smilify</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/substituent_builder/index.html">MolecularDiffusion.utils.substituent_builder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/substituent_geometries/index.html">MolecularDiffusion.utils.substituent_geometries</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../utils/torch/index.html">MolecularDiffusion.utils.torch</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../utils/xyz2mol/index.html">MolecularDiffusion.utils.xyz2mol</a><input aria-label="Toggle navigation of MolecularDiffusion.utils.xyz2mol" class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" role="switch" type="checkbox"/><label for="toctree-checkbox-23"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../utils/xyz2mol/converter/index.html">MolecularDiffusion.utils.xyz2mol.converter</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../utils/xyz2mol/elements/index.html">MolecularDiffusion.utils.xyz2mol.elements</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/pregHosh/MolCraftDiffusion/blob/main/docs/autoapi/MolecularDiffusion/modules/models/reactot/en_sb/index.rst?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/pregHosh/MolCraftDiffusion/edit/main/docs/autoapi/MolecularDiffusion/modules/models/reactot/en_sb/index.rst" rel="edit" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-MolecularDiffusion.modules.models.reactot.en_sb">
+<span id="moleculardiffusion-modules-models-reactot-en-sb"></span><h1>MolecularDiffusion.modules.models.reactot.en_sb<a class="headerlink" href="#module-MolecularDiffusion.modules.models.reactot.en_sb" title="Link to this heading">¶</a></h1>
+<p>React-OT’s E(n) Schrodinger bridge over reactant / TS / product.</p>
+<p>Vendored from <code class="docutils literal notranslate"><span class="pre">reactot/diffusion/en_sb.py</span></code> of
+<a class="reference external" href="https://github.com/deepprinciple/react-ot">https://github.com/deepprinciple/react-ot</a> at commit 6dfccd0.</p>
+<p>Duan, C.; Liu, G.-H.; Du, Y.; …; Kulik, H. J., <em>Optimal transport for
+generating transition states in chemical reactions</em>, Nature Machine
+Intelligence (2025), doi:10.1038/s42256-025-01010-0. Preprint (a <strong>different
+title</strong>, same work): arXiv:2404.13430, <em>React-OT: Optimal Transport for
+Generating Transition State in Chemical Reactions</em>.</p>
+<p>This is <strong>not</strong> a diffusion model and not flow matching. It is a Schrodinger
+bridge between two fixed endpoints, solved – on the released settings –
+as a deterministic optimal-transport ODE:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">x1</span></code> is the <strong>midpoint of the reactant and product coordinates</strong>,
+<code class="docutils literal notranslate"><span class="pre">(r_pos</span> <span class="pre">+</span> <span class="pre">p_pos)</span> <span class="pre">/</span> <span class="pre">2</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">x0</span></code> is the transition state;</p></li>
+<li><p>training draws <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">~</span> <span class="pre">U[0,</span> <span class="pre">T)</span></code>, interpolates
+<code class="docutils literal notranslate"><span class="pre">xt</span> <span class="pre">=</span> <span class="pre">mu_x0[t]</span> <span class="pre">*</span> <span class="pre">x0</span> <span class="pre">+</span> <span class="pre">mu_x1[t]</span> <span class="pre">*</span> <span class="pre">x1</span></code>, writes <code class="docutils literal notranslate"><span class="pre">xt</span></code> into the TS object’s
+position columns, runs the network once and regresses
+<code class="docutils literal notranslate"><span class="pre">(xt</span> <span class="pre">-</span> <span class="pre">x0)</span> <span class="pre">/</span> <span class="pre">std_fwd[t]</span></code> under plain <code class="docutils literal notranslate"><span class="pre">F.mse_loss</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ot_ode=True</span></code> and <code class="docutils literal notranslate"><span class="pre">sigma=0.0</span></code> mean <strong>no Gaussian noise is drawn
+anywhere</strong>, in training or in sampling. Run it twice, get the same answer.</p></li>
+</ul>
+<p>There is no ELBO, no KL prior, no <code class="docutils literal notranslate"><span class="pre">loss_0</span></code> term and no per-object
+<code class="docutils literal notranslate"><span class="pre">scales</span></code> weighting – <code class="docutils literal notranslate"><span class="pre">scales</span></code> reaches only upstream’s dead <code class="docutils literal notranslate"><span class="pre">DDPMModule</span></code>
+path, never <code class="docutils literal notranslate"><span class="pre">EnSB</span></code>. That is why
+<a class="reference internal" href="../../../tasks/diffusion_reactot/index.html#MolecularDiffusion.modules.tasks.diffusion_reactot.ReactOTTask" title="MolecularDiffusion.modules.tasks.diffusion_reactot.ReactOTTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReactOTTask</span></code></a>’s
+<code class="docutils literal notranslate"><span class="pre">forward</span></code> is four lines where OA-ReactDiff’s is sixty.</p>
+<section id="what-is-reused-rather-than-re-vendored">
+<h2>What is reused rather than re-vendored<a class="headerlink" href="#what-is-reused-rather-than-re-vendored" title="Link to this heading">¶</a></h2>
+<p>The <strong>network is the same object-aware LEFTNet</strong> OA-ReactDiff already ships,
+verified by <code class="docutils literal notranslate"><span class="pre">diff</span> <span class="pre">-u</span></code>: identical constructor (14 kwargs, same order, same
+defaults) and a forward that differs only by two periodic-boundary kwargs
+whose <code class="docutils literal notranslate"><span class="pre">pbc=False</span></code> path is the code already in the tree. So <code class="docutils literal notranslate"><span class="pre">LEFTNet</span></code>,
+<code class="docutils literal notranslate"><span class="pre">EGNNDynamics</span></code>, <code class="docutils literal notranslate"><span class="pre">Normalizer</span></code>/<code class="docutils literal notranslate"><span class="pre">FEATURE_MAPPING</span></code> and every graph helper
+are imported from <code class="docutils literal notranslate"><span class="pre">modules/models/oareactdiff/</span></code>; nothing there is edited.
+What is genuinely new – the bridge and its schedule – is what lives here.</p>
+</section>
+<section id="scope-and-what-was-stripped-when-vendoring">
+<h2>Scope, and what was stripped when vendoring<a class="headerlink" href="#scope-and-what-was-stripped-when-vendoring" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Only ``mapping=”R+P-&gt;TS”`` with ``mapping_initial=”RP”``.</strong> The other
+three mappings and five other initialisers have no released weights and no
+data path; they raise rather than silently running.</p></li>
+<li><p><strong>No ``ei`` solver</strong> (upstream’s <code class="docutils literal notranslate"><span class="pre">en_sb.py:552-666</span></code>): a research variant,
+absent from the README, needing a 10,000-sample Monte-Carlo quadrature per
+Adams-Bashforth coefficient. <code class="docutils literal notranslate"><span class="pre">ddpm</span></code> and <code class="docutils literal notranslate"><span class="pre">ode</span></code> cover every documented
+use.</p></li>
+<li><p><strong>No ``torchdiffeq``.</strong> <a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.ode_sampling" title="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.ode_sampling"><code class="xref py py-meth docutils literal notranslate"><span class="pre">EnSB.ode_sampling()</span></code></a> vendors the single
+midpoint step – see its <code class="docutils literal notranslate"><span class="pre">ponytail:</span></code> comment.</p></li>
+<li><p>Upstream’s monkey-patched <code class="docutils literal notranslate"><span class="pre">self.opt</span></code> namespace (set from outside at
+<code class="docutils literal notranslate"><span class="pre">evaluation.py:56</span></code>) is replaced by real named arguments; <code class="docutils literal notranslate"><span class="pre">ipdb</span></code>,
+<code class="docutils literal notranslate"><span class="pre">colored_traceback</span></code>, in-sampler <code class="docutils literal notranslate"><span class="pre">tqdm</span></code> (the platform’s
+<code class="docutils literal notranslate"><span class="pre">PocketGenerator.run</span></code> owns the progress bar) and the dead
+<code class="docutils literal notranslate"><span class="pre">return_timesteps=True</span></code> branch are gone.</p></li>
+</ul>
+</section>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.MAPPING" title="MolecularDiffusion.modules.models.reactot.en_sb.MAPPING"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MAPPING</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.MAPPING_INITIAL" title="MolecularDiffusion.modules.models.reactot.en_sb.MAPPING_INITIAL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MAPPING_INITIAL</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.TS_IDX" title="MolecularDiffusion.modules.models.reactot.en_sb.TS_IDX"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TS_IDX</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB" title="MolecularDiffusion.modules.models.reactot.en_sb.EnSB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EnSB</span></code></a></p></td>
+<td><p>The E(n) Schrodinger bridge module.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.compute_scaled_err" title="MolecularDiffusion.modules.models.reactot.en_sb.compute_scaled_err"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_scaled_err</span></code></a>(→ torch.Tensor)</p></td>
+<td><p>Mean absolute error scaled by the label's own magnitude.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.reactot.en_sb.</span></span><span class="sig-name descname"><span class="pre">EnSB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dynamics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../oareactdiff/dynamics/index.html#MolecularDiffusion.modules.models.oareactdiff.dynamics.EGNNDynamics" title="MolecularDiffusion.modules.models.oareactdiff.dynamics.EGNNDynamics"><span class="pre">MolecularDiffusion.modules.models.oareactdiff.dynamics.EGNNDynamics</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">schedule</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../schedule/index.html#MolecularDiffusion.modules.models.reactot.schedule.SBSchedule" title="MolecularDiffusion.modules.models.reactot.schedule.SBSchedule"><span class="pre">MolecularDiffusion.modules.models.reactot.schedule.SBSchedule</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalizer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../oareactdiff/normalizer/index.html#MolecularDiffusion.modules.models.oareactdiff.normalizer.Normalizer" title="MolecularDiffusion.modules.models.oareactdiff.normalizer.Normalizer"><span class="pre">MolecularDiffusion.modules.models.oareactdiff.normalizer.Normalizer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_histogram</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'l2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_only</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">MAPPING</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mapping_initial</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">MAPPING_INITIAL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ts_guess</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">TS_IDX</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
+<p>The E(n) Schrodinger bridge module.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.dynamics">
+<span class="sig-name descname"><span class="pre">dynamics</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.dynamics" title="Link to this definition">¶</a></dt>
+<dd><p>the object-aware <code class="docutils literal notranslate"><span class="pre">EGNNDynamics</span></code> wrapper around LEFTNet.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.schedule">
+<span class="sig-name descname"><span class="pre">schedule</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.schedule" title="Link to this definition">¶</a></dt>
+<dd><p>the bridge’s <code class="xref py py-class docutils literal notranslate"><span class="pre">SBSchedule</span></code>. <strong>Not</strong> in the state
+dict – it is a plain Python object.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.normalizer">
+<span class="sig-name descname"><span class="pre">normalizer</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.normalizer" title="Link to this definition">¶</a></dt>
+<dd><p>identity at the released <code class="docutils literal notranslate"><span class="pre">(1,1,1)/(0,0,0)</span></code> settings,
+kept because it is on the path upstream.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.T">
+<span class="sig-name descname"><span class="pre">T</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.T" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">schedule.timesteps</span></code> (3000 for the released weights).</p>
+</dd></dl>
+
+<p>Assemble the bridge.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dynamics</strong> – object-aware denoiser.</p></li>
+<li><p><strong>schedule</strong> – bridge schedule. Upstream spells this parameter
+<code class="docutils literal notranslate"><span class="pre">schdule</span></code>; the typo is not preserved, because unlike
+OA-ReactDiff’s <code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion</span></code> this class is not
+a verbatim vendoring and nothing constructs it by that name.</p></li>
+<li><p><strong>normalizer</strong> – feature normaliser.</p></li>
+<li><p><strong>size_histogram</strong> – accepted and ignored, exactly as upstream –
+it is passed <code class="docutils literal notranslate"><span class="pre">None</span></code> (<code class="docutils literal notranslate"><span class="pre">pl_trainer.py:813</span></code>) and never read,
+which is why no <code class="docutils literal notranslate"><span class="pre">train_set</span></code> is needed at build time.</p></li>
+<li><p><strong>loss_type</strong> – <code class="docutils literal notranslate"><span class="pre">&quot;vlb&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;l2&quot;</span></code>; asserted, then unread.</p></li>
+<li><p><strong>pos_only</strong> – coordinates only. The released weights are <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>fixed_idx</strong> – <strong>inert</strong>, recorded for fidelity. Upstream stores it
+(<code class="docutils literal notranslate"><span class="pre">en_sb.py:61</span></code>) and never reads it: freezing R and P is
+structural, since only <code class="docutils literal notranslate"><span class="pre">xh_t[idx]</span></code>’s position columns are
+ever overwritten.</p></li>
+<li><p><strong>mapping</strong> – must be <code class="docutils literal notranslate"><span class="pre">&quot;R+P-&gt;TS&quot;</span></code>.</p></li>
+<li><p><strong>mapping_initial</strong> – must be <code class="docutils literal notranslate"><span class="pre">&quot;RP&quot;</span></code>.</p></li>
+<li><p><strong>sigma</strong> – endpoint jitter. <code class="docutils literal notranslate"><span class="pre">0.0</span></code> on the released weights, and the
+code paths that would use it are commented out upstream.</p></li>
+<li><p><strong>ts_guess</strong> – must be falsy – <code class="docutils literal notranslate"><span class="pre">ts_guess</span></code> conditioning is out of
+scope and unreachable on the released checkpoint, whose
+<code class="docutils literal notranslate"><span class="pre">hyper_parameters</span></code> record <code class="docutils literal notranslate"><span class="pre">ts_guess</span> <span class="pre">=</span> <span class="pre">None</span></code>.</p></li>
+<li><p><strong>idx</strong> – which object is generated; must be 1 (the TS).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – for any out-of-scope mapping / initialiser /
+<code class="docutils literal notranslate"><span class="pre">ts_guess</span></code>.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.compute_label">
+<span class="sig-name descname"><span class="pre">compute_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">xt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.compute_label" title="Link to this definition">¶</a></dt>
+<dd><p>The regression target <code class="docutils literal notranslate"><span class="pre">(x_t</span> <span class="pre">-</span> <span class="pre">x_0)</span> <span class="pre">/</span> <span class="pre">std_fwd[t]</span></code> (eq. 12).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step</strong> – per-row integer timestep.</p></li>
+<li><p><strong>x0</strong> – target endpoint.</p></li>
+<li><p><strong>xt</strong> – current bridge state.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The label the network is regressed onto.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.compute_pred_x0">
+<span class="sig-name descname"><span class="pre">compute_pred_x0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">xt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">net_out</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip_denoise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.compute_pred_x0" title="Link to this definition">¶</a></dt>
+<dd><p>Recover <code class="docutils literal notranslate"><span class="pre">x_0</span></code> from a network output – the inverse of eq. 12.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step</strong> – per-row integer timestep.</p></li>
+<li><p><strong>xt</strong> – current bridge state.</p></li>
+<li><p><strong>net_out</strong> – what the network predicted at <code class="docutils literal notranslate"><span class="pre">xt</span></code>.</p></li>
+<li><p><strong>clip_denoise</strong> – clamp the result into <code class="docutils literal notranslate"><span class="pre">[-val,</span> <span class="pre">val]</span></code> angstroms.</p></li>
+<li><p><strong>val</strong> – the clamp bound.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The predicted transition state.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.ddpm_sampling">
+<span class="sig-name descname"><span class="pre">ddpm_sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred_x0_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ot_ode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cog_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.ddpm_sampling" title="Link to this definition">¶</a></dt>
+<dd><p>Walk the grid backwards with the Gaussian-product posterior.</p>
+<p>Deterministic at <code class="docutils literal notranslate"><span class="pre">ot_ode=True</span></code> (the released setting): the
+<code class="docutils literal notranslate"><span class="pre">randn_like</span></code> in <a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.p_posterior" title="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.p_posterior"><code class="xref py py-meth docutils literal notranslate"><span class="pre">p_posterior()</span></code></a> is skipped. This is what
+upstream’s shipped FastAPI service runs (<code class="docutils literal notranslate"><span class="pre">service_ot.py:49</span></code>) and
+what its train script defaults to (<code class="docutils literal notranslate"><span class="pre">train_rpsb_ts1x.py:32</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>steps</strong> – ascending grid indices, <code class="docutils literal notranslate"><span class="pre">steps[0]</span> <span class="pre">==</span> <span class="pre">0</span></code>.</p></li>
+<li><p><strong>pred_x0_fn</strong> – <code class="docutils literal notranslate"><span class="pre">(xt,</span> <span class="pre">step)</span> <span class="pre">-&gt;</span> <span class="pre">predicted</span> <span class="pre">x0</span></code>.</p></li>
+<li><p><strong>x1</strong> – the starting structure (the R/P midpoint).</p></li>
+<li><p><strong>ot_ode</strong> – <code class="docutils literal notranslate"><span class="pre">True</span></code> =&gt; deterministic.</p></li>
+<li><p><strong>log_steps</strong> – which grid indices to record a frame at.</p></li>
+<li><p><strong>cog_mask</strong> – per-row scatter index for CoM removal.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(xs,</span> <span class="pre">pred_x0s)</span></code>, each <code class="docutils literal notranslate"><span class="pre">(sum</span> <span class="pre">n,</span> <span class="pre">n_logged,</span> <span class="pre">3)</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">representations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ot_ode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.forward" title="Link to this definition">¶</a></dt>
+<dd><p>One training step’s loss terms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>representations</strong> – the three per-object dicts.</p></li>
+<li><p><strong>conditions</strong> – the constant-zero <code class="docutils literal notranslate"><span class="pre">(B,</span> <span class="pre">1)</span></code> channel.</p></li>
+<li><p><strong>ot_ode</strong> – <code class="docutils literal notranslate"><span class="pre">True</span></code> =&gt; no noise is drawn.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">{&quot;loss&quot;,</span> <span class="pre">&quot;scaled_err&quot;,</span> <span class="pre">&quot;pred&quot;,</span> <span class="pre">&quot;label&quot;}</span></code>. <code class="docutils literal notranslate"><span class="pre">loss</span></code> is already
+a 0-dim scalar (<code class="docutils literal notranslate"><span class="pre">F.mse_loss</span></code> reduces by default), so the task
+does not reduce again.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.ode_sampling">
+<span class="sig-name descname"><span class="pre">ode_sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net_out_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'midpoint'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cog_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.ode_sampling" title="Link to this definition">¶</a></dt>
+<dd><p>Integrate the probability-flow ODE backwards, one RK2 step a rung.</p>
+<p>The drift is <code class="docutils literal notranslate"><span class="pre">f(t,</span> <span class="pre">x)</span> <span class="pre">=</span> <span class="pre">net_out(x,</span> <span class="pre">t)</span> <span class="pre">*</span> <span class="pre">sqrt(beta</span> <span class="pre">/</span> <span class="pre">t)</span></code> with
+<code class="docutils literal notranslate"><span class="pre">beta</span> <span class="pre">=</span> <span class="pre">betas[0]</span> <span class="pre">*</span> <span class="pre">T</span></code>, which is only well defined because the beta
+schedule is constant – asserted below, exactly as upstream does
+(<code class="docutils literal notranslate"><span class="pre">en_sb.py:411</span></code>). See <code class="xref py py-mod docutils literal notranslate"><span class="pre">schedule</span></code> for why it is constant and what breaks it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>steps</strong> – ascending grid indices, <code class="docutils literal notranslate"><span class="pre">steps[0]</span> <span class="pre">==</span> <span class="pre">0</span></code>.</p></li>
+<li><p><strong>net_out_fn</strong> – <code class="docutils literal notranslate"><span class="pre">(xt,</span> <span class="pre">t)</span> <span class="pre">-&gt;</span> <span class="pre">network</span> <span class="pre">output</span></code> with <code class="docutils literal notranslate"><span class="pre">t</span></code> of shape
+<code class="docutils literal notranslate"><span class="pre">(B,</span> <span class="pre">1)</span></code>.</p></li>
+<li><p><strong>x1</strong> – the starting structure (the R/P midpoint).</p></li>
+<li><p><strong>t_size</strong> – batch size, i.e. how wide <code class="docutils literal notranslate"><span class="pre">t</span></code> must be broadcast.</p></li>
+<li><p><strong>method</strong> – only <code class="docutils literal notranslate"><span class="pre">&quot;midpoint&quot;</span></code>; anything else raises.</p></li>
+<li><p><strong>atol</strong> – accepted for signature fidelity and <strong>unused</strong> –
+torchdiffeq ignores tolerances for fixed-grid solvers, and
+upstream threads <code class="docutils literal notranslate"><span class="pre">1e-2</span></code> through to no effect.</p></li>
+<li><p><strong>rtol</strong> – as <code class="docutils literal notranslate"><span class="pre">atol</span></code>.</p></li>
+<li><p><strong>log_steps</strong> – which grid indices to record a frame at.</p></li>
+<li><p><strong>cog_mask</strong> – per-row scatter index for CoM removal.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(xs,</span> <span class="pre">xs)</span></code> – upstream returns the trajectory twice here,
+because the ODE path never computes <code class="docutils literal notranslate"><span class="pre">pred_x0</span></code>.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – for a non-<code class="docutils literal notranslate"><span class="pre">midpoint</span></code> method, or a grid that does
+not reach 0.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AssertionError" title="(in Python v3.14)"><strong>AssertionError</strong></a> – if the beta schedule is not constant.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.p_posterior">
+<span class="sig-name descname"><span class="pre">p_posterior</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nprev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ot_ode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.p_posterior" title="Link to this definition">¶</a></dt>
+<dd><p>Sample <code class="docutils literal notranslate"><span class="pre">p(x_{nprev}</span> <span class="pre">|</span> <span class="pre">x_n,</span> <span class="pre">x_0)</span></code> – upstream’s eq. 4.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nprev</strong> – the earlier grid index.</p></li>
+<li><p><strong>n</strong> – the current grid index.</p></li>
+<li><p><strong>x_n</strong> – state at <code class="docutils literal notranslate"><span class="pre">n</span></code>.</p></li>
+<li><p><strong>x0</strong> – predicted endpoint.</p></li>
+<li><p><strong>ot_ode</strong> – <code class="docutils literal notranslate"><span class="pre">True</span></code> =&gt; deterministic, no Gaussian term.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>State at <code class="docutils literal notranslate"><span class="pre">nprev</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.q_sample">
+<span class="sig-name descname"><span class="pre">q_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ot_ode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.q_sample" title="Link to this definition">¶</a></dt>
+<dd><p>Sample <code class="docutils literal notranslate"><span class="pre">q(x_t</span> <span class="pre">|</span> <span class="pre">x_0,</span> <span class="pre">x_1)</span></code> – upstream’s eq. 11.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step</strong> – per-row integer timestep, already inflated to <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">1)</span></code>.</p></li>
+<li><p><strong>x0</strong> – target endpoint (the transition state).</p></li>
+<li><p><strong>x1</strong> – source endpoint (the R/P midpoint).</p></li>
+<li><p><strong>ot_ode</strong> – <code class="docutils literal notranslate"><span class="pre">True</span></code> (the released setting) skips the Gaussian term
+entirely, which is what makes training deterministic.</p></li>
+<li><p><strong>mask</strong> – per-row scatter index; when given, the result is
+CoM-removed per sample.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">x_t</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">representations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip_denoise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nfe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ot_ode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ode'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'midpoint'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.sample" title="Link to this definition">¶</a></dt>
+<dd><p>Generate transition states for a batch of reactions.</p>
+<p><strong>``nfe`` is the number of network evaluations</strong>, not a fraction of
+a 3000-step schedule: <code class="docutils literal notranslate"><span class="pre">space_indices(T,</span> <span class="pre">nfe</span> <span class="pre">+</span> <span class="pre">1)</span></code> picks <code class="docutils literal notranslate"><span class="pre">nfe</span> <span class="pre">+</span> <span class="pre">1</span></code>
+rungs out of the grid and the loop walks them backwards. The README’s
+published command is <code class="docutils literal notranslate"><span class="pre">--solver</span> <span class="pre">ode</span> <span class="pre">--nfe</span> <span class="pre">10</span></code>.</p>
+<p>Upstream’s <code class="docutils literal notranslate"><span class="pre">x1</span></code> parameter is not reproduced: it is shadowed at
+<code class="docutils literal notranslate"><span class="pre">en_sb.py:477</span></code> by <a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.sample_batch" title="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.sample_batch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sample_batch()</span></code></a>’s own return, so the caller
+never had a say.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>representations</strong> – the three per-object dicts. <strong>Object 1’s
+positions must already be the R/P midpoint, not a reference
+transition state</strong> – see
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">sample()</span></code>, which substitutes it.</p></li>
+<li><p><strong>conditions</strong> – the constant-zero <code class="docutils literal notranslate"><span class="pre">(B,</span> <span class="pre">1)</span></code> channel.</p></li>
+<li><p><strong>clip_denoise</strong> – clamp each predicted <code class="docutils literal notranslate"><span class="pre">x0</span></code> into +/-10 A.</p></li>
+<li><p><strong>nfe</strong> – network evaluations; <code class="docutils literal notranslate"><span class="pre">None</span></code> =&gt; <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">-</span> <span class="pre">1</span></code>, which is 2999
+and almost certainly not what you want.</p></li>
+<li><p><strong>log_count</strong> – how many trajectory frames to keep. Index 0 of the
+returned tensors is always the final structure.</p></li>
+<li><p><strong>ot_ode</strong> – <code class="docutils literal notranslate"><span class="pre">True</span></code> =&gt; deterministic.</p></li>
+<li><p><strong>solver</strong> – <code class="docutils literal notranslate"><span class="pre">&quot;ode&quot;</span></code> (the published default) or <code class="docutils literal notranslate"><span class="pre">&quot;ddpm&quot;</span></code>.</p></li>
+<li><p><strong>method</strong> – ODE method; only <code class="docutils literal notranslate"><span class="pre">&quot;midpoint&quot;</span></code>.</p></li>
+<li><p><strong>atol</strong> – dead for a fixed-grid method; threaded for fidelity.</p></li>
+<li><p><strong>rtol</strong> – as <code class="docutils literal notranslate"><span class="pre">atol</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(xs,</span> <span class="pre">pred_x0)</span></code>, each <code class="docutils literal notranslate"><span class="pre">(sum</span> <span class="pre">n,</span> <span class="pre">n_logged,</span> <span class="pre">3)</span></code> – <strong>positions
+only</strong>, not the 9-wide concat. The generated structure is
+<code class="docutils literal notranslate"><span class="pre">xs[:,</span> <span class="pre">0,</span> <span class="pre">:]</span></code>.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – for an unknown solver or an out-of-range <code class="docutils literal notranslate"><span class="pre">nfe</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.sample_batch">
+<span class="sig-name descname"><span class="pre">sample_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">representations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.sample_batch" title="Link to this definition">¶</a></dt>
+<dd><p>Endpoints and graph structure for one batch of reactions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>representations</strong> – the three per-object dicts, in <code class="docutils literal notranslate"><span class="pre">[R,</span> <span class="pre">TS,</span> <span class="pre">P]</span></code>
+order, as <code class="xref py py-func docutils literal notranslate"><span class="pre">oareactdiff_collate()</span></code> builds them.</p></li>
+<li><p><strong>conditions</strong> – accepted and unused. Upstream reads
+<code class="docutils literal notranslate"><span class="pre">conditions[&quot;ts_guess&quot;]</span></code> here only on the out-of-scope
+<code class="docutils literal notranslate"><span class="pre">GUESS</span></code> initialiser; on this path the channel is the
+constant-zero <code class="docutils literal notranslate"><span class="pre">(B,</span> <span class="pre">1)</span></code> tensor the released weights saw.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(x0,</span> <span class="pre">x1,</span> <span class="pre">cond,</span> <span class="pre">x0_size,</span> <span class="pre">x0_other)</span></code> – the transition state,
+the reactant/product midpoint (CoM-removed per sample), a dict
+of graph tensors, the TS atom counts and the TS’s non-positional
+columns.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">T</span></span><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">dynamics</span></span><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.fixed_idx">
+<span class="sig-name descname"><span class="pre">fixed_idx</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.fixed_idx" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.fragment_names">
+<span class="sig-name descname"><span class="pre">fragment_names</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.fragment_names" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.idx">
+<span class="sig-name descname"><span class="pre">idx</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.idx" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.loss_type">
+<span class="sig-name descname"><span class="pre">loss_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'l2'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.loss_type" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.mapping">
+<span class="sig-name descname"><span class="pre">mapping</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'R+P-&gt;TS'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.mapping" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.mapping_initial">
+<span class="sig-name descname"><span class="pre">mapping_initial</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RP'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.mapping_initial" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.node_nfs">
+<span class="sig-name descname"><span class="pre">node_nfs</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.node_nfs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.norm_biases">
+<span class="sig-name descname"><span class="pre">norm_biases</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.norm_biases" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.norm_values">
+<span class="sig-name descname"><span class="pre">norm_values</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.norm_values" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">normalizer</span></span><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.pos_dim">
+<span class="sig-name descname"><span class="pre">pos_dim</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.pos_dim" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.pos_only">
+<span class="sig-name descname"><span class="pre">pos_only</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.pos_only" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">schedule</span></span><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.sigma">
+<span class="sig-name descname"><span class="pre">sigma</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.sigma" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.size_histogram">
+<span class="sig-name descname"><span class="pre">size_histogram</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.size_histogram" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.EnSB.ts_guess">
+<span class="sig-name descname"><span class="pre">ts_guess</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.ts_guess" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.compute_scaled_err">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.reactot.en_sb.</span></span><span class="sig-name descname"><span class="pre">compute_scaled_err</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.compute_scaled_err" title="Link to this definition">¶</a></dt>
+<dd><p>Mean absolute error scaled by the label’s own magnitude.</p>
+<p>Upstream’s checkpoint callback monitors <code class="docutils literal notranslate"><span class="pre">val_ep_scaled_err</span></code>, not the
+loss, so this travels alongside it (<code class="docutils literal notranslate"><span class="pre">en_sb.py:26-28</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – prediction.</p></li>
+<li><p><strong>y</strong> – label.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0-dim scalar.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.MAPPING">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.reactot.en_sb.</span></span><span class="sig-name descname"><span class="pre">MAPPING</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'R+P-&gt;TS'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.MAPPING" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.MAPPING_INITIAL">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.reactot.en_sb.</span></span><span class="sig-name descname"><span class="pre">MAPPING_INITIAL</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RP'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.MAPPING_INITIAL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.reactot.en_sb.TS_IDX">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.reactot.en_sb.</span></span><span class="sig-name descname"><span class="pre">TS_IDX</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.reactot.en_sb.TS_IDX" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, pregHosh
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/pregHosh/MolCraftDiffusion" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0"
+                     viewBox="0 0 16 16" height="1em" width="1em">
+                    <path fill-rule="evenodd"
+                          d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+                          0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+                          -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+                          .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+                          -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0
+                          1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82
+                          1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01
+                          1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+                    />
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">MolecularDiffusion.modules.models.reactot.en_sb</a><ul>
+<li><a class="reference internal" href="#what-is-reused-rather-than-re-vendored">What is reused rather than re-vendored</a></li>
+<li><a class="reference internal" href="#scope-and-what-was-stripped-when-vendoring">Scope, and what was stripped when vendoring</a></li>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB"><code class="docutils literal notranslate"><span class="pre">EnSB</span></code></a><ul>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.dynamics"><code class="docutils literal notranslate"><span class="pre">EnSB.dynamics</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.schedule"><code class="docutils literal notranslate"><span class="pre">EnSB.schedule</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.normalizer"><code class="docutils literal notranslate"><span class="pre">EnSB.normalizer</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.T"><code class="docutils literal notranslate"><span class="pre">EnSB.T</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.compute_label"><code class="docutils literal notranslate"><span class="pre">EnSB.compute_label()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.compute_pred_x0"><code class="docutils literal notranslate"><span class="pre">EnSB.compute_pred_x0()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.ddpm_sampling"><code class="docutils literal notranslate"><span class="pre">EnSB.ddpm_sampling()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.forward"><code class="docutils literal notranslate"><span class="pre">EnSB.forward()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.ode_sampling"><code class="docutils literal notranslate"><span class="pre">EnSB.ode_sampling()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.p_posterior"><code class="docutils literal notranslate"><span class="pre">EnSB.p_posterior()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.q_sample"><code class="docutils literal notranslate"><span class="pre">EnSB.q_sample()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.sample"><code class="docutils literal notranslate"><span class="pre">EnSB.sample()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.sample_batch"><code class="docutils literal notranslate"><span class="pre">EnSB.sample_batch()</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">EnSB.T</span></code></a></li>
+<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">EnSB.dynamics</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.fixed_idx"><code class="docutils literal notranslate"><span class="pre">EnSB.fixed_idx</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.fragment_names"><code class="docutils literal notranslate"><span class="pre">EnSB.fragment_names</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.idx"><code class="docutils literal notranslate"><span class="pre">EnSB.idx</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.loss_type"><code class="docutils literal notranslate"><span class="pre">EnSB.loss_type</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.mapping"><code class="docutils literal notranslate"><span class="pre">EnSB.mapping</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.mapping_initial"><code class="docutils literal notranslate"><span class="pre">EnSB.mapping_initial</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.node_nfs"><code class="docutils literal notranslate"><span class="pre">EnSB.node_nfs</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.norm_biases"><code class="docutils literal notranslate"><span class="pre">EnSB.norm_biases</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.norm_values"><code class="docutils literal notranslate"><span class="pre">EnSB.norm_values</span></code></a></li>
+<li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">EnSB.normalizer</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.pos_dim"><code class="docutils literal notranslate"><span class="pre">EnSB.pos_dim</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.pos_only"><code class="docutils literal notranslate"><span class="pre">EnSB.pos_only</span></code></a></li>
+<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">EnSB.schedule</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.sigma"><code class="docutils literal notranslate"><span class="pre">EnSB.sigma</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.size_histogram"><code class="docutils literal notranslate"><span class="pre">EnSB.size_histogram</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.EnSB.ts_guess"><code class="docutils literal notranslate"><span class="pre">EnSB.ts_guess</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.compute_scaled_err"><code class="docutils literal notranslate"><span class="pre">compute_scaled_err()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.MAPPING"><code class="docutils literal notranslate"><span class="pre">MAPPING</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.MAPPING_INITIAL"><code class="docutils literal notranslate"><span class="pre">MAPPING_INITIAL</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.reactot.en_sb.TS_IDX"><code class="docutils literal notranslate"><span class="pre">TS_IDX</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../../../../_static/documentation_options.js?v=030dc6f6"></script>
+    <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    </body>
+</html>

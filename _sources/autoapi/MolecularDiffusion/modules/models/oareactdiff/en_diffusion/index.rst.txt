@@ -1,0 +1,200 @@
+MolecularDiffusion.modules.models.oareactdiff.en_diffusion
+==========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.oareactdiff.en_diffusion
+
+.. autoapi-nested-parse::
+
+   ``EnVariationalDiffusion`` -- the multi-object E(n) diffusion process.
+
+   Ported from ``oa_reactdiff/diffusion/en_diffusion.py`` (commit 543aaa8, MIT).
+
+   Three entry points matter:
+
+   ``forward``   the training objective. Returns raw loss *terms*, not a scalar;
+                 the weighting (``scales``, the ``pos_only`` denominators) lives
+                 in ``OAReactDiffTask.forward`` because that is where upstream
+                 put it (``trainer/pl_trainer.py:208-282``).
+   ``sample``    unconditional: every object is noise. Needs ``h0`` (the atom
+                 identities) when ``pos_only=True``, because such a model cannot
+                 invent them. **Out of scope for this integration** -- kept
+                 because ``inpaint`` reuses half of it.
+   ``inpaint``   the headline mode: freeze objects ``frag_fixed=[0, 2]`` (the
+                 reactant and the product) at their true geometry and generate
+                 object 1 (the transition state) between them, RePaint-style
+                 with ``resamplings`` re-noise rounds every ``jump_length``
+                 steps.
+
+   ``pos_only=True`` (what the released checkpoint is) means the network only
+   ever predicts coordinate noise: the feature columns of its output are zeroed
+   in ``forward`` and the atom types / charges are copied straight through from
+   the input in both samplers.
+
+   One method is dropped: ``inpaint_fixed``, the ``fixed_idx`` variant. It is
+   reachable only when ``fixed_idx`` is non-empty, and the released checkpoint
+   has ``fixed_idx=None``; nothing in this integration calls it.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.oareactdiff.en_diffusion.EnVariationalDiffusion
+
+
+Module Contents
+---------------
+
+.. py:class:: EnVariationalDiffusion(dynamics: MolecularDiffusion.modules.models.oareactdiff.dynamics.EGNNDynamics, schdule: MolecularDiffusion.modules.models.oareactdiff.schedule.DiffSchedule, normalizer: MolecularDiffusion.modules.models.oareactdiff.normalizer.Normalizer, size_histogram: Optional[Dict] = None, loss_type: str = 'l2', pos_only: bool = False, fixed_idx: Optional[List] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   The E(n) Diffusion Module.
+
+
+   .. py:method:: compute_x_pred(net_eps_xh: List[torch.Tensor], zt_xh: List[torch.Tensor], gamma_t: torch.Tensor, masks: List[torch.Tensor]) -> List[torch.Tensor]
+
+      Commputes x_pred, i.e. the most likely prediction of x.
+
+
+
+   .. py:method:: delta_log_px(num_nodes)
+
+
+   .. py:method:: forward(representations: List[Dict], conditions: torch.Tensor, return_pred: bool = False)
+
+      Computes the loss and NLL terms.
+
+      #TODO: edge_attr not considered at all
+
+
+
+   .. py:method:: gaussian_KL(q_mu_minus_p_mu_squared, q_sigma, p_sigma, d)
+      :staticmethod:
+
+
+      Computes the KL distance between two normal distributions.
+      :param q_mu_minus_p_mu_squared: Squared difference between mean of
+                                      distribution q and distribution p: ||mu_q - mu_p||^2
+      :param q_sigma: Standard deviation of distribution q.
+      :param p_sigma: Standard deviation of distribution p.
+      :param d: dimension
+
+      :returns: The KL distance
+
+
+
+   .. py:method:: inpaint(n_samples: int, fragments_nodes: List[torch.tensor], conditions: Optional[torch.Tensor] = None, return_frames: int = 1, resamplings: int = 1, jump_length: int = 1, timesteps: Optional[int] = None, xh_fixed: Optional[List[torch.Tensor]] = None, frag_fixed: Optional[List] = None)
+
+      Draw samples from the generative model. Optionally, return intermediate
+      states for visualization purposes.
+
+
+
+   .. py:method:: kl_prior()
+
+
+   .. py:method:: log_constants_p_x_given_z0(n_nodes, device)
+
+      Computes p(x|z0).
+
+
+
+   .. py:method:: log_pxh_given_z0_without_constants(representations: List[Dict], z_t: List[torch.Tensor], eps_xh: List[torch.Tensor], net_eps_xh: List[torch.Tensor], gamma_t: torch.Tensor, epsilon: float = 1e-10) -> List[List[torch.Tensor]]
+
+
+   .. py:method:: noised_representation(xh: List[torch.Tensor], masks: List[torch.Tensor], gamma_t: torch.Tensor) -> Tuple[List[torch.Tensor], List[torch.Tensor]]
+
+
+   .. py:method:: sample(n_samples: int, fragments_nodes: List[torch.tensor], conditions: Optional[torch.Tensor] = None, return_frames: int = 1, timesteps: Optional[int] = None, h0: Optional[List[torch.Tensor]] = None)
+
+      Draw samples from the generative model. Optionally, return intermediate
+      states for visualization purposes.
+
+
+
+   .. py:method:: sample_combined_position_feature_noise(masks: List[torch.Tensor]) -> List[torch.Tensor]
+
+      Samples mean-centered normal noise for z_x, and standard normal noise for z_h.
+      Note that we only need to put the center of gravity of *each fragment* to the origin.
+
+
+
+   .. py:method:: sample_normal(mu: List[torch.Tensor], sigma: torch.Tensor, masks: List[torch.Tensor], fix_noise: bool = False) -> List[torch.Tensor]
+
+      Samples from a Normal distribution.
+
+
+
+   .. py:method:: sample_p_xh_given_z0(z0_xh: List[torch.Tensor], edge_index: torch.Tensor, n_frag_switch: torch.Tensor, masks: List[torch.Tensor], batch_size: int, conditions: Optional[torch.Tensor] = None, fix_noise: bool = False) -> Tuple[List[torch.Tensor]]
+
+      Samples x ~ p(x|z0).
+
+
+
+   .. py:method:: sample_p_zs_given_zt(s: torch.Tensor, t: torch.Tensor, zt_xh: List[torch.Tensor], edge_index: torch.Tensor, n_frag_switch: torch.Tensor, masks: List[torch.Tensor], conditions: Optional[torch.Tensor] = None, fix_noise: bool = False)
+
+      Samples from zs ~ p(zs | zt). Only used during sampling.
+
+
+
+   .. py:method:: sample_p_zt_given_zs(zs: List[torch.Tensor], masks: List[torch.Tensor], gamma_t: torch.Tensor, gamma_s: torch.Tensor, fix_noise: bool = False) -> List[torch.Tensor]
+
+
+   .. py:method:: subspace_dimensionality(input_size)
+
+      Compute the dimensionality on translation-invariant linear subspace
+      where distributions on x are defined.
+
+
+
+   .. py:attribute:: T
+
+
+   .. py:attribute:: dynamics
+
+
+   .. py:attribute:: fixed_idx
+      :value: []
+
+
+
+   .. py:attribute:: fragment_names
+
+
+   .. py:attribute:: loss_type
+      :value: 'l2'
+
+
+
+   .. py:attribute:: node_nfs
+
+
+   .. py:attribute:: norm_biases
+
+
+   .. py:attribute:: norm_values
+
+
+   .. py:attribute:: normalizer
+
+
+   .. py:attribute:: pos_dim
+
+
+   .. py:attribute:: pos_only
+      :value: False
+
+
+
+   .. py:attribute:: schedule
+
+
+   .. py:attribute:: size_histogram
+      :value: None
+
+
+
