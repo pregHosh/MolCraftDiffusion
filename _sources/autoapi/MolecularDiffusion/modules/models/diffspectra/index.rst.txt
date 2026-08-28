@@ -1,0 +1,25 @@
+MolecularDiffusion.modules.models.diffspectra
+=============================================
+
+.. py:module:: MolecularDiffusion.modules.models.diffspectra
+
+.. autoapi-nested-parse::
+
+   DiffSpectra: DMT (SE(3)-equivariant graph transformer) + SpecFormer
+   (spectral encoder). Liang Wang et al., "DiffSpectra: Molecular Structure
+   Elucidation from Spectra using Diffusion Models", arXiv:2507.06853.
+   https://github.com/AzureLeon1/DiffSpectra
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/diffspectra/dmt/index
+   /autoapi/MolecularDiffusion/modules/models/diffspectra/specformer/index
+   /autoapi/MolecularDiffusion/modules/models/diffspectra/specformer_layers/index
+
+

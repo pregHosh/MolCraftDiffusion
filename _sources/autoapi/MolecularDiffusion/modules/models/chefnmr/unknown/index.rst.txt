@@ -1,0 +1,241 @@
+MolecularDiffusion.modules.models.chefnmr.unknown
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.models.chefnmr.unknown
+
+.. autoapi-nested-parse::
+
+   Unknown-spectra input for ChefNMR: a spectrum and a formula, nothing else.
+
+   The converted benchmark corpus (``<prefix>.db`` plus four sidecars) can only
+   describe molecules whose 3D coordinates *and* SMILES you already have -- that
+   is, only the ones whose answer is known. It is the right input for
+   reproducing published numbers and the wrong one for the actual use case:
+   *here is a spectrum of an unknown, what is it?*
+
+   Generation needs exactly two things: the spectrum and the atom composition.
+   The formula stays mandatory on purpose -- in real NMR elucidation it comes
+   from high-resolution mass spectrometry, and upstream trains with
+   ``known_atoms: True``. Coordinates are not needed here and are not asked for.
+
+   **Format: JSON.** One object per unknown, or a list of them::
+
+       [
+         {
+           "name": "vanillin_unknown",
+           "formula": "C8H8O3",
+           "13C": {"peaks": [190.9, 151.7, 147.2, 129.9, 127.5,
+                             114.4, 108.8, 56.1]},
+           "1H":  {"peaks": [[9.82, 1.0], [7.44, 2.0], [7.04, 1.0],
+                             [6.20, 1.0], [3.95, 3.0]]}
+         }
+       ]
+
+   CSV was the alternative and does not fit: a peak list is a variable-length
+   nested array and a pre-binned channel is 10,000 floats, so neither goes in a
+   cell without an encoding a human then has to remember.
+
+   Keys, per record:
+
+   ``name``
+       Required. Names the output directory, so it must be unique in the file.
+   ``formula`` **or** ``atoms``
+       Exactly one. ``formula`` is a plain molecular formula (``"C8H8O3"``);
+       ``atoms`` is an explicit per-atom list (``["C", "C", "O", "H", ...]``),
+       which is what an exporter writes when it wants to preserve a specific
+       atom ordering.
+   ``smiles``
+       Optional, and only ever used for *scoring*. Supply a suspected structure
+       and the run reports top-k against it; leave it out and the run is a
+       genuine unknown -- :meth:`_reference` returns ``None``, and the shared
+       seam then writes no ``metrics.json``.
+   ``"1H"`` / ``"13C"``
+       Optional (a missing channel is read by the model as absent, via its
+       learned mask token). Each is an object holding **exactly one** of:
+
+       ``peaks``
+           A list of ppm shifts (``[190.9, 151.7]``) or of
+           ``[ppm, intensity]`` pairs. Binned here onto the model's own grid.
+       ``binned``
+           A vector already on the model's grid, exactly ``n_bins`` long.
+
+       ``peaks`` may be joined by ``linewidth`` (FWHM in ppm) on a non-binary
+       channel; see :func:`bin_peaks`.
+
+   Grids, per upstream ``meta/grids/*.p`` (README lines 36-42). Each pickle was
+   opened and checked against ``np.linspace`` here: max abs difference 3e-14, so
+   the analytic form is the grid.
+
+   ======  =======  ====================  ===========================
+   nuclei  n_bins   ppm range             semantics
+   ======  =======  ====================  ===========================
+   1H      10 000   [-2, 10]              lineshape, peak scaled to 1
+   13C     10 000   [-20, 230]            lineshape, peak scaled to 1
+   13C     80       [3.423975, 231.3]     **binary** occupancy, {0, 1}
+   ======  =======  ====================  ===========================
+
+   **The 80-bin 13C channel is an indicator, not intensities.** Measured over
+   both converted corpora: every value is exactly 0.0 or 1.0
+   (``c_all_binary: true`` in each ``_meta.json``), and the ``embed`` tokenizer
+   consumes it as ``x.long() * arange(1, L+1)`` into an
+   ``nn.Embedding(L+1, D, padding_idx=0)``, whose index arithmetic is only
+   correct on ``{0, 1}``. Binning a peak list onto it therefore sets 1.0 and
+   ignores intensities. The 1H 10k channel is *not* binary -- mean non-zero
+   fraction 43.4% over 650,313 USPTO rows, continuous values down to 5e-6 -- so
+   it gets a real lineshape instead. Binary-ness is read off the loaded
+   checkpoint's tokenizer as well as this table, because the tokenizer is what
+   actually consumes the vector.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.chefnmr.unknown.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.chefnmr.unknown.Channel
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.chefnmr.unknown.bin_peaks
+   MolecularDiffusion.modules.models.chefnmr.unknown.formula_to_symbols
+   MolecularDiffusion.modules.models.chefnmr.unknown.grid
+   MolecularDiffusion.modules.models.chefnmr.unknown.read_unknown_spectra
+
+
+Module Contents
+---------------
+
+.. py:class:: Channel
+
+   One measurement channel's slot in the concatenated condition vector.
+
+   .. attribute:: name
+
+      the nuclei, as :attr:`ChefNMRElucidationGenerator
+      .maskable_channels` names it (``"1H"``, ``"13C"``).
+
+   .. attribute:: n_bins
+
+      width of this channel's slice. ``0`` when the loaded
+      checkpoint has no branch for it at all.
+
+   .. attribute:: trained
+
+      whether the checkpoint has this branch. A spectrum
+      supplied for an untrained channel is refused rather than
+      silently discarded.
+
+   .. attribute:: binary
+
+      whether the channel is a ``{0, 1}`` occupancy indicator.
+      Read off the checkpoint's tokenizer, not guessed from the data.
+
+
+   .. py:attribute:: binary
+      :type:  bool
+
+
+   .. py:attribute:: n_bins
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: trained
+      :type:  bool
+
+
+.. py:function:: bin_peaks(peaks: Any, channel: Channel, linewidth: float | None = None, where: str = '') -> numpy.ndarray
+
+   Place a peak list on ``channel``'s grid.
+
+   A binary channel gets a nearest-bin 1.0 per peak and intensities are
+   ignored, because that is what the channel holds (see the module
+   docstring). Everything else gets a sum of Lorentzians scaled so the tallest
+   point is 1.0 -- the normalisation the training data uses.
+
+   :param peaks: ppm shifts, or ``[ppm, intensity]`` pairs.
+   :param channel: which slot of the condition vector this is.
+   :param linewidth: FWHM in ppm, on a non-binary channel. ``None`` => one
+                     grid step, which for the 1H 10k grid is 0.0012 ppm. That is the
+                     **measured** line width: fitting a Lorentzian to isolated
+                     singlets in the USPTO corpus puts the best HWHM at 0.0006 ppm
+                     (18% max relative error, against 24% at twice that and 54% at
+                     four times), and the median singlet FWHM there is 2 grid bins.
+                     Raise it if your peaks came off an instrument with broader
+                     lines than the simulated training spectra.
+   :param where: prefix for error messages, naming the record.
+
+   :returns: A ``(channel.n_bins,)`` float32 vector.
+
+   :raises ValueError: on a malformed peak, a shift off the end of the grid, a
+       non-positive intensity, or a non-positive ``linewidth``.
+
+
+.. py:function:: formula_to_symbols(formula: str, decoder: collections.abc.Sequence[str], where: str = '') -> list[str]
+
+   ``"C8H8O3"`` -> one symbol per atom, in ``decoder`` order.
+
+   The order is arbitrary as far as the model is concerned -- the denoiser
+   has no positional encoding on the atom axis -- but it is fixed here so
+   two runs of the same formula draw the same noise for the same atom.
+
+   :param formula: a plain molecular formula. Parentheses, charges, dots and
+                   hydrates are not parsed; use ``atoms`` for anything else.
+   :param decoder: the model's ``atom_decoder``.
+   :param where: prefix for error messages, naming the record.
+
+   :returns: One element symbol per atom.
+
+   :raises ValueError: on a formula this parser does not accept, an element
+       outside ``decoder``, or a zero count.
+
+
+.. py:function:: grid(channel: str, n_bins: int) -> numpy.ndarray
+
+   The ppm axis a peak list is binned onto.
+
+   :param channel: ``"1H"`` or ``"13C"``.
+   :param n_bins: the checkpoint's width for that channel.
+
+   :returns: The ``(n_bins,)`` ppm axis. Grid points are bin *centres*, and both
+             endpoints are on the grid.
+
+   :raises ValueError: when no grid is published for this pairing -- the ppm
+       axis is then unknown and a peak list cannot be placed on it.
+
+
+.. py:function:: read_unknown_spectra(path: str, channels: collections.abc.Sequence[Channel], decoder: collections.abc.Sequence[str], max_n_atoms: int) -> list[dict[str, Any]]
+
+   Parse an unknown-spectra file into ready-to-use records.
+
+   :param path: the JSON file. See the module docstring for the format.
+   :param channels: the condition vector's layout, read off the loaded
+                    checkpoint. Concatenated in this order.
+   :param decoder: the model's ``atom_decoder``. Position-in-vocab is the
+                   one-hot column, so an element outside it has nowhere to go.
+   :param max_n_atoms: the largest molecule these weights were trained on.
+
+   :returns: One dict per record with ``name``, ``symbols``, ``smiles`` (possibly
+             ``None``) and ``cond`` -- a ``(sum(n_bins),)`` float32 vector.
+
+   :raises ValueError: on anything malformed. Every check names the record.
+
+
+.. py:data:: logger
+

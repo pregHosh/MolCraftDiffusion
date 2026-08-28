@@ -1,0 +1,189 @@
+MolecularDiffusion.modules.models.chefnmr.diffusion
+===================================================
+
+.. py:module:: MolecularDiffusion.modules.models.chefnmr.diffusion
+
+.. autoapi-nested-parse::
+
+   EDM / AlphaFold3 atom diffusion for ChefNMR (MIT, (c) 2025 Ziyu Xiong).
+
+   Upstream: ``src/model/modules/diffusion.py``, which itself started from
+   Boltz (``jwohlwend/boltz``, MIT, (c) 2024 Wohlwend/Corso/Passaro).
+
+   References: Karras et al. 2022 (EDM); Abramson et al. 2024 (AlphaFold3).
+
+   Ported unchanged except for two things that are packaging, not maths:
+
+   * ``score_model_args`` is the denoiser's kwargs dict directly, instead of
+     upstream's ``{model_name: str, <model_name>: {...}}`` indirection --
+     there is exactly one score model and Hydra already picks the task.
+   * ``einops.rearrange(sigma, "b -> b 1 1")`` is ``sigma[:, None, None]``.
+     ``einops`` is not installed here and this was its only site in this file.
+
+   ``sigma_data`` enters the preconditioning (``c_in``/``c_sigma``/``d_sigma``),
+   so it is **baked into the weights**: a checkpoint must be sampled with the
+   same value it was trained with, which is why it is a task-config key rather
+   than something derived from whatever dataset happens to be attached.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.chefnmr.diffusion.AtomDiffusion
+
+
+Module Contents
+---------------
+
+.. py:class:: AtomDiffusion(score_model_args: dict, train_sigma_distribution_type: str = 'af3', sample_sigma_schedule_type: str = 'edm', sample_gamma_schedule_type: str = 'edm', num_sampling_steps: int = 50, sigma_min: float = 0.0004, sigma_max: float = 80.0, gamma_min: float = 1.0, noise_scale: float = 1.0, step_scale: float = 1.0, guidance_scale: float = 0.0, synchronize_sigmas: bool = False, coordinate_transformation_when_training: str = 'centering_rotation_translation', edm_args: Optional[Dict] = None, train_sigma_args: Optional[Dict] = None, **kwargs)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Forward noising + reverse (Heun/EDM) sampling over atom coordinates.
+
+
+   .. py:method:: a_sigma(sigma: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: b_sigma(sigma: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: c_in(sigma: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: c_sigma(sigma: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: compute_loss(model_inputs: Dict[str, torch.Tensor], dict_out: Dict[str, torch.Tensor], multiplicity: int = 1, add_smooth_lddt_loss: bool = True, lddt_loss_threshold: Optional[list] = None) -> Dict[str, Any]
+
+
+   .. py:method:: d_sigma(sigma: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: float_to_tensor(value: Union[float, torch.Tensor], batch_size: int, device) -> torch.Tensor
+
+
+   .. py:method:: forward(model_inputs: Dict[str, torch.Tensor], atom_coords: torch.Tensor, multiplicity: int = 1) -> Dict[str, torch.Tensor]
+
+
+   .. py:method:: interpolate(atom_coords, noise, sigma)
+
+
+   .. py:method:: net_target(atom_coords, noise, sigma)
+
+
+   .. py:method:: neural_network_forward(noisy_atom_coords: torch.Tensor, sigma: Union[float, torch.Tensor], network_condition_kwargs: dict) -> Dict[str, torch.Tensor]
+
+
+   .. py:method:: noised_coords_in_network(atom_coords, sigma)
+
+
+   .. py:method:: pad_sigma(sigma: torch.Tensor, batch_size: int, device) -> torch.Tensor
+
+
+   .. py:method:: predict_denoised_atom_coords(noisy_atom_coords, net_out, sigma)
+
+
+   .. py:method:: predict_velocity(noisy_atom_coords, net_out, sigma, denoised_atom_coords=None)
+
+
+   .. py:method:: sample(model_inputs: Dict[str, torch.Tensor], num_sampling_steps: Optional[int] = None, multiplicity: int = 1, n_chain_frames: int = 1, guidance_scale: Optional[float] = None) -> Tuple[torch.Tensor, torch.Tensor]
+
+      Reverse diffusion.
+
+      ``guidance_scale=None`` uses ``self.guidance_scale`` (the model's own
+      default). It is an explicit argument rather than a mutated attribute
+      so a generator can vary it per run without touching the module.
+
+
+
+   .. py:method:: sample_gamma_schedule(sigmas: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: sample_sigma_schedule(num_sampling_steps=None) -> torch.Tensor
+
+
+   .. py:method:: sigma_in_network(sigma: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: train_sigma_distribution(batch_size: int) -> torch.Tensor
+
+
+   .. py:attribute:: coordinate_transformation_when_training
+      :value: 'centering_rotation_translation'
+
+
+
+   .. py:property:: device
+      :type: torch.device
+
+
+
+   .. py:attribute:: edm_args
+
+
+   .. py:attribute:: gamma_min
+      :value: 1.0
+
+
+
+   .. py:attribute:: guidance_scale
+      :value: 0.0
+
+
+
+   .. py:attribute:: noise_scale
+      :value: 1.0
+
+
+
+   .. py:attribute:: num_sampling_steps
+      :value: 50
+
+
+
+   .. py:attribute:: sample_gamma_schedule_type
+      :value: 'edm'
+
+
+
+   .. py:attribute:: sample_sigma_schedule_type
+      :value: 'edm'
+
+
+
+   .. py:attribute:: score_model
+
+
+   .. py:attribute:: sigma_max
+      :value: 80.0
+
+
+
+   .. py:attribute:: sigma_min
+      :value: 0.0004
+
+
+
+   .. py:attribute:: step_scale
+      :value: 1.0
+
+
+
+   .. py:attribute:: synchronize_sigmas
+      :value: False
+
+
+
+   .. py:attribute:: train_sigma_args
+
+
+   .. py:attribute:: train_sigma_distribution_type
+      :value: 'af3'
+
+
+

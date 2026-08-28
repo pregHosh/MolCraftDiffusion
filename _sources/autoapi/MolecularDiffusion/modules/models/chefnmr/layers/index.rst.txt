@@ -1,0 +1,204 @@
+MolecularDiffusion.modules.models.chefnmr.layers
+================================================
+
+.. py:module:: MolecularDiffusion.modules.models.chefnmr.layers
+
+.. autoapi-nested-parse::
+
+   DiT blocks for ChefNMR (MIT, (c) 2025 Ziyu Xiong).
+
+   Upstream: ``src/model/modules/layers.py``, modified from DiT
+   (facebookresearch/DiT) and timm's ``VisionTransformer``.
+
+   Kept in ``modules/models/chefnmr/`` rather than promoted to
+   ``modules/layers/``: these blocks carry an explicit **atom mask** through
+   attention and use adaLN-zero conditioning on a fused
+   ``time + spectrum`` vector. Nothing else in the tree consumes that shape
+   today, and a shared block would have to grow the mask argument anyway.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.chefnmr.layers.to_2tuple
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.chefnmr.layers.Attention
+   MolecularDiffusion.modules.models.chefnmr.layers.DiTBlock
+   MolecularDiffusion.modules.models.chefnmr.layers.FinalLayer
+   MolecularDiffusion.modules.models.chefnmr.layers.Mlp
+   MolecularDiffusion.modules.models.chefnmr.layers.TimestepEmbedder
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.chefnmr.layers.modulate
+
+
+Module Contents
+---------------
+
+.. py:class:: Attention(dim: int, num_heads: int = 8, qkv_bias: bool = False, qk_norm: bool = False, proj_bias: bool = True, attn_drop: float = 0.0, proj_drop: float = 0.0, norm_layer: Type[torch.nn.Module] = nn.LayerNorm)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Masked multi-head self-attention over the atom axis.
+
+   ``fused_attn`` is hard-off, exactly as upstream: the released weights
+   were trained through the explicit softmax path, and
+   ``scaled_dot_product_attention`` differs in how it handles a fully
+   masked row.
+
+
+   .. py:method:: forward(x: torch.Tensor, mask: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: attn_drop
+
+
+   .. py:attribute:: fused_attn
+      :value: False
+
+
+
+   .. py:attribute:: head_dim
+
+
+   .. py:attribute:: k_norm
+
+
+   .. py:attribute:: num_heads
+      :value: 8
+
+
+
+   .. py:attribute:: proj
+
+
+   .. py:attribute:: proj_drop
+
+
+   .. py:attribute:: q_norm
+
+
+   .. py:attribute:: qkv
+
+
+   .. py:attribute:: scale
+
+
+.. py:class:: DiTBlock(hidden_size: int, n_heads: int, mlp_ratio: float = 4, **block_kwargs)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   DiT block with adaptive layer norm zero (adaLN-Zero) conditioning.
+
+
+   .. py:method:: forward(x: torch.Tensor, c: torch.Tensor, atom_mask: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: adaLN_modulation
+
+
+   .. py:attribute:: attn
+
+
+   .. py:attribute:: mlp
+
+
+   .. py:attribute:: norm1
+
+
+   .. py:attribute:: norm2
+
+
+.. py:class:: FinalLayer(hidden_size: int, out_atom_coords_size: int)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   adaLN-zero output head: hidden -> coordinate update.
+
+
+   .. py:method:: forward(x: torch.Tensor, c: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: adaLN_modulation
+
+
+   .. py:attribute:: linear
+
+
+   .. py:attribute:: norm_final
+
+
+.. py:class:: Mlp(in_features: int, hidden_features: int = None, out_features: int = None, act_layer=nn.GELU, norm_layer=None, bias: bool = True, drop: float = 0.0, use_conv: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   timm's ViT MLP.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: drop1
+
+
+   .. py:attribute:: drop2
+
+
+   .. py:attribute:: fc1
+
+
+   .. py:attribute:: fc2
+
+
+   .. py:attribute:: norm
+
+
+.. py:class:: TimestepEmbedder(hidden_size: int, frequency_embedding_size: int = 256)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Sinusoidal noise-level embedding + 2-layer MLP.
+
+
+   .. py:method:: forward(t: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: timestep_embedding(t: torch.Tensor, dim: int, max_period: int = 10000) -> torch.Tensor
+      :staticmethod:
+
+
+
+   .. py:attribute:: frequency_embedding_size
+      :value: 256
+
+
+
+   .. py:attribute:: mlp
+
+
+.. py:function:: modulate(x: torch.Tensor, shift: torch.Tensor, scale: torch.Tensor) -> torch.Tensor
+
+.. py:data:: to_2tuple
+

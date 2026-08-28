@@ -648,7 +648,8 @@ the bonds are thrown away.</p>
 a pharmacophore. These need <strong>paired</strong> data (the condition alongside the
 molecule); a plain molecule dataset is not enough. Except for ShEPhERD, none
 of them generate bonds — you get atoms in space and the chemistry is perceived
-afterwards. Most are heavy-atom only; KGDiff, PMDM and Apo2Mol also place hydrogens.</p>
+afterwards. Most are heavy-atom only; KGDiff, PMDM and Apo2Mol also place
+hydrogens.</p>
 <p>Synthesizable generation can also be steered by a pharmacophore — see section 2.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
@@ -721,10 +722,10 @@ afterwards. Most are heavy-atom only; KGDiff, PMDM and Apo2Mol also place hydrog
 </section>
 <section id="conformer-generation">
 <h2>4. Conformer generation<a class="headerlink" href="#conformer-generation" title="Link to this heading">¶</a></h2>
-<p>The odd one out: these do not design molecules. You already know <em>what</em> the
-molecule is — you want to know what <strong>shape</strong> it takes. Everything else on this
-page invents new chemistry; this section keeps yours exactly as drawn and only
-works out the geometry. That also means an ordinary molecule dataset is enough
+<p>These do not design molecules. You already know <em>what</em> the molecule is — you
+want to know what <strong>shape</strong> it takes. The generators on this page invent new
+chemistry; this section keeps yours exactly as drawn and only works out the
+geometry. That also means an ordinary molecule dataset is enough
 to train on, with no paired conditions to assemble.</p>
 <p>Because the molecule is yours, you ask for a number of shapes <strong>per molecule</strong>
 rather than a total, and there is no molecule size to set — your structure
@@ -760,8 +761,46 @@ it moved from the structure you supplied.</p>
 </table>
 </div>
 </section>
+<section id="structure-elucidation">
+<h2>5. Structure elucidation<a class="headerlink" href="#structure-elucidation" title="Link to this heading">¶</a></h2>
+<p>You have the compound already — it is the sample in front of you — and you
+want to know what it is. Give these a measured spectrum and they propose the
+structure. Any measurement that pins a structure down fits here; NMR is the
+first one shipped.</p>
+<p>Most of these also need the <strong>molecular formula</strong> as an input, not something
+the model works out for you — in practice it comes from high-resolution mass
+spec, so run that first — and every candidate then has exactly the atoms you
+declared. DiffSpectra is the exception: it generates the atom types and the
+bonds itself, so it needs only the spectrum. What comes back is a ranked
+shortlist per measurement, not a single answer. On carbon spectra alone the
+shipped ChefNMR weights name roughly four compounds in ten outright; with
+proton spectra as well, substantially better.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Task config</p></th>
+<th class="head text-left"><p><code class="docutils literal notranslate"><span class="pre">task_type</span></code></p></th>
+<th class="head text-left"><p>Measurement</p></th>
+<th class="head text-left"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_chefnmr.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_chefnmr</span></code></p></td>
+<td class="text-left"><p><strong>1D NMR</strong> — 1H and 13C, or 13C alone</p></td>
+<td class="text-left"><p>ChefNMR — names an unknown from its NMR. Your own unknown goes in as a short file listing the peaks and the formula; the prepared spectrum collections are only needed to reproduce published benchmark numbers. Structures come back with hydrogens placed but no bonds drawn — the chemistry is read off the geometry afterwards, and a candidate that cannot be read as a molecule is dropped before you see it.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffspectra.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffspectra</span></code></p></td>
+<td class="text-left"><p><strong>IR, Raman, or UV-Vis</strong> — alone or combined</p></td>
+<td class="text-left"><p>DiffSpectra — proposes a complete structure, bonds included, from the spectrum alone; no molecular formula needed, unlike ChefNMR above. QM9-scale only (≤9 heavy atoms), nothing drug-sized.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="transition-state-generation">
-<h2>5. Transition state generation<a class="headerlink" href="#transition-state-generation" title="Link to this heading">¶</a></h2>
+<h2>6. Transition state generation<a class="headerlink" href="#transition-state-generation" title="Link to this heading">¶</a></h2>
 <p>Give these a reactant and a product and they give you back the transition
 state, in seconds rather than hours. Good enough to optimise from, or to
 screen a lot of reactions cheaply — not a final answer.</p>
@@ -797,7 +836,7 @@ the choice above as one of speed, coverage and whether you want more than one
 attempt — not as a ranking on accuracy.</p>
 </section>
 <section id="transition-metal-complex-generation">
-<h2>6. Transition-metal complex generation<a class="headerlink" href="#transition-metal-complex-generation" title="Link to this heading">¶</a></h2>
+<h2>7. Transition-metal complex generation<a class="headerlink" href="#transition-metal-complex-generation" title="Link to this heading">¶</a></h2>
 <p>Ligand design <em>around a metal centre</em>: freeze the metal and the retained
 ligands, re-diffuse the rest. Neither generates bonds, every run starts from an
 input complex, and both need complexes prepared with the bundled converter — a
@@ -828,7 +867,7 @@ the metals Cr through Zn.</p>
 </div>
 </section>
 <section id="property-prediction-and-guidance">
-<h2>7. Property prediction and guidance<a class="headerlink" href="#property-prediction-and-guidance" title="Link to this heading">¶</a></h2>
+<h2>8. Property prediction and guidance<a class="headerlink" href="#property-prediction-and-guidance" title="Link to this heading">¶</a></h2>
 <p>Not generators. <code class="docutils literal notranslate"><span class="pre">regression</span></code> predicts a property; <code class="docutils literal notranslate"><span class="pre">guidance</span></code> exposes the same
 head as a gradient signal to steer a diffusion sampler. Only EGCL and eSEN can
 be used for that steering.</p>
@@ -862,7 +901,7 @@ be used for that steering.</p>
 </div>
 </section>
 <section id="self-supervised-pretraining">
-<h2>8. Self-supervised pretraining<a class="headerlink" href="#self-supervised-pretraining" title="Link to this heading">¶</a></h2>
+<h2>9. Self-supervised pretraining<a class="headerlink" href="#self-supervised-pretraining" title="Link to this heading">¶</a></h2>
 <p>Train a backbone on unlabeled 3D structures. The resulting checkpoint is usable
 today as a <strong>molecular featuriser</strong> (<code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">analyze</span> <span class="pre">featurize</span> <span class="pre">--backend</span> <span class="pre">ssl3d</span></code>); fine-tuning one into a regression or guidance model is <strong>not wired up
 yet</strong> and will be refused.</p>
@@ -1009,6 +1048,14 @@ via dynamic pocket-aware diffusion models.</em> AAAI 2026, 40(2), 1614–1622.
 <a class="reference external" href="https://arxiv.org/abs/2511.14559">arXiv:2511.14559</a> — built on the
 <strong>TargetDiff</strong> backbone (above); its PMINet prior follows <strong>IPDiff</strong>’s
 prior-conditioning idea with a different network.</p></li>
+<li><p><strong>ChefNMR</strong> — Xiong, Zhang, Alauddin, Cheng, An, Seyedsayamdost &amp; Zhong.
+<em>Atomic Diffusion Models for Small Molecule Structure Elucidation from NMR
+Spectra.</em> NeurIPS 2025. <a class="reference external" href="https://arxiv.org/abs/2512.03127">arXiv:2512.03127</a></p></li>
+<li><p><strong>DiffSpectra</strong> — Wang, Rong, Xu, Zhong, Liu, Wang, Zhao, Liu, Wu, Wang &amp;
+Zhang. <em>DiffSpectra: Molecular Structure Elucidation from Spectra using
+Diffusion Models.</em> 2025. <a class="reference external" href="https://arxiv.org/abs/2507.06853">arXiv:2507.06853</a>
+— the DMT backbone is <strong>JODO</strong>’s (above) with a SpecFormer spectral
+encoder replacing JODO’s property-conditioning branch.</p></li>
 <li><p><strong>LigandDiff</strong> — Jin &amp; Merz. <em>LigandDiff: de Novo Ligand Design for 3D
 Transition Metal Complexes with Diffusion Models.</em> Journal of Chemical Theory
 and Computation 20(10), 4377–4384, 2024.
@@ -1151,10 +1198,11 @@ Optimal Transport for Generating Transition State in Chemical Reactions</em>
 <li><a class="reference internal" href="#synthesizable-retroanalysis-constrained-generation">2. Synthesizable / retroanalysis-constrained generation</a></li>
 <li><a class="reference internal" href="#conditional-and-structure-aware-generation">3. Conditional and structure-aware generation</a></li>
 <li><a class="reference internal" href="#conformer-generation">4. Conformer generation</a></li>
-<li><a class="reference internal" href="#transition-state-generation">5. Transition state generation</a></li>
-<li><a class="reference internal" href="#transition-metal-complex-generation">6. Transition-metal complex generation</a></li>
-<li><a class="reference internal" href="#property-prediction-and-guidance">7. Property prediction and guidance</a></li>
-<li><a class="reference internal" href="#self-supervised-pretraining">8. Self-supervised pretraining</a></li>
+<li><a class="reference internal" href="#structure-elucidation">5. Structure elucidation</a></li>
+<li><a class="reference internal" href="#transition-state-generation">6. Transition state generation</a></li>
+<li><a class="reference internal" href="#transition-metal-complex-generation">7. Transition-metal complex generation</a></li>
+<li><a class="reference internal" href="#property-prediction-and-guidance">8. Property prediction and guidance</a></li>
+<li><a class="reference internal" href="#self-supervised-pretraining">9. Self-supervised pretraining</a></li>
 <li><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>

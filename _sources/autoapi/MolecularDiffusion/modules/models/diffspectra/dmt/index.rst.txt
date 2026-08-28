@@ -1,0 +1,158 @@
+MolecularDiffusion.modules.models.diffspectra.dmt
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.models.diffspectra.dmt
+
+.. autoapi-nested-parse::
+
+   DMT: DiffSpectra's Diffusion Molecule Transformer.
+
+   Ported from ``others/DiffSpectra/models/dmt.py``. DMT is JODO's own
+   Graph-DiT-style backbone (``configs/base_qm9.py`` and
+   ``configs/diffspectra_qm9s.py`` both open with the literal leftover module
+   docstring 'Training Conditional JODO with single property on QM9', and
+   ``model.edge_ch = 2`` is JODO's exact QM9 value) with two changes: a
+   :class:`~.specformer.SpecFormer` conditioning branch in place of JODO's
+   scalar-property MLP, and self-conditioning always on.
+
+   Because of that shared ancestry, ``EquivariantMixBlock``/``MultiCondEquiUpdate``
+   (the per-layer equivariant message-passing block) and every GBF/attention
+   primitive they use are **byte-identical** to what
+   ``modules/models/jodo/mol_gnn.py`` and ``modules/models/jodo/layers.py``
+   already ported for JODO -- verified line-for-line against
+   ``others/DiffSpectra/models/layers.py`` and ``others/DiffSpectra/models/dmt.py``
+   before writing this file. They are imported here rather than re-ported, per
+   the integration plan's "cite, don't re-derive" instruction (the plan cites
+   this exact fact in its Repo Inspection section). Only the parts that
+   DIFFER from ``Cond_DGT_concat`` are new: the top-level ``node_emb`` /
+   ``edge_emb`` / ``dist_layer`` / ``e_block_i`` stack construction (kept here,
+   not reused, because it has to end up with UPSTREAM'S OWN ATTRIBUTE NAMES --
+   ``node_emb``, ``edge_emb``, ``e_block_%d``, ``node_pred_mlp``,
+   ``edge_type_mlp``, ``edge_exist_mlp``, ``time_mlp``, ``cond_encoder``,
+   ``cond_lin`` -- so that ``scripts/convert_checkpoint.py`` can load upstream's
+   released weights with a plain ``module.`` prefix strip and NO key remap;
+   see the Hyperparameter Provenance table's warning about a wrong remap
+   loading nothing under ``strict=False``), and ``cond_encoder``/``forward``'s
+   context branch, which is genuinely new (SpecFormer, not a scalar MLP).
+
+   Same reasoning, same reuse: :class:`~MolecularDiffusion.modules.models.jodo.NoiseScheduleVP`
+   is used as-is by the task file rather than re-ported -- its continuous
+   ``cosine``/``linear`` branches (the only ones either model's shipped configs
+   use) are byte-identical to ``others/DiffSpectra/diffusion/noise_schedule.py``'s
+   (same ``beta_0=0.1``, ``beta_1=20.``, ``cosine_s=0.008``, ``T=0.9946``).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffspectra.dmt.DMT
+
+
+Module Contents
+---------------
+
+.. py:class:: DMT(atom_types: int, include_fc_charge: bool, nf: int = 256, n_layers: int = 8, n_heads: int = 16, n_extra_heads: int = 2, dropout: float = 0.1, mlp_ratio: int = 2, spatial_cut_off: float = 2.0, edge_ch: int = 2, cond_time: bool = True, dist_gbf: bool = True, gbf_name: str = 'CondGaussianLayer', trans_name: str = 'TransMixLayer', softmax_inf: bool = True, edge_quan_th: float = 0.0, com: bool = True, pred_data: bool = True, patch_len: list | None = None, stride: list | None = None, spectra_version: str = 'allspectra', specformer_kwargs: dict | None = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   SE(3)-equivariant dense graph transformer with SpecFormer conditioning.
+
+   ``forward`` keeps upstream's raw positional/kwarg contract (``t, xh,
+   node_mask, edge_mask, context=None, *, edge_x, cond_x, cond_edge_x,
+   noise_level``) unchanged, because that is exactly the call shape
+   ``modules/tasks/diffusion_diffspectra.py`` mechanically ports from
+   ``losses.py``/``sampling.py``.
+
+
+   .. py:method:: forward(t, xh, node_mask, edge_mask, context=None, *args: Any, **kwargs: Any)
+
+      Mechanical port of ``others/DiffSpectra/models/dmt.py:306-412``.
+
+      :param t: ``(B,)`` diffusion time in ``[0, 1]`` (unused directly --
+                ``noise_level`` in kwargs carries the actual conditioning
+                signal, exactly as upstream).
+      :param xh: ``(B, N, 3 + in_node_dim)`` positions concatenated with atom
+                 features (types [+ formal charge]).
+      :param node_mask: ``(B, N, 1)`` float/bool.
+      :param edge_mask: ``(B*N*N, 1)`` float -- flattened dense adjacency.
+      :param context: raw spectra -- one ``(B, L)`` tensor, or a 3-list
+                      ``[uv, ir, raman]`` for ``allspectra``. ``None`` is not a
+                      supported call (DiffSpectra has no unconditional branch,
+                      see the integration plan) but is not asserted against here,
+                      matching upstream's own lack of a guard.
+      :param kwargs: ``edge_x`` ``(B, N, N, edge_ch)``, ``cond_x``/``cond_edge_x``
+                     (self-conditioning feedback, ``None`` on the first pass),
+                     ``noise_level`` ``(B,)``.
+
+
+
+   .. py:attribute:: CoM
+      :value: True
+
+
+
+   .. py:attribute:: cond_encoder
+
+
+   .. py:attribute:: cond_lin
+
+
+   .. py:attribute:: cond_time
+      :value: True
+
+
+
+   .. py:attribute:: dist_dim
+      :value: 64
+
+
+
+   .. py:attribute:: dist_gbf
+      :value: True
+
+
+
+   .. py:attribute:: edge_emb
+
+
+   .. py:attribute:: edge_exist_mlp
+
+
+   .. py:attribute:: edge_th
+      :value: 0.0
+
+
+
+   .. py:attribute:: edge_type_mlp
+
+
+   .. py:attribute:: n_layers
+      :value: 8
+
+
+
+   .. py:attribute:: node_emb
+
+
+   .. py:attribute:: node_pred_mlp
+
+
+   .. py:attribute:: pred_data
+      :value: True
+
+
+
+   .. py:attribute:: spatial_cut_off
+      :value: 2.0
+
+
+
+   .. py:attribute:: spectra_version
+      :value: 'allspectra'
+
+
+

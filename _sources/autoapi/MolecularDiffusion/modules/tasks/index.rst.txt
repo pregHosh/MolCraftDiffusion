@@ -12,12 +12,14 @@ Submodules
 
    /autoapi/MolecularDiffusion/modules/tasks/diffusion/index
    /autoapi/MolecularDiffusion/modules/tasks/diffusion_apo2mol/index
+   /autoapi/MolecularDiffusion/modules/tasks/diffusion_chefnmr/index
    /autoapi/MolecularDiffusion/modules/tasks/diffusion_diffdec/index
    /autoapi/MolecularDiffusion/modules/tasks/diffusion_diffint/index
    /autoapi/MolecularDiffusion/modules/tasks/diffusion_difflinker/index
    /autoapi/MolecularDiffusion/modules/tasks/diffusion_diffpharma/index
    /autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsbdd/index
    /autoapi/MolecularDiffusion/modules/tasks/diffusion_diffsmol/index
+   /autoapi/MolecularDiffusion/modules/tasks/diffusion_diffspectra/index
    /autoapi/MolecularDiffusion/modules/tasks/diffusion_ditmc/index
    /autoapi/MolecularDiffusion/modules/tasks/diffusion_equifm/index
    /autoapi/MolecularDiffusion/modules/tasks/diffusion_etflow/index
@@ -38,6 +40,7 @@ Submodules
    /autoapi/MolecularDiffusion/modules/tasks/diffusion_reactot/index
    /autoapi/MolecularDiffusion/modules/tasks/diffusion_syncogen/index
    /autoapi/MolecularDiffusion/modules/tasks/diffusion_tabasco/index
+   /autoapi/MolecularDiffusion/modules/tasks/elucidation_generator/index
    /autoapi/MolecularDiffusion/modules/tasks/metrics/index
    /autoapi/MolecularDiffusion/modules/tasks/pharmacophore/index
    /autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index

@@ -1,0 +1,131 @@
+MolecularDiffusion.modules.models.chefnmr.sidecar
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.models.chefnmr.sidecar
+
+.. autoapi-nested-parse::
+
+   Row-aligned sidecar arrays for ChefNMR.
+
+   The platform's ``pointcloud`` batch has a per-atom array channel
+   (``node_features``) and a per-molecule *scalar* channel (``target_fields``),
+   but no per-molecule *array* channel. ChefNMR needs two of those: a
+   ``(10080,)`` binned NMR condition and a ``(C, N, 3)`` ground-truth conformer
+   stack. Both ride memmapped ``.npy`` files keyed by row index and are joined
+   **inside the task**, off ``batch["xyz"]`` -- the same pattern
+   ``diffusion_diffsmol.py`` uses for its shape latent, and the reason the data
+   layer needs no change.
+
+   Why memmap and not one ``.pt`` dict like DiffSMol's: the condition is 40 kB
+   per molecule (27x DiffSMol's latent), and ``torch.load`` would pull the whole
+   map into RAM. ``np.load(..., mmap_mode="r")[i]`` is O(1) resident and reads
+   40 kB per item.
+
+   Layout, all written in one pass by
+   ``docs/model_integrations/chefnmr/scripts/convert_dataset.py``::
+
+       <prefix>.db            ASE db; row i <-> xyz == f"db_entry_{i}"
+       <prefix>_cond.npy      (R, h_dim + c_dim) float32
+       <prefix>_conf.npy      (R, max_C, max_n_atoms, 3) float32, zero-padded
+       <prefix>_nconf.npy     (R,) int32 -- real conformers per row
+       <prefix>_meta.json     R, max_C, max_n_atoms, atom_decoder, sigma_data,
+                              db sha256 + path, split, sparsity report
+
+   **A miss is a hard error, not a fallback.** DiffSMol falls back to a zero
+   latent on a cache miss; here a zero condition *is* the classifier-free
+   unconditional branch, so the model would happily emit a plausible molecule of
+   the right formula that has nothing to do with the spectrum and the run would
+   look fine. Every lookup failure raises.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.chefnmr.sidecar.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.chefnmr.sidecar.ChefNMRSidecar
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.chefnmr.sidecar.load_sidecar
+   MolecularDiffusion.modules.models.chefnmr.sidecar.parse_row_index
+   MolecularDiffusion.modules.models.chefnmr.sidecar.sha256_file
+
+
+Module Contents
+---------------
+
+.. py:class:: ChefNMRSidecar
+
+   The three row-aligned arrays plus the conversion metadata.
+
+
+   .. py:attribute:: cond
+      :type:  numpy.ndarray
+
+
+   .. py:property:: cond_dim
+      :type: int
+
+
+
+   .. py:attribute:: conf
+      :type:  numpy.ndarray
+
+
+   .. py:property:: max_n_atoms
+      :type: int
+
+
+
+   .. py:attribute:: meta
+      :type:  dict
+
+
+   .. py:attribute:: n_conf
+      :type:  numpy.ndarray
+
+
+   .. py:property:: n_rows
+      :type: int
+
+
+
+.. py:function:: load_sidecar(cond_path: Optional[str], conf_path: Optional[str], meta_path: Optional[str]) -> Optional[ChefNMRSidecar]
+
+   Open the memmaps and cross-check them against ``_meta.json``.
+
+   Returns ``None`` when no paths are configured -- which is the
+   generate-from-checkpoint case, where the corpus comes from the
+   interference config instead and the task never trains.
+
+
+.. py:function:: parse_row_index(xyz: object, n_rows: int) -> int
+
+   ``"db_entry_17"`` -> ``17``, with a message naming the real cause.
+
+   ``PointCloudDataset.save_pickle(cheap_data=True)`` nulls ``self.xyzs``,
+   which destroys the join key outright; so does pointing the task at a db
+   that was not the one the sidecar was built from.
+
+
+.. py:function:: sha256_file(path: str, chunk: int = 8 << 20) -> str
+
+   Streamed sha256 of a file.
+
+
+.. py:data:: logger
+

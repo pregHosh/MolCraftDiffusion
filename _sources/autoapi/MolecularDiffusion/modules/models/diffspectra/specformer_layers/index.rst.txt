@@ -1,0 +1,106 @@
+MolecularDiffusion.modules.models.diffspectra.specformer_layers
+===============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.diffspectra.specformer_layers
+
+.. autoapi-nested-parse::
+
+   Building blocks for :mod:`specformer` -- ported verbatim from
+   ``others/DiffSpectra/models/specformer_layers.py`` (itself PatchTST's
+   building blocks, https://github.com/yuqinie98/PatchTST). No behaviour
+   changes; only the unused ``__all__`` re-export list and a couple of
+   docstrings were trimmed.
+
+   ``moving_avg``/``series_decomp``/``Coord1dPosEncoding``/``Coord2dPosEncoding``
+   are dead in DMT's own use of :class:`~.specformer.SpecFormer` (it always
+   constructs with ``pe='zeros'``), but are kept because
+   :func:`positional_encoding` dispatches to them for other ``pe`` values and
+   the file is small enough that a partial port would only be a trap for
+   whoever changes ``pe`` later.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffspectra.specformer_layers.SinCosPosEncoding
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffspectra.specformer_layers.Transpose
+   MolecularDiffusion.modules.models.diffspectra.specformer_layers.moving_avg
+   MolecularDiffusion.modules.models.diffspectra.specformer_layers.series_decomp
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffspectra.specformer_layers.Coord1dPosEncoding
+   MolecularDiffusion.modules.models.diffspectra.specformer_layers.Coord2dPosEncoding
+   MolecularDiffusion.modules.models.diffspectra.specformer_layers.PositionalEncoding
+   MolecularDiffusion.modules.models.diffspectra.specformer_layers.get_activation_fn
+   MolecularDiffusion.modules.models.diffspectra.specformer_layers.positional_encoding
+
+
+Module Contents
+---------------
+
+.. py:class:: Transpose(*dims, contiguous=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x)
+
+
+.. py:class:: moving_avg(kernel_size, stride)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Moving average block to highlight the trend of a time series.
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: avg
+
+
+   .. py:attribute:: kernel_size
+
+
+.. py:class:: series_decomp(kernel_size)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Series decomposition block.
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: moving_avg
+
+
+.. py:function:: Coord1dPosEncoding(q_len, exponential=False, normalize=True)
+
+.. py:function:: Coord2dPosEncoding(q_len, d_model, exponential=False, normalize=True, eps=0.001, verbose=False)
+
+.. py:function:: PositionalEncoding(q_len, d_model, normalize=True)
+
+.. py:function:: get_activation_fn(activation)
+
+.. py:function:: positional_encoding(pe, learn_pe, q_len, d_model)
+
+.. py:data:: SinCosPosEncoding
+

@@ -1,0 +1,199 @@
+MolecularDiffusion.modules.models.diffspectra.specformer
+========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.diffspectra.specformer
+
+.. autoapi-nested-parse::
+
+   SpecFormer: DiffSpectra's patch-based transformer spectral encoder.
+
+   Ported from ``others/DiffSpectra/models/specformer.py`` (itself adapted from
+   PatchTST, https://github.com/yuqinie98/PatchTST). Takes 1-3 raw spectra
+   (UV/IR/Raman, depending on ``spectra_version``) and returns one
+   ``output_dim``-wide vector per molecule, which
+   :class:`~MolecularDiffusion.modules.models.diffspectra.dmt.DMT` adds directly
+   into its timestep embedding (no cross-attention, no CFG branch -- see the
+   integration plan's Repo Inspection section).
+
+   No behaviour changes from upstream beyond explicit imports (``from
+   .specformer_layers import *`` -> named imports) and dropping the
+   ``__main__`` smoke block; ``reset_parameters()`` is kept even though loading
+   a checkpoint overwrites its effect, because it is cheap and keeps this
+   diffable against upstream.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.diffspectra.specformer.Flatten_Head
+   MolecularDiffusion.modules.models.diffspectra.specformer.SpecFormer
+   MolecularDiffusion.modules.models.diffspectra.specformer.TSTEncoder
+   MolecularDiffusion.modules.models.diffspectra.specformer.TSTEncoderLayer
+   MolecularDiffusion.modules.models.diffspectra.specformer.TSTiEncoder
+
+
+Module Contents
+---------------
+
+.. py:class:: Flatten_Head(individual, nf, target_window, head_dropout=0, n_vars=1)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: individual
+
+
+   .. py:attribute:: n_vars
+      :value: 1
+
+
+
+.. py:class:: SpecFormer(patch_len: list = None, stride: list = None, output_dim: int = 256, spectra_version: str = 'ir', n_layers: int = 3, d_model: int = 128, n_heads: int = 16, d_k: int | None = None, d_v: int | None = None, d_ff: int = 256, attn_dropout: float = 0.0, dropout: float = 0.0, act: str = 'gelu', res_attention: bool = True, pre_norm: bool = False, store_attn: bool = False, pe: str = 'zeros', learn_pe: bool = True, fc_dropout: float = 0.0, head_dropout: float = 0.0, individual: bool = False, **kwargs: object)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(spectra_tensor)
+
+      ``spectra_tensor``: one ``(B, L)``/``(B, 1, L)`` tensor for a
+      single spectrum version, or a 3-list ``[uv, ir, raman]`` for
+      ``allspectra`` -- matching :class:`~.dmt.DMT`'s own ``context``
+      contract, which is in turn what the task's ``_context_from_batch``
+      builds.
+
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: backbone
+
+
+   .. py:attribute:: head
+
+
+   .. py:attribute:: head_nf
+
+
+   .. py:attribute:: out_norm
+
+
+   .. py:attribute:: patch_len
+      :value: [20, 50, 50]
+
+
+
+   .. py:attribute:: patch_nums
+
+
+   .. py:attribute:: spectra_version
+      :value: 'ir'
+
+
+
+   .. py:attribute:: stride
+      :value: [10, 25, 25]
+
+
+
+.. py:class:: TSTEncoder(q_len, d_model, n_heads, d_k=None, d_v=None, d_ff=None, norm='BatchNorm', attn_dropout=0.0, dropout=0.0, activation='gelu', res_attention=False, n_layers=1, pre_norm=False, store_attn=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(src: torch.Tensor, key_padding_mask: torch.Tensor | None = None, attn_mask: torch.Tensor | None = None)
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: layers
+
+
+   .. py:attribute:: res_attention
+      :value: False
+
+
+
+.. py:class:: TSTEncoderLayer(q_len, d_model, n_heads, d_k=None, d_v=None, d_ff=256, store_attn=False, norm='BatchNorm', attn_dropout=0, dropout=0.0, bias=True, activation='gelu', res_attention=False, pre_norm=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(src: torch.Tensor, prev: torch.Tensor | None = None, key_padding_mask: torch.Tensor | None = None, attn_mask: torch.Tensor | None = None) -> torch.Tensor
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: dropout_attn
+
+
+   .. py:attribute:: dropout_ffn
+
+
+   .. py:attribute:: ff
+
+
+   .. py:attribute:: pre_norm
+      :value: False
+
+
+
+   .. py:attribute:: res_attention
+      :value: False
+
+
+
+   .. py:attribute:: self_attn
+
+
+   .. py:attribute:: store_attn
+      :value: False
+
+
+
+.. py:class:: TSTiEncoder(patch_nums, patch_len, spectra_version, used_spectra_type, n_layers=3, d_model=128, n_heads=16, d_k=None, d_v=None, d_ff=256, norm='BatchNorm', attn_dropout=0.0, dropout=0.0, act='gelu', res_attention=True, pre_norm=False, store_attn=False, pe='zeros', learn_pe=True, **kwargs: object)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Channel-independent patch encoder (one branch per spectrum type).
+
+
+   .. py:method:: forward(patched_spectra) -> torch.Tensor
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: W_P
+
+
+   .. py:attribute:: dropout
+
+
+   .. py:attribute:: encoder
+
+
+   .. py:attribute:: patch_len
+
+
+   .. py:attribute:: patch_nums
+
+
+   .. py:attribute:: spectra_version
+
+
+   .. py:attribute:: used_spectra_type
+
+

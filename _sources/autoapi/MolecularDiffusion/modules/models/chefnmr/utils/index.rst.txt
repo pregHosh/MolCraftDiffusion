@@ -1,0 +1,89 @@
+MolecularDiffusion.modules.models.chefnmr.utils
+===============================================
+
+.. py:module:: MolecularDiffusion.modules.models.chefnmr.utils
+
+.. autoapi-nested-parse::
+
+   Geometry / loss helpers ported from ChefNMR (MIT, (c) 2025 Ziyu Xiong).
+
+   Upstream: ``src/model/modules/utils.py``, itself started from Boltz
+   (``jwohlwend/boltz``, MIT) and lucidrains' alphafold3-pytorch (MIT).
+
+   Only what the ported forward/sampling path touches is here: the random
+   SO(3) augmentation that is *how this non-equivariant DiT learns
+   equivariance*, AlphaFold3's smooth-LDDT auxiliary loss, and the 1-D
+   sin/cos grid used by the spectra embedder's optional positional encoding.
+   Upstream's ``ExponentialMovingAverage`` is deliberately NOT ported -- the
+   platform's engine owns EMA -- but its *layout* is what
+   ``scripts/convert_checkpoint.py`` has to understand, see that file.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.chefnmr.utils.center_random_augmentation
+   MolecularDiffusion.modules.models.chefnmr.utils.default
+   MolecularDiffusion.modules.models.chefnmr.utils.exists
+   MolecularDiffusion.modules.models.chefnmr.utils.get_1d_sincos_pos_embed_from_grid
+   MolecularDiffusion.modules.models.chefnmr.utils.log
+   MolecularDiffusion.modules.models.chefnmr.utils.quaternion_to_matrix
+   MolecularDiffusion.modules.models.chefnmr.utils.random_quaternions
+   MolecularDiffusion.modules.models.chefnmr.utils.random_rotations
+   MolecularDiffusion.modules.models.chefnmr.utils.randomly_rotate
+   MolecularDiffusion.modules.models.chefnmr.utils.smooth_lddt_loss
+
+
+Module Contents
+---------------
+
+.. py:function:: center_random_augmentation(atom_coords: torch.Tensor, atom_mask: torch.Tensor, s_trans: float = 1.0, augmentation: bool = True, centering: bool = True, return_second_coords: bool = False, second_coords: Optional[torch.Tensor] = None)
+
+   Mask-aware centering + random rotation + random translation.
+
+   This is not cosmetic: the DiT backbone has no equivariance built in,
+   so this augmentation is the *only* thing that teaches it rotational
+   and translational invariance. Dropping it changes what the model
+   learns, not just how fast.
+
+
+.. py:function:: default(v: object, d: object) -> object
+
+.. py:function:: exists(v: object) -> bool
+
+.. py:function:: get_1d_sincos_pos_embed_from_grid(embed_dim: int, pos: numpy.ndarray) -> numpy.ndarray
+
+   ``(M, embed_dim)`` sin/cos positional grid.
+
+
+.. py:function:: log(t: torch.Tensor, eps: float = 1e-20) -> torch.Tensor
+
+.. py:function:: quaternion_to_matrix(quaternions: torch.Tensor) -> torch.Tensor
+
+   Rotations given as quaternions (real part first) -> ``(..., 3, 3)``.
+
+
+.. py:function:: random_quaternions(n: int, dtype: Optional[torch.dtype] = None, device: Optional[torch.device] = None) -> torch.Tensor
+
+   Uniform random versors with non-negative real part, ``(n, 4)``.
+
+
+.. py:function:: random_rotations(n: int, dtype: Optional[torch.dtype] = None, device: Optional[torch.device] = None) -> torch.Tensor
+
+   Uniform random rotation matrices, ``(n, 3, 3)``.
+
+
+.. py:function:: randomly_rotate(coords: torch.Tensor, return_second_coords: bool = False, second_coords: Optional[torch.Tensor] = None)
+
+.. py:function:: smooth_lddt_loss(pred_coords: torch.Tensor, true_coords: torch.Tensor, is_nucleotide: torch.Tensor, coords_mask: torch.Tensor, lddt_loss_threshold: list, nucleic_acid_cutoff: float = 30.0, other_cutoff: float = 15.0, multiplicity: int = 1) -> torch.Tensor
+
+   AlphaFold3's smooth-LDDT auxiliary, on all real atom pairs.
+
+   ``is_nucleotide`` is kept in the signature (and passed all-zeros by
+   the caller) so the ported maths stays diffable against upstream; for
+   small molecules only ``other_cutoff`` is ever active.
+
+

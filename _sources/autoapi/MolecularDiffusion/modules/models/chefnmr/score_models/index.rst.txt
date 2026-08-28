@@ -1,0 +1,83 @@
+MolecularDiffusion.modules.models.chefnmr.score_models
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.models.chefnmr.score_models
+
+.. autoapi-nested-parse::
+
+   ChefNMR denoiser: a DiT over atom coordinates (MIT, (c) 2025 Ziyu Xiong).
+
+   Upstream: ``src/model/modules/score_models.py``, based on DiT
+   (facebookresearch/DiT); the ``x_embedder`` is copied from NExT-Mol.
+
+   The only per-atom input is ``cat([noisy_coords, atom_one_hot])`` -- there is
+   no edge tensor, no adjacency and no valency table anywhere in the forward
+   path. Conditioning (noise level + spectrum embedding) enters through
+   adaLN-zero in every block; the atom axis is masked attention. Equivariance
+   is **not** built in, it is trained in via
+   :func:`~MolecularDiffusion.modules.models.chefnmr.utils.center_random_augmentation`.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.chefnmr.score_models.DiffusionModuleTransformer
+
+
+Module Contents
+---------------
+
+.. py:class:: DiffusionModuleTransformer(in_atom_feature_size: int = 10, out_atom_coords_size: int = 3, condition: str = 'H1C13NMRSpectrum', in_condition_size: Union[int, List[int]] = (10000, 80), max_n_atoms: int = 300, drop_transform: str = 'zero', n_blocks: int = 10, n_heads: int = 8, hidden_size: int = 512, mlp_ratio: float = 4.0, embedder_args: Optional[Dict] = None, **kwargs)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Noisy coords + known formula + spectrum -> coordinate update.
+
+
+   .. py:method:: forward(r_noisy: torch.Tensor, times: torch.Tensor, model_inputs: Dict[str, torch.Tensor], multiplicity: int = 1, guidance_scale: float = 0.0) -> Dict[str, torch.Tensor]
+
+      Args:
+      r_noisy: noisy atom coordinates ``(B, N, 3)``.
+      times: preconditioned noise levels ``(B,)``.
+      model_inputs: ``atom_mask``, ``atom_one_hot``, ``condition``.
+      multiplicity: candidates per input (a batch dimension).
+      guidance_scale: CFG ``w``. ``0.0`` = conditional pass only,
+          which is also what training uses.
+
+
+
+   .. py:method:: initialize_weights() -> None
+
+
+   .. py:attribute:: blocks
+
+
+   .. py:attribute:: condition
+      :value: 'H1C13NMRSpectrum'
+
+
+
+   .. py:attribute:: drop_transform
+      :value: 'zero'
+
+
+
+   .. py:attribute:: final_layer
+
+
+   .. py:attribute:: pos_embed
+
+
+   .. py:attribute:: t_embedder
+
+
+   .. py:attribute:: x_embedder
+
+
+   .. py:attribute:: y_embedder
+
+

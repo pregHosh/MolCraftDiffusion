@@ -1,0 +1,245 @@
+MolecularDiffusion.modules.models.chefnmr.embedders
+===================================================
+
+.. py:module:: MolecularDiffusion.modules.models.chefnmr.embedders
+
+.. autoapi-nested-parse::
+
+   NMR spectrum tokenizers + encoder for ChefNMR (MIT, (c) 2025 Ziyu Xiong).
+
+   Upstream: ``src/model/modules/embedders.py`` (conv tokenizer modified from
+   MarklandGroup/NMR2Struct).
+
+   Ported verbatim except that upstream's three ``einops.rearrange`` calls are
+   inlined as plain ``reshape``/``permute`` -- ``einops`` is not installed in
+   this environment and these three sites are the only thing that wanted it::
+
+       rearrange(t, "b n (h d) -> b h n d")  ->  t.reshape(b, n, h, d).permute(0, 2, 1, 3)
+       rearrange(o, "b h n d -> b n (h d)")  ->  o.permute(0, 2, 1, 3).reshape(b, n, h * d)
+
+   **The ``embed`` tokenizer only works on a binary vector.** ``_embed_spectrum``
+   does ``x.long() * arange(1, L+1)`` into an ``nn.Embedding(L+1, D,
+   padding_idx=0)``: a bin holding 0 maps to the pad row, a bin holding 1 maps
+   to that bin's own row, and any other value indexes a *different bin's* row.
+   The 80-bin 13C grid is stored as strictly {0.0, 1.0}, and
+   ``scripts/convert_dataset.py`` asserts that rather than assuming it.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.chefnmr.embedders.Attention
+   MolecularDiffusion.modules.models.chefnmr.embedders.AttnPoolToken
+   MolecularDiffusion.modules.models.chefnmr.embedders.FeedForward
+   MolecularDiffusion.modules.models.chefnmr.embedders.NMRSpectraEmbedder
+   MolecularDiffusion.modules.models.chefnmr.embedders.PreNorm
+   MolecularDiffusion.modules.models.chefnmr.embedders.SpectraTokenizerConv1D
+   MolecularDiffusion.modules.models.chefnmr.embedders.SpectraTokenizerPatch1D
+   MolecularDiffusion.modules.models.chefnmr.embedders.TransformerEncoder
+
+
+Module Contents
+---------------
+
+.. py:class:: Attention(dim: int, heads: int, dim_head: Optional[int] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Unmasked multi-head self-attention over spectrum tokens.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: attn
+
+
+   .. py:attribute:: dim_head
+      :value: None
+
+
+
+   .. py:attribute:: heads
+
+
+   .. py:attribute:: scale
+
+
+   .. py:attribute:: to_out
+
+
+   .. py:attribute:: to_qkv
+
+
+.. py:class:: AttnPoolToken(dim: int, out_dim: int, heads: int = 8, dim_head: int = 64, dropout: float = 0.1)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   CLS-token attention pooling to a fixed-size vector.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: attn
+
+
+   .. py:attribute:: cls
+
+
+   .. py:attribute:: proj
+
+
+.. py:class:: FeedForward(dim: int, hidden_dim: int, dropout: float)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: net
+
+
+.. py:class:: NMRSpectraEmbedder(*, use_hnmr: bool = True, use_cnmr: bool = False, hnmr_dim: int = 10000, cnmr_dim: int = 10000, hidden_dim: int = 256, output_dim: int = 768, dropout: float = 0.1, pooling: str = 'flatten', tokenizer_args: dict = None, transformer_args: dict = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Concatenated 1H/13C spectra -> one ``(B, output_dim)`` vector.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: pos_encode(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: c_tokenizer
+
+
+   .. py:attribute:: cnmr_dim
+      :value: 10000
+
+
+
+   .. py:attribute:: dropout
+
+
+   .. py:attribute:: h_tokenizer
+
+
+   .. py:attribute:: hidden_dim
+      :value: 256
+
+
+
+   .. py:attribute:: hnmr_dim
+      :value: 10000
+
+
+
+   .. py:attribute:: pooling
+      :value: 'flatten'
+
+
+
+   .. py:attribute:: pos_enc_mode
+
+
+   .. py:attribute:: use_c_mask_token
+
+
+   .. py:attribute:: use_cnmr
+      :value: False
+
+
+
+   .. py:attribute:: use_h_mask_token
+
+
+   .. py:attribute:: use_hnmr
+      :value: True
+
+
+
+.. py:class:: PreNorm(dim: int, fn: torch.nn.Module)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: fn
+
+
+   .. py:attribute:: norm
+
+
+.. py:class:: SpectraTokenizerConv1D(input_size: int, hidden_dim: int, pool_sizes: list, kernel_sizes: list, out_channels: list)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Conv1d/ReLU/MaxPool stack -> ``(B, T, D)`` tokens.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: num_tokens(input_size: int, kernel_sizes: list, pool_sizes: list) -> int
+      :staticmethod:
+
+
+
+   .. py:attribute:: conv_blocks
+
+
+   .. py:attribute:: linear_after_conv
+
+
+.. py:class:: SpectraTokenizerPatch1D(patch_size: int, stride: int, hidden_dim: int)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Split a 1-D spectrum into fixed patches and project them.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: num_tokens(input_size: int, patch_size: int, stride: int) -> int
+      :staticmethod:
+
+
+
+   .. py:attribute:: patch_size
+
+
+   .. py:attribute:: proj
+
+
+   .. py:attribute:: stride
+
+
+.. py:class:: TransformerEncoder(dim: int, depth: int, heads: int, dim_head: int, mlp_ratio: int, dropout: float)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: final_norm
+
+
+   .. py:attribute:: layers
+
+

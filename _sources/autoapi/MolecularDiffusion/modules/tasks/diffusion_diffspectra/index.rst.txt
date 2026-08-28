@@ -1,0 +1,521 @@
+MolecularDiffusion.modules.tasks.diffusion_diffspectra
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_diffspectra
+
+.. autoapi-nested-parse::
+
+   DiffSpectra: 3D structure elucidation from IR/Raman/UV-Vis spectra.
+
+   DMT (Diffusion Molecule Transformer) jointly diffuses coordinates, atom
+   types, formal charges **and** a dense bond tensor -- DiffSpectra is JODO's
+   own architecture family (Huang et al., NeurIPS 2023, arXiv:2305.12347,
+   already integrated as ``diffusion_jodo``), with a
+   :class:`~MolecularDiffusion.modules.models.diffspectra.specformer.SpecFormer`
+   spectral encoder added directly into the timestep embedding in place of
+   JODO's scalar-property MLP. See the approved
+   ``docs/model_integrations/diffspectra/INTEGRATION_PLAN.md`` for the full
+   derivation; ``_adapt``/``_scale``/``_edge_one_hot``/``_masks`` below are a
+   mechanical adaptation of ``diffusion_jodo.py``'s (same bond encoding, same
+   charge handling), and ``kabsch_batch``/``get_align_position``/``expand_dims``
+   are reused from there directly rather than re-derived -- they are
+   architecture-family math, not something specific to either task.
+
+   **Data path**: ``data_type: graph3d`` with ``bond_collate: dense`` and
+   ``kekulize: true`` (``edge_ch: 2`` has no aromatic channel -- identical
+   situation to JODO's own QM9 config, see
+   ``configs/data/graph3d_qm9s_dataset.yaml``). Coordinates/atoms/bonds ride the
+   platform's existing ``data/qm9_graph3d.db``; the IR/Raman/UV-Vis spectra
+   QM9S adds on top do not fit any existing per-molecule channel, so they ride a
+   SMILES-keyed sidecar (``docs/model_integrations/diffspectra/scripts/
+   convert_dataset.py``), joined here off ``batch["smiles"]`` -- graph3d's
+   identity key, the same role ``xyz`` plays for ``pointcloud`` in
+   ``diffusion_chefnmr.py``.
+
+   **No ``sample()``.** DiffSpectra's spectrum conditioning is never dropped
+   during training (no CFG branch, ``supports_guidance = False`` below), so an
+   unconditional ``sample()`` would either fabricate a spectrum or silently
+   zero it -- both a lie, and both would arm ``GenerativeEvalCallback`` to
+   produce garbage during training. The generative entry point is
+   ``elucidate()``, reached through
+   :class:`~MolecularDiffusion.modules.tasks.elucidation_generator.ElucidationGenerator`
+   via ``configs/interference/gen_elucidation.yaml`` -- rung-1 reuse, no new
+   interference config, no seam change (see the plan's *Inference Task
+   Decision*).
+
+   **Node-count prior.** Unlike ChefNMR (formula is always an input), DiffSpectra
+   generates atom types itself, so all it ever needs from ``_priors`` is a
+   molecule SIZE. When a record's size is unknown, ``node_dist_model``
+   (:class:`~MolecularDiffusion.modules.tasks.diffusion_tabasco.TabascoNodeDistribution`
+   off ``train_set.graph3d_stats``, exactly as ``diffusion_jodo.py`` builds it)
+   draws a plausible one from the training distribution instead of refusing --
+   the user-approved resolution to the plan's node-count-prior question.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_diffspectra.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_diffspectra.DiffSpectraElucidationGenerator
+   MolecularDiffusion.modules.tasks.diffusion_diffspectra.DiffSpectraElucidationTask
+   MolecularDiffusion.modules.tasks.diffusion_diffspectra.DiffSpectraRecord
+   MolecularDiffusion.modules.tasks.diffusion_diffspectra.DiffSpectraTaskFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: DiffSpectraElucidationGenerator(*args: Any, **kwargs: Any)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.elucidation_generator.ElucidationGenerator`
+
+
+   Walk a set of measured spectra; emit ranked 3D candidates per record.
+
+   ``spectra_source`` takes either input, told apart by what the path IS
+   (see :meth:`_records`), the same mechanism
+   ``ChefNMRElucidationGenerator`` uses:
+
+   * a **converted corpus** -- a ``.npz`` written by ``scripts/
+     convert_dataset.py`` (or any file with that shape): SMILES-keyed, so
+     top-k and Tanimoto are reported. Reproduces published numbers.
+   * a **bare unknown-spectra JSON** -- per record a name, spectra on the
+     standard QM9S grid (701/3501/3501 for uv/ir/raman) and OPTIONALLY a
+     known size (``n_atoms``) or reference ``smiles``. No formula required
+     -- unlike ChefNMR, DiffSpectra generates the atom types itself.
+
+   Rides the shared seam unchanged: no ``run()`` loop here, no ``_rank``
+   override (generation order is the correct default -- DiffSpectra has no
+   scorer of its own), and ``_sample_kwargs`` is the base's, because
+   ``num_steps`` is the only knob ``elucidate()`` takes
+   (``guidance_scale`` is refused outright by ``supports_guidance = False``).
+
+   Configure the run.
+
+   :param task: the loaded elucidation task; its ``elucidate()`` is called.
+   :param spectra_source: where measurements are read from. A subclass may
+                          alias this under its own name via :attr:`source_key`.
+   :param spectra_index: index of the first record to process.
+   :param max_records: how many records to process; ``None`` => all of them.
+   :param num_candidates: candidates to draw per record.
+   :param batch_size: how many of those to draw at once. ``k`` is a batch
+                      dimension, never a Python loop.
+   :param num_steps: reverse-process steps; ``None`` => the model's default.
+   :param guidance_scale: classifier-free guidance strength -- the
+                          ``w`` in ``(1+w)*cond - w*uncond``. ``None`` => the
+                          model's own default. Note ``0.0`` is a *meaningful,
+                          different* value: it means unconditional. Rejected when
+                          the model declares ``supports_guidance = False``.
+   :param split: which fold of a labelled corpus to elucidate (e.g.
+                 ``test``). ``None`` => whatever the model's own reader
+                 defaults to. Corpora with no folds ignore it.
+   :param drop_channels: measurement channels to blank out before the
+                         model is shown the record, by name. Valid names are this
+                         model's :attr:`maskable_channels`; anything else is
+                         rejected naming the valid set, and a model declaring none
+                         rejects any non-empty list. ``()`` => the measurement
+                         exactly as recorded.
+   :param top_k: which top-k accuracies to report, when references exist.
+   :param seed: torch/random/numpy seed.
+   :param device: ``None`` => cuda if available.
+   :param output_path: directory for the per-record candidate sets.
+   :param \*\*kwargs: rejected by the base, on purpose.
+
+   :raises ValueError: on any unrecognised interference key. A silently
+       ignored key makes a run look configured when it is not -- the
+       same reason ``PocketGenerator`` rejects rather than ignores.
+
+
+   .. py:attribute:: maskable_channels
+      :value: ()
+
+
+
+   .. py:attribute:: source_key
+      :value: 'spectra_source'
+
+
+
+   .. py:attribute:: source_required_msg
+      :value: Multiline-String
+
+      .. raw:: html
+
+         <details><summary>Show Value</summary>
+
+      .. code-block:: python
+
+         """diffspectra needs `spectra_source`, which is either:
+           (a) a JSON file of UNKNOWN spectra -- per record a name and IR/Raman/UV-Vis intensities on the QM9S grid (701/3501/3501 points), optionally a known size (`n_atoms`) or a reference `smiles`. This is the real use case: hand it a spectrum, get back a molecule.
+           (b) a `.npz` written by docs/model_integrations/diffspectra/scripts/convert_dataset.py -- SMILES-keyed spectra with the answer attached. Use this to reproduce published numbers; it can only describe molecules whose structure you already have."""
+
+      .. raw:: html
+
+         </details>
+
+
+
+
+   .. py:attribute:: supports_guidance
+      :value: False
+
+
+
+   .. py:attribute:: tag
+      :value: 'diffspectra'
+
+
+
+.. py:class:: DiffSpectraElucidationTask(atom_vocab: list[str], include_fc_charge: bool, nf: int, n_layers: int, n_heads: int, n_extra_heads: int, dropout: float, mlp_ratio: int, spatial_cut_off: float, edge_ch: int, cond_time: bool, dist_gbf: bool, gbf_name: str, trans_name: str, softmax_inf: bool, edge_quan_th: float, com: bool, pred_data: bool, self_cond: bool, noise_align: bool, centered: bool, normalize_factors: list, loss_weights: list, reduce_mean: bool, noise_schedule: str, beta_0: float, beta_1: float, sampling_steps: int, spectra_version: str, patch_len: list | None, stride: list | None, specformer_kwargs: dict, n_atoms_hist: dict, sidecar: _SpectraSidecar | None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Task-contract implementation for DiffSpectra.
+
+   The class name is load-bearing:
+   ``elucidation_generator._TASK_TO_GENERATOR`` keys on it to find
+   :class:`DiffSpectraElucidationGenerator`. Implements the FULL contract
+   (``forward``/``predict_and_target``/``evaluate`` for training, PLUS
+   ``elucidate`` for generation) in one class, exactly as
+   ``ChefNMRElucidationTask`` does.
+
+
+   .. py:method:: elucidate(batch: dict[str, torch.Tensor], num_steps: int | None = None) -> dict[str, torch.Tensor]
+
+      One tiled spectrum -> ``n`` candidate molecules.
+
+      ``batch`` is what :meth:`DiffSpectraElucidationGenerator._repeat`
+      built: ``condition`` (one raw ``(n, L)`` tensor, or a 3-list for
+      ``allspectra``) and ``n_atoms`` ``(n,)`` -- the known or
+      ``node_dist_model``-sampled size per candidate. Ancestral sampling,
+      mechanical port of ``diffusion_jodo.py``'s ``sample()`` (same
+      architecture family), always conditioned -- DiffSpectra has no
+      unconditional branch.
+
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor) -> dict
+
+
+   .. py:method:: forward(batch: dict) -> tuple
+
+      One training step: mechanical port of upstream's
+      ``losses.get_sde_graph_loss_fn`` (``self_cond_type: 'ori'`` in every
+      shipped config, so the self-cond post-process step it calls is the
+      identity and is not reproduced here).
+
+
+
+   .. py:method:: predict_and_target(batch: dict) -> tuple
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: backbone
+
+
+   .. py:attribute:: centered
+
+
+   .. py:property:: device
+      :type: torch.device
+
+
+      ``cli/generate.py`` skips its own device move when a task has
+      this defined, and the elucidation seam does ``task.to(device)``.
+
+
+   .. py:attribute:: edge_ch
+
+
+   .. py:attribute:: include_fc_charge
+
+
+   .. py:attribute:: last_bond_types
+      :type:  torch.Tensor | None
+      :value: None
+
+
+
+   .. py:attribute:: loss_weights
+
+
+   .. py:property:: model
+      :type: DiffSpectraElucidationTask
+
+
+
+   .. py:attribute:: n_atom_types
+
+
+   .. py:property:: n_node_dist
+      :type: dict
+
+
+
+   .. py:attribute:: node_dist_model
+
+
+   .. py:attribute:: noise_align
+
+
+   .. py:attribute:: noise_scheduler
+
+
+   .. py:attribute:: pred_data
+
+
+   .. py:attribute:: reduce_mean
+
+
+   .. py:attribute:: sampling_steps
+
+
+   .. py:attribute:: self_cond
+
+
+   .. py:attribute:: spectra_version
+
+
+.. py:class:: DiffSpectraRecord
+
+   One spectrum to elucidate.
+
+   Two sources fill this (see :meth:`DiffSpectraElucidationGenerator._records`):
+   a converted labelled corpus (``smiles`` known, ``uv``/``ir``/``raman``
+   read from the sidecar-shaped ``.npz``) or a bare unknown-spectra JSON
+   (``smiles`` usually ``None``, spectra given inline).
+
+
+   .. py:attribute:: ir
+      :type:  numpy.ndarray | None
+      :value: None
+
+
+
+   .. py:attribute:: n_atoms
+      :type:  int | None
+      :value: None
+
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: raman
+      :type:  numpy.ndarray | None
+      :value: None
+
+
+
+   .. py:attribute:: smiles
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: uv
+      :type:  numpy.ndarray | None
+      :value: None
+
+
+
+.. py:class:: DiffSpectraTaskFactory(task_type: str = 'diffusion_diffspectra', atom_vocab: collections.abc.Sequence[str] | None = None, include_fc_charge: bool = True, nf: int = 256, n_layers: int = 8, n_heads: int = 16, n_extra_heads: int = 2, dropout: float = 0.1, mlp_ratio: int = 2, spatial_cut_off: float = 2.0, edge_ch: int = 2, cond_time: bool = True, dist_gbf: bool = True, gbf_name: str = 'CondGaussianLayer', trans_name: str = 'TransMixLayer', softmax_inf: bool = True, edge_quan_th: float = 0.0, com: bool = True, pred_data: bool = True, self_cond: bool = True, noise_align: bool = True, centered: bool = True, normalize_factors: list | None = None, loss_weights: list | None = None, reduce_mean: bool = False, noise_schedule: str = 'cosine', beta_0: float = 0.1, beta_1: float = 20.0, sampling_steps: int = 1000, spectra_version: str = 'allspectra', patch_len: list | None = None, stride: list | None = None, specformer_kwargs: dict | None = None, spectra_sidecar_path: str | None = None, train_set: torch.utils.data.Dataset | None = None, **kwargs: Any)
+
+   Hydra entry point for ``configs/tasks/diffusion_diffspectra.yaml``.
+
+
+   .. py:method:: build() -> DiffSpectraElucidationTask
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: beta_0
+      :value: 0.1
+
+
+
+   .. py:attribute:: beta_1
+      :value: 20.0
+
+
+
+   .. py:attribute:: centered
+      :value: True
+
+
+
+   .. py:attribute:: com
+      :value: True
+
+
+
+   .. py:attribute:: cond_time
+      :value: True
+
+
+
+   .. py:attribute:: dist_gbf
+      :value: True
+
+
+
+   .. py:attribute:: dropout
+      :value: 0.1
+
+
+
+   .. py:attribute:: edge_ch
+      :value: 2
+
+
+
+   .. py:attribute:: edge_quan_th
+      :value: 0.0
+
+
+
+   .. py:attribute:: gbf_name
+      :value: 'CondGaussianLayer'
+
+
+
+   .. py:attribute:: include_fc_charge
+      :value: True
+
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: loss_weights
+      :value: [1.0, 0.25, 0.1]
+
+
+
+   .. py:attribute:: mlp_ratio
+      :value: 2
+
+
+
+   .. py:attribute:: n_extra_heads
+      :value: 2
+
+
+
+   .. py:attribute:: n_heads
+      :value: 16
+
+
+
+   .. py:attribute:: n_layers
+      :value: 8
+
+
+
+   .. py:attribute:: nf
+      :value: 256
+
+
+
+   .. py:attribute:: noise_align
+      :value: True
+
+
+
+   .. py:attribute:: noise_schedule
+      :value: 'cosine'
+
+
+
+   .. py:attribute:: normalize_factors
+      :value: [1, 4, 4, 1]
+
+
+
+   .. py:attribute:: patch_len
+
+
+   .. py:attribute:: pred_data
+      :value: True
+
+
+
+   .. py:attribute:: reduce_mean
+      :value: False
+
+
+
+   .. py:attribute:: sampling_steps
+      :value: 1000
+
+
+
+   .. py:attribute:: self_cond
+      :value: True
+
+
+
+   .. py:attribute:: softmax_inf
+      :value: True
+
+
+
+   .. py:attribute:: spatial_cut_off
+      :value: 2.0
+
+
+
+   .. py:attribute:: specformer_kwargs
+
+
+   .. py:attribute:: spectra_sidecar_path
+      :value: None
+
+
+
+   .. py:attribute:: spectra_version
+      :value: 'allspectra'
+
+
+
+   .. py:attribute:: stride
+
+
+   .. py:attribute:: task
+      :type:  DiffSpectraElucidationTask | None
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_diffspectra'
+
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+   .. py:attribute:: trans_name
+      :value: 'TransMixLayer'
+
+
+
+.. py:data:: logger
+

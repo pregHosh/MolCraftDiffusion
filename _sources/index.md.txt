@@ -4,7 +4,7 @@
 
 MolCraftDiffusion is an open-source framework for building, training, applying, and comparing **3D molecular generative models** in computational chemistry. It supports de novo, property-directed, structure-guided, shape-conditioned, pocket-conditioned, fragment-based, and pharmacophore-driven molecular design.
 
-The platform unifies data preparation, training and fine-tuning, guided generation, checkpoint handling, and evaluation behind a shared CLI and configuration system. Different generative paradigms can therefore use the same surrounding infrastructure without requiring separate end-to-end codebases.
+The platform unifies data preparation, training and fine-tuning, guided generation, checkpoint handling, and evaluation behind a shared CLI and configuration system. Different generative paradigms can therefore use the same surrounding infrastructure without requiring separate end-to-end codebases. A no-code browser UI, [AutomaticMolCraft](https://github.com/lcmd-epfl/AutomaticMolCraft), is also available for users who prefer not to work from the CLI.
 
 ![Workflow overview](../images/overview.png)
 
@@ -14,6 +14,7 @@ The platform unifies data preparation, training and fine-tuning, guided generati
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19511401.svg)](https://zenodo.org/records/19511401)
 [![Weights](https://img.shields.io/badge/Weights-HuggingFace-yellow)](https://huggingface.co/pregH/MolecularDiffusion)
 [![Dataset](https://img.shields.io/badge/Dataset-HuggingFace-yellow)](https://huggingface.co/pregH/MolecularDiffusion)
+[![Web UI](https://img.shields.io/badge/Web%20UI-AutomaticMolCraft-purple)](https://github.com/lcmd-epfl/AutomaticMolCraft)
 
 ---
 
@@ -29,6 +30,12 @@ MolCraftDiffusion is built around a common task interface, allowing generators w
   - *Property-Targeted Guidance*: Steer generation towards desired properties using Classifier-Free Guidance (CFG), Gradient Guidance (GG), or a hybrid approach.
   - *Structure-Guided Generation*: Perform inpainting (scaffold decoration), outpainting (fragment extension) and SILVR (soft reference steering / fragment merging) with precise 3D geometric constraints.
 - **Analysis & Evaluation Module** — Assess generated molecules with structural validity metrics, xTB geometry optimisation, RMSD comparisons, and quantum-chemical property calculation or prediction.
+
+---
+
+## Web Interface
+
+Prefer a browser to the CLI? [AutomaticMolCraft](https://github.com/lcmd-epfl/AutomaticMolCraft) is a no-code web UI built on top of MolCraftDiffusion — property-guided generation, structure-guided inpainting/outpainting, training configuration, dataset curation, and linked 2D/3D visualization, served locally via `dev.sh`.
 
 ---
 

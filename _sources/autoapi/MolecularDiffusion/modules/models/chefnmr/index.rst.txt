@@ -1,0 +1,37 @@
+MolecularDiffusion.modules.models.chefnmr
+=========================================
+
+.. py:module:: MolecularDiffusion.modules.models.chefnmr
+
+.. autoapi-nested-parse::
+
+   ChefNMR: 3D structure elucidation from NMR spectra.
+
+   Xiong, Zhang, Alauddin, Cheng, An, Seyedsayamdost, Zhong,
+   *"Atomic Diffusion Models for Small Molecule Structure Elucidation from NMR
+   Spectra"*, NeurIPS 2025. arXiv:2512.03127.
+   Upstream: https://github.com/ml-struct-bio/chefnmr (MIT).
+
+   EDM/AlphaFold3 diffusion over Cartesian atom coordinates with a plain
+   (non-equivariant) DiT denoiser, conditioned on a binned 1H/13C NMR pair and
+   on the **known chemical formula** -- the atom types are an input, never a
+   prediction. Bonds are perceived from the generated geometry afterwards by
+   RDKit; the model has no bond channel at all.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/chefnmr/diffusion/index
+   /autoapi/MolecularDiffusion/modules/models/chefnmr/embedders/index
+   /autoapi/MolecularDiffusion/modules/models/chefnmr/layers/index
+   /autoapi/MolecularDiffusion/modules/models/chefnmr/score_models/index
+   /autoapi/MolecularDiffusion/modules/models/chefnmr/sidecar/index
+   /autoapi/MolecularDiffusion/modules/models/chefnmr/unknown/index
+   /autoapi/MolecularDiffusion/modules/models/chefnmr/utils/index
+
+

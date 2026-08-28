@@ -474,14 +474,15 @@
 <h1>MolCraftDiffusion<a class="headerlink" href="#molcraftdiffusion" title="Link to this heading">¶</a></h1>
 <p><strong>One platform for diverse 3D molecular generation workflows.</strong></p>
 <p>MolCraftDiffusion is an open-source framework for building, training, applying, and comparing <strong>3D molecular generative models</strong> in computational chemistry. It supports de novo, property-directed, structure-guided, shape-conditioned, pocket-conditioned, fragment-based, and pharmacophore-driven molecular design.</p>
-<p>The platform unifies data preparation, training and fine-tuning, guided generation, checkpoint handling, and evaluation behind a shared CLI and configuration system. Different generative paradigms can therefore use the same surrounding infrastructure without requiring separate end-to-end codebases.</p>
+<p>The platform unifies data preparation, training and fine-tuning, guided generation, checkpoint handling, and evaluation behind a shared CLI and configuration system. Different generative paradigms can therefore use the same surrounding infrastructure without requiring separate end-to-end codebases. A no-code browser UI, <a class="reference external" href="https://github.com/lcmd-epfl/AutomaticMolCraft">AutomaticMolCraft</a>, is also available for users who prefer not to work from the CLI.</p>
 <p><img alt="Workflow overview" src="_images/overview.png" /></p>
 <p><a class="reference external" href="https://github.com/pregHosh/MolCraftDiffusion"><img alt="GitHub" src="https://img.shields.io/badge/GitHub-Repo-black?logo=github" /></a>
 <a class="reference external" href="https://pypi.org/project/molcraftdiffusion/"><img alt="PyPI" src="https://img.shields.io/pypi/v/molcraftdiffusion" /></a>
 <a class="reference external" href="https://chemrxiv.org/engage/chemrxiv/article-details/6909e50fef936fb4a23df237"><img alt="Preprint" src="https://img.shields.io/badge/Preprint-ChemRxiv-blue" /></a>
 <a class="reference external" href="https://zenodo.org/records/19511401"><img alt="DOI" src="https://zenodo.org/badge/DOI/10.5281/zenodo.19511401.svg" /></a>
 <a class="reference external" href="https://huggingface.co/pregH/MolecularDiffusion"><img alt="Weights" src="https://img.shields.io/badge/Weights-HuggingFace-yellow" /></a>
-<a class="reference external" href="https://huggingface.co/pregH/MolecularDiffusion"><img alt="Dataset" src="https://img.shields.io/badge/Dataset-HuggingFace-yellow" /></a></p>
+<a class="reference external" href="https://huggingface.co/pregH/MolecularDiffusion"><img alt="Dataset" src="https://img.shields.io/badge/Dataset-HuggingFace-yellow" /></a>
+<a class="reference external" href="https://github.com/lcmd-epfl/AutomaticMolCraft"><img alt="Web UI" src="https://img.shields.io/badge/Web%20UI-AutomaticMolCraft-purple" /></a></p>
 <hr class="docutils" />
 <section id="key-features">
 <h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h2>
@@ -499,6 +500,11 @@
 </li>
 <li><p><strong>Analysis &amp; Evaluation Module</strong> — Assess generated molecules with structural validity metrics, xTB geometry optimisation, RMSD comparisons, and quantum-chemical property calculation or prediction.</p></li>
 </ul>
+</section>
+<hr class="docutils" />
+<section id="web-interface">
+<h2>Web Interface<a class="headerlink" href="#web-interface" title="Link to this heading">¶</a></h2>
+<p>Prefer a browser to the CLI? <a class="reference external" href="https://github.com/lcmd-epfl/AutomaticMolCraft">AutomaticMolCraft</a> is a no-code web UI built on top of MolCraftDiffusion — property-guided generation, structure-guided inpainting/outpainting, training configuration, dataset curation, and linked 2D/3D visualization, served locally via <code class="docutils literal notranslate"><span class="pre">dev.sh</span></code>.</p>
 </section>
 <hr class="docutils" />
 <section id="quick-start">
@@ -676,6 +682,7 @@ MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>my_gen
             <ul>
 <li><a class="reference internal" href="#">MolCraftDiffusion</a><ul>
 <li><a class="reference internal" href="#key-features">Key Features</a></li>
+<li><a class="reference internal" href="#web-interface">Web Interface</a></li>
 <li><a class="reference internal" href="#quick-start">Quick Start</a></li>
 <li><a class="reference internal" href="#contents">Contents</a><ul>
 </ul>

@@ -87,7 +87,8 @@ Generation steered by an external input — a shape, a pocket, a set of fragment
 a pharmacophore. These need **paired** data (the condition alongside the
 molecule); a plain molecule dataset is not enough. Except for ShEPhERD, none
 of them generate bonds — you get atoms in space and the chemistry is perceived
-afterwards. Most are heavy-atom only; KGDiff, PMDM and Apo2Mol also place hydrogens.
+afterwards. Most are heavy-atom only; KGDiff, PMDM and Apo2Mol also place
+hydrogens.
 
 Synthesizable generation can also be steered by a pharmacophore — see section 2.
 
@@ -107,10 +108,10 @@ Synthesizable generation can also be steered by a pharmacophore — see section 
 
 ## 4. Conformer generation
 
-The odd one out: these do not design molecules. You already know *what* the
-molecule is — you want to know what **shape** it takes. Everything else on this
-page invents new chemistry; this section keeps yours exactly as drawn and only
-works out the geometry. That also means an ordinary molecule dataset is enough
+These do not design molecules. You already know *what* the molecule is — you
+want to know what **shape** it takes. The generators on this page invent new
+chemistry; this section keeps yours exactly as drawn and only works out the
+geometry. That also means an ordinary molecule dataset is enough
 to train on, with no paired conditions to assemble.
 
 Because the molecule is yours, you ask for a number of shapes **per molecule**
@@ -126,7 +127,28 @@ it moved from the structure you supplied.
 | `diffusion_ditmc.yaml` | `diffusion_ditmc` | A transformer alternative to the two above, worth a second opinion on floppy molecules. Give it a molecule and it returns 3D poses of exactly that molecule. Nothing ready-made comes with it, so you must train it first — on a multi-conformer set — and start with LoQi if you cannot. |
 | `diffusion_etflow.yaml` | `diffusion_etflow` | Another second opinion alongside DiTMC, but this one **comes with ready-made weights** — one set for small molecules, one for drug-sized ones — so there is nothing to train first. It needs a **single connected molecule**: given a salt or anything in two pieces it returns a hugely exploded structure instead of stopping with an error, so split those off first. |
 
-## 5. Transition state generation
+## 5. Structure elucidation
+
+You have the compound already — it is the sample in front of you — and you
+want to know what it is. Give these a measured spectrum and they propose the
+structure. Any measurement that pins a structure down fits here; NMR is the
+first one shipped.
+
+Most of these also need the **molecular formula** as an input, not something
+the model works out for you — in practice it comes from high-resolution mass
+spec, so run that first — and every candidate then has exactly the atoms you
+declared. DiffSpectra is the exception: it generates the atom types and the
+bonds itself, so it needs only the spectrum. What comes back is a ranked
+shortlist per measurement, not a single answer. On carbon spectra alone the
+shipped ChefNMR weights name roughly four compounds in ten outright; with
+proton spectra as well, substantially better.
+
+| Task config | `task_type` | Measurement | Notes |
+| :--- | :--- | :--- | :--- |
+| `diffusion_chefnmr.yaml` | `diffusion_chefnmr` | **1D NMR** — 1H and 13C, or 13C alone | ChefNMR — names an unknown from its NMR. Your own unknown goes in as a short file listing the peaks and the formula; the prepared spectrum collections are only needed to reproduce published benchmark numbers. Structures come back with hydrogens placed but no bonds drawn — the chemistry is read off the geometry afterwards, and a candidate that cannot be read as a molecule is dropped before you see it. |
+| `diffusion_diffspectra.yaml` | `diffusion_diffspectra` | **IR, Raman, or UV-Vis** — alone or combined | DiffSpectra — proposes a complete structure, bonds included, from the spectrum alone; no molecular formula needed, unlike ChefNMR above. QM9-scale only (≤9 heavy atoms), nothing drug-sized. |
+
+## 6. Transition state generation
 
 Give these a reactant and a product and they give you back the transition
 state, in seconds rather than hours. Good enough to optimise from, or to
@@ -146,7 +168,7 @@ They have not been compared head to head on the same reactions here, so treat
 the choice above as one of speed, coverage and whether you want more than one
 attempt — not as a ranking on accuracy.
 
-## 6. Transition-metal complex generation
+## 7. Transition-metal complex generation
 
 Ligand design *around a metal centre*: freeze the metal and the retained
 ligands, re-diffuse the rest. Neither generates bonds, every run starts from an
@@ -159,7 +181,7 @@ the metals Cr through Zn.
 | `diffusion_ligandiff.yaml` | `diffusion_ligandiff` | Exactly **one** ligand per run | Swap **one** ligand for new chemistry while the rest of the complex stays put; the coordination geometry is preserved. Ligand assignments ship for one published dataset — bringing your own complexes needs molSimplify. |
 | `diffusion_ligandiff_multi.yaml` | `diffusion_ligandiff_multi` | **Any subset**, one ligand up to the whole coordination sphere | The broader option: keep any number of ligands and regenerate the rest, so use it when more of the coordination sphere is up for redesign. **Octahedral complexes only.** How the free sites are divided between new ligands is chosen at random unless you specify it — the model does not predict it. |
 
-## 7. Property prediction and guidance
+## 8. Property prediction and guidance
 
 Not generators. `regression` predicts a property; `guidance` exposes the same
 head as a gradient signal to steer a diffusion sampler. Only EGCL and eSEN can
@@ -171,7 +193,7 @@ be used for that steering.
 | `regression_esen.yaml` / `guidance_esen.yaml` | `regression` / `guidance` | eSEN | Slower and heavier; reach for it when EGCL's accuracy plateaus. |
 | `regression_equiformer.yaml` | `regression` | EquiformerV2 | The most expensive option, for prediction runs where accuracy matters more than cost. It **cannot** steer generation. |
 
-## 8. Self-supervised pretraining
+## 9. Self-supervised pretraining
 
 Train a backbone on unlabeled 3D structures. The resulting checkpoint is usable
 today as a **molecular featuriser** (`MolCraftDiff analyze featurize --backend
@@ -294,6 +316,14 @@ Backbones and objectives integrated here are based on the following work.
   [arXiv:2511.14559](https://arxiv.org/abs/2511.14559) — built on the
   **TargetDiff** backbone (above); its PMINet prior follows **IPDiff**'s
   prior-conditioning idea with a different network.
+- **ChefNMR** — Xiong, Zhang, Alauddin, Cheng, An, Seyedsayamdost & Zhong.
+  *Atomic Diffusion Models for Small Molecule Structure Elucidation from NMR
+  Spectra.* NeurIPS 2025. [arXiv:2512.03127](https://arxiv.org/abs/2512.03127)
+- **DiffSpectra** — Wang, Rong, Xu, Zhong, Liu, Wang, Zhao, Liu, Wu, Wang &
+  Zhang. *DiffSpectra: Molecular Structure Elucidation from Spectra using
+  Diffusion Models.* 2025. [arXiv:2507.06853](https://arxiv.org/abs/2507.06853)
+  — the DMT backbone is **JODO**'s (above) with a SpecFormer spectral
+  encoder replacing JODO's property-conditioning branch.
 - **LigandDiff** — Jin & Merz. *LigandDiff: de Novo Ligand Design for 3D
   Transition Metal Complexes with Diffusion Models.* Journal of Chemical Theory
   and Computation 20(10), 4377–4384, 2024.

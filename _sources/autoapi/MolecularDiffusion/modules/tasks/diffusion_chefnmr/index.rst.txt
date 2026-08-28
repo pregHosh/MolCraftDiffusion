@@ -1,0 +1,413 @@
+MolecularDiffusion.modules.tasks.diffusion_chefnmr
+==================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_chefnmr
+
+.. autoapi-nested-parse::
+
+   ChefNMR: 3D structure elucidation from a binned 1H/13C NMR pair.
+
+   Binds ``modules/models/chefnmr`` to the duck-typed Task contract and rides
+   the shared :class:`~MolecularDiffusion.modules.tasks.elucidation_generator.
+   ElucidationGenerator` seam for inference.
+
+   Approved INTEGRATION_PLAN (docs/model_integrations/chefnmr/), in one
+   paragraph: the routing is stock ``pointcloud`` -- coordinates and atom
+   types, no bonds anywhere in the forward path -- and the two payloads
+   ``pointcloud`` has no channel for (the ``(10080,)`` condition and the
+   ground-truth conformer stack) ride row-aligned memmap sidecars joined
+   **here**, off ``batch["xyz"]``, exactly as ``diffusion_diffsmol.py`` joins
+   its shape latent. The data layer is untouched.
+
+   **No ``sample()``, deliberately.** ChefNMR cannot generate unconditionally:
+   the atom composition is an *input* (``known_atoms: True``) and the spectrum
+   is mandatory. A ``sample()`` that ignored both would be a lie, and would
+   also arm ``GenerativeEvalCallback`` during training to produce garbage. The
+   generative entry point is :meth:`ChefNMRElucidationTask.elucidate`.
+
+   **No ``node_dist_model`` / ``n_node_dist``**, for the same reason: the
+   formula fixes the molecule size, so there is no size prior to draw from.
+
+   Three traps worth knowing before editing this file:
+
+   * The condition must **never** enter the batch dict.
+     ``pointcloud_collate_v0`` applies an *atom-axis* boolean mask to every
+     tensor in the mapping, so a ``(B, 10080)`` condition would be silently
+     sliced by an atom mask. ``batch["xyz"]`` survives untouched because both
+     collates pass strings through.
+   * ``save_pickle(cheap_data=True)`` nulls ``xyzs``, destroying the join key.
+     DiffSMol falls back to a zero latent on a miss; here a zero condition *is*
+     the CFG unconditional branch, so every miss raises instead.
+   * ``sigma_data`` is baked into the EDM preconditioning and therefore into
+     the weights. It is a task-config key, not something derived from whatever
+     dataset is attached.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_chefnmr.CHEFNMR_ATOM_DECODER
+   MolecularDiffusion.modules.tasks.diffusion_chefnmr.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_chefnmr.ChefNMRElucidationGenerator
+   MolecularDiffusion.modules.tasks.diffusion_chefnmr.ChefNMRElucidationTask
+   MolecularDiffusion.modules.tasks.diffusion_chefnmr.ChefNMRRecord
+   MolecularDiffusion.modules.tasks.diffusion_chefnmr.ChefNMRTaskFactory
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_chefnmr.canonical_smiles
+
+
+Module Contents
+---------------
+
+.. py:class:: ChefNMRElucidationGenerator(*args: Any, **kwargs: Any)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.elucidation_generator.ElucidationGenerator`
+
+
+   Walk a set of NMR measurements; emit ranked 3D candidates per record.
+
+   ``spectra_source`` takes either input, told apart by what the path IS
+   (see :meth:`_records`), never by a mode flag:
+
+   * a **converted benchmark corpus** -- ``<prefix>.db`` plus its four
+     sidecars. Carries the answer, so top-k and Tanimoto are reported.
+     This is how published numbers are reproduced.
+   * a **bare unknown-spectra file** -- one small JSON holding, per
+     unknown, a name, a molecular formula and the peaks. No coordinates,
+     no SMILES. This is the real use case; see
+     :mod:`MolecularDiffusion.modules.models.chefnmr.unknown`.
+
+   Rides the shared seam unchanged: no ``run()`` loop here, no ``_rank``
+   override (upstream's top-k is over the *first k drawn samples*
+   -- ``model.py:395-398`` -- so generation order is the correct default,
+   not a lazy one), and ``_sample_kwargs`` is the base's, because
+   ``num_steps`` and ``guidance_scale`` are the only knobs
+   ``elucidate()`` takes.
+
+   Configure the run.
+
+   :param task: the loaded elucidation task; its ``elucidate()`` is called.
+   :param spectra_source: where measurements are read from. A subclass may
+                          alias this under its own name via :attr:`source_key`.
+   :param spectra_index: index of the first record to process.
+   :param max_records: how many records to process; ``None`` => all of them.
+   :param num_candidates: candidates to draw per record.
+   :param batch_size: how many of those to draw at once. ``k`` is a batch
+                      dimension, never a Python loop.
+   :param num_steps: reverse-process steps; ``None`` => the model's default.
+   :param guidance_scale: classifier-free guidance strength -- the
+                          ``w`` in ``(1+w)*cond - w*uncond``. ``None`` => the
+                          model's own default. Note ``0.0`` is a *meaningful,
+                          different* value: it means unconditional. Rejected when
+                          the model declares ``supports_guidance = False``.
+   :param split: which fold of a labelled corpus to elucidate (e.g.
+                 ``test``). ``None`` => whatever the model's own reader
+                 defaults to. Corpora with no folds ignore it.
+   :param drop_channels: measurement channels to blank out before the
+                         model is shown the record, by name. Valid names are this
+                         model's :attr:`maskable_channels`; anything else is
+                         rejected naming the valid set, and a model declaring none
+                         rejects any non-empty list. ``()`` => the measurement
+                         exactly as recorded.
+   :param top_k: which top-k accuracies to report, when references exist.
+   :param seed: torch/random/numpy seed.
+   :param device: ``None`` => cuda if available.
+   :param output_path: directory for the per-record candidate sets.
+   :param \*\*kwargs: rejected by the base, on purpose.
+
+   :raises ValueError: on any unrecognised interference key. A silently
+       ignored key makes a run look configured when it is not -- the
+       same reason ``PocketGenerator`` rejects rather than ignores.
+
+
+   .. py:attribute:: maskable_channels
+      :value: ('1H', '13C')
+
+
+
+   .. py:attribute:: source_key
+      :value: 'spectra_source'
+
+
+
+   .. py:attribute:: source_required_msg
+      :value: Multiline-String
+
+      .. raw:: html
+
+         <details><summary>Show Value</summary>
+
+      .. code-block:: python
+
+         """chefnmr needs `spectra_source`, which is either:
+           (a) a JSON file of UNKNOWN spectra -- per record a name, a molecular formula and the peaks. This is the real use case: you need the spectrum and the composition, and nothing else. See configs/chefnmr_unknown_example.json.
+           (b) the prefix of a converted benchmark corpus written by docs/model_integrations/chefnmr/scripts/convert_dataset.py -- point it at the .db and the _cond/_conf/_nconf/_meta sidecars are found beside it. Use this to reproduce published numbers; it can only describe molecules whose structure you already have."""
+
+      .. raw:: html
+
+         </details>
+
+
+
+
+   .. py:attribute:: supports_guidance
+      :value: True
+
+
+
+   .. py:attribute:: tag
+      :value: 'chefnmr'
+
+
+
+.. py:class:: ChefNMRElucidationTask(task_type: str, atom_decoder: List[str], max_n_atoms: int, sigma_data: float, condition_type: str, in_condition_size: List[int], score_model_args: dict, diffusion_process_args: dict, diffusion_loss_args: dict, multitask_args: dict, max_n_conformers: int, diffusion_multiplicity: int, num_sampling_steps: int, guidance_scale: float, sidecar: Optional[MolecularDiffusion.modules.models.chefnmr.sidecar.ChefNMRSidecar])
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Task-contract implementation for ChefNMR.
+
+   The class name is load-bearing: ``elucidation_generator._TASK_TO_GENERATOR``
+   keys on it to find :class:`ChefNMRElucidationGenerator`.
+
+
+   .. py:method:: elucidate(batch: Dict[str, torch.Tensor], num_steps: Optional[int] = None, guidance_scale: Optional[float] = None) -> Dict[str, torch.Tensor]
+
+      One tiled measurement -> ``n`` candidate geometries.
+
+      ``batch`` is what :meth:`ChefNMRElucidationGenerator._repeat` built:
+      ``atom_mask (n, N)``, ``atom_one_hot (n, N, T)``,
+      ``condition (n, cond_dim)``. ``num_steps``/``guidance_scale`` of
+      ``None`` mean "the model's own default", per the shared seam.
+
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor)
+
+
+   .. py:method:: forward(batch: Dict[str, Any])
+
+
+   .. py:method:: predict_and_target(batch: Dict[str, Any])
+
+
+   .. py:attribute:: add_smooth_lddt_loss
+
+
+   .. py:attribute:: atom_decoder
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: condition_type
+
+
+   .. py:property:: device
+      :type: torch.device
+
+
+      ``cli/generate.py`` skips its own device move
+      when a task has this, and the elucidation seam does ``task.to(...)``.
+
+      :type: Defined on purpose
+
+
+   .. py:attribute:: diffusion_multiplicity
+
+
+   .. py:attribute:: guidance_scale
+
+
+   .. py:attribute:: in_condition_size
+
+
+   .. py:attribute:: lddt_loss_threshold
+
+
+   .. py:attribute:: max_n_atoms
+
+
+   .. py:attribute:: max_n_conformers
+
+
+   .. py:attribute:: model
+
+
+   .. py:attribute:: num_sampling_steps
+
+
+   .. py:attribute:: p_drop_both
+
+
+   .. py:attribute:: p_drop_c13nmr
+
+
+   .. py:attribute:: p_drop_h1nmr
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+
+
+.. py:class:: ChefNMRRecord
+
+   One measured spectrum plus the formula that goes with it.
+
+   Two sources fill this, and only ``cond`` tells them apart. A converted
+   benchmark corpus leaves it ``None`` and the condition is read from the
+   memmap at ``row_index``; an unknown-spectra file carries the condition
+   inline and sets ``row_index`` to -1, because there is no corpus row.
+
+
+   .. py:attribute:: cond
+      :type:  Optional[numpy.ndarray]
+      :value: None
+
+
+
+   .. py:attribute:: n_atoms
+      :type:  int
+
+
+   .. py:attribute:: name
+      :type:  str
+
+
+   .. py:attribute:: row_index
+      :type:  int
+
+
+   .. py:attribute:: smiles
+      :type:  Optional[str]
+      :value: None
+
+
+
+   .. py:attribute:: symbols
+      :type:  List[str]
+
+
+.. py:class:: ChefNMRTaskFactory(task_type: str = 'diffusion_chefnmr', atom_decoder: Sequence[str] = tuple(CHEFNMR_ATOM_DECODER), max_n_atoms: int = 101, sigma_data: float = 2.67, condition_type: str = 'H1C13NMRSpectrum', in_condition_size: Sequence[int] = (10000, 80), score_model_args: Optional[dict] = None, diffusion_process_args: Optional[dict] = None, diffusion_loss_args: Optional[dict] = None, multitask_args: Optional[dict] = None, max_n_conformers: int = 3, diffusion_multiplicity: int = 1, num_sampling_steps: int = 50, guidance_scale: float = 1.5, cond_path: Optional[str] = None, conf_path: Optional[str] = None, meta_path: Optional[str] = None, atom_vocab: Optional[Sequence[str]] = None, **kwargs: Any)
+
+   Hydra entry point for ``configs/tasks/diffusion_chefnmr.yaml``.
+
+
+   .. py:method:: build() -> ChefNMRElucidationTask
+
+
+   .. py:attribute:: atom_decoder
+      :value: ['C', 'H', 'O', 'N', 'S', 'P', 'F', 'Cl', 'Br', 'I']
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: cond_path
+      :value: None
+
+
+
+   .. py:attribute:: condition_type
+      :value: 'H1C13NMRSpectrum'
+
+
+
+   .. py:attribute:: conf_path
+      :value: None
+
+
+
+   .. py:attribute:: diffusion_loss_args
+
+
+   .. py:attribute:: diffusion_multiplicity
+      :value: 1
+
+
+
+   .. py:attribute:: diffusion_process_args
+
+
+   .. py:attribute:: guidance_scale
+
+
+   .. py:attribute:: in_condition_size
+
+
+   .. py:attribute:: max_n_atoms
+      :value: 101
+
+
+
+   .. py:attribute:: max_n_conformers
+      :value: 3
+
+
+
+   .. py:attribute:: meta_path
+      :value: None
+
+
+
+   .. py:attribute:: multitask_args
+
+
+   .. py:attribute:: num_sampling_steps
+      :value: 50
+
+
+
+   .. py:attribute:: score_model_args
+
+
+   .. py:attribute:: sigma_data
+
+
+   .. py:attribute:: task
+      :type:  Optional[ChefNMRElucidationTask]
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_chefnmr'
+
+
+
+.. py:function:: canonical_smiles(smiles: Optional[str], remove_stereo: bool = True) -> Optional[str]
+
+   Canonicalise the way upstream compares structures.
+
+   ``RemoveHs`` -> optional ``RemoveStereochemistry`` -> ``CanonSmiles``,
+   per ``src/evaluation/bond_analyzer.py:26-33``. Used for BOTH the
+   reference and the candidates so top-k accuracy compares like with like.
+
+
+.. py:data:: CHEFNMR_ATOM_DECODER
+   :value: ['C', 'H', 'O', 'N', 'S', 'P', 'F', 'Cl', 'Br', 'I']
+
+
+.. py:data:: logger
+

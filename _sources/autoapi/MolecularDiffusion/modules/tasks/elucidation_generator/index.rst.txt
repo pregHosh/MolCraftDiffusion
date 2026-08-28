@@ -1,0 +1,331 @@
+MolecularDiffusion.modules.tasks.elucidation_generator
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.elucidation_generator
+
+.. autoapi-nested-parse::
+
+   The one ``run()`` loop behind every measurement-conditioned generator.
+
+   **Structure elucidation** is a different problem from the ones the existing
+   seams solve. You are handed a *measurement* of an unknown compound -- a tandem
+   mass spectrum, an NMR pair, an IR trace -- and you return a **ranked shortlist
+   of candidate structures**. The molecule is the unknown; the conditioning is read
+   per item from a corpus of measurements; and the answer is a set, not a sample.
+
+   Every existing generator was surveyed before this one was written, and each
+   fails on a named mechanism rather than on taste:
+
+   * :class:`~MolecularDiffusion.runmodes.generate.tasks_generate.GenerativeFactory`
+     conditions on ``target_values`` -- *a flat scalar list broadcast identically
+     to every molecule in the run* -- or on one reference ``.xyz`` tiled to the
+     batch. Elucidation needs a different payload per output. Its size logic is
+     wrong in kind too (``nodesxsample`` from a prior), and every writer in it is
+     coordinate-based.
+   * :class:`~MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator`
+     has the right candidate-set shape but is **single-context by construction**
+     (``item = self._pocket()``, called once), and its output contract is
+     hard-wired to coordinates (``_accept(one_hot, coords, node_mask)``,
+     ``save_xyz_file``). ``TSGenerator`` rides it precisely because a transition
+     state *is* coordinates.
+   * ``ConformerFactory`` is closest by loop shape, but its pool items are
+     *molecules* (``_to_mol(item, item.pos...)``), it writes a ``reference.sdf`` of
+     its input, and its metric is RMSD against that input geometry. Here the input
+     is a measurement and the molecule is the unknown.
+
+   Hence a new shared seam rather than a bandaid. What differs per model lives in
+   hooks:
+
+   ===========================  ====================================================
+   hook                         what it decides
+   ===========================  ====================================================
+   :attr:`tag`                  log prefix
+   :attr:`source_key`           this model's own name for ``spectra_source``
+   :attr:`source_required_msg`  the "source is required" error, or ``None``
+   :meth:`_records`             which reader walks the corpus, and in what order
+   :meth:`_condition`           the model-specific conditioning payload (opaque)
+   :meth:`_priors`              the known-composition slot: formula / atom multiset
+   :meth:`_repeat`              how one measurement is tiled to ``n`` candidates
+   :attr:`supports_guidance`    whether this model has a CFG branch at all
+   :attr:`maskable_channels`    which measurement channels ``drop_channels``
+                                may blank out, by name
+   :meth:`_sample_kwargs`       model-specific ``elucidate()`` kwargs, on
+                                top of the base's ``num_steps`` /
+                                ``guidance_scale`` forwarding
+   :meth:`_decode`              raw output -> :class:`Candidate` (3D **nullable**)
+   :meth:`_accept`              validity filter
+   :meth:`_rank`                **defaults to generation order**
+   :meth:`_reference`           ground truth, **or None** -- scoring is optional
+   :meth:`_start` / :meth:`_summary`  header / footer
+   ===========================  ====================================================
+
+   Four constraints keep this seam general rather than shaped around any one
+   model. Each was checked against two structurally different elucidation models
+   -- one graph-based and coordinate-free, one coordinate-first -- before being
+   written down:
+
+   * **``_priors`` is an explicit named slot, not a kwarg blob.** Both models are
+     handed the molecular formula; composition-is-known is the norm in this
+     problem, not an extra.
+   * **``_decode`` returns SMILES plus nullable 3D.** A graph-based model emits
+     connectivity and never fills ``coords``; a coordinate-first model fills it
+     and reaches SMILES through bond perception. Both slots always exist. ``_decode`` is also allowed
+     to be slow and to fail per candidate.
+   * **``_rank`` defaults to identity.** No ranking framework is built here. A
+     model that votes over repeated draws overrides it (e.g. canonical-InChI
+     frequency); a model with no scorer at all takes the default and is not
+     forced into a no-op override.
+   * **``_reference`` may return ``None``.** Scoring is a separate, optional pass.
+     The core loop must run on genuinely unknown spectra -- that is the actual use
+     case, and an evaluation harness that cannot run without labels is not one.
+
+   Padding is deliberately *not* in the seam: it belongs to :meth:`_repeat`,
+   because one model pads to a dataset-wide ``max_n_atoms`` while another is
+   variable-size PyG.
+
+   Outputs, per run::
+
+       <output_path>/record_XXXX/candidates.{sdf,smi}   ranked candidates
+       <output_path>/record_XXXX/ranking.csv            rank, smiles, score
+       <output_path>/predictions.csv                    run-level, one row per record
+       <output_path>/metrics.json                       only if _reference gave labels
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.elucidation_generator.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.elucidation_generator.Candidate
+   MolecularDiffusion.modules.tasks.elucidation_generator.ElucidationGenerator
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.elucidation_generator.move_to_device
+
+
+Module Contents
+---------------
+
+.. py:class:: Candidate
+
+   One proposed structure.
+
+   .. attribute:: smiles
+
+      canonical SMILES. Always present -- it is the common currency
+      between a graph-generating model and a coordinate-generating one.
+
+   .. attribute:: mol
+
+      the RDKit molecule, when the model produced one.
+
+   .. attribute:: coords
+
+      ``(n_atoms, 3)`` positions, or ``None``. **Nullable on purpose**:
+      a 2D elucidation model never fills it, and forcing a fake conformer
+      in would be inventing geometry the model did not predict.
+
+   .. attribute:: score
+
+      rank score, when the model has a scorer. ``None`` means the
+      candidate is ordered by generation order.
+
+
+   .. py:attribute:: coords
+      :type:  Optional[numpy.ndarray]
+      :value: None
+
+
+
+   .. py:attribute:: meta
+      :type:  dict
+
+
+   .. py:attribute:: mol
+      :type:  Any
+      :value: None
+
+
+
+   .. py:attribute:: score
+      :type:  Optional[float]
+      :value: None
+
+
+
+   .. py:attribute:: smiles
+      :type:  str
+
+
+.. py:class:: ElucidationGenerator(task: Any, spectra_source: Optional[str] = None, spectra_index: int = 0, max_records: Optional[int] = None, num_candidates: int = 100, batch_size: int = 10, num_steps: Optional[int] = None, guidance_scale: Optional[float] = None, split: Optional[str] = None, drop_channels: Sequence[str] = (), top_k: Sequence[int] = (1, 10), seed: int = 42, device: Optional[str] = None, output_path: str = 'generated_elucidation', **kwargs: Any)
+
+   Walk a corpus of measurements; emit a ranked candidate set per record.
+
+   Not instantiable from a config on its own -- :meth:`_records`,
+   :meth:`_condition`, :meth:`_repeat` and :meth:`_decode` are what a model
+   must supply.
+
+   Configure the run.
+
+   :param task: the loaded elucidation task; its ``elucidate()`` is called.
+   :param spectra_source: where measurements are read from. A subclass may
+                          alias this under its own name via :attr:`source_key`.
+   :param spectra_index: index of the first record to process.
+   :param max_records: how many records to process; ``None`` => all of them.
+   :param num_candidates: candidates to draw per record.
+   :param batch_size: how many of those to draw at once. ``k`` is a batch
+                      dimension, never a Python loop.
+   :param num_steps: reverse-process steps; ``None`` => the model's default.
+   :param guidance_scale: classifier-free guidance strength -- the
+                          ``w`` in ``(1+w)*cond - w*uncond``. ``None`` => the
+                          model's own default. Note ``0.0`` is a *meaningful,
+                          different* value: it means unconditional. Rejected when
+                          the model declares ``supports_guidance = False``.
+   :param split: which fold of a labelled corpus to elucidate (e.g.
+                 ``test``). ``None`` => whatever the model's own reader
+                 defaults to. Corpora with no folds ignore it.
+   :param drop_channels: measurement channels to blank out before the
+                         model is shown the record, by name. Valid names are this
+                         model's :attr:`maskable_channels`; anything else is
+                         rejected naming the valid set, and a model declaring none
+                         rejects any non-empty list. ``()`` => the measurement
+                         exactly as recorded.
+   :param top_k: which top-k accuracies to report, when references exist.
+   :param seed: torch/random/numpy seed.
+   :param device: ``None`` => cuda if available.
+   :param output_path: directory for the per-record candidate sets.
+   :param \*\*kwargs: rejected by the base, on purpose.
+
+   :raises ValueError: on any unrecognised interference key. A silently
+       ignored key makes a run look configured when it is not -- the
+       same reason ``PocketGenerator`` rejects rather than ignores.
+
+
+   .. py:method:: run() -> None
+
+
+   .. py:attribute:: batch_size
+      :value: 10
+
+
+
+   .. py:attribute:: device
+      :value: 'cuda'
+
+
+
+   .. py:attribute:: drop_channels
+
+
+   .. py:attribute:: guidance_scale
+      :value: None
+
+
+
+   .. py:attribute:: maskable_channels
+      :type:  ClassVar[tuple[str, ...]]
+      :value: ()
+
+
+
+   .. py:attribute:: max_records
+      :value: None
+
+
+
+   .. py:attribute:: num_candidates
+      :value: 100
+
+
+
+   .. py:attribute:: num_steps
+      :value: None
+
+
+
+   .. py:attribute:: output_path
+      :value: 'generated_elucidation'
+
+
+
+   .. py:attribute:: seed
+      :value: 42
+
+
+
+   .. py:attribute:: source_key
+      :type:  ClassVar[str]
+      :value: 'spectra_source'
+
+
+
+   .. py:attribute:: source_required_msg
+      :type:  ClassVar[Optional[str]]
+      :value: None
+
+
+
+   .. py:attribute:: spectra_index
+      :value: 0
+
+
+
+   .. py:attribute:: spectra_source
+      :value: None
+
+
+
+   .. py:attribute:: split
+      :value: None
+
+
+
+   .. py:attribute:: supports_guidance
+      :type:  ClassVar[bool]
+      :value: True
+
+
+
+   .. py:attribute:: tag
+      :type:  ClassVar[str]
+      :value: 'elucidation'
+
+
+
+   .. py:attribute:: task
+
+
+   .. py:attribute:: top_k
+
+
+.. py:function:: move_to_device(obj: Any, device: Any) -> Any
+
+   Recursively place a batch on ``device``, leaving unknown types alone.
+
+   The conditioning payload is opaque to this seam by design, but "the batch
+   must be on the same device as the model" is true for every model that will
+   ever ride it -- and getting it wrong surfaces as a ``RuntimeError`` deep
+   inside an encoder, not as anything that names the batch. So the base applies
+   this to whatever :meth:`ElucidationGenerator._repeat` returns. It handles
+   tensors, dicts, lists/tuples and anything with a ``.to()`` (a PyG ``Batch``,
+   for instance); anything else is returned untouched, so a model whose payload
+   needs custom placement can simply do it in ``_repeat`` -- this then finds
+   nothing left to move.
+
+
+.. py:data:: logger
+
