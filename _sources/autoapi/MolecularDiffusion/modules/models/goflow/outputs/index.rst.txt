@@ -1,0 +1,108 @@
+MolecularDiffusion.modules.models.goflow.outputs
+================================================
+
+.. py:module:: MolecularDiffusion.modules.models.goflow.outputs
+
+.. autoapi-nested-parse::
+
+   The atom-wise 3D output head that turns ``(q, mu)`` into a velocity.
+
+   Ported from ``gotennet/models/components/outputs.py:21-49`` (``SNNDense``,
+   what ``GatedEquivariantBlock`` needs) and ``:52-189`` (``GatedEquivariantBlock``,
+   ``Atomwise3DOut``). ``Atomwise3DOutRTSP`` (upstream's own "TODO: modify to
+   accept r/ts/p", never imported by ``flow_matching/flow_module.py``) is not
+   ported -- dead code, not a fidelity gap.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.goflow.outputs.Atomwise3DOut
+   MolecularDiffusion.modules.models.goflow.outputs.GatedEquivariantBlock
+   MolecularDiffusion.modules.models.goflow.outputs.SNNDense
+
+
+Module Contents
+---------------
+
+.. py:class:: Atomwise3DOut(n_in, n_hidden: Optional[int] = None, activation=shifted_softplus)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Two stacked :class:`GatedEquivariantBlock`\ s mapping ``(q, mu[:,
+   :3, :])`` to a per-atom 3D velocity. Verbatim from ``outputs.py:161-189``.
+
+
+   .. py:method:: forward(l0: torch.Tensor, l1: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: out_net
+
+
+.. py:class:: GatedEquivariantBlock(n_sin, n_vin, n_sout, n_vout, n_hidden, activation=F.silu, sactivation=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Rotationally invariant/equivariant tensorial feature mixing.
+
+   Verbatim from ``outputs.py:52-85``.
+
+
+   .. py:method:: forward(scalars: torch.Tensor, vectors: torch.Tensor)
+
+
+   .. py:attribute:: mix_vectors
+
+
+   .. py:attribute:: n_hidden
+
+
+   .. py:attribute:: n_sin
+
+
+   .. py:attribute:: n_sout
+
+
+   .. py:attribute:: n_vin
+
+
+   .. py:attribute:: n_vout
+
+
+   .. py:attribute:: sactivation
+      :value: None
+
+
+
+   .. py:attribute:: scalar_net
+
+
+.. py:class:: SNNDense(in_features: int, out_features: int, bias: bool = True, activation: Union[Callable, torch.nn.Module, None] = None, weight_init: Callable = xavier_uniform_, bias_init: Callable = zeros_)
+
+   Bases: :py:obj:`torch.nn.Linear`
+
+
+   Fully connected linear layer with activation. Verbatim from
+   ``outputs.py:21-49``.
+
+
+   .. py:method:: forward(input: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: activation
+
+
+   .. py:attribute:: bias_init
+
+
+   .. py:attribute:: weight_init
+
+

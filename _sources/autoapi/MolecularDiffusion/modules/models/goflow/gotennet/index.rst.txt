@@ -1,0 +1,355 @@
+MolecularDiffusion.modules.models.goflow.gotennet
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.models.goflow.gotennet
+
+.. autoapi-nested-parse::
+
+   GotenNet: the CGR-conditioned equivariant backbone GoFlow's velocity
+   field is built from.
+
+   Ported from ``gotennet/models/representation/gotennet.py`` (commit
+   ``3ec00a09``). Aykent & Xia, arXiv:2410.14670 -- cited from the GotenNet
+   repository's own README, not independently verified against it (see
+   ``INTEGRATION_PLAN.md``, Repo Inspection).
+
+   Two deviations from upstream, both mechanical, neither changing any tensor
+   shape or learned behaviour:
+
+   * The two ``einops.rearrange``/``reduce`` calls in ``GATA.rej``
+     (``gotennet.py:296-297``) are replaced by their exact plain-torch
+     equivalents -- verified by their own docstrings below.
+   * ``RankedLogger`` (a Hydra-rank-zero-only wrapper the rest of
+     ``gotennet/utils`` is not ported for) is replaced by a plain
+     ``logging.getLogger``; the two ``log.info`` calls it backs are cosmetic
+     (weight-init choice logging), not model behaviour.
+
+   ``self.distance`` (upstream's ``Distance`` module) is not constructed here:
+   see ``ops.py``'s module docstring for why it is dead code in ``forward``.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.goflow.gotennet.log
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.goflow.gotennet.EQFF
+   MolecularDiffusion.modules.models.goflow.gotennet.GATA
+   MolecularDiffusion.modules.models.goflow.gotennet.GotenNet
+   MolecularDiffusion.modules.models.goflow.gotennet.TimestepEmbedding
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.goflow.gotennet.get_timestep_embedding
+   MolecularDiffusion.modules.models.goflow.gotennet.lmax_tensor_size
+   MolecularDiffusion.modules.models.goflow.gotennet.split_degree
+
+
+Module Contents
+---------------
+
+.. py:class:: EQFF(n_atom_basis: int, activation: Callable, epsilon: float = 1e-08, weight_init=nn.init.xavier_uniform_, bias_init=nn.init.zeros_, vec_dim=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Equivariant feed-forward mixing. Verbatim from ``gotennet.py:372-414``.
+
+
+   .. py:method:: forward(s, v)
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: epsilon
+      :value: 1e-08
+
+
+
+   .. py:attribute:: gamma_m
+
+
+   .. py:attribute:: n_atom_basis
+
+
+   .. py:attribute:: w_vu
+
+
+.. py:class:: GATA(n_atom_basis: int, activation: Callable, weight_init=nn.init.xavier_uniform_, bias_init=nn.init.zeros_, aggr='add', node_dim=0, epsilon: float = 1e-07, layer_norm='', vector_norm='', cutoff=5.0, scaling=1.0, num_heads=8, dropout=0.0, edge_updates=True, last_layer=False, scale_edge=True, edge_ln='', evec_dim=None, emlp_dim=None, sep_vecj=True, lmax=1)
+
+   Bases: :py:obj:`torch_geometric.nn.MessagePassing`
+
+
+   Attention-weighted equivariant message passing.
+
+   Verbatim from ``gotennet.py:54-370``, except :meth:`rej`'s two
+   ``einops`` calls.
+
+
+   .. py:method:: aggregate(features, index, ptr, dim_size)
+
+
+   .. py:method:: edge_update(w1_i, w2_j, d_ij, f_ij)
+
+
+   .. py:method:: forward(edge_index, s, t, dir_ij, r_ij, d_ij, num_edges_expanded)
+
+
+   .. py:method:: message(edge_index, x_i, x_j, q_i, k_j, val_j, ten_j, r_ij, r_ij_attn, d_ij, dir_ij, num_edges_expanded, index, ptr: torch_geometric.typing.OptTensor, dim_size: Optional[int]) -> Tuple[torch.Tensor, torch.Tensor]
+
+
+   .. py:method:: rej(vec: torch.Tensor, d_ij: torch.Tensor) -> torch.Tensor
+      :staticmethod:
+
+
+      Reject ``vec`` off the ``d_ij`` direction, per irrep degree.
+
+      Replaces ``gotennet.py:294-298``'s two ``einops`` calls with their
+      exact plain-torch equivalents: ``rearrange(d_ij, 'b l -> b l 1')``
+      is ``d_ij.unsqueeze(-1)``, and ``reduce(vec * d_ij_1, 'b l c -> b 1
+      c', 'sum')`` is ``(vec * d_ij_1).sum(dim=1, keepdim=True)`` -- both
+      named explicitly in ``INTEGRATION_PLAN.md``'s Naming section.
+
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:method:: update(inputs)
+
+
+   .. py:attribute:: activation
+
+
+   .. py:attribute:: cutoff
+
+
+   .. py:attribute:: down_proj
+
+
+   .. py:attribute:: dropout
+      :value: 0.0
+
+
+
+   .. py:attribute:: edge_mlp_dim
+
+
+   .. py:attribute:: edge_updates
+      :value: True
+
+
+
+   .. py:attribute:: edge_vec_dim
+
+
+   .. py:attribute:: epsilon
+      :value: 1e-07
+
+
+
+   .. py:attribute:: gamma_s
+
+
+   .. py:attribute:: gamma_v
+
+
+   .. py:attribute:: k_w
+
+
+   .. py:attribute:: last_layer
+      :value: False
+
+
+
+   .. py:attribute:: layernorm
+
+
+   .. py:attribute:: layernorm_
+      :value: ''
+
+
+
+   .. py:attribute:: lmax
+      :value: 1
+
+
+
+   .. py:attribute:: n_atom_basis
+
+
+   .. py:attribute:: num_heads
+      :value: 8
+
+
+
+   .. py:attribute:: phik_w_ra
+
+
+   .. py:attribute:: q_w
+
+
+   .. py:attribute:: scale_edge
+      :value: True
+
+
+
+   .. py:attribute:: sep_vecj
+      :value: True
+
+
+
+   .. py:attribute:: tln
+
+
+   .. py:attribute:: update_info
+
+
+   .. py:attribute:: vector_norm_
+      :value: ''
+
+
+
+   .. py:attribute:: w_re
+
+
+.. py:class:: GotenNet(n_atom_basis: int = 128, n_atom_feat_basis: int = 128, n_atom_rdkit_feats: int = 28, n_interactions: int = 8, radial_basis: Union[Callable, str] = 'expnorm', n_rbf: int = 20, cutoff_fn: Optional[Callable] = None, edge_order: int = 4, activation: Optional[Union[Callable, str]] = F.silu, max_z: int = 100, epsilon: float = 1e-08, weight_init=nn.init.xavier_uniform_, bias_init=nn.init.zeros_, max_num_neighbors: int = 32, int_layer_norm='', int_vector_norm='', num_heads=8, attn_dropout=0.0, edge_updates=True, scale_edge=True, lmax=2, aggr='add', edge_ln='', evec_dim=None, emlp_dim=None, sep_int_vec=True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   The CGR-conditioned equivariant backbone.
+
+   Ported from ``gotennet.py:450-618``. ``forward``'s signature and body
+   are unchanged from upstream: ``inputs`` reads only ``.edge_index,
+   .edge_type, .batch, .r_feat, .p_feat, .atom_type`` off the PyG batch
+   (never ``.pos`` -- the noisy TS coordinate is always the separate
+   ``x_t_N_3`` argument), exactly as ``INTEGRATION_PLAN.md``'s Repo
+   Inspection records.
+
+
+   .. py:method:: forward(x_t_N_3: torch.Tensor, t_G: torch.Tensor, inputs: Mapping[str, torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+
+      Compute atomic representations.
+
+      :param x_t_N_3: ``(N, 3)`` current (noisy) node coordinates.
+      :param t_G: ``(B, 1)`` flow time, one value per graph.
+      :param inputs: the PyG batch built by ``goflow_data.goflow_collate``;
+                     only ``.edge_index, .edge_type, .batch, .r_feat, .p_feat,
+                     .atom_type`` are read.
+
+      :returns: ``q`` is ``(N, hidden_dim)`` scalar features, ``mu``
+                is ``(N, (lmax+1)**2 - 1, hidden_dim)`` higher-order features.
+      :rtype: ``(q, mu)``
+
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: atom_cgr_embedding
+
+
+   .. py:attribute:: cutoff
+
+
+   .. py:attribute:: cutoff_fn
+      :value: None
+
+
+
+   .. py:attribute:: edge_cgr_embedding
+
+
+   .. py:attribute:: edge_embedding
+
+
+   .. py:attribute:: edge_order
+      :value: 4
+
+
+
+   .. py:attribute:: eqff
+
+
+   .. py:attribute:: gata
+
+
+   .. py:attribute:: n_interactions
+      :value: 8
+
+
+
+   .. py:attribute:: neighbor_embedding
+
+
+   .. py:attribute:: radial_basis
+
+
+   .. py:attribute:: scale_edge
+      :value: True
+
+
+
+   .. py:attribute:: scaling
+
+
+   .. py:attribute:: tensor_init
+
+
+   .. py:attribute:: time_embedding
+
+
+.. py:class:: TimestepEmbedding(embedding_dim, hidden_dim, output_dim)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Verbatim from ``gotennet.py:431-447``.
+
+
+   .. py:method:: forward(timesteps: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: embedding_dim
+
+
+   .. py:attribute:: hidden_dim
+
+
+   .. py:attribute:: mlp
+
+
+   .. py:attribute:: output_dim
+
+
+.. py:function:: get_timestep_embedding(timesteps: torch.Tensor, embedding_dim: int, max_positions: int = 10000) -> torch.Tensor
+
+   Verbatim from ``gotennet.py:417-428``.
+
+
+.. py:function:: lmax_tensor_size(lmax: int) -> int
+
+.. py:function:: split_degree(tensor: torch.Tensor, lmax: int, dim: int = -1)
+
+   Split a stacked-irreps tensor into one chunk per degree ``l``.
+
+   Verbatim from ``gotennet.py:41-51``.
+
+
+.. py:data:: log
+

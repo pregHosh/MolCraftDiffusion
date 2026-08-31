@@ -308,6 +308,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../../../../data/component/diffpharma_prep/index.html">MolecularDiffusion.data.component.diffpharma_prep</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../data/component/diffsbdd_data/index.html">MolecularDiffusion.data.component.diffsbdd_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../data/component/feature/index.html">MolecularDiffusion.data.component.feature</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/goflow_data/index.html">MolecularDiffusion.data.component.goflow_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../data/component/graph3d_dataset/index.html">MolecularDiffusion.data.component.graph3d_dataset</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../data/component/kgdiff_data/index.html">MolecularDiffusion.data.component.kgdiff_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../data/component/oareactdiff_data/index.html">MolecularDiffusion.data.component.oareactdiff_data</a></li>
@@ -490,7 +491,7 @@ sites pass the same value twice, which makes the second (ligand-block)
 pass a no-op. It takes one cutoff here.</p></li>
 </ul>
 <p># ponytail: the vendored surface is the reachable subset only. If a future
-# pass turns on <code class="docutils literal notranslate"><span class="pre">vae_context</span></code>/<code class="docutils literal notranslate"><span class="pre">linker_mask</span></code>, port those branches then.</p>
+# pass turns on <code class="docutils literal notranslate"><span class="pre">vae_context</span></code>, port that branch then.</p>
 <section id="attributes">
 <h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -526,28 +527,31 @@ pass a no-op. It takes one cutoff here.</p></li>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.center_pos_pl" title="MolecularDiffusion.modules.models.pmdm.common.center_pos_pl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">center_pos_pl</span></code></a>(→ Tuple[torch.Tensor, torch.Tensor])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.center_pos_lp" title="MolecularDiffusion.modules.models.pmdm.common.center_pos_lp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">center_pos_lp</span></code></a>(→ Tuple[torch.Tensor, torch.Tensor])</p></td>
+<td><p>Move ligand <em>and</em> pocket so the per-complex POCKET centroid is at 0.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.center_pos_pl" title="MolecularDiffusion.modules.models.pmdm.common.center_pos_pl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">center_pos_pl</span></code></a>(→ Tuple[torch.Tensor, torch.Tensor])</p></td>
 <td><p>Move ligand <em>and</em> pocket so the per-complex ligand centroid is at 0.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.clip_norm" title="MolecularDiffusion.modules.models.pmdm.common.clip_norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip_norm</span></code></a>(→ torch.Tensor)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.clip_norm" title="MolecularDiffusion.modules.models.pmdm.common.clip_norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip_norm</span></code></a>(→ torch.Tensor)</p></td>
 <td><p>Rescale rows of <code class="docutils literal notranslate"><span class="pre">vec</span></code> whose norm exceeds <code class="docutils literal notranslate"><span class="pre">limit</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.eq_transform" title="MolecularDiffusion.modules.models.pmdm.common.eq_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eq_transform</span></code></a>(→ torch.Tensor)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.eq_transform" title="MolecularDiffusion.modules.models.pmdm.common.eq_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eq_transform</span></code></a>(→ torch.Tensor)</p></td>
 <td><p>Turn a per-edge distance score into an equivariant per-node score.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.extend_graph_order_radius" title="MolecularDiffusion.modules.models.pmdm.common.extend_graph_order_radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extend_graph_order_radius</span></code></a>(→ Tuple[torch.Tensor, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.extend_graph_order_radius" title="MolecularDiffusion.modules.models.pmdm.common.extend_graph_order_radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extend_graph_order_radius</span></code></a>(→ Tuple[torch.Tensor, ...)</p></td>
 <td><p>Bond graph -&gt; (k-hop extended) -&gt; (unioned with a radius graph).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.get_adj_matrix" title="MolecularDiffusion.modules.models.pmdm.common.get_adj_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_adj_matrix</span></code></a>(→ torch.Tensor)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.get_adj_matrix" title="MolecularDiffusion.modules.models.pmdm.common.get_adj_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_adj_matrix</span></code></a>(→ torch.Tensor)</p></td>
 <td><p>Fully-connected, self-loop-free edge index for one molecule, <code class="docutils literal notranslate"><span class="pre">(2,</span> <span class="pre">n*(n-1))</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.get_distance" title="MolecularDiffusion.modules.models.pmdm.common.get_distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_distance</span></code></a>(→ torch.Tensor)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.get_distance" title="MolecularDiffusion.modules.models.pmdm.common.get_distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_distance</span></code></a>(→ torch.Tensor)</p></td>
 <td><p>Euclidean length of every edge, <code class="docutils literal notranslate"><span class="pre">(E,)</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.get_edges" title="MolecularDiffusion.modules.models.pmdm.common.get_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_edges</span></code></a>(→ torch.Tensor)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.get_edges" title="MolecularDiffusion.modules.models.pmdm.common.get_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_edges</span></code></a>(→ torch.Tensor)</p></td>
 <td><p>Dense within-graph radius graph over the joined ligand+pocket cloud.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.get_num_embedding" title="MolecularDiffusion.modules.models.pmdm.common.get_num_embedding"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_num_embedding</span></code></a>(→ torch.Tensor)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.get_num_embedding" title="MolecularDiffusion.modules.models.pmdm.common.get_num_embedding"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_num_embedding</span></code></a>(→ torch.Tensor)</p></td>
 <td><p>Sinusoidal embedding of a 1-D integer tensor, <code class="docutils literal notranslate"><span class="pre">(G,</span> <span class="pre">embedding_dim)</span></code>.</p></td>
 </tr>
 </tbody>
@@ -620,6 +624,16 @@ pass a no-op. It takes one cutoff here.</p></li>
 <span class="sig-name descname"><span class="pre">shift</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.pmdm.common.ShiftedSoftplus.shift" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.pmdm.common.center_pos_lp">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.pmdm.common.</span></span><span class="sig-name descname"><span class="pre">center_pos_lp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ligand_pos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pocket_pos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ligand_batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pocket_batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.13)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.pmdm.common.center_pos_lp" title="Link to this definition">¶</a></dt>
+<dd><p>Move ligand <em>and</em> pocket so the per-complex POCKET centroid is at 0.</p>
+<p>Unlike <a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.center_pos_pl" title="MolecularDiffusion.modules.models.pmdm.common.center_pos_pl"><code class="xref py py-func docutils literal notranslate"><span class="pre">center_pos_pl()</span></code></a>, this does not shift the ligand relative to
+the pocket – needed when the ligand’s positions are real, already-placed
+coordinates (a starting fragment from a user’s SDF), not noise that can
+be freely re-centred (<code class="docutils literal notranslate"><span class="pre">PMDMEpsNet.inpainting_sample</span></code>/<code class="docutils literal notranslate"><span class="pre">linker_sample</span></code>).</p>
 </dd></dl>
 
 <dl class="py function">
@@ -766,6 +780,7 @@ would change which edges tie on the cutoff boundary.</p>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.ShiftedSoftplus.shift"><code class="docutils literal notranslate"><span class="pre">ShiftedSoftplus.shift</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.center_pos_lp"><code class="docutils literal notranslate"><span class="pre">center_pos_lp()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.center_pos_pl"><code class="docutils literal notranslate"><span class="pre">center_pos_pl()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.clip_norm"><code class="docutils literal notranslate"><span class="pre">clip_norm()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.pmdm.common.eq_transform"><code class="docutils literal notranslate"><span class="pre">eq_transform()</span></code></a></li>

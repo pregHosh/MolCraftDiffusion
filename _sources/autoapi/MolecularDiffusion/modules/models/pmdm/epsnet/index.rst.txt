@@ -27,8 +27,6 @@ MolecularDiffusion.modules.models.pmdm.epsnet
    integration's scope (see ``docs/model_integrations/pmdm/INTEGRATION_PLAN.md``)
    puts out of reach:
 
-   * ``inpainting_sample`` (lead optimisation) and ``linker_sample`` (fragment
-     linking), plus their ``frag_mask``/``linker_mask`` plumbing;
    * the ``vae_context`` VAE latent branch and the ``context`` property list
      (both default-off upstream);
    * ``atom_num_emb`` (default-off), ``is_sidechain`` (always ``None``),
@@ -77,6 +75,23 @@ Module Contents
 
 
 
+   .. py:method:: inpainting_sample(ligand_atom_type: torch.Tensor, ligand_pos_init: torch.Tensor, ligand_bond_index: torch.Tensor, ligand_bond_type: Optional[torch.Tensor], ligand_batch: torch.Tensor, frag_mask: torch.Tensor, protein_atom_feature_full: torch.Tensor, protein_pos: torch.Tensor, protein_batch: torch.Tensor, num_graphs: int, n_steps: int = 100, step_lr: float = 1e-06, clip: float = 1000.0, clip_local: Optional[float] = None, clip_pos: Optional[float] = None, global_start_sigma: float = float('inf'), local_start_sigma: float = float('inf'), w_global_pos: float = 1.0, w_global_node: float = 1.0, w_local_pos: float = 1.0, w_local_node: float = 1.0, sampling_type: str = 'generalized', eta: float = 1.0, keep_traj: bool = False) -> Tuple[torch.Tensor, List[torch.Tensor], torch.Tensor, List[torch.Tensor]]
+
+      RePaint-style constrained sampling ("lead optimisation" upstream):
+      keep ``frag_mask`` atoms of a starting ligand fixed, regenerate the
+      rest, inside the same fixed pocket.
+
+      ``frag_mask`` (bool, ``(n_ligand,)``): ``True`` = keep exactly as
+      given in ``ligand_pos_init``/``ligand_atom_type``; ``False`` =
+      regenerate. Every reverse step re-noises the kept fragment's atom
+      *type* to the current timestep before scoring, then force-restores
+      both its position and type afterward -- classic RePaint. Position is
+      never re-noised (upstream's matching line is dead/commented-out
+      code, not ported). Port of upstream ``inpainting_sample``,
+      ``MDM_pocket_coor_shared.py:929-1183``.
+
+
+
    .. py:method:: langevin_dynamics_sample(ligand_atom_type: torch.Tensor, ligand_pos_init: torch.Tensor, ligand_bond_index: torch.Tensor, ligand_bond_type: Optional[torch.Tensor], ligand_batch: torch.Tensor, protein_atom_feature_full: torch.Tensor, protein_pos: torch.Tensor, protein_batch: torch.Tensor, num_graphs: int, n_steps: int = 100, step_lr: float = 1e-06, clip: float = 1000.0, clip_local: Optional[float] = None, clip_pos: Optional[float] = None, global_start_sigma: float = float('inf'), local_start_sigma: float = float('inf'), w_global_pos: float = 1.0, w_global_node: float = 1.0, w_local_pos: float = 1.0, w_local_node: float = 1.0, sampling_type: str = 'generalized', eta: float = 1.0, keep_traj: bool = False) -> Tuple[torch.Tensor, List[torch.Tensor], torch.Tensor, List[torch.Tensor]]
 
       Reverse process inside a fixed pocket.
@@ -87,10 +102,34 @@ Module Contents
 
 
 
-   .. py:method:: net(ligand_atom_type: torch.Tensor, ligand_pos: torch.Tensor, ligand_bond_index: torch.Tensor, ligand_bond_type: Optional[torch.Tensor], ligand_batch: torch.Tensor, protein_embeddings: torch.Tensor, protein_pos: torch.Tensor, protein_batch: torch.Tensor, time_step: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]
+   .. py:method:: linker_sample(ligand_atom_type: torch.Tensor, ligand_pos_init: torch.Tensor, ligand_bond_index: torch.Tensor, ligand_bond_type: Optional[torch.Tensor], ligand_batch: torch.Tensor, frag_mask: torch.Tensor, protein_atom_feature_full: torch.Tensor, protein_pos: torch.Tensor, protein_batch: torch.Tensor, num_graphs: int, n_steps: int = 100, step_lr: float = 1e-06, clip: float = 1000.0, clip_local: Optional[float] = None, clip_pos: Optional[float] = None, global_start_sigma: float = float('inf'), local_start_sigma: float = float('inf'), w_global_pos: float = 1.0, w_global_node: float = 1.0, w_local_pos: float = 1.0, w_local_node: float = 1.0, sampling_type: str = 'generalized', eta: float = 1.0, keep_traj: bool = False) -> Tuple[torch.Tensor, List[torch.Tensor], torch.Tensor, List[torch.Tensor]]
+
+      RePaint-style constrained sampling for linker design: keep two (or
+      more) disjoint fragments of a starting ligand fixed (``frag_mask``),
+      regenerate the region between them, inside the same fixed pocket.
+
+      Structurally identical to :meth:`inpainting_sample` (same
+      restore-after-every-step loop), with two differences: the kept
+      fragment is fed to the network exactly as given, with no per-step
+      forward-noise on its atom type (upstream computes a matching noise
+      tensor here but never uses it -- dead code, not ported); and the
+      network additionally receives ``linker_mask`` (the region being
+      regenerated), which biases its coordinate update toward that region
+      (see ``encoders.py``). Port of upstream ``linker_sample``,
+      ``MDM_pocket_coor_shared.py:1186-1425``.
+
+
+
+   .. py:method:: net(ligand_atom_type: torch.Tensor, ligand_pos: torch.Tensor, ligand_bond_index: torch.Tensor, ligand_bond_type: Optional[torch.Tensor], ligand_batch: torch.Tensor, protein_embeddings: torch.Tensor, protein_pos: torch.Tensor, protein_batch: torch.Tensor, time_step: torch.Tensor, linker_mask: Optional[torch.Tensor] = None) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]
 
       One denoiser pass. Returns the global/local position and node scores
       plus the ligand edge bookkeeping the loss needs.
+
+      ``linker_mask`` (bool, ``(n_ligand,)``, ``True`` = regenerate): used
+      only by :meth:`linker_sample`, to bias the EGNN coordinate update
+      toward the region being regenerated (see ``encoders.py``'s module
+      docstring). ``None`` (default) reproduces training/default-sampling
+      behaviour exactly.
 
 
 

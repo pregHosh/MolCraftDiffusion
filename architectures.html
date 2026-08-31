@@ -308,6 +308,7 @@
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/diffpharma_prep/index.html">MolecularDiffusion.data.component.diffpharma_prep</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/diffsbdd_data/index.html">MolecularDiffusion.data.component.diffsbdd_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/feature/index.html">MolecularDiffusion.data.component.feature</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/goflow_data/index.html">MolecularDiffusion.data.component.goflow_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/graph3d_dataset/index.html">MolecularDiffusion.data.component.graph3d_dataset</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/kgdiff_data/index.html">MolecularDiffusion.data.component.kgdiff_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/oareactdiff_data/index.html">MolecularDiffusion.data.component.oareactdiff_data</a></li>
@@ -684,7 +685,7 @@ hydrogens.</p>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_pmdm.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_pmdm</span></code></p></td>
 <td class="text-left"><p><strong>Protein pocket</strong></p></td>
-<td class="text-left"><p>Straightforward pocket-conditioned design, and a reasonable second opinion alongside DiffSBDD. De novo generation only here — the paper’s lead-optimisation and linker modes were not ported.</p></td>
+<td class="text-left"><p>Straightforward pocket-conditioned design, and a reasonable second opinion alongside DiffSBDD. Also does <strong>lead optimisation</strong> — keep part of an existing ligand fixed and grow new atoms off it — and <strong>linker design</strong> — keep two fragments fixed and bridge them with new atoms. Both reuse the same checkpoint as de novo generation, no separate model needed, and take your ligand and pocket as a plain SDF + PDB rather than the converted dataset. See <code class="docutils literal notranslate"><span class="pre">examples/pmdm_leadopt_generate.yaml</span></code> and <code class="docutils literal notranslate"><span class="pre">examples/pmdm_linker_generate.yaml</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_kgdiff.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_kgdiff</span></code></p></td>
@@ -827,13 +828,18 @@ atom.</p>
 <td class="text-left"><p><strong>Reactant + product</strong> geometries</p></td>
 <td class="text-left"><p><strong>Reach for this when one attempt is not enough.</strong> It gives a different structure each time, so you can ask for a batch and keep the best — the usual way to rescue a reaction the fast model gets wrong. Narrower scope: small organic reactions made of H, C, N, O, up to about 23 atoms, with each side a single connected molecule. Slower, by roughly the ratio above.</p></td>
 </tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_goflow.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_goflow</span></code></p></td>
+<td class="text-left"><p><strong>Reactant + product</strong> connectivity (2D only)</p></td>
+<td class="text-left"><p><strong>Needs only 2D structure</strong> — no 3D reactant/product geometry required, unlike the two rows above; a reaction drawn on paper is enough. Ships no pretrained weights, so train it yourself before generating.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
-<p>Both usually land close enough to the true transition state to optimise from.
-They have not been compared head to head on the same reactions here, so treat
-the choice above as one of speed, coverage and whether you want more than one
-attempt — not as a ranking on accuracy.</p>
+<p>All three usually land close enough to the true transition state to optimise
+from. They have not been compared head to head on the same reactions here, so
+treat the choice above as one of speed, coverage and whether you want more
+than one attempt — not as a ranking on accuracy.</p>
 </section>
 <section id="transition-metal-complex-generation">
 <h2>7. Transition-metal complex generation<a class="headerlink" href="#transition-metal-complex-generation" title="Link to this heading">¶</a></h2>
@@ -1117,6 +1123,15 @@ optimal-transport bridge that starts from the reactant/product midpoint
 rather than from noise. The preprint carries a different title: <em>React-OT:
 Optimal Transport for Generating Transition State in Chemical Reactions</em>
 (<a class="reference external" href="https://arxiv.org/abs/2404.13430">arXiv:2404.13430</a>).</p></li>
+<li><p><strong>GoFlow</strong> — Galustian, Mark, Karwounopoulos, Kovar &amp; Heid. <em>GoFlow:
+Efficient Transition State Geometry Prediction with Flow Matching and
+E(3)-Equivariant Neural Networks.</em> ChemRxiv (2025).
+<a class="reference external" href="https://doi.org/10.26434/chemrxiv-2025-bk2rh">doi:10.26434/chemrxiv-2025-bk2rh</a>
+— conditions only on the reactant/product’s 2D connectivity, not their 3D
+shape like OA-ReactDiff/React-OT above. The backbone is <strong>GotenNet</strong>: Aykent
+&amp; Xia, <em>GotenNet: Rethinking Efficient 3D Equivariant Graph Neural
+Networks</em>, ICLR 2025
+(<a class="reference external" href="https://openreview.net/forum?id=5wxCQDtbMo">OpenReview</a>).</p></li>
 </ul>
 </section>
 </section>

@@ -1,0 +1,426 @@
+MolecularDiffusion.modules.models.goflow.ops
+============================================
+
+.. py:module:: MolecularDiffusion.modules.models.goflow.ops
+
+.. autoapi-nested-parse::
+
+   Supporting primitives GotenNet's forward path actually reaches.
+
+   Ported from ``gotennet/models/components/ops.py`` (1644 lines upstream; that
+   file also holds machinery for upstream's *other*, non-flow ``GotenNetModule``
+   energy-prediction model, which GoFlow's own ``configs/train.yaml`` never
+   selects). See ``docs/model_integrations/goflow/INTEGRATION_PLAN.md``,
+   Integration Plan, for the exact line ranges this was ported from.
+
+   Two reductions versus upstream, both because no shipped GoFlow config ever
+   selects the dropped branch (ponytail: only the reachable path is ported;
+   the line above names where to find the rest if that ever changes):
+
+   * ``str2act`` supports only ``""`` (-> ``None``) and ``"swish"`` (->
+     ``nn.SiLU()``, upstream's own mapping for that string --
+     ``ops.py:1319-1344``, ``get_activations``/``dictionary_to_option``).
+     ``activation: swish`` is the only value any shipped GoFlow config ever
+     sets.
+   * ``str2basis`` supports only ``"expnorm"`` (case-insensitive), so
+     ``BesselBasis``/``GaussianRBF`` (``ops.py:281-343``) are not ported.
+     ``radial_basis: expnorm`` is hardcoded in every shipped experiment config.
+
+   ``NodeInit`` similarly drops the ``concat=True`` branch (a second embedding
+   table plus a differently-shaped ``distance_proj``/``message``): GotenNet
+   always constructs it with ``concat=False`` (``gotennet.py:506-509``), and
+   the dropped branch is otherwise unreachable code, not a fidelity gap.
+
+   ``Distance`` (upstream ``ops.py:1473-1497``) is not ported at all: it is
+   constructed by ``GotenNet.__init__`` but its ``forward`` is never called --
+   ``GotenNet.forward`` builds edges via ``_extend_condensed_graph_edge``
+   instead. Confirmed by reading the whole of ``gotennet.py``'s ``forward``:
+   no ``self.distance(`` call site exists. It carries no parameters, so
+   dropping it changes no checkpoint shape either way.
+
+   ``.jittable()`` (called on every ``MessagePassing`` subclass in upstream's
+   ``GotenNet.__init__``) is a documented no-op in the installed PyG (2.7):
+   ``'X.jittable' is deprecated and a no-op. Please remove its usage.`` -- so
+   those calls are simply not reproduced here.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.goflow.ops.zeros_initializer
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.goflow.ops.AtomCGREmbedding
+   MolecularDiffusion.modules.models.goflow.ops.CosineCutoff
+   MolecularDiffusion.modules.models.goflow.ops.Dense
+   MolecularDiffusion.modules.models.goflow.ops.EdgeCGREmbedding
+   MolecularDiffusion.modules.models.goflow.ops.EdgeInit
+   MolecularDiffusion.modules.models.goflow.ops.ExpNormalSmearing
+   MolecularDiffusion.modules.models.goflow.ops.MLP
+   MolecularDiffusion.modules.models.goflow.ops.NodeInit
+   MolecularDiffusion.modules.models.goflow.ops.TensorInit
+   MolecularDiffusion.modules.models.goflow.ops.VecLayerNorm
+   MolecularDiffusion.modules.models.goflow.ops.swish
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.goflow.ops.get_weight_init_by_string
+   MolecularDiffusion.modules.models.goflow.ops.glorot_orthogonal_wrapper_
+   MolecularDiffusion.modules.models.goflow.ops.he_orthogonal_init
+   MolecularDiffusion.modules.models.goflow.ops.parse_update_info
+   MolecularDiffusion.modules.models.goflow.ops.shifted_softplus
+   MolecularDiffusion.modules.models.goflow.ops.str2act
+   MolecularDiffusion.modules.models.goflow.ops.str2basis
+
+
+Module Contents
+---------------
+
+.. py:class:: AtomCGREmbedding(n_atom_rdkit_feats: int, last_channel: int)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Verbatim from ``ops.py:1500-1513``, with the ``einops.rearrange``
+   replaced by the plain-``torch.cat`` equivalent (see
+   ``INTEGRATION_PLAN.md``, Naming: for the ``a=2`` case used here,
+   ``rearrange([z1, z2], 'a n d -> n (a d)', a=2)`` is exactly
+   ``torch.cat([z1, z2], dim=-1)``).
+
+
+   .. py:method:: forward(z_N: torch.Tensor, r_feat_N_F: torch.Tensor, p_feat_N_F: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: atom_embedding
+
+
+   .. py:attribute:: atom_feat_embedding
+
+
+   .. py:attribute:: half_last_channel_dim
+
+
+.. py:class:: CosineCutoff(cutoff: float, scaling: float)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Verbatim from ``ops.py:147-158``.
+
+   Instantiated directly by ``configs/tasks/diffusion_goflow.yaml``'s
+   ``representation.cutoff_fn`` block (``_target_`` points here), exactly
+   mirroring upstream's own ``configs/model/flow.yaml:26-29``.
+
+
+   .. py:method:: forward(distances: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: cutoff
+
+
+   .. py:attribute:: scaling
+
+
+.. py:class:: Dense(in_features, out_features, bias=True, activation=None, weight_init=xavier_uniform_, bias_init=zeros_initializer, norm=None, gain=None)
+
+   Bases: :py:obj:`torch.nn.Linear`
+
+
+   Verbatim from ``ops.py:403-476``.
+
+
+   .. py:method:: forward(inputs: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: activation
+      :value: None
+
+
+
+   .. py:attribute:: bias_init
+
+
+   .. py:attribute:: gain
+      :value: None
+
+
+
+   .. py:attribute:: weight_init
+
+
+.. py:class:: EdgeCGREmbedding(hidden_dim: int = 100)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Verbatim from ``ops.py:1525-1539``, ``einops.rearrange`` replaced the
+   same way as :class:`AtomCGREmbedding`.
+
+
+   .. py:method:: forward(edge_type_r: torch.Tensor, edge_type_p: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: bond_emb
+
+
+   .. py:attribute:: edge_cat
+
+
+   .. py:attribute:: hidden_dim
+      :value: 100
+
+
+
+.. py:class:: EdgeInit(num_rbf, hidden_channels, activation=F.silu, proj_ln='', last_activation=False, weight_init=nn.init.xavier_uniform_, bias_init=nn.init.zeros_)
+
+   Bases: :py:obj:`torch_geometric.nn.MessagePassing`
+
+
+   Verbatim from ``ops.py:1613-1644``. ``aggr=None``: this never
+   actually calls ``propagate`` (its ``forward`` is a plain function call,
+   kept as a ``MessagePassing`` subclass only because upstream jittable'd
+   it alongside the others).
+
+
+   .. py:method:: forward(edge_index, edge_attr, edge_type_r, edge_type_p)
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: activation
+
+
+   .. py:attribute:: edge_cgr_embedding
+
+
+   .. py:attribute:: edge_up
+
+
+.. py:class:: ExpNormalSmearing(cutoff: float = 5.0, scaling: float = 1.0, n_rbf: int = 50, trainable: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Verbatim from ``ops.py:1388-1421``. The only radial basis any shipped
+   GoFlow config selects (``radial_basis: expnorm``).
+
+
+   .. py:method:: forward(dist: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: alpha
+      :value: 1.0
+
+
+
+   .. py:attribute:: cutoff
+      :value: 5.0
+
+
+
+   .. py:attribute:: cutoff_fn
+
+
+   .. py:attribute:: n_rbf
+      :value: 50
+
+
+
+   .. py:attribute:: trainable
+      :value: False
+
+
+
+.. py:class:: MLP(hidden_dims: List[int], bias=True, activation=None, last_activation=None, weight_init=xavier_uniform_, bias_init=zeros_initializer, norm='')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Verbatim from ``ops.py:1440-1470``.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: dense_layers
+
+
+   .. py:attribute:: layers
+
+
+.. py:class:: NodeInit(hidden_channels, n_atom_rdkit_feats, num_rbf, cutoff, scaling, max_z=100, activation=F.silu, proj_ln='', last_activation=False, weight_init=nn.init.xavier_uniform_, bias_init=nn.init.zeros_)
+
+   Bases: :py:obj:`torch_geometric.nn.MessagePassing`
+
+
+   ``concat=False`` only -- verbatim from ``ops.py:1542-1610`` with the
+   ``concat=True`` branch dropped (see the module docstring: GotenNet never
+   constructs this with ``concat=True``).
+
+
+   .. py:method:: forward(z, r_feat, p_feat, x, edge_index, edge_weight, edge_attr, edge_type_r, edge_type_p)
+
+
+   .. py:method:: message(s_i, x_j, W)
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:attribute:: atom_cgr_embedding
+
+
+   .. py:attribute:: combine
+
+
+   .. py:attribute:: cutoff
+
+
+   .. py:attribute:: distance_proj
+
+
+   .. py:attribute:: edge_cgr_embedding
+
+
+.. py:class:: TensorInit(l: int = 2)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Real spherical-harmonic components up to ``l=2``.
+
+   Verbatim from ``ops.py:543-575`` (the ``lmax in {1, 2}`` branches only).
+   Every shipped GoFlow config fixes ``lmax: 2``
+   (``configs/model/flow.yaml:43``, restated across every model-size
+   ablation in the Hyperparameter Provenance table), so the ``lmax >= 3``
+   branches (``ops.py:577-``, another ~80 lines of higher-order e3nn-style
+   coefficients) are not ported -- ``forward`` raises for any other value
+   rather than silently truncating.
+
+
+   .. py:method:: forward(edge_vec: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: l
+      :value: 2
+
+
+
+   .. py:property:: tensor_size
+      :type: int
+
+
+
+.. py:class:: VecLayerNorm(hidden_channels, trainable, norm_type='max_min')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Verbatim from ``ops.py:1234-1304``.
+
+   Every shipped GoFlow config leaves ``int_layer_norm``/``int_vector_norm``
+   at ``""`` (``configs/model/flow.yaml:35-36``), so ``GATA`` builds
+   ``nn.Identity()`` instead of this class in practice -- ported anyway
+   since the switch (``rms``/``max_min``/none) is cheap and self-contained.
+
+
+   .. py:method:: forward(vec: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: max_min_norm(vec: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: none_norm(vec: torch.Tensor) -> torch.Tensor
+
+
+   .. py:method:: reset_parameters() -> None
+
+
+   .. py:method:: rms_norm(vec: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: eps
+      :value: 1e-12
+
+
+
+   .. py:attribute:: hidden_channels
+
+
+.. py:class:: swish
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Verbatim from ``ops.py:1517-1522``. Functionally SiLU; kept as its
+   own class because it lives inside ``EdgeCGREmbedding.edge_cat``'s
+   ``nn.Sequential``, whose state-dict has no parameters here either way.
+
+
+   .. py:method:: forward(x: torch.Tensor) -> torch.Tensor
+
+
+.. py:function:: get_weight_init_by_string(init_str: str)
+
+   Verbatim from ``ops.py:387-400``.
+
+
+.. py:function:: glorot_orthogonal_wrapper_(tensor: torch.Tensor, scale: float = 2.0) -> torch.Tensor
+
+   Verbatim from ``ops.py:344-345``. Not selected by any shipped config
+   (``weight_init: xavier_uniform``), ported for the switch's completeness.
+
+
+.. py:function:: he_orthogonal_init(tensor: torch.Tensor) -> torch.Tensor
+
+   Verbatim from ``ops.py:364-384``. Not selected by any shipped config.
+
+
+.. py:function:: parse_update_info(edge_updates)
+
+   Decode the ``edge_updates`` config string into flag bits.
+
+   Verbatim from ``ops.py:48-86``. GoFlow's shipped config sets
+   ``edge_updates: norej`` (``configs/model/flow.yaml:39``), which flips
+   only ``rej`` to ``False``.
+
+
+.. py:function:: shifted_softplus(x: torch.Tensor) -> torch.Tensor
+
+   Verbatim from ``ops.py:103-104``.
+
+
+.. py:function:: str2act(input_str: str)
+
+   Reduced dispatcher -- see the module docstring for why.
+
+
+.. py:function:: str2basis(input_str: str)
+
+   Reduced dispatcher -- see the module docstring for why.
+
+
+.. py:data:: zeros_initializer
+

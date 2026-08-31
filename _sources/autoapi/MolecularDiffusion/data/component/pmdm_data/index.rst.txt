@@ -42,6 +42,8 @@ Attributes
 
 .. autoapisummary::
 
+   MolecularDiffusion.data.component.pmdm_data.AA_NAME_NUMBER
+   MolecularDiffusion.data.component.pmdm_data.BACKBONE_NAMES
    MolecularDiffusion.data.component.pmdm_data.MAX_NUM_AA
    MolecularDiffusion.data.component.pmdm_data.PMDM_ATOM_VOCAB
    MolecularDiffusion.data.component.pmdm_data.PMDM_ELEMENTS
@@ -63,7 +65,9 @@ Functions
 .. autoapisummary::
 
    MolecularDiffusion.data.component.pmdm_data.fully_connected_edges
+   MolecularDiffusion.data.component.pmdm_data.parse_pocket_pdb
    MolecularDiffusion.data.component.pmdm_data.pmdm_collate
+   MolecularDiffusion.data.component.pmdm_data.write_pocket_pdb
 
 
 Module Contents
@@ -191,9 +195,40 @@ Module Contents
    away before the model ever sees them.
 
 
+.. py:function:: parse_pocket_pdb(path: str) -> Dict[str, numpy.ndarray]
+
+   Minimal PDB ATOM-line parser for a live pocket file, at generate time.
+
+   Relocated from ``docs/model_integrations/pmdm/scripts/convert_dataset.py``
+   (that script now imports this instead of keeping its own copy) so
+   :class:`~MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMConstrainedGenerator`
+   can read a plain ``pocket_file`` PDB directly, the same way
+   ``PMDMDataset`` reads a converted db row. Returns **raw**
+   arrays (element Z, amino-acid index, backbone flag) -- one-hot expansion
+   is the caller's job, same convention as :class:`PMDMDataset`.
+
+
 .. py:function:: pmdm_collate(batch: List[Dict[str, Any]]) -> Dict[str, Any]
 
    Concatenate complexes; emit PMDM's own attribute names.
+
+
+.. py:function:: write_pocket_pdb(pocket: Dict[str, numpy.ndarray], path: str) -> None
+
+   Write a pocket back to a PDB that :func:`parse_pocket_pdb` can read.
+
+   Only what the parser actually checks round-trips exactly: element,
+   amino-acid identity, coordinates, and backbone-set membership (not the
+   specific atom name -- ``"CA"``/``"CB"`` stand in for backbone/sidechain).
+   Used by ``docs/model_integrations/pmdm/scripts/extract_smoke_pair.py`` to
+   reconstruct a smoke-test pocket from a converted db row (the original raw
+   PDBs were deleted after conversion).
+
+
+.. py:data:: AA_NAME_NUMBER
+
+.. py:data:: BACKBONE_NAMES
+   :value: ['CA', 'C', 'N', 'O']
 
 
 .. py:data:: MAX_NUM_AA

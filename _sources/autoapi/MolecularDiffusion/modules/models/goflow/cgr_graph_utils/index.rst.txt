@@ -1,0 +1,50 @@
+MolecularDiffusion.modules.models.goflow.cgr_graph_utils
+========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.goflow.cgr_graph_utils
+
+.. autoapi-nested-parse::
+
+   Condensed-graph-of-reaction edge extension, vendored UNMODIFIED.
+
+   Ported verbatim from ``gotennet/utils/cgr_graph_utils.py`` (commit
+   ``3ec00a09``). This is architecture-load-bearing logic -- the decode of the
+   packed ``edge_type = r_native * 22 + p_native`` union back into per-side
+   bond types, plus the higher-order (multi-hop, up to ``edge_order``)
+   connectivity and the runtime ``radius_graph`` union -- not glue, and is not
+   touched beyond the import path. See ``INTEGRATION_PLAN.md``, Repo Inspection
+   and Bond Representation Mapping, for the full derivation.
+
+   ``BOND_TYPES`` here is RDKit's native 22-class ``BondType`` enum position
+   (``UNSPECIFIED=0`` shared with "no bond", ..., ``AROMATIC=12``, ...) -- the
+   scale ``edge_type`` on the batch is packed in, decoded by ``// 22`` / ``%
+   22`` below. This is a DIFFERENT vocabulary from the platform's canonical
+   5-class ``BOND_VOCAB`` (``graph3d_dataset.py``); the round trip between them
+   happens once, in ``data/component/goflow_data.py::goflow_collate``, never
+   here.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.goflow.cgr_graph_utils.BOND_TYPES
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.goflow.cgr_graph_utils.extend_ts_graph_order_radius
+
+
+Module Contents
+---------------
+
+.. py:function:: extend_ts_graph_order_radius(num_nodes, pos, edge_index, edge_type, batch, order=3, cutoff=10.0)
+
+.. py:data:: BOND_TYPES
+

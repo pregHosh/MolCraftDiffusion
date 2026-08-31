@@ -25,7 +25,7 @@ MolecularDiffusion.modules.models.pmdm.common
      pass a no-op. It takes one cutoff here.
 
    # ponytail: the vendored surface is the reachable subset only. If a future
-   # pass turns on ``vae_context``/``linker_mask``, port those branches then.
+   # pass turns on ``vae_context``, port that branch then.
 
 
 
@@ -52,6 +52,7 @@ Functions
 
 .. autoapisummary::
 
+   MolecularDiffusion.modules.models.pmdm.common.center_pos_lp
    MolecularDiffusion.modules.models.pmdm.common.center_pos_pl
    MolecularDiffusion.modules.models.pmdm.common.clip_norm
    MolecularDiffusion.modules.models.pmdm.common.eq_transform
@@ -114,6 +115,16 @@ Module Contents
 
 
    .. py:attribute:: shift
+
+
+.. py:function:: center_pos_lp(ligand_pos: torch.Tensor, pocket_pos: torch.Tensor, ligand_batch: torch.Tensor, pocket_batch: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+
+   Move ligand *and* pocket so the per-complex POCKET centroid is at 0.
+
+   Unlike :func:`center_pos_pl`, this does not shift the ligand relative to
+   the pocket -- needed when the ligand's positions are real, already-placed
+   coordinates (a starting fragment from a user's SDF), not noise that can
+   be freely re-centred (``PMDMEpsNet.inpainting_sample``/``linker_sample``).
 
 
 .. py:function:: center_pos_pl(ligand_pos: torch.Tensor, pocket_pos: torch.Tensor, ligand_batch: torch.Tensor, pocket_batch: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]

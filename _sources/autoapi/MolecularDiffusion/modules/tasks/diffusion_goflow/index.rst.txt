@@ -1,0 +1,413 @@
+MolecularDiffusion.modules.tasks.diffusion_goflow
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_goflow
+
+.. autoapi-nested-parse::
+
+   GoFlow: transition-state geometry from a reaction's condensed graph of
+   reaction (CGR), via conditional flow matching and GotenNet.
+
+   Galustian, Mark, Karwounopoulos, Kovar & Heid, *GoFlow: Efficient
+   Transition State Geometry Prediction with Flow Matching and E(3)-Equivariant
+   Neural Networks*, ChemRxiv (2025), doi:10.26434/chemrxiv-2025-bk2rh. Ported
+   from the repo checked out at ``others/nice/goflow`` (commit
+   ``3ec00a09d9b283e3258ae01fe5d3e35bb3812bff``).
+
+   Three pieces live here:
+
+   :class:`GoFlowTask`
+       The platform task contract around :class:`~MolecularDiffusion.modules.
+       models.goflow.gotennet.GotenNet`. ``forward`` reproduces upstream's
+       ``FlowModule.train_val_step`` (``flow_matching/flow_module.py:94-99``);
+       ``sample`` reproduces ``FlowModule.test_step``'s ODE integration
+       (``:116-134``) but returns every draw independently, unranked -- see
+       Scope below.
+
+   :class:`ModelTaskFactory`
+       Hydra entry point for ``configs/tasks/diffusion_goflow.yaml``.
+       ``representation:`` is a nested Hydra ``_target_`` block that Hydra
+       instantiates into a real :class:`GotenNet` *before* this factory is
+       constructed (mirroring upstream's own ``configs/model/flow.yaml``
+       nesting), so ``build()`` is a two-line assembly, not a second-level
+       dict-to-object conversion.
+
+   :class:`GoFlowTSGenerator`
+       A thin :class:`~MolecularDiffusion.modules.tasks.ts_generator.
+       TSGenerator` subclass. **It writes no ``run()`` loop.** "Load one
+       reaction, tile it to a batch, sample the transition state into it,
+       write .xyz" is the shared TS layer (``ts_generator.py``) on top of the
+       shared pocket loop (``pocket_generator.py``); what is left here is only
+       GoFlow's own: which corpus (the converted RDB7 pickle + its
+       ``feat_dict.pkl`` + split files), which collate, and nothing else --
+       GoFlow has no RePaint knobs, no solver choice, just a fixed-step Euler
+       integrator with one knob (``num_steps``) the base already carries.
+
+   Scope of this integration
+   --------------------------
+
+   **Transition-state geometry given a reaction's connectivity (reactant +
+   product bonds and per-atom RDKit descriptors), and nothing else.** Not
+   ported, each for a stated reason (see ``INTEGRATION_PLAN.md``, Explicitly
+   out of scope, for the full list): upstream's GT-anchored Kabsch-rotate-then-
+   median-consensus ensembling and RDKit-substructure permutation matching
+   (both require a *known* transition state, so cannot run on a real, blind
+   reaction); the vendored ``tsdiff/`` baseline (a separate, complete model);
+   ``schedule_free`` optimizer mode; the model-size ablation configs; trajectory
+   frames. **``sample()`` returns every ``num_generate`` draw independently,
+   unranked and unpermuted** -- same "no RMSD scoring, no best-of-N ranking"
+   design as the two existing TS generators
+   (``modules/tasks/ts_generator.py``'s own stated principle).
+
+   Two facts that constrain everything
+   ------------------------------------
+
+   * Atom identity is **supplied by the input reaction and copied straight
+     through** -- only coordinates are generated. ``sample()``'s one-hot
+     encoding reuses :data:`~MolecularDiffusion.modules.tasks.
+     diffusion_oareactdiff.N_ELEMENT` and
+     :func:`~MolecularDiffusion.modules.tasks.diffusion_oareactdiff._pad_ts`
+     by import (do not duplicate them): the five-wide ``[H, C, N, O, F]``
+     layout is architecture-agnostic padding logic, not something specific to
+     OA-ReactDiff. RDB7 never populates the "F" column (it is a C/H/N/O
+     corpus), but the column costs nothing.
+   * GoFlow has **no charge concept at all** (unlike OA-ReactDiff/React-OT,
+     whose ninth column is the atomic number standing in for a charge slot):
+     the charge column in ``sample()``'s output is zeros, full stop.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_goflow.GoFlowTSGenerator
+   MolecularDiffusion.modules.tasks.diffusion_goflow.GoFlowTask
+   MolecularDiffusion.modules.tasks.diffusion_goflow.ModelTaskFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: GoFlowTSGenerator(task: Any, reaction_index: int = 0, feat_dict_file: str = '', split_path: str = '', split_file: str = 'random_split.pkl', split: str = 'test', num_generate: int = 25, batch_size: int = 4, num_steps: Optional[int] = 25, output_path: str = 'generated_goflow', seed: int = 42, device: Optional[str] = None, **kwargs: Any)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.ts_generator.TSGenerator`
+
+
+   Transition-state generation behind ``interference/gen_goflow_ts``.
+
+   The shape of the request is identical to every other TS run -- *load one
+   reaction, tile it to a batch, sample the transition state into it, write
+   .xyz* -- so the loop is
+   :meth:`~MolecularDiffusion.modules.tasks.pocket_generator.
+   PocketGenerator.run`, the reaction plumbing is
+   :class:`~MolecularDiffusion.modules.tasks.ts_generator.TSGenerator`, and
+   what is left here is only GoFlow's own: which corpus (the converted
+   RDB7 pickle, plus the ``feat_dict.pkl`` and split files it needs
+   alongside it) and which collate. **No ``PocketGenerator`` hook beyond
+   what ``TSGenerator`` already fills is overridden.**
+
+   Unlike OA-ReactDiff/React-OT, GoFlow's corpus is not one self-contained
+   pickle: :class:`~MolecularDiffusion.data.component.goflow_data.
+   GoFlowRDB7Dataset` also needs the frozen ``feat_dict.pkl`` (the one-hot
+   vocabulary the converted ``ReactionSide.feat`` columns were built
+   against) and the split directory/file, so this generator adds those
+   three as its own constructor keys rather than folding them into
+   ``reaction_source`` -- exactly the same "a subclass may add its own
+   extra kwargs beyond the shared base" pattern as OA-ReactDiff's
+   RePaint knobs or React-OT's solver knobs.
+
+   ``source_key`` stays the shared default, ``"reaction_source"``: GoFlow's
+   corpus really is "a reaction source", a converted pickle, no more
+   honest model-specific name exists (mirrors ``INTEGRATION_PLAN.md``'s
+   Inference Task Decision table verbatim).
+
+   Configure the run.
+
+   :param task: the loaded :class:`GoFlowTask`; its ``sample()`` is what
+                gets called.
+   :param reaction_index: which reaction in the split to generate for.
+   :param feat_dict_file: the frozen ``feat_dict.pkl`` this corpus's
+                          one-hot columns were built against.
+   :param split_path: directory holding the split pickle.
+   :param split_file: which split pickle, e.g. ``random_split.pkl``.
+   :param split: ``"train"``, ``"val"`` or ``"test"``; defaults to the
+                 held-out ``"test"`` split.
+   :param num_generate: how many transition states to sample. 25 mirrors
+                        the actual headline run's ensemble size
+                        (``train_test_all_splits.sh``'s ``model.num_samples=25``).
+   :param batch_size: how many of those to sample at once.
+   :param num_steps: Euler steps; ``None`` => the task's default (25).
+   :param output_path: directory for the .xyz files.
+   :param seed: torch/random/numpy seed.
+   :param device: ``None`` => cuda if available.
+   :param \*\*kwargs: forwarded to :class:`TSGenerator` (``reaction_source``
+                      arrives this way), then rejected by the base if unknown.
+
+   :raises ValueError: if ``feat_dict_file`` or ``split_path`` is not set.
+
+
+   .. py:attribute:: db_required_msg
+      :value: 'interference.reaction_source is required: GoFlow has no unconditional mode -- it needs a...
+
+
+
+   .. py:attribute:: feat_dict_file
+      :value: ''
+
+
+
+   .. py:attribute:: max_retries
+      :type:  Optional[int]
+      :value: None
+
+
+
+   .. py:attribute:: seed_numpy
+      :value: True
+
+
+
+   .. py:attribute:: source_key
+      :value: 'reaction_source'
+
+
+
+   .. py:attribute:: split
+      :value: 'test'
+
+
+
+   .. py:attribute:: split_file
+      :value: 'random_split.pkl'
+
+
+
+   .. py:attribute:: split_path
+      :value: ''
+
+
+
+   .. py:attribute:: tag
+      :value: 'goflow'
+
+
+
+.. py:class:: GoFlowTask(representation: MolecularDiffusion.modules.models.goflow.GotenNet, output_n_hidden: int = 64, num_steps: int = 25, atom_vocab: Optional[List[str]] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Task contract around :class:`GotenNet` + :class:`Atomwise3DOut`.
+
+
+   .. py:method:: evaluate(pred: torch.Tensor, target: torch.Tensor) -> Dict[str, torch.Tensor]
+
+      Validation metric.
+
+      Upstream's substructure-matched DMAE/RMSD validation
+      (``evaluate_geometry``, ``callbacks.py:182-239``) is deliberately
+      not here -- same reasoning as oareactdiff/reactot leaving their own
+      heavier upstream validation-time sampling out of scope.
+
+
+
+   .. py:method:: forward(batch: Dict[str, Any]) -> Tuple[torch.Tensor, Dict[str, Any]]
+
+      One training/validation step.
+
+      Reproduces ``FlowModule.train_val_step``
+      (``flow_module.py:94-99``): draw ``x_0``, Kabsch-align the ground
+      truth onto it, interpolate to a random time, and regress the
+      straight-line velocity under ``rmsd_loss``.
+
+      :param batch: ``{"batch": <PyG Batch>}`` from
+                    :func:`~MolecularDiffusion.data.component.goflow_data.
+                    goflow_collate`; the batch must carry ``ts_pos``.
+
+      :returns: ``(loss, stats)``.
+
+      :raises ValueError: if the batch carries no ``ts_pos`` (this model
+          cannot train without a known transition state).
+
+
+
+   .. py:method:: model_output(x_t_N_3: torch.Tensor, batch: Any, t_G: torch.Tensor) -> torch.Tensor
+
+      One network call: ``(x_t, t, batch) -> predicted velocity``.
+
+      Reproduces ``FlowModule.model_output`` (``flow_module.py:101-104``).
+
+
+
+   .. py:method:: predict_and_target(batch: Dict[str, Any]) -> Tuple[torch.Tensor, torch.Tensor]
+
+      Pure-generative stub: the loss is the prediction, target is zero.
+
+
+
+   .. py:method:: sample(batch_size: Optional[int] = None, nodesxsample: Optional[torch.Tensor] = None, num_steps: Optional[int] = None, batch: Optional[Dict[str, Any]] = None, num_generate: Optional[int] = None, **kwargs: Any) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]
+
+      Generate transition states for the reactions in ``batch``.
+
+      **The signature deviates from Section 2.1 the same way every
+      pocket-conditioned task's does**: the conditioning structure arrives
+      as ``batch``, because there is no channel for "which reaction" in
+      ``sample(batch_size, nodesxsample, ...)``.
+
+      One fresh Gaussian draw per call, integrated with the vendored
+      fixed-step Euler stepper (:func:`~MolecularDiffusion.modules.models.
+      goflow.flow.euler_integrate`) over ``linspace(0, 1, num_steps)`` --
+      reproduces ``FlowModule.test_step``'s per-sample loop
+      (``flow_module.py:128-134``) MINUS the GT-anchored substructure
+      matching + Kabsch-to-reference + median-consensus collapsing
+      (structurally requires a known TS; see ``INTEGRATION_PLAN.md``'s
+      Repo Inspection caveat and Explicitly out of scope). Every sample in
+      ``batch`` is returned independently and unranked.
+
+      :param batch_size: ignored; taken from ``batch``.
+      :param nodesxsample: accepted and *checked*, not used to choose. The
+                           transition state has exactly as many atoms as the reaction,
+                           so a value disagreeing with it is a caller bug worth
+                           surfacing rather than silently overriding.
+      :param num_steps: Euler steps. ``None`` falls back to ``self.num_steps``
+                        (25, the actual headline run's value).
+      :param batch: ``{"batch": <PyG Batch>}``, one graph per requested
+                    sample (built by tiling one reaction ``n`` times).
+      :param num_generate: unused; accepted for signature parity with the
+                           platform contract. The number of samples is however many
+                           graphs ``batch`` carries.
+
+      :returns: ``(one_hot, charges, coords, node_mask)`` for the transition
+                state, padded to ``(B, N, .)``. ``charges`` is all zeros:
+                GoFlow has no charge concept, unlike OA-ReactDiff/React-OT's
+                atomic-number-as-charge column.
+
+      :raises ValueError: if ``batch`` is missing, or ``nodesxsample``
+          disagrees with the reaction's atom count.
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:property:: device
+      :type: torch.device
+
+
+      Device of the first parameter.
+
+
+   .. py:property:: model
+      :type: GoFlowTask
+
+
+      There is no separate inner module the generation code needs.
+
+
+   .. py:attribute:: node_dist_model
+      :type:  Any
+      :value: None
+
+
+
+   .. py:attribute:: num_steps
+      :value: 25
+
+
+
+   .. py:attribute:: output_layer
+
+
+   .. py:attribute:: prop_dist_model
+      :type:  Any
+      :value: None
+
+
+
+   .. py:attribute:: representation
+
+
+   .. py:attribute:: split
+      :value: 'train'
+
+
+
+.. py:class:: ModelTaskFactory(task_type: str = 'diffusion_goflow', representation: Optional[MolecularDiffusion.modules.models.goflow.GotenNet] = None, output_n_hidden: int = 64, num_steps: int = 25, atom_vocab: Optional[List[str]] = None, **kwargs: Any)
+
+   Hydra entry point for ``configs/tasks/diffusion_goflow.yaml``.
+
+   No ``train_set`` parameter: the only construction-time statistic
+   (``n_atom_rdkit_feats``) is a fixed config int, verified against the
+   shipped ``feat_dict.pkl`` by :class:`~MolecularDiffusion.data.component.
+   goflow_data.GoFlowRDB7Dataset` at data-load time, not injected via the
+   Section 2.5 ``train_set`` seam. ``cli/train.py`` is untouched.
+
+   Record GoFlow's own hyperparameters.
+
+   :param task_type: ``"diffusion_goflow"``.
+   :param representation: the (already Hydra-instantiated) ``GotenNet``
+                          backbone -- required; ``configs/tasks/diffusion_goflow.yaml``
+                          nests it as ``representation: {_target_: ...GotenNet, ...}``,
+                          so Hydra builds it before this factory is constructed.
+   :param output_n_hidden: ``Atomwise3DOut``'s hidden width (upstream's
+                           ``configs/model/flow.yaml``'s ``output.n_hidden: 64``).
+   :param num_steps: default Euler steps for ``sample()`` (the actual
+                     headline run's value, 25 -- see the plan's Hyperparameter
+                     Provenance table for the config-default-vs-actual-run
+                     conflict this resolves).
+   :param atom_vocab: output vocabulary; defaults to
+                      ``[H, C, N, O, F]`` (see the module docstring for why "F"
+                      is present but never populated by RDB7).
+   :param \*\*kwargs: swallowed; ``cli/train.py`` injects ``node_feature*``.
+
+   :raises ValueError: if ``representation`` is missing.
+
+
+   .. py:method:: build() -> GoFlowTask
+
+      Assemble the representation + output head into the task.
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: condition_names
+      :type:  List[str]
+      :value: []
+
+
+
+   .. py:attribute:: generation_time_keys
+      :value: ('reaction_source',)
+
+
+
+   .. py:attribute:: num_steps
+      :value: 25
+
+
+
+   .. py:attribute:: output_n_hidden
+      :value: 64
+
+
+
+   .. py:attribute:: representation
+      :value: None
+
+
+
+   .. py:attribute:: task
+      :type:  Optional[GoFlowTask]
+      :value: None
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_goflow'
+
+
+

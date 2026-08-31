@@ -308,6 +308,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../diffpharma_prep/index.html">MolecularDiffusion.data.component.diffpharma_prep</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../diffsbdd_data/index.html">MolecularDiffusion.data.component.diffsbdd_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../feature/index.html">MolecularDiffusion.data.component.feature</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../goflow_data/index.html">MolecularDiffusion.data.component.goflow_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../graph3d_dataset/index.html">MolecularDiffusion.data.component.graph3d_dataset</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../kgdiff_data/index.html">MolecularDiffusion.data.component.kgdiff_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../oareactdiff_data/index.html">MolecularDiffusion.data.component.oareactdiff_data</a></li>
@@ -505,6 +506,12 @@ adapter is a one-line <code class="docutils literal notranslate"><span class="pr
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.pmdm_data.AA_NAME_NUMBER" title="MolecularDiffusion.data.component.pmdm_data.AA_NAME_NUMBER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AA_NAME_NUMBER</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.pmdm_data.BACKBONE_NAMES" title="MolecularDiffusion.data.component.pmdm_data.BACKBONE_NAMES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BACKBONE_NAMES</span></code></a></p></td>
+<td><p></p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.pmdm_data.MAX_NUM_AA" title="MolecularDiffusion.data.component.pmdm_data.MAX_NUM_AA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MAX_NUM_AA</span></code></a></p></td>
 <td><p></p></td>
 </tr>
@@ -544,8 +551,14 @@ adapter is a one-line <code class="docutils literal notranslate"><span class="pr
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.pmdm_data.fully_connected_edges" title="MolecularDiffusion.data.component.pmdm_data.fully_connected_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fully_connected_edges</span></code></a>(→ torch.Tensor)</p></td>
 <td><p>Per-molecule fully-connected, self-loop-free edge index with offsets.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.pmdm_data.pmdm_collate" title="MolecularDiffusion.data.component.pmdm_data.pmdm_collate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pmdm_collate</span></code></a>(→ Dict[str, Any])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.pmdm_data.parse_pocket_pdb" title="MolecularDiffusion.data.component.pmdm_data.parse_pocket_pdb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_pocket_pdb</span></code></a>(→ Dict[str, numpy.ndarray])</p></td>
+<td><p>Minimal PDB ATOM-line parser for a live pocket file, at generate time.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.pmdm_data.pmdm_collate" title="MolecularDiffusion.data.component.pmdm_data.pmdm_collate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pmdm_collate</span></code></a>(→ Dict[str, Any])</p></td>
 <td><p>Concatenate complexes; emit PMDM's own attribute names.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.pmdm_data.write_pocket_pdb" title="MolecularDiffusion.data.component.pmdm_data.write_pocket_pdb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_pocket_pdb</span></code></a>(→ None)</p></td>
+<td><p>Write a pocket back to a PDB that <a class="reference internal" href="#MolecularDiffusion.data.component.pmdm_data.parse_pocket_pdb" title="MolecularDiffusion.data.component.pmdm_data.parse_pocket_pdb"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse_pocket_pdb()</span></code></a> can read.</p></td>
 </tr>
 </tbody>
 </table>
@@ -681,10 +694,45 @@ away before the model ever sees them.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pmdm_data.parse_pocket_pdb">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.data.component.pmdm_data.</span></span><span class="sig-name descname"><span class="pre">parse_pocket_pdb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pmdm_data.parse_pocket_pdb" title="Link to this definition">¶</a></dt>
+<dd><p>Minimal PDB ATOM-line parser for a live pocket file, at generate time.</p>
+<p>Relocated from <code class="docutils literal notranslate"><span class="pre">docs/model_integrations/pmdm/scripts/convert_dataset.py</span></code>
+(that script now imports this instead of keeping its own copy) so
+<a class="reference internal" href="../../../modules/tasks/diffusion_pmdm/index.html#MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMConstrainedGenerator" title="MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMConstrainedGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">PMDMConstrainedGenerator</span></code></a>
+can read a plain <code class="docutils literal notranslate"><span class="pre">pocket_file</span></code> PDB directly, the same way
+<code class="docutils literal notranslate"><span class="pre">PMDMDataset</span></code> reads a converted db row. Returns <strong>raw</strong>
+arrays (element Z, amino-acid index, backbone flag) – one-hot expansion
+is the caller’s job, same convention as <a class="reference internal" href="#MolecularDiffusion.data.component.pmdm_data.PMDMDataset" title="MolecularDiffusion.data.component.pmdm_data.PMDMDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">PMDMDataset</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.data.component.pmdm_data.pmdm_collate">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.data.component.pmdm_data.</span></span><span class="sig-name descname"><span class="pre">pmdm_collate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pmdm_data.pmdm_collate" title="Link to this definition">¶</a></dt>
 <dd><p>Concatenate complexes; emit PMDM’s own attribute names.</p>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pmdm_data.write_pocket_pdb">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.data.component.pmdm_data.</span></span><span class="sig-name descname"><span class="pre">write_pocket_pdb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pocket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pmdm_data.write_pocket_pdb" title="Link to this definition">¶</a></dt>
+<dd><p>Write a pocket back to a PDB that <a class="reference internal" href="#MolecularDiffusion.data.component.pmdm_data.parse_pocket_pdb" title="MolecularDiffusion.data.component.pmdm_data.parse_pocket_pdb"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse_pocket_pdb()</span></code></a> can read.</p>
+<p>Only what the parser actually checks round-trips exactly: element,
+amino-acid identity, coordinates, and backbone-set membership (not the
+specific atom name – <code class="docutils literal notranslate"><span class="pre">&quot;CA&quot;</span></code>/<code class="docutils literal notranslate"><span class="pre">&quot;CB&quot;</span></code> stand in for backbone/sidechain).
+Used by <code class="docutils literal notranslate"><span class="pre">docs/model_integrations/pmdm/scripts/extract_smoke_pair.py</span></code> to
+reconstruct a smoke-test pocket from a converted db row (the original raw
+PDBs were deleted after conversion).</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pmdm_data.AA_NAME_NUMBER">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.data.component.pmdm_data.</span></span><span class="sig-name descname"><span class="pre">AA_NAME_NUMBER</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pmdm_data.AA_NAME_NUMBER" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="MolecularDiffusion.data.component.pmdm_data.BACKBONE_NAMES">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.data.component.pmdm_data.</span></span><span class="sig-name descname"><span class="pre">BACKBONE_NAMES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['CA',</span> <span class="pre">'C',</span> <span class="pre">'N',</span> <span class="pre">'O']</span></span><a class="headerlink" href="#MolecularDiffusion.data.component.pmdm_data.BACKBONE_NAMES" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="MolecularDiffusion.data.component.pmdm_data.MAX_NUM_AA">
@@ -812,7 +860,11 @@ away before the model ever sees them.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#MolecularDiffusion.data.component.pmdm_data.fully_connected_edges"><code class="docutils literal notranslate"><span class="pre">fully_connected_edges()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pmdm_data.parse_pocket_pdb"><code class="docutils literal notranslate"><span class="pre">parse_pocket_pdb()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.data.component.pmdm_data.pmdm_collate"><code class="docutils literal notranslate"><span class="pre">pmdm_collate()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pmdm_data.write_pocket_pdb"><code class="docutils literal notranslate"><span class="pre">write_pocket_pdb()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pmdm_data.AA_NAME_NUMBER"><code class="docutils literal notranslate"><span class="pre">AA_NAME_NUMBER</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.data.component.pmdm_data.BACKBONE_NAMES"><code class="docutils literal notranslate"><span class="pre">BACKBONE_NAMES</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.data.component.pmdm_data.MAX_NUM_AA"><code class="docutils literal notranslate"><span class="pre">MAX_NUM_AA</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.data.component.pmdm_data.PMDM_ATOM_VOCAB"><code class="docutils literal notranslate"><span class="pre">PMDM_ATOM_VOCAB</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.data.component.pmdm_data.PMDM_ELEMENTS"><code class="docutils literal notranslate"><span class="pre">PMDM_ELEMENTS</span></code></a></li>

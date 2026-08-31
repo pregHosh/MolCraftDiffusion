@@ -1,0 +1,102 @@
+MolecularDiffusion.modules.models.goflow.flow
+=============================================
+
+.. py:module:: MolecularDiffusion.modules.models.goflow.flow
+
+.. autoapi-nested-parse::
+
+   GoFlow's conditional-flow-matching algorithm: the perturbation, the loss,
+   and the sampling-time ODE stepper.
+
+   Ported from ``flow_matching/flow_module.py`` and ``flow_matching/utils.py``
+   (commit ``3ec00a09``) -- the algorithm, not upstream's ``pl.LightningModule``
+   wrapper (training-loop plumbing this platform's own engine already owns).
+
+   One shape adaptation, recorded in ``INTEGRATION_PLAN.md``'s Data adapters
+   section: upstream's ``Data.pos`` is a fixed ``(N, 3, 3)`` ``[R, TS, P]``
+   stack, read by ``FlowModule`` only at index 1 (the transition state).
+   ``goflow_collate`` never materialises the R/P slots inside the training/
+   sampling batch -- it carries a bare ``ts_pos (N, 3)`` instead (present for
+   training and corpus-driven generation, simply absent for a blind R/P-only
+   query). :func:`get_perturbed_flow_point_and_time` below reads ``batch.ts_pos``
+   where upstream reads ``batch.pos[:, 1, :]``; nothing else about the
+   algorithm changes.
+
+   ``euler_integrate`` replaces the single ``torchdiffeq.odeint(ode_func,
+   x_init, t_grid, method='euler')`` call at ``flow_module.py:134`` with a
+   five-line fixed-step forward-Euler loop (`x_{i+1} = x_i + (t_{i+1}-t_i) *
+   f(t_i, x_i)`) -- the exact math of that call, since ``method='euler'`` on a
+   fixed grid is nothing else. Unlike upstream's ``odeint`` call, this returns
+   only the final position: upstream stores the whole trajectory
+   (``pos_gen_traj_S_T_N_3``) only to feed ``align_and_rotate_samples``'s
+   GT-anchored median-consensus ensembling, which this integration does not
+   port (see ``INTEGRATION_PLAN.md``, Explicitly out of scope: "Trajectory
+   frames"). ponytail: fixed-step euler only, no adaptive step-size control --
+   `pip install torchdiffeq` and restore the original call is the upgrade path
+   if another method is ever wanted (same precedent as React-OT's vendored
+   midpoint stepper).
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.goflow.flow.euler_integrate
+   MolecularDiffusion.modules.models.goflow.flow.get_perturbed_flow_point_and_time
+   MolecularDiffusion.modules.models.goflow.flow.get_shortest_path_fast_batched_x_1
+   MolecularDiffusion.modules.models.goflow.flow.rmsd_loss
+
+
+Module Contents
+---------------
+
+.. py:function:: euler_integrate(ode_func: Callable[[float, torch.Tensor], torch.Tensor], x_init: torch.Tensor, t_grid: torch.Tensor) -> torch.Tensor
+
+   Fixed-step forward-Euler integration; returns only the final point.
+
+   See the module docstring for why this replaces
+   ``torchdiffeq.odeint(ode_func, x_init, t_grid, method='euler')`` and why
+   only the final position (not the trajectory) is returned.
+
+   :param ode_func: ``(t, x) -> dx/dt``.
+   :param x_init: ``(N, 3)`` starting point, ``t_grid[0]``.
+   :param t_grid: ``(num_steps,)`` ascending time points, e.g.
+                  ``torch.linspace(0, 1, num_steps)``.
+
+   :returns: ``(N, 3)`` the position at ``t_grid[-1]``.
+
+
+.. py:function:: get_perturbed_flow_point_and_time(batch: torch_geometric.data.Batch, device: torch.device) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+
+   Draw ``x_0``, interpolate to a random time, and return the target
+   velocity.
+
+   Adapted from ``FlowModule.get_perturbed_flow_point_and_time``
+   (``flow_module.py:79-92``): reads ``batch.ts_pos`` where upstream reads
+   ``batch.pos[:, 1, :]`` (see the module docstring).
+
+   :param batch: the PyG batch from ``goflow_collate``; must carry ``ts_pos``.
+   :param device: where to draw the Gaussian noise and the per-graph times.
+
+   :returns: the interpolated point, the target
+             straight-line velocity, and the per-graph flow time.
+   :rtype: ``(x_t_N_3, dx_dt_N_3, t_G)``
+
+
+.. py:function:: get_shortest_path_fast_batched_x_1(x_0_N_3: torch.Tensor, x_1_N_3: torch.Tensor, batch: torch_geometric.data.Batch) -> torch.Tensor
+
+   Batched Kabsch rotation of ``x_1`` onto ``x_0``'s frame, per graph.
+
+   Verbatim from ``flow_matching/utils.py:140-188``. Takes the PyG
+   ``Batch`` itself (reads ``batch.batch``) rather than a bare tensor, so
+   it needs no adaptation for this port's PyG-native collate.
+
+
+.. py:function:: rmsd_loss(pred_N_3: torch.Tensor, gt_N_3: torch.Tensor) -> torch.Tensor
+
+   Verbatim from ``flow_matching/utils.py:137-138``: a single scalar
+   over the whole batch, not a per-molecule mean averaged afterwards.
+
+

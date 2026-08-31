@@ -1,0 +1,223 @@
+MolecularDiffusion.data.component.goflow_data
+=============================================
+
+.. py:module:: MolecularDiffusion.data.component.goflow_data
+
+.. autoapi-nested-parse::
+
+   Dataset / collate / DataModule for GoFlow on RDB7.
+
+   The item is the shared :class:`~MolecularDiffusion.data.component.
+   reaction_data.Reaction` container (built once by
+   ``docs/model_integrations/goflow/scripts/convert_dataset.py`` from RDB7's
+   raw ``.csv``/``.xyz`` and the frozen ``feat_dict.pkl`` -- see
+   ``INTEGRATION_PLAN.md``, Data & Pretrained Provenance); the batch is the
+   native PyG ``Batch`` GotenNet's forward wants, built here.
+
+   Bond union, canonical -> native
+   --------------------------------
+
+   ``ReactionSide.bond_index``/``bond_type`` are stored in the platform's
+   canonical 5-class vocabulary (``0=none, 1=SINGLE, 2=DOUBLE, 3=TRIPLE,
+   4=AROMATIC``), directed, per side -- the container's own rule. GotenNet's
+   vendored ``_extend_condensed_graph_edge`` expects a **native-scale packed
+   union**: ``edge_index (2, E)`` over the union of reactant and product bonds,
+   ``edge_type (E,) = bond_type_r_native * 22 + bond_type_p_native``
+   (``cgr_graph_utils.py`` decodes it back with ``// 22``, ``% 22``). Both
+   directions live only here, in :func:`goflow_collate`, per
+   ``INTEGRATION_PLAN.md``'s Bond Representation Mapping:
+
+   1. canonical -> native is a lookup (identity for 0/1/2/3, ``4 -> 12``;
+      lossless on this corpus -- 0/1/2/3/12 are the only native values RDB7
+      ever produces, verified at conversion time);
+   2. the dense union per side is built with ``to_dense_adj``, mirroring
+      upstream's ``adj = r_adj_perm + p_adj_perm`` numpy version
+      (``utils/datasets.py:116-121``);
+   3. each side's native type is read off at every nonzero union pair (``0``
+      if that side has none there);
+   4. the two are packed with the same ``* 22 +`` scheme.
+
+   ``atom_type`` is the reaction's raw atomic number (``z``), read by
+   ``AtomCGREmbedding``'s ``nn.Embedding(100, ...)`` directly -- there is no
+   fixed atom vocabulary on the conditioning side (only on ``sample()``'s
+   output side; see ``diffusion_goflow.py``).
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.goflow_data.NATIVE_BOND_VOCAB_SIZE
+   MolecularDiffusion.data.component.goflow_data.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.goflow_data.GoFlowDataModule
+   MolecularDiffusion.data.component.goflow_data.GoFlowRDB7Dataset
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.goflow_data.goflow_collate
+
+
+Module Contents
+---------------
+
+.. py:class:: GoFlowDataModule(data_file: str, feat_dict_file: str, split_path: str, split_file: str = 'random_split.pkl', n_atom_rdkit_feats: int = 27, batch_size: int = 200, num_workers: int = 0, limit: Optional[int] = None, atom_vocab: Optional[List[str]] = None, task_type: str = 'diffusion_goflow', **kwargs: Any)
+
+   DataModule contract: ``load()`` + ``train_set``/``valid_set``/``test_set``.
+
+   Three :class:`GoFlowRDB7Dataset` instances over the same converted
+   pickle, one per split named in ``split_file`` (``random_split.pkl``,
+   ``rxn_core_split.pkl`` or ``barrier_split.pkl`` -- all three ship
+   in-tree, see ``INTEGRATION_PLAN.md``'s Hyperparameter Provenance table).
+
+
+   .. py:method:: load() -> None
+
+      Build the train / valid / test datasets.
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: batch_size
+      :value: 200
+
+
+
+   .. py:attribute:: collate_fn
+
+
+   .. py:attribute:: data_file
+
+
+   .. py:attribute:: feat_dict_file
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: limit
+      :value: None
+
+
+
+   .. py:attribute:: n_atom_rdkit_feats
+      :value: 27
+
+
+
+   .. py:attribute:: num_workers
+      :value: 0
+
+
+
+   .. py:attribute:: split_file
+      :value: 'random_split.pkl'
+
+
+
+   .. py:attribute:: split_path
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_goflow'
+
+
+
+   .. py:attribute:: test_set
+      :type:  Optional[GoFlowRDB7Dataset]
+      :value: None
+
+
+
+   .. py:attribute:: train_set
+      :type:  Optional[GoFlowRDB7Dataset]
+      :value: None
+
+
+
+   .. py:attribute:: valid_set
+      :type:  Optional[GoFlowRDB7Dataset]
+      :value: None
+
+
+
+.. py:class:: GoFlowRDB7Dataset(data_file: str, feat_dict_file: str, split_path: str, split_file: str = 'random_split.pkl', split: str = 'test', n_atom_rdkit_feats: int = 27, limit: Optional[int] = None)
+
+   Bases: :py:obj:`torch.utils.data.Dataset`
+
+
+   One RDB7 split, read from the converted ``Reaction`` pickle.
+
+   :param data_file: pickle of ``Dict[int, Reaction]`` keyed by the RDB7
+                     ``rxn`` id (built by ``scripts/convert_dataset.py``; the ``rxn``
+                     column has gaps, so this is a dict, not a list).
+   :param feat_dict_file: the frozen ``feat_dict.pkl`` this corpus's
+                          ``ReactionSide.feat`` one-hot columns were built against.
+                          Read only to verify the vocabulary has not silently drifted
+                          (see below) -- the features themselves already live in
+                          ``data_file``, pre-encoded.
+   :param split_path: directory holding the split pickle.
+   :param split_file: which split pickle, e.g. ``random_split.pkl``.
+   :param split: ``"train"``, ``"val"`` or ``"test"``. Defaults to ``"test"``
+                 (the held-out set) because this is also what
+                 :class:`~MolecularDiffusion.modules.tasks.diffusion_goflow.
+                 GoFlowTSGenerator` constructs for generation, where indexing
+                 the reactions the model trained on would be misleading.
+   :param n_atom_rdkit_feats: the width ``feat_dict_file``'s per-descriptor
+                              cardinalities must sum to. A mismatch means the shipped
+                              ``feat_dict.pkl`` and the task's ``GotenNet(n_atom_rdkit_feats=
+                              ...)`` have drifted apart -- caught here, at data load, rather
+                              than at the first forward pass's shape mismatch.
+   :param limit: cap the number of reactions in this split (smoke tests).
+
+
+   .. py:attribute:: ids
+
+
+   .. py:attribute:: reactions
+      :type:  List[MolecularDiffusion.data.component.reaction_data.Reaction]
+
+
+.. py:function:: goflow_collate(reactions: Sequence[MolecularDiffusion.data.component.reaction_data.Reaction], n: int = 1) -> Dict[str, Any]
+
+   Reactions -> ``{"batch": <PyG Batch>}``, the one collate for both
+   training and :class:`~MolecularDiffusion.modules.tasks.diffusion_goflow.
+   GoFlowTSGenerator`.
+
+   ``n`` tiles the whole input sequence (``list(reactions) * n``) before
+   batching. Training's ``DataLoader`` calls this with ``n=1`` on a list of
+   ``batch_size`` distinct sampled reactions (one copy of each);
+   ``GoFlowTSGenerator._collate`` calls it with a single-reaction list and
+   ``n=num_generate`` (one reaction, tiled into ``n`` independent copies,
+   each starting from its own fresh Gaussian draw at sampling time) --
+   exactly ``oareactdiff_collate``'s ``[reaction] * n`` tiling, pushed
+   inside the shared collate so both call sites share one function.
+
+   :param reactions: the reactions to batch.
+   :param n: how many times to repeat the whole sequence before batching.
+
+   :returns: ``{"batch": batch}``, where ``batch`` carries ``.atom_type, .r_feat,
+             .p_feat, .edge_index, .edge_type, .batch`` (always) and ``.ts_pos``
+             (only when every tiled reaction has one).
+
+
+.. py:data:: NATIVE_BOND_VOCAB_SIZE
+   :value: 22
+
+
+.. py:data:: logger
+

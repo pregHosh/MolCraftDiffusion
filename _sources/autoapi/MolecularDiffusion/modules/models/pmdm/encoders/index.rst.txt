@@ -31,9 +31,20 @@ MolecularDiffusion.modules.models.pmdm.encoders
    Dropped as unreachable under this integration's scope: the fourier-feature
    branch (``fourier_features=0``), global linear attention
    (``global_linear_attn_every=0``), the node/edge embedding-table branch
-   (empty dims), ``linker_mask`` (linker sampling is out of scope), and
-   upstream's unused ``ligandemb``/``proteinemb``/inner ``atten_layer``
-   parameters in ``EGNN_Sparse_Network`` (the live code path is ``h = z``).
+   (empty dims), and upstream's unused ``ligandemb``/``proteinemb``/inner
+   ``atten_layer`` parameters in ``EGNN_Sparse_Network`` (the live code path is
+   ``h = z``).
+
+   ``linker_mask`` (used by ``PMDMEpsNet.linker_sample`` -- see
+   ``modules/tasks/diffusion_pmdm.py``'s ``PMDMConstrainedGenerator``,
+   ``mode: linker``) zeros the coordinate-update contribution for every atom it
+   does not cover, biasing the EGNN toward moving only the region being
+   regenerated
+   (``others/PMDM/models/encoders/egnn.py:268-274``). Upstream additionally
+   concatenates a zero mask for the pocket half before this point, but that
+   pocket-half masking is a no-op on the coordinates this port returns (the
+   pocket rows of ``coors_out`` never receive ``+mhat_i`` regardless of the
+   mask), so only the ligand-sized mask is threaded through here.
 
 
 
@@ -120,7 +131,7 @@ Module Contents
    ligand-then-pocket), which is exactly upstream's convention.
 
 
-   .. py:method:: forward(x: torch.Tensor, edge_index: torch.Tensor, edge_attr: Optional[torch.Tensor], batch: torch.Tensor, n_ligand: int) -> torch.Tensor
+   .. py:method:: forward(x: torch.Tensor, edge_index: torch.Tensor, edge_attr: Optional[torch.Tensor], batch: torch.Tensor, n_ligand: int, linker_mask: Optional[torch.Tensor] = None) -> torch.Tensor
 
 
    .. py:attribute:: coors_mlp
@@ -171,7 +182,7 @@ Module Contents
    equivariant score), as upstream does.
 
 
-   .. py:method:: forward(z: torch.Tensor, pos: torch.Tensor, edge_index: torch.Tensor, edge_attr: torch.Tensor, batch: torch.Tensor, n_ligand: int) -> Tuple[torch.Tensor, torch.Tensor]
+   .. py:method:: forward(z: torch.Tensor, pos: torch.Tensor, edge_index: torch.Tensor, edge_attr: torch.Tensor, batch: torch.Tensor, n_ligand: int, linker_mask: Optional[torch.Tensor] = None) -> Tuple[torch.Tensor, torch.Tensor]
 
 
    .. py:attribute:: feats_dim

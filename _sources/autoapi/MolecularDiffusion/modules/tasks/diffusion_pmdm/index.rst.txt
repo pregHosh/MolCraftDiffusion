@@ -27,9 +27,17 @@ MolecularDiffusion.modules.tasks.diffusion_pmdm
    ``data/component/pmdm_data.py`` already emits PMDM's own attribute names, so
    the adapter here is a one-line ``SimpleNamespace(**batch)``.
 
-   Out of scope this pass (see the integration plan): ``inpainting_sample`` /
-   ``linker_sample``, the VAE-latent and property-context branches, and CFG /
-   gradient guidance.
+   :class:`PMDMConstrainedGenerator` adds the two constrained-sampling modes
+   upstream calls "lead optimisation" and "linker design" (``mode: lead_opt``
+   / ``mode: linker``) -- keep part of a starting ligand fixed, regenerate the
+   rest, inside the same fixed pocket. Both modes read the pocket and the
+   starting ligand from plain files (``pocket_file``/``mol_file``), not a
+   converted db -- see ``docs/model_integrations/pmdm/INTEGRATION_PLAN.md``'s
+   revision-3 Q1/Q1b. One class for both modes, not two -- the same pattern
+   DiffSBDD already uses for its own de novo/inpaint split.
+
+   Out of scope this pass (see the integration plan): the VAE-latent and
+   property-context branches, and CFG / gradient guidance.
 
 
 
@@ -52,6 +60,7 @@ Classes
 
    MolecularDiffusion.modules.tasks.diffusion_pmdm.LigandSizeDistribution
    MolecularDiffusion.modules.tasks.diffusion_pmdm.ModelTaskFactory
+   MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMConstrainedGenerator
    MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMDiffusionTask
    MolecularDiffusion.modules.tasks.diffusion_pmdm.PMDMPocketGenerator
 
@@ -115,6 +124,77 @@ Module Contents
 
 
 
+.. py:class:: PMDMConstrainedGenerator(task, mode: str = 'lead_opt', pocket_db: Optional[str] = None, pocket_index: int = 0, mol_size: Optional[list] = None, pocket_file: Optional[str] = None, mol_file: Optional[str] = None, fixed_atoms: Optional[List[int]] = None, atoms_to_replace: Optional[List[int]] = None, atoms_to_add: Optional[int] = None, num_generate: int = 20, batch_size: int = 4, num_steps: Optional[int] = None, sampling_type: str = 'generalized', step_lr: float = 1e-06, clip: float = 1000.0, clip_pos: Optional[float] = None, global_start_sigma: Optional[float] = None, w_global_pos: float = 1.0, w_global_node: float = 1.0, w_local_pos: float = 1.0, w_local_node: float = 1.0, output_path: str = 'generated_pmdm_constrained', seed: int = 42, device: Optional[str] = None, validity_filter: bool = True, max_retries: int = 10, **kwargs: Any)
+
+   Bases: :py:obj:`PMDMPocketGenerator`
+
+
+   Constrained generation (lead optimisation OR linker design), behind
+   ``interference/gen_pocket`` (``mode: lead_opt`` / ``mode: linker``) --
+   see ``pocket_generator.py``'s ``_TASK_TO_GENERATOR`` for the dispatch.
+
+   One class for both -- following the same pattern DiffSBDD already uses
+   for its own de novo/inpaint split (``gen_diffsbdd_pocket.yaml`` vs
+   ``gen_diffsbdd_inpaint.yaml``, same ``_target_``): the two upstream
+   sampling methods (``inpainting_sample``/``linker_sample``) share their
+   entire loop, differing only in which atoms are held fixed and which
+   internal EGNN masking mode fires (:class:`PMDMDiffusionTask.sample`'s
+   ``mode`` dispatch). A second class here would be exactly the
+   "interface with one implementation" ``gen_diffsbdd_inpaint.yaml``'s own
+   header warns against.
+
+   ``mode`` picks the task and which of the two mutually-exclusive atom
+   lists is read:
+
+   - ``"lead_opt"`` -- keep ``fixed_atoms`` of a starting ligand
+     (``mol_file``) exactly as given, grow ``atoms_to_add`` brand-new atoms
+     onto it. Mirrors upstream's ``sample_frag.py --keep_index``.
+   - ``"linker"`` -- delete ``atoms_to_replace`` (typically the gap between
+     two fragments) and regrow ``atoms_to_add`` atoms in their place.
+     Mirrors upstream's ``sample_linker.py --mask``.
+
+   Both read the pocket from ``pocket_file`` -- a plain PDB, NOT a
+   converted db, unlike :class:`PMDMPocketGenerator`'s de novo path (which
+   stays a separate class: its input genuinely is a different *source*,
+   not just a different knob -- a converted ASE db row, not a live file).
+
+
+   .. py:attribute:: db_required_msg
+      :value: None
+
+
+
+   .. py:attribute:: keep_atoms
+
+
+   .. py:attribute:: mode
+      :value: 'lead_opt'
+
+
+
+   .. py:attribute:: mol_file
+      :value: None
+
+
+
+   .. py:attribute:: n_new_atoms
+      :value: 0
+
+
+
+   .. py:attribute:: pocket_file
+      :value: None
+
+
+
+   .. py:attribute:: replace_atoms
+
+
+   .. py:attribute:: tag
+      :value: 'pmdm-leadopt'
+
+
+
 .. py:class:: PMDMDiffusionTask(model: MolecularDiffusion.modules.models.pmdm.PMDMEpsNet, atom_vocab: Optional[List[str]] = None, size_histogram: Optional[torch.Tensor] = None)
 
    Bases: :py:obj:`torch.nn.Module`
@@ -132,7 +212,7 @@ Module Contents
    .. py:method:: predict_and_target(batch)
 
 
-   .. py:method:: sample(batch_size=None, nodesxsample=None, num_steps=None, batch=None, **kwargs)
+   .. py:method:: sample(batch_size=None, nodesxsample=None, num_steps=None, batch=None, mode: Optional[str] = None, n_new_atoms: Optional[int] = None, **kwargs)
 
       Sample ligands inside the pocket carried by ``batch``.
 
@@ -141,6 +221,17 @@ Module Contents
       batch (:class:`PMDMPocketGenerator` builds it). There is no
       unconditional mode -- the network has no path that runs without a
       pocket.
+
+      ``mode`` (``None`` | ``"lead_opt"`` | ``"linker"``): ``None`` (default)
+      is the existing de novo path, unchanged. Either other value is
+      constrained sampling -- ``batch`` must ALSO carry
+      ``frag_ligand_pos``/``frag_ligand_atom_feature``/``frag_element_batch``
+      (the kept fragment, tiled once per sample -- :class:`PMDMConstrainedGenerator`
+      builds these), and ``n_new_atoms`` is
+      required (how many brand-new atoms to grow, mirroring upstream's
+      single ``--num_atom``). Dispatches to ``PMDMEpsNet.inpainting_sample``
+      (``"lead_opt"``) or ``linker_sample`` (``"linker"``) instead of
+      ``langevin_dynamics_sample``.
 
       Returns ``(one_hot, charges, coords, node_mask)`` padded to
       ``(B, N, .)``, in the ORIGINAL pocket frame. ``charges`` is zeros:
