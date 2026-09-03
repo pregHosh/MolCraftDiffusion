@@ -23,14 +23,61 @@ MolCraftDiff generate examples/kgdiff_generate.yaml
 Where a row below says the shipped checkpoint behaves a certain way, that is
 the checkpoint you get. Three cases:
 
-- **Fetch and go** — apo2mol, diffdec, diffint, diffpharma, diffsbdd,
-  flowmol_graph3d, gcdm, ipdiff, kgdiff, ligandiff, ligandiff_multi, loqi, midi.
-- **Build locally** — diffsmol, ditmc, equifm, nextmol, pmdm. Weights exist,
+- **Fetch and go** — apo2mol, diffdec, diffint, diffpharma, diffsbdd, diffsmol,
+  flowmol_graph3d, gcdm, ipdiff, kgdiff, ligandiff, ligandiff_multi, loqi, midi,
+  and five of difflinker's checkpoints (see below). diffsmol's shape-conditioned
+  MOSES2 checkpoint is the `moses2_shape` variant; its *other* variant, the
+  converted upstream release, stays build-locally below.
+- **Build locally** — ditmc, equifm, nextmol, pmdm, and diffsmol's converted
+  upstream checkpoint. Weights exist,
   but their upstream projects do not permit redistribution, so the zoo ships
   the recipe instead: `MolCraftDiff zoo recipe <asset>` prints the download,
   the conversion command and the expected checksum.
-- **Train it yourself** — difflinker and silvr have no pretrained weights at
-  all. The zoo still carries their datasets and example configs.
+- **Train it yourself** — goflow ships no weights. difflinker's situation is
+  split by checkpoint, not all-or-nothing:
+  - **Fetch and go — working checkpoints.** `zinc` and `geom`
+    (`MolCraftDiff zoo fetch --model difflinker --variant zinc`, then
+    `MolCraftDiff generate examples/difflinker_zinc_generate.yaml`, or
+    `geom` likewise). 48-molecule smoke tests: `zinc` 45/48 (93.75%) clean,
+    `geom` 48/48 (100%) clean, no atom clashes. Three of the four Pockets
+    checkpoints (`pockets_backbone`, `pockets_full_no_anchors`,
+    `pockets_full`) also generate correctly out of the box — same
+    fetch/generate pattern, e.g.
+    `examples/difflinker_pockets_backbone_generate.yaml`.
+  - **Broken (kept registered, not generation-ready)** — `pockets_unconditioned`,
+    DiffLinker's own released weight, converts and loads cleanly — zero
+    state-dict key drops — but **generation from it is broken**: a genuine
+    numerical-instability defect in the released weights themselves
+    (`tanh: false`, unbounded per-layer coordinate updates), reproduced
+    identically against upstream's own unmodified code. The plain ZINC/GEOM
+    releases (`zinc_difflinker.ckpt`/`geom_difflinker.ckpt` and their
+    given-anchors variants) shared this same defect and have been **removed
+    from the zoo entirely** rather than kept as documented-broken, since a
+    working replacement now exists for both.
+  - Why some checkpoints work and others don't: the three working Pockets
+    checkpoints' `DynamicsWithPockets` sparser distance-cutoff graph
+    apparently does not compound the same numerical blow-up the dense
+    fully-connected graph does — observed, not fully root-caused.
+  - Optionally pair a checkpoint with the
+    zoo's `difflinker_size_gnn` checkpoint
+    (`examples/difflinker_train_full_with_size_gnn_generate.yaml`) to have
+    linker size auto-predicted from fragment geometry instead of sampling a
+    fixed/ranged `mol_size`.
+
+  See `docs/model_integrations/difflinker/FINAL_REPORT.md` for the full
+  diagnostic chain. The zoo carries every checkpoint's datasets and example
+  configs regardless of which bucket it falls in.
+
+**SILVR is not in any of these buckets, because it is not a model.** It is an
+inference-time guidance method layered on the existing EDM sampler — no network,
+no loss, no dataset, no training config, and no `tasks.task_type` of its own, just
+an `interference.task_type: silvr`. It runs on **any** EDM checkpoint, so use a
+pretrained one from the zoo rather than training anything:
+
+```bash
+MolCraftDiff zoo fetch edm/geom      # the GEOM-drugs prior SILVR was built on
+MolCraftDiff generate examples/silvr_generate.yaml
+```
 
 See the [Model Zoo](model_zoo/index.md) to get
 started.
@@ -94,7 +141,7 @@ Synthesizable generation can also be steered by a pharmacophore — see section 
 
 | Task config | `task_type` | Conditioned on | Notes |
 | :--- | :--- | :--- | :--- |
-| `diffusion_diffsmol.yaml` | `diffusion_diffsmol` | Molecular **shape** | Intended for **shape-matching / bioisostere** work, but as shipped the pretrained model **ignores the shape you give it** — the original authors released an incomplete shape encoder. Treat it as a plain generator, or a starting point for your own training. For working shape-based design use ShEPhERD below. |
+| `diffusion_diffsmol.yaml` | `diffusion_diffsmol` | Molecular **shape** | **Shape-matching / bioisostere design** — hand it a reference molecule's shape envelope and it generates new molecules that occupy it. Shape conditioning is available and working: fetch the `moses2_shape` variant and run `examples/diffsmol_moses2_shape_generate.yaml`. Two things to set: keep `guide_stren` at **0.0** (that is the shape-conditioned setting; the higher values inherited from upstream's sampler degrade validity badly), and give it a reference envelope built by the bundled precompute script. Heavy atoms only, no bonds — the chemistry is perceived afterwards. ShEPhERD below is the alternative when you also need electrostatics and pharmacophores. |
 | `diffusion_diffsbdd.yaml` | `diffusion_diffsbdd` | **Protein pocket** | **Start here for pocket-based design** — the best-tested and most flexible of the SBDD options. It is also the only one that does **scaffold hopping**: keep part of a known ligand and regenerate the rest — though the part you keep has to be chosen from a ligand already in your converted dataset. |
 | `diffusion_diffpharma.yaml` | `diffusion_diffpharma` | **Protein pocket** + pharmacophore particles | Give it a pocket **plus a known binder's pose**; it reads that binder's contacts and designs new molecules that reproduce them. You cannot hand-author the interaction pattern yourself. |
 | `diffusion_diffint.yaml` | `diffusion_diffint` | **Protein pocket** + hydrogen-bond interaction particles | Narrower than DiffPharma: it keeps only the **hydrogen bonds** a known binder makes, rather than its full contact pattern. Like DiffPharma it needs that binder's pose, not just a pocket. If no hydrogen bonds are found it quietly degrades to plain DiffSBDD. |
@@ -102,9 +149,9 @@ Synthesizable generation can also be steered by a pharmacophore — see section 
 | `diffusion_kgdiff.yaml` | `diffusion_kgdiff` | **Protein pocket** | Choose this when you want samples **pushed towards better predicted binding affinity** — it scores and steers itself, with no second model to train. Turning that steering off gives you plain [TargetDiff](https://arxiv.org/abs/2303.03543), so this config doubles as the unguided baseline to compare against. The steering only means anything if your training set carries **real measured affinities**. |
 | `diffusion_ipdiff.yaml` | `diffusion_ipdiff` | **Protein pocket** | Binding awareness is learned during training rather than steered at sampling, so there is no knob to turn. The heaviest sampler here, and the shipped checkpoint tends to produce carbon-heavy, chemically dull molecules — check your output before trusting it. |
 | `diffusion_apo2mol.yaml` | `diffusion_apo2mol` | **Apo protein pocket** | The one for **targets with no known binder**: it takes a ligand-free structure and reshapes the pocket as it designs, instead of assuming the pocket is already the right shape. Run the full sampling schedule: shorten it and the pocket never moves, which defeats the point. On the one complex tested, the shipped weights moved the pocket *away* from the true bound shape — validate before relying on it. |
-| `diffusion_difflinker.yaml` | `diffusion_difflinker` | **Fragments** to join | **Linker design**: hold fragments fixed, generate the atoms joining them. You choose the linker length — it does not pick one for you. No pocket and no pretrained weights, so you train it yourself; use DiffDec instead if you need either. |
+| `diffusion_difflinker.yaml` | `diffusion_difflinker` | **Fragments** to join, optionally a **protein pocket** | **Linker design**: hold fragments (and, for the three pocket-conditioned checkpoints, a fixed pocket too) fixed, generate the atoms joining them. You choose the linker length yourself, or pair a checkpoint with the zoo's `difflinker_size_gnn` checkpoint to have it auto-picked from fragment geometry. Checkpoint status (see the tip above for the full breakdown): `zinc`, `geom`, `pockets_backbone`, `pockets_full_no_anchors` and `pockets_full` all generate correctly; `pockets_unconditioned` converts and loads cleanly but fails to generate (a numerical-instability defect in that weight, not this port). Use DiffDec instead if you want a pocket model with no per-checkpoint caveats. |
 | `diffusion_diffdec.yaml` | `diffusion_diffdec` | **Scaffold** + anchor atom + **protein pocket** | **R-group decoration**: keep a scaffold fixed, pick one attachment point, and grow a substituent there inside the pocket. Choose it over DiffLinker when you are growing off a scaffold rather than bridging two fragments. One R-group per run, and the model picks its size for you, up to about 10 heavy atoms. |
-| `pharmacophore.yaml` | `diffusion_pharmacophore` | **Pharmacophore** points, electrostatics, shape | ShEPhERD — ligand-based design when you have a reference molecule but **no protein structure**, and the one option here whose conditioning actually works end to end. Shape matching needs to be trained in; the shipped setup covers pharmacophores and electrostatics. It is also the only model in this table that generates bonds. |
+| `pharmacophore.yaml` | `diffusion_pharmacophore` | **Pharmacophore** points, electrostatics, shape | ShEPhERD — ligand-based design when you have a reference molecule but **no protein structure**. Reach for it over DiffSMol above when you need electrostatics and pharmacophores as well as shape. Shape matching needs to be trained in; the shipped setup covers pharmacophores and electrostatics. It is also the only model in this table that generates bonds. |
 
 ## 4. Conformer generation
 

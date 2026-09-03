@@ -1,0 +1,109 @@
+MolecularDiffusion.modules.models.difflinker.size_gnn
+=====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.difflinker.size_gnn
+
+.. autoapi-nested-parse::
+
+   Size GNN: an auxiliary, fragment-geometry-conditioned linker-size
+   classifier, ported from DiffLinker's ``src/linker_size.py``
+   (``SizeGNN``) and ``src/linker_size_lightning.py`` (``SizeClassifier``'s
+   inference path only -- training machinery is out of scope).
+
+   See docs/model_integrations/difflinker/INTEGRATION_PLAN.md's "Revision 8 --
+   Size GNN" section for the full design (why this is a small helper class, not
+   a new ``Task``; the exact upstream inference contract this ports; the
+   documented per-retry-resampling simplification). Used only as an optional,
+   additive size predictor plugged into
+   ``MolecularDiffusion.modules.tasks.diffusion_difflinker.DiffLinkerTask.sample()``
+   -- unrelated to, and architecturally distinct from, ``linker_size.py``'s
+   ``DistributionNodes`` (unconditional histogram sampling).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.difflinker.size_gnn.LinkerSizePredictor
+   MolecularDiffusion.modules.models.difflinker.size_gnn.SizeGNN
+
+
+Module Contents
+---------------
+
+.. py:class:: LinkerSizePredictor(in_node_nf: int, hidden_nf: int, out_node_nf: int, n_layers: int, normalization: Optional[str], linker_id2size: list)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Thin inference-only wrapper matching ``SizeClassifier``'s own
+   state-dict key layout exactly (``self.gnn = SizeGNN(...)`` -- every
+   checkpoint key is prefixed ``gnn.``, confirmed in
+   INTEGRATION_PLAN.md Revision 8's Phase A6). Never routed through
+   ``cli/generate.py``'s ``Task``-loading machinery -- this is not a
+   ``Task``, so its own converted-checkpoint format is a plain,
+   self-describing ``{"state_dict", "hyper_parameters"}`` dict.
+
+
+   .. py:method:: from_checkpoint(path: str, map_location='cpu') -> LinkerSizePredictor
+      :classmethod:
+
+
+
+   .. py:method:: predict(one_hot: torch.Tensor, positions: torch.Tensor, fragment_mask: Optional[torch.Tensor] = None) -> torch.Tensor
+
+      Reproduces ``SizeClassifier.forward(..., return_loss=False)``
+      (``linker_size_lightning.py:83-109``) + ``generate.py``'s
+      softmax/Categorical/id-to-size sampling (``generate.py:90-99``) in
+      one pass. ``one_hot``/``positions`` are the fragment-only tensors
+      (``(B, N, n_vocab)``/``(B, N, 3)``); with no ``fragment_mask``
+      supplied, every atom in ``N`` is treated as a real fragment atom
+      (the reference structure *is* the fragment, by construction --
+      matches ``DiffLinkerTask.sample()``'s own ``ref_onehot``/
+      ``ref_positions``). Returns a ``(B,)`` ``torch.LongTensor`` of
+      predicted linker-only atom counts.
+
+
+
+   .. py:attribute:: gnn
+
+
+   .. py:attribute:: linker_id2size
+
+
+.. py:class:: SizeGNN(in_node_nf: int, hidden_nf: int, out_node_nf: int, n_layers: int, normalization: Optional[str] = None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Ported near-verbatim from ``others/difflinker/src/linker_size.py:45-91``.
+
+   A plain stack of message-passing ``GCL`` layers (imported from the
+   already-ported ``egnn.py``, not reimplemented) producing a per-node
+   hidden vector -- no coordinate output, no coordinate-update layer
+   anywhere (unlike ``Dynamics``/``EGNN``).
+
+
+   .. py:method:: forward(h, edges, distances, node_mask, edge_mask)
+
+
+   .. py:attribute:: embedding_in
+
+
+   .. py:attribute:: embedding_out
+
+
+   .. py:attribute:: gcl1
+
+
+   .. py:attribute:: gcl_layers
+
+
+   .. py:attribute:: hidden_nf
+
+
+   .. py:attribute:: out_node_nf
+
+

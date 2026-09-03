@@ -41,7 +41,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: DiffLinkerTask(in_node_nf: int, n_dims: int, hidden_nf: int, activation: str, tanh: bool, n_layers: int, attention: bool, norm_constant: float, inv_sublayers: int, sin_embedding: bool, normalization_factor: float, aggregation_method: str, model: str, normalization: Optional[str], condition_time: bool, anchors_context: bool, diffusion_steps: int, diffusion_noise_schedule: str, diffusion_noise_precision: float, diffusion_loss_type: str, normalize_factors: tuple, center_of_mass: str, atom_vocab: Optional[list] = None)
+.. py:class:: DiffLinkerTask(in_node_nf: int, n_dims: int, hidden_nf: int, activation: str, tanh: bool, n_layers: int, attention: bool, norm_constant: float, inv_sublayers: int, sin_embedding: bool, normalization_factor: float, aggregation_method: str, model: str, normalization: Optional[str], condition_time: bool, anchors_context: bool, diffusion_steps: int, diffusion_noise_schedule: str, diffusion_noise_precision: float, diffusion_loss_type: str, normalize_factors: tuple, center_of_mass: str, atom_vocab: Optional[list] = None, pocket_conditioned: bool = False, context_node_nf: Optional[int] = None, graph_type: str = 'FC')
 
    Bases: :py:obj:`torch.nn.Module`
 
@@ -71,12 +71,44 @@ Module Contents
       see INTEGRATION_PLAN.md's Task-contract mapping section for the
       exact kwarg contract this method mirrors.
 
-      Several kwargs accepted here are explicitly out of scope this pass
-      (inert, not implemented with real behavior): `batch`, `num_steps`,
-      `condition_mode`, `outpaint_cfgs`, `use_noised_conditioning`,
-      `n_frames` (no trajectory export), `n_retrys`/`t_retry` (no
-      bond-distance retry loop), `context` (property-conditioning value --
-      DiffLinker has no `prop_dist_model`, so this is always None here).
+      `outpaint_cfgs` is read for two keys: `anchor_indices` -- a list of
+      1-indexed positions into the reference fragment file, matching
+      upstream's `--anchors` CLI convention
+      (`others/difflinker/generate.py:129-132`). Required when this
+      checkpoint's `center_of_mass == "anchors"` (see INTEGRATION_PLAN.md
+      Revision 5, Point 1/2); unused when `center_of_mass == "fragments"`.
+      `max_generate_attempts` -- a bounded full-restart retry count around
+      `self.edm.sample_chain(...)`, catching `FoundNaNException`
+      (INTEGRATION_PLAN.md Revision 6, Point 1). Mirrors upstream's own
+      `generate.py` retry loop (fixed budget, full restart, no partial/
+      `t_retry`-style resume -- `EDM.sample_chain` draws fresh noise
+      internally every call). Defaults to `1` (today's single-shot
+      behavior, unchanged for any config that doesn't set it). This is
+      independent of the still-inert `n_retrys`/`t_retry` kwargs below,
+      which the shared `structural_guidance` dispatch always forces to
+      `0`/`None` -- do not confuse the two.
+
+      When `self.pocket_conditioned` (the three genuinely pocket-
+      conditioned Pockets checkpoints, INTEGRATION_PLAN.md Revision 9),
+      `outpaint_cfgs` additionally requires `pocket_db` -- a path to a
+      single-row-per-pocket ASE db (see
+      `convert_pocket_pt_to_asedb.py`) -- and accepts `pocket_index`
+      (0-indexed, default 0). The pocket is inserted as a fixed,
+      non-diffused block between the fragment and linker regions;
+      `nodesxsample` keeps its existing meaning (fragment + linker atom
+      count, NOT including the pocket).
+
+      When `self.size_predictor` is set (an optional `LinkerSizePredictor`,
+      INTEGRATION_PLAN.md Revision 8), the incoming `nodesxsample` is
+      overridden with a fragment-geometry-conditioned prediction instead
+      of whatever `GenerativeFactory` sampled from `node_dist_model`.
+
+      Several other kwargs accepted here are explicitly out of scope this
+      pass (inert, not implemented with real behavior): `batch`,
+      `num_steps`, `condition_mode`, `use_noised_conditioning`, `n_frames`
+      (no trajectory export), `n_retrys`/`t_retry` (no bond-distance retry
+      loop), `context` (property-conditioning value -- DiffLinker has no
+      `prop_dist_model`, so this is always None here).
 
 
 
@@ -99,12 +131,22 @@ Module Contents
    .. py:attribute:: center_of_mass
 
 
+   .. py:attribute:: context_node_nf
+      :value: None
+
+
+
    .. py:property:: device
       :type: torch.device
 
 
 
    .. py:attribute:: edm
+
+
+   .. py:attribute:: graph_type
+      :value: 'FC'
+
 
 
    .. py:attribute:: in_node_nf
@@ -137,12 +179,23 @@ Module Contents
    .. py:attribute:: norm_values
 
 
+   .. py:attribute:: pocket_conditioned
+      :value: False
+
+
+
    .. py:attribute:: prop_dist_model
       :value: None
 
 
 
-.. py:class:: DiffLinkerTaskFactory(task_type: str, in_node_nf: int, n_dims: int = 3, hidden_nf: int = 128, activation: str = 'silu', tanh: bool = False, n_layers: int = 6, attention: bool = False, norm_constant: float = 1e-06, inv_sublayers: int = 2, sin_embedding: bool = False, normalization_factor: float = 100, aggregation_method: str = 'sum', model: str = 'egnn_dynamics', normalization: Optional[str] = 'batch_norm', condition_time: bool = True, anchors_context: bool = True, diffusion_steps: int = 500, diffusion_noise_schedule: str = 'polynomial_2', diffusion_noise_precision: float = 1e-05, diffusion_loss_type: str = 'l2', normalize_factors: tuple = (1, 4, 10), center_of_mass: str = 'fragments', atom_vocab: Optional[list] = None, **kwargs)
+   .. py:attribute:: size_predictor
+      :type:  Optional[MolecularDiffusion.modules.models.difflinker.size_gnn.LinkerSizePredictor]
+      :value: None
+
+
+
+.. py:class:: DiffLinkerTaskFactory(task_type: str, in_node_nf: int, n_dims: int = 3, hidden_nf: int = 128, activation: str = 'silu', tanh: bool = False, n_layers: int = 6, attention: bool = False, norm_constant: float = 1e-06, inv_sublayers: int = 2, sin_embedding: bool = False, normalization_factor: float = 100, aggregation_method: str = 'sum', model: str = 'egnn_dynamics', normalization: Optional[str] = 'batch_norm', condition_time: bool = True, anchors_context: bool = True, diffusion_steps: int = 500, diffusion_noise_schedule: str = 'polynomial_2', diffusion_noise_precision: float = 1e-05, diffusion_loss_type: str = 'l2', normalize_factors: tuple = (1, 4, 10), center_of_mass: str = 'fragments', atom_vocab: Optional[list] = None, pocket_conditioned: bool = False, context_node_nf: Optional[int] = None, graph_type: str = 'FC', size_gnn_checkpoint: Optional[str] = None, **kwargs)
 
    Factory matching ``train.py``'s ``task_module.build()`` /
    ``task_module.task`` instantiation pattern (see
@@ -185,6 +238,11 @@ Module Contents
 
 
 
+   .. py:attribute:: context_node_nf
+      :value: None
+
+
+
    .. py:attribute:: diffusion_loss_type
       :value: 'l2'
 
@@ -202,6 +260,11 @@ Module Contents
 
    .. py:attribute:: diffusion_steps
       :value: 500
+
+
+
+   .. py:attribute:: graph_type
+      :value: 'FC'
 
 
 
@@ -256,8 +319,18 @@ Module Contents
 
 
 
+   .. py:attribute:: pocket_conditioned
+      :value: False
+
+
+
    .. py:attribute:: sin_embedding
       :value: False
+
+
+
+   .. py:attribute:: size_gnn_checkpoint
+      :value: None
 
 
 

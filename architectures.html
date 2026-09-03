@@ -492,16 +492,63 @@ MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>examples/kgd
 </div>
 <p>Where a row below says the shipped checkpoint behaves a certain way, that is
 the checkpoint you get. Three cases:</p>
-<ul class="simple">
-<li><p><strong>Fetch and go</strong> — apo2mol, diffdec, diffint, diffpharma, diffsbdd,
-flowmol_graph3d, gcdm, ipdiff, kgdiff, ligandiff, ligandiff_multi, loqi, midi.</p></li>
-<li><p><strong>Build locally</strong> — diffsmol, ditmc, equifm, nextmol, pmdm. Weights exist,
+<ul>
+<li><p><strong>Fetch and go</strong> — apo2mol, diffdec, diffint, diffpharma, diffsbdd, diffsmol,
+flowmol_graph3d, gcdm, ipdiff, kgdiff, ligandiff, ligandiff_multi, loqi, midi,
+and five of difflinker’s checkpoints (see below). diffsmol’s shape-conditioned
+MOSES2 checkpoint is the <code class="docutils literal notranslate"><span class="pre">moses2_shape</span></code> variant; its <em>other</em> variant, the
+converted upstream release, stays build-locally below.</p></li>
+<li><p><strong>Build locally</strong> — ditmc, equifm, nextmol, pmdm, and diffsmol’s converted
+upstream checkpoint. Weights exist,
 but their upstream projects do not permit redistribution, so the zoo ships
 the recipe instead: <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">zoo</span> <span class="pre">recipe</span> <span class="pre">&lt;asset&gt;</span></code> prints the download,
 the conversion command and the expected checksum.</p></li>
-<li><p><strong>Train it yourself</strong> — difflinker and silvr have no pretrained weights at
-all. The zoo still carries their datasets and example configs.</p></li>
+<li><p><strong>Train it yourself</strong> — goflow ships no weights. difflinker’s situation is
+split by checkpoint, not all-or-nothing:</p>
+<ul class="simple">
+<li><p><strong>Fetch and go — working checkpoints.</strong> <code class="docutils literal notranslate"><span class="pre">zinc</span></code> and <code class="docutils literal notranslate"><span class="pre">geom</span></code>
+(<code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">zoo</span> <span class="pre">fetch</span> <span class="pre">--model</span> <span class="pre">difflinker</span> <span class="pre">--variant</span> <span class="pre">zinc</span></code>, then
+<code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">generate</span> <span class="pre">examples/difflinker_zinc_generate.yaml</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">geom</span></code> likewise). 48-molecule smoke tests: <code class="docutils literal notranslate"><span class="pre">zinc</span></code> 45/48 (93.75%) clean,
+<code class="docutils literal notranslate"><span class="pre">geom</span></code> 48/48 (100%) clean, no atom clashes. Three of the four Pockets
+checkpoints (<code class="docutils literal notranslate"><span class="pre">pockets_backbone</span></code>, <code class="docutils literal notranslate"><span class="pre">pockets_full_no_anchors</span></code>,
+<code class="docutils literal notranslate"><span class="pre">pockets_full</span></code>) also generate correctly out of the box — same
+fetch/generate pattern, e.g.
+<code class="docutils literal notranslate"><span class="pre">examples/difflinker_pockets_backbone_generate.yaml</span></code>.</p></li>
+<li><p><strong>Broken (kept registered, not generation-ready)</strong> — <code class="docutils literal notranslate"><span class="pre">pockets_unconditioned</span></code>,
+DiffLinker’s own released weight, converts and loads cleanly — zero
+state-dict key drops — but <strong>generation from it is broken</strong>: a genuine
+numerical-instability defect in the released weights themselves
+(<code class="docutils literal notranslate"><span class="pre">tanh:</span> <span class="pre">false</span></code>, unbounded per-layer coordinate updates), reproduced
+identically against upstream’s own unmodified code. The plain ZINC/GEOM
+releases (<code class="docutils literal notranslate"><span class="pre">zinc_difflinker.ckpt</span></code>/<code class="docutils literal notranslate"><span class="pre">geom_difflinker.ckpt</span></code> and their
+given-anchors variants) shared this same defect and have been <strong>removed
+from the zoo entirely</strong> rather than kept as documented-broken, since a
+working replacement now exists for both.</p></li>
+<li><p>Why some checkpoints work and others don’t: the three working Pockets
+checkpoints’ <code class="docutils literal notranslate"><span class="pre">DynamicsWithPockets</span></code> sparser distance-cutoff graph
+apparently does not compound the same numerical blow-up the dense
+fully-connected graph does — observed, not fully root-caused.</p></li>
+<li><p>Optionally pair a checkpoint with the
+zoo’s <code class="docutils literal notranslate"><span class="pre">difflinker_size_gnn</span></code> checkpoint
+(<code class="docutils literal notranslate"><span class="pre">examples/difflinker_train_full_with_size_gnn_generate.yaml</span></code>) to have
+linker size auto-predicted from fragment geometry instead of sampling a
+fixed/ranged <code class="docutils literal notranslate"><span class="pre">mol_size</span></code>.</p></li>
 </ul>
+<p>See <code class="docutils literal notranslate"><span class="pre">docs/model_integrations/difflinker/FINAL_REPORT.md</span></code> for the full
+diagnostic chain. The zoo carries every checkpoint’s datasets and example
+configs regardless of which bucket it falls in.</p>
+</li>
+</ul>
+<p><strong>SILVR is not in any of these buckets, because it is not a model.</strong> It is an
+inference-time guidance method layered on the existing EDM sampler — no network,
+no loss, no dataset, no training config, and no <code class="docutils literal notranslate"><span class="pre">tasks.task_type</span></code> of its own, just
+an <code class="docutils literal notranslate"><span class="pre">interference.task_type:</span> <span class="pre">silvr</span></code>. It runs on <strong>any</strong> EDM checkpoint, so use a
+pretrained one from the zoo rather than training anything:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>fetch<span class="w"> </span>edm/geom<span class="w">      </span><span class="c1"># the GEOM-drugs prior SILVR was built on</span>
+MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>examples/silvr_generate.yaml
+</pre></div>
+</div>
 <p>See the <a class="reference internal" href="model_zoo/index.html"><span class="std std-doc">Model Zoo</span></a> to get
 started.</p>
 </div>
@@ -665,7 +712,7 @@ hydrogens.</p>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffsmol.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffsmol</span></code></p></td>
 <td class="text-left"><p>Molecular <strong>shape</strong></p></td>
-<td class="text-left"><p>Intended for <strong>shape-matching / bioisostere</strong> work, but as shipped the pretrained model <strong>ignores the shape you give it</strong> — the original authors released an incomplete shape encoder. Treat it as a plain generator, or a starting point for your own training. For working shape-based design use ShEPhERD below.</p></td>
+<td class="text-left"><p><strong>Shape-matching / bioisostere design</strong> — hand it a reference molecule’s shape envelope and it generates new molecules that occupy it. Shape conditioning is available and working: fetch the <code class="docutils literal notranslate"><span class="pre">moses2_shape</span></code> variant and run <code class="docutils literal notranslate"><span class="pre">examples/diffsmol_moses2_shape_generate.yaml</span></code>. Two things to set: keep <code class="docutils literal notranslate"><span class="pre">guide_stren</span></code> at <strong>0.0</strong> (that is the shape-conditioned setting; the higher values inherited from upstream’s sampler degrade validity badly), and give it a reference envelope built by the bundled precompute script. Heavy atoms only, no bonds — the chemistry is perceived afterwards. ShEPhERD below is the alternative when you also need electrostatics and pharmacophores.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffsbdd.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffsbdd</span></code></p></td>
@@ -704,8 +751,8 @@ hydrogens.</p>
 </tr>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_difflinker.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_difflinker</span></code></p></td>
-<td class="text-left"><p><strong>Fragments</strong> to join</p></td>
-<td class="text-left"><p><strong>Linker design</strong>: hold fragments fixed, generate the atoms joining them. You choose the linker length — it does not pick one for you. No pocket and no pretrained weights, so you train it yourself; use DiffDec instead if you need either.</p></td>
+<td class="text-left"><p><strong>Fragments</strong> to join, optionally a <strong>protein pocket</strong></p></td>
+<td class="text-left"><p><strong>Linker design</strong>: hold fragments (and, for the three pocket-conditioned checkpoints, a fixed pocket too) fixed, generate the atoms joining them. You choose the linker length yourself, or pair a checkpoint with the zoo’s <code class="docutils literal notranslate"><span class="pre">difflinker_size_gnn</span></code> checkpoint to have it auto-picked from fragment geometry. Checkpoint status (see the tip above for the full breakdown): <code class="docutils literal notranslate"><span class="pre">zinc</span></code>, <code class="docutils literal notranslate"><span class="pre">geom</span></code>, <code class="docutils literal notranslate"><span class="pre">pockets_backbone</span></code>, <code class="docutils literal notranslate"><span class="pre">pockets_full_no_anchors</span></code> and <code class="docutils literal notranslate"><span class="pre">pockets_full</span></code> all generate correctly; <code class="docutils literal notranslate"><span class="pre">pockets_unconditioned</span></code> converts and loads cleanly but fails to generate (a numerical-instability defect in that weight, not this port). Use DiffDec instead if you want a pocket model with no per-checkpoint caveats.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffdec.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffdec</span></code></p></td>
@@ -715,7 +762,7 @@ hydrogens.</p>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">pharmacophore.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_pharmacophore</span></code></p></td>
 <td class="text-left"><p><strong>Pharmacophore</strong> points, electrostatics, shape</p></td>
-<td class="text-left"><p>ShEPhERD — ligand-based design when you have a reference molecule but <strong>no protein structure</strong>, and the one option here whose conditioning actually works end to end. Shape matching needs to be trained in; the shipped setup covers pharmacophores and electrostatics. It is also the only model in this table that generates bonds.</p></td>
+<td class="text-left"><p>ShEPhERD — ligand-based design when you have a reference molecule but <strong>no protein structure</strong>. Reach for it over DiffSMol above when you need electrostatics and pharmacophores as well as shape. Shape matching needs to be trained in; the shipped setup covers pharmacophores and electrostatics. It is also the only model in this table that generates bonds.</p></td>
 </tr>
 </tbody>
 </table>
