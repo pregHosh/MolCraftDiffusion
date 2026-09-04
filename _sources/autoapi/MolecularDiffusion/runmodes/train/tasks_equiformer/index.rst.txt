@@ -30,6 +30,10 @@ Module Contents
    Supported task_type values:
        - "ssl3d_equiformer": SSL3D pretraining with an EquiformerV2 backbone.
        - "regression": Scalar property prediction with an EquiformerV2 backbone.
+       - "diffusion": EnVariationalDiffusion generative training with
+         EquiformerV2_dynamics as the denoising network -- a backbone swap,
+         same diffusion math as every other diffusion_*.yaml (see
+         diffusion_painn.yaml / tasks_painn.py for the identical pattern).
 
    :param task_type: One of the supported task types above.
    :type task_type: str
@@ -44,6 +48,8 @@ Module Contents
                                             num_layers (int): Number of transformer layers (default 8).
                                             lmax_list (list[int]): Max spherical harmonic degree per resolution (default [6]).
                                             mmax_list (list[int]): Max order per resolution (default [2]).
+                                            grid_resolution (int | None): SO3 grid resolution (default None -> auto).
+                                            num_sphere_samples (int): Sphere-sampling points for the S2 grid (default 128).
                                             attn_hidden_channels (int): Attention hidden size (default 128).
                                             attn_alpha_channels (int): Alpha vector channels per head (default 32).
                                             attn_value_channels (int): Value vector channels per head (default 16).
@@ -53,9 +59,12 @@ Module Contents
                                             edge_channels (int): Edge invariant feature channels (default 128).
                                             use_atom_edge_embedding (bool): Use atom embedding in edge features (default True).
                                             share_atom_edge_embedding (bool): Share atom edge embedding (default False).
+                                            use_m_share_rad (bool): Share the radial function across m (default False).
                                             distance_function (str): Radial basis function (default "gaussian").
                                             num_distance_basis (int): Number of basis functions (default 512).
                                             attn_activation (str): Attention activation (default "scaled_silu").
+                                            use_s2_act_attn (bool): Use S2 activation in attention (default False).
+                                            use_attn_renorm (bool): Renormalise attention weights (default True).
                                             ffn_activation (str): FFN activation (default "scaled_silu").
                                             use_gate_act (bool): Use gate activation (default False).
                                             use_grid_mlp (bool): Use grid MLP in FFN (default False).
@@ -68,6 +77,12 @@ Module Contents
    :param SSL3D kwargs: ssl3d_denoise_weight, ssl3d_sigma_min, ssl3d_sigma_max, ssl3d_sigma_schedule,
                         ssl3d_mtype_weight, ssl3d_mask_rate, ssl3d_atom_vocab_size,
                         ssl3d_dist_weight, ssl3d_dist_k_pairs
+   :param Diffusion kwargs: diffusion_steps, diffusion_noise_schedule,
+                            diffusion_noise_precision, diffusion_loss_type,
+                            normalize_factors, extra_norm_values,
+                            augment_noise, data_augmentation, context_mask_rate, mask_value,
+                            normalize_condition, reference_indices
+   :type Diffusion kwargs: see configs/tasks/diffusion_equiformer.yaml
    :param Regression kwargs: task_learn (list[str]): Property names to predict.
                              criterion (str): Loss function (default "mse").
                              metric (list[str]): Evaluation metric(s) (default ["mae"]).

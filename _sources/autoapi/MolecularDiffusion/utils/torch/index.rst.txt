@@ -27,6 +27,7 @@ Functions
    MolecularDiffusion.utils.torch.detach
    MolecularDiffusion.utils.torch.get_vram_size
    MolecularDiffusion.utils.torch.mean
+   MolecularDiffusion.utils.torch.move_stray_tensor_attrs
    MolecularDiffusion.utils.torch.recursive_module_to_device
    MolecularDiffusion.utils.torch.seed_everything
    MolecularDiffusion.utils.torch.stack
@@ -69,6 +70,20 @@ Module Contents
 .. py:function:: mean(obj, *args, **kwargs)
 
    Compute mean of tensors in any nested container.
+
+
+.. py:function:: move_stray_tensor_attrs(module: torch.nn.Module, device: torch.device) -> None
+
+   Move plain (non-parameter, non-buffer) tensor attributes to `device`.
+
+   `nn.Module.to()` only recurses into registered parameters/buffers/
+   submodules -- a submodule that lazily caches a tensor as a plain
+   `self.foo = tensor` attribute (rather than via `register_buffer`) is
+   invisible to it, and stays wherever it was when the model was loaded.
+   A checkpoint loaded with `map_location="cpu"` remaps every tensor in
+   the pickle regardless of whether it is registered, so such caches are
+   stranded on CPU even after the model itself is moved to GPU. Call this
+   right after moving a loaded model to its target device.
 
 
 .. py:function:: recursive_module_to_device(module: torch.nn.Module, device: torch.device)

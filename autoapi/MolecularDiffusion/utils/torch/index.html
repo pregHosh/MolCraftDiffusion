@@ -520,13 +520,16 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.torch.mean" title="MolecularDiffusion.utils.torch.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>(obj, *args, **kwargs)</p></td>
 <td><p>Compute mean of tensors in any nested container.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.torch.recursive_module_to_device" title="MolecularDiffusion.utils.torch.recursive_module_to_device"><code class="xref py py-obj docutils literal notranslate"><span class="pre">recursive_module_to_device</span></code></a>(module, device)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.torch.move_stray_tensor_attrs" title="MolecularDiffusion.utils.torch.move_stray_tensor_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">move_stray_tensor_attrs</span></code></a>(→ None)</p></td>
+<td><p>Move plain (non-parameter, non-buffer) tensor attributes to <cite>device</cite>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.torch.recursive_module_to_device" title="MolecularDiffusion.utils.torch.recursive_module_to_device"><code class="xref py py-obj docutils literal notranslate"><span class="pre">recursive_module_to_device</span></code></a>(module, device)</p></td>
 <td><p>Recursively assigns a given device to all submodules of a torch.nn.Module.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.torch.seed_everything" title="MolecularDiffusion.utils.torch.seed_everything"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed_everything</span></code></a>(→ int)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.torch.seed_everything" title="MolecularDiffusion.utils.torch.seed_everything"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed_everything</span></code></a>(→ int)</p></td>
 <td><p>Sets seed for reproducibility across torch, numpy, and random modules.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.torch.stack" title="MolecularDiffusion.utils.torch.stack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stack</span></code></a>(objs, *args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.torch.stack" title="MolecularDiffusion.utils.torch.stack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stack</span></code></a>(objs, *args, **kwargs)</p></td>
 <td><p>Stack a list of nested containers with the same structure.</p></td>
 </tr>
 </tbody>
@@ -584,6 +587,20 @@
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.torch.mean">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.torch.</span></span><span class="sig-name descname"><span class="pre">mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.torch.mean" title="Link to this definition">¶</a></dt>
 <dd><p>Compute mean of tensors in any nested container.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.torch.move_stray_tensor_attrs">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.torch.</span></span><span class="sig-name descname"><span class="pre">move_stray_tensor_attrs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.14)"><span class="pre">torch.nn.Module</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensor_attributes.html#torch.device" title="(in PyTorch v2.14)"><span class="pre">torch.device</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.torch.move_stray_tensor_attrs" title="Link to this definition">¶</a></dt>
+<dd><p>Move plain (non-parameter, non-buffer) tensor attributes to <cite>device</cite>.</p>
+<p><cite>nn.Module.to()</cite> only recurses into registered parameters/buffers/
+submodules – a submodule that lazily caches a tensor as a plain
+<cite>self.foo = tensor</cite> attribute (rather than via <cite>register_buffer</cite>) is
+invisible to it, and stays wherever it was when the model was loaded.
+A checkpoint loaded with <cite>map_location=”cpu”</cite> remaps every tensor in
+the pickle regardless of whether it is registered, so such caches are
+stranded on CPU even after the model itself is moved to GPU. Call this
+right after moving a loaded model to its target device.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -719,6 +736,7 @@
 <li><a class="reference internal" href="#MolecularDiffusion.utils.torch.detach"><code class="docutils literal notranslate"><span class="pre">detach()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.torch.get_vram_size"><code class="docutils literal notranslate"><span class="pre">get_vram_size()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.torch.mean"><code class="docutils literal notranslate"><span class="pre">mean()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.torch.move_stray_tensor_attrs"><code class="docutils literal notranslate"><span class="pre">move_stray_tensor_attrs()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.torch.recursive_module_to_device"><code class="docutils literal notranslate"><span class="pre">recursive_module_to_device()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.torch.seed_everything"><code class="docutils literal notranslate"><span class="pre">seed_everything()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.torch.stack"><code class="docutils literal notranslate"><span class="pre">stack()</span></code></a></li>
