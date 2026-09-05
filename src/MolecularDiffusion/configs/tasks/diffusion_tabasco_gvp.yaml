@@ -1,0 +1,81 @@
+# TABASCO + GVP backbone task configuration.
+# Novel-model derivation of diffusion_tabasco.yaml: only `transformer_config`
+# is replaced by `gvp_config`; every interpolant/flow-matching value below is
+# copied verbatim from diffusion_tabasco.yaml (inherited, not the hypothesis).
+# See docs/model_novel/tabasco_gvp/INTEGRATION_PLAN.md.
+#
+# This config is referenced by: defaults: - tasks: diffusion_tabasco_gvp
+
+_target_: MolecularDiffusion.modules.tasks.diffusion_tabasco_gvp.ModelTaskFactory
+task_type: diffusion_tabasco_gvp
+
+# Automatically populated from dataset
+num_atom_types: ???
+
+# GVP backbone configuration -- wraps modules/layers/gvp/gvp.py's GVPConv /
+# NodePositionUpdate / EdgeUpdate. Values reused as-is from FlowMol's own
+# proven-stable QM9-scale GVP config (configs/tasks/diffusion_flowmol.yaml),
+# per the ledger's Hyperparameter Provenance table -- NOT capacity-matched to
+# TABASCO's transformer_config.hidden_dim (256); see the ledger's Confound #2.
+gvp_config:
+  atom_dim: ???
+  n_hidden_scalars: 64
+  n_vec_channels: 16
+  n_hidden_edge_feats: 64
+  n_molecule_updates: 2
+  convs_per_update: 2
+  n_message_gvps: 3
+  n_update_gvps: 3
+  n_expansion_gvps: 3
+  attention: false
+  message_norm: 100
+  rbf_dmax: 20
+  rbf_dim: 16
+  n_recycles: 1
+  dropout: 0.0
+
+# Continuous coordinate interpolant -- unchanged from diffusion_tabasco.yaml
+coords_interpolant_config:
+  key: coords
+  loss_weight: 1.0
+  centered: true
+  scale_noise_by_log_num_atoms: false
+  noise_scale: 1.0
+  langevin_sampling_schedule:
+    _target_: MolecularDiffusion.modules.models.tabasco.sample.noise_schedule.SampleNoiseSchedule
+    cutoff: 0.9
+  white_noise_sampling_scale: 0.01
+  time_factor:
+    _target_: MolecularDiffusion.modules.models.tabasco.flow.time_factor.InverseTimeFactor
+    max_value: 100.0
+    min_value: 0.05
+    zero_before: 0.0
+    eps: 1.0e-6
+
+# Discrete atom type interpolant -- unchanged from diffusion_tabasco.yaml
+atomics_interpolant_config:
+  key: atomics
+  loss_weight: 0.1
+  time_factor:
+    _target_: MolecularDiffusion.modules.models.tabasco.flow.time_factor.InverseTimeFactor
+    max_value: 100.0
+    min_value: 0.05
+    zero_before: 0.0
+    eps: 1.0e-6
+
+# Flow matching configuration -- unchanged from diffusion_tabasco.yaml.
+# num_random_augmentations is kept identical to the parent deliberately
+# (ablation-contract constant, not a knob -- see the ledger's Confound #1).
+flow_matching_config:
+  time_distribution: beta
+  time_alpha_factor: 1.8
+  num_random_augmentations: 7
+  sample_schedule: log
+  compile: false
+  interdist_loss: null
+
+# Dataset statistics (populated at runtime)
+dataset_stats:
+  max_atoms: ???
+  atom_count_histogram: {}
+  all_smiles: []

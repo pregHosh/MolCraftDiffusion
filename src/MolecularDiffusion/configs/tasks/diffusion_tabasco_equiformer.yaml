@@ -1,0 +1,99 @@
+# TABASCO + EquiformerV2 backbone task configuration.
+# Novel-model derivation of diffusion_tabasco.yaml: only `transformer_config`
+# is replaced by `equiformer_config`; every interpolant/flow-matching value
+# below is copied verbatim from diffusion_tabasco.yaml (inherited, not the
+# hypothesis). See docs/model_novel/tabasco_equiformer/INTEGRATION_PLAN.md.
+#
+# This config is referenced by: defaults: - tasks: diffusion_tabasco_equiformer
+
+_target_: MolecularDiffusion.modules.tasks.diffusion_tabasco_equiformer.ModelTaskFactory
+task_type: diffusion_tabasco_equiformer
+
+# Automatically populated from dataset
+num_atom_types: ???
+
+# EquiformerV2 backbone configuration -- wraps
+# modules/models/shepherd_arch/equiformer_v2_encoder.py's EquiformerV2
+# (equiformer_v2_s layer family). Architecture kwargs below are reused
+# verbatim from this platform's own proven configs/tasks/diffusion_equiformer.yaml
+# (NOT capacity-matched to TABASCO's transformer width -- deliberate, see the
+# ledger's Confound #2), per the ledger's Hyperparameter Provenance table.
+equiformer_config:
+  atom_dim: ???
+  sphere_channels: 128
+  input_sphere_channels: 128
+  num_layers: 8
+  lmax_list: [2]
+  mmax_list: [1]
+  grid_resolution: 18
+  num_sphere_samples: 128
+  attn_hidden_channels: 64
+  attn_alpha_channels: 64
+  attn_value_channels: 16
+  ffn_hidden_channels: 128
+  num_heads: 8
+  norm_type: "layer_norm_sh"
+  edge_channels: 128
+  use_atom_edge_embedding: True
+  share_atom_edge_embedding: False
+  use_m_share_rad: False
+  distance_function: "gaussian"
+  num_distance_basis: 512
+  attn_activation: "silu"
+  use_s2_act_attn: False
+  use_attn_renorm: True
+  ffn_activation: "silu"
+  use_gate_act: False
+  use_grid_mlp: True
+  use_sep_s2_act: True
+  alpha_drop: 0.1
+  drop_path_rate: 0.1
+  proj_drop: 0.0
+  cutoff: 9.0
+  weight_init: "uniform"
+
+# Continuous coordinate interpolant -- unchanged from diffusion_tabasco.yaml
+coords_interpolant_config:
+  key: coords
+  loss_weight: 1.0
+  centered: true
+  scale_noise_by_log_num_atoms: false
+  noise_scale: 1.0
+  langevin_sampling_schedule:
+    _target_: MolecularDiffusion.modules.models.tabasco.sample.noise_schedule.SampleNoiseSchedule
+    cutoff: 0.9
+  white_noise_sampling_scale: 0.01
+  time_factor:
+    _target_: MolecularDiffusion.modules.models.tabasco.flow.time_factor.InverseTimeFactor
+    max_value: 100.0
+    min_value: 0.05
+    zero_before: 0.0
+    eps: 1.0e-6
+
+# Discrete atom type interpolant -- unchanged from diffusion_tabasco.yaml
+atomics_interpolant_config:
+  key: atomics
+  loss_weight: 0.1
+  time_factor:
+    _target_: MolecularDiffusion.modules.models.tabasco.flow.time_factor.InverseTimeFactor
+    max_value: 100.0
+    min_value: 0.05
+    zero_before: 0.0
+    eps: 1.0e-6
+
+# Flow matching configuration -- unchanged from diffusion_tabasco.yaml.
+# num_random_augmentations is kept identical to the parent deliberately
+# (ablation-contract constant, not a knob -- see the ledger's Confound #1).
+flow_matching_config:
+  time_distribution: beta
+  time_alpha_factor: 1.8
+  num_random_augmentations: 7
+  sample_schedule: log
+  compile: false
+  interdist_loss: null
+
+# Dataset statistics (populated at runtime)
+dataset_stats:
+  max_atoms: ???
+  atom_count_histogram: {}
+  all_smiles: []
