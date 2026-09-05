@@ -1,0 +1,140 @@
+MolecularDiffusion.modules.tasks.diffusion_tabasco_equiformer
+=============================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_tabasco_equiformer
+
+.. autoapi-nested-parse::
+
+   TABASCO + EquiformerV2 backbone: a novel-model derivation of
+   ``diffusion_tabasco``.
+
+   Replaces TABASCO's ``TransformerModule`` backbone with
+   ``EquiformerV2TabascoBackbone``
+   (``modules/models/tabasco_equiformer/equiformer_backbone.py``, wrapping this
+   platform's existing ``EquiformerV2`` encoder). Every other TABASCO component
+   -- ``FlowMatchingModel``, ``SDEMetricInterpolant``, ``DiscreteInterpolant``,
+   the Euler-Maruyama sampler, ``TabascoNodeDistribution``, the
+   pointcloud<->TensorDict adapters -- is imported unmodified from
+   ``MolecularDiffusion.modules.tasks.diffusion_tabasco``.
+
+   See docs/model_novel/tabasco_equiformer/INTEGRATION_PLAN.md ("Integration
+   Plan", "Derivation Rung") for why this is a subclass that overrides only
+   ``__init__`` rather than a smaller override: ``TabascoDiffusionTask.__init__``
+   has no seam to override just the backbone-construction line, so this
+   reproduces its assembly sequence (``diffusion_tabasco.py:280-326``) with one
+   substitution -- ``EquiformerV2TabascoBackbone(**equiformer_config)`` in place
+   of ``TransformerModule(**transformer_config)`` -- the exact pattern
+   ``TabascoEGNNDiffusionTask`` (``diffusion_tabasco_egnn.py:50-97``) already
+   establishes.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_tabasco_equiformer.ModelTaskFactory
+   MolecularDiffusion.modules.tasks.diffusion_tabasco_equiformer.TabascoEquiformerDiffusionTask
+
+
+Module Contents
+---------------
+
+.. py:class:: ModelTaskFactory(task_type: str, equiformer_config: dict, coords_interpolant_config: dict, atomics_interpolant_config: dict, flow_matching_config: dict, num_atom_types: int, dataset_stats: dict, atom_vocab: Optional[list] = None, train_set: Optional[torch.utils.data.Dataset] = None, **kwargs)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.diffusion_tabasco.ModelTaskFactory`
+
+
+   Factory for ``TabascoEquiformerDiffusionTask``.
+
+   ``compute_dataset_stats`` is inherited unchanged from
+   ``TabascoModelTaskFactory`` (diffusion_tabasco.py:191-245) -- it only
+   touches ``self.dataset_stats``/``self.train_set``, neither of which
+   changes shape here. Only the constructor's config surface
+   (``equiformer_config`` in place of ``transformer_config``) and
+   ``build()``'s target class differ.
+
+
+   .. py:method:: build()
+
+      Build and return the TabascoEquiformerDiffusionTask.
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: atomics_interpolant_config
+
+
+   .. py:attribute:: coords_interpolant_config
+
+
+   .. py:attribute:: dataset_stats
+
+
+   .. py:attribute:: equiformer_config
+
+
+   .. py:attribute:: flow_matching_config
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: num_atom_types
+
+
+   .. py:attribute:: task_type
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+.. py:class:: TabascoEquiformerDiffusionTask(equiformer_config: dict, coords_interpolant_config: dict, atomics_interpolant_config: dict, flow_matching_config: dict, num_atom_types: int, dataset_stats: dict, atom_vocab: Optional[list] = None)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.diffusion_tabasco.TabascoDiffusionTask`
+
+
+   TABASCO flow-matching diffusion with an EquiformerV2 backbone.
+
+   Every method other than ``__init__`` (``forward``, ``predict_and_target``,
+   ``evaluate``, ``sample``, ``node_dist_model``, ``n_node_dist``, ``model``,
+   ``device``) is inherited unchanged from ``TabascoDiffusionTask`` -- they
+   only ever call through ``self.tabasco_model``/``self.net``, which is
+   backbone-agnostic.
+
+
+   .. py:attribute:: atom_vocab
+      :value: None
+
+
+
+   .. py:attribute:: max_n_nodes
+
+
+   .. py:attribute:: num_atom_types
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: tabasco_model
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_tabasco_equiformer'
+
+
+
+   .. py:attribute:: to_pointcloud
+
+
+   .. py:attribute:: to_tensordict
+
+

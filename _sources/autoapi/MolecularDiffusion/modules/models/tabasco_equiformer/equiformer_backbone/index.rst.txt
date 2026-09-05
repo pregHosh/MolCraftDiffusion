@@ -1,0 +1,144 @@
+MolecularDiffusion.modules.models.tabasco_equiformer.equiformer_backbone
+========================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco_equiformer.equiformer_backbone
+
+.. autoapi-nested-parse::
+
+   EquiformerV2 backbone for TABASCO's flow-matching model.
+
+   Wraps ``MolecularDiffusion.modules.models.shepherd_arch.equiformer_v2_encoder.
+   EquiformerV2`` (the SO(3) tensor-product transformer encoder, ``equiformer_v2_s``
+   layer family -- the same encoder class ``EquiformerV2_dynamics``,
+   ``EquiformerV2Backbone``, and ``shepherd_arch`` already use, imported here
+   unmodified) so it can be substituted 1-for-1 for TABASCO's
+   ``TransformerModule`` (``modules/layers/tabasco/transformer_module.py``) with
+   no change to ``FlowMatchingModel``, the interpolants, the Euler-Maruyama
+   sampler, or the pointcloud<->TensorDict adapters.
+
+   Backbone contract (fixed by ``FlowMatchingModel._call_net``,
+   ``modules/models/tabasco/flow_model.py:84-97``)::
+
+       forward(coords, atomics, padding_mask, t) -> (coords, atom_logits)
+
+   ``coords`` returned is the direct endpoint prediction ``x_1`` -- both
+   ``CenteredMetricInterpolant.compute_loss`` and ``SDEMetricInterpolant.step``
+   (``modules/models/tabasco/flow/interpolate.py``) treat ``pred["coords"]`` as
+   an x_1 estimate, not a velocity/residual.
+
+   Mask convention: ``padding_mask`` follows TABASCO's own inverted convention
+   (``1 = padded``, see ``PointCloudToTensorDictAdapter``,
+   ``modules/tasks/diffusion_tabasco.py:60-113``) -- the opposite of the
+   platform's usual ``node_mask`` (``1 = real``). This class inverts once at the
+   boundary, the same idiom ``EGNNBackbone``/``GVPBackbone`` already use.
+
+   Six-step mechanism (see docs/model_novel/tabasco_equiformer/INTEGRATION_PLAN.md,
+   "Hypothesis" / "Integration Plan"):
+
+   1. Compact the padded ``(B, N, ...)`` batch to its real (unmasked) atoms and
+      build a per-molecule fully-connected, no-self-loop edge index -- reusing
+      the exact valid-node-compaction and edge-construction pattern
+      ``EquiformerV2_dynamics._forward_dense`` implements for a dense pointcloud
+      batch (``modules/models/equiformer_v2_dynamics.py:266-343``). Reproduced
+      locally (a two-line body, boilerplate index bookkeeping, not a
+      layer/schedule) rather than importing ``EquiformerV2_dynamics`` itself,
+      which this backbone otherwise never touches.
+   2. Project one-hot atom type + scalar time ``t`` into the l=0 (scalar)
+      channel of a fresh ``SO3_Embedding``, following ``_build_so3_input``'s
+      pattern (``equiformer_v2_dynamics.py:118-142``) -- omitting the
+      context/adapter machinery ``EquiformerV2_dynamics`` carries for EDM
+      conditioning, since TABASCO has no conditioning context.
+   3. Run the wrapped ``EquiformerV2`` encoder over the compacted graph.
+   4. Read a per-atom displacement ``d`` off the l=1 channel via a
+      ``FeedForwardNetwork`` SO3 head (same construction as
+      ``EquiformerV2_dynamics.head_vel_ffn``, including its own ``SO3_Grid``).
+      **Deliberate, load-bearing departure from ``EquiformerV2_dynamics``'s own
+      convention:** returns ``coords_in + d`` as the endpoint prediction, not
+      ``d`` alone, and does **not** call ``remove_mean_pyG``. ``d`` is built
+      purely from ``edge_distance_vec`` (translation-invariant relative
+      geometry), so on its own it carries no absolute position information -- it
+      is a displacement, not an endpoint. ``EquiformerV2_dynamics`` returns it
+      bare because EDM's dynamics contract wants a velocity/noise prediction
+      added externally by the caller; TABASCO's contract instead wants the
+      endpoint directly. The ground-truth ``x_1`` target is already COM-centered
+      by ``mask_and_zero_com`` before the MSE loss is computed, so -- exactly as
+      neither ``EGNNBackbone`` nor ``GVPBackbone`` needed a forced centering
+      step -- the loss alone is sufficient to teach a centered output.
+   5. Read the l=0 scalar channel through a fresh ``nn.Linear(sphere_channels,
+      atom_dim)`` into atom-type logits -- NOT ``EquiformerV2_dynamics.head_h``,
+      which is sized for EDM's ``in_node_nf`` feature convention.
+   6. Scatter both outputs back into the padded ``(B, N, 3)``/``(B, N,
+      atom_dim)`` shape, mirroring ``_forward_dense``'s own scatter-back step.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco_equiformer.equiformer_backbone.EquiformerV2TabascoBackbone
+
+
+Module Contents
+---------------
+
+.. py:class:: EquiformerV2TabascoBackbone(atom_dim: int, sphere_channels: int = 128, input_sphere_channels: int = 128, num_layers: int = 8, lmax_list: Optional[List[int]] = None, mmax_list: Optional[List[int]] = None, grid_resolution: int = 18, num_sphere_samples: int = 128, attn_hidden_channels: int = 64, attn_alpha_channels: int = 64, attn_value_channels: int = 16, ffn_hidden_channels: int = 128, num_heads: int = 8, norm_type: str = 'layer_norm_sh', edge_channels: int = 128, use_atom_edge_embedding: bool = True, share_atom_edge_embedding: bool = False, use_m_share_rad: bool = False, distance_function: str = 'gaussian', num_distance_basis: int = 512, attn_activation: str = 'silu', use_s2_act_attn: bool = False, use_attn_renorm: bool = True, ffn_activation: str = 'silu', use_gate_act: bool = False, use_grid_mlp: bool = True, use_sep_s2_act: bool = True, alpha_drop: float = 0.1, drop_path_rate: float = 0.1, proj_drop: float = 0.0, cutoff: float = 9.0, weight_init: str = 'uniform')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   TABASCO-compatible net: ``(coords, atomics, padding_mask, t) -> (coords, atom_logits)``.
+
+   Architecture kwargs below default to the exact values
+   ``configs/tasks/diffusion_equiformer.yaml`` uses (this platform's own
+   proven QM9-scale EquiformerV2 config) -- see the ledger's "Hyperparameter
+   Provenance" table.
+
+
+   .. py:method:: forward(coords: torch.Tensor, atomics: torch.Tensor, padding_mask: torch.Tensor, t: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+
+      :param coords: (B, N, 3)
+      :param atomics: (B, N, atom_dim) one-hot (or soft) atom-type features
+      :param padding_mask: (B, N), TABASCO convention -- 1 = padded, 0 = real
+      :param t: (B,) timestep in [0, 1]
+
+      :returns: (B, N, 3) endpoint prediction
+                atom_logits: (B, N, atom_dim)
+      :rtype: coords
+
+
+
+   .. py:attribute:: atom_dim
+
+
+   .. py:attribute:: equiformer
+
+
+   .. py:attribute:: head_atom
+
+
+   .. py:attribute:: head_disp_ffn
+
+
+   .. py:attribute:: input_proj
+
+
+   .. py:attribute:: lmax_list
+      :value: None
+
+
+
+   .. py:attribute:: mmax_list
+      :value: None
+
+
+
+   .. py:attribute:: so3_grid
+
+
+   .. py:attribute:: sphere_channels
+      :value: 128
+
+
+

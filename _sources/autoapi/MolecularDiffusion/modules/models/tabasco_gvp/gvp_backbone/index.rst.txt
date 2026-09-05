@@ -1,0 +1,169 @@
+MolecularDiffusion.modules.models.tabasco_gvp.gvp_backbone
+==========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco_gvp.gvp_backbone
+
+.. autoapi-nested-parse::
+
+   GVP backbone for TABASCO's flow-matching model.
+
+   Wraps this platform's existing SE(3)-equivariant GVP building blocks
+   (``GVPConv``/``NodePositionUpdate``/``EdgeUpdate``, canonical location
+   ``modules/layers/gvp/gvp.py``) so they can be substituted 1-for-1 for
+   TABASCO's ``TransformerModule``
+   (``modules/layers/tabasco/transformer_module.py``) with no change to
+   ``FlowMatchingModel``, the interpolants, the Euler-Maruyama sampler, or the
+   pointcloud<->TensorDict adapters.
+
+   Backbone contract (fixed by ``FlowMatchingModel._call_net``,
+   ``modules/models/tabasco/flow_model.py:84-97``):
+
+       forward(coords, atomics, padding_mask, t) -> (coords, atom_logits)
+
+   ``coords`` returned is the direct endpoint prediction ``x_1`` -- the same
+   endpoint-parameterization semantics ``EGNNBackbone`` already returns as-is
+   and that FlowMol's ``EndpointVectorField.denoise_graph`` predicts
+   (``modules/models/flowmol/vector_field.py:206-269``), whose interleaved
+   conv/update-stack structure this backbone reproduces closely, minus the
+   charge modality and the bond-token edge features (TABASCO's pointcloud
+   pipeline has neither), and importing the canonical
+   ``NodePositionUpdate``/``EdgeUpdate`` from ``modules/layers/gvp/gvp.py``
+   instead of ``vector_field.py``'s own local duplicate copies of those two
+   classes (a pre-existing inconsistency in this repo, noted but deliberately
+   not fixed here -- see the ledger's Derivation Rung).
+
+   Mask convention: ``padding_mask`` follows TABASCO's own inverted convention
+   (``1 = padded``, see ``PointCloudToTensorDictAdapter``,
+   ``modules/tasks/diffusion_tabasco.py:60-113``) -- inverted once at the
+   boundary, the same idiom ``EGNNBackbone.forward`` uses
+   (``modules/models/tabasco_egnn/egnn_backbone.py:147``).
+
+   Graph construction: per-molecule masked-slice -> fully-connected DIRECTED
+   graph WITHOUT self-loops (``build_edge_idxs``,
+   ``modules/models/flowmol/graph_utils.py:14-20``) -> ``dgl.batch`` -- the same
+   idiom ``PointCloudToDGLAdapter`` already uses in production
+   (``modules/tasks/diffusion_flowmol.py:82-105``). No self-loops is
+   deliberate, matching ``EndpointVectorField``'s own established graph shape
+   (``vector_field.py:216-231``); this differs from the sibling
+   ``tabasco_egnn``'s self-loop-including graph, which is not a bug in either
+   (see the ledger's Confound #4).
+
+   Dense reconstruction: this backbone's output must satisfy
+   ``FlowMatchingModel``'s contract exactly -- ``_call_net`` reuses the
+   caller's ``padding_mask`` verbatim for the returned TensorDict
+   (``flow_model.py:90-97``), and both the loss (``_compute_loss``,
+   ``flow_model.py:174-213``) and the Euler step (``_step``,
+   ``flow_model.py:279-286``) combine ``pred["coords"]``/``pred["atomics"]``
+   elementwise against tensors shaped by that same ``padding_mask``. So the
+   dense width reconstructed here is always exactly the *input* ``coords``
+   width ``N`` -- independently confirmed to already equal "this batch's
+   max real-atom count" (the platform's pointcloud collator,
+   ``data/dataloader.py:97-180``, slices every batch down to
+   ``natoms.max()`` before returning it), so this is the same quantity
+   ``DGLToPointCloudAdapter`` (``diffusion_flowmol.py:108-137``) recovers via
+   ``dgl.unbatch`` + per-graph ``num_nodes()``. Reconstruction here uses a
+   boolean-mask scatter (``dense[node_mask] = flat_values``) instead of that
+   ``dgl.unbatch`` loop -- provably correct regardless of whether padding
+   happens to be a contiguous per-molecule prefix, because the per-molecule
+   graph-construction loop below selects real atoms in increasing-column order
+   (``coords[b][mask_b]``), which is exactly the row-major enumeration order a
+   leading-dims boolean-mask scatter assignment also uses, and every GVP layer
+   below only ever transforms node features elementwise / via message-passing
+   without permuting node order.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco_gvp.gvp_backbone.GVPBackbone
+
+
+Module Contents
+---------------
+
+.. py:class:: GVPBackbone(atom_dim: int, n_hidden_scalars: int = 64, n_vec_channels: int = 16, n_hidden_edge_feats: int = 64, n_molecule_updates: int = 2, convs_per_update: int = 2, n_message_gvps: int = 3, n_update_gvps: int = 3, n_expansion_gvps: int = 3, attention: bool = False, message_norm: float = 100, rbf_dmax: float = 20, rbf_dim: int = 16, n_recycles: int = 1, dropout: float = 0.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   TABASCO-compatible net: ``(coords, atomics, padding_mask, t) -> (coords, atom_logits)``.
+
+   Hyperparameters default to FlowMol's own proven-stable QM9-scale GVP
+   configuration (``configs/tasks/diffusion_flowmol.yaml``), reused as-is
+   per the ledger's Hyperparameter Provenance table -- deliberately NOT
+   capacity-matched to TABASCO's transformer width (see the ledger's
+   Confound #2).
+
+
+   .. py:method:: forward(coords: torch.Tensor, atomics: torch.Tensor, padding_mask: torch.Tensor, t: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+
+      :param coords: (B, N, 3)
+      :param atomics: (B, N, atom_dim) one-hot (or soft) atom-type features
+      :param padding_mask: (B, N), TABASCO convention -- 1 = padded, 0 = real
+      :param t: (B,) timestep in [0, 1]
+
+      :returns: (B, N, 3) endpoint prediction
+                atom_logits: (B, N, atom_dim)
+      :rtype: coords
+
+
+
+   .. py:attribute:: atom_dim
+
+
+   .. py:attribute:: conv_layers
+
+
+   .. py:attribute:: convs_per_update
+      :value: 2
+
+
+
+   .. py:attribute:: edge_embedding
+
+
+   .. py:attribute:: edge_updater
+
+
+   .. py:attribute:: n_hidden_scalars
+      :value: 64
+
+
+
+   .. py:attribute:: n_molecule_updates
+      :value: 2
+
+
+
+   .. py:attribute:: n_recycles
+      :value: 1
+
+
+
+   .. py:attribute:: n_vec_channels
+      :value: 16
+
+
+
+   .. py:attribute:: node_output_head
+
+
+   .. py:attribute:: node_position_updater
+
+
+   .. py:attribute:: rbf_dim
+      :value: 16
+
+
+
+   .. py:attribute:: rbf_dmax
+      :value: 20
+
+
+
+   .. py:attribute:: scalar_embedding
+
+

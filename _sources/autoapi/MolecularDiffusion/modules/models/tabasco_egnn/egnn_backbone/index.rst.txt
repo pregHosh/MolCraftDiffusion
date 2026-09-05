@@ -1,0 +1,78 @@
+MolecularDiffusion.modules.models.tabasco_egnn.egnn_backbone
+============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco_egnn.egnn_backbone
+
+.. autoapi-nested-parse::
+
+   EGNN backbone for TABASCO's flow-matching model.
+
+   Wraps ``MolecularDiffusion.modules.models.egcl.EGNN`` (this platform's
+   existing ``GCL`` / ``EquivariantUpdate`` / ``EquivariantBlock`` stack,
+   ``modules/layers/conv.py:13-255``) so it can be substituted 1-for-1 for
+   TABASCO's ``TransformerModule``
+   (``modules/layers/tabasco/transformer_module.py``) with no change to
+   ``FlowMatchingModel``, the interpolants, the Euler-Maruyama sampler, or the
+   pointcloud<->TensorDict adapters.
+
+   Backbone contract (fixed by ``FlowMatchingModel._call_net``,
+   ``modules/models/tabasco/flow_model.py:84-97``):
+
+       forward(coords, atomics, padding_mask, t) -> (coords, atom_logits)
+
+   ``coords`` returned is the direct endpoint prediction ``x_1`` -- both
+   ``CenteredMetricInterpolant.compute_loss`` and ``SDEMetricInterpolant.step``
+   (``modules/models/tabasco/flow/interpolate.py``) treat ``pred["coords"]`` as
+   an x_1 estimate, not a velocity/residual. EGNN's own coordinate output
+   already has this shape (each ``EquivariantBlock`` displaces the running
+   coordinate estimate), so it is returned as-is -- no ``x_final - x`` residual
+   is taken here (that residual pattern in ``EGNN_dynamics._forward``,
+   ``egcl.py:440-442``, is specific to EDM's noise-prediction contract, not
+   TABASCO's endpoint-prediction contract).
+
+   Mask convention: ``padding_mask`` follows TABASCO's own inverted convention
+   (``1 = padded``, see ``PointCloudToTensorDictAdapter``,
+   ``modules/tasks/diffusion_tabasco.py:60-113``) -- the opposite of ``EGNN``'s
+   ``node_mask``/``edge_mask`` (``1 = real``, ``modules/models/egcl.py``). This
+   class inverts once at the boundary.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.tabasco_egnn.egnn_backbone.EGNNBackbone
+
+
+Module Contents
+---------------
+
+.. py:class:: EGNNBackbone(atom_dim: int, hidden_dim: int = 256, num_layers: int = 9, activation: str = 'SiLU', attention: bool = True, tanh: bool = True, inv_sublayers: int = 1, sin_embedding: bool = False, include_cosine: bool = True, norm_constant: float = 1.0, normalization_factor: float = 1.0, aggregation_method: str = 'sum', coords_range: float = 15.0, norm_diff: bool = True, dropout: float = 0.0, normalization: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   TABASCO-compatible net: ``(coords, atomics, padding_mask, t) -> (coords, atom_logits)``.
+
+
+   .. py:method:: forward(coords: torch.Tensor, atomics: torch.Tensor, padding_mask: torch.Tensor, t: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+
+      :param coords: (B, N, 3)
+      :param atomics: (B, N, atom_dim) one-hot (or soft) atom-type features
+      :param padding_mask: (B, N), TABASCO convention -- 1 = padded, 0 = real
+      :param t: (B,) timestep in [0, 1]
+
+      :returns: (B, N, 3) endpoint prediction
+                atom_logits: (B, N, atom_dim)
+      :rtype: coords
+
+
+
+   .. py:attribute:: atom_dim
+
+
+   .. py:attribute:: egnn
+
+

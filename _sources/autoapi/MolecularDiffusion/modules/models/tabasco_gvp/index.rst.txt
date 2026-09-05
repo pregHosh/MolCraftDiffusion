@@ -1,0 +1,29 @@
+MolecularDiffusion.modules.models.tabasco_gvp
+=============================================
+
+.. py:module:: MolecularDiffusion.modules.models.tabasco_gvp
+
+.. autoapi-nested-parse::
+
+   tabasco_gvp: TABASCO's flow-matching recipe with an equivariant GVP
+   backbone in place of its plain augmented ``TransformerModule``.
+
+   Novel-model ablation track. See
+   docs/model_novel/tabasco_gvp/INTEGRATION_PLAN.md for the hypothesis,
+   ablation contract, and hyperparameter provenance.
+
+   The backbone is built from this platform's existing
+   ``GVPConv``/``NodePositionUpdate``/``EdgeUpdate``
+   (``modules/layers/gvp/gvp.py``) -- nothing here reimplements those layers.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/tabasco_gvp/gvp_backbone/index
+
+

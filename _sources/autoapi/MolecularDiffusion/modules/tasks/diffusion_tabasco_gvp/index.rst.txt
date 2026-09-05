@@ -1,0 +1,139 @@
+MolecularDiffusion.modules.tasks.diffusion_tabasco_gvp
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.diffusion_tabasco_gvp
+
+.. autoapi-nested-parse::
+
+   TABASCO + GVP backbone: a novel-model derivation of ``diffusion_tabasco``.
+
+   Replaces TABASCO's ``TransformerModule`` backbone with ``GVPBackbone``
+   (``modules/models/tabasco_gvp/gvp_backbone.py``, wrapping this platform's
+   existing ``GVPConv``/``NodePositionUpdate``/``EdgeUpdate`` layers). Every
+   other TABASCO component -- ``FlowMatchingModel``, ``SDEMetricInterpolant``,
+   ``DiscreteInterpolant``, the Euler-Maruyama sampler,
+   ``TabascoNodeDistribution``, the pointcloud<->TensorDict adapters -- is
+   imported unmodified from
+   ``MolecularDiffusion.modules.tasks.diffusion_tabasco``.
+
+   See docs/model_novel/tabasco_gvp/INTEGRATION_PLAN.md ("Integration Plan",
+   "Derivation Rung") for why this is a subclass that overrides only
+   ``__init__`` rather than a smaller override: ``TabascoDiffusionTask.__init__``
+   has no seam to override just the backbone-construction line, so this
+   reproduces its assembly sequence (``diffusion_tabasco.py:280-326``) with one
+   substitution -- ``GVPBackbone(**gvp_config)`` in place of
+   ``TransformerModule(**transformer_config)``. Same pattern the sibling
+   ``tabasco_egnn`` track already used
+   (``modules/tasks/diffusion_tabasco_egnn.py``).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_tabasco_gvp.ModelTaskFactory
+   MolecularDiffusion.modules.tasks.diffusion_tabasco_gvp.TabascoGVPDiffusionTask
+
+
+Module Contents
+---------------
+
+.. py:class:: ModelTaskFactory(task_type: str, gvp_config: dict, coords_interpolant_config: dict, atomics_interpolant_config: dict, flow_matching_config: dict, num_atom_types: int, dataset_stats: dict, atom_vocab: Optional[list] = None, train_set: Optional[torch.utils.data.Dataset] = None, **kwargs)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.diffusion_tabasco.ModelTaskFactory`
+
+
+   Factory for ``TabascoGVPDiffusionTask``.
+
+   ``compute_dataset_stats`` is inherited unchanged from
+   ``TabascoModelTaskFactory`` (diffusion_tabasco.py:191-245) -- it only
+   touches ``self.dataset_stats``/``self.train_set``, neither of which
+   changes shape here. Only the constructor's config surface
+   (``gvp_config`` in place of ``transformer_config``) and ``build()``'s
+   target class differ.
+
+
+   .. py:method:: build()
+
+      Build and return the TabascoGVPDiffusionTask.
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:attribute:: atomics_interpolant_config
+
+
+   .. py:attribute:: coords_interpolant_config
+
+
+   .. py:attribute:: dataset_stats
+
+
+   .. py:attribute:: flow_matching_config
+
+
+   .. py:attribute:: gvp_config
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: num_atom_types
+
+
+   .. py:attribute:: task_type
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+.. py:class:: TabascoGVPDiffusionTask(gvp_config: dict, coords_interpolant_config: dict, atomics_interpolant_config: dict, flow_matching_config: dict, num_atom_types: int, dataset_stats: dict, atom_vocab: Optional[list] = None)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.diffusion_tabasco.TabascoDiffusionTask`
+
+
+   TABASCO flow-matching diffusion with a GVP backbone.
+
+   Every method other than ``__init__`` (``forward``, ``predict_and_target``,
+   ``evaluate``, ``sample``, ``node_dist_model``, ``n_node_dist``, ``model``,
+   ``device``) is inherited unchanged from ``TabascoDiffusionTask`` -- they
+   only ever call through ``self.tabasco_model``/``self.net``, which is
+   backbone-agnostic.
+
+
+   .. py:attribute:: atom_vocab
+      :value: None
+
+
+
+   .. py:attribute:: max_n_nodes
+
+
+   .. py:attribute:: num_atom_types
+
+
+   .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: tabasco_model
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_tabasco_gvp'
+
+
+
+   .. py:attribute:: to_pointcloud
+
+
+   .. py:attribute:: to_tensordict
+
+
