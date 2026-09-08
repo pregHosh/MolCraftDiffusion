@@ -84,7 +84,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: GVPBackbone(atom_dim: int, n_hidden_scalars: int = 64, n_vec_channels: int = 16, n_hidden_edge_feats: int = 64, n_molecule_updates: int = 2, convs_per_update: int = 2, n_message_gvps: int = 3, n_update_gvps: int = 3, n_expansion_gvps: int = 3, attention: bool = False, message_norm: float = 100, rbf_dmax: float = 20, rbf_dim: int = 16, n_recycles: int = 1, dropout: float = 0.0)
+.. py:class:: GVPBackbone(atom_dim: int, n_hidden_scalars: int = 64, n_vec_channels: int = 16, n_hidden_edge_feats: int = 64, n_molecule_updates: int = 2, convs_per_update: int = 2, n_message_gvps: int = 3, n_update_gvps: int = 3, n_expansion_gvps: int = 3, attention: bool = False, message_norm: float = 100, rbf_dmax: float = 20, rbf_dim: int = 16, n_recycles: int = 1, dropout: float = 0.0, adapter_indices: Optional[list] = None, concat_indices: Optional[list] = None)
 
    Bases: :py:obj:`torch.nn.Module`
 
@@ -98,12 +98,13 @@ Module Contents
    Confound #2).
 
 
-   .. py:method:: forward(coords: torch.Tensor, atomics: torch.Tensor, padding_mask: torch.Tensor, t: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+   .. py:method:: forward(coords: torch.Tensor, atomics: torch.Tensor, padding_mask: torch.Tensor, t: torch.Tensor, condition: Optional[torch.Tensor] = None) -> Tuple[torch.Tensor, torch.Tensor]
 
       :param coords: (B, N, 3)
       :param atomics: (B, N, atom_dim) one-hot (or soft) atom-type features
       :param padding_mask: (B, N), TABASCO convention -- 1 = padded, 0 = real
       :param t: (B,) timestep in [0, 1]
+      :param condition: (B, N, n_adapter_context + n_concat_context) or None
 
       :returns: (B, N, 3) endpoint prediction
                 atom_logits: (B, N, atom_dim)
@@ -111,7 +112,17 @@ Module Contents
 
 
 
+   .. py:attribute:: adapter_indices
+      :value: []
+
+
+
    .. py:attribute:: atom_dim
+
+
+   .. py:attribute:: concat_indices
+      :value: []
+
 
 
    .. py:attribute:: conv_layers

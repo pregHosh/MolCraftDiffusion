@@ -360,6 +360,7 @@
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_gcdm/index.html">MolecularDiffusion.runmodes.train.tasks_gcdm</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_gfmdiff/index.html">MolecularDiffusion.runmodes.train.tasks_gfmdiff</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_painn/index.html">MolecularDiffusion.runmodes.train.tasks_painn</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/tasks_transformer/index.html">MolecularDiffusion.runmodes.train.tasks_transformer</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/train/trainer/index.html">MolecularDiffusion.runmodes.train.trainer</a></li>
 </ul>
 </li>
@@ -492,10 +493,10 @@ MolCraftDiff<span class="w"> </span>generate<span class="w"> </span>examples/kgd
 </div>
 <p>Where a row below says the shipped checkpoint behaves a certain way, that is
 the checkpoint you get. Three cases:</p>
-<ul>
-<li><p><strong>Fetch and go</strong> — apo2mol, diffdec, diffint, diffpharma, diffsbdd, diffsmol,
-flowmol_graph3d, gcdm, ipdiff, kgdiff, ligandiff, ligandiff_multi, loqi, midi,
-and five of difflinker’s checkpoints (see below). diffsmol’s shape-conditioned
+<ul class="simple">
+<li><p><strong>Fetch and go</strong> — apo2mol, diffdec, difflinker, diffint, diffpharma,
+diffsbdd, diffsmol, flowmol_graph3d, gcdm, ipdiff, kgdiff, ligandiff,
+ligandiff_multi, loqi, midi. diffsmol’s shape-conditioned
 MOSES2 checkpoint is the <code class="docutils literal notranslate"><span class="pre">moses2_shape</span></code> variant; its <em>other</em> variant, the
 converted upstream release, stays build-locally below.</p></li>
 <li><p><strong>Build locally</strong> — ditmc, equifm, nextmol, pmdm, and diffsmol’s converted
@@ -503,42 +504,7 @@ upstream checkpoint. Weights exist,
 but their upstream projects do not permit redistribution, so the zoo ships
 the recipe instead: <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">zoo</span> <span class="pre">recipe</span> <span class="pre">&lt;asset&gt;</span></code> prints the download,
 the conversion command and the expected checksum.</p></li>
-<li><p><strong>Train it yourself</strong> — goflow ships no weights. difflinker’s situation is
-split by checkpoint, not all-or-nothing:</p>
-<ul class="simple">
-<li><p><strong>Fetch and go — working checkpoints.</strong> <code class="docutils literal notranslate"><span class="pre">zinc</span></code> and <code class="docutils literal notranslate"><span class="pre">geom</span></code>
-(<code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">zoo</span> <span class="pre">fetch</span> <span class="pre">--model</span> <span class="pre">difflinker</span> <span class="pre">--variant</span> <span class="pre">zinc</span></code>, then
-<code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">generate</span> <span class="pre">examples/difflinker_zinc_generate.yaml</span></code>, or
-<code class="docutils literal notranslate"><span class="pre">geom</span></code> likewise). 48-molecule smoke tests: <code class="docutils literal notranslate"><span class="pre">zinc</span></code> 45/48 (93.75%) clean,
-<code class="docutils literal notranslate"><span class="pre">geom</span></code> 48/48 (100%) clean, no atom clashes. Three of the four Pockets
-checkpoints (<code class="docutils literal notranslate"><span class="pre">pockets_backbone</span></code>, <code class="docutils literal notranslate"><span class="pre">pockets_full_no_anchors</span></code>,
-<code class="docutils literal notranslate"><span class="pre">pockets_full</span></code>) also generate correctly out of the box — same
-fetch/generate pattern, e.g.
-<code class="docutils literal notranslate"><span class="pre">examples/difflinker_pockets_backbone_generate.yaml</span></code>.</p></li>
-<li><p><strong>Broken (kept registered, not generation-ready)</strong> — <code class="docutils literal notranslate"><span class="pre">pockets_unconditioned</span></code>,
-DiffLinker’s own released weight, converts and loads cleanly — zero
-state-dict key drops — but <strong>generation from it is broken</strong>: a genuine
-numerical-instability defect in the released weights themselves
-(<code class="docutils literal notranslate"><span class="pre">tanh:</span> <span class="pre">false</span></code>, unbounded per-layer coordinate updates), reproduced
-identically against upstream’s own unmodified code. The plain ZINC/GEOM
-releases (<code class="docutils literal notranslate"><span class="pre">zinc_difflinker.ckpt</span></code>/<code class="docutils literal notranslate"><span class="pre">geom_difflinker.ckpt</span></code> and their
-given-anchors variants) shared this same defect and have been <strong>removed
-from the zoo entirely</strong> rather than kept as documented-broken, since a
-working replacement now exists for both.</p></li>
-<li><p>Why some checkpoints work and others don’t: the three working Pockets
-checkpoints’ <code class="docutils literal notranslate"><span class="pre">DynamicsWithPockets</span></code> sparser distance-cutoff graph
-apparently does not compound the same numerical blow-up the dense
-fully-connected graph does — observed, not fully root-caused.</p></li>
-<li><p>Optionally pair a checkpoint with the
-zoo’s <code class="docutils literal notranslate"><span class="pre">difflinker_size_gnn</span></code> checkpoint
-(<code class="docutils literal notranslate"><span class="pre">examples/difflinker_train_full_with_size_gnn_generate.yaml</span></code>) to have
-linker size auto-predicted from fragment geometry instead of sampling a
-fixed/ranged <code class="docutils literal notranslate"><span class="pre">mol_size</span></code>.</p></li>
-</ul>
-<p>See <code class="docutils literal notranslate"><span class="pre">docs/model_integrations/difflinker/FINAL_REPORT.md</span></code> for the full
-diagnostic chain. The zoo carries every checkpoint’s datasets and example
-configs regardless of which bucket it falls in.</p>
-</li>
+<li><p><strong>Train it yourself</strong> — goflow ships no weights.</p></li>
 </ul>
 <p><strong>SILVR is not in any of these buckets, because it is not a model.</strong> It is an
 inference-time guidance method layered on the existing EDM sampler — no network,
@@ -752,7 +718,7 @@ hydrogens.</p>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_difflinker.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_difflinker</span></code></p></td>
 <td class="text-left"><p><strong>Fragments</strong> to join, optionally a <strong>protein pocket</strong></p></td>
-<td class="text-left"><p><strong>Linker design</strong>: hold fragments (and, for the three pocket-conditioned checkpoints, a fixed pocket too) fixed, generate the atoms joining them. You choose the linker length yourself, or pair a checkpoint with the zoo’s <code class="docutils literal notranslate"><span class="pre">difflinker_size_gnn</span></code> checkpoint to have it auto-picked from fragment geometry. Checkpoint status (see the tip above for the full breakdown): <code class="docutils literal notranslate"><span class="pre">zinc</span></code>, <code class="docutils literal notranslate"><span class="pre">geom</span></code>, <code class="docutils literal notranslate"><span class="pre">pockets_backbone</span></code>, <code class="docutils literal notranslate"><span class="pre">pockets_full_no_anchors</span></code> and <code class="docutils literal notranslate"><span class="pre">pockets_full</span></code> all generate correctly; <code class="docutils literal notranslate"><span class="pre">pockets_unconditioned</span></code> converts and loads cleanly but fails to generate (a numerical-instability defect in that weight, not this port). Use DiffDec instead if you want a pocket model with no per-checkpoint caveats.</p></td>
+<td class="text-left"><p><strong>Linker design</strong>: hold fragments (and, for the three pocket-conditioned checkpoints, a fixed pocket too) fixed, generate the atoms joining them. You choose the linker length yourself, or pair a checkpoint with the zoo’s <code class="docutils literal notranslate"><span class="pre">difflinker_size_gnn</span></code> checkpoint to have it auto-picked from fragment geometry.</p></td>
 </tr>
 <tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffdec.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_diffdec</span></code></p></td>

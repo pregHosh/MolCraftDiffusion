@@ -38,10 +38,18 @@ Classes
    MolecularDiffusion.modules.tasks.diffusion_difflinker.PointCloudToDiffLinkerBatch
 
 
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.diffusion_difflinker.dense_edge_mask
+
+
 Module Contents
 ---------------
 
-.. py:class:: DiffLinkerTask(in_node_nf: int, n_dims: int, hidden_nf: int, activation: str, tanh: bool, n_layers: int, attention: bool, norm_constant: float, inv_sublayers: int, sin_embedding: bool, normalization_factor: float, aggregation_method: str, model: str, normalization: Optional[str], condition_time: bool, anchors_context: bool, diffusion_steps: int, diffusion_noise_schedule: str, diffusion_noise_precision: float, diffusion_loss_type: str, normalize_factors: tuple, center_of_mass: str, atom_vocab: Optional[list] = None, pocket_conditioned: bool = False, context_node_nf: Optional[int] = None, graph_type: str = 'FC')
+.. py:class:: DiffLinkerTask(in_node_nf: int, n_dims: int, hidden_nf: int, activation: str, tanh: bool, n_layers: int, attention: bool, norm_constant: float, inv_sublayers: int, sin_embedding: bool, normalization_factor: float, aggregation_method: str, model: str, normalization: Optional[str], condition_time: bool, anchors_context: bool, diffusion_steps: int, diffusion_noise_schedule: str, diffusion_noise_precision: float, diffusion_loss_type: str, normalize_factors: tuple, center_of_mass: str, atom_vocab: Optional[list] = None, pocket_conditioned: bool = False, context_node_nf: Optional[int] = None, graph_type: str = 'FC', upstream_int8_edge_mask: bool = False)
 
    Bases: :py:obj:`torch.nn.Module`
 
@@ -195,7 +203,12 @@ Module Contents
 
 
 
-.. py:class:: DiffLinkerTaskFactory(task_type: str, in_node_nf: int, n_dims: int = 3, hidden_nf: int = 128, activation: str = 'silu', tanh: bool = False, n_layers: int = 6, attention: bool = False, norm_constant: float = 1e-06, inv_sublayers: int = 2, sin_embedding: bool = False, normalization_factor: float = 100, aggregation_method: str = 'sum', model: str = 'egnn_dynamics', normalization: Optional[str] = 'batch_norm', condition_time: bool = True, anchors_context: bool = True, diffusion_steps: int = 500, diffusion_noise_schedule: str = 'polynomial_2', diffusion_noise_precision: float = 1e-05, diffusion_loss_type: str = 'l2', normalize_factors: tuple = (1, 4, 10), center_of_mass: str = 'fragments', atom_vocab: Optional[list] = None, pocket_conditioned: bool = False, context_node_nf: Optional[int] = None, graph_type: str = 'FC', size_gnn_checkpoint: Optional[str] = None, **kwargs)
+   .. py:attribute:: upstream_int8_edge_mask
+      :value: False
+
+
+
+.. py:class:: DiffLinkerTaskFactory(task_type: str, in_node_nf: int, n_dims: int = 3, hidden_nf: int = 128, activation: str = 'silu', tanh: bool = False, n_layers: int = 6, attention: bool = False, norm_constant: float = 1e-06, inv_sublayers: int = 2, sin_embedding: bool = False, normalization_factor: float = 100, aggregation_method: str = 'sum', model: str = 'egnn_dynamics', normalization: Optional[str] = 'batch_norm', condition_time: bool = True, anchors_context: bool = True, diffusion_steps: int = 500, diffusion_noise_schedule: str = 'polynomial_2', diffusion_noise_precision: float = 1e-05, diffusion_loss_type: str = 'l2', normalize_factors: tuple = (1, 4, 10), center_of_mass: str = 'fragments', atom_vocab: Optional[list] = None, pocket_conditioned: bool = False, context_node_nf: Optional[int] = None, graph_type: str = 'FC', upstream_int8_edge_mask: bool = False, size_gnn_checkpoint: Optional[str] = None, **kwargs)
 
    Factory matching ``train.py``'s ``task_module.build()`` /
    ``task_module.task`` instantiation pattern (see
@@ -342,7 +355,12 @@ Module Contents
    .. py:attribute:: task_type
 
 
-.. py:class:: PointCloudToDiffLinkerBatch(atom_vocab: list)
+   .. py:attribute:: upstream_int8_edge_mask
+      :value: False
+
+
+
+.. py:class:: PointCloudToDiffLinkerBatch(atom_vocab: list, *, upstream_int8_edge_mask: bool = False)
 
    Converts a MolCraftDiffusion PointCloud batch dict into DiffLinker's
    native per-atom field layout.
@@ -364,6 +382,37 @@ Module Contents
 
 
    .. py:attribute:: n_vocab
+
+
+   .. py:attribute:: upstream_int8_edge_mask
+      :value: False
+
+
+
+.. py:function:: dense_edge_mask(atom_mask: torch.Tensor, *, upstream_int8: bool = False) -> torch.Tensor
+
+   Build the flat ``(B*N*N, 1)`` edge mask for the dense path.
+
+   ``upstream_int8`` reproduces a real integer-overflow bug in DiffLinker's
+   own ``src/datasets.py:366-369``, which every released non-pocket weight
+   was trained under::
+
+       edge_mask = atom_mask[:, None, :] * atom_mask[:, :, None]
+       diag_mask = ~torch.eye(n, dtype=const.TORCH_INT)   # TORCH_INT = int8
+       edge_mask *= diag_mask
+
+   ``~`` on an ``int8`` tensor is *bitwise* NOT, not logical NOT, so
+   ``diag_mask`` is ``-1`` off-diagonal and ``-2`` on-diagonal rather than
+   ``True``/``False``. The resulting mask therefore **negates** every real
+   message and passes self-loops through at ``-2``. That sign convention is
+   baked into the released weights: fed the arithmetically-correct
+   ``+1``/``0`` mask they diverge to NaN on the first reverse step, and fed
+   this one they generate cleanly. Weights trained *by this platform* learnt
+   the correct mask, so this defaults to ``False`` and only the converted
+   upstream checkpoints turn it on.
+
+   The pocket checkpoints are unaffected either way: ``DynamicsWithPockets``
+   builds its own distance-cutoff edges and is called with ``edge_mask=None``.
 
 
 .. py:data:: DIFFLINKER_ROW_DATA_COLUMNS

@@ -46,7 +46,7 @@ Module Contents
    .. py:method:: forward(g: dgl.DGLGraph, n_atom_types: int) -> Dict[str, torch.Tensor]
 
 
-.. py:class:: FlowMolFlowMatchingTask(n_atom_types: int, n_charges: int, neutral_charge_index: int, interpolant_scheduler_config: dict, vector_field_config: dict, prior_std: float, time_scaled_loss: bool, total_loss_weights: dict, default_n_timesteps: int, dataset_stats: dict, atom_vocab: Optional[list] = None)
+.. py:class:: FlowMolFlowMatchingTask(n_atom_types: int, n_charges: int, neutral_charge_index: int, interpolant_scheduler_config: dict, vector_field_config: dict, prior_std: float, time_scaled_loss: bool, total_loss_weights: dict, default_n_timesteps: int, dataset_stats: dict, atom_vocab: Optional[list] = None, condition_names: list = [], context_mask_rate: float = 0.0, mask_value: float = 0.0, normalize_condition: Optional[str] = None, adapter_conditions: Optional[list] = None, use_adapter_module: bool = False)
 
    Bases: :py:obj:`torch.nn.Module`
 
@@ -60,7 +60,33 @@ Module Contents
    .. py:method:: predict_and_target(batch: Dict[str, torch.Tensor])
 
 
+   .. py:method:: preprocess(train_set=None, valid_set=None, test_set=None)
+
+      Build self.property_norms for CFG conditioning (train-side only).
+
+      Called generically by cli/train.py if this attribute exists. Does
+      NOT touch node_dist_model/n_node_dist -- those come from
+      dataset_stats at __init__ time via FlowMolTaskFactory, a separate
+      mechanism. Deliberately skips DistributionProperty/prop_dist_model
+      (out of scope -- generation always takes an explicit target_value).
+
+
+
    .. py:method:: sample(batch_size: Optional[int] = None, nodesxsample: Optional[torch.Tensor] = None, num_steps: Optional[int] = None, batch: Optional[Dict[str, torch.Tensor]] = None, mode=None, n_frames: int = 0, **kwargs)
+
+
+   .. py:method:: sample_guidance_conitional(target_function=None, target_value=None, negative_target_value=None, nodesxsample: Optional[torch.Tensor] = None, cfg_scale: float = 1, cfg_scale_schedule: Optional[str] = None, guidance_ver: str = 'cfg', n_frames: int = 0, num_steps: Optional[int] = None, **kwargs)
+
+      Classifier-free-guidance generation. Matches the call signature
+      GenerativeFactory.conditional_generation() hardcodes for
+      task_type == "cfg" (runmodes/generate/tasks_generate.py), and returns
+      (one_hot, charges, x, node_mask) like sample() -- "EDM compatibility".
+
+      Simpler than TABASCO's version: FlowMol's DGL graphs are node-native
+      (no per-molecule padding dimension), so a per-molecule condition
+      value broadcasts via `context_per_mol[node_batch_idx]` directly --
+      no dense (B,N,D) intermediate needed.
+
 
 
    .. py:attribute:: atom_vocab
@@ -70,6 +96,16 @@ Module Contents
 
    .. py:attribute:: canonical_feat_order
       :value: ['x', 'a', 'c']
+
+
+
+   .. py:attribute:: condition
+      :value: []
+
+
+
+   .. py:attribute:: context_mask_rate
+      :value: 0.0
 
 
 
@@ -91,13 +127,24 @@ Module Contents
    .. py:attribute:: loss_x
 
 
+   .. py:attribute:: mask_value
+      :value: 0.0
+
+
+
    .. py:property:: model
+
+
+   .. py:attribute:: n_adapter_context
 
 
    .. py:attribute:: n_atom_types
 
 
    .. py:attribute:: n_charges
+
+
+   .. py:attribute:: n_concat_context
 
 
    .. py:property:: n_node_dist
@@ -109,10 +156,20 @@ Module Contents
    .. py:property:: node_dist_model
 
 
+   .. py:attribute:: normalize_condition
+      :value: None
+
+
+
    .. py:attribute:: prior_std
 
 
    .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: property_norms
       :value: None
 
 
@@ -216,7 +273,7 @@ Module Contents
    Gaussian prior. No ``edata`` is set -- bonds are dropped.
 
 
-   .. py:method:: forward(batch: Dict[str, torch.Tensor]) -> dgl.DGLGraph
+   .. py:method:: forward(batch: Dict[str, torch.Tensor], condition: Optional[torch.Tensor] = None) -> dgl.DGLGraph
 
 
    .. py:attribute:: n_atom_types

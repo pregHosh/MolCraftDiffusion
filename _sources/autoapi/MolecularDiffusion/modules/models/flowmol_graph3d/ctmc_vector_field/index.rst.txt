@@ -62,7 +62,7 @@ Module Contents
 
 
 
-   .. py:method:: integrate(g: dgl.DGLGraph, node_batch_idx: torch.Tensor, upper_edge_mask: torch.Tensor, n_timesteps: int, stochasticity: float = 8.0, high_confidence_threshold: float = 0.9, cat_temp_func: collections.abc.Callable = None, tspan: torch.Tensor = None, **kwargs) -> dgl.DGLGraph
+   .. py:method:: integrate(g: dgl.DGLGraph, node_batch_idx: torch.Tensor, upper_edge_mask: torch.Tensor, n_timesteps: int, stochasticity: float = 8.0, high_confidence_threshold: float = 0.9, cat_temp_func: collections.abc.Callable = None, tspan: torch.Tensor = None, condition: torch.Tensor | None = None, negative_condition: torch.Tensor | None = None, cfg_scale: float = 0.0, cfg_scale_schedule: str | None = None, **kwargs) -> dgl.DGLGraph
 
       Integrate from the all-mask prior to a molecule in ``n_timesteps``.
 
@@ -78,7 +78,7 @@ Module Contents
 
 
 
-   .. py:method:: step(g: dgl.DGLGraph, s_i: torch.Tensor, t_i: torch.Tensor, alpha_t_i: torch.Tensor, alpha_s_i: torch.Tensor, alpha_t_prime_i: torch.Tensor, node_batch_idx: torch.Tensor, edge_batch_idx: torch.Tensor = None, upper_edge_mask: torch.Tensor = None, cat_temp_func: collections.abc.Callable = None, prev_dst_dict: dict = None, stochasticity: float = 8.0, high_confidence_threshold: float = 0.9, last_step: bool = False, inv_temp_func: collections.abc.Callable = None, **kwargs)
+   .. py:method:: step(g: dgl.DGLGraph, s_i: torch.Tensor, t_i: torch.Tensor, alpha_t_i: torch.Tensor, alpha_s_i: torch.Tensor, alpha_t_prime_i: torch.Tensor, node_batch_idx: torch.Tensor, edge_batch_idx: torch.Tensor = None, upper_edge_mask: torch.Tensor = None, cat_temp_func: collections.abc.Callable = None, prev_dst_dict: dict = None, stochasticity: float = 8.0, high_confidence_threshold: float = 0.9, last_step: bool = False, inv_temp_func: collections.abc.Callable = None, condition: torch.Tensor | None = None, negative_condition: torch.Tensor | None = None, cfg_scale: float = 0.0, **kwargs)
 
       One CTMC step: Euler on ``x``, Campbell unmask/re-mask on ``a/c/e``.
 

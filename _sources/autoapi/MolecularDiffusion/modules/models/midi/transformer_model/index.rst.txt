@@ -36,7 +36,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: GraphTransformer(input_dims: MolecularDiffusion.modules.models.midi.placeholder.Dims, n_layers: int, hidden_mlp_dims: dict, hidden_dims: dict, output_dims: MolecularDiffusion.modules.models.midi.placeholder.Dims)
+.. py:class:: GraphTransformer(input_dims: MolecularDiffusion.modules.models.midi.placeholder.Dims, n_layers: int, hidden_mlp_dims: dict, hidden_dims: dict, output_dims: MolecularDiffusion.modules.models.midi.placeholder.Dims, adapter_indices: list | None = None, concat_indices: list | None = None)
 
    Bases: :py:obj:`torch.nn.Module`
 
@@ -50,14 +50,38 @@ Module Contents
                            ``X``/``E``/``y``/``pos``.
    :param hidden_dims: transformer widths, keys ``dx``/``de``/``dy``/``n_head``/
                        ``dim_ffX``/``dim_ffE``/``dim_ffy``.
-   :param output_dims: channel counts of the prediction (``y`` is 0 -- MiDi is
-                       unconditional).
+   :param output_dims: channel counts of the prediction (``y`` is 0 -- MiDi
+                       never asks the network to predict a property value).
+   :param adapter_indices: indices into an external per-graph ``condition``
+                           tensor routed through a per-layer adapter MLP, additively
+                           injected into the evolving ``y`` after every transformer layer.
+   :param concat_indices: indices into ``condition`` concatenated onto ``y``
+                          once, before the input embedding -- reaches every layer for free
+                          via ``y``'s existing per-layer FiLM injection into ``X``/``E``.
 
 
-   .. py:method:: forward(data: MolecularDiffusion.modules.models.midi.placeholder.PlaceHolder) -> MolecularDiffusion.modules.models.midi.placeholder.PlaceHolder
+   .. py:method:: forward(data: MolecularDiffusion.modules.models.midi.placeholder.PlaceHolder, condition: torch.Tensor | None = None) -> MolecularDiffusion.modules.models.midi.placeholder.PlaceHolder
 
       Denoise one batch; returns logits for the categorical modalities.
 
+      ``condition``, when given, is a per-graph ``(B, D)`` property tensor:
+      columns in ``self.concat_indices`` are appended to ``y`` before the
+      input embedding, columns in ``self.adapter_indices`` are routed
+      through a dedicated per-layer MLP added to ``y`` after each layer.
+
+
+
+   .. py:attribute:: adapter_indices
+      :value: []
+
+
+
+   .. py:attribute:: concat_indices
+      :value: []
+
+
+
+   .. py:attribute:: condition_adapters
 
 
    .. py:attribute:: mlp_in_E

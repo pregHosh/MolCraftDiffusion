@@ -43,11 +43,12 @@ MolecularDiffusion.modules.models.tabasco_equiformer.equiformer_backbone
       locally (a two-line body, boilerplate index bookkeeping, not a
       layer/schedule) rather than importing ``EquiformerV2_dynamics`` itself,
       which this backbone otherwise never touches.
-   2. Project one-hot atom type + scalar time ``t`` into the l=0 (scalar)
-      channel of a fresh ``SO3_Embedding``, following ``_build_so3_input``'s
-      pattern (``equiformer_v2_dynamics.py:118-142``) -- omitting the
-      context/adapter machinery ``EquiformerV2_dynamics`` carries for EDM
-      conditioning, since TABASCO has no conditioning context.
+   2. Project one-hot atom type + scalar time ``t`` (+ concat-routed
+      conditioning, if any) into the l=0 (scalar) channel of a fresh
+      ``SO3_Embedding``, following ``_build_so3_input``'s pattern
+      (``equiformer_v2_dynamics.py:118-142``). Adapter-routed conditioning is a
+      separate single additive injection into l=0 after this projection,
+      mirroring ``EquiformerV2_dynamics``'s own ``adapter_proj``.
    3. Run the wrapped ``EquiformerV2`` encoder over the compacted graph.
    4. Read a per-atom displacement ``d`` off the l=1 channel via a
       ``FeedForwardNetwork`` SO3 head (same construction as
@@ -83,7 +84,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: EquiformerV2TabascoBackbone(atom_dim: int, sphere_channels: int = 128, input_sphere_channels: int = 128, num_layers: int = 8, lmax_list: Optional[List[int]] = None, mmax_list: Optional[List[int]] = None, grid_resolution: int = 18, num_sphere_samples: int = 128, attn_hidden_channels: int = 64, attn_alpha_channels: int = 64, attn_value_channels: int = 16, ffn_hidden_channels: int = 128, num_heads: int = 8, norm_type: str = 'layer_norm_sh', edge_channels: int = 128, use_atom_edge_embedding: bool = True, share_atom_edge_embedding: bool = False, use_m_share_rad: bool = False, distance_function: str = 'gaussian', num_distance_basis: int = 512, attn_activation: str = 'silu', use_s2_act_attn: bool = False, use_attn_renorm: bool = True, ffn_activation: str = 'silu', use_gate_act: bool = False, use_grid_mlp: bool = True, use_sep_s2_act: bool = True, alpha_drop: float = 0.1, drop_path_rate: float = 0.1, proj_drop: float = 0.0, cutoff: float = 9.0, weight_init: str = 'uniform')
+.. py:class:: EquiformerV2TabascoBackbone(atom_dim: int, sphere_channels: int = 128, input_sphere_channels: int = 128, num_layers: int = 8, lmax_list: Optional[List[int]] = None, mmax_list: Optional[List[int]] = None, grid_resolution: int = 18, num_sphere_samples: int = 128, attn_hidden_channels: int = 64, attn_alpha_channels: int = 64, attn_value_channels: int = 16, ffn_hidden_channels: int = 128, num_heads: int = 8, norm_type: str = 'layer_norm_sh', edge_channels: int = 128, use_atom_edge_embedding: bool = True, share_atom_edge_embedding: bool = False, use_m_share_rad: bool = False, distance_function: str = 'gaussian', num_distance_basis: int = 512, attn_activation: str = 'silu', use_s2_act_attn: bool = False, use_attn_renorm: bool = True, ffn_activation: str = 'silu', use_gate_act: bool = False, use_grid_mlp: bool = True, use_sep_s2_act: bool = True, alpha_drop: float = 0.1, drop_path_rate: float = 0.1, proj_drop: float = 0.0, cutoff: float = 9.0, weight_init: str = 'uniform', adapter_indices: Optional[List[int]] = None, concat_indices: Optional[List[int]] = None)
 
    Bases: :py:obj:`torch.nn.Module`
 
@@ -96,12 +97,13 @@ Module Contents
    Provenance" table.
 
 
-   .. py:method:: forward(coords: torch.Tensor, atomics: torch.Tensor, padding_mask: torch.Tensor, t: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+   .. py:method:: forward(coords: torch.Tensor, atomics: torch.Tensor, padding_mask: torch.Tensor, t: torch.Tensor, condition: Optional[torch.Tensor] = None) -> Tuple[torch.Tensor, torch.Tensor]
 
       :param coords: (B, N, 3)
       :param atomics: (B, N, atom_dim) one-hot (or soft) atom-type features
       :param padding_mask: (B, N), TABASCO convention -- 1 = padded, 0 = real
       :param t: (B,) timestep in [0, 1]
+      :param condition: (B, N, n_adapter_context + n_concat_context) or None
 
       :returns: (B, N, 3) endpoint prediction
                 atom_logits: (B, N, atom_dim)
@@ -109,7 +111,17 @@ Module Contents
 
 
 
+   .. py:attribute:: adapter_indices
+      :value: []
+
+
+
    .. py:attribute:: atom_dim
+
+
+   .. py:attribute:: concat_indices
+      :value: []
+
 
 
    .. py:attribute:: equiformer

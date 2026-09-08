@@ -38,13 +38,13 @@ Module Contents
    compile: If True, passes the network through `torch.compile`.
 
 
-   .. py:method:: forward(batch, compute_stats: bool = True)
+   .. py:method:: forward(batch, condition=None, compute_stats: bool = True)
 
       Compute training loss and optional stats.
 
 
 
-   .. py:method:: sample(batch: Optional[tensordict.TensorDict] = None, num_steps: int = 100, batch_size: Optional[int] = None, return_trajectories: bool = False)
+   .. py:method:: sample(batch: Optional[tensordict.TensorDict] = None, num_steps: int = 100, batch_size: Optional[int] = None, return_trajectories: bool = False, condition=None, negative_condition=None, cfg_scale: float = 0.0, cfg_scale_schedule: Optional[str] = None)
 
       Sample molecules.
 
@@ -54,6 +54,13 @@ Module Contents
       :param num_steps: Number of Euler steps.
       :param batch_size: Required when `batch` is `None`.
       :param return_trajectories: If True, also return intermediate snapshots.
+      :param condition: Optional (B, N, D) classifier-free-guidance condition.
+      :param negative_condition: Optional explicit negative/null condition;
+                                 defaults to zeros when `condition` is given but this isn't.
+      :param cfg_scale: Guidance strength `w` in `(1+w)*cond - w*uncond`.
+      :param cfg_scale_schedule: `None | "linear" | "exponential" | "cosine"`
+                                 -- ramps `cfg_scale` across sampling steps, see
+                                 `_scale_schedule`.
 
 
 

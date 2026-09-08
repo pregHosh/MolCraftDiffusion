@@ -50,7 +50,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: EndpointVectorField(n_atom_types: int, canonical_feat_order: list, interpolant_scheduler: MolecularDiffusion.modules.models.flowmol.interpolant_scheduler.InterpolantScheduler, n_charges: int = 6, n_bond_types: int = 4, n_vec_channels: int = 16, n_cp_feats: int = 0, n_hidden_scalars: int = 64, n_hidden_edge_feats: int = 64, n_recycles: int = 1, n_molecule_updates: int = 2, convs_per_update: int = 2, n_message_gvps: int = 3, n_update_gvps: int = 3, n_expansion_gvps: int = 3, separate_mol_updaters: bool = False, message_norm: float | str = 100, update_edge_w_distance: bool = False, rbf_dmax: float = 20, rbf_dim: int = 16, exclude_charges: bool = False, continuous_inv_temp_schedule=None, continuous_inv_temp_max: float = 10.0, time_embedding_dim: int = 1, a_token_dim: int = 0, c_token_dim: int = 0, e_token_dim: int = 0, attention: bool = False, n_heads: int = 1, s_message_dim: int = None, v_message_dim: int = None, dropout: float = 0.0, has_mask: bool = False, self_conditioning: bool = False, use_dst_feats: bool = False, dst_feat_msg_reduction_factor: float = 4, scprop: float = 0.5)
+.. py:class:: EndpointVectorField(n_atom_types: int, canonical_feat_order: list, interpolant_scheduler: MolecularDiffusion.modules.models.flowmol.interpolant_scheduler.InterpolantScheduler, n_charges: int = 6, n_bond_types: int = 4, n_vec_channels: int = 16, n_cp_feats: int = 0, n_hidden_scalars: int = 64, n_hidden_edge_feats: int = 64, n_recycles: int = 1, n_molecule_updates: int = 2, convs_per_update: int = 2, n_message_gvps: int = 3, n_update_gvps: int = 3, n_expansion_gvps: int = 3, separate_mol_updaters: bool = False, message_norm: float | str = 100, update_edge_w_distance: bool = False, rbf_dmax: float = 20, rbf_dim: int = 16, exclude_charges: bool = False, continuous_inv_temp_schedule=None, continuous_inv_temp_max: float = 10.0, time_embedding_dim: int = 1, a_token_dim: int = 0, c_token_dim: int = 0, e_token_dim: int = 0, attention: bool = False, n_heads: int = 1, s_message_dim: int = None, v_message_dim: int = None, dropout: float = 0.0, has_mask: bool = False, self_conditioning: bool = False, use_dst_feats: bool = False, dst_feat_msg_reduction_factor: float = 4, scprop: float = 0.5, adapter_indices: list | None = None, concat_indices: list | None = None)
 
    Bases: :py:obj:`torch.nn.Module`
 
@@ -70,7 +70,7 @@ Module Contents
 
 
 
-   .. py:method:: denoise_graph(g: dgl.DGLGraph, node_scalar_features: torch.Tensor, node_vec_features: torch.Tensor, node_positions: torch.Tensor, edge_features: torch.Tensor, node_batch_idx: torch.Tensor, upper_edge_mask: torch.Tensor, apply_softmax: bool = False, remove_com: bool = False) -> dict
+   .. py:method:: denoise_graph(g: dgl.DGLGraph, node_scalar_features: torch.Tensor, node_vec_features: torch.Tensor, node_positions: torch.Tensor, edge_features: torch.Tensor, node_batch_idx: torch.Tensor, upper_edge_mask: torch.Tensor, apply_softmax: bool = False, remove_com: bool = False, adapter_ctx: torch.Tensor | None = None) -> dict
 
       The GVP message-passing stack plus the four output heads.
 
@@ -118,7 +118,17 @@ Module Contents
 
 
 
+   .. py:attribute:: adapter_indices
+      :value: []
+
+
+
    .. py:attribute:: canonical_feat_order
+
+
+   .. py:attribute:: concat_indices
+      :value: []
+
 
 
    .. py:attribute:: continuous_inv_temp_func

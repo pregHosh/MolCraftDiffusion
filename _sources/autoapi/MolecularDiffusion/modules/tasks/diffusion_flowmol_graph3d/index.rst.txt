@@ -65,7 +65,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: FlowMolGraph3DTask(atom_vocab: list, n_atom_types: int, n_charge_classes: int, charge_offset: int, n_bond_types: int, fake_atom_p: float, fake_atom_std: float, distort_p: float, distort_t: float, prior_std: float, time_scaled_loss: bool, total_loss_weights: dict, default_n_timesteps: int, stochasticity: float, high_confidence_threshold: float, sdf_output_path: str | None, interpolant_scheduler_config: dict, vector_field_config: dict, n_atoms_hist: dict, task_type: str = 'diffusion_flowmol_graph3d')
+.. py:class:: FlowMolGraph3DTask(atom_vocab: list, n_atom_types: int, n_charge_classes: int, charge_offset: int, n_bond_types: int, fake_atom_p: float, fake_atom_std: float, distort_p: float, distort_t: float, prior_std: float, time_scaled_loss: bool, total_loss_weights: dict, default_n_timesteps: int, stochasticity: float, high_confidence_threshold: float, sdf_output_path: str | None, interpolant_scheduler_config: dict, vector_field_config: dict, n_atoms_hist: dict, task_type: str = 'diffusion_flowmol_graph3d', condition_names: list = [], context_mask_rate: float = 0.0, mask_value: float = 0.0, normalize_condition: str | None = None, adapter_conditions: list | None = None, use_adapter_module: bool = False)
 
    Bases: :py:obj:`torch.nn.Module`
 
@@ -88,6 +88,19 @@ Module Contents
 
 
 
+   .. py:method:: preprocess(train_set=None, valid_set=None, test_set=None)
+
+      Build self.property_norms for CFG conditioning (train-side only).
+
+      Called generically by cli/train.py if this attribute exists. Does
+      NOT touch node_dist_model/n_node_dist -- those come from
+      dataset_stats/graph3d_stats at __init__ time via
+      FlowMolGraph3DTaskFactory, a separate mechanism. Deliberately skips
+      DistributionProperty/prop_dist_model (out of scope -- generation
+      always takes an explicit target_value).
+
+
+
    .. py:method:: sample(batch_size: int | None = None, nodesxsample: torch.Tensor | None = None, num_steps: int | None = None, batch: dict | None = None, mode: str | None = None, n_frames: int = 0, **kwargs: Any) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]
 
       Unconditional sampling from the all-mask prior.
@@ -107,6 +120,15 @@ Module Contents
 
 
 
+   .. py:method:: sample_guidance_conitional(target_function=None, target_value=None, negative_target_value=None, nodesxsample=None, cfg_scale: float = 1, cfg_scale_schedule: str | None = None, guidance_ver: str = 'cfg', n_frames: int = 0, num_steps: int | None = None, **kwargs: Any)
+
+      Classifier-free-guidance generation. Matches the call signature
+      GenerativeFactory.conditional_generation() hardcodes for
+      task_type == "cfg" (runmodes/generate/tasks_generate.py), and returns
+      (one_hot, charges, x, node_mask) like sample() -- "EDM compatibility".
+
+
+
    .. py:attribute:: atom_vocab
 
 
@@ -116,6 +138,16 @@ Module Contents
 
 
    .. py:attribute:: charge_offset
+
+
+   .. py:attribute:: condition
+      :value: []
+
+
+
+   .. py:attribute:: context_mask_rate
+      :value: 0.0
+
 
 
    .. py:property:: device
@@ -156,9 +188,17 @@ Module Contents
    .. py:attribute:: loss_x
 
 
+   .. py:attribute:: mask_value
+      :value: 0.0
+
+
+
    .. py:property:: model
       :type: FlowMolGraph3DTask
 
+
+
+   .. py:attribute:: n_adapter_context
 
 
    .. py:attribute:: n_atom_types
@@ -168,6 +208,9 @@ Module Contents
 
 
    .. py:attribute:: n_charge_classes
+
+
+   .. py:attribute:: n_concat_context
 
 
    .. py:property:: n_node_dist
@@ -183,10 +226,20 @@ Module Contents
    .. py:attribute:: node_dist_model
 
 
+   .. py:attribute:: normalize_condition
+      :value: None
+
+
+
    .. py:attribute:: prior_std
 
 
    .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: property_norms
       :value: None
 
 
@@ -356,7 +409,7 @@ Module Contents
    5. mirror the labels onto both edge directions.
 
 
-   .. py:method:: forward(batch: Any, *, use_fake_atoms: bool) -> dgl.DGLGraph
+   .. py:method:: forward(batch: Any, *, use_fake_atoms: bool, condition: torch.Tensor | None = None) -> dgl.DGLGraph
 
 
    .. py:attribute:: charge_offset

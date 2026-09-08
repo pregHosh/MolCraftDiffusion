@@ -56,12 +56,12 @@ Module Contents
 
 
 
-.. py:class:: EndpointVectorField(n_atom_types: int, canonical_feat_order: list, interpolant_scheduler: MolecularDiffusion.modules.models.flowmol.interpolant_scheduler.InterpolantScheduler, n_charges: int = 6, n_vec_channels: int = 16, n_cp_feats: int = 0, n_hidden_scalars: int = 64, n_hidden_edge_feats: int = 64, n_recycles: int = 1, n_molecule_updates: int = 2, convs_per_update: int = 2, n_message_gvps: int = 3, n_update_gvps: int = 3, n_expansion_gvps: int = 3, separate_mol_updaters: bool = False, message_norm: Union[float, str] = 100, update_edge_w_distance: bool = True, rbf_dmax: float = 20, rbf_dim: int = 16, time_embedding_dim: int = 1, attention: bool = False, n_heads: int = 1, s_message_dim: int = None, v_message_dim: int = None, dropout: float = 0.0, use_dst_feats: bool = False, dst_feat_msg_reduction_factor: float = 4)
+.. py:class:: EndpointVectorField(n_atom_types: int, canonical_feat_order: list, interpolant_scheduler: MolecularDiffusion.modules.models.flowmol.interpolant_scheduler.InterpolantScheduler, n_charges: int = 6, n_vec_channels: int = 16, n_cp_feats: int = 0, n_hidden_scalars: int = 64, n_hidden_edge_feats: int = 64, n_recycles: int = 1, n_molecule_updates: int = 2, convs_per_update: int = 2, n_message_gvps: int = 3, n_update_gvps: int = 3, n_expansion_gvps: int = 3, separate_mol_updaters: bool = False, message_norm: Union[float, str] = 100, update_edge_w_distance: bool = True, rbf_dmax: float = 20, rbf_dim: int = 16, time_embedding_dim: int = 1, attention: bool = False, n_heads: int = 1, s_message_dim: int = None, v_message_dim: int = None, dropout: float = 0.0, use_dst_feats: bool = False, dst_feat_msg_reduction_factor: float = 4, adapter_indices: Optional[list] = None, concat_indices: Optional[list] = None)
 
    Bases: :py:obj:`torch.nn.Module`
 
 
-   .. py:method:: denoise_graph(g: dgl.DGLGraph, node_scalar_features: torch.Tensor, node_vec_features: torch.Tensor, node_positions: torch.Tensor, node_batch_idx: torch.Tensor, apply_softmax: bool = False, remove_com: bool = False)
+   .. py:method:: denoise_graph(g: dgl.DGLGraph, node_scalar_features: torch.Tensor, node_vec_features: torch.Tensor, node_positions: torch.Tensor, node_batch_idx: torch.Tensor, apply_softmax: bool = False, remove_com: bool = False, adapter_ctx: Optional[torch.Tensor] = None)
 
 
    .. py:method:: forward(g: dgl.DGLGraph, t: torch.Tensor, node_batch_idx: torch.Tensor, apply_softmax: bool = False, remove_com: bool = False)
@@ -70,7 +70,7 @@ Module Contents
 
 
 
-   .. py:method:: integrate(g: dgl.DGLGraph, node_batch_idx: torch.Tensor, n_timesteps: int)
+   .. py:method:: integrate(g: dgl.DGLGraph, node_batch_idx: torch.Tensor, n_timesteps: int, condition: Optional[torch.Tensor] = None, negative_condition: Optional[torch.Tensor] = None, cfg_scale: float = 0.0, cfg_scale_schedule: Optional[str] = None)
 
       Integrate the trajectory from prior (x_0) to endpoint along the VF.
 
@@ -88,13 +88,23 @@ Module Contents
 
 
 
-   .. py:method:: step(g: dgl.DGLGraph, s_i: torch.Tensor, t_i: torch.Tensor, alpha_t_i: torch.Tensor, alpha_t_prime_i: torch.Tensor, node_batch_idx: torch.Tensor)
+   .. py:method:: step(g: dgl.DGLGraph, s_i: torch.Tensor, t_i: torch.Tensor, alpha_t_i: torch.Tensor, alpha_t_prime_i: torch.Tensor, node_batch_idx: torch.Tensor, condition: Optional[torch.Tensor] = None, negative_condition: Optional[torch.Tensor] = None, cfg_scale: float = 0.0)
 
 
    .. py:method:: vector_field(x_t, x_1, alpha_t, alpha_t_prime)
 
 
+   .. py:attribute:: adapter_indices
+      :value: []
+
+
+
    .. py:attribute:: canonical_feat_order
+
+
+   .. py:attribute:: concat_indices
+      :value: []
+
 
 
    .. py:attribute:: conv_layers

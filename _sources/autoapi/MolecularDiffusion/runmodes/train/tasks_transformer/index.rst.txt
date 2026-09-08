@@ -1,0 +1,150 @@
+MolecularDiffusion.runmodes.train.tasks_transformer
+===================================================
+
+.. py:module:: MolecularDiffusion.runmodes.train.tasks_transformer
+
+.. autoapi-nested-parse::
+
+   Factory wiring ``TransformerDynamics`` -- a plain (non-equivariant)
+   multi-head self-attention backbone -- into the existing, unmodified
+   diffusion task, structured exactly like
+   ``runmodes/train/tasks_painn.py::ModelTaskFactory`` (a new dynamics
+   network dropped into ``EnVariationalDiffusion`` + ``GeomMolecularGenerative``,
+   zero edits to either).
+
+   Per the approved ledger
+   (``docs/model_novel/diffusion_transformer/INTEGRATION_PLAN.md``) this is a
+   novel-model ablation against the EGCL parent (``tasks_egcl.py``): only the
+   backbone (and the platform's own ``data_augmentation`` flag) differ --
+   every diffusion-math hyperparameter is copied verbatim from
+   ``configs/tasks/diffusion.yaml`` so the ablation isolates the backbone
+   swap and nothing else. Follows the *parent's* simpler constructor
+   convention (a plain ``condition_names`` parameter) rather than
+   ``tasks_painn.ModelTaskFactory``'s ``train_set``/``task_names``
+   legacy-alias pair, which this backbone does not need.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.tasks_transformer.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.train.tasks_transformer.ModelTaskFactory
+
+
+Module Contents
+---------------
+
+.. py:class:: ModelTaskFactory(task_type: str, atom_vocab: list = None, condition_names: list = [], hidden_dim: int = 192, num_layers: int = 9, num_heads: int = 8, mlp_dim: int = None, dropout: float = 0.0, activation_type: str = 'gelu', add_sinusoid_posenc: bool = False, chkpt_path: str = None, **kwargs)
+
+   Build the Transformer-backbone diffusion model + task.
+
+   :param task_type: must be ``"diffusion"``.
+   :type task_type: str
+   :param atom_vocab: atom vocabulary used for encoding.
+   :type atom_vocab: list
+   :param condition_names: condition names for conditional
+                           generation.
+   :type condition_names: list
+   :param hidden_dim: transformer token width.
+   :type hidden_dim: int
+   :param num_layers: transformer block depth
+                      (``Transformer``'s ``depth``).
+   :type num_layers: int
+   :param num_heads: multi-head self-attention heads.
+   :type num_heads: int
+   :param mlp_dim: feed-forward hidden width; ``None`` defaults to
+                   ``4 * hidden_dim`` inside ``Transformer``.
+   :type mlp_dim: int
+   :param dropout: dropout probability.
+   :type dropout: float
+   :param activation_type: ``Transformer``'s feed-forward activation
+                           string knob (e.g. ``"gelu"``).
+   :type activation_type: str
+   :param add_sinusoid_posenc: ablation-only knob, off by default.
+   :type add_sinusoid_posenc: bool
+   :param chkpt_path: optional path to a model checkpoint.
+   :type chkpt_path: str
+   :param \*\*kwargs: diffusion keyword arguments, see
+                      ``configs/tasks/diffusion_transformer.yaml``.
+
+
+   .. py:method:: build()
+
+      Build and return the ``GeomMolecularGenerative`` task.
+
+
+
+   .. py:attribute:: activation_type
+      :value: 'gelu'
+
+
+
+   .. py:attribute:: add_sinusoid_posenc
+      :value: False
+
+
+
+   .. py:attribute:: atom_vocab
+      :value: None
+
+
+
+   .. py:attribute:: chkpt_path
+      :value: None
+
+
+
+   .. py:attribute:: condition_names
+      :value: []
+
+
+
+   .. py:attribute:: context_node_nf
+
+
+   .. py:attribute:: dropout
+      :value: 0.0
+
+
+
+   .. py:attribute:: hidden_dim
+      :value: 192
+
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: mlp_dim
+      :value: None
+
+
+
+   .. py:attribute:: num_heads
+      :value: 8
+
+
+
+   .. py:attribute:: num_layers
+      :value: 9
+
+
+
+   .. py:attribute:: task_type
+
+
+.. py:data:: logger
+

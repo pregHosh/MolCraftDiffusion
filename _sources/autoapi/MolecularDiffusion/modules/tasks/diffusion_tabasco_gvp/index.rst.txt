@@ -93,7 +93,7 @@ Module Contents
 
 
 
-.. py:class:: TabascoGVPDiffusionTask(gvp_config: dict, coords_interpolant_config: dict, atomics_interpolant_config: dict, flow_matching_config: dict, num_atom_types: int, dataset_stats: dict, atom_vocab: Optional[list] = None)
+.. py:class:: TabascoGVPDiffusionTask(gvp_config: dict, coords_interpolant_config: dict, atomics_interpolant_config: dict, flow_matching_config: dict, num_atom_types: int, dataset_stats: dict, atom_vocab: Optional[list] = None, condition_names: list = [], context_mask_rate: float = 0.0, mask_value: float = 0.0, normalize_condition: Optional[str] = None, adapter_conditions: Optional[list] = None, use_adapter_module: bool = False)
 
    Bases: :py:obj:`MolecularDiffusion.modules.tasks.diffusion_tabasco.TabascoDiffusionTask`
 
@@ -112,13 +112,44 @@ Module Contents
 
 
 
+   .. py:attribute:: condition
+      :value: []
+
+
+
+   .. py:attribute:: context_mask_rate
+      :value: 0.0
+
+
+
+   .. py:attribute:: mask_value
+      :value: 0.0
+
+
+
    .. py:attribute:: max_n_nodes
+
+
+   .. py:attribute:: n_adapter_context
+
+
+   .. py:attribute:: n_concat_context
+
+
+   .. py:attribute:: normalize_condition
+      :value: None
+
 
 
    .. py:attribute:: num_atom_types
 
 
    .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: property_norms
       :value: None
 
 

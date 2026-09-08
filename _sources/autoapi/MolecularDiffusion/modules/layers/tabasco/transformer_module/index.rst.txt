@@ -15,7 +15,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: TransformerModule(spatial_dim: int, atom_dim: int, num_heads: int, num_layers: int, hidden_dim: int, activation: str = 'SiLU', implementation: str = 'pytorch', cross_attention: bool = False, add_sinusoid_posenc: bool = True, concat_combine_input: bool = False, custom_weight_init: Optional[str] = None)
+.. py:class:: TransformerModule(spatial_dim: int, atom_dim: int, num_heads: int, num_layers: int, hidden_dim: int, activation: str = 'SiLU', implementation: str = 'pytorch', cross_attention: bool = False, add_sinusoid_posenc: bool = True, concat_combine_input: bool = False, custom_weight_init: Optional[str] = None, adapter_indices: Optional[list] = None, concat_indices: Optional[list] = None)
 
    Bases: :py:obj:`torch.nn.Module`
 
@@ -26,9 +26,14 @@ Module Contents
    :param (uniform does not work well):
 
 
-   .. py:method:: forward(coords, atomics, padding_mask, t) -> torch.Tensor
+   .. py:method:: forward(coords, atomics, padding_mask, t, condition: Optional[torch.Tensor] = None) -> torch.Tensor
 
       Forward pass of the module.
+
+
+
+   .. py:attribute:: adapter_indices
+      :value: []
 
 
 
@@ -45,6 +50,11 @@ Module Contents
 
    .. py:attribute:: concat_combine_input
       :value: False
+
+
+
+   .. py:attribute:: concat_indices
+      :value: []
 
 
 

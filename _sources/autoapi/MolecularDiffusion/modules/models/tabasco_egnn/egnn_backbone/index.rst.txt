@@ -49,7 +49,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: EGNNBackbone(atom_dim: int, hidden_dim: int = 256, num_layers: int = 9, activation: str = 'SiLU', attention: bool = True, tanh: bool = True, inv_sublayers: int = 1, sin_embedding: bool = False, include_cosine: bool = True, norm_constant: float = 1.0, normalization_factor: float = 1.0, aggregation_method: str = 'sum', coords_range: float = 15.0, norm_diff: bool = True, dropout: float = 0.0, normalization: bool = False)
+.. py:class:: EGNNBackbone(atom_dim: int, hidden_dim: int = 256, num_layers: int = 9, activation: str = 'SiLU', attention: bool = True, tanh: bool = True, inv_sublayers: int = 1, sin_embedding: bool = False, include_cosine: bool = True, norm_constant: float = 1.0, normalization_factor: float = 1.0, aggregation_method: str = 'sum', coords_range: float = 15.0, norm_diff: bool = True, dropout: float = 0.0, normalization: bool = False, adapter_indices: Optional[list] = None, concat_indices: Optional[list] = None)
 
    Bases: :py:obj:`torch.nn.Module`
 
@@ -57,12 +57,13 @@ Module Contents
    TABASCO-compatible net: ``(coords, atomics, padding_mask, t) -> (coords, atom_logits)``.
 
 
-   .. py:method:: forward(coords: torch.Tensor, atomics: torch.Tensor, padding_mask: torch.Tensor, t: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+   .. py:method:: forward(coords: torch.Tensor, atomics: torch.Tensor, padding_mask: torch.Tensor, t: torch.Tensor, condition: Optional[torch.Tensor] = None) -> Tuple[torch.Tensor, torch.Tensor]
 
       :param coords: (B, N, 3)
       :param atomics: (B, N, atom_dim) one-hot (or soft) atom-type features
       :param padding_mask: (B, N), TABASCO convention -- 1 = padded, 0 = real
       :param t: (B,) timestep in [0, 1]
+      :param condition: (B, N, n_adapter_context + n_concat_context) or None
 
       :returns: (B, N, 3) endpoint prediction
                 atom_logits: (B, N, atom_dim)
@@ -70,7 +71,17 @@ Module Contents
 
 
 
+   .. py:attribute:: adapter_indices
+      :value: []
+
+
+
    .. py:attribute:: atom_dim
+
+
+   .. py:attribute:: concat_indices
+      :value: []
+
 
 
    .. py:attribute:: egnn

@@ -1,0 +1,97 @@
+MolecularDiffusion.modules.models.transformer_dynamics
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.models.transformer_dynamics
+
+.. autoapi-nested-parse::
+
+   Dense self-attention adapter binding a plain (non-equivariant)
+   Transformer to the ``dynamics._forward(t, xh, node_mask, edge_mask,
+   context)`` contract that ``EnVariationalDiffusion.phi``
+   (``modules/models/en_diffusion.py:234``) calls.
+
+   Novel-model ablation (``docs/model_novel/diffusion_transformer/
+   INTEGRATION_PLAN.md``): swaps EGCL's equivariant pairwise-difference
+   message passing (``modules/models/egcl.py::EGNN_dynamics``) for plain
+   multi-head self-attention over absolute coordinates, with no distance/edge
+   features and no built-in rotation-equivariance -- the hypothesis is that
+   the platform's existing rotation-augmentation flag
+   (``GeomMolecularGenerative.data_augmentation``) substitutes for the
+   architectural guarantee. Reuses the platform's TABASCO-family attention
+   layers by import rather than copying them: unlike ``PaiNNDynamics``
+   (``modules/models/painn_dynamics.py``), no dense<->flat packing is needed
+   at all, since ``Transformer`` already speaks dense ``(B, N, dim)``.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics
+
+
+Module Contents
+---------------
+
+.. py:class:: TransformerDynamics(in_node_nf: int, context_node_nf: int = 0, n_dims: int = 3, hidden_dim: int = 192, num_layers: int = 9, num_heads: int = 8, mlp_dim: int | None = None, dropout: float = 0.0, activation_type: str = 'gelu', add_sinusoid_posenc: bool = False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Denoising network: plain multi-head self-attention, EDM interface.
+
+   :param in_node_nf: Node feature channels the diffusion model expects
+                      back (atom-type one-hot + atomic number [+ extra values]),
+                      excluding time and context, which are added internally.
+   :param context_node_nf: Conditioning channels, concatenated to the node
+                           features before embedding.
+   :param n_dims: Spatial dimensions (3).
+   :param hidden_dim: Transformer token width.
+   :param num_layers: Transformer block depth (``Transformer``'s ``depth``).
+   :param num_heads: Multi-head self-attention heads.
+   :param mlp_dim: Feed-forward hidden width; ``None`` defaults to
+                   ``4 * hidden_dim`` inside ``Transformer``.
+   :param dropout: Dropout probability.
+   :param activation_type: ``Transformer``'s feed-forward activation
+                           string knob (e.g. ``"gelu"``).
+   :param add_sinusoid_posenc: Ablation-only knob, off by default. Atoms
+                               are an unordered set here, so this has no principled reason
+                               to help; it exists only for later ablation curiosity and is
+                               never load-bearing.
+
+
+   .. py:attribute:: add_sinusoid_posenc
+      :value: False
+
+
+
+   .. py:attribute:: context_node_nf
+      :value: 0
+
+
+
+   .. py:attribute:: feat_embed
+
+
+   .. py:attribute:: in_node_nf
+
+
+   .. py:attribute:: n_dims
+      :value: 3
+
+
+
+   .. py:attribute:: out_head
+
+
+   .. py:attribute:: pos_embed
+
+
+   .. py:attribute:: time_encoding
+
+
+   .. py:attribute:: transformer
+
+

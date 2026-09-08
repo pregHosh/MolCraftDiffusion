@@ -27,8 +27,13 @@ MolecularDiffusion.modules.tasks.diffusion_midi
 
    Out of scope this pass (see the integration plan): ``ExtraFeatures`` (every
    released config sets ``extra_features: null``), the variational-NLL validation
-   path, MiDi's own molecular metrics, the size-aware loader, and all
-   conditioning/guidance modes -- MiDi is unconditional-only.
+   path, MiDi's own molecular metrics, and the size-aware loader.
+
+   Property-conditioning + classifier-free guidance use the same config
+   signature as ``configs/tasks/diffusion.yaml`` (en_diffusion's formulation):
+   set ``condition_names`` to opt in. The injection point is ``PlaceHolder.y``,
+   MiDi's own per-graph global feature, already FiLM-injected into every
+   transformer layer -- see ``modules/models/midi/transformer_model.py``.
 
 
 
@@ -53,7 +58,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: MidiDiffusionTask(atom_vocab: list, n_layers: int, hidden_mlp_dims: dict, hidden_dims: dict, diffusion_steps: int, diffusion_noise_schedule: str, transition: str, nu: dict, lambda_train: list, charge_offset: int, n_charge_classes: int, sdf_output_path: Optional[str], x_marginals: Optional[torch.Tensor], e_marginals: Optional[torch.Tensor], charges_marginals: Optional[torch.Tensor], n_atoms_hist: dict)
+.. py:class:: MidiDiffusionTask(atom_vocab: list, n_layers: int, hidden_mlp_dims: dict, hidden_dims: dict, diffusion_steps: int, diffusion_noise_schedule: str, transition: str, nu: dict, lambda_train: list, charge_offset: int, n_charge_classes: int, sdf_output_path: Optional[str], x_marginals: Optional[torch.Tensor], e_marginals: Optional[torch.Tensor], charges_marginals: Optional[torch.Tensor], n_atoms_hist: dict, condition_names: list = [], context_mask_rate: float = 0.0, mask_value: float = 0.0, normalize_condition: Optional[str] = None, adapter_conditions: Optional[list] = None, use_adapter_module: bool = False)
 
    Bases: :py:obj:`torch.nn.Module`
 
@@ -79,9 +84,21 @@ Module Contents
 
 
 
-   .. py:method:: sample(batch_size: Optional[int] = None, nodesxsample: Optional[torch.Tensor] = None, num_steps: Optional[int] = None, batch: Optional[dict] = None, mode: Optional[str] = None, n_frames: int = 0, **kwargs: Any) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]
+   .. py:method:: preprocess(train_set=None, valid_set=None, test_set=None)
 
-      Unconditional sampling.
+      Build self.property_norms for CFG conditioning (train-side only).
+
+      Called generically by cli/train.py if this attribute exists. Does
+      NOT touch node_dist_model/n_node_dist -- those come from
+      graph3d_stats at __init__ time via ModelTaskFactory, a separate
+      mechanism. Deliberately skips DistributionProperty/prop_dist_model
+      (out of scope -- generation always takes an explicit target_value).
+
+
+
+   .. py:method:: sample(batch_size: Optional[int] = None, nodesxsample: Optional[torch.Tensor] = None, num_steps: Optional[int] = None, batch: Optional[dict] = None, mode: Optional[str] = None, n_frames: int = 0, condition: Optional[torch.Tensor] = None, negative_condition: Optional[torch.Tensor] = None, cfg_scale: float = 0.0, cfg_scale_schedule: Optional[str] = None, **kwargs: Any) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]
+
+      Sampling, unconditional unless ``condition``/``cfg_scale`` are set.
 
       Returns the platform's ``(one_hot, charges, coords, node_mask)``
       tuple. ``charges`` carries **signed formal charges** (FlowMol's
@@ -89,6 +106,16 @@ Module Contents
       The generated bond matrix has no channel in that tuple, so it is
       stashed on ``self.last_bond_types`` and, when ``sdf_output_path`` is
       set, written as an ``.sdf`` sidecar alongside the platform's ``.xyz``.
+
+
+
+   .. py:method:: sample_guidance_conitional(target_function: Any = None, target_value: Optional[list] = None, negative_target_value: Optional[list] = None, nodesxsample: Optional[torch.Tensor] = None, cfg_scale: float = 1, cfg_scale_schedule: Optional[str] = None, guidance_ver: str = 'cfg', n_frames: int = 0, num_steps: Optional[int] = None) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]
+
+      Classifier-free-guidance generation.
+
+      Matches the call signature ``GenerativeFactory.conditional_generation()``
+      hardcodes for ``task_type == "cfg"``, and returns
+      ``(one_hot, charges, x, node_mask)`` like ``sample()``.
 
 
 
@@ -102,6 +129,16 @@ Module Contents
 
 
    .. py:attribute:: charge_offset
+
+
+   .. py:attribute:: condition
+      :value: []
+
+
+
+   .. py:attribute:: context_mask_rate
+      :value: 0.0
+
 
 
    .. py:property:: device
@@ -123,6 +160,11 @@ Module Contents
 
 
 
+   .. py:attribute:: mask_value
+      :value: 0.0
+
+
+
    .. py:property:: model
       :type: MidiDiffusionTask
 
@@ -130,10 +172,16 @@ Module Contents
       ``tasks_generate.py`` reads ``task.model.T``; self is the model.
 
 
+   .. py:attribute:: n_adapter_context
+
+
    .. py:attribute:: n_atom_types
 
 
    .. py:attribute:: n_charge_classes
+
+
+   .. py:attribute:: n_concat_context
 
 
    .. py:property:: n_node_dist
@@ -146,10 +194,20 @@ Module Contents
    .. py:attribute:: node_dist_model
 
 
+   .. py:attribute:: normalize_condition
+      :value: None
+
+
+
    .. py:attribute:: output_dims
 
 
    .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: property_norms
       :value: None
 
 

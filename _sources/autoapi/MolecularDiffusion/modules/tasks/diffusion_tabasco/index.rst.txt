@@ -110,7 +110,7 @@ Module Contents
    .. py:attribute:: num_atom_types
 
 
-.. py:class:: TabascoDiffusionTask(transformer_config: dict, coords_interpolant_config: dict, atomics_interpolant_config: dict, flow_matching_config: dict, num_atom_types: int, dataset_stats: dict, atom_vocab: Optional[list] = None)
+.. py:class:: TabascoDiffusionTask(transformer_config: dict, coords_interpolant_config: dict, atomics_interpolant_config: dict, flow_matching_config: dict, num_atom_types: int, dataset_stats: dict, atom_vocab: Optional[list] = None, condition_names: list = [], context_mask_rate: float = 0.0, mask_value: float = 0.0, normalize_condition: Optional[str] = None, adapter_conditions: Optional[list] = None, use_adapter_module: bool = False)
 
    Bases: :py:obj:`torch.nn.Module`
 
@@ -153,6 +153,18 @@ Module Contents
 
 
 
+   .. py:method:: preprocess(train_set=None, valid_set=None, test_set=None)
+
+      Build self.property_norms for CFG conditioning (train-side only).
+
+      Called generically by cli/train.py if this attribute exists. Does
+      NOT touch node_dist_model/n_node_dist -- those come from
+      dataset_stats at __init__ time via ModelTaskFactory, a separate
+      mechanism. Deliberately skips DistributionProperty/prop_dist_model
+      (out of scope -- generation always takes an explicit target_value).
+
+
+
    .. py:method:: sample(batch_size: Optional[int] = None, nodesxsample: Optional[torch.Tensor] = None, num_steps: int = 100, batch: Optional[Dict[str, torch.Tensor]] = None, return_trajectories: bool = False, **kwargs)
 
       Generate molecules via sampling.
@@ -171,14 +183,41 @@ Module Contents
 
 
 
+   .. py:method:: sample_guidance_conitional(target_function=None, target_value=None, negative_target_value=None, nodesxsample: Optional[torch.Tensor] = None, cfg_scale: float = 1, cfg_scale_schedule: Optional[str] = None, guidance_ver: str = 'cfg', n_frames: int = 0, num_steps: int = 100, **kwargs)
+
+      Classifier-free-guidance generation. Matches the call signature
+      GenerativeFactory.conditional_generation() hardcodes for
+      task_type == "cfg" (runmodes/generate/tasks_generate.py), and returns
+      (one_hot, charges, x, node_mask) like sample() -- "EDM compatibility".
+
+      Only guidance_ver="cfg" is supported (plain classifier-free guidance,
+      no gradient-guidance variants).
+
+
+
    .. py:attribute:: atom_vocab
       :value: None
+
+
+
+   .. py:attribute:: condition
+      :value: []
+
+
+
+   .. py:attribute:: context_mask_rate
+      :value: 0.0
 
 
 
    .. py:property:: device
 
       Get model device.
+
+
+   .. py:attribute:: mask_value
+      :value: 0.0
+
 
 
    .. py:attribute:: max_n_nodes
@@ -189,6 +228,12 @@ Module Contents
       exposes self as the model interface.
 
       :type: tasks_generate.py compatibility
+
+
+   .. py:attribute:: n_adapter_context
+
+
+   .. py:attribute:: n_concat_context
 
 
    .. py:property:: n_node_dist
@@ -204,10 +249,20 @@ Module Contents
       Return a node distribution sampler (EDM compatibility).
 
 
+   .. py:attribute:: normalize_condition
+      :value: None
+
+
+
    .. py:attribute:: num_atom_types
 
 
    .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: property_norms
       :value: None
 
 
