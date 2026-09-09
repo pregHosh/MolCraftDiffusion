@@ -1,7 +1,9 @@
-"""Dense self-attention adapter binding a plain (non-equivariant)
-Transformer to the ``dynamics._forward(t, xh, node_mask, edge_mask,
-context)`` contract that ``EnVariationalDiffusion.phi``
-(``modules/models/en_diffusion.py:234``) calls.
+"""Dense self-attention adapter for ``EnVariationalDiffusion``.
+
+Binds a plain (non-equivariant) Transformer to the
+``dynamics._forward(t, xh, node_mask, edge_mask, context)`` contract that
+``EnVariationalDiffusion.phi`` (``modules/models/en_diffusion.py:234``)
+calls.
 
 Novel-model ablation (``docs/model_novel/diffusion_transformer/
 INTEGRATION_PLAN.md``): swaps EGCL's equivariant pairwise-difference
@@ -10,10 +12,29 @@ multi-head self-attention over absolute coordinates, with no distance/edge
 features and no built-in rotation-equivariance -- the hypothesis is that
 the platform's existing rotation-augmentation flag
 (``GeomMolecularGenerative.data_augmentation``) substitutes for the
-architectural guarantee. Reuses the platform's TABASCO-family attention
-layers by import rather than copying them: unlike ``PaiNNDynamics``
-(``modules/models/painn_dynamics.py``), no dense<->flat packing is needed
-at all, since ``Transformer`` already speaks dense ``(B, N, dim)``.
+architectural guarantee.
+
+Revision 2026-09-09: a real cluster run (300k steps, hyperparameters matched
+to the EGCL baseline) still landed far below EGCL's `valid_posebuster`. Two
+concrete asymmetries against both EGCL and this platform's other
+non-equivariant 3D transformer (ADiT's `DiT`,
+``modules/models/ldm/denoisers/dit.py``) were identified and fixed here:
+
+1. No near-zero output-head init -- EGCL's coordinate-update head is
+   Xavier-init'd with ``gain=0.001`` (``modules/layers/conv.py``); DiT
+   zero-inits its final projection and AdaLN gates. This file's output head
+   previously had neither.
+2. Time was injected once, additively, at the input -- every one of the 9
+   attention blocks was otherwise unconditioned, unlike DiT's per-block
+   AdaLN-zero conditioning.
+
+Both are fixed by reusing DiT's own blocks (``DiTBlock``, ``FinalLayer``)
+by import rather than re-deriving the same recipe -- this platform's other
+non-equivariant 3D transformer already solved this exact problem, on the
+same platform, so there's no reason to reinvent it. ``Transformer``/
+``AttentionBlock`` (``modules/layers/tabasco/``) are no longer used here as
+a result; ``TimeFourierEncoding`` still is, feeding the same time embedding
+into every block's AdaLN conditioning instead of only the input sum.
 """
 
 from __future__ import annotations
@@ -25,8 +46,9 @@ from MolecularDiffusion.modules.layers.tabasco.positional_encoder import (
     SinusoidEncoding,
     TimeFourierEncoding,
 )
-from MolecularDiffusion.modules.layers.tabasco.transformer import (
-    Transformer,
+from MolecularDiffusion.modules.models.ldm.denoisers.dit import (
+    DiTBlock,
+    FinalLayer,
 )
 from MolecularDiffusion.utils.geom_utils import remove_mean_with_mask_v2
 
@@ -42,13 +64,20 @@ class TransformerDynamics(nn.Module):
             features before embedding.
         n_dims: Spatial dimensions (3).
         hidden_dim: Transformer token width.
-        num_layers: Transformer block depth (``Transformer``'s ``depth``).
+        num_layers: Number of ``DiTBlock``s.
         num_heads: Multi-head self-attention heads.
         mlp_dim: Feed-forward hidden width; ``None`` defaults to
-            ``4 * hidden_dim`` inside ``Transformer``.
-        dropout: Dropout probability.
-        activation_type: ``Transformer``'s feed-forward activation
-            string knob (e.g. ``"gelu"``).
+            ``4 * hidden_dim`` (``DiTBlock``'s own default ``mlp_ratio``).
+        dropout: Currently a no-op -- ``DiTBlock``'s attention/MLP
+            hardcode zero dropout internally and silently ignore extra
+            kwargs. Kept as a constructor arg (this platform's other
+            dynamics wrappers all expose one) rather than removed, since
+            the config default is already 0.0; flagged here so a nonzero
+            value doesn't look like it did something.
+        activation_type: Currently a no-op for the same reason --
+            ``DiTBlock``'s MLP hardcodes ``GELU(approximate="tanh")``.
+            Kept for config-shape compatibility with the pre-revision
+            file; the bundled config's default was already ``"gelu"``.
         add_sinusoid_posenc: Ablation-only knob, off by default. Atoms
             are an unordered set here, so this has no principled reason
             to help; it exists only for later ablation curiosity and is
@@ -64,8 +93,8 @@ class TransformerDynamics(nn.Module):
         num_layers: int = 9,
         num_heads: int = 8,
         mlp_dim: int | None = None,
-        dropout: float = 0.0,
-        activation_type: str = "gelu",
+        dropout: float = 0.0,  # noqa: ARG002 -- see class docstring
+        activation_type: str = "gelu",  # noqa: ARG002 -- see class docstring
         add_sinusoid_posenc: bool = False,
     ) -> None:
         super().__init__()
@@ -79,20 +108,36 @@ class TransformerDynamics(nn.Module):
             in_node_nf + context_node_nf, hidden_dim, bias=False
         )
         self.time_encoding = TimeFourierEncoding(hidden_dim)
-        self.transformer = Transformer(
-            dim=hidden_dim,
-            depth=num_layers,
-            num_heads=num_heads,
-            mlp_dim=mlp_dim,
-            dropout=dropout,
-            activation_type=activation_type,
+
+        mlp_ratio = (mlp_dim / hidden_dim) if mlp_dim is not None else 4.0
+        self.blocks = nn.ModuleList(
+            [
+                DiTBlock(hidden_dim, num_heads, mlp_ratio=mlp_ratio)
+                for _ in range(num_layers)
+            ]
         )
-        self.out_head = nn.Sequential(
-            nn.LayerNorm(hidden_dim),
-            nn.Linear(hidden_dim, n_dims + in_node_nf),
-        )
+        self.final_layer = FinalLayer(hidden_dim, n_dims + in_node_nf)
         if add_sinusoid_posenc:
             self.sinusoid_posenc = SinusoidEncoding(hidden_dim)
+
+        self._zero_init_adaln()
+
+    def _zero_init_adaln(self) -> None:
+        """Zero-init every AdaLN gate/scale/shift layer + final proj.
+
+        Exactly as DiT's own ``initialize_weights`` does
+        (``modules/models/ldm/denoisers/dit.py``) -- each block starts as
+        a near-identity function and the final layer starts predicting
+        all-zero eps, rather than default-Kaiming-uniform noise, so early
+        training updates start small instead of large and untrained.
+        """
+        for block in self.blocks:
+            nn.init.constant_(block.adaLN_modulation[-1].weight, 0)
+            nn.init.constant_(block.adaLN_modulation[-1].bias, 0)
+        nn.init.constant_(self.final_layer.adaLN_modulation[-1].weight, 0)
+        nn.init.constant_(self.final_layer.adaLN_modulation[-1].bias, 0)
+        nn.init.constant_(self.final_layer.linear.weight, 0)
+        nn.init.constant_(self.final_layer.linear.bias, 0)
 
     # -- EnVariationalDiffusion dynamics interface --------------------- #
 
@@ -131,23 +176,27 @@ class TransformerDynamics(nn.Module):
 
         # TimeFourierEncoding asserts its own output shape (B, dim) and
         # requires a strict 1-D (B,) input -- unlike PaiNN's own
-        # FourierTimeFeatures, which wants (N, 1).
+        # FourierTimeFeatures, which wants (N, 1). This is also the AdaLN
+        # conditioning vector `c` every DiTBlock/FinalLayer takes below --
+        # unlike the pre-revision file, time is no longer also summed
+        # additively into the input tokens, matching DiT's own recipe.
         if torch.numel(t) == 1:
             t_flat = t.reshape(1).expand(b)
         else:
             t_flat = t.reshape(b)
-        time_emb = self.time_encoding(t_flat).unsqueeze(1)
+        time_emb = self.time_encoding(t_flat)
 
-        tokens = self.pos_embed(x) + self.feat_embed(h) + time_emb
+        tokens = self.pos_embed(x) + self.feat_embed(h)
         if self.add_sinusoid_posenc:
             tokens = tokens + self.sinusoid_posenc(b, n)
 
-        # This platform's node_mask is 1 = valid, but Transformer's
-        # padding_mask (a thin wrapper over nn.MultiheadAttention's
-        # key_padding_mask) is True = ignore -- inverted here.
+        # This platform's node_mask is 1 = valid, but DiTBlock's `mask`
+        # arg (like Transformer's padding_mask) is a key_padding_mask,
+        # True = ignore -- inverted here.
         key_padding_mask = ~node_mask.squeeze(-1).bool()
-        h_out = self.transformer(tokens, padding_mask=key_padding_mask)
-        raw_out = self.out_head(h_out)
+        for block in self.blocks:
+            tokens = block(tokens, time_emb, key_padding_mask)
+        raw_out = self.final_layer(tokens, time_emb)
 
         # Zero padded rows BEFORE the CoM projection -- load-bearing, not
         # stylistic. remove_mean_with_mask_v2's mean is
