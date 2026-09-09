@@ -474,10 +474,11 @@
         <article role="main" id="furo-main-content">
           <section id="module-MolecularDiffusion.modules.models.transformer_dynamics">
 <span id="moleculardiffusion-modules-models-transformer-dynamics"></span><h1>MolecularDiffusion.modules.models.transformer_dynamics<a class="headerlink" href="#module-MolecularDiffusion.modules.models.transformer_dynamics" title="Link to this heading">¶</a></h1>
-<p>Dense self-attention adapter binding a plain (non-equivariant)
-Transformer to the <code class="docutils literal notranslate"><span class="pre">dynamics._forward(t,</span> <span class="pre">xh,</span> <span class="pre">node_mask,</span> <span class="pre">edge_mask,</span>
-<span class="pre">context)</span></code> contract that <code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.phi</span></code>
-(<code class="docutils literal notranslate"><span class="pre">modules/models/en_diffusion.py:234</span></code>) calls.</p>
+<p>Dense self-attention adapter for <code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion</span></code>.</p>
+<p>Binds a plain (non-equivariant) Transformer to the
+<code class="docutils literal notranslate"><span class="pre">dynamics._forward(t,</span> <span class="pre">xh,</span> <span class="pre">node_mask,</span> <span class="pre">edge_mask,</span> <span class="pre">context)</span></code> contract that
+<code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.phi</span></code> (<code class="docutils literal notranslate"><span class="pre">modules/models/en_diffusion.py:234</span></code>)
+calls.</p>
 <p>Novel-model ablation (<code class="docutils literal notranslate"><span class="pre">docs/model_novel/diffusion_transformer/</span>
 <span class="pre">INTEGRATION_PLAN.md</span></code>): swaps EGCL’s equivariant pairwise-difference
 message passing (<code class="docutils literal notranslate"><span class="pre">modules/models/egcl.py::EGNN_dynamics</span></code>) for plain
@@ -485,10 +486,28 @@ multi-head self-attention over absolute coordinates, with no distance/edge
 features and no built-in rotation-equivariance – the hypothesis is that
 the platform’s existing rotation-augmentation flag
 (<code class="docutils literal notranslate"><span class="pre">GeomMolecularGenerative.data_augmentation</span></code>) substitutes for the
-architectural guarantee. Reuses the platform’s TABASCO-family attention
-layers by import rather than copying them: unlike <code class="docutils literal notranslate"><span class="pre">PaiNNDynamics</span></code>
-(<code class="docutils literal notranslate"><span class="pre">modules/models/painn_dynamics.py</span></code>), no dense&lt;-&gt;flat packing is needed
-at all, since <code class="docutils literal notranslate"><span class="pre">Transformer</span></code> already speaks dense <code class="docutils literal notranslate"><span class="pre">(B,</span> <span class="pre">N,</span> <span class="pre">dim)</span></code>.</p>
+architectural guarantee.</p>
+<p>Revision 2026-09-09: a real cluster run (300k steps, hyperparameters matched
+to the EGCL baseline) still landed far below EGCL’s <cite>valid_posebuster</cite>. Two
+concrete asymmetries against both EGCL and this platform’s other
+non-equivariant 3D transformer (ADiT’s <cite>DiT</cite>,
+<code class="docutils literal notranslate"><span class="pre">modules/models/ldm/denoisers/dit.py</span></code>) were identified and fixed here:</p>
+<ol class="arabic simple">
+<li><p>No near-zero output-head init – EGCL’s coordinate-update head is
+Xavier-init’d with <code class="docutils literal notranslate"><span class="pre">gain=0.001</span></code> (<code class="docutils literal notranslate"><span class="pre">modules/layers/conv.py</span></code>); DiT
+zero-inits its final projection and AdaLN gates. This file’s output head
+previously had neither.</p></li>
+<li><p>Time was injected once, additively, at the input – every one of the 9
+attention blocks was otherwise unconditioned, unlike DiT’s per-block
+AdaLN-zero conditioning.</p></li>
+</ol>
+<p>Both are fixed by reusing DiT’s own blocks (<code class="docutils literal notranslate"><span class="pre">DiTBlock</span></code>, <code class="docutils literal notranslate"><span class="pre">FinalLayer</span></code>)
+by import rather than re-deriving the same recipe – this platform’s other
+non-equivariant 3D transformer already solved this exact problem, on the
+same platform, so there’s no reason to reinvent it. <code class="docutils literal notranslate"><span class="pre">Transformer</span></code>/
+<code class="docutils literal notranslate"><span class="pre">AttentionBlock</span></code> (<code class="docutils literal notranslate"><span class="pre">modules/layers/tabasco/</span></code>) are no longer used here as
+a result; <code class="docutils literal notranslate"><span class="pre">TimeFourierEncoding</span></code> still is, feeding the same time embedding
+into every block’s AdaLN conditioning instead of only the input sum.</p>
 <section id="classes">
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
@@ -518,13 +537,20 @@ excluding time and context, which are added internally.</p></li>
 features before embedding.</p></li>
 <li><p><strong>n_dims</strong> – Spatial dimensions (3).</p></li>
 <li><p><strong>hidden_dim</strong> – Transformer token width.</p></li>
-<li><p><strong>num_layers</strong> – Transformer block depth (<code class="docutils literal notranslate"><span class="pre">Transformer</span></code>’s <code class="docutils literal notranslate"><span class="pre">depth</span></code>).</p></li>
+<li><p><strong>num_layers</strong> – Number of <a href="#id1"><span class="problematic" id="id2">``</span></a>DiTBlock``s.</p></li>
 <li><p><strong>num_heads</strong> – Multi-head self-attention heads.</p></li>
 <li><p><strong>mlp_dim</strong> – Feed-forward hidden width; <code class="docutils literal notranslate"><span class="pre">None</span></code> defaults to
-<code class="docutils literal notranslate"><span class="pre">4</span> <span class="pre">*</span> <span class="pre">hidden_dim</span></code> inside <code class="docutils literal notranslate"><span class="pre">Transformer</span></code>.</p></li>
-<li><p><strong>dropout</strong> – Dropout probability.</p></li>
-<li><p><strong>activation_type</strong> – <code class="docutils literal notranslate"><span class="pre">Transformer</span></code>’s feed-forward activation
-string knob (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;gelu&quot;</span></code>).</p></li>
+<code class="docutils literal notranslate"><span class="pre">4</span> <span class="pre">*</span> <span class="pre">hidden_dim</span></code> (<code class="docutils literal notranslate"><span class="pre">DiTBlock</span></code>’s own default <code class="docutils literal notranslate"><span class="pre">mlp_ratio</span></code>).</p></li>
+<li><p><strong>dropout</strong> – Currently a no-op – <code class="docutils literal notranslate"><span class="pre">DiTBlock</span></code>’s attention/MLP
+hardcode zero dropout internally and silently ignore extra
+kwargs. Kept as a constructor arg (this platform’s other
+dynamics wrappers all expose one) rather than removed, since
+the config default is already 0.0; flagged here so a nonzero
+value doesn’t look like it did something.</p></li>
+<li><p><strong>activation_type</strong> – Currently a no-op for the same reason –
+<code class="docutils literal notranslate"><span class="pre">DiTBlock</span></code>’s MLP hardcodes <code class="docutils literal notranslate"><span class="pre">GELU(approximate=&quot;tanh&quot;)</span></code>.
+Kept for config-shape compatibility with the pre-revision
+file; the bundled config’s default was already <code class="docutils literal notranslate"><span class="pre">&quot;gelu&quot;</span></code>.</p></li>
 <li><p><strong>add_sinusoid_posenc</strong> – Ablation-only knob, off by default. Atoms
 are an unordered set here, so this has no principled reason
 to help; it exists only for later ablation curiosity and is
@@ -538,6 +564,11 @@ never load-bearing.</p></li>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.blocks">
+<span class="sig-name descname"><span class="pre">blocks</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.blocks" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.context_node_nf">
 <span class="sig-name descname"><span class="pre">context_node_nf</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.context_node_nf" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -545,6 +576,11 @@ never load-bearing.</p></li>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.feat_embed">
 <span class="sig-name descname"><span class="pre">feat_embed</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.feat_embed" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.final_layer">
+<span class="sig-name descname"><span class="pre">final_layer</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.final_layer" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -558,11 +594,6 @@ never load-bearing.</p></li>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.out_head">
-<span class="sig-name descname"><span class="pre">out_head</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.out_head" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.pos_embed">
 <span class="sig-name descname"><span class="pre">pos_embed</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.pos_embed" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -570,11 +601,6 @@ never load-bearing.</p></li>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.time_encoding">
 <span class="sig-name descname"><span class="pre">time_encoding</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.time_encoding" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.transformer">
-<span class="sig-name descname"><span class="pre">transformer</span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.transformer" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -641,14 +667,14 @@ never load-bearing.</p></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics"><code class="docutils literal notranslate"><span class="pre">TransformerDynamics</span></code></a><ul>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.add_sinusoid_posenc"><code class="docutils literal notranslate"><span class="pre">TransformerDynamics.add_sinusoid_posenc</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.blocks"><code class="docutils literal notranslate"><span class="pre">TransformerDynamics.blocks</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.context_node_nf"><code class="docutils literal notranslate"><span class="pre">TransformerDynamics.context_node_nf</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.feat_embed"><code class="docutils literal notranslate"><span class="pre">TransformerDynamics.feat_embed</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.final_layer"><code class="docutils literal notranslate"><span class="pre">TransformerDynamics.final_layer</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.in_node_nf"><code class="docutils literal notranslate"><span class="pre">TransformerDynamics.in_node_nf</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.n_dims"><code class="docutils literal notranslate"><span class="pre">TransformerDynamics.n_dims</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.out_head"><code class="docutils literal notranslate"><span class="pre">TransformerDynamics.out_head</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.pos_embed"><code class="docutils literal notranslate"><span class="pre">TransformerDynamics.pos_embed</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.time_encoding"><code class="docutils literal notranslate"><span class="pre">TransformerDynamics.time_encoding</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.transformer_dynamics.TransformerDynamics.transformer"><code class="docutils literal notranslate"><span class="pre">TransformerDynamics.transformer</span></code></a></li>
 </ul>
 </li>
 </ul>

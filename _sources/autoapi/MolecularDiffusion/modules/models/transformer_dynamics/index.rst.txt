@@ -5,10 +5,12 @@ MolecularDiffusion.modules.models.transformer_dynamics
 
 .. autoapi-nested-parse::
 
-   Dense self-attention adapter binding a plain (non-equivariant)
-   Transformer to the ``dynamics._forward(t, xh, node_mask, edge_mask,
-   context)`` contract that ``EnVariationalDiffusion.phi``
-   (``modules/models/en_diffusion.py:234``) calls.
+   Dense self-attention adapter for ``EnVariationalDiffusion``.
+
+   Binds a plain (non-equivariant) Transformer to the
+   ``dynamics._forward(t, xh, node_mask, edge_mask, context)`` contract that
+   ``EnVariationalDiffusion.phi`` (``modules/models/en_diffusion.py:234``)
+   calls.
 
    Novel-model ablation (``docs/model_novel/diffusion_transformer/
    INTEGRATION_PLAN.md``): swaps EGCL's equivariant pairwise-difference
@@ -17,10 +19,29 @@ MolecularDiffusion.modules.models.transformer_dynamics
    features and no built-in rotation-equivariance -- the hypothesis is that
    the platform's existing rotation-augmentation flag
    (``GeomMolecularGenerative.data_augmentation``) substitutes for the
-   architectural guarantee. Reuses the platform's TABASCO-family attention
-   layers by import rather than copying them: unlike ``PaiNNDynamics``
-   (``modules/models/painn_dynamics.py``), no dense<->flat packing is needed
-   at all, since ``Transformer`` already speaks dense ``(B, N, dim)``.
+   architectural guarantee.
+
+   Revision 2026-09-09: a real cluster run (300k steps, hyperparameters matched
+   to the EGCL baseline) still landed far below EGCL's `valid_posebuster`. Two
+   concrete asymmetries against both EGCL and this platform's other
+   non-equivariant 3D transformer (ADiT's `DiT`,
+   ``modules/models/ldm/denoisers/dit.py``) were identified and fixed here:
+
+   1. No near-zero output-head init -- EGCL's coordinate-update head is
+      Xavier-init'd with ``gain=0.001`` (``modules/layers/conv.py``); DiT
+      zero-inits its final projection and AdaLN gates. This file's output head
+      previously had neither.
+   2. Time was injected once, additively, at the input -- every one of the 9
+      attention blocks was otherwise unconditioned, unlike DiT's per-block
+      AdaLN-zero conditioning.
+
+   Both are fixed by reusing DiT's own blocks (``DiTBlock``, ``FinalLayer``)
+   by import rather than re-deriving the same recipe -- this platform's other
+   non-equivariant 3D transformer already solved this exact problem, on the
+   same platform, so there's no reason to reinvent it. ``Transformer``/
+   ``AttentionBlock`` (``modules/layers/tabasco/``) are no longer used here as
+   a result; ``TimeFourierEncoding`` still is, feeding the same time embedding
+   into every block's AdaLN conditioning instead of only the input sum.
 
 
 
@@ -49,13 +70,20 @@ Module Contents
                            features before embedding.
    :param n_dims: Spatial dimensions (3).
    :param hidden_dim: Transformer token width.
-   :param num_layers: Transformer block depth (``Transformer``'s ``depth``).
+   :param num_layers: Number of ``DiTBlock``s.
    :param num_heads: Multi-head self-attention heads.
    :param mlp_dim: Feed-forward hidden width; ``None`` defaults to
-                   ``4 * hidden_dim`` inside ``Transformer``.
-   :param dropout: Dropout probability.
-   :param activation_type: ``Transformer``'s feed-forward activation
-                           string knob (e.g. ``"gelu"``).
+                   ``4 * hidden_dim`` (``DiTBlock``'s own default ``mlp_ratio``).
+   :param dropout: Currently a no-op -- ``DiTBlock``'s attention/MLP
+                   hardcode zero dropout internally and silently ignore extra
+                   kwargs. Kept as a constructor arg (this platform's other
+                   dynamics wrappers all expose one) rather than removed, since
+                   the config default is already 0.0; flagged here so a nonzero
+                   value doesn't look like it did something.
+   :param activation_type: Currently a no-op for the same reason --
+                           ``DiTBlock``'s MLP hardcodes ``GELU(approximate="tanh")``.
+                           Kept for config-shape compatibility with the pre-revision
+                           file; the bundled config's default was already ``"gelu"``.
    :param add_sinusoid_posenc: Ablation-only knob, off by default. Atoms
                                are an unordered set here, so this has no principled reason
                                to help; it exists only for later ablation curiosity and is
@@ -67,12 +95,18 @@ Module Contents
 
 
 
+   .. py:attribute:: blocks
+
+
    .. py:attribute:: context_node_nf
       :value: 0
 
 
 
    .. py:attribute:: feat_embed
+
+
+   .. py:attribute:: final_layer
 
 
    .. py:attribute:: in_node_nf
@@ -83,15 +117,9 @@ Module Contents
 
 
 
-   .. py:attribute:: out_head
-
-
    .. py:attribute:: pos_embed
 
 
    .. py:attribute:: time_encoding
-
-
-   .. py:attribute:: transformer
 
 
