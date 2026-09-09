@@ -32,6 +32,7 @@ from MolecularDiffusion.utils import (
     remove_mean_with_mask,
     sample_center_gravity_zero_gaussian_with_mask,
     sample_gaussian_with_mask,
+    sample_uniform_rotation_matrices,
 )
 
 from . import _preprocess_cache as _ppcache
@@ -70,6 +71,7 @@ class GeomMolecularGenerative(Task, core.Configurable):
         n_node_dist: Dict = {},
         augment_noise: float = 0,
         data_augmentation: bool = False,
+        num_random_augmentations: int = 0,
         condition: List = [],
         normalize_condition: str = None,
         sp_regularizer: SP_regularizer = None,
@@ -85,6 +87,22 @@ class GeomMolecularGenerative(Task, core.Configurable):
         - n_node_dist (Dict): The distribution of number of nodes. Default is {}.
         - augment_noise (float): The amount of noise to add to the coordinates for data augmentation. Default is 0.
         - data_augmentation (bool): Whether to apply data augmentation by symmetry operations. Default is False.
+        - num_random_augmentations (int): Dense/pointcloud path only. When
+          > 0, replaces the single in-place rotation `data_augmentation`
+          applies with TABASCO's batch-expansion scheme
+          (`modules/models/tabasco/flow_model.py::FlowMatchingModel.forward`):
+          each molecule in the batch is replicated into
+          `num_random_augmentations + 1` copies, each independently
+          rotated by a Haar-uniform SO(3) sample
+          (`sample_uniform_rotation_matrices`, Haar-uniform unlike
+          `random_rotation`'s Euler-angle composition). Every copy
+          contributes its own loss term in the same step -- this
+          multiplies the per-step compute cost by
+          `num_random_augmentations + 1`. Takes precedence over
+          `data_augmentation` when both are set (mutually exclusive, not
+          additive). Default 0 preserves every existing config's
+          behavior exactly. Not implemented for the PyG (`"graph" in
+          batch`) path -- out of scope, no current caller needs it.
         - condition (List): The list of conditions for the model. Default is [].
         - normalize_condition (str): The normalization method for the condition. Default is None. [None, "maxmin", "mad"]
         - sp_regularizer (SP_regularizer): The self-pace learning regularizer for the model. Default is None.
@@ -101,6 +119,7 @@ class GeomMolecularGenerative(Task, core.Configurable):
         self.n_node_dist = n_node_dist
         self.augment_noise = augment_noise
         self.data_augmentation = data_augmentation
+        self.num_random_augmentations = num_random_augmentations
         self.condition = condition
         self.sp_regularizer = sp_regularizer
         self.reference_indices = reference_indices
@@ -440,6 +459,31 @@ class GeomMolecularGenerative(Task, core.Configurable):
 
         return all_loss, metric
 
+    def _apply_n_fold_rotation_augmentation(
+        self, x, h, node_mask, charges, edge_mask
+    ):
+        """TABASCO-style N-fold augmentation: replicate the batch and
+        rotate each copy independently, instead of one in-place rotation
+        per molecule (see `__init__`'s `num_random_augmentations`
+        docstring). `.repeat(naug, ...)` tiles the WHOLE batch naug times
+        end-to-end (not interleaved) -- every tensor here uses this exact
+        pattern on its own natural shape to stay row-aligned with the
+        others; `context`, computed later from the raw batch dict, is
+        repeated the same way by the caller.
+        """
+        naug = self.num_random_augmentations + 1
+        x = x.repeat(naug, 1, 1)
+        h = h.repeat(naug, 1, 1)
+        node_mask = node_mask.repeat(naug, 1, 1)
+        charges = charges.repeat(naug, *([1] * (charges.dim() - 1)))
+        edge_mask = edge_mask.repeat(naug, *([1] * (edge_mask.dim() - 1)))
+        rotations = sample_uniform_rotation_matrices(
+            x.shape[0], x.device, x.dtype
+        )
+        x = torch.matmul(x, rotations)
+        x = remove_mean_with_mask(x, node_mask)
+        return x, h, node_mask, charges, edge_mask
+
     def density_estimation(self, batch):
         """"""
         all_loss = torch.tensor(0, dtype=torch.float32, device=self.device)
@@ -494,7 +538,13 @@ class GeomMolecularGenerative(Task, core.Configurable):
                 )
                 x = x + eps * self.augment_noise
                 x = remove_mean_with_mask(x, node_mask)
-            if self.data_augmentation:
+            if self.num_random_augmentations > 0:
+                x, h, node_mask, charges, edge_mask = (
+                    self._apply_n_fold_rotation_augmentation(
+                        x, h, node_mask, charges, edge_mask
+                    )
+                )
+            elif self.data_augmentation:
                 x = random_rotation(x).detach()
 
             check_mask_correct([x, h], node_mask)
@@ -506,10 +556,18 @@ class GeomMolecularGenerative(Task, core.Configurable):
             h = {"categorical": h, "integer": charges}
 
             if len(self.condition) > 0:
-                context = prepare_context(self.condition, batch, self.property_norms, 
+                context = prepare_context(self.condition, batch, self.property_norms,
                                         normalization_method=self.normalize_condition).to(
                     dtype=torch.float32, device=self.device
                 )
+                if self.num_random_augmentations > 0:
+                    # `context` was computed from the raw (unexpanded)
+                    # batch above -- repeat it the same way x/h/node_mask
+                    # already were, so each augmented copy of a molecule
+                    # keeps that molecule's own condition values.
+                    context = context.repeat(
+                        self.num_random_augmentations + 1, 1, 1
+                    )
                 assert_correctly_masked(context, node_mask)
             else:
                 context = None

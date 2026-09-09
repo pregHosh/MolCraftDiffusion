@@ -6,6 +6,7 @@ from torch_geometric.nn import radius_graph
 from torch_geometric.data import Data
 from ase.io import read
 from ase.data import covalent_radii, chemical_symbols
+from scipy.spatial.transform import Rotation
 import numpy as np
 import os
 import shutil
@@ -37,6 +38,22 @@ def sample_gaussian_with_mask(size, device, node_mask, std=1.0):
     x = torch.randn(size, device=device) * std
     x_masked = x * node_mask
     return x_masked
+
+
+def sample_uniform_rotation_matrices(n, device, dtype=torch.float32):
+    """Haar-uniform SO(3) rotation matrices, shape ``(n, 3, 3)``.
+
+    Unlike ``random_rotation`` below (independent uniform Euler angles,
+    not exactly Haar-uniform), this samples true Haar-uniform rotations
+    via ``scipy.spatial.transform.Rotation.random()`` -- the same
+    sampler ``modules/models/tabasco/data/transforms.py::
+    sample_uniform_rotation`` already uses for TABASCO's own N-fold
+    rotation augmentation. Placed here rather than imported from that
+    module so this generic geometry utility has no TABASCO-family
+    dependency.
+    """
+    mats = Rotation.random(n).as_matrix()
+    return torch.tensor(mats, device=device, dtype=dtype)
 
 
 def random_rotation(x):

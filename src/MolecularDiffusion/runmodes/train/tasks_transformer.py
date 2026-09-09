@@ -143,6 +143,9 @@ class ModelTaskFactory:
             data_augmentation=self.kwargs.get(
                 "data_augmentation", False
             ),
+            num_random_augmentations=self.kwargs.get(
+                "num_random_augmentations", 0
+            ),
             condition=self.condition_names,
             sp_regularizer=None,
             normalize_condition=self.kwargs.get(
