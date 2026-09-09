@@ -36,6 +36,7 @@ Functions
    MolecularDiffusion.utils.geom_utils.remove_mean_with_mask_v2
    MolecularDiffusion.utils.geom_utils.sample_center_gravity_zero_gaussian_with_mask
    MolecularDiffusion.utils.geom_utils.sample_gaussian_with_mask
+   MolecularDiffusion.utils.geom_utils.sample_uniform_rotation_matrices
    MolecularDiffusion.utils.geom_utils.save_shepherd_outputs
    MolecularDiffusion.utils.geom_utils.save_xyz_file
    MolecularDiffusion.utils.geom_utils.save_xyz_file_atomic_numbers
@@ -289,6 +290,20 @@ Module Contents
 .. py:function:: sample_center_gravity_zero_gaussian_with_mask(size, device, node_mask, std=1.0)
 
 .. py:function:: sample_gaussian_with_mask(size, device, node_mask, std=1.0)
+
+.. py:function:: sample_uniform_rotation_matrices(n, device, dtype=torch.float32)
+
+   Haar-uniform SO(3) rotation matrices, shape ``(n, 3, 3)``.
+
+   Unlike ``random_rotation`` below (independent uniform Euler angles,
+   not exactly Haar-uniform), this samples true Haar-uniform rotations
+   via ``scipy.spatial.transform.Rotation.random()`` -- the same
+   sampler ``modules/models/tabasco/data/transforms.py::
+   sample_uniform_rotation`` already uses for TABASCO's own N-fold
+   rotation augmentation. Placed here rather than imported from that
+   module so this generic geometry utility has no TABASCO-family
+   dependency.
+
 
 .. py:function:: save_shepherd_outputs(output_dir: str, structures: list, idx_offset: int = 0, save_modalities: bool = False)
 

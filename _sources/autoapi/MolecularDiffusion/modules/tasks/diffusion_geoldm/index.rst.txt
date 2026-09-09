@@ -41,7 +41,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: GeoLDMTask(diffusion_model, node_dist_model=None, prop_dist_model=None, n_node_dist: Dict = {}, augment_noise: float = 0, data_augmentation: bool = False, condition: List = [], normalize_condition: str = None, sp_regularizer: MolecularDiffusion.callbacks.SP_regularizer = None, reference_indices: List = None, reference_freeze_mode: str = 'all')
+.. py:class:: GeoLDMTask(diffusion_model, node_dist_model=None, prop_dist_model=None, n_node_dist: Dict = {}, augment_noise: float = 0, data_augmentation: bool = False, num_random_augmentations: int = 0, condition: List = [], normalize_condition: str = None, sp_regularizer: MolecularDiffusion.callbacks.SP_regularizer = None, reference_indices: List = None, reference_freeze_mode: str = 'all')
 
    Bases: :py:obj:`MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative`
 
@@ -56,6 +56,22 @@ Module Contents
    - n_node_dist (Dict): The distribution of number of nodes. Default is {}.
    - augment_noise (float): The amount of noise to add to the coordinates for data augmentation. Default is 0.
    - data_augmentation (bool): Whether to apply data augmentation by symmetry operations. Default is False.
+   - num_random_augmentations (int): Dense/pointcloud path only. When
+     > 0, replaces the single in-place rotation `data_augmentation`
+     applies with TABASCO's batch-expansion scheme
+     (`modules/models/tabasco/flow_model.py::FlowMatchingModel.forward`):
+     each molecule in the batch is replicated into
+     `num_random_augmentations + 1` copies, each independently
+     rotated by a Haar-uniform SO(3) sample
+     (`sample_uniform_rotation_matrices`, Haar-uniform unlike
+     `random_rotation`'s Euler-angle composition). Every copy
+     contributes its own loss term in the same step -- this
+     multiplies the per-step compute cost by
+     `num_random_augmentations + 1`. Takes precedence over
+     `data_augmentation` when both are set (mutually exclusive, not
+     additive). Default 0 preserves every existing config's
+     behavior exactly. Not implemented for the PyG (`"graph" in
+     batch`) path -- out of scope, no current caller needs it.
    - condition (List): The list of conditions for the model. Default is [].
    - normalize_condition (str): The normalization method for the condition. Default is None. [None, "maxmin", "mad"]
    - sp_regularizer (SP_regularizer): The self-pace learning regularizer for the model. Default is None.

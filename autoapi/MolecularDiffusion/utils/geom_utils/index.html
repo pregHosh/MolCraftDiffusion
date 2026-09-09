@@ -548,16 +548,19 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.sample_gaussian_with_mask" title="MolecularDiffusion.utils.geom_utils.sample_gaussian_with_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_gaussian_with_mask</span></code></a>(size, device, node_mask[, std])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_shepherd_outputs" title="MolecularDiffusion.utils.geom_utils.save_shepherd_outputs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_shepherd_outputs</span></code></a>(output_dir, structures[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.sample_uniform_rotation_matrices" title="MolecularDiffusion.utils.geom_utils.sample_uniform_rotation_matrices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_uniform_rotation_matrices</span></code></a>(n, device[, dtype])</p></td>
+<td><p>Haar-uniform SO(3) rotation matrices, shape <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">3,</span> <span class="pre">3)</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_shepherd_outputs" title="MolecularDiffusion.utils.geom_utils.save_shepherd_outputs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_shepherd_outputs</span></code></a>(output_dir, structures[, ...])</p></td>
 <td><p>Save ShEPhERD generated structures to disk.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_xyz_file" title="MolecularDiffusion.utils.geom_utils.save_xyz_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_xyz_file</span></code></a>(path, one_hot, positions, atom_decoder)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_xyz_file" title="MolecularDiffusion.utils.geom_utils.save_xyz_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_xyz_file</span></code></a>(path, one_hot, positions, atom_decoder)</p></td>
 <td><p>Save XYZ files for a batch of molecules, skipping atoms near (0,0,0).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_xyz_file_atomic_numbers" title="MolecularDiffusion.utils.geom_utils.save_xyz_file_atomic_numbers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_xyz_file_atomic_numbers</span></code></a>(path, positions, ...[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_xyz_file_atomic_numbers" title="MolecularDiffusion.utils.geom_utils.save_xyz_file_atomic_numbers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_xyz_file_atomic_numbers</span></code></a>(path, positions, ...[, ...])</p></td>
 <td><p>Save XYZ files for a batch of molecules, writing ATOMIC SYMBOLS in the first column.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.translate_to_origine" title="MolecularDiffusion.utils.geom_utils.translate_to_origine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">translate_to_origine</span></code></a>(coords, node_mask)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.translate_to_origine" title="MolecularDiffusion.utils.geom_utils.translate_to_origine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">translate_to_origine</span></code></a>(coords, node_mask)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -906,6 +909,20 @@ torch_geometric.data.Data: The corrected molecular graph data with updated edge 
 <dd></dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.sample_uniform_rotation_matrices">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_utils.</span></span><span class="sig-name descname"><span class="pre">sample_uniform_rotation_matrices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">torch.float32</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.sample_uniform_rotation_matrices" title="Link to this definition">¶</a></dt>
+<dd><p>Haar-uniform SO(3) rotation matrices, shape <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">3,</span> <span class="pre">3)</span></code>.</p>
+<p>Unlike <code class="docutils literal notranslate"><span class="pre">random_rotation</span></code> below (independent uniform Euler angles,
+not exactly Haar-uniform), this samples true Haar-uniform rotations
+via <code class="docutils literal notranslate"><span class="pre">scipy.spatial.transform.Rotation.random()</span></code> – the same
+sampler <code class="docutils literal notranslate"><span class="pre">modules/models/tabasco/data/transforms.py::</span>
+<span class="pre">sample_uniform_rotation</span></code> already uses for TABASCO’s own N-fold
+rotation augmentation. Placed here rather than imported from that
+module so this generic geometry utility has no TABASCO-family
+dependency.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_utils.save_shepherd_outputs">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_utils.</span></span><span class="sig-name descname"><span class="pre">save_shepherd_outputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">structures</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_modalities</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_utils.save_shepherd_outputs" title="Link to this definition">¶</a></dt>
 <dd><p>Save ShEPhERD generated structures to disk.</p>
@@ -1081,6 +1098,7 @@ mol_{idx:04d}_pharm.npz    x4 pharmacophores: types(M,) + positions(M,3) + direc
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.remove_mean_with_mask_v2"><code class="docutils literal notranslate"><span class="pre">remove_mean_with_mask_v2()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.sample_center_gravity_zero_gaussian_with_mask"><code class="docutils literal notranslate"><span class="pre">sample_center_gravity_zero_gaussian_with_mask()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.sample_gaussian_with_mask"><code class="docutils literal notranslate"><span class="pre">sample_gaussian_with_mask()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.sample_uniform_rotation_matrices"><code class="docutils literal notranslate"><span class="pre">sample_uniform_rotation_matrices()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_shepherd_outputs"><code class="docutils literal notranslate"><span class="pre">save_shepherd_outputs()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_xyz_file"><code class="docutils literal notranslate"><span class="pre">save_xyz_file()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_utils.save_xyz_file_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">save_xyz_file_atomic_numbers()</span></code></a></li>
