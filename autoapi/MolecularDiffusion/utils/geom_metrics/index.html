@@ -581,7 +581,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.pca_align" title="MolecularDiffusion.utils.geom_metrics.pca_align"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pca_align</span></code></a>(→ numpy.ndarray)</p></td>
 <td><p>Rotate pts_fit to align its principal axes with those of pts_ref.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.run_postbuster" title="MolecularDiffusion.utils.geom_metrics.run_postbuster"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_postbuster</span></code></a>(mols[, timeout, batch_size])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.run_postbuster" title="MolecularDiffusion.utils.geom_metrics.run_postbuster"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_postbuster</span></code></a>(mols[, timeout, batch_size, names])</p></td>
 <td><p>Run PoseBusters on a list of RDKit molecules, optionally in batches, with a timeout per batch.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.smilify_wrapper" title="MolecularDiffusion.utils.geom_metrics.smilify_wrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilify_wrapper</span></code></a>(xyzs, xyz2mol)</p></td>
@@ -612,14 +612,14 @@
 a mismatch between electrons and spin multiplicity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the XYZ file containing the molecule.</p>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the XYZ file containing the molecule.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>True if the molecule is neutral (no mismatch found), False
 otherwise, or None when xTB is unavailable or failed.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -634,9 +634,9 @@ otherwise, or None when xTB is unavailable or failed.</p>
 <li><p><strong>data</strong> – A dictionary containing molecular information.
 - ‘atomic_numbers’: List of integers representing the atomic number of each atom.
 - ‘positions’: List of tuples (x, y, z) representing the position of each atom.</p></li>
-<li><p><strong>angle_relax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Tolerance allowed for bond angles in degrees. Default is 10.0.</p></li>
-<li><p><strong>scale_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The scaling factor to apply to the covalent radii. Default is 1.3.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to print debug messages during validation. Default is False.</p></li>
+<li><p><strong>angle_relax</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Tolerance allowed for bond angles in degrees. Default is 10.0.</p></li>
+<li><p><strong>scale_factor</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The scaling factor to apply to the covalent radii. Default is 1.3.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to print debug messages during validation. Default is False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -653,7 +653,7 @@ otherwise, or None when xTB is unavailable or failed.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -672,10 +672,10 @@ Special handling is applied for atoms with certain atomic numbers, such as carbo
 <li><p><strong>data</strong> – A dictionary containing molecular information.
 - ‘atomic_numbers’: List of integers representing the atomic number of each atom.
 - ‘positions’: List of tuples (x, y, z) representing the position of each atom.</p></li>
-<li><p><strong>score_threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Tolerance allowed for shape values. Default is 3.0.</p></li>
-<li><p><strong>scale_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The scaling factor to apply to the covalent radii. Default is 1.3.</p></li>
-<li><p><strong>skip_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – List of atom indices to skip during validation.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to print debug messages during validation. Default is False.</p></li>
+<li><p><strong>score_threshold</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Tolerance allowed for shape values. Default is 3.0.</p></li>
+<li><p><strong>scale_factor</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The scaling factor to apply to the covalent radii. Default is 1.3.</p></li>
+<li><p><strong>skip_indices</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – List of atom indices to skip during validation.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to print debug messages during validation. Default is False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -692,7 +692,7 @@ Special handling is applied for atoms with certain atomic numbers, such as carbo
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -716,20 +716,20 @@ Special handling is applied for atoms with certain atomic numbers, such as carbo
 <dd class="field-even"><p>True if the graphs have the same topology, False otherwise.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.compute_drug_likeness">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">compute_drug_likeness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.compute_drug_likeness" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">compute_drug_likeness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.compute_drug_likeness" title="Link to this definition">¶</a></dt>
 <dd><p>Compute RDKit-based drug-likeness metrics including SAScore and QED.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.compute_esp_similarity">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">compute_esp_similarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pts_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pts_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.compute_esp_similarity" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">compute_esp_similarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pts_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pts_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.compute_esp_similarity" title="Link to this definition">¶</a></dt>
 <dd><p>Compute ESP similarity using Gaussian-weighted overlap (ESP Tanimoto).</p>
 </dd></dl>
 
@@ -759,7 +759,7 @@ If surf_pts is None: (N,) charges for each atom.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.compute_mol_pharmacophores">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">compute_mol_pharmacophores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_vector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_access</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.compute_mol_pharmacophores" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">compute_mol_pharmacophores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_vector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_access</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.compute_mol_pharmacophores" title="Link to this definition">¶</a></dt>
 <dd><p>Extract pharmacophore points and vectors using shepherd-score implementation.</p>
 <dl class="simple">
 <dt>Returns (pharm_pos, pharm_types, pharm_vecs):</dt><dd><ul class="simple">
@@ -776,10 +776,10 @@ If surf_pts is None: (N,) charges for each atom.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mol</strong> (<em>rdkit.Chem.Mol</em>) – RDKit molecule with conformer.</p></li>
-<li><p><strong>multi_vector</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em> (</em><em>default = True</em><em>)</em>) – Whether to represent pharmacophores with multiple vectors.</p></li>
-<li><p><strong>exclude</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> (</em><em>default =</em><em> [</em><em>]</em><em>)</em>) – List of hydrogen indices to exclude from HBD detection.</p></li>
-<li><p><strong>check_access</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em> (</em><em>default = False</em><em>)</em>) – Check if HBD/HBA are accessible to molecular surface.</p></li>
-<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> (</em><em>default = 1.0</em><em>)</em>) – Length of pharmacophore vector in Angstroms.</p></li>
+<li><p><strong>multi_vector</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em> (</em><em>default = True</em><em>)</em>) – Whether to represent pharmacophores with multiple vectors.</p></li>
+<li><p><strong>exclude</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> (</em><em>default =</em><em> [</em><em>]</em><em>)</em>) – List of hydrogen indices to exclude from HBD detection.</p></li>
+<li><p><strong>check_access</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em> (</em><em>default = False</em><em>)</em>) – Check if HBD/HBA are accessible to molecular surface.</p></li>
+<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> (</em><em>default = 1.0</em><em>)</em>) – Length of pharmacophore vector in Angstroms.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -789,14 +789,14 @@ If surf_pts is None: (N,) charges for each atom.</p>
 - pharm_vectors: (M, 3) direction vectors</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.compute_mol_surface_pts">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">compute_mol_surface_pts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_pts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probe_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.compute_mol_surface_pts" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">compute_mol_surface_pts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_pts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probe_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.compute_mol_surface_pts" title="Link to this definition">¶</a></dt>
 <dd><p>Gets the point cloud representation of a molecule’s van der Waals surface using
 mesh-based surface generation (matching shepherd-score implementation).</p>
 <p>Uses Open3D’s ball-pivoting algorithm for accurate surface mesh generation.
@@ -806,8 +806,8 @@ within vdW radii of neighboring atoms.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mol</strong> (<em>rdkit.Chem.Mol object</em>) – RDKit molecule object with a conformer.</p></li>
-<li><p><strong>num_pts</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> (</em><em>default = 75</em><em>)</em>) – The total number of points in the final point cloud.</p></li>
-<li><p><strong>probe_radius</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> (</em><em>default = 1.2</em><em>)</em>) – The radius of a probe atom to act as a “solvent accessible surface”.
+<li><p><strong>num_pts</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> (</em><em>default = 75</em><em>)</em>) – The total number of points in the final point cloud.</p></li>
+<li><p><strong>probe_radius</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> (</em><em>default = 1.2</em><em>)</em>) – The radius of a probe atom to act as a “solvent accessible surface”.
 Default = 1.2 angstroms which is the radius of a Hydrogen atom.</p></li>
 </ul>
 </dd>
@@ -822,13 +822,13 @@ Default = 1.2 angstroms which is the radius of a Hydrogen atom.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.compute_pharm_similarity">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">compute_pharm_similarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pts_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">types_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pts_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">types_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vecs_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vecs_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.compute_pharm_similarity" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">compute_pharm_similarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pts_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">types_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pts_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">types_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vecs_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vecs_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.compute_pharm_similarity" title="Link to this definition">¶</a></dt>
 <dd><p>Direction-aware Gaussian overlap Tanimoto for pharmacophores.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.compute_shape_similarity">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">compute_shape_similarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pts_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pts_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.compute_shape_similarity" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">compute_shape_similarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pts_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pts_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.compute_shape_similarity" title="Link to this definition">¶</a></dt>
 <dd><p>Compute shape similarity using Gaussian-weighted volume overlap (Tanimoto).</p>
 </dd></dl>
 
@@ -840,7 +840,7 @@ Default = 1.2 angstroms which is the radius of a Hydrogen atom.</p></li>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>edge_index</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.14)"><em>torch.Tensor</em></a>) – The edge indices of the graph.</p></li>
-<li><p><strong>num_nodes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The number of nodes in the graph.</p></li>
+<li><p><strong>num_nodes</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The number of nodes in the graph.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -854,7 +854,7 @@ Default = 1.2 angstroms which is the radius of a Hydrogen atom.</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -873,7 +873,7 @@ Returns pts_fit rotated and translated to align with pts_ref.</p>
 <p>It first converts XYZ files to PDB using OpenBabel, then loads the PDBs into RDKit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>xyz_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Directory containing XYZ files.</p>
+<dd class="field-odd"><p><strong>xyz_dir</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Directory containing XYZ files.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><dl class="simple">
@@ -886,7 +886,7 @@ Returns pts_fit rotated and translated to align with pts_ref.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -925,17 +925,22 @@ the sum of dot products between corresponding principal axes (best sign match).<
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.run_postbuster">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">run_postbuster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.run_postbuster" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">run_postbuster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.run_postbuster" title="Link to this definition">¶</a></dt>
 <dd><p>Run PoseBusters on a list of RDKit molecules, optionally in batches, with a timeout per batch.</p>
 <p>This function processes molecules using the PoseBusters library to compute various geometric checks.
 Processing happens in separate processes to enforce timeouts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>RDKit Mol</em>) – List of molecules to evaluate.</p></li>
-<li><p><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Maximum time (in seconds) allowed for each batch calculation. Default is 60.</p></li>
-<li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Number of molecules to process in a single batch.
+<li><p><strong>mols</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>RDKit Mol</em>) – List of molecules to evaluate.</p></li>
+<li><p><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Maximum time (in seconds) allowed for each batch calculation. Default is 60.</p></li>
+<li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Number of molecules to process in a single batch.
 If None, processes all molecules in one batch. Default is None.</p></li>
+<li><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – One label per molecule. When given, every row gets a
+<code class="docutils literal notranslate"><span class="pre">filename</span></code> column, and a batch that fails or times out
+yields one row per molecule (checks NaN, <code class="docutils literal notranslate"><span class="pre">posebuster_error</span></code>
+set) instead of being dropped. Default None keeps the old
+drop-the-batch behaviour that training eval relies on.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -958,7 +963,7 @@ If None, processes all molecules in one batch. Default is None.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xyzs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – List of paths to XYZ files.</p></li>
+<li><p><strong>xyzs</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – List of paths to XYZ files.</p></li>
 <li><p><strong>xyz2mol</strong> (<em>callable</em>) – A function that takes an XYZ file path and returns (smiles, mol).</p></li>
 </ul>
 </dd>
@@ -975,7 +980,7 @@ If None, processes all molecules in one batch. Default is None.</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -987,8 +992,8 @@ If None, processes all molecules in one batch. Default is None.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xyz_file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to input XYZ file.</p></li>
-<li><p><strong>pdb_file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to output PDB file.</p></li>
+<li><p><strong>xyz_file_path</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to input XYZ file.</p></li>
+<li><p><strong>pdb_file_path</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to output PDB file.</p></li>
 </ul>
 </dd>
 </dl>
@@ -996,7 +1001,7 @@ If None, processes all molecules in one batch. Default is None.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">xyz_to_rdkit_mol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">xyz_to_rdkit_mol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol" title="Link to this definition">¶</a></dt>
 <dd><p>Convert an XYZ file to an RDKit molecule with perceived bonds.
 Tries multiple charges to find a valid structure without radicals.</p>
 </dd></dl>

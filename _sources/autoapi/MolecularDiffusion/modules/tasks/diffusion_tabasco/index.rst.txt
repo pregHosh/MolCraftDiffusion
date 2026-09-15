@@ -248,6 +248,13 @@ Module Contents
 
       Return a node distribution sampler (EDM compatibility).
 
+      Derived from ``tabasco_model.data_stats`` on every read, unless a
+      sampler was assigned explicitly. Deliberately NOT cached:
+      EngineLightning.on_load_checkpoint reads this *before* it restores
+      the checkpoint's data_stats, and a cached sampler froze the
+      constructor's (usually empty) histogram, so generation silently
+      fell back to uniform 5-29 atoms.
+
 
    .. py:attribute:: normalize_condition
       :value: None

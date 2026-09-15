@@ -502,16 +502,16 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sphere_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of spherical channels</p></li>
-<li><p><strong>hidden_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of hidden channels used during feedforward network</p></li>
-<li><p><strong>output_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of output channels</p></li>
+<li><p><strong>sphere_channels</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of spherical channels</p></li>
+<li><p><strong>hidden_channels</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of hidden channels used during feedforward network</p></li>
+<li><p><strong>output_channels</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of output channels</p></li>
 <li><p><strong>(</strong><strong>list</strong> (<a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.mmax_list" title="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.mmax_list"><em>mmax_list</em></a>) – int):       List of degrees (l) for each resolution</p></li>
 <li><p><strong>(</strong><strong>list</strong> – int):       List of orders (m) for each resolution</p></li>
 <li><p><strong>SO3_grid</strong> (<a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.SO3_grid" title="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.FeedForwardNetwork.SO3_grid"><em>SO3_grid</em></a>) – Class used to convert from grid the spherical harmonic representations</p></li>
-<li><p><strong>activation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Type of activation function</p></li>
-<li><p><strong>use_gate_act</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use gate activation. Otherwise, use S2 activation</p></li>
-<li><p><strong>use_grid_mlp</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use projecting to grids and performing MLPs.</p></li>
-<li><p><strong>use_sep_s2_act</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use separable grid MLP when <cite>use_grid_mlp</cite> is True.</p></li>
+<li><p><strong>activation</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Type of activation function</p></li>
+<li><p><strong>use_gate_act</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use gate activation. Otherwise, use S2 activation</p></li>
+<li><p><strong>use_grid_mlp</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use projecting to grids and performing MLPs.</p></li>
+<li><p><strong>use_sep_s2_act</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use separable grid MLP when <cite>use_grid_mlp</cite> is True.</p></li>
 </ul>
 </dd>
 </dl>
@@ -604,12 +604,12 @@ attention weights * non-linear messages -&gt; Linear</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sphere_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of spherical channels</p></li>
-<li><p><strong>hidden_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of hidden channels used during the SO(2) conv</p></li>
-<li><p><strong>num_heads</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of attention heads</p></li>
-<li><p><strong>attn_alpha_head</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of channels for alpha vector in each attention head</p></li>
-<li><p><strong>attn_value_head</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of channels for value vector in each attention head</p></li>
-<li><p><strong>output_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of output channels</p></li>
+<li><p><strong>sphere_channels</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of spherical channels</p></li>
+<li><p><strong>hidden_channels</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of hidden channels used during the SO(2) conv</p></li>
+<li><p><strong>num_heads</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of attention heads</p></li>
+<li><p><strong>attn_alpha_head</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of channels for alpha vector in each attention head</p></li>
+<li><p><strong>attn_value_head</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of channels for value vector in each attention head</p></li>
+<li><p><strong>output_channels</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of output channels</p></li>
 <li><p><strong>(</strong><strong>list</strong> (<a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.edge_channels_list" title="MolecularDiffusion.modules.layers.equiformer_v2_s.transformer_block.SO2EquivariantGraphAttention.edge_channels_list"><em>edge_channels_list</em></a>) – int):       List of degrees (l) for each resolution</p></li>
 <li><p><strong>(</strong><strong>list</strong> – int):       List of orders (m) for each resolution</p></li>
 <li><p><strong>(</strong><strong>list</strong> – SO3_Rotation): Class to calculate Wigner-D matrices and rotate embeddings</p></li>
@@ -618,14 +618,14 @@ attention weights * non-linear messages -&gt; Linear</p>
 <li><p><strong>max_num_elements</strong> (<em>#</em>) – Maximum number of atomic numbers</p></li>
 <li><p><strong>(</strong><strong>list</strong> – int):  List of sizes of invariant edge embedding. For example, [input_channels, hidden_channels, hidden_channels].
 The last one will be used as hidden size when <cite>use_atom_edge_embedding</cite> is <cite>True</cite>.</p></li>
-<li><p><strong>use_atom_edge_embedding</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use atomic embedding along with relative distance for edge scalar features</p></li>
-<li><p><strong>use_m_share_rad</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether all m components within a type-L vector of one channel share radial function weights</p></li>
-<li><p><strong>activation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Type of activation function</p></li>
-<li><p><strong>use_s2_act_attn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use attention after S2 activation. Otherwise, use the same attention as Equiformer</p></li>
-<li><p><strong>use_attn_renorm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to re-normalize attention weights</p></li>
-<li><p><strong>use_gate_act</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use gate activation. Otherwise, use S2 activation.</p></li>
-<li><p><strong>use_sep_s2_act</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use separable S2 activation when <cite>use_gate_act</cite> is False.</p></li>
-<li><p><strong>alpha_drop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Dropout rate for attention weights</p></li>
+<li><p><strong>use_atom_edge_embedding</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use atomic embedding along with relative distance for edge scalar features</p></li>
+<li><p><strong>use_m_share_rad</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether all m components within a type-L vector of one channel share radial function weights</p></li>
+<li><p><strong>activation</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Type of activation function</p></li>
+<li><p><strong>use_s2_act_attn</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use attention after S2 activation. Otherwise, use the same attention as Equiformer</p></li>
+<li><p><strong>use_attn_renorm</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to re-normalize attention weights</p></li>
+<li><p><strong>use_gate_act</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use gate activation. Otherwise, use S2 activation.</p></li>
+<li><p><strong>use_sep_s2_act</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use separable S2 activation when <cite>use_gate_act</cite> is False.</p></li>
+<li><p><strong>alpha_drop</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Dropout rate for attention weights</p></li>
 </ul>
 </dd>
 </dl>
@@ -783,14 +783,14 @@ self.edge_channels_list[0] = self.edge_channels_list[0] + 2 * self.edge_channels
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_sphere_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of spherical channels in input x embedding (used for edge embeddings)</p></li>
-<li><p><strong>sphere_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of spherical channels</p></li>
-<li><p><strong>attn_hidden_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of hidden channels used during SO(2) graph attention</p></li>
-<li><p><strong>num_heads</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of attention heads</p></li>
-<li><p><strong>attn_alpha_head</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of channels for alpha vector in each attention head</p></li>
-<li><p><strong>attn_value_head</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of channels for value vector in each attention head</p></li>
-<li><p><strong>ffn_hidden_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of hidden channels used during feedforward network</p></li>
-<li><p><strong>output_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of output channels</p></li>
+<li><p><strong>input_sphere_channels</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of spherical channels in input x embedding (used for edge embeddings)</p></li>
+<li><p><strong>sphere_channels</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of spherical channels</p></li>
+<li><p><strong>attn_hidden_channels</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of hidden channels used during SO(2) graph attention</p></li>
+<li><p><strong>num_heads</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of attention heads</p></li>
+<li><p><strong>attn_alpha_head</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of channels for alpha vector in each attention head</p></li>
+<li><p><strong>attn_value_head</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of channels for value vector in each attention head</p></li>
+<li><p><strong>ffn_hidden_channels</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of hidden channels used during feedforward network</p></li>
+<li><p><strong>output_channels</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of output channels</p></li>
 <li><p><strong>(</strong><strong>list</strong> (<a class="reference internal" href="../../equiformer_v2/equiformer_v2_oc20/index.html#MolecularDiffusion.modules.layers.equiformer_v2.equiformer_v2_oc20.EquiformerV2_OC20.edge_channels_list" title="MolecularDiffusion.modules.layers.equiformer_v2.equiformer_v2_oc20.EquiformerV2_OC20.edge_channels_list"><em>edge_channels_list</em></a>) – int):       List of degrees (l) for each resolution</p></li>
 <li><p><strong>(</strong><strong>list</strong> – int):       List of orders (m) for each resolution</p></li>
 <li><p><strong>(</strong><strong>list</strong> – SO3_Rotation): Class to calculate Wigner-D matrices and rotate embeddings</p></li>
@@ -799,19 +799,19 @@ self.edge_channels_list[0] = self.edge_channels_list[0] + 2 * self.edge_channels
 <li><p><strong>max_num_elements</strong> (<em>#</em>) – Maximum number of atomic numbers</p></li>
 <li><p><strong>(</strong><strong>list</strong> – int):  List of sizes of invariant edge embedding. For example, [input_channels, hidden_channels, hidden_channels].
 The last one will be used as hidden size when <cite>use_atom_edge_embedding</cite> is <cite>True</cite>.</p></li>
-<li><p><strong>use_atom_edge_embedding</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use atomic embedding along with relative distance for edge scalar features</p></li>
-<li><p><strong>use_m_share_rad</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether all m components within a type-L vector of one channel share radial function weights</p></li>
-<li><p><strong>attn_activation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Type of activation function for SO(2) graph attention</p></li>
-<li><p><strong>use_s2_act_attn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use attention after S2 activation. Otherwise, use the same attention as Equiformer</p></li>
-<li><p><strong>use_attn_renorm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to re-normalize attention weights</p></li>
-<li><p><strong>ffn_activation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Type of activation function for feedforward network</p></li>
-<li><p><strong>use_gate_act</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use gate activation. Otherwise, use S2 activation</p></li>
-<li><p><strong>use_grid_mlp</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use projecting to grids and performing MLPs for FFN.</p></li>
-<li><p><strong>use_sep_s2_act</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use separable S2 activation when <cite>use_gate_act</cite> is False.</p></li>
-<li><p><strong>norm_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Type of normalization layer ([‘layer_norm’, ‘layer_norm_sh’])</p></li>
-<li><p><strong>alpha_drop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Dropout rate for attention weights</p></li>
-<li><p><strong>drop_path_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Drop path rate</p></li>
-<li><p><strong>proj_drop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Dropout rate for outputs of attention and FFN</p></li>
+<li><p><strong>use_atom_edge_embedding</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use atomic embedding along with relative distance for edge scalar features</p></li>
+<li><p><strong>use_m_share_rad</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether all m components within a type-L vector of one channel share radial function weights</p></li>
+<li><p><strong>attn_activation</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Type of activation function for SO(2) graph attention</p></li>
+<li><p><strong>use_s2_act_attn</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use attention after S2 activation. Otherwise, use the same attention as Equiformer</p></li>
+<li><p><strong>use_attn_renorm</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to re-normalize attention weights</p></li>
+<li><p><strong>ffn_activation</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Type of activation function for feedforward network</p></li>
+<li><p><strong>use_gate_act</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use gate activation. Otherwise, use S2 activation</p></li>
+<li><p><strong>use_grid_mlp</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use projecting to grids and performing MLPs for FFN.</p></li>
+<li><p><strong>use_sep_s2_act</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, use separable S2 activation when <cite>use_gate_act</cite> is False.</p></li>
+<li><p><strong>norm_type</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Type of normalization layer ([‘layer_norm’, ‘layer_norm_sh’])</p></li>
+<li><p><strong>alpha_drop</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Dropout rate for attention weights</p></li>
+<li><p><strong>drop_path_rate</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Drop path rate</p></li>
+<li><p><strong>proj_drop</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Dropout rate for outputs of attention and FFN</p></li>
 </ul>
 </dd>
 </dl>

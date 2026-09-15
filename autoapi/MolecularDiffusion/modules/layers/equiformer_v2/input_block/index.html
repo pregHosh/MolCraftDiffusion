@@ -496,16 +496,16 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sphere_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of spherical channels</p></li>
+<li><p><strong>sphere_channels</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of spherical channels</p></li>
 <li><p><strong>(</strong><strong>list</strong> (<a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2.input_block.EdgeDegreeEmbedding.edge_channels_list" title="MolecularDiffusion.modules.layers.equiformer_v2.input_block.EdgeDegreeEmbedding.edge_channels_list"><em>edge_channels_list</em></a>) – int):       List of degrees (l) for each resolution</p></li>
 <li><p><strong>(</strong><strong>list</strong> – int):       List of orders (m) for each resolution</p></li>
 <li><p><strong>(</strong><strong>list</strong> – SO3_Rotation): Class to calculate Wigner-D matrices and rotate embeddings</p></li>
 <li><p><strong>mappingReduced</strong> (<a class="reference internal" href="../so3/index.html#MolecularDiffusion.modules.layers.equiformer_v2.so3.CoefficientMappingModule" title="MolecularDiffusion.modules.layers.equiformer_v2.so3.CoefficientMappingModule"><em>CoefficientMappingModule</em></a>) – Class to convert l and m indices once node embedding is rotated</p></li>
-<li><p><strong>max_num_elements</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Maximum number of atomic numbers</p></li>
+<li><p><strong>max_num_elements</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Maximum number of atomic numbers</p></li>
 <li><p><strong>(</strong><strong>list</strong> – int):  List of sizes of invariant edge embedding. For example, [input_channels, hidden_channels, hidden_channels].
 The last one will be used as hidden size when <cite>use_atom_edge_embedding</cite> is <cite>True</cite>.</p></li>
-<li><p><strong>use_atom_edge_embedding</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use atomic embedding along with relative distance for edge scalar features</p></li>
-<li><p><strong>rescale_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Rescale the sum aggregation</p></li>
+<li><p><strong>use_atom_edge_embedding</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to use atomic embedding along with relative distance for edge scalar features</p></li>
+<li><p><strong>rescale_factor</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Rescale the sum aggregation</p></li>
 </ul>
 </dd>
 </dl>

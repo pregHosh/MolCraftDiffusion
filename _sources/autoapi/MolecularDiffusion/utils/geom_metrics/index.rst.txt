@@ -306,7 +306,7 @@ Module Contents
    :rtype: np.ndarray (N, 3)
 
 
-.. py:function:: run_postbuster(mols, timeout=60, batch_size=1)
+.. py:function:: run_postbuster(mols, timeout=60, batch_size=1, names=None)
 
    Run PoseBusters on a list of RDKit molecules, optionally in batches, with a timeout per batch.
 
@@ -320,6 +320,12 @@ Module Contents
    :param batch_size: Number of molecules to process in a single batch.
                       If None, processes all molecules in one batch. Default is None.
    :type batch_size: int, optional
+   :param names: One label per molecule. When given, every row gets a
+                 ``filename`` column, and a batch that fails or times out
+                 yields one row per molecule (checks NaN, ``posebuster_error``
+                 set) instead of being dropped. Default None keeps the old
+                 drop-the-batch behaviour that training eval relies on.
+   :type names: list of str, optional
 
    :returns:
 
