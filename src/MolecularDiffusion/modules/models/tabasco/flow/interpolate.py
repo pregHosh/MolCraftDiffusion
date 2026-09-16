@@ -258,6 +258,12 @@ class CenteredMetricInterpolant(Interpolant):
         self.scale_noise_by_log_num_atoms = scale_noise_by_log_num_atoms
         self.noise_scale = noise_scale
 
+    def _prepare_coords(self, coords: Tensor, pad_mask: Tensor) -> Tensor:
+        """Apply the same masking/centering convention to paths and targets."""
+        if self.centered:
+            return mask_and_zero_com(coords, pad_mask)
+        return apply_mask(coords, pad_mask)
+
     def sample_noise(self, shape: torch.Size, pad_mask: Tensor) -> TensorDict:
         """Return masked Gaussian noise with optional scaling.
 
@@ -274,12 +280,7 @@ class CenteredMetricInterpolant(Interpolant):
             num_atoms = (~pad_mask).sum(dim=-1)
             x_0 = x_0 * torch.log(num_atoms[..., None, None])
 
-        if self.centered:
-            x_0 = mask_and_zero_com(x_0, pad_mask)
-        else:
-            x_0 = apply_mask(x_0, pad_mask)
-
-        return x_0
+        return self._prepare_coords(x_0, pad_mask)
 
     def create_path(
         self, x_1: Tensor, t: Tensor, x_0: Optional[TensorDict] = None
@@ -296,8 +297,8 @@ class CenteredMetricInterpolant(Interpolant):
             f"t shape: {t.shape} != {(x_1[self.key].shape[0], 1, 1)}"
         )
 
-        x_0_tensor = mask_and_zero_com(x_0_tensor, x_1[self.key_pad_mask])
-        x_1_tensor = mask_and_zero_com(x_1[self.key], x_1[self.key_pad_mask])
+        x_0_tensor = self._prepare_coords(x_0_tensor, x_1[self.key_pad_mask])
+        x_1_tensor = self._prepare_coords(x_1[self.key], x_1[self.key_pad_mask])
 
         x_t = (1.0 - t) * x_0_tensor + t * x_1_tensor
         dx_t = x_1_tensor - x_0_tensor
@@ -312,7 +313,14 @@ class CenteredMetricInterpolant(Interpolant):
         real_mask = 1 - path.x_1[self.key_pad_mask].int()
         n_atoms = real_mask.sum(dim=-1)
 
-        err = (pred[self.key] - path.x_1[self.key]) * real_mask.unsqueeze(-1)
+        # ``create_path`` feeds the network centered coordinates.  Compare its
+        # endpoint prediction with the same centered target.  Using the raw
+        # target here asks the network to recover a translation removed from
+        # its input and makes the loss depend on arbitrary dataset offsets.
+        target = self._prepare_coords(
+            path.x_1[self.key], path.x_1[self.key_pad_mask]
+        )
+        err = (pred[self.key] - target) * real_mask.unsqueeze(-1)
         loss = torch.sum(err**2, dim=(-1, -2)) / (n_atoms * err.shape[-1])
 
         if self.time_factor:
