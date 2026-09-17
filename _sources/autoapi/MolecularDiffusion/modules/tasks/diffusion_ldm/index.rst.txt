@@ -136,7 +136,7 @@ Module Contents
 
 
 
-.. py:class:: LDMTask(autoencoder: VAETask, denoiser: torch.nn.Module, interpolant_config: dict, augment_rotation: bool = False)
+.. py:class:: LDMTask(autoencoder: VAETask, denoiser: torch.nn.Module, interpolant_config: dict, augment_rotation: bool = False, task_type: str = 'ldm')
 
    Bases: :py:obj:`torch.nn.Module`
 
@@ -289,7 +289,7 @@ Module Contents
 
 
 
-.. py:class:: VAETask(encoder: torch.nn.Module, decoder: torch.nn.Module, latent_dim: int = 8, loss_weights: Optional[dict] = None, eval_reconstruction: bool = False, save_reconstruction: bool = False, output_path: str = '', augment_rotation: bool = False, augment_noise: float = 0.0)
+.. py:class:: VAETask(encoder: torch.nn.Module, decoder: torch.nn.Module, latent_dim: int = 8, loss_weights: Optional[dict] = None, eval_reconstruction: bool = False, save_reconstruction: bool = False, output_path: str = '', augment_rotation: bool = False, augment_noise: float = 0.0, pos_scale: float = 1.0, task_type: str = 'vae')
 
    Bases: :py:obj:`torch.nn.Module`
 
@@ -389,6 +389,11 @@ Module Contents
 
 
 
+   .. py:attribute:: pos_scale
+      :value: 1.0
+
+
+
    .. py:attribute:: post_quant_conv
 
 
@@ -410,7 +415,7 @@ Module Contents
 
 
 
-.. py:class:: VAETaskFactory(task_type: str, encoder: dict, decoder: dict, latent_dim: int = 8, loss_weights: Optional[dict] = None, eval_reconstruction: bool = False, save_reconstruction: bool = False, output_path: str = '', augment_rotation: bool = False, augment_noise: float = 0.0, train_set: Optional[torch.utils.data.Dataset] = None, **kwargs)
+.. py:class:: VAETaskFactory(task_type: str, encoder: dict, decoder: dict, latent_dim: int = 8, loss_weights: Optional[dict] = None, eval_reconstruction: bool = False, save_reconstruction: bool = False, output_path: str = '', augment_rotation: bool = False, augment_noise: float = 0.0, pos_scale: float = 1.0, train_set: Optional[torch.utils.data.Dataset] = None, **kwargs)
 
    Factory for building VAE task.
 
@@ -455,6 +460,11 @@ Module Contents
 
    .. py:attribute:: output_path
       :value: ''
+
+
+
+   .. py:attribute:: pos_scale
+      :value: 1.0
 
 
 

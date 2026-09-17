@@ -1,0 +1,64 @@
+MolecularDiffusion.modules.layers.radius_graph_utils
+====================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.radius_graph_utils
+
+.. autoapi-nested-parse::
+
+   Copyright (c) Meta Platforms, Inc. and affiliates.
+
+   Adapted from: https://github.com/FAIR-Chem/fairchem
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.radius_graph_utils.compute_neighbors
+   MolecularDiffusion.modules.layers.radius_graph_utils.get_max_neighbors_mask
+   MolecularDiffusion.modules.layers.radius_graph_utils.get_pbc_distances
+   MolecularDiffusion.modules.layers.radius_graph_utils.radius_graph_pbc
+
+
+Module Contents
+---------------
+
+.. py:function:: compute_neighbors(pos, num_atoms, edge_index)
+
+.. py:function:: get_max_neighbors_mask(natoms, index, atom_distance, max_num_neighbors_threshold, degeneracy_tolerance: float = 0.01, enforce_max_strictly: bool = False)
+
+   Give a mask that filters out edges so that each atom has at most
+   `max_num_neighbors_threshold` neighbors. Assumes that `index` is sorted.
+
+   Enforcing the max strictly can force the arbitrary choice between degenerate edges. This can
+   lead to undesired behaviors; for example, bulk formation energies which are not invariant to
+   unit cell choice.
+
+   A degeneracy tolerance can help prevent sudden changes in edge existence from small changes in
+   atom position, for example, rounding errors, slab relaxation, temperature, etc.
+
+
+.. py:function:: get_pbc_distances(pos, edge_index, cell, cell_offsets, neighbors, return_offsets: bool = False, return_distance_vec: bool = False)
+
+.. py:function:: radius_graph_pbc(atom_pos, cell, num_atoms, radius, max_num_neighbors_threshold, enforce_max_neighbors_strictly: bool = False, pbc=None)
+
+   Creates a radial cutoff graph with periodic boundary conditions (PBC).
+
+   Adapted from: https://github.com/FAIR-Chem/fairchem
+
+   :param atom_pos: (n, 3) - 3D Cartesian coordinates
+   :param cell: (bsz, 3, 3) - Lattice vectors/unit cell
+   :param num_atoms: (bsz,) - Number of atoms per crystal
+   :param radius: (float) - Cutoff radius for pairwise distances
+   :param max_num_neighbors_threshold: (int) - Maximum number of neighbors per atom
+   :param enforce_max_neighbors_strictly: (bool) - Enforce strict maximum number of neighbors
+   :param pbc: (list) - Periodic boundary conditions (default: [True, True, True])
+
+   :returns: (2, e) - Pairs of edges (i, j)
+             unit_cell: (e, 3) - Unit cell offsets
+             num_neighbors_image: (bsz,) - Number of neighbors per image
+   :rtype: edge_index
+
+
