@@ -51,6 +51,16 @@ def _validate_task_type(checkpoint, expected_task_type):
     if expected_task_type is None:
         return
     ckpt_task_type, _ = _get_ckpt_meta(checkpoint)
+    # LDM/VAE checkpoints written before the configured task_type was propagated
+    # into the task carry these generic placeholders, which match no config name.
+    # They say nothing about the architecture, so they cannot be validated.
+    #
+    # This is only safe because neither string is a live task name: no
+    # configs/tasks/*.yaml declares `task_type: ldm` or `task_type: vae` (they
+    # use `diffusion_adit`, `vae_transformer`, ...). Naming a future task config
+    # exactly `ldm` or `vae` would silently disable validation for it.
+    if ckpt_task_type in ("ldm", "vae"):
+        return
     if ckpt_task_type is not None and ckpt_task_type != expected_task_type:
         raise ValueError(
             f"Task type mismatch: checkpoint was trained as '{ckpt_task_type}' "

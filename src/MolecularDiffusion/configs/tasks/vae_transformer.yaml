@@ -17,6 +17,10 @@ decoder:
   num_layers: 8
 
 latent_dim: 8
+# Decoder length unit relative to Angstrom: the pos loss target is divided
+# by it and decoded positions multiplied back. 1.0 = Angstrom (all older
+# checkpoints); upstream ADiT uses 10.0 (nanometres).
+pos_scale: 1.0
 loss_weights:
   pos: 10.0
   atom_types: 1.0

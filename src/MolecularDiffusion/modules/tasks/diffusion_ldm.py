@@ -59,10 +59,12 @@ class VAETaskFactory:
         output_path: str = "",
         augment_rotation: bool = False,
         augment_noise: float = 0.0,
+        pos_scale: float = 1.0,
         train_set: Optional[torch.utils.data.Dataset] = None,
         **kwargs
     ):
         self.task_type = task_type
+        self.pos_scale = pos_scale
         self.encoder_config = encoder
         self.decoder_config = decoder
         self.latent_dim = latent_dim
@@ -87,7 +89,8 @@ class VAETaskFactory:
             decoder = self.decoder_config
         else:
             decoder = instantiate(self.decoder_config)
-        
+
+        print(f"VAE pos_scale = {self.pos_scale} (decoder length unit / Angstrom)")
         self.task = VAETask(
             encoder=encoder,
             decoder=decoder,
@@ -98,6 +101,8 @@ class VAETaskFactory:
             output_path=self.output_path,
             augment_rotation=self.augment_rotation,
             augment_noise=self.augment_noise,
+            pos_scale=self.pos_scale,
+            task_type=self.task_type,
         )
         return self.task
 
@@ -116,9 +121,16 @@ class VAETask(nn.Module):
         output_path: str = "",
         augment_rotation: bool = False,
         augment_noise: float = 0.0,
+        pos_scale: float = 1.0,
+        task_type: str = "vae",
     ):
         super().__init__()
-        
+
+        # Length unit the decoder's `pos_head` works in, relative to Angstrom.
+        # 1.0 = Angstrom directly (every checkpoint trained before this key).
+        # Upstream ADiT trains in nanometres (10.0): the loss target is
+        # divided by it and every decoded position multiplied back.
+        self.pos_scale = pos_scale
         self.encoder = encoder
         self.decoder = decoder
         self.latent_dim = latent_dim
@@ -134,7 +146,9 @@ class VAETask(nn.Module):
         self.quant_conv = nn.Linear(d_model, 2 * latent_dim, bias=False)
         self.post_quant_conv = nn.Linear(latent_dim, decoder.d_model, bias=False)
         
-        self.task_type = "vae"
+        # Must be the *configured* name, not a generic one: the checkpoint
+        # stamps it and `cli/generate.py` refuses a mismatching config.
+        self.task_type = task_type
         self.split = "train"  # Track train/valid/test
         self._batch_idx = 0  # For sample indexing
         
@@ -211,10 +225,13 @@ class VAETask(nn.Module):
             wrapped.batch = wrapped.batch[flat_mask]
             wrapped.token_idx = wrapped.token_idx[flat_mask]
             
-            # Silenced defaults for molecules
+            # Silenced defaults for molecules. The cell is all-zero, as the
+            # PyG molecule caches store it: the Equiformer encoder turns cell
+            # vectors into edge-angle features, and a fixed non-zero cell
+            # would leak absolute orientation into them. A zero cell makes
+            # those features 0/0 = NaN, which the encoder maps to 0.
             wrapped.frac_coords = torch.zeros_like(wrapped.pos)
-            bsz = B
-            wrapped.cell = torch.eye(3, device=wrapped.pos.device).unsqueeze(0).expand(bsz, 3, 3) * 100.0
+            wrapped.cell = wrapped.pos.new_zeros(B, 3, 3)
             
             return wrapped
         
@@ -226,9 +243,8 @@ class VAETask(nn.Module):
         # Silenced defaults for molecules
         if not hasattr(batch, 'frac_coords'):
             batch.frac_coords = torch.zeros_like(batch.pos)
-        if not hasattr(batch, 'cell'):
-            bsz = batch.num_atoms.size(0)
-            batch.cell = torch.eye(3, device=batch.pos.device).unsqueeze(0).expand(bsz, 3, 3) * 100.0
+        if not hasattr(batch, 'cell'):  # zero cell: see the dict branch above
+            batch.cell = batch.pos.new_zeros(batch.num_atoms.size(0), 3, 3)
         return batch
     
     def encode(self, batch):
@@ -332,7 +348,7 @@ class VAETask(nn.Module):
         # Position reconstruction MSE - zero-centered for translation invariance
 
         pos_pred = recon["pos"]
-        pos_true = batch.pos
+        pos_true = batch.pos / self.pos_scale
         batch_idx = encoded["batch"]
         # Subtract per-molecule centroids
         pos_mean_pred = scatter(pos_pred, batch_idx, dim=0, reduce="mean")[batch_idx]
@@ -379,7 +395,7 @@ class VAETask(nn.Module):
         
         # Get predicted atom types (argmax of logits)
         pred_atom_types = recon["atom_types"].argmax(dim=-1)  # (n_total,)
-        pred_pos = recon["pos"]  # (n_total, 3)
+        pred_pos = recon["pos"] * self.pos_scale  # (n_total, 3), back to Angstrom
         
         # Get ground truth
         gt_atom_types = batch.atom_types  # (n_total,)
@@ -574,6 +590,7 @@ class LDMTaskFactory:
             denoiser=denoiser,
             interpolant_config=self.interpolant_config,
             augment_rotation=self.augment_rotation,
+            task_type=self.task_type,
         )
         return self.task
 
@@ -762,6 +779,7 @@ class LDMTask(nn.Module):
         denoiser: nn.Module,
         interpolant_config: dict,
         augment_rotation: bool = False,
+        task_type: str = "ldm",
     ):
         super().__init__()
         
@@ -782,7 +800,8 @@ class LDMTask(nn.Module):
             self_condition_prob=interpolant_config.get("self_condition_prob", 0.5),
         )
         
-        self.task_type = "ldm"
+        # The configured name (e.g. `diffusion_adit`), as for VAETask above.
+        self.task_type = task_type
 
         # For compatibility with generation
         self.prop_dist_model = None
@@ -1061,7 +1080,8 @@ class LDMTask(nn.Module):
         # Convert to output format
         atom_logits = recon["atom_types"]  # (n_total, max_elements)
         atom_types = atom_logits.argmax(dim=-1)  # (n_total,)
-        coords = recon["pos"]  # (n_total, 3)
+        # getattr: a VAE object pickled before `pos_scale` existed is Angstrom.
+        coords = recon["pos"] * getattr(self.autoencoder, "pos_scale", 1.0)  # (n_total, 3)
         
         # Pad to dense format
         one_hot = torch.zeros(batch_size, max_atoms, atom_logits.size(-1), device=device)

@@ -447,7 +447,27 @@ def lightning_wrapper(task_module, data_module, trainer_module, logger_module, e
         filename=f"epoch={{epoch}}-{monitor_metric_key.replace('/', '_').replace(' ', '_')}={{{monitor_metric_key}:.3f}}",
         save_last=True,
     ))
-    
+
+    # Lightning writes `last.ckpt` only when the monitored top-k save fires at
+    # that same step (pytorch_lightning/callbacks/model_checkpoint.py:517), and
+    # its `on_train_end` fallback is skipped once any checkpoint was saved.
+    # So on a run whose monitored metric stops improving, `last.ckpt` freezes
+    # at the last improvement and every later epoch is discarded -- silently,
+    # exit 0. A second, unmonitored callback fixes that: `save_top_k=0` means
+    # it writes nothing during training (no extra files, no extra disk), and
+    # `save_last=True` makes its `on_train_end` write `last.ckpt` from the
+    # final training step. `enable_version_counter=False` so it overwrites
+    # the file above in place instead of creating `last-v1.ckpt`.
+    # The monitored callback is left untouched and stays first in
+    # `trainer.checkpoint_callbacks` (Lightning preserves the relative order of
+    # checkpoint callbacks), so `trainer.checkpoint_callback`, the top-k
+    # filenames and the top-k selection are all unchanged.
+    callbacks.append(ModelCheckpoint(
+        save_top_k=0,
+        save_last=True,
+        enable_version_counter=False,
+    ))
+
     # Learning rate monitor for wandb logging
     callbacks.append(LearningRateMonitor(logging_interval='step'))
 
