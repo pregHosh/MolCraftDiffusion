@@ -9,11 +9,13 @@ Stage 1: Train VAE to learn latent space
 Stage 2: Train DiT on frozen VAE latents
 """
 
+import copy
+from typing import Dict, Optional
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch_scatter import scatter
-from typing import Dict, Optional
 from omegaconf import OmegaConf, DictConfig
 from hydra.utils import instantiate
 from torch_geometric.utils import to_dense_batch
@@ -232,7 +234,15 @@ class VAETask(nn.Module):
     def encode(self, batch):
         """Encode batch to latent distribution."""
         batch = self._adapt_batch(batch)
-        encoded = self.encoder(batch)
+
+        # The reconstruction loss is translation-invariant, but the
+        # Transformer encoder embeds Cartesian positions directly. Center a
+        # shallow copy so arbitrary database offsets cannot leak into the
+        # VAE/ADiT latent while leaving the caller's coordinates unchanged.
+        encoder_batch = copy.copy(batch)
+        pos_mean = scatter(batch.pos, batch.batch, dim=0, reduce="mean")
+        encoder_batch.pos = batch.pos - pos_mean[batch.batch]
+        encoded = self.encoder(encoder_batch)
         
         # Project to latent: mean and logvar
         h = self.quant_conv(encoded["x"])  # (n, 2*latent_dim)
