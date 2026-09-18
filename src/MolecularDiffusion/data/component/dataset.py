@@ -1271,9 +1271,11 @@ class GraphDataset(torch_data.Dataset):
                     ]
                     if missing_fields:
                         skipped_missing_target += 1
-                        logger.warning(
-                            f"row id={i}: missing target field(s) {missing_fields}, dropping entry"
-                        )
+                        if skipped_missing_target <= 5:
+                            logger.warning(
+                                f"row id={i}: missing target field(s) {missing_fields}, dropping entry"
+                                + ("" if skipped_missing_target < 5 else " (further such warnings suppressed, see summary count at end)")
+                            )
                         continue
 
                 if any(atom.symbol in forbidden_atoms for atom in mol_ase):
@@ -2266,9 +2268,11 @@ class PointCloudDataset(torch_data.Dataset):
                     ]
                     if missing_fields:
                         skipped_missing_target += 1
-                        logger.warning(
-                            f"row id={i}: missing target field(s) {missing_fields}, dropping entry"
-                        )
+                        if skipped_missing_target <= 5:
+                            logger.warning(
+                                f"row id={i}: missing target field(s) {missing_fields}, dropping entry"
+                                + ("" if skipped_missing_target < 5 else " (further such warnings suppressed, see summary count at end)")
+                            )
                         continue
 
                 if any(atom.symbol in forbidden_atoms for atom in mol_ase):

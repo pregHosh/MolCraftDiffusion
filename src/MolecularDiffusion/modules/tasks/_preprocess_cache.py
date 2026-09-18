@@ -201,7 +201,22 @@ def canonical_smiles_set(
     )
 
     if n_workers is None:
-        n_workers = max(1, (os.cpu_count() or 2) - 1)
+        # os.cpu_count() reports the *physical node's* CPU count, not what a
+        # job scheduler (e.g. SLURM cgroups) actually allocated to this
+        # process — on a shared multi-core node this can wildly overshoot
+        # and fork far more worker processes than intended.
+        # os.sched_getaffinity(0) reflects the process's actual usable CPU
+        # set and is cgroup-aware on Linux; fall back to cpu_count() where
+        # unavailable (e.g. macOS). Capped regardless: SMILES canonicalisation
+        # is pickling/IPC-bound past a handful of workers, and each worker
+        # forks a copy-on-write snapshot of the (potentially multi-GB)
+        # dataset already resident in the parent, so more workers than
+        # necessary risks OOM rather than speed.
+        try:
+            available_cpus = len(os.sched_getaffinity(0))
+        except AttributeError:
+            available_cpus = os.cpu_count() or 2
+        n_workers = max(1, min(available_cpus - 1, 8))
 
     _t = time.perf_counter()
     if n_workers > 1 and len(smiles_list) >= parallel_threshold:
