@@ -28,7 +28,7 @@ from ase.db import connect
 try:
     from rdkit import Chem
     from rdkit.Chem import MolToSmiles as mol2smi
-    from rdkit.Chem import rdFingerprintGenerator, rdMolDescriptors
+    from rdkit.Chem import rdMolDescriptors
 except ImportError:
     Chem = None
 
@@ -99,12 +99,11 @@ def calculate_sa_score(m):
     if not _fscores:
         return float('nan')
 
-    try:
-        gen = rdFingerprintGenerator.GetMorganGenerator(radius=2)
-        fps = gen.GetCountFingerprint(m).GetNonzeroElements()
-    except Exception:
-        fps = rdMolDescriptors.GetMorganFingerprint(m, 2).GetNonzeroElements()
-    
+    # rdFingerprintGenerator's bit-hash space doesn't match the legacy
+    # hashing fpscores.pkl.gz was built with -- every lookup would miss
+    # and silently fall back to -4, so use the legacy API directly.
+    fps = rdMolDescriptors.GetMorganFingerprint(m, 2).GetNonzeroElements()
+
     score1 = sum(_fscores.get(bitId, -4) * v for bitId, v in fps.items()) / (sum(fps.values()) or 1)
     
     nAtoms = m.GetNumAtoms()
@@ -686,7 +685,7 @@ def calculate_props(mol):
     read_fragment_scores()
     if _fscores:
         try:
-            score = calculate_sa_score(mol)
+            score = calculate_sa_score(Chem.RemoveHs(mol))
             if not math.isnan(score):
                 props['sascore'] = float(score)
         except:

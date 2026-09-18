@@ -350,6 +350,20 @@ class EngineLightning(pl.LightningModule, core.Configurable):
         # already have them (i.e., preprocess() hasn't been called with a new dataset).
         # When fine-tuning on a new dataset, preprocess() computes fresh distribution
         # models that must NOT be overwritten by the old checkpoint's stale ones.
+        # Tabasco's data_stats must be restored BEFORE the freshness probes below.
+        # Its node_dist_model is a lazy property that builds a sampler from
+        # tabasco_model.data_stats and caches it in _node_dist_model. Probing the
+        # property while data_stats is still empty therefore caches a sampler whose
+        # histogram is empty, which makes the task look like it carries a fresh
+        # distribution and silently falls back to a uniform 5-29 QM9-like size range.
+        # Restoring the stats first, and dropping any cached sampler, lets the
+        # property rebuild from the checkpoint's own histogram.
+        if 'data_stats' in checkpoint and hasattr(self.task, 'tabasco_model'):
+            self.task.tabasco_model.set_data_stats(checkpoint['data_stats'])
+            if getattr(self.task, '_node_dist_model', None) is not None:
+                self.task._node_dist_model = None
+            logger.info("Restored Tabasco data_stats from checkpoint")
+
         has_fresh_node_dist = getattr(self.task, 'node_dist_model', None) is not None
         has_fresh_prop_dist = getattr(self.task, 'prop_dist_model', None) is not None
 
@@ -373,10 +387,6 @@ class EngineLightning(pl.LightningModule, core.Configurable):
             else:
                 self.task.prop_dist_model = checkpoint['prop_dist_model']
                 logger.info("Restored prop_dist_model from checkpoint")
-
-        if 'data_stats' in checkpoint and hasattr(self.task, 'tabasco_model'):
-            self.task.tabasco_model.set_data_stats(checkpoint['data_stats'])
-            logger.info("Restored Tabasco data_stats from checkpoint")
 
         has_fresh_property_norms = getattr(self.task, 'property_norms', None) is not None
         if 'property_norms' in checkpoint:

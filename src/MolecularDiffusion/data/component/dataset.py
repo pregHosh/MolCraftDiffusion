@@ -1256,12 +1256,25 @@ class GraphDataset(torch_data.Dataset):
         skipped_rdkit = 0
         skipped_atom_mismatch = 0
         skipped_empty = 0
+        skipped_missing_target = 0
         failed = 0
         last_error: Optional[Exception] = None
         for i, row in enumerate(iterator):
             try:
                 mol_ase = row.toatoms()
                 row_data = getattr(row, "data", {}) or {}
+
+                if target_fields:
+                    missing_fields = [
+                        f for f in target_fields
+                        if f not in row_data or row_data[f] == ""
+                    ]
+                    if missing_fields:
+                        skipped_missing_target += 1
+                        logger.warning(
+                            f"row id={i}: missing target field(s) {missing_fields}, dropping entry"
+                        )
+                        continue
 
                 if any(atom.symbol in forbidden_atoms for atom in mol_ase):
                     skipped_forbidden += 1
@@ -1411,16 +1424,8 @@ class GraphDataset(torch_data.Dataset):
                 resolved_targets: Dict[str, float] = {}
                 if target_fields:
                     for field in target_fields:
-                        value = row_data.get(field, -1)
-                        if value == "":
-                            default_values = {
-                                "total_charge": 0,
-                                "num_graph": 1,
-                                "distortion_d": 0,
-                                "sascore": -1,
-                                "SCScore": -1,
-                            }
-                            value = default_values.get(field, value)
+                        # presence already guaranteed by the missing-target check above
+                        value = row_data[field]
                         try:
                             value = utils.literal_eval(str(value))
                         except (ValueError, SyntaxError):
@@ -1479,13 +1484,13 @@ class GraphDataset(torch_data.Dataset):
                 f"in {len(_chunk_paths)} chunks → {chunk_dir}"
             )
 
-        if skipped_too_large or skipped_forbidden or skipped_nan or skipped_mol_block or skipped_rdkit or skipped_atom_mismatch or skipped_empty or failed:
+        if skipped_too_large or skipped_forbidden or skipped_nan or skipped_mol_block or skipped_rdkit or skipped_atom_mismatch or skipped_empty or skipped_missing_target or failed:
             logger.warning(
                 f"Discarded entries: {skipped_too_large} too large, {skipped_forbidden} forbidden atoms, "
                 f"{skipped_nan} NaN values, {skipped_mol_block} missing mol_block, "
                 f"{skipped_rdkit} RDKit parse failures, {skipped_atom_mismatch} atom order mismatches, "
-                f"{skipped_empty} empty after hydrogen removal, {failed} errors "
-                f"(last: {last_error})"
+                f"{skipped_empty} empty after hydrogen removal, {skipped_missing_target} missing target field(s), "
+                f"{failed} errors (last: {last_error})"
             )
 
         _check_any_loaded(
@@ -2246,12 +2251,25 @@ class PointCloudDataset(torch_data.Dataset):
         skipped_rdkit = 0
         skipped_atom_mismatch = 0
         skipped_empty = 0
+        skipped_missing_target = 0
         failed = 0
         last_error: Optional[Exception] = None
         for i, row in enumerate(iterator):
             try:
                 mol_ase = row.toatoms()
                 row_data = getattr(row, "data", {}) or {}
+
+                if target_fields:
+                    missing_fields = [
+                        f for f in target_fields
+                        if f not in row_data or row_data[f] == ""
+                    ]
+                    if missing_fields:
+                        skipped_missing_target += 1
+                        logger.warning(
+                            f"row id={i}: missing target field(s) {missing_fields}, dropping entry"
+                        )
+                        continue
 
                 if any(atom.symbol in forbidden_atoms for atom in mol_ase):
                     skipped_forbidden += 1
@@ -2400,20 +2418,13 @@ class PointCloudDataset(torch_data.Dataset):
                     _buf["smiles_list"].append(smiles)
                     if target_fields:
                         for field in target_fields:
-                            value = row_data.get(field, "")
-                            if value == "":
-                                default_values = {
-                                    "total_charge": 0, "num_graph": 1,
-                                    "distortion_d": 0, "sascore": -1, "SCScore": -1,
-                                }
-                                value = default_values.get(field, value)
+                            # presence already guaranteed by the missing-target check above
+                            value = row_data[field]
                             try:
                                 value = utils.literal_eval(str(value))
                             except (ValueError, SyntaxError):
                                 if isinstance(value, (np.ndarray, torch.Tensor)):
                                     value = value.tolist()
-                            if value == "":
-                                value = math.nan
                             _buf["targets"][field].append(float(value))
                     _all_smiles.append(smiles)
                     _all_n_atoms.append(n_nodes)
@@ -2435,23 +2446,13 @@ class PointCloudDataset(torch_data.Dataset):
                     self.n_atoms.append(n_nodes)
                     if target_fields:
                         for field in target_fields:
-                            value = row_data.get(field, "")
-                            if value == "":
-                                default_values = {
-                                    "total_charge": 0,
-                                    "num_graph": 1,
-                                    "distortion_d": 0,
-                                    "sascore": -1,
-                                    "SCScore": -1,
-                                }
-                                value = default_values.get(field, value)
+                            # presence already guaranteed by the missing-target check above
+                            value = row_data[field]
                             try:
                                 value = utils.literal_eval(str(value))
                             except (ValueError, SyntaxError):
                                 if isinstance(value, (np.ndarray, torch.Tensor)):
                                     value = value.tolist()
-                            if value == "":
-                                value = math.nan
                             self.targets[field].append(float(value))
                     # Append unconditionally (`smiles` is None without RDKit) so
                     # smiles_list stays index-aligned with coords_list.
@@ -2481,13 +2482,13 @@ class PointCloudDataset(torch_data.Dataset):
                 f"in {len(_chunk_paths)} chunks → {chunk_dir}"
             )
 
-        if skipped_too_large or skipped_forbidden or skipped_nan or skipped_mol_block or skipped_rdkit or skipped_atom_mismatch or skipped_empty or failed:
+        if skipped_too_large or skipped_forbidden or skipped_nan or skipped_mol_block or skipped_rdkit or skipped_atom_mismatch or skipped_empty or skipped_missing_target or failed:
             logger.warning(
                 f"Discarded entries: {skipped_too_large} too large, {skipped_forbidden} forbidden atoms, "
                 f"{skipped_nan} NaN values, {skipped_mol_block} missing mol_block, "
                 f"{skipped_rdkit} RDKit parse failures, {skipped_atom_mismatch} atom order mismatches, "
-                f"{skipped_empty} empty after hydrogen removal, {failed} errors "
-                f"(last: {last_error})"
+                f"{skipped_empty} empty after hydrogen removal, {skipped_missing_target} missing target field(s), "
+                f"{failed} errors (last: {last_error})"
             )
 
         _check_any_loaded(
