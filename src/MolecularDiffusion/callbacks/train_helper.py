@@ -55,7 +55,9 @@ class gradient_clipping:
         )
         if float(grad_norm) > self.max_grad_norm:
             gradnorm_queue.add(float(self.max_grad_norm))
-        else:
+        elif float(grad_norm) > 0:
+            # Zero-grad steps (e.g. SP regularizer dropped the whole batch)
+            # would drag the threshold to 0, and it can never rise again.
             gradnorm_queue.add(float(grad_norm))
 
         if float(grad_norm) > self.max_grad_norm:
@@ -192,11 +194,11 @@ class SP_regularizer:
             self.lambda_2 = self.lambda_2
 
     def hard(self, losses: torch.Tensor):
-
-        weights = (losses <= self.lambda_).float()
-        sp_loss = losses * weights
-
-        return sp_loss
+        # torch.where, not losses * mask: inf * 0 = nan would poison the batch.
+        # Rescaled so the caller's .mean() averages over kept samples only.
+        keep = losses <= self.lambda_
+        sp_loss = torch.where(keep, losses, torch.zeros_like(losses))
+        return sp_loss * (keep.numel() / keep.sum().clamp(min=1))
 
     def hard_relax(self, losses: torch.Tensor):
         weights = torch.where(

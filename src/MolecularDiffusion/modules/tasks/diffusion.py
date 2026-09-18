@@ -583,11 +583,14 @@ class GeomMolecularGenerative(Task, core.Configurable):
 
             N = node_mask.squeeze(2).sum(1).long()
         if not sp_reg_handled:
+            if self.sp_regularizer is not None and self.training:
+                # Threshold the model loss before adding -log p(N): that term
+                # is parameter-free and, for l2, dwarfs the loss, so filtering
+                # after it drops rare molecule sizes instead of hard samples.
+                nll = self.sp_regularizer(nll)
             log_pN = self.node_dist_model.log_prob(N)
             assert nll.size() == log_pN.size()
             nll = nll - log_pN
-            if self.sp_regularizer is not None and self.training:
-                nll = self.sp_regularizer(nll)
         loss = nll.mean(0)
         metric["train_negative_log_likelihood"] = loss
         all_loss += loss

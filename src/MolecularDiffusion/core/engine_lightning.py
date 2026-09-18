@@ -289,6 +289,13 @@ class EngineLightning(pl.LightningModule, core.Configurable):
             checkpoint['ema_model_state_dict'] = self.ema_model.state_dict()
             logger.info("Saved EMA model state to checkpoint")
 
+        # Self-paced schedule, so a resume doesn't restart warm-up and lambda.
+        sp = getattr(self.task, 'sp_regularizer', None)
+        if sp is not None:
+            checkpoint['sp_regularizer'] = {
+                k: getattr(sp, k) for k in ('n_calls', 'lambda_', 'lambda_2')
+            }
+
         # For Tabasco: save data_stats dictionary
         if hasattr(self.task, 'tabasco_model'):
             if hasattr(self.task.tabasco_model, 'data_stats'):
@@ -395,6 +402,10 @@ class EngineLightning(pl.LightningModule, core.Configurable):
             else:
                 self.task.property_norms = checkpoint['property_norms']
                 logger.info("Restored property_norms from checkpoint")
+
+        sp = getattr(self.task, 'sp_regularizer', None)
+        if sp is not None and 'sp_regularizer' in checkpoint:
+            vars(sp).update(checkpoint['sp_regularizer'])
 
         if 'reference_indices' in checkpoint:
             self.task.reference_indices = checkpoint['reference_indices']

@@ -521,6 +521,8 @@ def lightning_wrapper(task_module, data_module, trainer_module, logger_module, e
             saved_prop_dist = getattr(pl_module.task, 'prop_dist_model', None)
             saved_n_node_dist = getattr(pl_module.task, 'n_node_dist', None)
             saved_property_norms = getattr(pl_module.task, 'property_norms', None)
+            # Fine-tuning starts its own self-paced schedule; only resume keeps it.
+            checkpoint.pop('sp_regularizer', None)
 
             pl_module.on_load_checkpoint(checkpoint)
 
