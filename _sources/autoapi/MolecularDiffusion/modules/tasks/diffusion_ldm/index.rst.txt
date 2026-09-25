@@ -136,7 +136,7 @@ Module Contents
 
 
 
-.. py:class:: LDMTask(autoencoder: VAETask, denoiser: torch.nn.Module, interpolant_config: dict, augment_rotation: bool = False, task_type: str = 'ldm')
+.. py:class:: LDMTask(autoencoder: VAETask, denoiser: torch.nn.Module, interpolant_config: dict, augment_rotation: bool = False, task_type: str = 'ldm', autoencoder_ckpt: Optional[str] = None, allow_autoencoder_override: bool = False)
 
    Bases: :py:obj:`torch.nn.Module`
 
@@ -173,6 +173,21 @@ Module Contents
 
 
 
+   .. py:method:: load_state_dict(state_dict, strict=True, **kwargs)
+
+      Never let a checkpoint's own VAE replace the one `tasks.autoencoder_ckpt` loaded.
+
+      Both paths land here: the warm start (`trainer.load_weights_from`) and a full
+      checkpoint restore. An LDM checkpoint stores `autoencoder.*` beside `denoiser.*`,
+      with identical names and shapes to the VAE this task has just built and FROZEN from
+      the config, so those tensors overwrite it silently -- no error, no shape mismatch.
+      That is how two 100k-step fine-tunes ended up training through the wrong latent
+      space. The configured VAE wins; the checkpoint's copy is dropped and the denoiser
+      loads as usual. Set `tasks.allow_autoencoder_override: true` to restore the old
+      behaviour (e.g. to reproduce a checkpoint trained before this guard existed).
+
+
+
    .. py:method:: predict_and_target(batch)
 
       Evaluation pass for Engine compatibility.
@@ -204,12 +219,22 @@ Module Contents
       Diffusion steps (T) for compatibility with GenerativeFactory.
 
 
+   .. py:attribute:: allow_autoencoder_override
+      :value: False
+
+
+
    .. py:attribute:: augment_rotation
       :value: False
 
 
 
    .. py:attribute:: autoencoder
+
+
+   .. py:attribute:: autoencoder_ckpt
+      :value: None
+
 
 
    .. py:attribute:: denoiser
@@ -253,7 +278,7 @@ Module Contents
 
 
 
-.. py:class:: LDMTaskFactory(task_type: str, autoencoder_ckpt: str, denoiser: dict, interpolant: dict, augment_rotation: bool = False, train_set: Optional[torch.utils.data.Dataset] = None, **kwargs)
+.. py:class:: LDMTaskFactory(task_type: str, autoencoder_ckpt: str, denoiser: dict, interpolant: dict, augment_rotation: bool = False, train_set: Optional[torch.utils.data.Dataset] = None, allow_autoencoder_override: bool = False, **kwargs)
 
    Factory for building LDM (Latent Diffusion Model) task.
 
@@ -261,6 +286,11 @@ Module Contents
    .. py:method:: build()
 
       Instantiate and return the LDM task.
+
+
+
+   .. py:attribute:: allow_autoencoder_override
+      :value: False
 
 
 
