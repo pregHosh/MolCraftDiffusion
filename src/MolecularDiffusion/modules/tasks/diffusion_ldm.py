@@ -501,10 +501,13 @@ class LDMTaskFactory:
         interpolant: dict,
         augment_rotation: bool = False,
         train_set: Optional[torch.utils.data.Dataset] = None,
+        allow_autoencoder_override: bool = False,
         **kwargs
     ):
         self.task_type = task_type
         self.autoencoder_ckpt = autoencoder_ckpt
+        # A checkpoint's own VAE must not replace the one named above; see LDMTask.load_state_dict.
+        self.allow_autoencoder_override = allow_autoencoder_override
         self.denoiser_config = denoiser
         self.interpolant_config = interpolant
         self.augment_rotation = augment_rotation
@@ -591,6 +594,8 @@ class LDMTaskFactory:
             interpolant_config=self.interpolant_config,
             augment_rotation=self.augment_rotation,
             task_type=self.task_type,
+            autoencoder_ckpt=self.autoencoder_ckpt,
+            allow_autoencoder_override=self.allow_autoencoder_override,
         )
         return self.task
 
@@ -780,10 +785,15 @@ class LDMTask(nn.Module):
         interpolant_config: dict,
         augment_rotation: bool = False,
         task_type: str = "ldm",
+        autoencoder_ckpt: Optional[str] = None,
+        allow_autoencoder_override: bool = False,
     ):
         super().__init__()
         
         self.autoencoder = autoencoder
+        # Which VAE the config asked for, and whether a checkpoint may replace it.
+        self.autoencoder_ckpt = autoencoder_ckpt
+        self.allow_autoencoder_override = allow_autoencoder_override
         self.denoiser = denoiser
         self.augment_rotation = augment_rotation
         
@@ -809,6 +819,7 @@ class LDMTask(nn.Module):
         self.node_dist_model = None
 
     @property
+
     def T(self):
         """Diffusion steps (T) for compatibility with GenerativeFactory."""
         return self.interpolant.num_timesteps
@@ -1102,3 +1113,41 @@ class LDMTask(nn.Module):
     @property
     def device(self):
         return next(self.parameters()).device
+
+    def load_state_dict(self, state_dict, strict=True, **kwargs):
+        """Never let a checkpoint's own VAE replace the one `tasks.autoencoder_ckpt` loaded.
+
+        Both paths land here: the warm start (`trainer.load_weights_from`) and a full
+        checkpoint restore. An LDM checkpoint stores `autoencoder.*` beside `denoiser.*`,
+        with identical names and shapes to the VAE this task has just built and FROZEN from
+        the config, so those tensors overwrite it silently -- no error, no shape mismatch.
+        That is how two 100k-step fine-tunes ended up training through the wrong latent
+        space. The configured VAE wins; the checkpoint's copy is dropped and the denoiser
+        loads as usual. Set `tasks.allow_autoencoder_override: true` to restore the old
+        behaviour (e.g. to reproduce a checkpoint trained before this guard existed).
+        """
+        incoming = {k: v for k, v in state_dict.items() if k.startswith("autoencoder.")}
+        if incoming and getattr(self, "autoencoder_ckpt", None) \
+                and not getattr(self, "allow_autoencoder_override", False):
+            current = self.state_dict()
+            differing = sum(
+                1
+                for k, v in incoming.items()
+                if k in current
+                and (v.shape != current[k].shape
+                     or not torch.equal(v.detach().cpu(), current[k].detach().cpu()))
+            )
+            if differing:
+                print(
+                    f"[LDMTask] Ignoring {len(incoming)} autoencoder.* tensor(s) from the "
+                    f"incoming state_dict: {differing} of them differ from the VAE loaded "
+                    f"from tasks.autoencoder_ckpt ({self.autoencoder_ckpt}), which is kept. "
+                    f"Only the denoiser is loaded. Pass tasks.allow_autoencoder_override=true "
+                    f"to let the checkpoint's VAE win instead."
+                )
+            state_dict = {k: v for k, v in state_dict.items()
+                          if not k.startswith("autoencoder.")}
+            strict = False
+        return super().load_state_dict(state_dict, strict=strict, **kwargs)
+
+
