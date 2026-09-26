@@ -50,12 +50,14 @@ Module Contents
    Check if current process is rank zero.
 
 
-.. py:function:: load_lightning_model(chkpt_path, task_config, atom_vocab=None, total_step=0)
+.. py:function:: load_lightning_model(chkpt_path, task_config, atom_vocab=None, total_step=0, use_ema=False)
 
    Load model from Lightning checkpoint (.ckpt).
 
+   `use_ema=True` generates from the checkpoint's EMA weights instead of the raw ones.
 
-.. py:function:: load_model(chkpt_directory, task_config=None, atom_vocab=None, total_step=0, base_chkpt_path=None)
+
+.. py:function:: load_model(chkpt_directory, task_config=None, atom_vocab=None, total_step=0, base_chkpt_path=None, use_ema=False)
 
    Load model from checkpoint directory with auto-detection.
 

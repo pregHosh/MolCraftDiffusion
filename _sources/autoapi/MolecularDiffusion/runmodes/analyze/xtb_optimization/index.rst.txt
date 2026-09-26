@@ -27,7 +27,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: check_neutrality(filename: str, charge: int = -1, timeout: int = 180) -> bool
+.. py:function:: check_neutrality(filename: str, charge: int = 0, timeout: int = 180) -> bool
 
    Checks if a molecule described in an XYZ file is neutral using xTB.
 
@@ -42,7 +42,10 @@ Module Contents
 
    :param filename: The path to the XYZ file of the molecule to check.
    :type filename: str
-   :param charge: The molecular charge to use for the xTB calculation. Defaults to -1.
+   :param charge: The molecular charge to use for the xTB calculation. Defaults to 0
+                  (the call site never overrides this, so this default IS the neutrality test:
+                  asking xTB to accept the molecule as charge-0 and checking it doesn't
+                  complain about an electron-count/spin-multiplicity mismatch).
    :type charge: int
    :param timeout: The maximum time in seconds to wait for the xTB process to complete.
    :type timeout: int
