@@ -55,6 +55,7 @@ Functions
    MolecularDiffusion.modules.models.pmdm.common.center_pos_lp
    MolecularDiffusion.modules.models.pmdm.common.center_pos_pl
    MolecularDiffusion.modules.models.pmdm.common.clip_norm
+   MolecularDiffusion.modules.models.pmdm.common.coalesce
    MolecularDiffusion.modules.models.pmdm.common.eq_transform
    MolecularDiffusion.modules.models.pmdm.common.extend_graph_order_radius
    MolecularDiffusion.modules.models.pmdm.common.get_adj_matrix
@@ -136,6 +137,8 @@ Module Contents
 
    Rescale rows of ``vec`` whose norm exceeds ``limit``.
 
+
+.. py:function:: coalesce(index, value, m, n, op='add')
 
 .. py:function:: eq_transform(score_d: torch.Tensor, pos: torch.Tensor, edge_index: torch.Tensor, edge_length: torch.Tensor) -> torch.Tensor
 

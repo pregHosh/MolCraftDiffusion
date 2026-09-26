@@ -1,0 +1,42 @@
+MolecularDiffusion.device
+=========================
+
+.. py:module:: MolecularDiffusion.device
+
+.. autoapi-nested-parse::
+
+   Device selection shared by training, generation and analysis.
+
+   Order is CUDA -> Apple MPS -> CPU, so a CUDA machine picks exactly what the
+   old ``"cuda" if torch.cuda.is_available() else "cpu"`` idiom picked; MPS only
+   enters the picture on a Mac, where CUDA can never be available.
+
+   ``MOLCRAFT_DEVICE`` (e.g. ``cpu``, ``mps``, ``cuda:1``) overrides the choice.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.device.get_device
+   MolecularDiffusion.device.mps_available
+   MolecularDiffusion.device.to_device
+
+
+Module Contents
+---------------
+
+.. py:function:: get_device() -> torch.device
+
+   Return the preferred torch device: $MOLCRAFT_DEVICE, else cuda, mps, cpu.
+
+
+.. py:function:: mps_available() -> bool
+
+.. py:function:: to_device(obj, device, *args, **kwargs)
+
+   Move any nested container of tensors to ``device`` (device-generic ``utils.cuda``).
+
+

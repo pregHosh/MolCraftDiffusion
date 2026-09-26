@@ -324,6 +324,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../../data/valency_tables/index.html">MolecularDiffusion.data.valency_tables</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../device/index.html">MolecularDiffusion.device</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../molcraftdiff/index.html">MolecularDiffusion.molcraftdiff</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../optional/index.html">MolecularDiffusion.optional</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../runmodes/index.html">MolecularDiffusion.runmodes</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -506,7 +507,10 @@ here.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.goflow.cgr_graph_utils.extend_ts_graph_order_radius" title="MolecularDiffusion.modules.models.goflow.cgr_graph_utils.extend_ts_graph_order_radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extend_ts_graph_order_radius</span></code></a>(num_nodes, pos, ...[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.goflow.cgr_graph_utils.coalesce" title="MolecularDiffusion.modules.models.goflow.cgr_graph_utils.coalesce"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coalesce</span></code></a>(index, value, m, n[, op])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.goflow.cgr_graph_utils.extend_ts_graph_order_radius" title="MolecularDiffusion.modules.models.goflow.cgr_graph_utils.extend_ts_graph_order_radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extend_ts_graph_order_radius</span></code></a>(num_nodes, pos, ...[, ...])</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -515,6 +519,11 @@ here.</p>
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.goflow.cgr_graph_utils.coalesce">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.goflow.cgr_graph_utils.</span></span><span class="sig-name descname"><span class="pre">coalesce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'add'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.goflow.cgr_graph_utils.coalesce" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.goflow.cgr_graph_utils.extend_ts_graph_order_radius">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.goflow.cgr_graph_utils.</span></span><span class="sig-name descname"><span class="pre">extend_ts_graph_order_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.goflow.cgr_graph_utils.extend_ts_graph_order_radius" title="Link to this definition">¶</a></dt>
@@ -586,6 +595,7 @@ here.</p>
 <li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#MolecularDiffusion.modules.models.goflow.cgr_graph_utils.coalesce"><code class="docutils literal notranslate"><span class="pre">coalesce()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.goflow.cgr_graph_utils.extend_ts_graph_order_radius"><code class="docutils literal notranslate"><span class="pre">extend_ts_graph_order_radius()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.goflow.cgr_graph_utils.BOND_TYPES"><code class="docutils literal notranslate"><span class="pre">BOND_TYPES</span></code></a></li>
 </ul>

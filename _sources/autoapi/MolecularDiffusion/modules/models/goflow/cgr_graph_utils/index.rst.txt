@@ -38,11 +38,14 @@ Functions
 
 .. autoapisummary::
 
+   MolecularDiffusion.modules.models.goflow.cgr_graph_utils.coalesce
    MolecularDiffusion.modules.models.goflow.cgr_graph_utils.extend_ts_graph_order_radius
 
 
 Module Contents
 ---------------
+
+.. py:function:: coalesce(index, value, m, n, op='add')
 
 .. py:function:: extend_ts_graph_order_radius(num_nodes, pos, edge_index, edge_type, batch, order=3, cutoff=10.0)
 

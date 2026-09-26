@@ -324,6 +324,7 @@
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/data/valency_tables/index.html">MolecularDiffusion.data.valency_tables</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/MolecularDiffusion/device/index.html">MolecularDiffusion.device</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/MolecularDiffusion/molcraftdiff/index.html">MolecularDiffusion.molcraftdiff</a></li>
 <li class="toctree-l3"><a class="reference internal" href="autoapi/MolecularDiffusion/optional/index.html">MolecularDiffusion.optional</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/MolecularDiffusion/runmodes/index.html">MolecularDiffusion.runmodes</a><input aria-label="Toggle navigation of MolecularDiffusion.runmodes" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -535,6 +536,64 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 </pre></div>
 </div>
 </section>
+</section>
+<section id="macos-apple-silicon">
+<h2>macOS (Apple Silicon)<a class="headerlink" href="#macos-apple-silicon" title="Link to this heading">¶</a></h2>
+<p>On a Mac with an M-series chip, MolCraftDiffusion trains and generates on the
+Apple GPU through PyTorch’s <strong>MPS</strong> backend. CUDA does not exist on macOS, so the
+<code class="docutils literal notranslate"><span class="pre">[gpu]</span></code>/<code class="docutils literal notranslate"><span class="pre">[cpu]</span></code> commands above do not apply; use this route instead. The Linux /
+WSL instructions above are unchanged.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. Environment (conda-forge only)</span>
+conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>molcraft<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>--override-channels<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.11<span class="w"> </span>-y
+conda<span class="w"> </span>activate<span class="w"> </span>molcraft
+
+<span class="c1"># 2. Optional: xTB / OpenBabel for analysis (Apple Silicon builds exist on conda-forge)</span>
+conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>--override-channels<span class="w"> </span><span class="nv">xtb</span><span class="o">==</span><span class="m">6</span>.7.1<span class="w"> </span>xtb-python<span class="w"> </span>openbabel<span class="w"> </span>-y
+
+<span class="c1"># 3. MolCraftDiffusion from the repository (PyPI lags behind this version)</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/pregHosh/MolCraftDiffusion
+<span class="nb">cd</span><span class="w"> </span>MolCraftDiffusion
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">'.[mac]'</span>
+pip<span class="w"> </span>install<span class="w"> </span>./mac_shims
+
+<span class="c1"># 4. Feature groups as needed, same as on Linux</span>
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">'.[data]'</span>
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">'.[analyze]'</span>
+
+<span class="c1"># 5. Check the GPU is visible</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import torch; print(torch.backends.mps.is_available())"</span><span class="w">   </span><span class="c1"># True</span>
+</pre></div>
+</div>
+<p>What the Mac route changes:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">[mac]</span></code></strong> installs plain PyPI <code class="docutils literal notranslate"><span class="pre">torch==2.6.0</span></code> (which includes MPS) and
+<code class="docutils literal notranslate"><span class="pre">torch_geometric&lt;2.8</span></code>, without the PyG C++ extensions (<code class="docutils literal notranslate"><span class="pre">torch_scatter</span></code>,
+<code class="docutils literal notranslate"><span class="pre">torch_sparse</span></code>, <code class="docutils literal notranslate"><span class="pre">torch_cluster</span></code>, <code class="docutils literal notranslate"><span class="pre">torch_spline_conv</span></code>), which have no MPS support.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">./mac_shims</span></code></strong> provides pure-torch <code class="docutils literal notranslate"><span class="pre">torch_scatter</span></code> and <code class="docutils literal notranslate"><span class="pre">torch_cluster</span></code> with
+the same functions and results, so every model runs on the GPU unchanged. Never
+install it on Linux next to the real extensions.</p></li>
+<li><p><strong>Device selection is automatic</strong>: CUDA, then MPS, then CPU. Force a device
+with <code class="docutils literal notranslate"><span class="pre">MOLCRAFT_DEVICE</span></code>, e.g. <code class="docutils literal notranslate"><span class="pre">MOLCRAFT_DEVICE=cpu</span> <span class="pre">MolCraftDiff</span> <span class="pre">train</span> <span class="pre">...</span></code>.</p></li>
+<li><p>Operations that MPS lacks fall back to the CPU automatically
+(<code class="docutils literal notranslate"><span class="pre">PYTORCH_ENABLE_MPS_FALLBACK=1</span></code> is set for you on macOS).</p></li>
+<li><p>Keep <code class="docutils literal notranslate"><span class="pre">trainer.precision:</span> <span class="pre">32</span></code>; mixed precision on MPS is limited.</p></li>
+<li><p>With <code class="docutils literal notranslate"><span class="pre">engine:</span> <span class="pre">lightning</span></code>, DataLoader workers are turned off automatically when
+the collate function cannot be sent to worker processes (macOS starts workers
+with <code class="docutils literal notranslate"><span class="pre">spawn</span></code>, Linux with <code class="docutils literal notranslate"><span class="pre">fork</span></code>).</p></li>
+<li><p><strong>Not accelerated on Mac</strong>: FlowMol (<code class="docutils literal notranslate"><span class="pre">[flowmol]</span></code>, DGL has no MPS backend; its
+macOS wheel is CPU-only) and the UMA featurisation backend run on CPU.</p></li>
+</ul>
+<p>Two extras need one extra step on Apple Silicon:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># [sbdd]: vina has no macOS arm64 wheel on PyPI; take it from conda-forge first</span>
+conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>--override-channels<span class="w"> </span>vina<span class="w"> </span>-y
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">'.[sbdd]'</span>
+
+<span class="c1"># [bio]: oddt is source-only and its build needs `six` outside pip's build sandbox</span>
+pip<span class="w"> </span>install<span class="w"> </span>six
+pip<span class="w"> </span>install<span class="w"> </span>--no-build-isolation<span class="w"> </span>oddt
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">'.[bio]'</span>
+</pre></div>
+</div>
 </section>
 <section id="which-extras-do-i-need">
 <h2>Which extras do I need?<a class="headerlink" href="#which-extras-do-i-need" title="Link to this heading">¶</a></h2>
@@ -777,6 +836,7 @@ MolCraftDiff<span class="w"> </span>--help
 <li><a class="reference internal" href="#development-editable-install">Development / editable install</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#macos-apple-silicon">macOS (Apple Silicon)</a></li>
 <li><a class="reference internal" href="#which-extras-do-i-need">Which extras do I need?</a></li>
 <li><a class="reference internal" href="#optional-dependencies">Optional dependencies</a><ul>
 <li><a class="reference internal" href="#uma-featurisation-backend">UMA featurisation backend</a></li>

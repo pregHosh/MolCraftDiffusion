@@ -63,6 +63,67 @@ pip install -e '.[data]'
 pip install -e '.[analyze]'
 ```
 
+## macOS (Apple Silicon)
+
+On a Mac with an M-series chip, MolCraftDiffusion trains and generates on the
+Apple GPU through PyTorch's **MPS** backend. CUDA does not exist on macOS, so the
+`[gpu]`/`[cpu]` commands above do not apply; use this route instead. The Linux /
+WSL instructions above are unchanged.
+
+```bash
+# 1. Environment (conda-forge only)
+conda create -n molcraft -c conda-forge --override-channels python=3.11 -y
+conda activate molcraft
+
+# 2. Optional: xTB / OpenBabel for analysis (Apple Silicon builds exist on conda-forge)
+conda install -c conda-forge --override-channels xtb==6.7.1 xtb-python openbabel -y
+
+# 3. MolCraftDiffusion from the repository (PyPI lags behind this version)
+git clone https://github.com/pregHosh/MolCraftDiffusion
+cd MolCraftDiffusion
+pip install -e '.[mac]'
+pip install ./mac_shims
+
+# 4. Feature groups as needed, same as on Linux
+pip install -e '.[data]'
+pip install -e '.[analyze]'
+
+# 5. Check the GPU is visible
+python -c "import torch; print(torch.backends.mps.is_available())"   # True
+```
+
+What the Mac route changes:
+
+- **`[mac]`** installs plain PyPI `torch==2.6.0` (which includes MPS) and
+  `torch_geometric<2.8`, without the PyG C++ extensions (`torch_scatter`,
+  `torch_sparse`, `torch_cluster`, `torch_spline_conv`), which have no MPS support.
+- **`./mac_shims`** provides pure-torch `torch_scatter` and `torch_cluster` with
+  the same functions and results, so every model runs on the GPU unchanged. Never
+  install it on Linux next to the real extensions.
+- **Device selection is automatic**: CUDA, then MPS, then CPU. Force a device
+  with `MOLCRAFT_DEVICE`, e.g. `MOLCRAFT_DEVICE=cpu MolCraftDiff train ...`.
+- Operations that MPS lacks fall back to the CPU automatically
+  (`PYTORCH_ENABLE_MPS_FALLBACK=1` is set for you on macOS).
+- Keep `trainer.precision: 32`; mixed precision on MPS is limited.
+- With `engine: lightning`, DataLoader workers are turned off automatically when
+  the collate function cannot be sent to worker processes (macOS starts workers
+  with `spawn`, Linux with `fork`).
+- **Not accelerated on Mac**: FlowMol (`[flowmol]`, DGL has no MPS backend; its
+  macOS wheel is CPU-only) and the UMA featurisation backend run on CPU.
+
+Two extras need one extra step on Apple Silicon:
+
+```bash
+# [sbdd]: vina has no macOS arm64 wheel on PyPI; take it from conda-forge first
+conda install -c conda-forge --override-channels vina -y
+pip install -e '.[sbdd]'
+
+# [bio]: oddt is source-only and its build needs `six` outside pip's build sandbox
+pip install six
+pip install --no-build-isolation oddt
+pip install -e '.[bio]'
+```
+
 ## Which extras do I need?
 
 Use this table to decide which optional groups to install before you start:
