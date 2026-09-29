@@ -183,7 +183,7 @@ Module Contents
 
 
 
-   .. py:method:: sample_guidance_conitional(target_function=None, target_value=None, negative_target_value=None, nodesxsample: Optional[torch.Tensor] = None, cfg_scale: float = 1, cfg_scale_schedule: Optional[str] = None, guidance_ver: str = 'cfg', n_frames: int = 0, num_steps: int = 100, **kwargs)
+   .. py:method:: sample_guidance_conitional(target_function=None, target_value=None, negative_target_value=None, nodesxsample: Optional[torch.Tensor] = None, cfg_scale: float = 1, cfg_scale_schedule: Optional[str] = None, guidance_ver: str = 'cfg', n_frames: int = 0, num_steps: Optional[int] = None, **kwargs)
 
       Classifier-free-guidance generation. Matches the call signature
       GenerativeFactory.conditional_generation() hardcodes for

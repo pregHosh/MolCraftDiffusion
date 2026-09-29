@@ -25,6 +25,7 @@ Attributes
 
 .. autoapisummary::
 
+   MolecularDiffusion.runmodes.train.tasks_painn.ADAPTER_UNSUPPORTED_MSG
    MolecularDiffusion.runmodes.train.tasks_painn.logger
 
 
@@ -114,6 +115,10 @@ Module Contents
    .. py:attribute:: train_set
       :value: None
 
+
+
+.. py:data:: ADAPTER_UNSUPPORTED_MSG
+   :value: 'adapter_conditions is not supported by this model (no adapter path); use condition_names only.'
 
 
 .. py:data:: logger

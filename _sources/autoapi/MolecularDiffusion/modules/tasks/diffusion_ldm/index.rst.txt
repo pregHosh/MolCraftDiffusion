@@ -90,7 +90,7 @@ Module Contents
 
 
 
-   .. py:method:: sample(batch_size, num_tokens, emb_dim, model, mask=None, num_timesteps=None, x_0=None)
+   .. py:method:: sample(batch_size, num_tokens, emb_dim, model, mask=None, num_timesteps=None, x_0=None, context=None, negative_context=None, cfg_scale=0.0, cfg_scale_schedule=None)
 
       Generate samples by integrating the flow ODE.
 
@@ -101,6 +101,12 @@ Module Contents
       :param mask: Valid token mask (B, N)
       :param num_timesteps: Number of integration steps
       :param x_0: Initial noise (if None, sampled)
+      :param context: Optional (B, D) property context; None = unconditional model
+                      (the denoiser is then called exactly as before).
+      :param negative_context: (B, D) context for the guidance "uncond" branch.
+      :param cfg_scale: w in x1 = (1+w)*x1_cond - w*x1_uncond, combined on the
+                        predicted clean latent; 0 = plain conditional pass.
+      :param cfg_scale_schedule: None | linear | exponential | cosine, ramped on t.
 
       :returns: Dict with tokens_traj and clean_traj lists
 
@@ -136,7 +142,7 @@ Module Contents
 
 
 
-.. py:class:: LDMTask(autoencoder: VAETask, denoiser: torch.nn.Module, interpolant_config: dict, augment_rotation: bool = False, task_type: str = 'ldm', autoencoder_ckpt: Optional[str] = None, allow_autoencoder_override: bool = False)
+.. py:class:: LDMTask(autoencoder: VAETask, denoiser: torch.nn.Module, interpolant_config: dict, augment_rotation: bool = False, task_type: str = 'ldm', autoencoder_ckpt: Optional[str] = None, allow_autoencoder_override: bool = False, condition_names: Optional[list] = None, context_mask_rate: float = 0.0, mask_value: float = 0.0, normalize_condition: Optional[str] = None)
 
    Bases: :py:obj:`torch.nn.Module`
 
@@ -196,11 +202,11 @@ Module Contents
 
    .. py:method:: preprocess(train_set)
 
-      Compute node distribution from training set.
+      Compute node distribution (and property norms if conditional) from training set.
 
 
 
-   .. py:method:: sample(batch_size: int = 1, nodesxsample: Optional[torch.Tensor] = None, num_steps: Optional[int] = None, **kwargs)
+   .. py:method:: sample(batch_size: int = 1, nodesxsample: Optional[torch.Tensor] = None, num_steps: Optional[int] = None, context: Optional[torch.Tensor] = None, negative_context: Optional[torch.Tensor] = None, cfg_scale: float = 0.0, cfg_scale_schedule: Optional[str] = None, **kwargs)
 
       Generate molecules by sampling from the latent diffusion model.
 
@@ -211,6 +217,14 @@ Module Contents
       :param num_steps: Number of denoising steps (defaults to self.interpolant.num_timesteps)
 
       :returns: Tuple of (one_hot, charges, coords, node_mask)
+
+
+
+   .. py:method:: sample_guidance_conitional(target_function=None, target_value=None, negative_target_value=None, nodesxsample: Optional[torch.Tensor] = None, cfg_scale: float = 1, cfg_scale_schedule: Optional[str] = None, guidance_ver: str = 'cfg', n_frames: int = 0, num_steps: Optional[int] = None, **kwargs)
+
+      Classifier-free-guidance generation (name/signature fixed by tasks_generate.py).
+
+      Only plain CFG is supported. A negative_target_value replaces the null branch.
 
 
 
@@ -237,6 +251,16 @@ Module Contents
 
 
 
+   .. py:attribute:: condition
+      :value: []
+
+
+
+   .. py:attribute:: context_mask_rate
+      :value: 0.0
+
+
+
    .. py:attribute:: denoiser
 
 
@@ -249,6 +273,11 @@ Module Contents
 
 
    .. py:attribute:: interpolant
+
+
+   .. py:attribute:: mask_value
+      :value: 0.0
+
 
 
    .. py:attribute:: max_n_nodes
@@ -268,7 +297,17 @@ Module Contents
 
 
 
+   .. py:attribute:: normalize_condition
+      :value: None
+
+
+
    .. py:attribute:: prop_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: property_norms
       :value: None
 
 
@@ -302,6 +341,12 @@ Module Contents
    .. py:attribute:: autoencoder_ckpt
 
 
+   .. py:attribute:: condition_names
+
+
+   .. py:attribute:: context_mask_rate
+
+
    .. py:attribute:: denoiser_config
 
 
@@ -309,6 +354,12 @@ Module Contents
 
 
    .. py:attribute:: kwargs
+
+
+   .. py:attribute:: mask_value
+
+
+   .. py:attribute:: normalize_condition
 
 
    .. py:attribute:: task_type
