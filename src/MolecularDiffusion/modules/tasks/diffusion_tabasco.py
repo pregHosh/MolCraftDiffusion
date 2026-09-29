@@ -247,6 +247,18 @@ class ModelTaskFactory:
 
     def build(self):
         """Build and return the TabascoDiffusionTask."""
+        # Uniform conditioning signature; fallbacks match every other model's
+        # factory and only matter when condition_names is non-empty.
+        _names = list(self.kwargs.get("condition_names") or [])
+        # Hydra ignores unknown keys silently: make the effective values visible.
+        print(
+            f"[TabascoTaskFactory] condition_names={_names} "
+            f"context_mask_rate={self.kwargs.get('context_mask_rate', 0.2)} "
+            f"mask_value={self.kwargs.get('mask_value', 5)} "
+            f"normalize_condition={self.kwargs.get('normalize_condition', 'value_10')}"
+            + ("" if _names else " (unconditional)")
+        )
+
         
         # Check if we need to compute stats
         needs_stats = (
@@ -270,9 +282,9 @@ class ModelTaskFactory:
             dataset_stats=self.dataset_stats,
             atom_vocab=self.atom_vocab,
             condition_names=self.kwargs.get("condition_names", []),
-            context_mask_rate=self.kwargs.get("context_mask_rate", 0.0),
-            mask_value=self.kwargs.get("mask_value", 0.0),
-            normalize_condition=self.kwargs.get("normalize_condition", None),
+            context_mask_rate=self.kwargs.get("context_mask_rate", 0.2),
+            mask_value=self.kwargs.get("mask_value", 5),
+            normalize_condition=self.kwargs.get("normalize_condition", "value_10"),
             adapter_conditions=self.kwargs.get("adapter_conditions", None),
             use_adapter_module=self.kwargs.get("use_adapter_module", False),
         )
@@ -522,14 +534,21 @@ class TabascoDiffusionTask(nn.Module):
             # Convert input batch if provided
             batch = self.to_tensordict(batch) if batch is not None else None
 
-        
+        # Conditional checkpoint: feed the trained null (what context_mask_rate
+        # dropout used) instead of omitting `condition`. Needs a batch for the
+        # (B, N) shape; with batch=None (shapes drawn from data_stats) it stays None.
+        null_condition = None
+        if len(self.condition) > 0 and batch is not None:
+            null_condition = self._null_context(~batch["padding_mask"])
+
         # Sample from TABASCO
         if return_trajectories:
             samples, trajectories = self.tabasco_model.sample(
                 batch=batch,
                 batch_size=batch_size,
                 num_steps=num_steps,
-                return_trajectories=True
+                return_trajectories=True,
+                condition=null_condition,
             )
             # Convert trajectories back to PointCloud format
             trajectories_pc = [self.to_pointcloud(traj) for traj in trajectories]
@@ -538,7 +557,8 @@ class TabascoDiffusionTask(nn.Module):
             samples = self.tabasco_model.sample(
                 batch=batch,
                 batch_size=batch_size,
-                num_steps=num_steps
+                num_steps=num_steps,
+                condition=null_condition,
             )
             # Convert TensorDict → PointCloud format
             pointcloud_result = self.to_pointcloud(samples)
@@ -556,6 +576,30 @@ class TabascoDiffusionTask(nn.Module):
         # Return in EDM format: (one_hot, charges, coords, node_mask)
         return one_hot, charges, coords, node_mask
 
+    def _null_context(self, real_mask: torch.Tensor) -> torch.Tensor:
+        """(B, N, D) null context (training's dropout value), zeroed on padding."""
+        if self.n_adapter_context > 0:
+            null_value = torch.empty(len(self.condition), device=self.device)
+            null_value[self.adapter_indices] = 0.0
+            null_value[self.concat_indices] = self.mask_value
+        else:
+            null_value = torch.full((len(self.condition),), self.mask_value, device=self.device)
+        real = real_mask.to(self.device).unsqueeze(-1).float()
+        return null_value.view(1, 1, -1) * real
+
+    def _normalize(self, value, key):
+        """Scalar twin of prepare_context's normalisation (mad | maxmin | value_N | None)."""
+        if self.normalize_condition is None:
+            return value
+        norms = self.property_norms[key]
+        if self.normalize_condition == "mad":
+            return (value - norms["mean"]) / norms["mad"]
+        elif self.normalize_condition == "maxmin":
+            return 2 * (value - norms["min"]) / (norms["max"] - norms["min"]) - 1
+        elif "value" in self.normalize_condition:
+            return value / float(self.normalize_condition.split("_")[1])
+        raise ValueError(f"Unknown normalization method: {self.normalize_condition}")
+
     def sample_guidance_conitional(
         self,
         target_function=None,
@@ -566,7 +610,7 @@ class TabascoDiffusionTask(nn.Module):
         cfg_scale_schedule: Optional[str] = None,
         guidance_ver: str = "cfg",
         n_frames: int = 0,
-        num_steps: int = 100,
+        num_steps: Optional[int] = None,
         **kwargs,
     ):
         """
@@ -578,9 +622,11 @@ class TabascoDiffusionTask(nn.Module):
         Only guidance_ver="cfg" is supported (plain classifier-free guidance,
         no gradient-guidance variants).
         """
+        if num_steps is None:  # None == TABASCO's historical default (aligned signature)
+            num_steps = 100
         if guidance_ver != "cfg":
             raise NotImplementedError(
-                f"TabascoDiffusionTask only supports guidance_ver='cfg' (got {guidance_ver!r}); "
+                f"sample_guidance_conitional only supports guidance_ver='cfg' (got {guidance_ver!r}); "
                 "gradient-guidance variants are out of scope."
             )
         if n_frames:
@@ -591,24 +637,12 @@ class TabascoDiffusionTask(nn.Module):
         padding_mask = torch.arange(max_atoms, device=self.device)[None, :] >= nodesxsample[:, None].to(self.device)
         node_mask_edm = (~padding_mask).float().unsqueeze(-1)  # (B, N, 1), 1=real
 
-        def _normalize(value, key):
-            if self.normalize_condition is None:
-                return value
-            norms = self.property_norms[key]
-            if self.normalize_condition == "mad":
-                return (value - norms["mean"]) / norms["mad"]
-            elif self.normalize_condition == "maxmin":
-                return 2 * (value - norms["min"]) / (norms["max"] - norms["min"]) - 1
-            elif "value" in self.normalize_condition:
-                return value / float(self.normalize_condition.split("_")[1])
-            raise ValueError(f"Unknown normalization method: {self.normalize_condition}")
-
-        vals = [_normalize(target_value[i], key) for i, key in enumerate(self.condition)]
+        vals = [self._normalize(target_value[i], key) for i, key in enumerate(self.condition)]
         context = torch.tensor(vals, dtype=torch.float, device=self.device).view(1, 1, -1)
         context = context.expand(batch_size, max_atoms, -1) * node_mask_edm
 
         if negative_target_value:
-            neg_vals = [_normalize(negative_target_value[i], key) for i, key in enumerate(self.condition)]
+            neg_vals = [self._normalize(negative_target_value[i], key) for i, key in enumerate(self.condition)]
             negative_context = torch.tensor(neg_vals, dtype=torch.float, device=self.device).view(1, 1, -1)
             negative_context = negative_context.expand(batch_size, max_atoms, -1) * node_mask_edm
         else:

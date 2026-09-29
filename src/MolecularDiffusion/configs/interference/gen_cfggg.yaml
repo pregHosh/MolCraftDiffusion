@@ -14,7 +14,7 @@ save_xyzrender_figures: false # code default
 output_path: generated_mol
 condition_configs:
   cfg_scale: 1
-  cfg_scale_schedule: null   # code default 1
+  cfg_scale_schedule: null   # code default null
   target_function:
     _target_: scripts.gradient_guidance.sf_energy_score.SFEnergyScore
     _partial_: true

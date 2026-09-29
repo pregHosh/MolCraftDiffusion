@@ -643,7 +643,7 @@ class GenerativeFactory:
                             negative_target_value=self.negative_target_values,
                             nodesxsample=nodesxsample, 
                             cfg_scale=self.condition_configs.get("cfg_scale",1),
-                            cfg_scale_schedule=self.condition_configs.get("cfg_scale_schedule",1),
+                            cfg_scale_schedule=self.condition_configs.get("cfg_scale_schedule", None),
                             guidance_ver="cfg",
                             n_frames=self.n_frames
                         )

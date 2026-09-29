@@ -26,6 +26,12 @@ from MolecularDiffusion.modules.tasks.diffusion import (
 
 logger = logging.getLogger(__name__)
 
+# Shared verbatim with LDMTaskFactory (ADiT): neither has an adapter route.
+ADAPTER_UNSUPPORTED_MSG = (
+    "adapter_conditions is not supported by this model (no adapter path); "
+    "use condition_names only."
+)
+
 
 class ModelTaskFactory:
     """Build the PaiNN-backbone diffusion model + task.
@@ -72,6 +78,20 @@ class ModelTaskFactory:
 
         self.chkpt_path = chkpt_path
         self.kwargs = kwargs
+        # Uniform conditioning signature (same 5 keys/defaults in every model's
+        # factory). These fallbacks only matter when condition_names is
+        # non-empty: unconditional runs never read mask/normalisation values.
+        if kwargs.get("adapter_conditions"):
+            raise ValueError(ADAPTER_UNSUPPORTED_MSG)
+        # Hydra ignores unknown keys silently: make the effective values visible.
+        names = list(condition_names or task_names or [])
+        print(
+            f"[PaiNNTaskFactory] condition_names={names} "
+            f"context_mask_rate={kwargs.get('context_mask_rate', 0.2)} "
+            f"mask_value={kwargs.get('mask_value', 5)} "
+            f"normalize_condition={kwargs.get('normalize_condition', 'value_10')}"
+            + ("" if names else " (unconditional)")
+        )
 
     def build(self):
         """Build and return the ``GeomMolecularGenerative`` task."""
@@ -115,8 +135,8 @@ class ModelTaskFactory:
             norm_values=self.kwargs.get("normalize_factors", [1, 4, 10]),
             include_charges=True,
             extra_norm_values=self.kwargs.get("extra_norm_values", []),
-            context_mask_rate=self.kwargs.get("context_mask_rate", 0.15),
-            mask_value=self.kwargs.get("mask_value", None),
+            context_mask_rate=self.kwargs.get("context_mask_rate", 0.2),
+            mask_value=self.kwargs.get("mask_value", 5),
         )
 
         self.task = GeomMolecularGenerative(
@@ -125,7 +145,7 @@ class ModelTaskFactory:
             data_augmentation=self.kwargs.get("data_augmentation", False),
             condition=self.task_names,
             sp_regularizer=None,
-            normalize_condition=self.kwargs.get("normalize_condition", None),
+            normalize_condition=self.kwargs.get("normalize_condition", "value_10"),
             reference_indices=self.kwargs.get("reference_indices", None),
         )
 

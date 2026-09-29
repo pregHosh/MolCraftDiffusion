@@ -9,8 +9,8 @@ task_type: diffusion_tabasco
 condition_names: []
 context_mask_rate: 0.2
 mask_value: 5
-normalize_condition: value_10   # None | "maxmin" | "mad" | "value_N"
-adapter_conditions: []          # subset of condition_names routed through the adapter MLP(s)
+normalize_condition: value_10 # None | "maxmin" | "mad" | "value_N" (divide by N)
+adapter_conditions: [] # subset of condition_names routed via the adapter MLP(s); TABASCO/FlowMol/EGNN only (PaiNN/ADiT raise if non-empty)
 use_adapter_module: false       # deprecated-but-supported: route ALL conditions through the adapter
 
 # Automatically populated from dataset

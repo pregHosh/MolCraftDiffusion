@@ -14,4 +14,4 @@ save_xyzrender_figures: false # code default
 output_path: generated_mol
 condition_configs:
   cfg_scale: 1               # code default
-  cfg_scale_schedule: null   # code default 1; null | "linear" | "exponential" | "cosine"
+  cfg_scale_schedule: null   # code default null; null | "linear" | "exponential" | "cosine"

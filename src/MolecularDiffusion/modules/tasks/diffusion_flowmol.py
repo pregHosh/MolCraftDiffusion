@@ -200,6 +200,18 @@ class FlowMolTaskFactory:
         )
 
     def build(self):
+        # Uniform conditioning signature; fallbacks match every other model's
+        # factory and only matter when condition_names is non-empty.
+        _names = list(self.kwargs.get("condition_names") or [])
+        # Hydra ignores unknown keys silently: make the effective values visible.
+        print(
+            f"[FlowMolTaskFactory] condition_names={_names} "
+            f"context_mask_rate={self.kwargs.get('context_mask_rate', 0.2)} "
+            f"mask_value={self.kwargs.get('mask_value', 5)} "
+            f"normalize_condition={self.kwargs.get('normalize_condition', 'value_10')}"
+            + ("" if _names else " (unconditional)")
+        )
+
         if not self.dataset_stats.get("num_atoms_histogram"):
             if self.train_set is not None:
                 self.compute_dataset_stats(self.train_set)
@@ -228,9 +240,9 @@ class FlowMolTaskFactory:
             dataset_stats=self.dataset_stats,
             atom_vocab=self.atom_vocab,
             condition_names=self.kwargs.get("condition_names", []),
-            context_mask_rate=self.kwargs.get("context_mask_rate", 0.0),
-            mask_value=self.kwargs.get("mask_value", 0.0),
-            normalize_condition=self.kwargs.get("normalize_condition", None),
+            context_mask_rate=self.kwargs.get("context_mask_rate", 0.2),
+            mask_value=self.kwargs.get("mask_value", 5),
+            normalize_condition=self.kwargs.get("normalize_condition", "value_10"),
             adapter_conditions=self.kwargs.get("adapter_conditions", None),
             use_adapter_module=self.kwargs.get("use_adapter_module", False),
         )
@@ -487,12 +499,31 @@ class FlowMolFlowMatchingTask(nn.Module):
         node_batch_idx = get_node_batch_idxs(g)
         g = self._sample_prior(g, node_batch_idx)
 
-        g = self.vector_field.integrate(g, node_batch_idx, n_timesteps=num_steps)
+        # A conditional checkpoint's first layer expects the context columns, so
+        # unconditional sampling must feed the same null training's dropout used
+        # (single pass, cfg_scale=0) rather than omit `condition` (width crash).
+        condition = None
+        if len(self.condition) > 0:
+            condition = self._null_context(len(sizes))[node_batch_idx]
+        g = self.vector_field.integrate(
+            g, node_batch_idx, n_timesteps=num_steps,
+            condition=condition, cfg_scale=0.0,
+        )
 
         pc = self.to_pc(g, self.n_atom_types)
         return pc["one_hot"], pc["charges"], pc["coords"], pc["node_mask"]
 
-    def _normalize_target(self, value, key):
+    def _null_context(self, n_mol: int) -> torch.Tensor:
+        """(n_mol, D) null context: the value training's context_mask_rate dropout used."""
+        if self.n_adapter_context > 0:
+            null_value = torch.empty(len(self.condition), device=self.device)
+            null_value[self.adapter_indices] = 0.0
+            null_value[self.concat_indices] = self.mask_value
+        else:
+            null_value = torch.full((len(self.condition),), self.mask_value, device=self.device)
+        return null_value.unsqueeze(0).expand(n_mol, -1)
+
+    def _normalize(self, value, key):
         if self.normalize_condition is None:
             return value
         norms = self.property_norms[key]
@@ -531,7 +562,7 @@ class FlowMolFlowMatchingTask(nn.Module):
         """
         if guidance_ver != "cfg":
             raise NotImplementedError(
-                f"FlowMolFlowMatchingTask only supports guidance_ver='cfg' (got {guidance_ver!r}); "
+                f"sample_guidance_conitional only supports guidance_ver='cfg' (got {guidance_ver!r}); "
                 "gradient-guidance variants are out of scope."
             )
         if n_frames:
@@ -541,22 +572,16 @@ class FlowMolFlowMatchingTask(nn.Module):
 
         sizes = nodesxsample.to(self.device).long()
 
-        vals = [self._normalize_target(target_value[i], key) for i, key in enumerate(self.condition)]
+        vals = [self._normalize(target_value[i], key) for i, key in enumerate(self.condition)]
         context_per_mol = torch.tensor(vals, dtype=torch.float, device=self.device).unsqueeze(0).expand(len(sizes), -1)
 
         if negative_target_value:
-            neg = [self._normalize_target(negative_target_value[i], key) for i, key in enumerate(self.condition)]
+            neg = [self._normalize(negative_target_value[i], key) for i, key in enumerate(self.condition)]
             negative_context_per_mol = torch.tensor(neg, dtype=torch.float, device=self.device).unsqueeze(0).expand(len(sizes), -1)
         else:
             # No explicit negative given -- reuse the same null value training's
             # context_mask_rate dropout used (mask_value / 0.0 for adapter cols).
-            if self.n_adapter_context > 0:
-                null_value = torch.empty(len(self.condition), device=self.device)
-                null_value[self.adapter_indices] = 0.0
-                null_value[self.concat_indices] = self.mask_value
-            else:
-                null_value = torch.full((len(self.condition),), self.mask_value, device=self.device)
-            negative_context_per_mol = null_value.unsqueeze(0).expand(len(sizes), -1)
+            negative_context_per_mol = self._null_context(len(sizes))
 
         g = self._build_graphs(sizes)
         node_batch_idx = get_node_batch_idxs(g)

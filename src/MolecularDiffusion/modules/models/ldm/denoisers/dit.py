@@ -201,6 +201,10 @@ class DiT(nn.Module):
         class_dropout_prob: Probability of dropping class labels for CFG
         num_datasets: Number of datasets (for multi-dataset training, default 2)
         num_spacegroups: Number of spacegroups (for crystals, default 230)
+        d_context: Width of a per-molecule property vector (0 = unconditional).
+            When > 0 a `context_embedder` MLP maps it to d_model and the result
+            is ADDED to the conditioning vector c. 0 creates no module, so the
+            state_dict of every existing checkpoint is unchanged.
     """
 
     def __init__(
@@ -213,6 +217,7 @@ class DiT(nn.Module):
         class_dropout_prob: float = 0.1,
         num_datasets: int = 2,
         num_spacegroups: int = 230,
+        d_context: int = 0,
     ):
         super().__init__()
         self.d_x = d_x
@@ -231,7 +236,35 @@ class DiT(nn.Module):
             [DiTBlock(d_model, nhead, mlp_ratio=mlp_ratio) for _ in range(num_layers)]
         )
         self.final_layer = FinalLayer(d_model, d_x)
+        self.d_context = 0
+        if d_context > 0:
+            self.enable_context(d_context)
         self.initialize_weights()
+
+    def enable_context(self, d_context: int):
+        """Add the property-context MLP (idempotent). Also called by LDMTaskFactory, since
+        the denoiser may already be instantiated by Hydra before condition_names is known."""
+        if self.d_context == d_context:
+            return
+        if self.d_context:
+            raise ValueError(f"DiT already has d_context={self.d_context}, asked for {d_context}")
+        self.d_context = d_context
+        self.context_embedder = nn.Sequential(
+            nn.Linear(d_context, self.d_model), nn.SiLU(), nn.Linear(self.d_model, self.d_model)
+        )
+        # Fresh module (also when added post-init): same init as initialize_weights().
+        for m in self.context_embedder:
+            if isinstance(m, nn.Linear):
+                nn.init.xavier_uniform_(m.weight)
+                nn.init.zeros_(m.bias)
+        self._zero_context_out()
+
+    def _zero_context_out(self):
+        # Zero the context MLP's output layer so a conditional DiT warm-started
+        # from an unconditional checkpoint starts as exactly that model. It still
+        # receives gradient (its input is non-zero), so it does not stay zero.
+        nn.init.constant_(self.context_embedder[-1].weight, 0)
+        nn.init.constant_(self.context_embedder[-1].bias, 0)
 
     def initialize_weights(self):
         def _basic_init(module):
@@ -261,7 +294,12 @@ class DiT(nn.Module):
         nn.init.constant_(self.final_layer.linear.weight, 0)
         nn.init.constant_(self.final_layer.linear.bias, 0)
 
-    def forward(self, x, t, mask, dataset_idx=None, spacegroup=None, x_sc=None):
+        if self.d_context > 0:  # initialize_weights() re-ran xavier over the MLP
+            self._zero_context_out()
+
+    def forward(
+        self, x, t, mask, dataset_idx=None, spacegroup=None, x_sc=None, context=None
+    ):
         """Forward pass of DiT.
 
         Args:
@@ -271,6 +309,9 @@ class DiT(nn.Module):
             dataset_idx: Dataset index (B,) - default 1 for molecules
             spacegroup: Spacegroup index (B,) - default 0 for molecules
             x_sc: Self-conditioning input (B, N, d_x) - optional
+            context: Per-molecule property vector (B, d_context) - required iff
+                the model was built with d_context > 0 (null = the caller's
+                mask_value vector; the caller owns dropout/null semantics)
 
         Returns:
             Predicted clean latent (B, N, d_x)
@@ -300,6 +341,15 @@ class DiT(nn.Module):
         d_emb = self.dataset_embedder(dataset_idx, self.training)  # (B, d)
         s_emb = self.spacegroup_embedder(spacegroup, self.training)  # (B, d)
         c = t_emb + d_emb + s_emb  # (B, d)
+        if getattr(self, "d_context", 0) > 0:
+            if context is None:
+                raise ValueError(
+                    f"DiT was built with d_context={self.d_context}; forward() needs `context` "
+                    "(pass the null/mask_value vector for unconditional use)."
+                )
+            c = c + self.context_embedder(context.to(c.dtype))
+        elif context is not None:
+            raise ValueError("`context` given but DiT was built with d_context=0.")
 
         # Transformer blocks
         for block in self.blocks:

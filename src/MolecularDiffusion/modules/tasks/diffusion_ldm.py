@@ -513,6 +513,32 @@ class LDMTaskFactory:
         self.augment_rotation = augment_rotation
         self.train_set = train_set
         self.kwargs = kwargs
+        # Property conditioning + classifier-free guidance. Same keys/defaults as
+        # configs/tasks/diffusion.yaml. Empty condition_names = today's unconditional
+        # model (no new module, identical state_dict).
+        self.condition_names = list(kwargs.get("condition_names") or [])
+        self.context_mask_rate = kwargs.get("context_mask_rate", 0.2)
+        self.mask_value = kwargs.get("mask_value", 5)
+        self.normalize_condition = kwargs.get("normalize_condition", "value_10")
+        # Hydra ignores unknown keys silently: make the effective values visible.
+        print(
+            f"[LDMTaskFactory] condition_names={self.condition_names} "
+            f"context_mask_rate={self.context_mask_rate} mask_value={self.mask_value} "
+            f"normalize_condition={self.normalize_condition}"
+            + ("" if self.condition_names else " (unconditional)")
+        )
+        if kwargs.get("adapter_conditions"):
+            # Same message as the PaiNN factory (runmodes/train/tasks_painn.py).
+            raise ValueError(
+                "adapter_conditions is not supported by this model (no adapter path); "
+                "use condition_names only."
+            )
+        if kwargs.get("use_adapter_module"):
+            # ADiT has a single embedder into c; there is no adapter route.
+            raise ValueError(
+                "use_adapter_module is not supported for ADiT "
+                "(diffusion_adit): the property vector goes through one context MLP into c."
+            )
     
     def build(self):
         """Instantiate and return the LDM task."""
@@ -588,6 +614,10 @@ class LDMTaskFactory:
             else:
                 denoiser = instantiate(self.denoiser_config)
         
+        if self.condition_names:
+            # Works whether Hydra already built the denoiser or we just did.
+            denoiser.enable_context(len(self.condition_names))
+
         self.task = LDMTask(
             autoencoder=vae,
             denoiser=denoiser,
@@ -596,6 +626,10 @@ class LDMTaskFactory:
             task_type=self.task_type,
             autoencoder_ckpt=self.autoencoder_ckpt,
             allow_autoencoder_override=self.allow_autoencoder_override,
+            condition_names=self.condition_names,
+            context_mask_rate=self.context_mask_rate,
+            mask_value=self.mask_value,
+            normalize_condition=self.normalize_condition,
         )
         return self.task
 
@@ -710,6 +744,10 @@ class FlowMatchingInterpolant:
         mask=None,
         num_timesteps=None,
         x_0=None,
+        context=None,
+        negative_context=None,
+        cfg_scale=0.0,
+        cfg_scale_schedule=None,
     ):
         """Generate samples by integrating the flow ODE.
         
@@ -721,6 +759,12 @@ class FlowMatchingInterpolant:
             mask: Valid token mask (B, N)
             num_timesteps: Number of integration steps
             x_0: Initial noise (if None, sampled)
+            context: Optional (B, D) property context; None = unconditional model
+                (the denoiser is then called exactly as before).
+            negative_context: (B, D) context for the guidance "uncond" branch.
+            cfg_scale: w in x1 = (1+w)*x1_cond - w*x1_uncond, combined on the
+                predicted clean latent; 0 = plain conditional pass.
+            cfg_scale_schedule: None | linear | exponential | cosine, ramped on t.
         
         Returns:
             Dict with tokens_traj and clean_traj lists
@@ -748,7 +792,10 @@ class FlowMatchingInterpolant:
             
             # Run denoiser model
             with torch.no_grad():
-                pred_x_1 = model(x_t_1, t.squeeze(1), mask, x_sc=x_sc)
+                pred_x_1 = self._predict(
+                    model, x_t_1, t.squeeze(1), mask, x_sc, context, negative_context,
+                    self._step_scale(t_1, cfg_scale, cfg_scale_schedule),
+                )
             
             # Store prediction
             clean_traj.append(pred_x_1)
@@ -765,11 +812,38 @@ class FlowMatchingInterpolant:
         x_t_1 = tokens_traj[-1]
         t = torch.ones((batch_size, 1), device=self.device) * t_1
         with torch.no_grad():
-            pred_x_1 = model(x_t_1, t.squeeze(1), mask, x_sc=x_sc)
+            pred_x_1 = self._predict(
+                model, x_t_1, t.squeeze(1), mask, x_sc, context, negative_context,
+                self._step_scale(t_1, cfg_scale, cfg_scale_schedule),
+            )
         clean_traj.append(pred_x_1)
         tokens_traj.append(pred_x_1)
         
         return {"tokens_traj": tokens_traj, "clean_traj": clean_traj}
+
+    @staticmethod
+    def _step_scale(t, cfg_scale, schedule):
+        if not schedule:
+            return cfg_scale
+        # t runs 0 (noise) -> 1 (data) here, same as TABASCO/FlowMol: reuse its ramps.
+        from MolecularDiffusion.modules.models.tabasco.flow_model import FlowMatchingModel
+
+        return FlowMatchingModel._scale_schedule(t, cfg_scale, schedule)
+
+    @staticmethod
+    def _predict(model, x, t, mask, x_sc, context, negative_context, w):
+        """One denoiser call; doubles the batch (cond ++ uncond) when guiding."""
+        if context is None:  # unconditional model: byte-identical to the old call
+            return model(x, t, mask, x_sc=x_sc)
+        if not w:
+            return model(x, t, mask, x_sc=x_sc, context=context)
+        cat2 = lambda a: None if a is None else torch.cat([a, a], dim=0)  # noqa: E731
+        out = model(
+            cat2(x), cat2(t), cat2(mask), x_sc=cat2(x_sc),
+            context=torch.cat([context, negative_context], dim=0),
+        )
+        x1_c, x1_u = out.chunk(2, dim=0)
+        return x1_u + (1 + w) * (x1_c - x1_u)
     
     def __repr__(self):
         return f"{self.__class__.__name__}(num_timesteps={self.num_timesteps}, self_condition={self.self_condition})"
@@ -787,6 +861,10 @@ class LDMTask(nn.Module):
         task_type: str = "ldm",
         autoencoder_ckpt: Optional[str] = None,
         allow_autoencoder_override: bool = False,
+        condition_names: Optional[list] = None,
+        context_mask_rate: float = 0.0,
+        mask_value: float = 0.0,
+        normalize_condition: Optional[str] = None,
     ):
         super().__init__()
         
@@ -812,6 +890,16 @@ class LDMTask(nn.Module):
         
         # The configured name (e.g. `diffusion_adit`), as for VAETask above.
         self.task_type = task_type
+
+        # Property conditioning (same attribute names as the other tasks). The null
+        # context is the `mask_value` vector fed through the SAME context MLP as a real
+        # property (not a separate learned embedding): train dropout and sampling then
+        # use one identical vector, and `--target mask_value` == unconditional.
+        self.condition = list(condition_names or [])
+        self.context_mask_rate = context_mask_rate
+        self.mask_value = mask_value
+        self.normalize_condition = normalize_condition
+        self.property_norms = None  # built in preprocess()
 
         # For compatibility with generation
         self.prop_dist_model = None
@@ -843,9 +931,19 @@ class LDMTask(nn.Module):
         return self
 
     def preprocess(self, train_set):
-        """Compute node distribution from training set."""
+        """Compute node distribution (and property norms if conditional) from training set."""
         if train_set is None:
             return
+        if len(self.condition) > 0:
+            from . import _preprocess_cache as _ppcache
+            from MolecularDiffusion.utils import compute_mean_mad_from_dataloader
+
+            base, subset_indices = _ppcache.resolve_dataset_and_indices(train_set)
+            prop_indices = _ppcache.property_sample_indices(len(train_set), subset_indices)
+            props = torch.stack([
+                _ppcache.get_property_subset(base, name, prop_indices) for name in self.condition
+            ])
+            self.property_norms = compute_mean_mad_from_dataloader(props, self.condition)
             
         # Determine node counts
         n_node_dist = {}
@@ -887,6 +985,40 @@ class LDMTask(nn.Module):
         print("---------------Creating node distribution model-----------------")
         self.node_dist_model = DistributionNodes(self.n_node_dist)
     
+    def _normalize(self, value, key):
+        """Same normalisation as prepare_context (mad | maxmin | value_N | None)."""
+        method = self.normalize_condition
+        if method is None:
+            return value
+        if method == "mad":
+            return (value - self.property_norms[key]["mean"]) / self.property_norms[key]["mad"]
+        if method == "maxmin":
+            n = self.property_norms[key]
+            return 2 * (value - n["min"]) / (n["max"] - n["min"]) - 1
+        if "value" in method:
+            return value / float(method.split("_")[1])
+        raise ValueError(f"Unknown normalization method: {method}")
+
+    def _null_context(self, n_mol, device):
+        """(n_mol, D) null context = the vector training's dropout substitutes."""
+        return torch.full((n_mol, len(self.condition)), float(self.mask_value), device=device)
+
+    def _train_context(self, batch, n_mol, device):
+        """(B, D) normalised properties with whole-vector per-molecule dropout."""
+        if self.normalize_condition in ("mad", "maxmin") and self.property_norms is None:
+            raise RuntimeError("condition_names set but property_norms is None; did preprocess() run?")
+        cols = []
+        for key in self.condition:
+            v = batch[key].to(device).float().reshape(-1)
+            cols.append(self._normalize(v, key))
+        ctx = torch.stack(cols, dim=-1)
+        if ctx.shape[0] != n_mol:
+            raise ValueError(f"context has {ctx.shape[0]} rows for {n_mol} molecules")
+        if self.context_mask_rate > 0:
+            drop = torch.rand(n_mol, device=device) < self.context_mask_rate
+            ctx = torch.where(drop[:, None], self._null_context(n_mol, device), ctx)
+        return ctx
+
     @torch.no_grad()
     def encode(self, batch):
         """Encode batch with frozen VAE."""
@@ -913,6 +1045,9 @@ class LDMTask(nn.Module):
         import random
         import numpy as np
         
+        # Keep the raw batch: _adapt_batch unwraps {'graph': ..., 'gap': ...} and drops
+        # the property tensors.
+        raw_batch = batch
         # Adapt batch first (handles dict -> PyG conversion)
         batch = self.autoencoder._adapt_batch(batch)
         
@@ -949,6 +1084,12 @@ class LDMTask(nn.Module):
         # Corrupt batch using interpolant
         noisy_batch = self.interpolant.corrupt_batch(dense_batch)
         
+        # One context (and one dropout draw) shared by the self-conditioning pass and
+        # the main pass; absent when unconditional so those calls are unchanged.
+        ctx_kw = {}
+        if len(self.condition) > 0:
+            ctx_kw["context"] = self._train_context(raw_batch, B, device)
+
         # Self-conditioning
         x_sc = None
         if self.interpolant.self_condition and random.random() < self.interpolant.self_condition_prob:
@@ -957,7 +1098,8 @@ class LDMTask(nn.Module):
                     noisy_batch["x_t"],
                     noisy_batch["t"].squeeze(1),
                     mask,
-                    x_sc=None
+                    x_sc=None,
+                    **ctx_kw,
                 )
         
         # Run denoiser - predicts clean x_1
@@ -965,7 +1107,8 @@ class LDMTask(nn.Module):
             noisy_batch["x_t"],
             noisy_batch["t"].squeeze(1),
             mask,
-            x_sc=x_sc
+            x_sc=x_sc,
+            **ctx_kw,
         )
         
         # Compute loss with time-dependent normalization (reference criterion)
@@ -1024,6 +1167,10 @@ class LDMTask(nn.Module):
         batch_size: int = 1,
         nodesxsample: Optional[torch.Tensor] = None,
         num_steps: Optional[int] = None,
+        context: Optional[torch.Tensor] = None,
+        negative_context: Optional[torch.Tensor] = None,
+        cfg_scale: float = 0.0,
+        cfg_scale_schedule: Optional[str] = None,
         **kwargs
     ):
         """Generate molecules by sampling from the latent diffusion model.
@@ -1058,6 +1205,14 @@ class LDMTask(nn.Module):
         # Set interpolant device
         self.interpolant.device = device
         
+        # Conditional model + no context = unconditional sampling: use the trained null,
+        # never skip the context (the denoiser would raise / see an untrained input).
+        if len(self.condition) > 0:
+            if context is None:
+                context = self._null_context(batch_size, device)
+            if negative_context is None:
+                negative_context = self._null_context(batch_size, device)
+
         # Use interpolant's sample method for proper flow ODE integration
         sample_result = self.interpolant.sample(
             batch_size=batch_size,
@@ -1066,6 +1221,13 @@ class LDMTask(nn.Module):
             model=self.denoiser,
             mask=mask,
             num_timesteps=num_steps,
+            **(
+                dict(
+                    context=context, negative_context=negative_context,
+                    cfg_scale=cfg_scale, cfg_scale_schedule=cfg_scale_schedule,
+                )
+                if len(self.condition) > 0 else {}
+            ),
         )
         
         # Get final clean prediction
@@ -1110,6 +1272,48 @@ class LDMTask(nn.Module):
         
         return one_hot, charges, pos, node_mask
     
+    @torch.no_grad()
+    def sample_guidance_conitional(
+        self,
+        target_function=None,
+        target_value=None,
+        negative_target_value=None,
+        nodesxsample: Optional[torch.Tensor] = None,
+        cfg_scale: float = 1,
+        cfg_scale_schedule: Optional[str] = None,
+        guidance_ver: str = "cfg",
+        n_frames: int = 0,
+        num_steps: Optional[int] = None,
+        **kwargs,
+    ):
+        """Classifier-free-guidance generation (name/signature fixed by tasks_generate.py).
+
+        Only plain CFG is supported. A negative_target_value replaces the null branch.
+        """
+        if guidance_ver != "cfg":
+            raise NotImplementedError(
+                f"sample_guidance_conitional only supports guidance_ver='cfg' (got {guidance_ver!r}); "
+                "gradient-guidance variants are out of scope."
+            )
+        if len(self.condition) == 0:
+            raise ValueError("CFG sampling needs a conditional checkpoint (condition_names is empty).")
+        if n_frames:
+            print(f"WARNING: n_frames={n_frames} is not supported for ADiT CFG sampling; ignoring.")
+        n_mol = len(nodesxsample)
+        device = self.device
+
+        def _ctx(values):
+            vals = [self._normalize(float(values[i]), k) for i, k in enumerate(self.condition)]
+            return torch.tensor(vals, dtype=torch.float, device=device).expand(n_mol, -1)
+
+        context = _ctx(target_value)
+        negative_context = _ctx(negative_target_value) if negative_target_value else None
+        return self.sample(
+            nodesxsample=nodesxsample, num_steps=num_steps, context=context,
+            negative_context=negative_context, cfg_scale=cfg_scale,
+            cfg_scale_schedule=cfg_scale_schedule,
+        )
+
     @property
     def device(self):
         return next(self.parameters()).device

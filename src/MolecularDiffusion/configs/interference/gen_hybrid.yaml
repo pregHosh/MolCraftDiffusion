@@ -20,7 +20,7 @@ condition_configs:
   t_retry: 180
   # --- classifier-free / gradient guidance (code defaults) ---
   cfg_scale: 1
-  cfg_scale_schedule: null   # code default 1
+  cfg_scale_schedule: null   # code default null
   gg_scale: 1               # code default (unused for *_cfg; needed for *_gg / *_cfggg)
   max_norm: 1               # code default
   guidance_at: 1            # code default

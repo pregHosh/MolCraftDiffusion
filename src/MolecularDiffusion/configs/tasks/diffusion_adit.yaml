@@ -23,3 +23,17 @@ interpolant:
 # Data augmentation
 augment_rotation: true
 
+
+# Property conditioning + classifier-free guidance. Same keys/semantics as
+# configs/tasks/diffusion.yaml. condition_names: [] (default) = the unconditional
+# model, with an identical state_dict. When set (e.g. [gap]) the normalised property
+# vector goes through a small MLP and is ADDED to the DiT conditioning vector c;
+# whole-vector dropout at context_mask_rate swaps it for the mask_value vector
+# (fed through the same MLP), which is also the unconditional/null branch at
+# sampling. Needs data_type: pyG with data.target_fields containing the names.
+# adapter_conditions / use_adapter_module are NOT supported (error if set).
+condition_names: []
+context_mask_rate: 0.2
+mask_value: 5
+normalize_condition: value_10 # None | "maxmin" | "mad" | "value_N" (divide by N)
+adapter_conditions: [] # subset of condition_names routed via the adapter MLP(s); TABASCO/FlowMol/EGNN only (PaiNN/ADiT raise if non-empty)
