@@ -535,8 +535,19 @@ class TabascoDiffusionTask(nn.Module):
             batch = self.to_tensordict(batch) if batch is not None else None
 
         # Conditional checkpoint: feed the trained null (what context_mask_rate
-        # dropout used) instead of omitting `condition`. Needs a batch for the
-        # (B, N) shape; with batch=None (shapes drawn from data_stats) it stays None.
+        # dropout used) instead of omitting `condition`. The null needs the (B, N)
+        # shape, so with batch=None (the in-training eval path) draw the sizes
+        # here, from the same data_stats the model would use, and pass them on as
+        # the batch. Without this the eval sampled with NO condition term, which
+        # training never saw, and produced garbage (PoseBusters 0, atoms valid ~5%).
+        if (
+            batch is None
+            and len(self.condition) > 0
+            and batch_size is not None
+        ):
+            batch = self.tabasco_model._sample_noise_like_batch(
+                None, batch_size
+            )
         null_condition = None
         if len(self.condition) > 0 and batch is not None:
             null_condition = self._null_context(~batch["padding_mask"])
