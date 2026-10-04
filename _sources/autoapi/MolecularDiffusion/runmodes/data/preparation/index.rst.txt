@@ -37,6 +37,7 @@ Functions
    MolecularDiffusion.runmodes.data.preparation.iter_files
    MolecularDiffusion.runmodes.data.preparation.read_fragment_scores
    MolecularDiffusion.runmodes.data.preparation.smilify_openbabel
+   MolecularDiffusion.runmodes.data.preparation.smilify_rdkit
    MolecularDiffusion.runmodes.data.preparation.smilify_structure
    MolecularDiffusion.runmodes.data.preparation.smilify_xyz2mol
 
@@ -96,7 +97,17 @@ Module Contents
 
 .. py:function:: smilify_openbabel(filename, total_charge=0, timeout=30)
 
-.. py:function:: smilify_structure(filename, total_charge=0, timeout=30, method='hybrid')
+.. py:function:: smilify_rdkit(filename, total_charge=0, timeout=30)
+
+   Derive a clean, index-preserving mol from cartesian coordinates.
+
+   Runs `_smilify_rdkit_core` in a forked subprocess with a hard kill on
+   timeout: a hang inside RDKit's C++ code doesn't respond to signal.alarm
+   in the same process (same reasoning as `utils/smilify.py::smilify_xyz2mol`
+   and `runmodes/analyze/compute_metrics.py`'s `_run_with_timeout`).
+
+
+.. py:function:: smilify_structure(filename, total_charge=0, timeout=30, method='hybrid', failure_reasons=None)
 
 .. py:function:: smilify_xyz2mol(filename, total_charge=0, timeout=30)
 

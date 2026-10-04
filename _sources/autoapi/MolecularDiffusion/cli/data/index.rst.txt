@@ -104,7 +104,7 @@ Module Contents
    Featurize 3D molecules into vectors.
 
 
-.. py:function:: generate_blocks_cmd(source, sdf, natoms, csv, fraction, indices, method)
+.. py:function:: generate_blocks_cmd(source, sdf, natoms, csv, fraction, indices, method, timeout)
 
    Generate Mol Blocks, SMILES, and properties (SA, SC).
 

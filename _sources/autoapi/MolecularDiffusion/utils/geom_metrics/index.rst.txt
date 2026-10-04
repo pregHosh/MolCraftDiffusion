@@ -363,10 +363,14 @@ Module Contents
    :type pdb_file_path: str
 
 
-.. py:function:: xyz_to_rdkit_mol(xyz_path: str)
+.. py:function:: xyz_to_rdkit_mol(xyz_path: str, charges: list = None)
 
    Convert an XYZ file to an RDKit molecule with perceived bonds.
    Tries multiple charges to find a valid structure without radicals.
+
+   :param charges: candidate total charges to try, in order. Defaults to
+                   ``[0, 1, -1, 2, -2]`` (a blind sweep); pass e.g. ``[total_charge]``
+                   to try only a single, already-known charge instead of sweeping.
 
 
 .. py:data:: ALPHA_DEFAULT
