@@ -9,6 +9,7 @@ import os
 import gzip
 import pickle
 import math
+import multiprocessing
 import random
 import logging
 import tempfile
@@ -659,22 +660,88 @@ def smilify_xyz2mol(filename, total_charge=0, timeout=30):
         
     return None, None
 
-def smilify_structure(filename, total_charge=0, timeout=30, method='hybrid'):
+def _smilify_rdkit_core(filename, total_charge=0):
+    """Index-preserving bond perception via Chem.MolFromXYZBlock +
+    rdDetermineBonds.DetermineBonds, at a single known charge (no blind
+    charge sweep -- the caller already knows total_charge for this row).
+    Returns (smiles, mol, failure_reason); failure_reason is None on success.
+    """
+    from MolecularDiffusion.utils.geom_metrics import xyz_to_rdkit_mol
+
+    atoms = ase_read(filename)
+    ref_symbols = atoms.get_chemical_symbols()
+
+    mol = xyz_to_rdkit_mol(str(filename), charges=[total_charge])
+    if mol is None:
+        return None, None, "bond_perception_failed"
+
+    # Defense-in-depth: xyz_to_rdkit_mol never reorders atoms (MolFromXYZBlock
+    # preserves input order) and already rejects radicals/multi-fragment
+    # structures internally, so these should never fire in practice.
+    if [a.GetSymbol() for a in mol.GetAtoms()] != ref_symbols:
+        return None, None, "index_mismatch"
+    if any(a.GetNumRadicalElectrons() > 0 for a in mol.GetAtoms()):
+        return None, None, "radicals"
+    if len(Chem.GetMolFrags(mol)) != 1:
+        return None, None, "multi_fragment"
+
+    return mol2smi(mol), mol, None
+
+
+def _smilify_rdkit_worker(filename, total_charge, result_queue):
+    try:
+        result_queue.put(_smilify_rdkit_core(filename, total_charge))
+    except Exception as e:
+        result_queue.put((None, None, f"exception:{e}"))
+
+
+def smilify_rdkit(filename, total_charge=0, timeout=30):
+    """Derive a clean, index-preserving mol from cartesian coordinates.
+
+    Runs `_smilify_rdkit_core` in a forked subprocess with a hard kill on
+    timeout: a hang inside RDKit's C++ code doesn't respond to signal.alarm
+    in the same process (same reasoning as `utils/smilify.py::smilify_xyz2mol`
+    and `runmodes/analyze/compute_metrics.py`'s `_run_with_timeout`).
+    """
+    ctx = multiprocessing.get_context("fork")
+    result_queue = ctx.Queue()
+    process = ctx.Process(
+        target=_smilify_rdkit_worker, args=(str(filename), total_charge, result_queue)
+    )
+    process.start()
+    process.join(timeout=timeout)
+
+    if process.is_alive():
+        process.terminate()
+        process.join()
+        return None, None, "timeout"
+
+    if not result_queue.empty():
+        return result_queue.get()
+    return None, None, "no_result"
+
+
+def smilify_structure(filename, total_charge=0, timeout=30, method='hybrid', failure_reasons=None):
     smiles, rdkit_mol = None, None
     filename = str(filename)
-    
+
     if method == 'hybrid':
         if total_charge == 0:
             smiles, rdkit_mol = smilify_openbabel(filename, total_charge, timeout)
         if rdkit_mol is None:
             smiles, rdkit_mol = smilify_xyz2mol(filename, total_charge, timeout)
-            
+
     elif method == 'openbabel':
         smiles, rdkit_mol = smilify_openbabel(filename, total_charge, timeout)
-        
+
     elif method == 'xyz2mol':
         smiles, rdkit_mol = smilify_xyz2mol(filename, total_charge, timeout)
-        
+
+    elif method == 'rdkit':
+        smiles, rdkit_mol, reason = smilify_rdkit(filename, total_charge, timeout)
+        if failure_reasons is not None and reason:
+            failure_reasons[reason] = failure_reasons.get(reason, 0) + 1
+
     return smiles, rdkit_mol
 
 def calculate_props(mol):
@@ -837,7 +904,8 @@ def generate_mol_blocks_and_sdf(
          db_update = connect(str(input_path)) # Reconnect to update
 
     success_count = 0
-    
+    failure_reasons = {}
+
     for entry in tqdm(entries, desc="Generating"):
         mode = entry['mode']
         charge = entry.get('charge', 0)
@@ -858,52 +926,60 @@ def generate_mol_blocks_and_sdf(
                     ase_write(tmp_path, Atoms(numbers=zs, positions=coords))
                 
                 try:
-                    smi, mol = smilify_structure(tmp_path, total_charge=charge, timeout=timeout, method=smilify_method)
+                    smi, mol = smilify_structure(tmp_path, total_charge=charge, timeout=timeout, method=smilify_method, failure_reasons=failure_reasons)
                 finally:
                     os.remove(tmp_path)
-                    
+
             else:
                 # XYZ or DB (which exported temp XYZs)
                 fpath = entry['file']
-                smi, mol = smilify_structure(fpath, total_charge=charge, timeout=timeout, method=smilify_method)
+                smi, mol = smilify_structure(fpath, total_charge=charge, timeout=timeout, method=smilify_method, failure_reasons=failure_reasons)
             
 
             if mol:
                 # --- Atom Order Alignment Fix ---
-                try:
-                    # Reconstruct ASE atoms for alignment
-                    if mode == 'npy':
-                        # zs and coords are already extracted above
-                         from ase import Atoms
-                         ase_atoms_check = Atoms(numbers=zs, positions=coords)
-                    elif mode == 'db':
-                         # We need to get the atoms from the DB or entry
-                         # entry['data'] might hold them if we loaded them, otherwise re-read?
-                         # For efficiency, if we have coords/zs, use them.
-                         # preparation.py doesn't unpack them for DB mode in the loop yet, let's look at the context.
-                         # It seems 'entry' just has id/file/mode.
-                         # We processed 'fpath' which was a temp xyz or the file.
-                         # Let's read the temp file back as ASE or use what we wrote.
-                         from ase.io import read as ase_read
-                         ase_atoms_check = ase_read(fpath)
-                    else:
-                         from ase.io import read as ase_read
-                         ase_atoms_check = ase_read(fpath)
+                # smilify_rdkit (method='rdkit') never reorders atoms -- it goes
+                # through Chem.MolFromXYZBlock and asserts index equality itself --
+                # so the Hungarian coordinate re-matching below is unneeded there;
+                # it exists only to compensate for openbabel/xyz2mol, which don't
+                # carry that same construction guarantee.
+                if smilify_method != 'rdkit':
+                    try:
+                        # Reconstruct ASE atoms for alignment
+                        if mode == 'npy':
+                            # zs and coords are already extracted above
+                             from ase import Atoms
+                             ase_atoms_check = Atoms(numbers=zs, positions=coords)
+                        elif mode == 'db':
+                             # We need to get the atoms from the DB or entry
+                             # entry['data'] might hold them if we loaded them, otherwise re-read?
+                             # For efficiency, if we have coords/zs, use them.
+                             # preparation.py doesn't unpack them for DB mode in the loop yet, let's look at the context.
+                             # It seems 'entry' just has id/file/mode.
+                             # We processed 'fpath' which was a temp xyz or the file.
+                             # Let's read the temp file back as ASE or use what we wrote.
+                             from ase.io import read as ase_read
+                             ase_atoms_check = ase_read(fpath)
+                        else:
+                             from ase.io import read as ase_read
+                             ase_atoms_check = ase_read(fpath)
 
-                    aligned_mol = align_atoms(ase_atoms_check, mol)
-                    if aligned_mol:
-                        mol = aligned_mol
-                    else:
-                        logger.warning(f"Could not align atom order for entry {entry['id']}. Skipping to avoid mismatch.")
+                        aligned_mol = align_atoms(ase_atoms_check, mol)
+                        if aligned_mol:
+                            mol = aligned_mol
+                        else:
+                            logger.warning(f"Could not align atom order for entry {entry['id']}. Skipping to avoid mismatch.")
+                            continue
+                    except Exception as ex:
+                        logger.warning(f"Error during atom alignment for {entry['id']}: {ex}")
+                        # If alignment checking fails, we might still want to proceed?
+                        # User was strict: "ensure that". So maybe we should skip.
                         continue
-                except Exception as ex:
-                    logger.warning(f"Error during atom alignment for {entry['id']}: {ex}")
-                    # If alignment checking fails, we might still want to proceed? 
-                    # User was strict: "ensure that". So maybe we should skip.
-                    continue
                 # --------------------------------
 
                 props = calculate_props(mol)
+                if smilify_method == 'rdkit':
+                    props['num_graph'] = len(Chem.GetMolFrags(mol))
                 mol_block = Chem.MolToMolBlock(mol)
                 
                 # Update Mol with props for SDF
@@ -938,5 +1014,8 @@ def generate_mol_blocks_and_sdf(
         temp_dir.cleanup()
         
     logger.info(f"Processed {len(entries)}. Success: {success_count} ({success_count/len(entries)*100:.1f}%)")
+    if failure_reasons:
+        tally = ", ".join(f"{k}={v}" for k, v in sorted(failure_reasons.items(), key=lambda kv: -kv[1]))
+        logger.info(f"Failure reasons: {tally}")
 
 

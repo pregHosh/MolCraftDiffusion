@@ -117,8 +117,9 @@ def annotate_cmd(db, tag, value):
 @click.option("--csv", "-c", type=click.Path(exists=True), help="Metadata CSV file")
 @click.option("--fraction", "-f", "--frac", default=1.0, show_default=True, help="Fraction to process")
 @click.option("--indices", type=str, help='Process a slice of data, e.g., "0-10000".')
-@click.option("--method", "-m", "--met", default="hybrid", show_default=True, type=click.Choice(['hybrid', 'openbabel', 'xyz2mol']), help="Smilification method")
-def generate_blocks_cmd(source, sdf, natoms, csv, fraction, indices, method):
+@click.option("--method", "-m", "--met", default="hybrid", show_default=True, type=click.Choice(['hybrid', 'openbabel', 'xyz2mol', 'rdkit']), help="Smilification method. 'rdkit' derives bonds via Chem.MolFromXYZBlock + rdDetermineBonds at the row's own total_charge, index-preserving by construction; rejects index mismatches, radicals, and multi-fragment structures instead of best-effort repairing them.")
+@click.option("--timeout", "-to", default=60, show_default=True, type=int, help="Per-molecule timeout in seconds (hard-enforced for --method rdkit; best-effort for others)")
+def generate_blocks_cmd(source, sdf, natoms, csv, fraction, indices, method, timeout):
     """Generate Mol Blocks, SMILES, and properties (SA, SC)."""
     _require_data_modules(["torch", "ase", "rdkit"])
     if method in {"hybrid", "openbabel"}:
@@ -131,6 +132,7 @@ def generate_blocks_cmd(source, sdf, natoms, csv, fraction, indices, method):
         natoms_file=Path(natoms) if natoms else None,
         csv_file=Path(csv) if csv else None,
         fraction=fraction,
+        timeout=timeout,
         smilify_method=method,
         indices=indices
     )

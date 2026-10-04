@@ -790,10 +790,15 @@ def run_postbuster(mols, timeout=60, batch_size=1, names=None):
         return None
 
 
-def xyz_to_rdkit_mol(xyz_path: str):
+def xyz_to_rdkit_mol(xyz_path: str, charges: list = None):
     """
     Convert an XYZ file to an RDKit molecule with perceived bonds.
     Tries multiple charges to find a valid structure without radicals.
+
+    Args:
+        charges: candidate total charges to try, in order. Defaults to
+            ``[0, 1, -1, 2, -2]`` (a blind sweep); pass e.g. ``[total_charge]``
+            to try only a single, already-known charge instead of sweeping.
     """
     _require_optional("rdkit", Chem)
     from rdkit.Chem import rdDetermineBonds
@@ -803,9 +808,9 @@ def xyz_to_rdkit_mol(xyz_path: str):
         mol = Chem.MolFromXYZBlock(xyz_block)
         if mol is None:
             return None
-        
+
         # Try different charges to perceive bonds correctly
-        for charge in [0, 1, -1, 2, -2]:
+        for charge in (charges if charges is not None else [0, 1, -1, 2, -2]):
             try:
                 mol_copy = Chem.Mol(mol)
                 rdDetermineBonds.DetermineBonds(mol_copy, charge=charge, embedChiral=True)
