@@ -517,13 +517,16 @@ instead of turning back into a pile of scattered files.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.zoo.path_cmd" title="MolecularDiffusion.cli.zoo.path_cmd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">path_cmd</span></code></a>(name)</p></td>
 <td><p>Print an asset's local path, for $(...) interop.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.zoo.recipe_cmd" title="MolecularDiffusion.cli.zoo.recipe_cmd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">recipe_cmd</span></code></a>(name)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.zoo.publish_cmd" title="MolecularDiffusion.cli.zoo.publish_cmd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">publish_cmd</span></code></a>(names, publish_all, sources, out, ...)</p></td>
+<td><p>Stage registered assets and push them to HuggingFace.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.zoo.recipe_cmd" title="MolecularDiffusion.cli.zoo.recipe_cmd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">recipe_cmd</span></code></a>(name)</p></td>
 <td><p>Show how to build a non-redistributable asset locally.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.zoo.verify_cmd" title="MolecularDiffusion.cli.zoo.verify_cmd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">verify_cmd</span></code></a>(names, verify_all)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.zoo.verify_cmd" title="MolecularDiffusion.cli.zoo.verify_cmd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">verify_cmd</span></code></a>(names, verify_all)</p></td>
 <td><p>Re-hash cached assets, and check the manifest is complete.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.zoo.zoo" title="MolecularDiffusion.cli.zoo.zoo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zoo</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.zoo.zoo" title="MolecularDiffusion.cli.zoo.zoo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zoo</span></code></a>()</p></td>
 <td><p>Pretrained weights, datasets and example configs.</p></td>
 </tr>
 </tbody>
@@ -586,6 +589,16 @@ a single asset, one model, everything one config needs, or –all.</p>
 <dt class="sig sig-object py" id="MolecularDiffusion.cli.zoo.path_cmd">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.zoo.</span></span><span class="sig-name descname"><span class="pre">path_cmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.zoo.path_cmd" title="Link to this definition">¶</a></dt>
 <dd><p>Print an asset’s local path, for $(…) interop.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.cli.zoo.publish_cmd">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.zoo.</span></span><span class="sig-name descname"><span class="pre">publish_cmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">publish_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sources</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stage_only</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.zoo.publish_cmd" title="Link to this definition">¶</a></dt>
+<dd><p>Stage registered assets and push them to HuggingFace.</p>
+<p>NAMES are asset keys or model names. Only <cite>redistribute: true</cite> assets are
+staged, an unaudited <cite>TODO</cite> aborts before anything is written, and the
+push asks first – it is outward-facing and not undoable. <cite>–dry-run</cite> and
+<cite>–stage-only</cite> never touch the remote.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -700,6 +713,7 @@ discovered a year later.</p>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.zoo.info_cmd"><code class="docutils literal notranslate"><span class="pre">info_cmd()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.zoo.list_cmd"><code class="docutils literal notranslate"><span class="pre">list_cmd()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.zoo.path_cmd"><code class="docutils literal notranslate"><span class="pre">path_cmd()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.cli.zoo.publish_cmd"><code class="docutils literal notranslate"><span class="pre">publish_cmd()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.zoo.recipe_cmd"><code class="docutils literal notranslate"><span class="pre">recipe_cmd()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.zoo.verify_cmd"><code class="docutils literal notranslate"><span class="pre">verify_cmd()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.zoo.zoo"><code class="docutils literal notranslate"><span class="pre">zoo()</span></code></a></li>

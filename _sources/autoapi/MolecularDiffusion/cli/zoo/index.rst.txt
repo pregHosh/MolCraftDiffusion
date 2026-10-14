@@ -33,6 +33,7 @@ Functions
    MolecularDiffusion.cli.zoo.info_cmd
    MolecularDiffusion.cli.zoo.list_cmd
    MolecularDiffusion.cli.zoo.path_cmd
+   MolecularDiffusion.cli.zoo.publish_cmd
    MolecularDiffusion.cli.zoo.recipe_cmd
    MolecularDiffusion.cli.zoo.verify_cmd
    MolecularDiffusion.cli.zoo.zoo
@@ -92,6 +93,16 @@ Module Contents
 .. py:function:: path_cmd(name)
 
    Print an asset's local path, for $(...) interop.
+
+
+.. py:function:: publish_cmd(names, publish_all, sources, out, stage_only, dry_run, message, yes)
+
+   Stage registered assets and push them to HuggingFace.
+
+   NAMES are asset keys or model names. Only `redistribute: true` assets are
+   staged, an unaudited `TODO` aborts before anything is written, and the
+   push asks first -- it is outward-facing and not undoable. `--dry-run` and
+   `--stage-only` never touch the remote.
 
 
 .. py:function:: recipe_cmd(name)

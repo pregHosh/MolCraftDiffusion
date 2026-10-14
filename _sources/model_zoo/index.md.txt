@@ -150,6 +150,7 @@ corpus once and every config on the machine that references it is satisfied.
 | `zoo recipe <asset>` | How to build an asset that cannot be redistributed |
 | `zoo bundle` | Package the cache for an offline machine |
 | `zoo add <name> ...` | Register your own model — see [Registering](registering.md) |
+| `zoo publish <name> --source <dir>` | Maintainer-only: stage the registered assets and push them |
 
 ```{toctree}
 :hidden:

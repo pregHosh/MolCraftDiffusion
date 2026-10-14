@@ -619,14 +619,20 @@ error that looks like a broken config but is not.</p>
 <h2>Publishing<a class="headerlink" href="#publishing" title="Link to this heading">¶</a></h2>
 <p>Uploading is a separate, deliberate step; registering does not push anything.
 Once the licence is settled and the example config runs, stage and upload:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>scripts/build_zoo_manifest.py<span class="w"> </span>stage<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--manifest<span class="w"> </span>src/MolecularDiffusion/zoo.yaml<span class="w"> </span>--out<span class="w"> </span>.zoo-staging
-python<span class="w"> </span>scripts/build_zoo_manifest.py<span class="w"> </span>upload<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--manifest<span class="w"> </span>src/MolecularDiffusion/zoo.yaml<span class="w"> </span>--staging<span class="w"> </span>.zoo-staging
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># look first -- writes nothing, contacts nothing</span>
+MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>publish<span class="w"> </span>&lt;name&gt;<span class="w"> </span>--source<span class="w"> </span>&lt;dir&gt;<span class="w"> </span>--dry-run
+MolCraftDiff<span class="w"> </span>zoo<span class="w"> </span>publish<span class="w"> </span>&lt;name&gt;<span class="w"> </span>--source<span class="w"> </span>&lt;dir&gt;
 </pre></div>
 </div>
-<p>Staging copies only the assets marked <code class="docutils literal notranslate"><span class="pre">redistribute:</span> <span class="pre">true</span></code>, so an asset you
-marked withheld cannot be uploaded by accident.</p>
+<p>Only assets marked <code class="docutils literal notranslate"><span class="pre">redistribute:</span> <span class="pre">true</span></code> are staged, so one you marked withheld
+cannot be uploaded by accident, and a single remaining <code class="docutils literal notranslate"><span class="pre">redistribute:</span> <span class="pre">TODO</span></code>
+aborts the run before anything is written. The push itself asks first;
+<code class="docutils literal notranslate"><span class="pre">--stage-only</span></code> builds the tree and stops.</p>
+<p><code class="docutils literal notranslate"><span class="pre">--source</span></code> is where the files actually live — the directory you passed to
+<code class="docutils literal notranslate"><span class="pre">zoo</span> <span class="pre">add</span></code>. The manifest stores relative paths and a sha256, never absolute
+paths, so <code class="docutils literal notranslate"><span class="pre">publish</span></code> re-derives each source: the local asset cache first, then
+each <code class="docutils literal notranslate"><span class="pre">--source</span></code> root, confirming every file by hash before staging it. Pass
+<code class="docutils literal notranslate"><span class="pre">--source</span></code> as many times as you need.</p>
 </section>
 <hr class="docutils" />
 <section id="where-to-go-next">
