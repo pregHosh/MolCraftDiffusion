@@ -106,7 +106,7 @@ def test_list_data_shows_corpora_and_their_readers(env):
     result = _run("list", "--data")
     assert result.exit_code == 0
     assert "data/corpus/variant" in result.output
-    assert "corpususer" in result.output          # USED BY column
+    assert "corpususer" in result.output  # USED BY column
     assert "demo/pretrained" not in result.output  # weights are not corpora
 
 
@@ -217,3 +217,175 @@ def test_add_requires_something_to_register(env):
     result = _run("add", "empty")
     assert result.exit_code != 0
     assert "at least one" in result.output
+
+
+def _audit(manifest, key, value):
+    """Rewrite one asset's `redistribute` field in the stub manifest."""
+    doc = yaml.safe_load(manifest.read_text(encoding="utf-8"))
+    doc["assets"][key]["redistribute"] = value
+    manifest.write_text(yaml.safe_dump(doc), encoding="utf-8")
+    assets.manifest.cache_clear()
+
+
+def _source_tree(root, rel):
+    """A source directory holding one file whose sha256 is `_SHA`."""
+    path = root / rel
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("hello", encoding="utf-8")
+    return root
+
+
+def test_publish_stages_by_host_and_stops_at_stage_only(env):
+    tmp_path, _cache, _manifest = env
+    src = _source_tree(tmp_path / "src", "demo/pretrained/model.ckpt")
+    _source_tree(src, "demo/data/demo.db")
+    out = tmp_path / "staging"
+
+    result = _run(
+        "publish",
+        "demo",
+        "--source",
+        str(src),
+        "--out",
+        str(out),
+        "--stage-only",
+    )
+    assert result.exit_code == 0, result.output
+    # the HuggingFace layout: <host>/<key>/<path>, not the cache layout
+    ckpt = out / "models" / "demo" / "pretrained" / "model.ckpt"
+    data = out / "datasets" / "demo" / "data" / "demo.db"
+    assert ckpt.read_text(encoding="utf-8") == "hello"
+    assert data.read_text(encoding="utf-8") == "hello"
+    assert "Staged only" in result.output
+
+
+def test_publish_dry_run_writes_nothing(env):
+    tmp_path, _cache, _manifest = env
+    src = _source_tree(tmp_path / "src", "demo/pretrained/model.ckpt")
+    out = tmp_path / "staging"
+
+    result = _run(
+        "publish",
+        "demo/pretrained",
+        "--source",
+        str(src),
+        "--out",
+        str(out),
+        "--dry-run",
+    )
+    assert result.exit_code == 0, result.output
+    assert not out.exists()
+
+
+def test_publish_never_pushes_without_confirmation(env):
+    tmp_path, _cache, _manifest = env
+    src = _source_tree(tmp_path / "src", "demo/pretrained/model.ckpt")
+    out = tmp_path / "staging"
+
+    result = CliRunner().invoke(
+        zoo,
+        [
+            "publish",
+            "demo/pretrained",
+            "--source",
+            str(src),
+            "--out",
+            str(out),
+        ],
+        input="n\n",
+    )
+    assert result.exit_code != 0
+    assert "org/zoo" in result.output  # the repo it would have pushed to
+
+
+def test_publish_refuses_while_redistribute_is_todo(env):
+    tmp_path, _cache, manifest = env
+    src = _source_tree(tmp_path / "src", "demo/pretrained/model.ckpt")
+    _audit(manifest, "demo/pretrained", "TODO")
+    out = tmp_path / "staging"
+
+    result = _run(
+        "publish",
+        "demo/pretrained",
+        "--source",
+        str(src),
+        "--out",
+        str(out),
+        "--stage-only",
+    )
+    assert result.exit_code != 0
+    assert "Unaudited" in result.output
+    assert not out.exists()  # aborts before writing anything
+
+
+def test_publish_withholds_non_redistributable(env):
+    tmp_path, _cache, manifest = env
+    src = _source_tree(tmp_path / "src", "demo/pretrained/model.ckpt")
+    _audit(manifest, "demo/pretrained", False)
+    out = tmp_path / "staging"
+
+    result = _run(
+        "publish",
+        "demo/pretrained",
+        "--source",
+        str(src),
+        "--out",
+        str(out),
+        "--stage-only",
+    )
+    assert result.exit_code != 0
+    assert "withheld" in result.output
+    assert not out.exists()
+
+
+def test_publish_without_a_source_says_how(env):
+    tmp_path, _cache, _manifest = env
+    result = _run(
+        "publish",
+        "demo/pretrained",
+        "--out",
+        str(tmp_path / "staging"),
+        "--stage-only",
+    )
+    assert result.exit_code != 0
+    assert "--source" in result.output
+
+
+def test_publish_rejects_a_source_whose_hash_drifted(env):
+    tmp_path, _cache, _manifest = env
+    src = tmp_path / "src"
+    (src / "demo" / "pretrained").mkdir(parents=True)
+    (src / "demo" / "pretrained" / "model.ckpt").write_text(
+        "world", encoding="utf-8"
+    )
+
+    result = _run(
+        "publish",
+        "demo/pretrained",
+        "--source",
+        str(src),
+        "--out",
+        str(tmp_path / "staging"),
+        "--stage-only",
+    )
+    assert result.exit_code != 0
+    assert "does not match the manifest" in result.output
+
+
+def test_publish_dedupes_aliases(env):
+    tmp_path, _cache, _manifest = env
+    src = _source_tree(tmp_path / "src", "demo/data/demo.db")
+    _source_tree(src, "demo/pretrained/model.ckpt")
+
+    result = _run(
+        "publish",
+        "shares",  # reaches demo/data through the `other/data` alias
+        "--source",
+        str(src),
+        "--out",
+        str(tmp_path / "staging"),
+        "--stage-only",
+    )
+    assert result.exit_code == 0, result.output
+    assert result.output.count("demo/data") == 1
+    assert "other/data" not in result.output

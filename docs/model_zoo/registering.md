@@ -149,14 +149,21 @@ Uploading is a separate, deliberate step; registering does not push anything.
 Once the licence is settled and the example config runs, stage and upload:
 
 ```bash
-python scripts/build_zoo_manifest.py stage \
-    --manifest src/MolecularDiffusion/zoo.yaml --out .zoo-staging
-python scripts/build_zoo_manifest.py upload \
-    --manifest src/MolecularDiffusion/zoo.yaml --staging .zoo-staging
+# look first -- writes nothing, contacts nothing
+MolCraftDiff zoo publish <name> --source <dir> --dry-run
+MolCraftDiff zoo publish <name> --source <dir>
 ```
 
-Staging copies only the assets marked `redistribute: true`, so an asset you
-marked withheld cannot be uploaded by accident.
+Only assets marked `redistribute: true` are staged, so one you marked withheld
+cannot be uploaded by accident, and a single remaining `redistribute: TODO`
+aborts the run before anything is written. The push itself asks first;
+`--stage-only` builds the tree and stops.
+
+`--source` is where the files actually live — the directory you passed to
+`zoo add`. The manifest stores relative paths and a sha256, never absolute
+paths, so `publish` re-derives each source: the local asset cache first, then
+each `--source` root, confirming every file by hash before staging it. Pass
+`--source` as many times as you need.
 
 ---
 

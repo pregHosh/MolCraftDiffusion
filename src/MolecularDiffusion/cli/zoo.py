@@ -673,3 +673,220 @@ def add_cmd(
     click.echo(f"registered {name} in {assets.MANIFEST}")
     click.echo("Now fill in license / redistribute / upstream, then run:")
     click.echo("  MolCraftDiff zoo verify --all")
+
+
+def _publish_source(key, spec, roots):
+    """Find the on-disk file backing one manifest entry, sha256-confirmed.
+
+    The manifest stores no absolute paths -- they would be machine-specific
+    -- so the source is re-derived: the local cache first, then any
+    ``--source`` root. The hash check makes a wrong guess impossible rather
+    than merely unlikely.
+    """
+    rel = spec["path"]
+    probes = [assets.local_path(key) / rel]
+    for root in roots:
+        base = Path(root)
+        probes += [base / key / rel, base / rel, base / Path(rel).name]
+    candidates = list(dict.fromkeys(probes))  # a flat `rel` repeats itself
+
+    stale = None
+    for cand in candidates:
+        if not cand.is_file():
+            continue
+        if spec.get("size") and cand.stat().st_size != spec["size"]:
+            stale = stale or cand  # wrong size, so skip hashing 12 GB
+            continue
+        if assets._sha256(cand) == spec["sha256"]:  # noqa: SLF001
+            return cand
+        stale = stale or cand
+
+    tried = "\n    ".join(str(c) for c in candidates)
+    drift = (
+        f"\n  {stale} exists but does not match the manifest -- it changed "
+        "since `zoo add`."
+        if stale
+        else ""
+    )
+    raise click.ClickException(
+        f"{key}/{rel}: no matching source file.{drift}\n"
+        "  Pass --source <dir> pointing at the files you registered.\n"
+        f"  Looked in:\n    {tried}"
+    )
+
+
+@zoo.command("publish")
+@click.argument("names", nargs=-1)
+@click.option(
+    "--all",
+    "publish_all",
+    is_flag=True,
+    help="Publish every redistributable asset",
+)
+@click.option(
+    "--source",
+    "sources",
+    type=click.Path(exists=True, file_okay=False),
+    multiple=True,
+    help="Directory to look for the asset's files in (repeatable)",
+)
+@click.option(
+    "--out",
+    type=click.Path(),
+    default=".zoo-staging",
+    show_default=True,
+    help="Staging tree to build",
+)
+@click.option(
+    "--stage-only", is_flag=True, help="Build the staging tree and stop"
+)
+@click.option(
+    "--dry-run",
+    is_flag=True,
+    help="Report what would be staged, write nothing",
+)
+@click.option(
+    "--message",
+    default="Add MolCraftDiffusion zoo assets",
+    show_default=True,
+    help="Upload commit message",
+)
+@click.option("--yes", is_flag=True, help="Skip the upload confirmation")
+def publish_cmd(
+    names, publish_all, sources, out, stage_only, dry_run, message, yes
+):
+    """Stage registered assets and push them to HuggingFace.
+
+    NAMES are asset keys or model names. Only `redistribute: true` assets are
+    staged, an unaudited `TODO` aborts before anything is written, and the
+    push asks first -- it is outward-facing and not undoable. `--dry-run` and
+    `--stage-only` never touch the remote.
+    """
+    keys = []
+    for name in names:
+        if name in _asset_map():
+            keys.append(name)
+        elif name in _models():
+            keys += _assets_of(name)
+        else:
+            close = difflib.get_close_matches(name, list(_asset_map()), 3)
+            raise click.ClickException(
+                f"Unknown asset or model {name!r}."
+                + (f" Close: {', '.join(close)}" if close else "")
+                + "\nTry: MolCraftDiff zoo list"
+            )
+    if publish_all:
+        keys += [k for k, v in _asset_map().items() if "alias" not in v]
+    if not keys:
+        raise click.ClickException(
+            "Nothing selected. Give an asset or model name, or use --all."
+        )
+
+    # Resolve aliases so a shared corpus is staged and uploaded once.
+    resolved = []
+    for key in keys:
+        try:
+            owner, _ = assets._resolve_key(key)  # noqa: SLF001
+        except (KeyError, ValueError) as exc:
+            raise click.ClickException(str(exc)) from exc
+        if owner not in resolved:
+            resolved.append(owner)
+
+    todo = [
+        k
+        for k in resolved
+        if str(assets.entry(k).get("redistribute", "TODO")).upper() == "TODO"
+    ]
+    if todo:
+        raise click.ClickException(
+            "Unaudited, refusing to stage:\n  "
+            + "\n  ".join(todo)
+            + "\nSettle `license` and `redistribute: true|false` on each "
+            "first, then: MolCraftDiff zoo verify --all"
+        )
+
+    selected = [
+        k for k in resolved if assets.entry(k).get("redistribute") is True
+    ]
+    for key in resolved:
+        if key not in selected:
+            click.echo(f"  withheld {key:<30} (redistribute: no)")
+    if not selected:
+        raise click.ClickException(
+            "Nothing to publish -- every asset selected is withheld."
+        )
+
+    root = Path(out)
+    hosting = assets.manifest().get("hosting") or {}
+    hosts = {}
+    total = 0
+    for key in selected:
+        info = assets.entry(key)
+        host = info.get("host", "models")
+        for spec in info.get("files") or []:
+            src = _publish_source(key, spec, sources)
+            total += spec.get("size") or src.stat().st_size
+            if dry_run:
+                continue
+            dest = root / host / key / spec["path"]
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            if dest.exists():
+                dest.unlink()
+            try:
+                os.link(src, dest)  # instant, no multi-GB copy
+            except OSError:
+                shutil.copy2(src, dest)  # different filesystem
+        hosts.setdefault(host, []).append(key)
+        click.echo(
+            f"  {'would stage' if dry_run else 'staged':<11} {key:<30} "
+            f"{_human(assets.total_size(key)):>9} -> {host}/"
+        )
+
+    click.echo(f"\n  {len(selected)} asset(s), {_human(total)} -> {root}")
+    if dry_run:
+        click.echo("Dry run. Nothing written, nothing uploaded.")
+        return
+    if stage_only:
+        click.echo("Staged only. Re-run without --stage-only to push.")
+        return
+
+    repos = ", ".join(
+        (hosting.get(h) or {}).get("repo", f"<no hosting.{h}.repo>")
+        for h in hosts
+    )
+    if not yes:
+        click.confirm(
+            f"Push {len(selected)} asset(s) ({_human(total)}) to {repos}?",
+            abort=True,
+        )
+
+    try:
+        from huggingface_hub import HfApi  # noqa: PLC0415
+    except ImportError as exc:  # maintainer-only path, not a runtime dep
+        raise click.ClickException(
+            "Uploading needs huggingface_hub: pip install huggingface_hub"
+        ) from exc
+
+    token = assets.hf_token()
+    if token is None:
+        raise click.ClickException(
+            "No HuggingFace token found. Set HF_TOKEN, or run `hf auth login`."
+        )
+    api = HfApi(token=token)
+    for host in hosts:
+        cfg = hosting.get(host) or {}
+        repo = cfg.get("repo")
+        if not repo:
+            raise click.ClickException(f"zoo.yaml has no hosting.{host}.repo")
+        kind = cfg.get("kind", "model")
+        click.echo(f"uploading {host}/ -> {repo} ({kind})")
+        # ponytail: pushes whatever sits in the host folder, leftovers from an
+        # earlier run included -- use a fresh --out to scope a single push.
+        api.upload_folder(
+            folder_path=str(root / host),
+            repo_id=repo,
+            repo_type=kind,
+            commit_message=message,
+        )
+        prefix = "datasets/" if kind == "dataset" else ""
+        click.echo(f"  done: https://huggingface.co/{prefix}{repo}")
