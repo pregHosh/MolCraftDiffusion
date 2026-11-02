@@ -10,6 +10,9 @@ from MolecularDiffusion.modules.layers.tabasco.positional_encoder import (
     SinusoidEncoding,
     TimeFourierEncoding,
 )
+from MolecularDiffusion.modules.layers.tabasco.point_transformer import (
+    PointTransformer,
+)
 from MolecularDiffusion.modules.layers.tabasco.transformer import Transformer
 
 
@@ -24,18 +27,26 @@ class TransformerModule(nn.Module):
         num_layers: int,
         hidden_dim: int,
         activation: str = "SiLU",
-        implementation: str = "pytorch",  # "pytorch" "reimplemented"
+        implementation: str = "pytorch",  # "pytorch" "reimplemented" "point_transformer"
         cross_attention: bool = False,
         add_sinusoid_posenc: bool = True,
         concat_combine_input: bool = False,
         custom_weight_init: Optional[str] = None,
         adapter_indices: Optional[list] = None,
         concat_indices: Optional[list] = None,
+        pt_attention: str = "vector",
+        pair_dim: int = 64,
+        rbf_dim: int = 32,
+        rbf_dmax: float = 12.0,
+        use_direction: bool = True,
+        rel_dim: int = 64,
     ):
         """
         Args:
             custom_weight_init: None, "xavier", "kaiming", "orthogonal", "uniform", "eye", "normal"
             (uniform does not work well)
+            pt_attention, pair_dim, rbf_dim, rbf_dmax, use_direction, rel_dim: only used
+            by implementation="point_transformer", see layers/tabasco/point_transformer.py
         """
         super().__init__()
 
@@ -107,6 +118,18 @@ class TransformerModule(nn.Module):
                 dim=hidden_dim,
                 num_heads=num_heads,
                 depth=num_layers,
+            )
+        elif self.implementation == "point_transformer":
+            self.transformer = PointTransformer(
+                dim=hidden_dim,
+                num_heads=num_heads,
+                depth=num_layers,
+                pt_attention=pt_attention,
+                pair_dim=pair_dim,
+                rbf_dim=rbf_dim,
+                rbf_dmax=rbf_dmax,
+                use_direction=use_direction,
+                rel_dim=rel_dim,
             )
         else:
             raise ValueError(f"Invalid implementation: {self.implementation}")
@@ -219,6 +242,8 @@ class TransformerModule(nn.Module):
             h_out = self.transformer(h_in, src_key_padding_mask=padding_mask)
         elif self.implementation == "reimplemented":
             h_out = self.transformer(h_in, padding_mask=padding_mask)
+        elif self.implementation == "point_transformer":
+            h_out = self.transformer(h_in, padding_mask=padding_mask, coords=coords)
 
         h_out = h_out * real_mask.unsqueeze(-1)
 
