@@ -4,14 +4,6 @@ MolecularDiffusion.runmodes.analyze.xtb_optimization
 .. py:module:: MolecularDiffusion.runmodes.analyze.xtb_optimization
 
 
-Attributes
-----------
-
-.. autoapisummary::
-
-   MolecularDiffusion.runmodes.analyze.xtb_optimization.parser
-
-
 Functions
 ---------
 
@@ -164,6 +156,4 @@ Module Contents
                          otherwise None if it times out or fails to produce output.
    :rtype: str | None
 
-
-.. py:data:: parser
 

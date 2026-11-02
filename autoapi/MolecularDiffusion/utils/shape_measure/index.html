@@ -499,13 +499,13 @@ or more of them, which is why their vertices do <em>not</em> average to the cent
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.shape_measure.available_shapes" title="MolecularDiffusion.utils.shape_measure.available_shapes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">available_shapes</span></code></a>(→ list[str])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.shape_measure.available_shapes" title="MolecularDiffusion.utils.shape_measure.available_shapes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">available_shapes</span></code></a>([n_vertices]) → list[str]</p></td>
 <td><p>Shape labels this module knows, optionally filtered by vertex count.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.shape_measure.reference_shape" title="MolecularDiffusion.utils.shape_measure.reference_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reference_shape</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.shape_measure.reference_shape" title="MolecularDiffusion.utils.shape_measure.reference_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reference_shape</span></code></a>(label) → numpy.ndarray</p></td>
 <td><p>Ideal coordinates for <code class="docutils literal notranslate"><span class="pre">label</span></code>: central atom first, then vertices.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.shape_measure.shape_measure" title="MolecularDiffusion.utils.shape_measure.shape_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape_measure</span></code></a>(→ float)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.shape_measure.shape_measure" title="MolecularDiffusion.utils.shape_measure.shape_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape_measure</span></code></a>(positions, label[, central_atom]) → float</p></td>
 <td><p>Continuous shape measure of <code class="docutils literal notranslate"><span class="pre">positions</span></code> against the ideal <code class="docutils literal notranslate"><span class="pre">label</span></code>.</p></td>
 </tr>
 </tbody>

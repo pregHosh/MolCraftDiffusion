@@ -511,16 +511,16 @@ this module never fails on a bare install.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.diffpharma_prep.complex_from_files" title="MolecularDiffusion.data.component.diffpharma_prep.complex_from_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">complex_from_files</span></code></a>(→ Dict[str, Any])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.diffpharma_prep.complex_from_files" title="MolecularDiffusion.data.component.diffpharma_prep.complex_from_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">complex_from_files</span></code></a>(pdb_file, sdf_file[, center, ...]) → Dict[str, Any]</p></td>
 <td><p>PDB + reference SDF -&gt; the same per-complex dict a converted db row yields.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.diffpharma_prep.hbond_particles" title="MolecularDiffusion.data.component.diffpharma_prep.hbond_particles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hbond_particles</span></code></a>(→ Tuple[numpy.ndarray, numpy.ndarray, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.diffpharma_prep.hbond_particles" title="MolecularDiffusion.data.component.diffpharma_prep.hbond_particles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hbond_particles</span></code></a>(protein, ligand) → Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]</p></td>
 <td><p>3 pseudo-nodes per H-bond, at 1/4, 1/2 and 3/4 along it.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.diffpharma_prep.hydrophobic_particles" title="MolecularDiffusion.data.component.diffpharma_prep.hydrophobic_particles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hydrophobic_particles</span></code></a>(→ Tuple[numpy.ndarray, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.diffpharma_prep.hydrophobic_particles" title="MolecularDiffusion.data.component.diffpharma_prep.hydrophobic_particles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hydrophobic_particles</span></code></a>(protein, ligand) → Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]</p></td>
 <td><p>2 pseudo-nodes per hydrophobic contact, at 1/3 and 2/3 along it.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.diffpharma_prep.process_ligand_and_pocket" title="MolecularDiffusion.data.component.diffpharma_prep.process_ligand_and_pocket"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_ligand_and_pocket</span></code></a>(→ Tuple[Dict[str, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.diffpharma_prep.process_ligand_and_pocket" title="MolecularDiffusion.data.component.diffpharma_prep.process_ligand_and_pocket"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_ligand_and_pocket</span></code></a>(pdbfile, sdffile[, dist_cutoff]) → Tuple[Dict[str, numpy.ndarray], Dict[str, numpy.ndarray]]</p></td>
 <td><p>Ligand atoms + every atom of each residue within <code class="docutils literal notranslate"><span class="pre">dist_cutoff</span></code> of it.</p></td>
 </tr>
 </tbody>

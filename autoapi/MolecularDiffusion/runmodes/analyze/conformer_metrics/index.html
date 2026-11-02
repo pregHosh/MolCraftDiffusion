@@ -525,25 +525,25 @@ coordinates destroys exactly the stereochemistry this group measures.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.conformer_metrics.compare_stereo" title="MolecularDiffusion.runmodes.analyze.conformer_metrics.compare_stereo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compare_stereo</span></code></a>(→ dict | None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.conformer_metrics.compare_stereo" title="MolecularDiffusion.runmodes.analyze.conformer_metrics.compare_stereo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compare_stereo</span></code></a>(mol, ref_mol) → dict | None</p></td>
 <td><p>Score one generated molecule against its reference.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.conformer_metrics.compute_conformer_metrics" title="MolecularDiffusion.runmodes.analyze.conformer_metrics.compute_conformer_metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_conformer_metrics</span></code></a>(→ tuple[pandas.DataFrame, dict])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.conformer_metrics.compute_conformer_metrics" title="MolecularDiffusion.runmodes.analyze.conformer_metrics.compute_conformer_metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_conformer_metrics</span></code></a>(input_path[, ...]) → tuple[pandas.DataFrame, dict]</p></td>
 <td><p>Per-conformer metrics table plus the summary payload.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.conformer_metrics.detect_layout" title="MolecularDiffusion.runmodes.analyze.conformer_metrics.detect_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">detect_layout</span></code></a>(→ str)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.conformer_metrics.detect_layout" title="MolecularDiffusion.runmodes.analyze.conformer_metrics.detect_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">detect_layout</span></code></a>(input_path) → str</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;sdf_pairs&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;xyz_optimized&quot;</span></code>; raises for anything else.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.conformer_metrics.get_stereochemistry_descriptor" title="MolecularDiffusion.runmodes.analyze.conformer_metrics.get_stereochemistry_descriptor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_stereochemistry_descriptor</span></code></a>(→ tuple[str, str, str])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.conformer_metrics.get_stereochemistry_descriptor" title="MolecularDiffusion.runmodes.analyze.conformer_metrics.get_stereochemistry_descriptor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_stereochemistry_descriptor</span></code></a>(mol) → tuple[str, str, str]</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">(rs,</span> <span class="pre">inverted_rs,</span> <span class="pre">ez)</span></code> descriptor strings for one molecule.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.conformer_metrics.prepare_mol_for_conformer_eval" title="MolecularDiffusion.runmodes.analyze.conformer_metrics.prepare_mol_for_conformer_eval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepare_mol_for_conformer_eval</span></code></a>(→ Any)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.conformer_metrics.prepare_mol_for_conformer_eval" title="MolecularDiffusion.runmodes.analyze.conformer_metrics.prepare_mol_for_conformer_eval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepare_mol_for_conformer_eval</span></code></a>(mol, *[, assign_from_3d]) → Any</p></td>
 <td><p>Sanitized, Kekule-form copy with CIP tags assigned. <code class="docutils literal notranslate"><span class="pre">None</span></code> if bad.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.conformer_metrics.stereo_scores" title="MolecularDiffusion.runmodes.analyze.conformer_metrics.stereo_scores"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stereo_scores</span></code></a>(→ dict)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.conformer_metrics.stereo_scores" title="MolecularDiffusion.runmodes.analyze.conformer_metrics.stereo_scores"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stereo_scores</span></code></a>(molecules, reference_molecules) → dict</p></td>
 <td><p>RS / EZ preservation scores over paired lists.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.conformer_metrics.xtb_available" title="MolecularDiffusion.runmodes.analyze.conformer_metrics.xtb_available"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xtb_available</span></code></a>(→ bool)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.conformer_metrics.xtb_available" title="MolecularDiffusion.runmodes.analyze.conformer_metrics.xtb_available"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xtb_available</span></code></a>() → bool</p></td>
 <td><p>Explicit probe -- <code class="docutils literal notranslate"><span class="pre">get_xtb_energy</span></code> swallows a missing binary.</p></td>
 </tr>
 </tbody>

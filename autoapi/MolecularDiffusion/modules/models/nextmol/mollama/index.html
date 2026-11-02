@@ -510,10 +510,10 @@ imports without it.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.nextmol.mollama.load_mollama" title="MolecularDiffusion.modules.models.nextmol.mollama.load_mollama"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_mollama</span></code></a>(model_id, device[, dtype])</p></td>
 <td><p>Load the LM and its fast tokenizer. Returns <code class="docutils literal notranslate"><span class="pre">(model,</span> <span class="pre">tokenizer)</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.nextmol.mollama.reencode_selfies" title="MolecularDiffusion.modules.models.nextmol.mollama.reencode_selfies"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reencode_selfies</span></code></a>(→ tuple[str, str, str])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.nextmol.mollama.reencode_selfies" title="MolecularDiffusion.modules.models.nextmol.mollama.reencode_selfies"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reencode_selfies</span></code></a>(selfies) → tuple[str, str, str]</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">(selfies,</span> <span class="pre">smiles_with_chirality,</span> <span class="pre">smiles_without_chirality)</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.nextmol.mollama.sample_smiles" title="MolecularDiffusion.modules.models.nextmol.mollama.sample_smiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_smiles</span></code></a>(→ list[tuple[str, str, str]])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.nextmol.mollama.sample_smiles" title="MolecularDiffusion.modules.models.nextmol.mollama.sample_smiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_smiles</span></code></a>(model_id, n, *[, device, temperature, ...]) → list[tuple[str, str, str]]</p></td>
 <td><p>Sample until <code class="docutils literal notranslate"><span class="pre">n</span></code> valid molecules accumulate.</p></td>
 </tr>
 </tbody>

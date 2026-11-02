@@ -491,19 +491,19 @@ optional energy column. Removing that function breaks conformer
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.compute_all_metrics" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.compute_all_metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_all_metrics</span></code></a>(→ dict)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.compute_all_metrics" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.compute_all_metrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_all_metrics</span></code></a>(init_file, opt_file, args) → dict</p></td>
 <td><p>Compute all available metrics for a single pair.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.compute_coord_rmsd" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.compute_coord_rmsd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_coord_rmsd</span></code></a>(→ float)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.compute_coord_rmsd" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.compute_coord_rmsd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_coord_rmsd</span></code></a>(coords1, coords2) → float</p></td>
 <td><p>Compute RMSD between two coordinate sets.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.get_xtb_energy" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.get_xtb_energy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_xtb_energy</span></code></a>(→ Optional[float])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.get_xtb_energy" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.get_xtb_energy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_xtb_energy</span></code></a>(xyz_path[, charge, level, timeout]) → Optional[float]</p></td>
 <td><p>Compute xTB single-point energy for an XYZ file (returns Hartree).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_converter" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_converter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz2mol_converter</span></code></a>(→ Optional[rdkit.Chem.Mol])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_converter" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_converter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz2mol_converter</span></code></a>(xyz_file[, timeout]) → Optional[rdkit.Chem.Mol]</p></td>
 <td><p>Convert XYZ to RDKit Mol using xyz2mol logic.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_openbabel" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_openbabel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz2mol_openbabel</span></code></a>(→ Optional[rdkit.Chem.Mol])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_openbabel" title="MolecularDiffusion.runmodes.analyze.compare_to_optimized.xyz2mol_openbabel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz2mol_openbabel</span></code></a>(xyz_file) → Optional[rdkit.Chem.Mol]</p></td>
 <td><p>Convert XYZ to RDKit Mol using OpenBabel (via pybel).</p></td>
 </tr>
 </tbody>

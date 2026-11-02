@@ -523,31 +523,31 @@ reproduce MiDi’s Kekule distribution on demand via the dataset’s
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.graph3d_import.delete_raw" title="MolecularDiffusion.runmodes.data.graph3d_import.delete_raw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_raw</span></code></a>(→ None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.graph3d_import.delete_raw" title="MolecularDiffusion.runmodes.data.graph3d_import.delete_raw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_raw</span></code></a>(raw_dir, artefacts) → None</p></td>
 <td><p>Remove ONLY the named download artefacts under <code class="docutils literal notranslate"><span class="pre">raw_dir</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.graph3d_import.ensure_qm9_splits" title="MolecularDiffusion.runmodes.data.graph3d_import.ensure_qm9_splits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ensure_qm9_splits</span></code></a>(→ None)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.graph3d_import.ensure_qm9_splits" title="MolecularDiffusion.runmodes.data.graph3d_import.ensure_qm9_splits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ensure_qm9_splits</span></code></a>(raw_dir) → None</p></td>
 <td><p>Materialize MiDi's published QM9 split csvs if they are not already there.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.graph3d_import.iter_geom" title="MolecularDiffusion.runmodes.data.graph3d_import.iter_geom"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter_geom</span></code></a>(→ Iterator[Tuple[object, str]])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.graph3d_import.iter_geom" title="MolecularDiffusion.runmodes.data.graph3d_import.iter_geom"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter_geom</span></code></a>(pickle_dir[, max_conformers, sanitize]) → Iterator[Tuple[object, str]]</p></td>
 <td><p>Yield <code class="docutils literal notranslate"><span class="pre">(mol,</span> <span class="pre">split)</span></code> from MiDi's GEOM-Drugs pickles.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.graph3d_import.iter_qm9" title="MolecularDiffusion.runmodes.data.graph3d_import.iter_qm9"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter_qm9</span></code></a>(→ Iterator[Tuple])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.graph3d_import.iter_qm9" title="MolecularDiffusion.runmodes.data.graph3d_import.iter_qm9"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter_qm9</span></code></a>(raw_dir[, sanitize, targets]) → Iterator[Tuple]</p></td>
 <td><p>Yield <code class="docutils literal notranslate"><span class="pre">(mol,</span> <span class="pre">split)</span></code> -- or <code class="docutils literal notranslate"><span class="pre">(mol,</span> <span class="pre">split,</span> <span class="pre">extra)</span></code> -- from gdb9.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.graph3d_import.main" title="MolecularDiffusion.runmodes.data.graph3d_import.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>(→ int)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.graph3d_import.main" title="MolecularDiffusion.runmodes.data.graph3d_import.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>([argv]) → int</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.graph3d_import.mol_to_row" title="MolecularDiffusion.runmodes.data.graph3d_import.mol_to_row"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mol_to_row</span></code></a>(mol[, sanitize_failed_ok, extra])</p></td>
 <td><p>RDKit mol -&gt; <code class="docutils literal notranslate"><span class="pre">(Atoms,</span> <span class="pre">data_dict)</span></code> for <code class="xref py py-func docutils literal notranslate"><span class="pre">ase.db.core.Database.write()</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.graph3d_import.qm9_targets" title="MolecularDiffusion.runmodes.data.graph3d_import.qm9_targets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qm9_targets</span></code></a>(→ Tuple[list, numpy.ndarray])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.graph3d_import.qm9_targets" title="MolecularDiffusion.runmodes.data.graph3d_import.qm9_targets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qm9_targets</span></code></a>(raw_dir) → Tuple[list, numpy.ndarray]</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">gdb9.sdf.csv</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">(names,</span> <span class="pre">values)</span></code> in PyG/JODO order and units.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.graph3d_import.verify_db" title="MolecularDiffusion.runmodes.data.graph3d_import.verify_db"><code class="xref py py-obj docutils literal notranslate"><span class="pre">verify_db</span></code></a>(→ None)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.graph3d_import.verify_db" title="MolecularDiffusion.runmodes.data.graph3d_import.verify_db"><code class="xref py py-obj docutils literal notranslate"><span class="pre">verify_db</span></code></a>(out_path, expected[, n_check]) → None</p></td>
 <td><p>Re-open the db and round-trip a sample back through RDKit.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.graph3d_import.write_graph3d_db" title="MolecularDiffusion.runmodes.data.graph3d_import.write_graph3d_db"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_graph3d_db</span></code></a>(→ dict)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.graph3d_import.write_graph3d_db" title="MolecularDiffusion.runmodes.data.graph3d_import.write_graph3d_db"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_graph3d_db</span></code></a>(mol_iter, out_path, source[, limit, ...]) → dict</p></td>
 <td><p>Write rows to an ASE db. Returns a counts dict.</p></td>
 </tr>
 </tbody>

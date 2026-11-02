@@ -503,7 +503,7 @@ Handles random charge, distortion, and size augmentation.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.augmentation.add_h_unit" title="MolecularDiffusion.runmodes.data.augmentation.add_h_unit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_h_unit</span></code></a>(→ Optional[Tuple[List[str], numpy.ndarray, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.augmentation.add_h_unit" title="MolecularDiffusion.runmodes.data.augmentation.add_h_unit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_h_unit</span></code></a>(atoms, coords) → Optional[Tuple[List[str], numpy.ndarray, int]]</p></td>
 <td><p>Adds a single hydrogen to a non-halogen heteroatom.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.augmentation.augment_charge" title="MolecularDiffusion.runmodes.data.augmentation.augment_charge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">augment_charge</span></code></a>(input_source, output_target[, ...])</p></td>
@@ -530,10 +530,10 @@ Handles random charge, distortion, and size augmentation.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.augmentation.get_target_count" title="MolecularDiffusion.runmodes.data.augmentation.get_target_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_target_count</span></code></a>(s, s_start, t_start, s_end, t_end[, ...])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.augmentation.read_xyz" title="MolecularDiffusion.runmodes.data.augmentation.read_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_xyz</span></code></a>(→ Tuple[List[str], numpy.ndarray])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.augmentation.read_xyz" title="MolecularDiffusion.runmodes.data.augmentation.read_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_xyz</span></code></a>(filename) → Tuple[List[str], numpy.ndarray]</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.augmentation.remove_h_unit" title="MolecularDiffusion.runmodes.data.augmentation.remove_h_unit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_h_unit</span></code></a>(→ Optional[Tuple[List[str], ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.augmentation.remove_h_unit" title="MolecularDiffusion.runmodes.data.augmentation.remove_h_unit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_h_unit</span></code></a>(atoms, coords) → Optional[Tuple[List[str], numpy.ndarray, int]]</p></td>
 <td><p>Removes a single hydrogen.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.data.augmentation.write_xyz" title="MolecularDiffusion.runmodes.data.augmentation.write_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_xyz</span></code></a>(filename, atoms, coords)</p></td>

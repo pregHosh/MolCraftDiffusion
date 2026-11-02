@@ -533,22 +533,22 @@ number of RDKit fragments.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.ditmc.graph_features.adjacency_from_bonds" title="MolecularDiffusion.modules.models.ditmc.graph_features.adjacency_from_bonds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">adjacency_from_bonds</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.ditmc.graph_features.adjacency_from_bonds" title="MolecularDiffusion.modules.models.ditmc.graph_features.adjacency_from_bonds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">adjacency_from_bonds</span></code></a>(bond_index, n_nodes) → numpy.ndarray</p></td>
 <td><p>Symmetric 0/1 adjacency from an upper-triangular bond index.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.ditmc.graph_features.all_pairs_edges" title="MolecularDiffusion.modules.models.ditmc.graph_features.all_pairs_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all_pairs_edges</span></code></a>(n_nodes[, device])</p></td>
 <td><p>All ordered pairs excluding self-loops, <strong>C-order over ``(i, j)``</strong>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.ditmc.graph_features.get_node_attr_from_mol" title="MolecularDiffusion.modules.models.ditmc.graph_features.get_node_attr_from_mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_node_attr_from_mol</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.ditmc.graph_features.get_node_attr_from_mol" title="MolecularDiffusion.modules.models.ditmc.graph_features.get_node_attr_from_mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_node_attr_from_mol</span></code></a>(mol, dataset) → numpy.ndarray</p></td>
 <td><p>Reproduce <code class="docutils literal notranslate"><span class="pre">prepare_dataset.get_node_attr_from_mol</span></code> exactly.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.ditmc.graph_features.laplacian_eigen" title="MolecularDiffusion.modules.models.ditmc.graph_features.laplacian_eigen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">laplacian_eigen</span></code></a>(adj[, num_components, threshold])</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">(D,</span> <span class="pre">P)</span></code> for the harmonic prior: <code class="docutils literal notranslate"><span class="pre">D</span> <span class="pre">=</span> <span class="pre">1/sqrt(lambda)</span></code>, zero modes 0.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.ditmc.graph_features.node_attr_dim" title="MolecularDiffusion.modules.models.ditmc.graph_features.node_attr_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">node_attr_dim</span></code></a>(→ int)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.ditmc.graph_features.node_attr_dim" title="MolecularDiffusion.modules.models.ditmc.graph_features.node_attr_dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">node_attr_dim</span></code></a>(dataset) → int</p></td>
 <td><p>Width of <code class="docutils literal notranslate"><span class="pre">node_attr</span></code> for a dataset name.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.ditmc.graph_features.shortest_hops_from_adjacency" title="MolecularDiffusion.modules.models.ditmc.graph_features.shortest_hops_from_adjacency"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shortest_hops_from_adjacency</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.ditmc.graph_features.shortest_hops_from_adjacency" title="MolecularDiffusion.modules.models.ditmc.graph_features.shortest_hops_from_adjacency"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shortest_hops_from_adjacency</span></code></a>(adj) → numpy.ndarray</p></td>
 <td><p>Off-diagonal Floyd-Warshall distances, C-order over <code class="docutils literal notranslate"><span class="pre">(i,</span> <span class="pre">j)</span></code>.</p></td>
 </tr>
 </tbody>

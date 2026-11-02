@@ -49,7 +49,6 @@ Attributes
 
    MolecularDiffusion.modules.models.diffsmol.shape_utils.OPENBABEL_VDW_RADII
    MolecularDiffusion.modules.models.diffsmol.shape_utils.POINT_CLOUD_SAMPLES
-   MolecularDiffusion.modules.models.diffsmol.shape_utils.ang
 
 
 Functions
@@ -114,6 +113,4 @@ Module Contents
 .. py:data:: POINT_CLOUD_SAMPLES
    :value: 512
 
-
-.. py:data:: ang
 

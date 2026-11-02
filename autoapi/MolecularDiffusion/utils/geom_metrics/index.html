@@ -546,31 +546,31 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compare_graph_topology" title="MolecularDiffusion.utils.geom_metrics.compare_graph_topology"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compare_graph_topology</span></code></a>(graph1, graph2)</p></td>
 <td><p>Compare the topology of two PyG graphs by checking their edge indices.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_drug_likeness" title="MolecularDiffusion.utils.geom_metrics.compute_drug_likeness"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_drug_likeness</span></code></a>(→ dict)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_drug_likeness" title="MolecularDiffusion.utils.geom_metrics.compute_drug_likeness"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_drug_likeness</span></code></a>(mol) → dict</p></td>
 <td><p>Compute RDKit-based drug-likeness metrics including SAScore and QED.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_esp_similarity" title="MolecularDiffusion.utils.geom_metrics.compute_esp_similarity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_esp_similarity</span></code></a>(→ float)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_esp_similarity" title="MolecularDiffusion.utils.geom_metrics.compute_esp_similarity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_esp_similarity</span></code></a>(pts_gen, esp_gen, pts_ref, esp_ref) → float</p></td>
 <td><p>Compute ESP similarity using Gaussian-weighted overlap (ESP Tanimoto).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_mol_esp_values" title="MolecularDiffusion.utils.geom_metrics.compute_mol_esp_values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_mol_esp_values</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_mol_esp_values" title="MolecularDiffusion.utils.geom_metrics.compute_mol_esp_values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_mol_esp_values</span></code></a>(mol[, surf_pts]) → numpy.ndarray</p></td>
 <td><p>Compute electrostatic potential (ESP) at surface points or per-atom charges.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_mol_pharmacophores" title="MolecularDiffusion.utils.geom_metrics.compute_mol_pharmacophores"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_mol_pharmacophores</span></code></a>(→ tuple)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_mol_pharmacophores" title="MolecularDiffusion.utils.geom_metrics.compute_mol_pharmacophores"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_mol_pharmacophores</span></code></a>(mol[, multi_vector, ...]) → tuple</p></td>
 <td><p>Extract pharmacophore points and vectors using shepherd-score implementation.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_mol_surface_pts" title="MolecularDiffusion.utils.geom_metrics.compute_mol_surface_pts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_mol_surface_pts</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_mol_surface_pts" title="MolecularDiffusion.utils.geom_metrics.compute_mol_surface_pts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_mol_surface_pts</span></code></a>(mol[, num_pts, probe_radius]) → numpy.ndarray</p></td>
 <td><p>Gets the point cloud representation of a molecule's van der Waals surface using</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_pharm_similarity" title="MolecularDiffusion.utils.geom_metrics.compute_pharm_similarity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_pharm_similarity</span></code></a>(→ float)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_pharm_similarity" title="MolecularDiffusion.utils.geom_metrics.compute_pharm_similarity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_pharm_similarity</span></code></a>(pts_gen, types_gen, pts_ref, ...) → float</p></td>
 <td><p>Direction-aware Gaussian overlap Tanimoto for pharmacophores.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_shape_similarity" title="MolecularDiffusion.utils.geom_metrics.compute_shape_similarity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_shape_similarity</span></code></a>(→ float)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_shape_similarity" title="MolecularDiffusion.utils.geom_metrics.compute_shape_similarity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_shape_similarity</span></code></a>(pts_gen, pts_ref[, center, align]) → float</p></td>
 <td><p>Compute shape similarity using Gaussian-weighted volume overlap (Tanimoto).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.is_fully_connected" title="MolecularDiffusion.utils.geom_metrics.is_fully_connected"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_fully_connected</span></code></a>(edge_index, num_nodes)</p></td>
 <td><p>Determines if the graph is fully connected.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.kabsch_align" title="MolecularDiffusion.utils.geom_metrics.kabsch_align"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kabsch_align</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.kabsch_align" title="MolecularDiffusion.utils.geom_metrics.kabsch_align"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kabsch_align</span></code></a>(pts_fit, pts_ref) → numpy.ndarray</p></td>
 <td><p>Standard Kabsch alignment for 1:1 corresponding point sets.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.load_molecules_from_xyz" title="MolecularDiffusion.utils.geom_metrics.load_molecules_from_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_molecules_from_xyz</span></code></a>(xyz_dir)</p></td>
@@ -579,7 +579,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.optimize_shape_alignment" title="MolecularDiffusion.utils.geom_metrics.optimize_shape_alignment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimize_shape_alignment</span></code></a>(pts_gen, pts_ref[, alpha, ...])</p></td>
 <td><p>Optimize alignment of non-corresponding point clouds to maximize Gaussian overlap.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.pca_align" title="MolecularDiffusion.utils.geom_metrics.pca_align"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pca_align</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.pca_align" title="MolecularDiffusion.utils.geom_metrics.pca_align"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pca_align</span></code></a>(pts_fit, pts_ref) → numpy.ndarray</p></td>
 <td><p>Rotate pts_fit to align its principal axes with those of pts_ref.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.run_postbuster" title="MolecularDiffusion.utils.geom_metrics.run_postbuster"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_postbuster</span></code></a>(mols[, timeout, batch_size, names])</p></td>
@@ -840,7 +840,7 @@ Default = 1.2 angstroms which is the radius of a Hydrogen atom.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>edge_index</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.14)"><em>torch.Tensor</em></a>) – The edge indices of the graph.</p></li>
+<li><p><strong>edge_index</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The edge indices of the graph.</p></li>
 <li><p><strong>num_nodes</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – The number of nodes in the graph.</p></li>
 </ul>
 </dd>

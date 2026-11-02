@@ -488,13 +488,13 @@ the other in-tree pocket models carry.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.kgdiff.atom_num.get_space_size" title="MolecularDiffusion.modules.models.kgdiff.atom_num.get_space_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_space_size</span></code></a>(→ float)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.kgdiff.atom_num.get_space_size" title="MolecularDiffusion.modules.models.kgdiff.atom_num.get_space_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_space_size</span></code></a>(pocket_3d_pos) → float</p></td>
 <td><p>Pocket extent: the median of the 10 largest pairwise distances.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.kgdiff.atom_num.marginal_size_distribution" title="MolecularDiffusion.modules.models.kgdiff.atom_num.marginal_size_distribution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">marginal_size_distribution</span></code></a>(→ dict[int, float])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.kgdiff.atom_num.marginal_size_distribution" title="MolecularDiffusion.modules.models.kgdiff.atom_num.marginal_size_distribution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">marginal_size_distribution</span></code></a>() → dict[int, float]</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">{n_atoms:</span> <span class="pre">probability}</span></code> marginalised over all pocket-size bins.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.kgdiff.atom_num.sample_atom_num" title="MolecularDiffusion.modules.models.kgdiff.atom_num.sample_atom_num"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_atom_num</span></code></a>(→ int)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.kgdiff.atom_num.sample_atom_num" title="MolecularDiffusion.modules.models.kgdiff.atom_num.sample_atom_num"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_atom_num</span></code></a>(space_size) → int</p></td>
 <td><p>Draw one ligand atom count for a pocket of this extent.</p></td>
 </tr>
 </tbody>

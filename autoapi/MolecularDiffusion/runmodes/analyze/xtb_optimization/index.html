@@ -475,36 +475,24 @@
         <article role="main" id="furo-main-content">
           <section id="module-MolecularDiffusion.runmodes.analyze.xtb_optimization">
 <span id="moleculardiffusion-runmodes-analyze-xtb-optimization"></span><h1>MolecularDiffusion.runmodes.analyze.xtb_optimization<a class="headerlink" href="#module-MolecularDiffusion.runmodes.analyze.xtb_optimization" title="Link to this heading">¶</a></h1>
-<section id="attributes">
-<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_optimization.parser" title="MolecularDiffusion.runmodes.analyze.xtb_optimization.parser"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parser</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_optimization.check_neutrality" title="MolecularDiffusion.runmodes.analyze.xtb_optimization.check_neutrality"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_neutrality</span></code></a>(→ bool)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_optimization.check_neutrality" title="MolecularDiffusion.runmodes.analyze.xtb_optimization.check_neutrality"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_neutrality</span></code></a>(filename[, charge, timeout]) → bool</p></td>
 <td><p>Checks if a molecule described in an XYZ file is neutral using xTB.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_optimization.check_xyz" title="MolecularDiffusion.runmodes.analyze.xtb_optimization.check_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_xyz</span></code></a>(→ tuple[bool, int, bool])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_optimization.check_xyz" title="MolecularDiffusion.runmodes.analyze.xtb_optimization.check_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_xyz</span></code></a>(filename[, connector_dicts, scale_factor]) → tuple[bool, int, bool]</p></td>
 <td><p>Performs a series of checks on an XYZ file to validate its molecular structure.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_optimization.get_xtb_optimized_xyz" title="MolecularDiffusion.runmodes.analyze.xtb_optimization.get_xtb_optimized_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_xtb_optimized_xyz</span></code></a>(→ list[str])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_optimization.get_xtb_optimized_xyz" title="MolecularDiffusion.runmodes.analyze.xtb_optimization.get_xtb_optimized_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_xtb_optimized_xyz</span></code></a>(input_directory[, ...]) → list[str]</p></td>
 <td><p>Optimizes all XYZ files in a given input directory using xTB or OpenBabel and saves them</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_optimization.optimize_ase_db" title="MolecularDiffusion.runmodes.analyze.xtb_optimization.optimize_ase_db"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimize_ase_db</span></code></a>(→ int)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_optimization.optimize_ase_db" title="MolecularDiffusion.runmodes.analyze.xtb_optimization.optimize_ase_db"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimize_ase_db</span></code></a>(input_db_path, output_db_path[, ...]) → int</p></td>
 <td><p>Optimizes all structures in an ASE database row by row.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_optimization.optimize_molecule" title="MolecularDiffusion.runmodes.analyze.xtb_optimization.optimize_molecule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimize_molecule</span></code></a>(→ str | None)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_optimization.optimize_molecule" title="MolecularDiffusion.runmodes.analyze.xtb_optimization.optimize_molecule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimize_molecule</span></code></a>(filename, charge, level, timeout) → str | None</p></td>
 <td><p>Optimizes the geometry of a molecule from an XYZ file using xTB or OpenBabel.</p></td>
 </tr>
 </tbody>
@@ -670,11 +658,6 @@ output file to a new name based on the input filename.</p>
 </dl>
 </dd></dl>
 
-<dl class="py data">
-<dt class="sig sig-object py" id="MolecularDiffusion.runmodes.analyze.xtb_optimization.parser">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.runmodes.analyze.xtb_optimization.</span></span><span class="sig-name descname"><span class="pre">parser</span></span><a class="headerlink" href="#MolecularDiffusion.runmodes.analyze.xtb_optimization.parser" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </section>
 </section>
 
@@ -751,7 +734,6 @@ output file to a new name based on the input filename.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">MolecularDiffusion.runmodes.analyze.xtb_optimization</a><ul>
-<li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_optimization.check_neutrality"><code class="docutils literal notranslate"><span class="pre">check_neutrality()</span></code></a></li>
@@ -759,7 +741,6 @@ output file to a new name based on the input filename.</p>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_optimization.get_xtb_optimized_xyz"><code class="docutils literal notranslate"><span class="pre">get_xtb_optimized_xyz()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_optimization.optimize_ase_db"><code class="docutils literal notranslate"><span class="pre">optimize_ase_db()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_optimization.optimize_molecule"><code class="docutils literal notranslate"><span class="pre">optimize_molecule()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xtb_optimization.parser"><code class="docutils literal notranslate"><span class="pre">parser</span></code></a></li>
 </ul>
 </li>
 </ul>

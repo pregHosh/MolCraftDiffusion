@@ -483,16 +483,16 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xyz2mol.extract_scaffold_and_fingerprints" title="MolecularDiffusion.runmodes.analyze.xyz2mol.extract_scaffold_and_fingerprints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_scaffold_and_fingerprints</span></code></a>(smiles_iter[, fp_bits])</p></td>
 <td><p>Sanitizes SMILES strings and computes molecular descriptors:</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xyz2mol.load_file_list_from_dir" title="MolecularDiffusion.runmodes.analyze.xyz2mol.load_file_list_from_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_file_list_from_dir</span></code></a>(→ pandas.DataFrame)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xyz2mol.load_file_list_from_dir" title="MolecularDiffusion.runmodes.analyze.xyz2mol.load_file_list_from_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_file_list_from_dir</span></code></a>(xyz_dir) → pandas.DataFrame</p></td>
 <td><p>Lists all .xyz files in the given directory and returns a DataFrame</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xyz2mol.main" title="MolecularDiffusion.runmodes.analyze.xyz2mol.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>()</p></td>
 <td><p>Main function to parse command-line arguments and initiate the processing</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xyz2mol.run_processing" title="MolecularDiffusion.runmodes.analyze.xyz2mol.run_processing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_processing</span></code></a>(→ None)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xyz2mol.run_processing" title="MolecularDiffusion.runmodes.analyze.xyz2mol.run_processing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_processing</span></code></a>(df, xyz_dir, label, output_csv_filepath) → None</p></td>
 <td><p>Processes each row of a DataFrame to generate SMILES strings from XYZ files.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xyz2mol.sanitize_smiles" title="MolecularDiffusion.runmodes.analyze.xyz2mol.sanitize_smiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sanitize_smiles</span></code></a>(→ Optional[str])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.runmodes.analyze.xyz2mol.sanitize_smiles" title="MolecularDiffusion.runmodes.analyze.xyz2mol.sanitize_smiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sanitize_smiles</span></code></a>(smiles) → Optional[str]</p></td>
 <td><p>Sanitizes a single SMILES string and returns its canonical form.</p></td>
 </tr>
 </tbody>

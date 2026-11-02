@@ -1,0 +1,148 @@
+MolecularDiffusion.modules.layers.tabasco.point_transformer
+===========================================================
+
+.. py:module:: MolecularDiffusion.modules.layers.tabasco.point_transformer
+
+.. autoapi-nested-parse::
+
+   Geometry-aware (Point-Transformer-style) attention stack for TABASCO.
+
+   Selected with ``TransformerModule(implementation="point_transformer")``. Same
+   skeleton as ``Transformer`` in ``transformer.py`` (pre-LN residual blocks,
+   ``Transition`` FFN, final LayerNorm) with the self-attention swapped for one
+   that sees relative geometry, so ``implementation="reimplemented"`` is the
+   matched control that isolates the attention change.
+
+   Relative geometry ``x_i - x_j`` is embedded ONCE per forward
+   (``PairGeometry``) and shared by every layer: the backbone never moves
+   coordinates internally, so recomputing it per layer would be wasted work.
+   Each layer reads it through its own small linear heads.
+
+   Two attention modes (``pt_attention``):
+
+   ``bias``    scalar multi-head attention plus a per-head additive bias from the
+               pair embedding (Graphormer-3D / AF3 pair-bias style). The bias
+               projection is zero-initialised, so training starts from plain MHA.
+   ``vector``  PTv2 grouped vector attention (Wu et al., 2022; Pointcept
+               ``GroupedVectorAttention``): ``relation = (k_j - q_i) * pe_mul +
+               pe_rel``, a weight-encoding MLP to one weight per channel group,
+               softmax over neighbours, grouped aggregation of ``v_j + pe_val``.
+               Deviations from the reference: dense masked attention over all
+               atoms instead of kNN; LayerNorm instead of BatchNorm (padded atoms
+               would corrupt batch statistics); one linear head per layer from the
+               shared pair embedding instead of a per-layer MLP on raw xyz; the
+               relation is ``rel_dim`` wide (default 64, the reference uses the
+               full channel width: ``rel_dim=dim``) and the value bias is a
+               separate head applied through the linearity trick below. Both
+               exist because full-width pair tensors made this arm ~4x slower
+               than the plain transformer (memory-bound, B x N x N x C).
+
+   ``use_direction=False`` drops the unit vector from the pair features, which
+   makes the attention pattern rotation-invariant (distances only).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.layers.tabasco.point_transformer.GeoAttention
+   MolecularDiffusion.modules.layers.tabasco.point_transformer.PairGeometry
+   MolecularDiffusion.modules.layers.tabasco.point_transformer.PointTransformer
+   MolecularDiffusion.modules.layers.tabasco.point_transformer.PointTransformerBlock
+
+
+Module Contents
+---------------
+
+.. py:class:: GeoAttention(dim: int, num_heads: int, pair_dim: int, mode: str = 'vector', rel_dim: int = 64)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Self-attention with access to the pair embedding ``e``.
+
+   ``forward(x, e, key_padding_mask)`` with ``x`` ``(B, N, C)``, ``e``
+   ``(B, N, N, pair_dim)`` (``e[b, i, j]`` embeds ``x_i - x_j``) and a bool
+   ``key_padding_mask`` ``(B, N)`` where True marks padded atoms.
+
+
+   .. py:method:: forward(x: torch.Tensor, e: torch.Tensor, key_padding_mask: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: out
+
+
+.. py:class:: PairGeometry(pair_dim: int = 64, rbf_dim: int = 32, rbf_dmax: float = 12.0, use_direction: bool = True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   ``(B, N, 3)`` coordinates -> ``(B, N, N, pair_dim)`` pair embedding.
+
+
+   .. py:method:: forward(coords: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: mlp
+
+
+   .. py:attribute:: rbf_dim
+      :value: 32
+
+
+
+   .. py:attribute:: rbf_dmax
+      :value: 12.0
+
+
+
+   .. py:attribute:: use_direction
+      :value: True
+
+
+
+.. py:class:: PointTransformer(dim: int, depth: int, num_heads: int, pt_attention: str = 'vector', pair_dim: int = 64, rbf_dim: int = 32, rbf_dmax: float = 12.0, use_direction: bool = True, rel_dim: int = 64, mlp_dim: int | None = None, activation_type: str = 'gelu', norm_eps: float = 1e-05)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Drop-in for ``Transformer`` that additionally takes ``coords``.
+
+
+   .. py:method:: forward(x: torch.Tensor, padding_mask: torch.Tensor, coords: torch.Tensor) -> torch.Tensor
+
+      ``x`` (B, N, dim), ``padding_mask`` (B, N) True = padded, ``coords`` (B, N, 3).
+
+
+
+   .. py:attribute:: geometry
+
+
+   .. py:attribute:: layers
+
+
+   .. py:attribute:: norm
+
+
+.. py:class:: PointTransformerBlock(dim: int, num_heads: int, pair_dim: int, pt_attention: str, rel_dim: int = 64, mlp_dim: int | None = None, activation_type: str = 'gelu', norm_eps: float = 1e-05)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   ``TransformerBlock`` with ``GeoAttention`` in place of ``AttentionBlock``.
+
+
+   .. py:method:: forward(x: torch.Tensor, e: torch.Tensor, padding_mask: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: attn
+
+
+   .. py:attribute:: ff_block
+
+
+   .. py:attribute:: norm
+
+

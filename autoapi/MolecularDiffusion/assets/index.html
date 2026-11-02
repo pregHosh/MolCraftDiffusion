@@ -513,28 +513,28 @@ inside a Hydra compose.</p></li>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.assets.assets_root" title="MolecularDiffusion.assets.assets_root"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assets_root</span></code></a>(→ pathlib.Path)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.assets.assets_root" title="MolecularDiffusion.assets.assets_root"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assets_root</span></code></a>() → pathlib.Path</p></td>
 <td><p>Where fetched assets live. <code class="docutils literal notranslate"><span class="pre">$MOLCRAFT_ASSETS</span></code> wins if set.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.assets.entry" title="MolecularDiffusion.assets.entry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">entry</span></code></a>(→ dict[str, Any])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.assets.entry" title="MolecularDiffusion.assets.entry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">entry</span></code></a>(name) → dict[str, Any]</p></td>
 <td><p>The manifest entry for <code class="docutils literal notranslate"><span class="pre">name</span></code>, with aliases already resolved.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.assets.fetch" title="MolecularDiffusion.assets.fetch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fetch</span></code></a>(→ pathlib.Path)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.assets.fetch" title="MolecularDiffusion.assets.fetch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fetch</span></code></a>(name[, force]) → pathlib.Path</p></td>
 <td><p>Download an asset into the cache and verify every file's sha256.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.assets.local_path" title="MolecularDiffusion.assets.local_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">local_path</span></code></a>(→ pathlib.Path)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.assets.local_path" title="MolecularDiffusion.assets.local_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">local_path</span></code></a>(name) → pathlib.Path</p></td>
 <td><p>Absolute cache path for <code class="docutils literal notranslate"><span class="pre">name</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.assets.manifest" title="MolecularDiffusion.assets.manifest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">manifest</span></code></a>(→ dict[str, Any])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.assets.manifest" title="MolecularDiffusion.assets.manifest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">manifest</span></code></a>() → dict[str, Any]</p></td>
 <td><p>The parsed <code class="docutils literal notranslate"><span class="pre">zoo.yaml</span></code>, read once per process.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.assets.register" title="MolecularDiffusion.assets.register"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register</span></code></a>(→ None)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.assets.register" title="MolecularDiffusion.assets.register"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register</span></code></a>() → None</p></td>
 <td><p>Register the <code class="docutils literal notranslate"><span class="pre">${asset:...}</span></code> OmegaConf resolver.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.assets.resolve" title="MolecularDiffusion.assets.resolve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resolve</span></code></a>(→ str)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.assets.resolve" title="MolecularDiffusion.assets.resolve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resolve</span></code></a>(name) → str</p></td>
 <td><p>The <code class="docutils literal notranslate"><span class="pre">${asset:...}</span></code> resolver body. Returns an absolute path string.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.assets.verify" title="MolecularDiffusion.assets.verify"><code class="xref py py-obj docutils literal notranslate"><span class="pre">verify</span></code></a>(→ list[tuple[str, str]])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.assets.verify" title="MolecularDiffusion.assets.verify"><code class="xref py py-obj docutils literal notranslate"><span class="pre">verify</span></code></a>(name) → list[tuple[str, str]]</p></td>
 <td><p>Re-hash an asset's files. Returns <code class="docutils literal notranslate"><span class="pre">[(relpath,</span> <span class="pre">status),</span> <span class="pre">...]</span></code>.</p></td>
 </tr>
 </tbody>

@@ -599,16 +599,16 @@ actually consumes the vector.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.chefnmr.unknown.bin_peaks" title="MolecularDiffusion.modules.models.chefnmr.unknown.bin_peaks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin_peaks</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.chefnmr.unknown.bin_peaks" title="MolecularDiffusion.modules.models.chefnmr.unknown.bin_peaks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin_peaks</span></code></a>(peaks, channel[, linewidth, where]) → numpy.ndarray</p></td>
 <td><p>Place a peak list on <code class="docutils literal notranslate"><span class="pre">channel</span></code>'s grid.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.chefnmr.unknown.formula_to_symbols" title="MolecularDiffusion.modules.models.chefnmr.unknown.formula_to_symbols"><code class="xref py py-obj docutils literal notranslate"><span class="pre">formula_to_symbols</span></code></a>(→ list[str])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.chefnmr.unknown.formula_to_symbols" title="MolecularDiffusion.modules.models.chefnmr.unknown.formula_to_symbols"><code class="xref py py-obj docutils literal notranslate"><span class="pre">formula_to_symbols</span></code></a>(formula, decoder[, where]) → list[str]</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;C8H8O3&quot;</span></code> -&gt; one symbol per atom, in <code class="docutils literal notranslate"><span class="pre">decoder</span></code> order.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.chefnmr.unknown.grid" title="MolecularDiffusion.modules.models.chefnmr.unknown.grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grid</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.chefnmr.unknown.grid" title="MolecularDiffusion.modules.models.chefnmr.unknown.grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grid</span></code></a>(channel, n_bins) → numpy.ndarray</p></td>
 <td><p>The ppm axis a peak list is binned onto.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.chefnmr.unknown.read_unknown_spectra" title="MolecularDiffusion.modules.models.chefnmr.unknown.read_unknown_spectra"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_unknown_spectra</span></code></a>(→ list[dict[str, Any]])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.chefnmr.unknown.read_unknown_spectra" title="MolecularDiffusion.modules.models.chefnmr.unknown.read_unknown_spectra"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_unknown_spectra</span></code></a>(path, channels, decoder, max_n_atoms) → list[dict[str, Any]]</p></td>
 <td><p>Parse an unknown-spectra file into ready-to-use records.</p></td>
 </tr>
 </tbody>

@@ -486,16 +486,16 @@ and PyTorch’s implementations.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.apply_SE3_transform_np" title="MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.apply_SE3_transform_np"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_SE3_transform_np</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.apply_SE3_transform_np" title="MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.apply_SE3_transform_np"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_SE3_transform_np</span></code></a>(points, SE3_transform) → numpy.ndarray</p></td>
 <td><p>Takes a point cloud and transforms it according to the provided SE3 transformation matrix.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.apply_SO3_transform_np" title="MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.apply_SO3_transform_np"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_SO3_transform_np</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.apply_SO3_transform_np" title="MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.apply_SO3_transform_np"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_SO3_transform_np</span></code></a>(points, SE3_transform) → numpy.ndarray</p></td>
 <td><p>Takes a point cloud and ONLY ROTATES it according to the provided SE3 transformation matrix.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.get_SE3_transform_np" title="MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.get_SE3_transform_np"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_SE3_transform_np</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.get_SE3_transform_np" title="MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.get_SE3_transform_np"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_SE3_transform_np</span></code></a>(se3_params) → numpy.ndarray</p></td>
 <td><p>Constructs an SE(3) transformtion matrix from parameters. NumPy implementation</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.quaternions_to_rotation_matrix_np" title="MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.quaternions_to_rotation_matrix_np"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quaternions_to_rotation_matrix_np</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.quaternions_to_rotation_matrix_np" title="MolecularDiffusion.utils.shepherd_score.alignment.utils.se3_np.quaternions_to_rotation_matrix_np"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quaternions_to_rotation_matrix_np</span></code></a>(quaternions) → numpy.ndarray</p></td>
 <td><p>Converts quaternion to a rotation matrix.</p></td>
 </tr>
 </tbody>
@@ -541,7 +541,7 @@ Supports batched and non-batched inputs.</p>
 <dd class="field-even"><p><strong>rotated_points</strong> – Set of coordinates rotated by the rotation component of the SE(3) transformation.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.14)">torch.Tensor</a> (batch, N, 3) or (N, 3)</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)">torch.Tensor</a> (batch, N, 3) or (N, 3)</p>
 </dd>
 </dl>
 </dd></dl>

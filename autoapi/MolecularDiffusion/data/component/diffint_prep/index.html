@@ -544,10 +544,10 @@ never fails on a bare install.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.diffint_prep.ca_pocket" title="MolecularDiffusion.data.component.diffint_prep.ca_pocket"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ca_pocket</span></code></a>(pdbfile, lig_coords[, dist_cutoff])</p></td>
 <td><p>One node per CA of every standard residue within <code class="docutils literal notranslate"><span class="pre">dist_cutoff</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.diffint_prep.complex_from_files" title="MolecularDiffusion.data.component.diffint_prep.complex_from_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">complex_from_files</span></code></a>(→ Dict[str, Any])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.diffint_prep.complex_from_files" title="MolecularDiffusion.data.component.diffint_prep.complex_from_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">complex_from_files</span></code></a>(pdb_file, sdf_file[, dist_cutoff]) → Dict[str, Any]</p></td>
 <td><p>PDB + reference SDF -&gt; the raw arrays one converted db row holds.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.diffint_prep.hbond_particles" title="MolecularDiffusion.data.component.diffint_prep.hbond_particles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hbond_particles</span></code></a>(→ Tuple[numpy.ndarray, numpy.ndarray])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.data.component.diffint_prep.hbond_particles" title="MolecularDiffusion.data.component.diffint_prep.hbond_particles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hbond_particles</span></code></a>(protein, ligand) → Tuple[numpy.ndarray, numpy.ndarray]</p></td>
 <td><p>2 pseudo-nodes per H-bond, at 1/3 and 2/3 along it.</p></td>
 </tr>
 </tbody>
