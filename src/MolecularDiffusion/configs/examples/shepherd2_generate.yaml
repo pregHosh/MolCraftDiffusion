@@ -1,0 +1,155 @@
+# @package _global_
+# ShEPhERD-2 -- interaction-profile-conditioned generation from the CONVERTED
+# PRETRAINED weights (upstream shepherd2-mosesaq-inference.ckpt, epoch 18,
+# global_step 309,250, MOSES-aq).
+#
+#   MolCraftDiff zoo fetch --model shepherd2
+#   MolCraftDiff generate examples/shepherd2_generate.yaml
+#
+# Every path below is an `asset:` zoo reference, so this file is machine
+# independent: it needs no checkout of docs/model_integrations/shepherd2/ and
+# no file inside the installed wheel. `output_path` is the one exception --
+# it is an OUTPUT, so it stays a plain relative directory under your CWD.
+#
+# WHAT THIS MODEL CONDITIONS ON
+# -----------------------------
+# A reference LIGAND's interaction profile -- its solvent-accessible surface,
+# the electrostatic potential on that surface, and its pharmacophore points
+# with direction vectors. There is no protein pocket anywhere in the inputs;
+# if you want pocket conditioning, this is the wrong model.
+#
+# The profile is extracted by upstream's own extract_interaction_profile at
+# 75 surface points / 0.6 A probe radius. Those two numbers are FIXED BY
+# TRAINING and are not tuning knobs -- upstream's *evaluation* code uses
+# 400 / 1.2, which is deliberately a different resolution and is not
+# interchangeable. They are set in the `shepherd2_condition` interference
+# group, not here.
+#
+# REQUIREMENTS BEYOND THE BASE INSTALL
+# ------------------------------------
+#   pip install '.[shepherd2]'       shepherd-score, open3d, h5py, huggingface-hub
+#
+# `open3d` is a HARD requirement, not a nicety: without it surface sampling
+# silently falls back to random downsampling, which changes the surface/ESP
+# distribution the model was trained on.
+#
+# The `xtb` BINARY (not a pip package; conda-forge or the upstream release)
+# must be on PATH for `write_sdf` and for partial charges. Without it
+# upstream's extract.py catches the FileNotFoundError and returns no molecule,
+# so you get the .xyz + _bonds.npz but no .sdf. Everything else still runs.
+#
+# OTHER MODES
+# -----------
+# Swap the `interference` default for one of:
+#   shepherd2_unconditional     no reference at all
+#   shepherd2_condition         full profile (this file)
+#   shepherd2_scaffold          keep a scaffold, regenerate the rest
+#   shepherd2_pharm_priority    weight some pharmacophores above others
+#   shepherd2_modality_hop      condition on a sub-pocket of the reference
+#   shepherd2_composition       logical AND over several profiles (fragment merging)
+#   shepherd2_composition_avoid AND-NOT, via negative weights
+#
+# The last three need their own reference files, which are registered in the
+# zoo and reachable the same way:
+#   scaffold / pharm_priority  asset  data/moses_aq/scaffold-test  (the JSONs)
+#   composition                asset  inputs/shepherd2/fragment_merging
+#   modality_hop               asset  inputs/shepherd2/modality_hopping
+# Fetch them with  MolCraftDiff zoo fetch --model shepherd2  (which pulls
+# every asset of the model, not just the three this file resolves).
+#
+# KNOWN LIMITATIONS OF THESE WEIGHTS (not of the port)
+# ----------------------------------------------------
+# * RDKit validity over the GENERATED bonds caps around 0.67-0.73. The failure
+#   mode is reference dependent: off an aliphatic reference every failure is a
+#   single over-valent atom; off an aromatic one it is `Can't kekulize mol`.
+#   Geometry is clean regardless -- min interatomic distance 0.93-1.00 A and a
+#   0% clash rate -- and uniqueness is 1.00.
+# * x2 / shape-only was NEVER TRAINED: the release has compute_x2=false and no
+#   x2 weights were ever published. Shape still enters through the x3 surface,
+#   but pure shape matching is NOT supported. Use ShEPhERD-v1 or DiffSMol.
+# * Property CFG is inert: the state_dict contains no `*prop*` tensors.
+# * compile_encoder must stay true (it is, in the task config): the checkpoint
+#   was trained under torch.compile, whose `._orig_mod.` key segment all 838
+#   tensors depend on. Flipping it off makes them silently fail to load.
+
+defaults:
+  - tasks: diffusion_shepherd2
+  - interference: shepherd2_condition
+  - _self_
+
+name: "shepherd2_generate"
+
+chkpt_directory: ${asset:shepherd2/pretrained}
+seed: 9
+
+# MANDATORY root key. cli/generate.py:750 reads `cfg.atom_vocab` by ATTRIBUTE
+# (not .get()), so a generate config without it dies in OmegaConf before the
+# model is ever built. This is the checkpoint's own 13-class atom-type list:
+# index 0 is the null "no atom" placeholder and the last class is ShEPhERD-2's
+# virtual `Dummy` type, which is stripped from every output before it is
+# written. It does not reach the model -- Shepherd2Generative.__init__ swallows
+# it through **kwargs and takes the vocabulary from the checkpoint's own params
+# instead, so the sampler always uses the checkpoint's regardless of this list.
+atom_vocab: [null, H, C, N, O, F, Cl, Br, I, S, P, Si, Dummy]
+
+interference:
+  # The reference ligand. Row 1 of the 100-molecule MOSES-aq test scaffold
+  # split that ships with upstream.
+  #
+  # WHY mol_idx 1 AND NOT 0. Output chemistry tracks the reference closely,
+  # which is the point of the model -- so the reference has to be
+  # representative. Row 0 is the single fully ALIPHATIC molecule in the
+  # fixture (0 of its 44 bonds aromatic) while 97 of the other 99 rows do
+  # contain aromatics, so generating off row 0 yields 0% aromatic output over
+  # 1406 bonds. That is the model correctly reproducing a non-aromatic
+  # reference, but it badly misrepresents the model. Row 1 is 48.5% aromatic
+  # and the model emits 47.4% aromatic bonds off it (190/401, within 1.1
+  # points) as heteroaromatic drug-like molecules -- thiophene, thiadiazole,
+  # isoxazole, triazole, pyridine, chloro-biaryl.
+  #
+  # Point it at your own ligand instead: .pkl/.pickle
+  # (list[(molblock, charges)]), .sdf, .mol or .pdb. The .pkl form is
+  # preferred because it ships xTB partial charges; for the others the charges
+  # are computed with xTB at load time, which is slower and needs the binary.
+  reference_mol: ${asset:data/moses_aq/scaffold-test/moses_test_scaffold_molblock_charges.pkl}
+  mol_idx: 1
+  condition_modalities: all
+
+  num_generate: 10
+  batch_size: 2
+  N_x1: [25, 45]      # heavy+H atom count, sampled per batch
+
+  # N_x4 = 0 is NOT "auto" to the shared seam: PharmacophoreConditionGenerator
+  # .__init__ hard-raises `distributions_path must be set when N_x4=0` before
+  # any conditioned code runs. These two keys exist to satisfy that check; on
+  # the conditioned path the drawn value is then overridden by the reference
+  # profile's own pharmacophore count. Set a positive integer to force a count.
+  #
+  # distributions_key MUST be moses_aq. atom_pharm_count.npz holds two (100,100)
+  # arrays, `gdb` and `moses_aq`; the seam's default is `gdb`, which is
+  # ShEPhERD-v1's GDB-17 table and the wrong statistics for these weights.
+  N_x4: 0
+  distributions_path: ${asset:inputs/shepherd2/distributions/atom_pharm_count.npz}
+  distributions_key: moses_aq
+
+  # Full 400-step schedule. Keep it: this config is meant to produce
+  # chemically plausible molecules. Cut num_steps only for a syntax check --
+  # the reverse loop runs t = T .. T-num_steps, so a short run stops far from
+  # completion and yields garbage rather than merely coarser molecules.
+  num_steps: 400
+  early_stop_edm: 0.9
+
+  # Output channels. write_bonds emits the GENERATED bond orders and formal
+  # charges, which the shared ShEPhERD writer has no slot for and would
+  # otherwise discard -- ShEPhERD-2 is the one model here that generates bond
+  # orders rather than re-perceiving them from geometry afterwards.
+  save_modalities: true
+  write_bonds: true
+  write_sdf: true     # needs the `xtb` binary on PATH; no-ops without it
+  xtb_optimize: true
+  xtb_timeout: 60
+  store_trajectories: false
+
+  # An OUTPUT, so a plain relative directory under your CWD -- never an
+  # zoo asset reference and never a path into docs/.
+  output_path: "generated_shepherd2"

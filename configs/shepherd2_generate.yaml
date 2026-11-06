@@ -1,0 +1,114 @@
+# ShEPhERD-2 -- generation from the CONVERTED PRETRAINED checkpoint (user-facing).
+#
+# PREREQUISITE -- run this first, from the repo root:
+#
+#   PYTHONPATH=src python docs/model_integrations/shepherd2/scripts/convert_checkpoint.py
+#
+# It remaps the released shepherd2-mosesaq-inference.ckpt (838 tensors,
+# `model.` -> `model.model.`), asserts the key set is a BIJECTION with a freshly
+# built task (0 missing, 0 dropped, all shapes and dtypes equal), writes
+# docs/model_integrations/shepherd2/checkpoints/converted/shepherd2_pretrained.ckpt,
+# and then re-loads that file through cli/generate.py's own code path to check
+# every live tensor is byte-identical to the source. That last step matters:
+# generate.py loads with strict=False, so a bad remap would load nothing,
+# raise nothing, and still emit plausible-looking molecules.
+#
+# Then:
+#   MolCraftDiff generate configs/shepherd2_generate.yaml
+#
+# WHAT THIS MODEL CONDITIONS ON
+# -----------------------------
+# A reference LIGAND's interaction profile -- its solvent-accessible surface,
+# the electrostatic potential on that surface, and its pharmacophore points
+# with direction vectors. There is no protein pocket anywhere in the inputs; if
+# you want pocket conditioning, this is the wrong model.
+#
+# The profile is extracted by upstream's own extract_interaction_profile at
+# 75 surface points / 0.6 A probe radius. Those two numbers are FIXED BY
+# TRAINING and are not tuning knobs -- upstream's *evaluation* code uses 400 /
+# 1.2, which is deliberately a different resolution and is not interchangeable.
+#
+# `reference_mol` below points at the 100-molecule MOSES-aq fixture that ships
+# with the target repo, purely so this config runs out of the box. Point it at
+# your own ligand: .pkl/.pickle (list[(molblock, charges)]), .sdf, .mol or .pdb.
+# A file that ships xTB partial charges (the .pkl form) is preferred -- for the
+# others the charges are computed with xTB at load time, which is slower and
+# needs the `xtb` binary on PATH.
+#
+# OTHER MODES
+# -----------
+# Swap the `interference` default for one of:
+#   shepherd2_unconditional     no reference at all
+#   shepherd2_condition         full profile (this file)
+#   shepherd2_scaffold          keep a scaffold, regenerate the rest
+#   shepherd2_pharm_priority    weight some pharmacophores above others
+#   shepherd2_modality_hop      condition on a sub-pocket of the reference
+#   shepherd2_composition       logical AND over several profiles (fragment merging)
+#   shepherd2_composition_avoid AND-NOT, via negative weights
+#
+# KNOWN LIMITATIONS OF THESE WEIGHTS (not of the port)
+# ----------------------------------------------------
+# * x2 / shape-only is not a trained channel: the release has compute_x2=false
+#   and no x2 weights were ever published. Shape still enters through the x3
+#   surface. For pure shape matching use ShEPhERD-v1 or DiffSMol.
+# * Property CFG is inert: the state_dict contains no `*prop*` tensors.
+# * Generation quality depends on the reference being a reasonable 3D conformer
+#   with charges consistent with its geometry. xtb_profile_optimize is false
+#   here because the .pkl fixture's charges were computed for its stored
+#   geometry; relaxing it would desynchronise the two.
+defaults:
+  - tasks: diffusion_shepherd2
+  - interference: shepherd2_condition
+  - _self_
+
+name: "shepherd2_generate_pretrained"
+
+# A FILE path, not a directory: cli/generate.py accepts either.
+chkpt_directory: "docs/model_integrations/shepherd2/checkpoints/converted/shepherd2_pretrained.ckpt"
+seed: 9
+
+# MANDATORY root key. cli/generate.py:750 reads `cfg.atom_vocab` by ATTRIBUTE
+# (not .get()), so a generate config without it dies in OmegaConf before the
+# model is ever built. This is the checkpoint's own 13-class atom-type list
+# (configs/tasks/diffusion_shepherd2.yaml -> dataset.x1.atom_types): index 0 is
+# the null "no atom" placeholder and the last class is ShEPhERD-2's virtual
+# `Dummy` type, which is stripped from every output before it is written.
+# It does not reach the model: Shepherd2Generative.__init__ swallows it through
+# **kwargs and sets self.atom_vocab from the checkpoint's params instead
+# (diffusion_shepherd2.py:122), so the vocabulary the sampler uses is always the
+# checkpoint's regardless of what is written here.
+atom_vocab: [null, H, C, N, O, F, Cl, Br, I, S, P, Si, Dummy]
+
+interference:
+  reference_mol: docs/model_integrations/shepherd2/data/moses_aq/moses_test_scaffold_molblock_charges.pkl
+  mol_idx: 0
+  condition_modalities: all
+
+  num_generate: 10
+  batch_size: 2
+  N_x1: [25, 45]      # heavy+H atom count, sampled per batch
+  # 0 here is NOT "auto": the shared seam refuses to construct with N_x4=0 and
+  # no distributions file. shepherd2_condition.yaml supplies that file (with
+  # distributions_key: moses_aq) for exactly this reason, and the conditioned
+  # path then overrides the drawn value with the reference profile's own
+  # pharmacophore count. Set a positive integer to force a specific count.
+  N_x4: 0
+
+  # Full 400-step schedule: this run is meant to produce chemically plausible
+  # molecules, which is the real test that the port and the weight remap are
+  # right. Cut it only for a quick syntactic check.
+  num_steps: 400
+  early_stop_edm: 0.9
+
+  # Output channels. write_bonds emits the GENERATED bond orders and formal
+  # charges, which the shared ShEPhERD writer has no slot for and would
+  # otherwise discard -- ShEPhERD is the one model here that generates bond
+  # orders rather than re-perceiving them from geometry.
+  save_modalities: true
+  write_bonds: true
+  write_sdf: true     # needs the `xtb` binary on PATH
+  xtb_optimize: true
+  xtb_timeout: 60
+  store_trajectories: false
+
+  output_path: "generated/shepherd2_pretrained"

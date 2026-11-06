@@ -1,0 +1,439 @@
+# ShEPhERD-2 -- platform task config (permanent).
+#
+# GENERATED, not hand-written. Every value under `model_params` is a verbatim
+# copy of `hyper_parameters['params']` inside the released checkpoint
+#   docs/model_integrations/shepherd2/checkpoints/upstream/shepherd2-mosesaq-inference.ckpt
+#   (HF kabeywar/shepherd2, repo sha 535116ad3cde2a3325daf4dc3f7a2dc7c04fb413,
+#    epoch 18, global_step 309250, 838 tensors / 6,317,695 parameters)
+# produced by:
+#   docs/model_integrations/shepherd2/scripts/generate_task_config.py
+#
+# Why generated from the checkpoint rather than from the authors'
+# `training/parameters/base.yaml`: the two DISAGREE, and the checkpoint is what
+# the weights were actually trained with. Four recorded conflicts
+# (INTEGRATION_PLAN.md "Hyperparameter Provenance"), checkpoint value first:
+#   edm.sigma_max    3.0  (base.yaml says 2.0)
+#   max_neighbors    1000000  everywhere (base.yaml says 2048)
+#   training.ema.enabled  False  (base.yaml says True)
+#   edm.rho          7.0  (absent from base.yaml entirely)
+# Rebuilding this file from base.yaml would silently change the sampler's noise
+# schedule and make the released weights load into the wrong architecture.
+#
+# ONE key is dropped from the checkpoint's params: `noise_schedules`, four
+# 400-step DDPM alpha/sigma arrays left over from ShEPhERD-v1. ShEPhERD-2 is EDM
+# (`edm.use_edm: true`) and passes a continuous per-molecule sigma instead of a
+# timestep index; `grep -rn noise_schedules` over the whole vendored package
+# finds no readers. It is also the only entry that is not YAML-representable.
+#
+# `dataset:` lives under model_params on purpose: configs/data/shepherd2_dataset.yaml
+# interpolates `model_params: ${tasks.model_params}` so the architecture and the
+# dataset construction can never drift apart.
+#
+# Out of scope with THESE weights (limitations of the release, not of the port):
+#   * x2 / shape-only channel -- `dataset.compute_x2: false` and
+#     `explicit_diffusion_variables: [x1, x3, x4]`; no x2 weights were released.
+#   * property CFG -- the state_dict contains no `*prop*` keys, so the knob is inert.
+#
+_target_: MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative
+task_type: diffusion_shepherd2
+
+# Per-modality loss multipliers applied on top of upstream's own losses.
+# All 1.0 reproduces upstream's plain sum (`lightning_module.py:383-440`) exactly.
+# x2 is listed for completeness but never contributes: `train_x2_denoising` is
+# False in the checkpoint.
+modality_weights:
+  x1: 1.0
+  x2: 1.0
+  x3: 1.0
+  x4: 1.0
+
+model_params:
+  compile_denoisers: false
+  compile_encoder: true
+  compile_joint_processing: false
+  compile_property_embedding: false
+  data: MOSES_aq_HDF5
+  dataset:
+    compute_x1: true
+    compute_x2: false
+    compute_x3: true
+    compute_x4: true
+    explicit_hydrogens: true
+    probe_radius: 0.6
+    scale_point_cloud: 1.0
+    use_MMFF94_charges: false
+    x1:
+      add_virtual_node: true
+      atom_types:
+      - null
+      - H
+      - C
+      - N
+      - O
+      - F
+      - Cl
+      - Br
+      - I
+      - S
+      - P
+      - Si
+      - Dummy
+      bond_types:
+      - null
+      - SINGLE
+      - DOUBLE
+      - TRIPLE
+      - AROMATIC
+      charge_types:
+      - 0
+      - 1
+      - 2
+      - -1
+      - -2
+      fixed_substructure:
+        frac_random: 0.1
+        hydrogen_weight: 0.3
+        num_fracs: 4
+        prob_fixed_substructure: 0.5
+        prob_random_vs_subgraphs: 0.5
+        prob_use_scaffold_com: 0.5
+        upper_bound_fraction_options:
+        - 0.1
+        - 0.2
+        - 0.3
+      include_dummy_atoms: true
+      recenter: true
+      remove_noise_COM: true
+      scale_atom_features: 0.25
+      scale_bond_features: 1.0
+    x2:
+      add_virtual_node: true
+      independent_timesteps: false
+      num_points: 75
+      recenter: false
+      remove_noise_COM: false
+    x3:
+      add_virtual_node: true
+      independent_timesteps: false
+      num_points: 75
+      recenter: false
+      remove_noise_COM: false
+      scale_node_features: 1.0
+    x4:
+      add_virtual_node: true
+      check_accessibility: false
+      fixed_substructure:
+        prob_fixed_pharmacophore: 0.667
+      include_dummy_pharm: true
+      independent_timesteps: false
+      max_node_types: 10
+      multivectors: false
+      recenter: false
+      remove_noise_COM: false
+      scale_node_features: 1.0
+      scale_vector_features: 1.0
+  decoder_heterogeneous_graph_encoder:
+    alpha_drop: 0.0
+    attn_activation: sep-merge_gates2_swiglu
+    attn_alpha_channels: 24
+    attn_grid_resolution_list:
+    - 4
+    - 4
+    attn_hidden_channels: 24
+    attn_mask_rate: 0.0
+    attn_value_channels: 24
+    attn_weights_drop: 0.0
+    cutoff: 5.0
+    drop_path_rate: 0.0
+    edge_channels: 128
+    ffn_drop: 0.0
+    ffn_grid_resolution_list:
+    - 4
+    - 4
+    ffn_hidden_channels: 32
+    input_sphere_channels: 64
+    l0_res_conditioning: false
+    lmax: 1
+    max_neighbors: 1000000
+    mmax: 1
+    num_channels: 64
+    num_heads: 2
+    num_layers: 2
+    proj_drop: 0.0
+    use: true
+    use_add_merge: false
+    use_grid_mlp: true
+    value_drop: 0.0
+  edm:
+    rho: 7.0
+    scale_by_sigma_data: false
+    sigma_data_atom_one_hot: 0.3
+    sigma_data_bond: 0.43
+    sigma_data_esp: 0.46
+    sigma_data_pharm_one_hot: 0.27
+    sigma_data_pos: 3.0
+    sigma_max: 3.0
+    use_edm: true
+  exclude_variables_from_decoder_heterogeneous_graph: []
+  explicit_diffusion_variables:
+  - x1
+  - x3
+  - x4
+  feedforward_network:
+    activation: sep-merge_gates2_swiglu
+    dropout: 0.0
+    grid_resolution_list:
+    - 4
+    - 4
+    num_hidden_channels: 32
+    use_grid_mlp: true
+  lmax: 1
+  mmax: 1
+  scaffold_conditioning: true
+  training:
+    accumulate_grad_batches: 2
+    batch_size: 24
+    ema:
+      checkpoint_every_n_steps: 10000
+      enabled: false
+      stds:
+      - 0.05
+      - 0.1
+      use_for_validation: false
+      validation_index: 1
+    gradient_clip_val: 5.0
+    log_every_n_steps: 50
+    lr: 0.001
+    lr_steps: 100000
+    min_lr: 0.0003
+    multiprocessing_spawn: false
+    num_gpus: 2
+    num_workers: 6
+    output_dir: x1x3x4_diffusion_mosesaq_pscaffold_edm_eqv3_20260423/
+    persistent_workers: true
+    prefetch_factor: 2
+    save_checkpoint_every_epoch: false
+    train_x1_denoising: true
+    train_x2_denoising: false
+    train_x3_denoising: true
+    train_x4_denoising: true
+    val_check_interval: 0.125
+    validation_conditional: false
+    wandb_name: shepherd1x-eqv3-pscaff-edm
+    wandb_project: shepherd-x1x3x4-xf-moses
+    warmup_steps: 10000
+  use_ema: false
+  x1:
+    decoder:
+      denoiser:
+        MLP_hidden_dim: 64
+        e3nn:
+          lmax: 1
+          mmax: 1
+          num_hidden_channels: 32
+        egnn:
+          MLP_hidden_dim: 64
+          distance_expansion_dim: 32
+          normalize_egnn_vectors: true
+          num_MLP_hidden_layers: 2
+        num_MLP_hidden_layers: 2
+        output_bond_channels: 5
+        output_node_channels: 18
+        use_e3nn: true
+        use_egnn_positions_update: true
+      encoder:
+        alpha_drop: 0.0
+        attn_activation: sep-merge_gates2_swiglu
+        attn_alpha_channels: 32
+        attn_grid_resolution_list:
+        - 4
+        - 4
+        attn_hidden_channels: 32
+        attn_mask_rate: 0.0
+        attn_value_channels: 32
+        attn_weights_drop: 0.0
+        cutoff: 5.0
+        drop_path_rate: 0.0
+        edge_attr_input_channels: 64
+        edge_channels: 128
+        ffn_drop: 0.0
+        ffn_grid_resolution_list:
+        - 4
+        - 4
+        ffn_hidden_channels: 64
+        fully_connected: true
+        input_bond_channels: 5
+        input_sphere_channels: 64
+        l0_res_conditioning: false
+        lmax: 1
+        max_neighbors: 1000000
+        mmax: 1
+        num_channels: 64
+        num_heads: 4
+        num_layers: 4
+        proj_drop: 0.0
+        use_add_merge: false
+        use_grid_mlp: true
+        value_drop: 0.0
+      force_edges_to_virtual_nodes: true
+      input_node_channels: 18
+      node_channels: 64
+      time_embedding_size: 32
+  x1_bond_diffusion: true
+  x1_formal_charge_diffusion: true
+  x2:
+    decoder:
+      denoiser:
+        e3nn:
+          lmax: 1
+          mmax: 1
+          num_hidden_channels: 32
+        egnn:
+          MLP_hidden_dim: 64
+          distance_expansion_dim: 32
+          normalize_egnn_vectors: true
+          num_MLP_hidden_layers: 2
+        output_node_channels: 64
+        use_e3nn: true
+        use_egnn_positions_update: false
+      encoder:
+        alpha_drop: 0.0
+        attn_activation: sep-merge_gates2_swiglu
+        attn_alpha_channels: 24
+        attn_grid_resolution_list:
+        - 4
+        - 4
+        attn_hidden_channels: 24
+        attn_mask_rate: 0.0
+        attn_value_channels: 24
+        attn_weights_drop: 0.0
+        cutoff: 5.0
+        drop_path_rate: 0.0
+        edge_channels: 128
+        ffn_drop: 0.0
+        ffn_grid_resolution_list:
+        - 4
+        - 4
+        ffn_hidden_channels: 32
+        input_sphere_channels: 64
+        l0_res_conditioning: false
+        lmax: 1
+        max_neighbors: 1000000
+        mmax: 1
+        num_channels: 64
+        num_heads: 2
+        num_layers: 2
+        proj_drop: 0.0
+        use_add_merge: false
+        use_grid_mlp: true
+        value_drop: 0.0
+      force_edges_to_virtual_nodes: true
+      input_node_channels: 2
+      node_channels: 64
+      time_embedding_size: 32
+  x3:
+    decoder:
+      denoiser:
+        MLP_hidden_dim: 64
+        e3nn:
+          lmax: 1
+          mmax: 1
+          num_hidden_channels: 32
+        egnn:
+          MLP_hidden_dim: 64
+          distance_expansion_dim: 32
+          normalize_egnn_vectors: true
+          num_MLP_hidden_layers: 2
+        num_MLP_hidden_layers: 2
+        output_node_channels: 1
+        use_e3nn: true
+        use_egnn_positions_update: false
+      encoder:
+        alpha_drop: 0.0
+        attn_activation: sep-merge_gates2_swiglu
+        attn_alpha_channels: 24
+        attn_grid_resolution_list:
+        - 4
+        - 4
+        attn_hidden_channels: 24
+        attn_mask_rate: 0.0
+        attn_value_channels: 24
+        attn_weights_drop: 0.0
+        cutoff: 5.0
+        drop_path_rate: 0.0
+        edge_channels: 128
+        ffn_drop: 0.0
+        ffn_grid_resolution_list:
+        - 4
+        - 4
+        ffn_hidden_channels: 32
+        input_sphere_channels: 64
+        l0_res_conditioning: false
+        lmax: 1
+        max_neighbors: 1000000
+        mmax: 1
+        num_channels: 64
+        num_heads: 2
+        num_layers: 2
+        proj_drop: 0.0
+        use_add_merge: false
+        use_grid_mlp: true
+        value_drop: 0.0
+      force_edges_to_virtual_nodes: true
+      input_node_channels: 64
+      node_channels: 64
+      scalar_expansion_max: 10.0
+      scalar_expansion_min: -10.0
+      time_embedding_size: 32
+  x4:
+    decoder:
+      denoiser:
+        MLP_hidden_dim: 64
+        e3nn:
+          lmax: 1
+          mmax: 1
+          num_hidden_channels: 32
+        egnn:
+          MLP_hidden_dim: 64
+          distance_expansion_dim: 32
+          normalize_egnn_vectors: true
+          num_MLP_hidden_layers: 2
+        num_MLP_hidden_layers: 2
+        output_node_channels: 10
+        use_e3nn: true
+        use_egnn_positions_update: false
+      encoder:
+        alpha_drop: 0.0
+        attn_activation: sep-merge_gates2_swiglu
+        attn_alpha_channels: 24
+        attn_grid_resolution_list:
+        - 4
+        - 4
+        attn_hidden_channels: 24
+        attn_mask_rate: 0.0
+        attn_value_channels: 24
+        attn_weights_drop: 0.0
+        cutoff: 5.0
+        drop_path_rate: 0.0
+        edge_channels: 128
+        ffn_drop: 0.0
+        ffn_grid_resolution_list:
+        - 4
+        - 4
+        ffn_hidden_channels: 32
+        input_sphere_channels: 64
+        l0_res_conditioning: false
+        lmax: 1
+        max_neighbors: 1000000
+        mmax: 1
+        num_channels: 64
+        num_heads: 2
+        num_layers: 2
+        proj_drop: 0.0
+        use_add_merge: false
+        use_grid_mlp: true
+        value_drop: 0.0
+      force_edges_to_virtual_nodes: true
+      input_node_channels: 10
+      node_channels: 64
+      time_embedding_size: 32
