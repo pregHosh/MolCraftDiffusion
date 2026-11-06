@@ -1,0 +1,62 @@
+# ShEPhERD-2 data config (permanent) -- `data_type: shepherd2_hetero`.
+#
+# A model-specific PyG HeteroData DataModule, not pointcloud / pyg / graph3d.
+# Three of the four modalities (75-point molecular surface, 75-value surface
+# ESP, 10-class pharmacophore points WITH direction vectors) and the per-atom
+# xTB partial charges the ESP is derived from have no channel in any shared
+# representation, so ShEPhERD-2 gets its own DataModule exactly as ShEPhERD-v1
+# does. `MolCraftDiff data import-graph3d` must NOT be used here: it would
+# discard all three conditioning modalities. See INTEGRATION_PLAN.md
+# "Representation Routing".
+#
+# Single source of truth for the hyperparameters
+# ----------------------------------------------
+# This file deliberately restates NONE of them. `model_params` interpolates
+# straight out of the task config, so the architecture and the dataset
+# construction can never drift apart -- and a drift here would be invisible,
+# because it changes the training distribution without changing any error
+# message. Set `checkpoint_path` to read both out of a checkpoint's
+# `hyper_parameters['params']` instead (the ShEPhERD-v1 precedent).
+#
+# open3d is a HARD requirement, not an optional extra: the Poisson-disk surface
+# sampling it provides is what the released weights were trained on. The
+# DataModule imports it lazily (inside the first process_item) on purpose --
+# open3d initialises thread locks that cannot be pickled under `spawn`
+# multiprocessing. Do not hoist that import.
+_target_: MolecularDiffusion.data.component.shepherd2.Shepherd2DataModule
+
+# === Data Source ===
+# "pkl"  -> list[(molblock, partial_charges)] pickles (the smoke default)
+# "hdf5" -> a directory of *.h5 shards via upstream's HeteroDatasetHDF5
+#           (Zenodo doi:10.5281/zenodo.22675705). Needs h5py.
+# Both funnel into the identical HeteroDataset.process_item; nothing downstream
+# of it differs.
+source: "pkl"
+
+pkl_files:
+  - "docs/model_integrations/shepherd2/data/moses_aq/moses_test_scaffold_molblock_charges.pkl"
+
+# Only read when source == "hdf5".
+hdf5_data_dir: null
+cache_molecules: false
+
+# === Hyperparameters (interpolated -- do not restate) ===
+model_params: ${tasks.model_params}
+
+# Set to a ShEPhERD-2 .ckpt to take `params` from it instead of from the task
+# config. Overrides model_params when non-null.
+checkpoint_path: null
+
+# === Data Limit ===
+num_samples: null      # null = use all rows
+data_fraction: 1.0
+
+# === DataLoader ===
+# batch_size 2 is the smoke-scale value. Upstream trains at 24 x 2 grad-accum
+# x 2 GPUs (effective 96); see configs/shepherd2_train.yaml.
+batch_size: 2
+# num_workers 0 on purpose: every item does Poisson-disk surface sampling and
+# pharmacophore extraction through open3d + shepherd_score, and open3d under
+# `spawn` is what upstream's lazy-import wrapper exists to work around.
+num_workers: 0
+train_ratio: 0.9

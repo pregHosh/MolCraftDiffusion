@@ -144,6 +144,38 @@ nextmol = [
     "typer==0.27.1",
     "annotated-doc==0.0.5",
 ]
+# ShEPhERD-2 (task_type: diffusion_shepherd2). Unlike most extras these are
+# HARD requirements of the ported code, not an optional preprocessing path:
+# `datasets.py`, `lightning_module.py`, `interaction_profile.py`, `extract.py`
+# and `comp_inference/` all import `shepherd_score` at module scope, so the
+# task cannot be built without it.
+#
+# open3d is NOT optional either, despite also appearing in [analyze]: it
+# provides the Poisson-disk surface sampling the released weights were trained
+# on. The random-downsampling fallback elsewhere in the tree changes the
+# surface/ESP distribution and must not be relied on here. (Extras do not
+# inherit, so it is repeated on purpose.)
+#
+# h5py backs the HDF5 shard loader (the full MOSES-aq corpus, Zenodo
+# doi:10.5281/zenodo.22675705); the pickle source works without it.
+# huggingface-hub is needed ONLY by the vendored `loader/` subpackage, which
+# resolves released weights from the Hub -- every other path takes a local
+# checkpoint file, so `loader/` is the one module that fails to import without
+# it, lazily and by design (`modules/models/shepherd2/__init__.py`).
+#
+# NOT listed, deliberately: `meeko`. It is an upstream hard dependency but is
+# imported only by `grid_selection.py` and `optimization/population.py`, both
+# in the out-of-scope GA/docking layer. See INTEGRATION_PLAN.md, Scope item 7.
+#
+# The `xtb` BINARY is also required for the SDF/partial-charge output path and
+# is not a pip package: install it with conda (`conda install -c conda-forge
+# xtb`) or from the upstream release.
+shepherd2 = [
+    "shepherd-score>=1.4",
+    "open3d>=0.18",
+    "h5py",
+    "huggingface-hub",
+]
 # GPU install (CUDA-capable torch wheels, auto-detected by pip on Linux/Windows):
 #   pip install molcraftdiffusion[gpu]
 gpu = [

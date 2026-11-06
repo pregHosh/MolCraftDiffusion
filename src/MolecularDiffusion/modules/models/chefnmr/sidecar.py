@@ -141,7 +141,9 @@ def load_sidecar(
     cond = np.load(cond_path, mmap_mode="r")
     conf = np.load(conf_path, mmap_mode="r")
     nconf_path = meta.get("nconf_path") or conf_path.replace("_conf.npy", "_nconf.npy")
-    if not os.path.isabs(nconf_path):
+    # An absolute path recorded on the converting machine is stale once the
+    # corpus moves (e.g. a fetched zoo asset), so fall back to the sibling.
+    if not os.path.isabs(nconf_path) or not os.path.exists(nconf_path):
         nconf_path = os.path.join(os.path.dirname(os.path.abspath(meta_path)),
                                   os.path.basename(nconf_path))
     n_conf = np.load(nconf_path)

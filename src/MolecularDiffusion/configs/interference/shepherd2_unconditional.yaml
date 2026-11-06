@@ -1,0 +1,58 @@
+# ShEPhERD-2 generation (permanent).
+#
+# A per-model interference config rather than a bundled one: the shared
+# gen_unconditional.yaml / gen_pocket.yaml carry neither the v2 EDM sampler
+# knobs (early_stop_edm, sigma_max/min, rho, use_stochastic, S_churn, S_noise,
+# shepherd_pred) nor the v2 output channels (write_bonds / write_sdf /
+# xtb_optimize / store_trajectories), and the five bundled pharm_*.yaml target
+# the ShEPhERD-v1 generator whose sampler takes a discrete timestep. The five
+# pharm_*.yaml are deliberately left untouched so v1 keeps working.
+#
+# Unconditional joint x1/x3/x4 sampling from pure noise. No reference molecule.
+_target_: MolecularDiffusion.modules.tasks.shepherd2_generator.Shepherd2Generator
+task_type: unconditional
+
+num_generate: 10
+batch_size: 2
+N_x1: [25, 45]            # [min, max] -> sampled per batch; [N] -> fixed N
+N_x1_sampling: uniform
+N_x4: 0                   # 0 -> draw from P(N_x4|N_x1) in distributions_path
+# Was a fixed 5, which is a poor default: in the moses_aq table 5
+# pharmacophores occurs in 0.9% of the corpus, while 9-11 covers ~53%
+# (mode 10, mean 9.9 and nearly flat in N_x1). A fixed 5 therefore asks
+# for molecules far sparser than anything the weights were trained on.
+# Drawing from the table instead gives the corpus's own spread, which is
+# what this knob is for -- and it costs nothing, since distributions_path
+# is already set below for exactly this case.
+# Setting N_x4: 0 REQUIRES distributions_path (the seam raises otherwise,
+# tasks_generate.py:1733-1741). On this unconditional path the drawn value is
+# the one actually used -- there is no reference profile to override it.
+# moses_aq, not the seam's `gdb` default: atom_pharm_count.npz carries both, and
+# `gdb` is ShEPhERD-v1's GDB-17 table, the wrong statistics for these weights.
+distributions_path: docs/model_integrations/shepherd2/data/distributions/atom_pharm_count.npz
+distributions_key: moses_aq
+
+# --- EDM sampler (checkpoint values; see INTEGRATION_PLAN Hyperparameter Provenance) ---
+num_steps: 400
+early_stop_edm: 0.9
+sigma_max: 3.0            # checkpoint value; base.yaml's 2.0 is stale
+sigma_min: 0.001
+rho: 7.0
+use_stochastic: false
+S_churn: 40.0
+S_noise: 1.0
+shepherd_pred: true
+
+# --- output channels ---
+save_modalities: true     # surface / ESP / pharmacophore .npz
+write_bonds: true         # generated bond orders + formal charges (v1 drops these)
+write_sdf: true           # real SDF molecules via xTB
+xtb_optimize: true
+xtb_timeout: 60
+store_trajectories: false
+store_trajectories_x0: false
+save_xyzrender_figures: false
+
+seed: 42
+verbose: true
+output_path: generated_shepherd2_unconditional

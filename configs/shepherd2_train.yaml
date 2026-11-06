@@ -1,0 +1,115 @@
+# ShEPhERD-2 -- training config (user-facing).
+#
+# ShEPhERD-2 is a 4-modality EDM diffusion model. It conditions on a reference
+# ligand's *interaction profile* -- its solvent-accessible surface, the
+# electrostatic potential on that surface, and its pharmacophore points with
+# direction vectors -- and jointly generates atoms, BOND ORDERS, formal charges
+# and 3D coordinates. It is not a pocket-conditioned model: there is no protein
+# anywhere in its inputs.
+#
+# PREREQUISITES -- run these first, from the repo root:
+#
+#   # 1. stage + verify the dataset (no download; the fixtures ship with the
+#   #    target repo). Writes docs/model_integrations/shepherd2/data/.
+#   PYTHONPATH=src python docs/model_integrations/shepherd2/scripts/convert_dataset.py
+#
+#   # 2. only if you want to resume from / compare against the released weights:
+#   PYTHONPATH=src python docs/model_integrations/shepherd2/scripts/convert_checkpoint.py
+#
+# Then:
+#   MolCraftDiff train configs/shepherd2_train.yaml
+#
+# DATA SCALE -- READ THIS BEFORE TRUSTING A RUN
+# ---------------------------------------------
+# The `data.pkl_files` below points at the 100-molecule MOSES-aq scaffold set
+# that ships with the target repo. That is a FIXTURE, not a training set. The
+# released weights were trained for 19 epochs / 309,250 steps on the full
+# MOSES-aq corpus, distributed as HDF5 shards at Zenodo
+# doi:10.5281/zenodo.22675705. To reproduce the paper, fetch those shards and
+# switch to the HDF5 source:
+#
+#   data:
+#     source: "hdf5"
+#     hdf5_data_dir: /path/to/moses_aq_hdf5_shards
+#
+# Both sources funnel into the identical HeteroDataset.process_item, so nothing
+# else changes.
+#
+# THROUGHPUT
+# ----------
+# Every item does Poisson-disk surface sampling (open3d) and pharmacophore
+# extraction (shepherd_score) on the fly rather than reading them from disk, so
+# the data loader, not the GPU, is usually the bottleneck. num_workers is 0
+# because open3d initialises thread locks that cannot be pickled under `spawn`
+# multiprocessing -- upstream hits the same constraint and documents it at
+# datasets.py:13. Raise it only with a fork start method.
+#
+# KNOWN LIMITATIONS BAKED INTO THESE DEFAULTS
+# -------------------------------------------
+# * The x2 (shape-only) channel is NOT trained: `dataset.compute_x2: false` and
+#   `explicit_diffusion_variables: [x1, x3, x4]`, matching the release. Shape
+#   still enters indirectly through the x3 surface points. Turning x2 on means
+#   training it from scratch -- no weights for it were ever published.
+# * Property CFG is inert with the released weights (no `*prop*` tensors exist
+#   in the state_dict). Training from scratch would be required.
+# * compile_encoder stays true. torch.compile inserts an `_orig_mod` segment
+#   into the state-dict keys, so flipping it off makes every pretrained tensor
+#   silently fail to load (cli/generate.py loads with strict=False).
+defaults:
+  - data: shepherd2_dataset
+  - tasks: diffusion_shepherd2
+  - logger: default
+  - trainer: default
+  - engine: lightning
+  - hydra: default
+  - _self_
+
+name: "shepherd2_mosesaq"
+tags: ["shepherd2", "edm", "interaction-profile", "mosesaq"]
+seed: 42
+
+# The task's predict/target return empty tensors by design (generation is
+# driven by `MolCraftDiff generate`), so there is nothing for an in-training
+# generative pass to score.
+generative_analysis: false
+
+data:
+  source: "pkl"
+  pkl_files:
+    - "docs/model_integrations/shepherd2/data/moses_aq/moses_test_scaffold_molblock_charges.pkl"
+  # upstream's own per-GPU batch size (model_params.training.batch_size)
+  batch_size: 24
+  num_workers: 0
+  train_ratio: 0.9
+
+trainer:
+  # Upstream ran 19 epochs over the full corpus at an effective batch of 96
+  # (24 x 2 grad-accum x 2 GPUs). 200 is the platform default and is a
+  # placeholder here: pick it against YOUR dataset size, and note that on the
+  # 100-molecule fixture above almost any epoch count overfits immediately.
+  num_epochs: 200
+  validation_interval: 1
+
+  # --- all from INTEGRATION_PLAN.md "Hyperparameter Provenance" ---
+  optimizer_choice: "adam"      # lightning_module.py:166-170
+  lr: 1.0e-03                   # training.lr
+  betas: [0.9, 0.999]
+  grad_clip_value: 5.0          # training.gradient_clip_val
+  gradient_clip_mode: "norm"
+  # Upstream decays exponentially from lr to min_lr=3e-4 over lr_steps=100000
+  # after a 10000-step cosine warmup (lightning_module.py:172-173). The
+  # platform's scheduler menu has no exact equivalent, so this is cosine
+  # annealing to the same floor -- a STATED deviation in schedule SHAPE, not in
+  # endpoints. For a faithful reproduction, drive training through upstream's
+  # own configure_optimizers instead.
+  scheduler: cosineannealing
+  scheduler_kwargs:
+    T_max: ${trainer.num_epochs}
+    eta_min: 3.0e-04            # training.min_lr
+
+  # EMA is off in the released checkpoint (training.ema.enabled: false),
+  # despite base.yaml saying true. The checkpoint wins.
+  ema_decay: 0.0
+
+  precision: 32
+  output_path: "logs/shepherd2_mosesaq"

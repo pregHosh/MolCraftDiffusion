@@ -1780,6 +1780,20 @@ class PharmacophoreConditionGenerator:
             if os.path.exists(xyz_path):
                 _render_xyz_figure(xyz_path)
 
+    def _save_outputs(self, structures: list, idx_offset: int) -> None:
+        """Write one batch of generated structures.
+
+        Subclasses override this to emit model-specific channels (e.g. generated
+        bond orders, formal charges, SDF molecules or sampling trajectories)
+        without reimplementing :meth:`run`. The default writes exactly what
+        ``run()`` has always written.
+        """
+        from MolecularDiffusion.utils.geom_utils import save_shepherd_outputs
+
+        save_shepherd_outputs(
+            self.output_path, structures, idx_offset=idx_offset, save_modalities=self.save_modalities
+        )
+
     def _load_reference(self, path: str, mol_idx: int) -> dict:
         """
         Load a reference molecule from a .pkl or .sdf file and extract all
@@ -1894,7 +1908,6 @@ class PharmacophoreConditionGenerator:
         return atom_inds_to_inpaint, exit_vector_atom_inds
 
     def run(self):
-        from MolecularDiffusion.utils.geom_utils import save_shepherd_outputs
         torch.manual_seed(self.seed)
         os.makedirs(self.output_path, exist_ok=True)
 
@@ -1909,7 +1922,7 @@ class PharmacophoreConditionGenerator:
                 bs = self.num_generate % self.batch_size
             try:
                 structures = self._generate_batch(bs)
-                save_shepherd_outputs(self.output_path, structures, idx_offset=idx_offset, save_modalities=self.save_modalities)
+                self._save_outputs(structures, idx_offset)
                 self._render_batch_xyz_figures(idx_offset, len(structures))
                 idx_offset += len(structures)
             except Exception as e:

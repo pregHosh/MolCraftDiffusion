@@ -1,0 +1,65 @@
+# ShEPhERD-2 generation (permanent).
+#
+# A per-model interference config rather than a bundled one: the shared
+# gen_unconditional.yaml / gen_pocket.yaml carry neither the v2 EDM sampler
+# knobs (early_stop_edm, sigma_max/min, rho, use_stochastic, S_churn, S_noise,
+# shepherd_pred) nor the v2 output channels (write_bonds / write_sdf /
+# xtb_optimize / store_trajectories), and the five bundled pharm_*.yaml target
+# the ShEPhERD-v1 generator whose sampler takes a discrete timestep. The five
+# pharm_*.yaml are deliberately left untouched so v1 keeps working.
+#
+# Pharmacophore prioritisation: condition on the reference profile but tell the
+# sampler which pharmacophores matter most. pharm_masks is passed through as
+# upstream's pharmacophore_prioritization. Upstream ships a ready-made
+# selection at data/moses_aq/interaction_pharm_prioritization.json.
+_target_: MolecularDiffusion.modules.tasks.shepherd2_generator.Shepherd2Generator
+task_type: pharmacophore_priority
+
+reference_mol: docs/model_integrations/shepherd2/data/moses_aq/moses_test_scaffold_molblock_charges.pkl
+mol_idx: 0
+condition_modalities: all
+condition_com: origin
+pharm_masks: null         # e.g. [0, 2, 5] -- indices of the prioritised pharmacophores
+
+num_generate: 10
+batch_size: 2
+N_x1: [25, 45]
+N_x4: 0                   # see distributions_path note below -- the profile's count wins
+
+# N_x4 = 0 does NOT mean "auto" to the shared seam: PharmacophoreConditionGenerator
+# .__init__ (tasks_generate.py:1733-1741) hard-raises
+#   ValueError: distributions_path must be set when N_x4=0
+# the moment it sees 0 with no distributions file -- it raises BEFORE any
+# conditioned code runs, so without these two keys this config cannot even be
+# constructed. They exist purely to satisfy that constructor check: on the
+# conditioned path the value is then overridden by the reference profile's own pharmacophore count
+# (profile.n_pharms, shepherd2_generator.py:418), so
+# the empirical P(N_x4|N_x1) table below is loaded and never consulted.
+# distributions_key MUST be moses_aq. atom_pharm_count.npz holds two (100,100)
+# arrays, `gdb` and `moses_aq`; the seam's default is `gdb`, which is the
+# ShEPhERD-v1 GDB-17 table and the wrong statistics for these MOSES-aq weights.
+distributions_path: docs/model_integrations/shepherd2/data/distributions/atom_pharm_count.npz
+distributions_key: moses_aq
+
+num_surf_points: 75
+probe_radius: 0.6
+xtb_profile_optimize: false
+solvent: water
+
+num_steps: 400
+early_stop_edm: 0.9
+sigma_max: 3.0
+sigma_min: 0.001
+rho: 7.0
+shepherd_pred: true
+
+save_modalities: true
+write_bonds: true
+write_sdf: true
+xtb_optimize: true
+xtb_timeout: 60
+save_xyzrender_figures: false
+
+seed: 42
+verbose: true
+output_path: generated_shepherd2_pharm_priority
