@@ -144,7 +144,8 @@ class Shepherd2Generative(Task, core.Configurable):
         """Return the ShEPhERD-2 ``params`` dict, checkpoint taking precedence."""
         if checkpoint_path:
             logger.info("Reading ShEPhERD-2 params from checkpoint: %s", checkpoint_path)
-            ckpt = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+            # ponytail: weights_only=True; fall back needs a trusted ckpt, so fail loudly instead
+            ckpt = torch.load(checkpoint_path, map_location="cpu", weights_only=True)
             return ckpt["hyper_parameters"]["params"]
 
         if model_params is None:
