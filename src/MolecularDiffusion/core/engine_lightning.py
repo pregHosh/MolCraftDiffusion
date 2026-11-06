@@ -179,7 +179,10 @@ class EngineLightning(pl.LightningModule, core.Configurable):
                 ema.load_state_dict(pending_state, strict=False)
                 logger.info("Loaded EMA model state from checkpoint")
 
-            self.ema_model = ema  # Assign via property setter
+            # Not `self.ema_model = ema`: nn.Module.__setattr__ registers Module values itself and never
+            # reaches the property setter, so _ema_models stayed empty (EMA never updated or saved, and a
+            # frozen init copy rode along in state_dict as ema_model.*).
+            self._ema_models.append(ema)
             self._ema_helper = EMA(self.ema_decay)
 
     def on_validation_start(self):
