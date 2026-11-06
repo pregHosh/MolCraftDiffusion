@@ -1,0 +1,50 @@
+MolecularDiffusion.modules.models.shepherd2.inference.steps
+===========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.inference.steps
+
+.. autoapi-nested-parse::
+
+   Contains the process to extract generated samples from denoised states.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.inference.steps.VIRTUAL_ATOMIC_NUMBER
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.inference.steps.atomic_number_to_symbol_map
+   MolecularDiffusion.modules.models.shepherd2.inference.steps.atomic_numbers_for_atom_types
+
+
+Module Contents
+---------------
+
+.. py:function:: atomic_number_to_symbol_map(atom_types: Iterable) -> dict[int, str]
+
+   Map atomic number -> symbol using the vocab defined by
+   params['dataset']['x1']['atom_types'].
+
+   Virtual-node ``None`` and ``'Dummy'`` are omitted (they both use 0).
+
+
+.. py:function:: atomic_numbers_for_atom_types(atom_types: Iterable) -> torch.Tensor
+
+   Map a model's ``atom_types`` list to the atomic-number for decoding.
+
+   ``None`` and ``'Dummy'`` both become 0.
+
+
+.. py:data:: VIRTUAL_ATOMIC_NUMBER
+   :value: 0
+
+

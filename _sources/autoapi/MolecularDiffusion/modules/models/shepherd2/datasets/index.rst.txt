@@ -1,0 +1,256 @@
+MolecularDiffusion.modules.models.shepherd2.datasets
+====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.datasets
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.datasets.HeteroDataset
+
+
+Module Contents
+---------------
+
+.. py:class:: HeteroDataset(molblocks_and_charges, explicit_hydrogens=True, formal_charge_diffusion=False, x1=True, x2=True, x3=True, x4=True, recenter_x1=True, add_virtual_node_x1=True, remove_noise_COM_x1=True, atom_types_x1=[None, 'H', 'C', 'N', 'O', 'F', 'Cl', 'Br', 'I', 'S', 'P', 'Si'], charge_types_x1=[0, 1, 2, -1, -2], bond_types_x1=[None, 'SINGLE', 'DOUBLE', 'TRIPLE', 'AROMATIC'], scale_atom_features_x1=1.0, scale_bond_features_x1=1.0, recenter_x2=False, add_virtual_node_x2=True, remove_noise_COM_x2=False, num_points_x2=75, recenter_x3=False, add_virtual_node_x3=True, remove_noise_COM_x3=False, num_points_x3=75, scale_node_features_x3=1.0, recenter_x4=False, add_virtual_node_x4=True, remove_noise_COM_x4=False, max_node_types_x4=10, scale_node_features_x4=1.0, scale_vector_features_x4=1.0, multivectors=False, check_accessibility=False, probe_radius=0.6, include_dummy_atoms=False, include_dummy_pharm=False, scale_point_cloud=1.0, scaffold_conditioning=False, fixed_substructure_params_x1={}, fixed_substructure_params_x4={}, edm_schedule_dict={})
+
+   Bases: :py:obj:`torch_geometric.data.Dataset`
+
+
+   .. py:method:: get(k)
+
+
+   .. py:method:: get_x1_data(mol, atom_inds_to_fix=[], scaffold_task=False, sigma: numpy.ndarray | None = None)
+
+      Scaffold task is true if we are conditioning on a fixed substructure OR fixed pharmacophore (or both)
+
+
+
+   .. py:method:: get_x2_data(radii, atom_centers, num_points, recenter, add_virtual_node, remove_noise_COM, virtual_node_pos=None, sigma: numpy.ndarray | None = None)
+
+
+   .. py:method:: get_x3_data_electrostatics_only(charges, charge_centers, data, pos, virtual_node_mask, sigma: numpy.ndarray | None = None)
+
+
+   .. py:method:: get_x4_data(pharm_types, pos, direction, recenter, add_virtual_node, remove_noise_COM, virtual_node_pos=None, pharm_inds_to_fix=[], sigma: numpy.ndarray | None = None)
+
+
+   .. py:method:: getitem(k)
+
+
+   .. py:method:: len()
+
+
+   .. py:method:: process_item(mol_block, charges, k)
+
+
+   .. py:attribute:: add_virtual_node_x1
+      :value: True
+
+
+
+   .. py:attribute:: add_virtual_node_x2
+      :value: True
+
+
+
+   .. py:attribute:: add_virtual_node_x3
+      :value: True
+
+
+
+   .. py:attribute:: add_virtual_node_x4
+      :value: True
+
+
+
+   .. py:attribute:: atom_types_x1
+      :value: [None, 'H', 'C', 'N', 'O', 'F', 'Cl', 'Br', 'I', 'S', 'P', 'Si']
+
+
+
+   .. py:attribute:: bond_types_x1
+      :value: [None, 'SINGLE', 'DOUBLE', 'TRIPLE', 'AROMATIC']
+
+
+
+   .. py:attribute:: charge_types_x1
+
+
+   .. py:attribute:: check_accessibility
+      :value: False
+
+
+
+   .. py:attribute:: edm_noise_schedule_atom_one_hot
+
+
+   .. py:attribute:: edm_noise_schedule_bond
+
+
+   .. py:attribute:: edm_noise_schedule_pos
+
+
+   .. py:attribute:: edm_schedule_dict
+
+
+   .. py:attribute:: explicit_hydrogens
+      :value: True
+
+
+
+   .. py:attribute:: fixed_substructure_params_x1
+
+
+   .. py:attribute:: fixed_substructure_params_x4
+
+
+   .. py:attribute:: formal_charge_diffusion
+      :value: False
+
+
+
+   .. py:attribute:: include_dummy_atoms
+      :value: False
+
+
+
+   .. py:attribute:: include_dummy_pharm
+      :value: False
+
+
+
+   .. py:attribute:: length
+
+
+   .. py:attribute:: max_node_types_x4
+      :value: 10
+
+
+
+   .. py:attribute:: molblocks_and_charges
+
+
+   .. py:attribute:: multivectors
+      :value: False
+
+
+
+   .. py:attribute:: num_points_x2
+      :value: 75
+
+
+
+   .. py:attribute:: num_points_x3
+      :value: 75
+
+
+
+   .. py:attribute:: probe_radius
+      :value: 0.6
+
+
+
+   .. py:attribute:: recenter_x1
+      :value: True
+
+
+
+   .. py:attribute:: recenter_x2
+      :value: False
+
+
+
+   .. py:attribute:: recenter_x3
+      :value: False
+
+
+
+   .. py:attribute:: recenter_x4
+      :value: False
+
+
+
+   .. py:attribute:: remove_noise_COM_x1
+      :value: True
+
+
+
+   .. py:attribute:: remove_noise_COM_x2
+      :value: False
+
+
+
+   .. py:attribute:: remove_noise_COM_x3
+      :value: False
+
+
+
+   .. py:attribute:: remove_noise_COM_x4
+      :value: False
+
+
+
+   .. py:attribute:: scaffold_conditioning
+      :value: False
+
+
+
+   .. py:attribute:: scale_atom_features_x1
+      :value: 1.0
+
+
+
+   .. py:attribute:: scale_bond_features_x1
+      :value: 1.0
+
+
+
+   .. py:attribute:: scale_electrostatics
+      :value: 1.0
+
+
+
+   .. py:attribute:: scale_node_features_x3
+      :value: 1.0
+
+
+
+   .. py:attribute:: scale_node_features_x4
+      :value: 1.0
+
+
+
+   .. py:attribute:: scale_point_cloud
+      :value: 1.0
+
+
+
+   .. py:attribute:: scale_vector_features_x4
+      :value: 1.0
+
+
+
+   .. py:attribute:: x1
+      :value: True
+
+
+
+   .. py:attribute:: x2
+      :value: True
+
+
+
+   .. py:attribute:: x3
+      :value: True
+
+
+
+   .. py:attribute:: x4
+      :value: True
+
+
+

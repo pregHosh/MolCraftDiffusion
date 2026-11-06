@@ -1,0 +1,27 @@
+MolecularDiffusion.modules.models.shepherd2.inference
+=====================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.inference
+
+.. autoapi-nested-parse::
+
+   Shepherd Inference submodule.
+
+   Provides the main inference sampling function.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/inference/edm_sampler/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/inference/initialization/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/inference/noise/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/inference/sampler/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/inference/steps/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/inference/utils/index
+
+

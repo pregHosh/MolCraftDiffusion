@@ -1,0 +1,176 @@
+MolecularDiffusion.modules.models.shepherd2.data_utils.datamodule
+=================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.data_utils.datamodule
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.data_utils.datamodule.ConditionalSingleBatchDataset
+   MolecularDiffusion.modules.models.shepherd2.data_utils.datamodule.ResumableDataModule
+   MolecularDiffusion.modules.models.shepherd2.data_utils.datamodule.SingleBatchDataset
+   MolecularDiffusion.modules.models.shepherd2.data_utils.datamodule.StatefulPyGDataLoader
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.data_utils.datamodule.collate_fn
+
+
+Module Contents
+---------------
+
+.. py:class:: ConditionalSingleBatchDataset(total_batch_size, distributions)
+
+   Bases: :py:obj:`torch.utils.data.Dataset`
+
+
+   This is a dummy dataset for conditional validation.
+
+
+   .. py:attribute:: data
+
+
+   .. py:attribute:: distributions
+
+
+.. py:class:: ResumableDataModule(train_dataset, val_distributions=None, batch_size: int = 24, num_workers: int = 4, seed: int = 42, multiprocessing_spawn: bool = True, worker_init_fn=None, **dataloader_kwargs)
+
+   Bases: :py:obj:`pytorch_lightning.LightningDataModule`
+
+
+   A simple, robust, and resumable DataModule.
+
+   It leverages the Trainer's state and hooks, avoiding
+   redundant state tracking.
+
+   1. `state_dict` / `load_state_dict` save/load the generator for perfect mid-epoch resumption.
+   2. `on_train_epoch_start` re-seeds the generator using `self.trainer.current_epoch` for new,
+       reproducible shuffles on new epochs.
+
+
+   .. py:method:: load_state_dict(state_dict: dict)
+
+      Restore the generator state for seamless resumption.
+
+
+
+   .. py:method:: on_train_epoch_start()
+
+      Called by the Trainer at the start of a *new* epoch.
+      (NOT called when resuming mid-epoch).
+
+      This is the perfect place to re-seed our generator
+      for a new, reproducible shuffle.
+
+
+
+   .. py:method:: state_dict() -> dict
+
+      Save the *only* state we care about: the generator.
+      The Trainer handles epoch and batch_idx.
+
+
+
+   .. py:method:: train_dataloader()
+
+      Create the training DataLoader.
+
+
+
+   .. py:method:: val_dataloader()
+
+
+   .. py:attribute:: base_seed
+      :value: 42
+
+
+
+   .. py:attribute:: batch_size
+      :value: 24
+
+
+
+   .. py:attribute:: dataloader_kwargs
+
+
+   .. py:attribute:: generator
+
+
+   .. py:attribute:: multiprocessing_spawn
+      :value: True
+
+
+
+   .. py:attribute:: num_workers
+      :value: 4
+
+
+
+   .. py:attribute:: train_dataset
+
+
+   .. py:attribute:: val_distributions
+      :value: None
+
+
+
+   .. py:attribute:: worker_init_fn_custom
+      :value: None
+
+
+
+   .. py:attribute:: worker_seed
+      :value: 0
+
+
+
+.. py:class:: SingleBatchDataset(total_batch_size, distributions)
+
+   Bases: :py:obj:`torch.utils.data.Dataset`
+
+
+   This is a dummy dataset for validation.
+
+
+   .. py:attribute:: data
+
+
+   .. py:attribute:: distributions
+
+
+.. py:class:: StatefulPyGDataLoader(*args, **kwargs)
+
+   Bases: :py:obj:`torch_geometric.loader.DataLoader`
+
+
+   A simple wrapper for torch_geometric.loader.DataLoader
+   that explicitly implements state_dict and load_state_dict.
+
+   This is necessary to pass PyTorch Lightning's `_is_resumable`
+   check in single-GPU (non-DDP) mode. The Trainer will call
+   the DataModule's hooks, but it *checks* the loader object.
+
+
+   .. py:method:: load_state_dict(state_dict)
+
+      This will not actually be called by the Trainer (it calls
+      the DataModule's hook), but we implement it to
+      pass the `is_overridden` check.
+
+
+
+   .. py:method:: state_dict()
+
+      Advertise the generator's state as our own.
+
+
+
+.. py:function:: collate_fn(batch)
+

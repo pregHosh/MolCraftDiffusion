@@ -1,0 +1,245 @@
+MolecularDiffusion.modules.models.shepherd2.comp_inference.sampler
+==================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.comp_inference.sampler
+
+.. autoapi-nested-parse::
+
+   Compositional inference sampler with ShEPhERD-2.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.comp_inference.sampler.gen_edm_inpainting_dict
+   MolecularDiffusion.modules.models.shepherd2.comp_inference.sampler.gen_x1_edm_inpainting_dict
+   MolecularDiffusion.modules.models.shepherd2.comp_inference.sampler.generate_composition
+
+
+Module Contents
+---------------
+
+.. py:function:: gen_edm_inpainting_dict(model_pl: MolecularDiffusion.modules.models.shepherd2.lightning_module.LightningModule, N_x1: int, N_x4: int, batch_size: int, sigma_steps: numpy.ndarray, inpaint_x2_pos: bool = False, inpaint_x3_pos: bool = False, inpaint_x3_x: bool = False, pharmacophore_conditioning: bool = False, inpaint_x4_pos: bool = False, inpaint_x4_direction: bool = False, inpaint_x4_type: bool = False, stop_inpainting_at_frac_x2: float = 1.0, add_noise_to_inpainted_x2_pos: float = 0.0, stop_inpainting_at_frac_x3: float = 1.0, add_noise_to_inpainted_x3_pos: float = 0.0, add_noise_to_inpainted_x3_x: float = 0.0, stop_inpainting_at_frac_x4: float = 1.0, add_noise_to_inpainted_x4_pos: float = 0.0, add_noise_to_inpainted_x4_direction: float = 0.0, add_noise_to_inpainted_x4_type: float = 0.0, surface: numpy.ndarray = np.zeros((75, 3)), electrostatics: numpy.ndarray = np.zeros(75), pharm_types: numpy.ndarray = np.zeros(5, dtype=int), pharm_pos: numpy.ndarray = np.zeros((5, 3)), pharm_direction: numpy.ndarray = np.zeros((5, 3)), center_of_mass: numpy.ndarray = np.zeros(3), **kwargs) -> dict
+
+   Build an EDM inpainting dict for surface / ESP / pharmacophore conditioning.
+
+   Trajectories are step-indexed (0..num_steps) rather than time-indexed,
+   and the stop threshold is expressed as a fraction of num_steps.
+
+   :param model_pl:
+   :type model_pl: LightningModule
+   :param N_x1: Number of atoms / pharmacophores to generate.
+   :type N_x1: int
+   :param N_x4: Number of atoms / pharmacophores to generate.
+   :type N_x4: int
+   :param batch_size:
+   :type batch_size: int
+   :param sigma_steps: EDM sigma schedule (length num_steps + 1) used to step-index trajectories.
+   :type sigma_steps: np.ndarray
+   :param inpaint_x2_pos: Note that x2 is implicitly modeled via x3.
+   :type inpaint_x2_pos: bool (default=False) Toggle inpainting.
+   :param inpaint_x3_pos:
+   :type inpaint_x3_pos: bool (default=False)
+   :param inpaint_x3_x:
+   :type inpaint_x3_x: bool (default=False)
+   :param pharmacophore_conditioning:
+   :type pharmacophore_conditioning: bool (default=False)
+   :param inpaint_x4_pos:
+   :type inpaint_x4_pos: bool (default=False)
+   :param inpaint_x4_direction:
+   :type inpaint_x4_direction: bool (default=False)
+   :param inpaint_x4_type:
+   :type inpaint_x4_type: bool (default=False)
+   :param stop_inpainting_at_frac_x2: Progress fraction at which to stop inpainting (1.0 = data / end of
+                                      denoising; 0.0 = prior / start). Same convention as ``early_stop_edm``.
+   :type stop_inpainting_at_frac_x2: float (default=1.0)
+   :param add_noise_to_inpainted_x2_pos: Scale of noise to add to inpainted values.
+   :type add_noise_to_inpainted_x2_pos: float (default=0.0)
+   :param stop_inpainting_at_frac_x3:
+   :type stop_inpainting_at_frac_x3: float (default=1.0)
+   :param add_noise_to_inpainted_x3_pos:
+   :type add_noise_to_inpainted_x3_pos: float (default=0.0)
+   :param add_noise_to_inpainted_x3_x:
+   :type add_noise_to_inpainted_x3_x: float (default=0.0)
+   :param stop_inpainting_at_frac_x4:
+   :type stop_inpainting_at_frac_x4: float (default=1.0)
+   :param add_noise_to_inpainted_x4_pos:
+   :type add_noise_to_inpainted_x4_pos: float (default=0.0)
+   :param add_noise_to_inpainted_x4_direction:
+   :type add_noise_to_inpainted_x4_direction: float (default=0.0)
+   :param add_noise_to_inpainted_x4_type:
+   :type add_noise_to_inpainted_x4_type: float (default=0.0)
+   :param \*these are the inpainting targets*:
+   :param surface:
+   :type surface: np.ndarray (75, 3) (default=np.zeros((75, 3))) Surface point coordinates.
+   :param electrostatics:
+   :type electrostatics: np.ndarray (75,) (default=np.zeros(75)) Electrostatics at each surface point.
+   :param pharm_types:
+   :type pharm_types: np.ndarray (<=N_x4,) (default=np.zeros(5, dtype=int)) Pharmacophore types.
+   :param pharm_pos: coordinates.
+   :type pharm_pos: np.ndarray (<=N_x4, 3) (default=np.zeros((5, 3))) Pharmacophore positions as
+   :param pharm_direction: as unit vectors.
+   :type pharm_direction: np.ndarray (<=N_x4, 3) (default=np.zeros((5, 3))) Pharmacophore directions
+   :param center_of_mass: not already centered.
+   :type center_of_mass: np.ndarray (3,) (default=np.zeros(3)) Must be supplied if target molecule is
+
+   :returns: **dict**
+   :rtype: EDM inpainting dict consumed by generate_composition / _inference_step_comp_edm.
+
+
+.. py:function:: gen_x1_edm_inpainting_dict(model_pl: MolecularDiffusion.modules.models.shepherd2.lightning_module.LightningModule, N_x1: int, N_x4: int, batch_size: int, sigma_steps: numpy.ndarray, inpaint_x1_pos: bool = False, inpaint_x1_x: bool = False, inpaint_x1_bonds: bool = False, inpaint_x1_formal_charge: bool = False, scaffold_conditioning: bool = False, stop_inpainting_at_frac_x1_pos: float = 1.0, stop_inpainting_at_frac_x1_x: float = 1.0, stop_inpainting_at_frac_x1_bonds: float = 1.0, mol: rdkit.Chem.Mol | None = None, atom_inds_to_inpaint: list | None = None, atom_types: list | None = None, atom_pos: numpy.ndarray | None = None, atom_formal_charges: numpy.ndarray | None = None, center_of_mass: numpy.ndarray | None = np.zeros(3), **kwargs) -> dict
+
+   Build an EDM inpainting dict for atom (x1) conditioning.
+
+   Equivalent to gen_x1_inpainting_dict in comp_inference/sampler.py but
+   uses forward_trajectory_edm (step-indexed) instead of forward_trajectory.
+
+   :param model_pl:
+   :type model_pl: LightningModule
+   :param N_x1: The number of atoms to diffuse. Must be >= the number of atoms in the `mol`.
+   :type N_x1: int
+   :param N_x4: The number of pharmacophores to diffuse.
+   :type N_x4: int
+   :param batch_size:
+   :type batch_size: int
+   :param sigma_steps: EDM sigma schedule (length num_steps + 1) used to step-index trajectories.
+   :type sigma_steps: np.ndarray
+   :param inpaint_x1_pos:
+   :type inpaint_x1_pos: bool (default=False)
+   :param inpaint_x1_x:
+   :type inpaint_x1_x: bool (default=False)
+   :param inpaint_x1_bonds:
+   :type inpaint_x1_bonds: bool (default=False)
+   :param inpaint_x1_formal_charge:
+   :type inpaint_x1_formal_charge: bool (default=False)
+   :param scaffold_conditioning: Enable scaffold-conditioned generation (distinct from inpainting).
+                                 When True:
+                                 - Scaffold atoms have step=0 and use learned scaffold time embeddings
+                                 - Scaffold positions are kept fixed (no noise added)
+                                 - COM is NOT removed from predicted noise (scaffold is at origin)
+                                 Requires `atom_pos` and `atom_inds_to_inpaint` to specify scaffold atoms.
+                                 Model must have been trained with `scaffold_conditioning=True`.
+   :type scaffold_conditioning: bool (default=False)
+   :param stop_inpainting_at_frac_x1_pos: Progress fraction at which to stop inpainting atom positions
+                                          (1.0 = data / end of denoising; 0.0 = prior / start).
+   :type stop_inpainting_at_frac_x1_pos: float (default=1.0)
+   :param stop_inpainting_at_frac_x1_x: Progress fraction at which to stop inpainting atom types.
+   :type stop_inpainting_at_frac_x1_x: float (default=1.0)
+   :param stop_inpainting_at_frac_x1_bonds: Progress fraction at which to stop inpainting bond types.
+   :type stop_inpainting_at_frac_x1_bonds: float (default=1.0)
+   :param \*these are the inpainting targets*:
+   :param mol: Target molecule specifically for *atom*-inpainting.
+               If provided, `atom_inds_to_inpaint` *must* also be provided.
+               This is required for *bond*-inpainting.
+               If `atom_pos` and `atom_types` are also provided,
+               they will override the atom types and positions extracted from `mol`.
+   :type mol: Optional[Chem.Mol] (default=None)
+   :param atom_inds_to_inpaint: Indices of atoms to inpaint.
+                                This is required for *bond*-inpainting.
+   :type atom_inds_to_inpaint: Optional[list[int]] (default=None)
+   :param atom_types: Atom elements expected as a list of atomic numbers.
+                      If provided alongside `mol`, `atom_inds_to_inpaint`,
+                      it will override the atom types extracted from `mol`.
+   :type atom_types: Optional[list[int]] (default=None)
+   :param atom_pos: If provided alongside `mol`, `atom_inds_to_inpaint`,
+                    it will override the atom positions extracted from `mol`.
+   :type atom_pos: Optional[np.ndarray] (default=None) Atom positions as coordinates.
+   :param atom_formal_charges: If provided alongside `mol`, `atom_inds_to_inpaint`,
+                               it will override the atom formal charges extracted from `mol`.
+   :type atom_formal_charges: Optional[np.ndarray] (default=None) Atom formal charges.
+   :param center_of_mass: Coordinate-frame handling, mirroring `condition_center_of_mass` on
+                          `shepherd.inference.sampler.generate`. `np.zeros(3)` ('origin') uses
+                          `atom_pos` as given. `None` ('auto') is only meaningful with
+                          `scaffold_conditioning=True`: the scaffold COM is derived from
+                          `atom_pos` and used to center it (recorded in the returned dict's
+                          `recenter_offset` so the caller can shift outputs back); with no
+                          scaffold to center on, it falls back to `np.zeros(3)`. An explicit
+                          length-3 array subtracts that offset instead.
+   :type center_of_mass: np.ndarray (3,) | None (default=np.zeros(3))
+
+   :returns: **dict** -- Includes `recenter_offset` (`np.ndarray (3,) | None`): the scaffold-COM
+             offset applied when `center_of_mass=None` ('auto'), or `None` if no
+             auto-centering occurred (add this back to generated positions to
+             restore the input reference frame).
+   :rtype: EDM inpainting dict consumed by generate_composition / _inference_step_comp_edm.
+
+
+.. py:function:: generate_composition(model_pl: MolecularDiffusion.modules.models.shepherd2.lightning_module.LightningModule, N_x1: int, N_x4: int, batch_size: int, *, profiles: list[MolecularDiffusion.modules.models.shepherd2.interaction_profile.InteractionProfile], weights_conditions: numpy.ndarray, composition_mode: str = 'default', atom_condition: MolecularDiffusion.modules.models.shepherd2.interaction_profile.InteractionProfile | MolecularDiffusion.modules.models.shepherd2.interaction_profile.ConditionAtoms | None = None, condition_modalities: str | set[str] = 'all', pharmacophore_conditioning: bool = False, scaffold_conditioning: bool = False, condition_center_of_mass: Literal["origin", "auto"] | np.ndarray = 'origin', inpaint: MolecularDiffusion.modules.models.shepherd2.interaction_profile.InpaintAdvancedOptions | None = None, num_steps: int = 400, use_stochastic: bool = False, S_churn: float = 40.0, S_noise: float = 1.0, shepherd_pred: bool = True, early_stop_edm: int | float = -1, sigma_max: float | None = 3.0, sigma_min: float | None = 0.001, rho: float | None = 7.0, store_trajectories: bool = False, verbose: bool = True, alignment_start_frac: float = 0.0, alignment_interval: int = 10, alignment_mode: str = 'so3', alignment_ema_alpha: float = 1.0) -> list[MolecularDiffusion.modules.models.shepherd2.generated_sample.GeneratedSample]
+
+   Compositional EDM generation mirroring gen_composition3 from comp_inference.
+
+   Multiple interaction-profile conditions are composed via weighted combination
+   of EDM D_theta predictions, then denoised with an EDM ODE step.
+
+   :param model_pl:
+   :type model_pl: LightningModule
+   :param N_x1: Number of atoms / pharmacophores to generate.
+   :type N_x1: int
+   :param N_x4: Number of atoms / pharmacophores to generate.
+   :type N_x4: int
+   :param batch_size:
+   :type batch_size: int
+   :param profiles: One condition per entry, composed via weighted combination of EDM
+                    D_theta predictions, translated via
+                    ``comp_inference.utils.condition_kwargs_from_profile`` (same objects
+                    used by ``shepherd.inference.sampler.generate``).
+   :type profiles: list[InteractionProfile]
+   :param weights_conditions: Per-condition weights (excluding the implicit unconditional component).
+   :type weights_conditions: np.ndarray
+   :param composition_mode: "default" prepends an unconditional condition (weight = 1 - sum(weights)).
+                            "conditional" uses only the supplied conditions.
+   :type composition_mode: str
+   :param atom_condition: x1 conditioning target (scaffold and/or x1 inpainting), translated via
+                          ``comp_inference.utils.atom_condition_kwargs_from_profile``. ``None``
+                          means no atom conditioning.
+   :type atom_condition: InteractionProfile | ConditionAtoms, optional
+   :param condition_modalities: Applied to every entry of ``profiles``.
+   :type condition_modalities: see InteractionProfile.to_generate_kwargs.
+   :param pharmacophore_conditioning: As in ``generate()`` — not derived from ``profiles``/``atom_condition``
+                                      themselves.
+   :type pharmacophore_conditioning: bool (default=False)
+   :param scaffold_conditioning: As in ``generate()`` — not derived from ``profiles``/``atom_condition``
+                                 themselves.
+   :type scaffold_conditioning: bool (default=False)
+   :param condition_center_of_mass: Coordinate-frame handling for ``atom_condition``, mirroring
+                                    ``generate()``'s argument of the same name. ``'origin'`` uses
+                                    ``atom_condition``'s coordinates as given. ``'auto'`` -- only
+                                    meaningful with ``scaffold_conditioning=True`` -- centers the scaffold
+                                    on its own COM for denoising and shifts the output back to the input
+                                    frame afterward. A length-3 array subtracts that explicit offset
+                                    instead. Ignored if ``atom_condition`` is None. The single shared
+                                    offset this resolves to is also applied to every entry of
+                                    ``profiles`` (surface/ESP/pharmacophore conditioning share one frame
+                                    with the atom condition; see ``gen_x1_edm_inpainting_dict``).
+                                    We suggest using 'origin' for most cases.
+   :type condition_center_of_mass: {'origin', 'auto'} | np.ndarray (3,), default='origin'
+   :param inpaint: Overrides applied to every profile/atom_condition, as in ``generate()``.
+   :type inpaint: InpaintAdvancedOptions, optional
+   :param num_steps: Number of EDM denoising steps.
+   :type num_steps: int
+   :param early_stop_edm: Truncate the sampling loop. ``-1`` runs all steps; an ``int`` is an
+                          absolute step count; a ``float`` in ``[0, 1]`` is a fraction of
+                          ``num_steps``.
+   :type early_stop_edm: int | float
+   :param use_stochastic: If True, adds churn noise per EDM Algorithm 2.
+   :type use_stochastic: bool
+   :param S_churn: Churn parameters for stochastic sampling.
+   :type S_churn: float
+   :param S_noise: Churn parameters for stochastic sampling.
+   :type S_noise: float
+   :param sigma_max: Override the EDM schedule from params['edm'].
+   :type sigma_max: float, optional
+   :param sigma_min: Override the EDM schedule from params['edm'].
+   :type sigma_min: float, optional
+   :param rho: Override the EDM schedule from params['edm'].
+   :type rho: float, optional
+   :param store_trajectories:
+   :type store_trajectories: bool
+
+   :returns: **list[dict]**
+   :rtype: generated structures, one per batch element.
+
+

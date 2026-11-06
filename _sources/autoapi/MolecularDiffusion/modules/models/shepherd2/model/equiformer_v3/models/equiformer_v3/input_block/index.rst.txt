@@ -1,0 +1,88 @@
+MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.input_block
+================================================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.input_block
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.input_block.EdgeDegreeEmbedding
+
+
+Module Contents
+---------------
+
+.. py:class:: EdgeDegreeEmbedding(input_sphere_channels: int, num_channels: int, lmax: int, mmax: int, so3_rotation: MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.so3.SO3Rotation, edge_channels_list: list[int], use_atom_edge_embedding: bool, rescale_factor: float)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Added input_sphere_channels to the arguments as we do in ShEPhERDv1.
+       Args:
+           input_sphere_channels (int): Number of input spherical channels (for nodes) # not in original eqV3
+           num_channels (int):             Number of spherical channels
+
+           lmax (int):                     Maximum degree (l)
+           mmax (int):                     Maximum order (m)
+
+           so3_rotation (SO3Rotation):     Class to calculate Wigner-D matrices and rotate embeddings
+
+           [deleted] max_num_elements (int):         Maximum number of atomic numbers
+           edge_channels_list (list:int):  List of sizes of invariant edge embedding. For example, [input_channels, hidden_channels, hidden_channels].
+                                           The last one will be used as hidden size when `use_atom_edge_embedding` is `True`.
+           use_atom_edge_embedding (bool): Whether to use atomic embedding along with relative distance for edge scalar features
+
+           rescale_factor (float):         Rescale the sum aggregation
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: forward(x_input: torch.Tensor, edge_distance, edge_index, edge_envelope_weight=None)
+
+      if self.use_atom_edge_embedding:
+          source_element = atomic_numbers[edge_index[0]]  # Source atom atomic number
+          target_element = atomic_numbers[edge_index[1]]  # Target atom atomic number
+          source_embedding = self.source_embedding(source_element)
+          target_embedding = self.target_embedding(target_element)
+          x_edge = torch.cat((edge_distance, source_embedding, target_embedding), dim=1)
+
+
+
+   .. py:attribute:: edge_channels_list
+
+
+   .. py:attribute:: input_sphere_channels
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mmax
+
+
+   .. py:attribute:: num_channels
+
+
+   .. py:attribute:: rad_func
+
+
+   .. py:attribute:: rescale_factor
+
+
+   .. py:attribute:: so3_rotation
+
+
+   .. py:attribute:: use_atom_edge_embedding
+
+      if self.use_atom_edge_embedding:
+      self.source_embedding = torch.nn.Embedding(self.max_num_elements, self.edge_channels_list[-1])
+      self.target_embedding = torch.nn.Embedding(self.max_num_elements, self.edge_channels_list[-1])
+      torch.nn.init.uniform_(self.source_embedding.weight.data, -0.001, 0.001)
+      torch.nn.init.uniform_(self.target_embedding.weight.data, -0.001, 0.001)
+      self.edge_channels_list[0] = self.edge_channels_list[0] + 2 * self.edge_channels_list[-1]
+
+

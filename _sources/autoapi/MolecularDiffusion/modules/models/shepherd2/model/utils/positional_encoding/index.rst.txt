@@ -1,0 +1,41 @@
+MolecularDiffusion.modules.models.shepherd2.model.utils.positional_encoding
+===========================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.model.utils.positional_encoding
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.utils.positional_encoding.fourier_embedding
+   MolecularDiffusion.modules.models.shepherd2.model.utils.positional_encoding.positional_encoding
+
+
+Module Contents
+---------------
+
+.. py:function:: fourier_embedding(input: torch.Tensor)
+
+   Fourier embedding for sigma in EDM.
+
+   Assumes ``input`` is:
+   sigma * w + b where w, b ~ N(0, I_dim)
+
+   :param input: (B, dim) where B is the number of molecules in the batch and dim is the embedding dimension
+
+   :returns: fourier embedding of shape (B, dim)
+
+
+.. py:function:: positional_encoding(position, dim, device)
+
+   Positional encoding for uniform timesteps.
+
+   :param position: (B,) where B is the number of molecules in the batch
+   :param dim: int, the dimension of the position embeddings
+   :param device: device to store the position embeddings on
+
+   :returns: position embeddings of shape (B, dim)
+
+

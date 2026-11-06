@@ -1,0 +1,245 @@
+MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.so3
+========================================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.so3
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.so3.CoefficientMappingModule
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.so3.SO3Embedding
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.so3.SO3Grid
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.so3.SO3Linear
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.so3.SO3Rotation
+
+
+Module Contents
+---------------
+
+.. py:class:: CoefficientMappingModule(lmax, mmax, use_rotate_inv_rescale=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Helper module for coefficients used to reshape l <--> m and to get coefficients of specific degree or order
+
+   :param lmax: Maximum degree of the spherical harmonics
+   :type lmax: int
+   :param mmax: Maximum order of the spherical harmonics
+   :type mmax: int
+   :param use_rotate_inv_rescale: Whether to pre-compute inverse rotation rescale matrices
+   :type use_rotate_inv_rescale: bool
+
+
+   .. py:method:: coefficient_idx(lmax, mmax)
+
+
+   .. py:method:: complex_idx(m, lmax, m_complex, l_harmonic)
+
+      Add `m_complex` and `l_harmonic` to the input arguments
+      since we cannot use `self.m_complex`.
+
+
+
+   .. py:method:: get_rotate_inv_rescale(lmax, mmax)
+
+
+   .. py:method:: pre_compute_coefficient_idx()
+
+      Pre-compute the results of `coefficient_idx()` and access them with `prepare_coefficient_idx()`
+
+
+
+   .. py:method:: pre_compute_rotate_inv_rescale()
+
+
+   .. py:method:: prepare_coefficient_idx()
+
+      Construct a list of buffers
+
+
+
+   .. py:method:: prepare_rotate_inv_rescale()
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mmax
+
+
+   .. py:attribute:: use_rotate_inv_rescale
+      :value: False
+
+
+
+.. py:class:: SO3Embedding(lmax, num_channels, device, dtype)
+
+   1.  Helper functions for performing operations on irreps embedding
+   2.  Deprecated since we can infer the lmax and mmax from the shape of tensors.
+
+   :param lmax: Maximum degree of the spherical harmonics
+   :type lmax: int
+   :param num_channels: Number of channels
+   :type num_channels: int
+   :param device: Device of the output
+   :param dtype: type of the output tensors
+
+
+   .. py:method:: clone()
+
+
+   .. py:method:: expand_edge(edge_index)
+
+
+   .. py:method:: set_embedding(embedding)
+
+
+   .. py:method:: set_lmax_mmax(lmax, mmax)
+
+
+   .. py:attribute:: device
+
+
+   .. py:attribute:: dtype
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: num_channels
+
+
+   .. py:attribute:: num_m_coefficients
+
+
+.. py:class:: SO3Grid(lmax, mmax, normalization='component', resolution_list=None, use_m_primary=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Helper functions for grid representation of the irreps
+
+   :param lmax: Maximum degree of the spherical harmonics
+   :type lmax: int
+   :param mmax: Maximum order of the spherical harmonics
+   :type mmax: int
+   :param normalization: Default: 'component'
+                         How grid samples are normalized.
+   :type normalization: str
+   :param resolution_list (list: int):
+                                 Default: None
+                                 List of grid resolutions corresponding to `lat_resolution` and `long_resolution`.
+                                 Set to `None` to use default resolutions.
+   :param use_m_primary: Default: False
+                         Whether to change the layout of m components.
+                         If `False`, the layout of m is (0), (-1, 0, +1), (-2, -1, 0, +1, +2), ...
+                         If `True`, the layout of m is (0, 0, ...), (1, 1, ...), ...
+                         The second one is used in SO(2) linear operations to avoid redundant
+                         matrix multiplications.
+   :type use_m_primary: bool
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: from_grid(grid)
+
+
+   .. py:method:: get_from_grid_mat()
+
+
+   .. py:method:: get_to_grid_mat()
+
+
+   .. py:method:: to_grid(embedding)
+
+
+   .. py:attribute:: lat_resolution
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mmax
+
+
+   .. py:attribute:: use_m_primary
+      :value: False
+
+
+
+.. py:class:: SO3Linear(in_features, out_features, lmax, bias=True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   
+   1.  Use `torch.einsum` to prevent slicing and concatenation
+   2.  Need to specify some behaviors in `no_weight_decay` and weight initialization.
+
+
+   .. py:method:: forward(inputs)
+
+
+   .. py:attribute:: bias
+
+
+   .. py:attribute:: in_features
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: out_features
+
+
+   .. py:attribute:: weight
+
+
+.. py:class:: SO3Rotation(lmax, mmax, use_rotation_mask=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   1.  Helper functions for Wigner-D rotations
+   2.  We merge the rotation with the original `._m_primary()` so after rotation, the layout of orders
+       would be changed from (0, (-1, 0, +1), (-2, -1, 0, +1, +2) ...) to ((0, ...), (1, ...)).
+       This can skip one matrix multiplication.
+   3.  Similar to 2., we also merge the inverse rotation with `._l_primary()`.
+   4.  To stabilize gradient methods, in `_rotation_to_wigner_matrix()`, we set `use_rotation_mask` == True
+       so that we do not backpropogate rotation if y component of the unit vector of relative position is
+       very close to `_ROTATION_MASK_THRESHOLD`. This implementation is based on eSEN.
+
+   :param lmax: Maximum degree of irreps features
+   :type lmax: int
+   :param mmax: Maximum order of irreps features after rotation
+   :type mmax: int
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: rotate(inputs)
+
+
+   .. py:method:: rotate_inv(inputs)
+
+
+   .. py:method:: set_wigner(rot_mat3x3)
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mmax
+
+
+   .. py:attribute:: use_rotation_mask
+      :value: False
+
+
+

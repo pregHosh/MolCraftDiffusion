@@ -1,0 +1,202 @@
+MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.layer_norm
+===============================================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.layer_norm
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.layer_norm.EquivariantLayerNorm
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.layer_norm.EquivariantMergeLayerNorm
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.layer_norm.EquivariantSeparableLayerNorm
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.layer_norm.RMSNorm
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.layer_norm.get_normalization_layer
+
+
+Module Contents
+---------------
+
+.. py:class:: EquivariantLayerNorm(lmax, num_channels, eps=1e-05, affine=True, normalization='component')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(inputs)
+
+      1.   `inputs` shape: (num_nodes, (self.lmax + 1) ** 2, self.num_channels)
+
+
+
+   .. py:attribute:: affine
+      :value: True
+
+
+
+   .. py:attribute:: eps
+      :value: 1e-05
+
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: normalization
+      :value: 'component'
+
+
+
+   .. py:attribute:: num_channels
+
+
+.. py:class:: EquivariantMergeLayerNorm(lmax, num_channels, eps=1e-05, affine=True, normalization='component', std_balance_degrees=True, centering=True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   1.  Use `expand_index` to skip for loop during affine transformation.
+   2.  Different from `EquivariantSeparableLayerNorm`, we normalize over all degrees L >= 0.
+   3.  If `centering == False`, this becomes RMSNorm for all degrees.
+
+
+   .. py:method:: forward(inputs)
+
+      1.  `inputs` shape: (num_nodes, (self.lmax + 1) ** 2, self.num_channels)
+
+
+
+   .. py:attribute:: affine
+      :value: True
+
+
+
+   .. py:attribute:: centering
+      :value: True
+
+
+
+   .. py:attribute:: eps
+      :value: 1e-05
+
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: normalization
+      :value: 'component'
+
+
+
+   .. py:attribute:: num_channels
+
+
+   .. py:attribute:: std_balance_degrees
+      :value: True
+
+
+
+.. py:class:: EquivariantSeparableLayerNorm(lmax, num_channels, eps=1e-05, affine=True, normalization='component', std_balance_degrees=True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   1.  Use `expand_index` to skip for loop during affine transformation.
+
+
+   .. py:method:: forward(inputs)
+
+      1.  `inputs` shape: (num_nodes, (self.lmax + 1) ** 2, self.num_channels)
+
+
+
+   .. py:attribute:: affine
+      :value: True
+
+
+
+   .. py:attribute:: eps
+      :value: 1e-05
+
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: norm_l0
+
+
+   .. py:attribute:: normalization
+      :value: 'component'
+
+
+
+   .. py:attribute:: num_channels
+
+
+   .. py:attribute:: std_balance_degrees
+      :value: True
+
+
+
+.. py:class:: RMSNorm(num_channels: int, eps: float = 1e-05)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   1. Reference: https://github.com/meta-llama/llama/blob/1e8375848d3a3ebaccab83fd670b880864cf9409/llama/model.py#L34
+
+   Initialize the RMSNorm normalization layer.
+
+   :param dim: The dimension of the input tensor.
+   :type dim: int
+   :param eps: A small value added to the denominator for numerical stability. Default is 1e-6.
+   :type eps: float, optional
+
+   .. attribute:: eps
+
+      A small value added to the denominator for numerical stability.
+
+      :type: float
+
+   .. attribute:: weight
+
+      Learnable scaling parameter.
+
+      :type: nn.Parameter
+
+
+   .. py:method:: forward(x)
+
+      Forward pass through the RMSNorm layer.
+
+      :param x: The input tensor.
+      :type x: torch.Tensor
+
+      :returns: The output tensor after applying RMSNorm.
+      :rtype: torch.Tensor
+
+
+
+   .. py:attribute:: eps
+      :value: 1e-05
+
+
+
+   .. py:attribute:: num_channels
+
+
+   .. py:attribute:: weight
+
+
+.. py:function:: get_normalization_layer(norm_type, lmax, num_channels, eps=1e-05, affine=True, normalization='component')
+

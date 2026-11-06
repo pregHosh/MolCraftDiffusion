@@ -1,0 +1,81 @@
+MolecularDiffusion.modules.models.shepherd2.loader.model_loader
+===============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.loader.model_loader
+
+.. autoapi-nested-parse::
+
+   Model loader for ShEPhERD-2.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.loader.model_loader.clear_model_cache
+   MolecularDiffusion.modules.models.shepherd2.loader.model_loader.get_model_info
+   MolecularDiffusion.modules.models.shepherd2.loader.model_loader.load_model
+
+
+Module Contents
+---------------
+
+.. py:function:: clear_model_cache(model_type: str | None = None, cache_dir: str | None = None)
+
+   Clear cached model checkpoints.
+
+   :param model_type:
+   :type model_type: Specific model type to clear, or None to clear all
+   :param cache_dir:
+   :type cache_dir: Cache directory to clear from (None uses default HF cache)
+
+
+.. py:function:: get_model_info() -> dict
+
+   Get information about available ShEPhERD models.
+
+   :rtype: Dictionary mapping model types to their descriptions
+
+
+.. py:function:: load_model(model_type: Literal['mosesaq'] = 'mosesaq', local_checkpoint_path: str | None = None, cache_dir: str | None = None, force_download: bool = False, inference_only: bool = True, device: str | None = None) -> MolecularDiffusion.modules.models.shepherd2.shepherd_model.ShepherdModel
+
+   Load a ShEPhERD-2 model from Huggingface or a local checkpoint.
+
+   :param model_type:
+                      - 'mosesaq': trained on MOSES-aq dataset
+   :type model_type: Type of model to load
+   :param local_checkpoint_path:
+   :type local_checkpoint_path: Path to a local checkpoint file (bypasses HF download)
+   :param cache_dir:
+   :type cache_dir: Directory to cache downloaded checkpoints (None uses default HF cache)
+   :param force_download:
+   :type force_download: Whether to force download even if cached checkpoint exists
+   :param inference_only: from Huggingface; if False, download the full training-resume
+                          checkpoint with optimizer state
+   :type inference_only: If True (default), download the stripped inference checkpoint
+   :param device:
+   :type device: Device to load model on ('cuda', 'cpu', or None for auto-detection)
+
+   :returns: * *ShepherdModel wrapping the loaded LightningModule, ready for inference*
+             * (call `model.generate(...)`; all LightningModule attributes/methods remain
+             * accessible directly on the wrapper, e.g. `model.params`, `model.device`).
+
+   .. rubric:: Example
+
+   >>> # Load default MOSES-aq inference checkpoint
+   >>> model = load_model()
+   >>> from shepherd.interaction_profile import extract_interaction_profile
+   >>> ref_profile = extract_interaction_profile(mol)  # mol: RDKit Mol with 3D coords + explicit H
+   >>> samples = model.generate(
+   ...     batch_size=10, N_x1=profile.n_atoms, N_x4=profile.n_pharms, condition=ref_profile,
+   ... )
+
+   >>> # Load training-resume checkpoint
+   >>> model = load_model(inference_only=False)
+
+   >>> # Force download latest version
+   >>> model = load_model('mosesaq', force_download=True)
+
+

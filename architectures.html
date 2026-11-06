@@ -316,6 +316,7 @@
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/pmdm_data/index.html">MolecularDiffusion.data.component.pmdm_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/pointcloud/index.html">MolecularDiffusion.data.component.pointcloud</a></li>
 <li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/reaction_data/index.html">MolecularDiffusion.data.component.reaction_data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autoapi/MolecularDiffusion/data/component/shepherd2/index.html">MolecularDiffusion.data.component.shepherd2</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/MolecularDiffusion/data/dataloader/index.html">MolecularDiffusion.data.dataloader</a></li>
@@ -661,10 +662,10 @@ the bonds are thrown away.</p>
 <h2>3. Conditional and structure-aware generation<a class="headerlink" href="#conditional-and-structure-aware-generation" title="Link to this heading">¶</a></h2>
 <p>Generation steered by an external input — a shape, a pocket, a set of fragments,
 a pharmacophore. These need <strong>paired</strong> data (the condition alongside the
-molecule); a plain molecule dataset is not enough. Except for ShEPhERD, none
-of them generate bonds — you get atoms in space and the chemistry is perceived
-afterwards. Most are heavy-atom only; KGDiff, PMDM and Apo2Mol also place
-hydrogens.</p>
+molecule); a plain molecule dataset is not enough. Except for the two ShEPhERD
+rows, none of them generate bonds — you get atoms in space and the chemistry is
+perceived afterwards. Most are heavy-atom only; KGDiff, PMDM and Apo2Mol also
+place hydrogens.</p>
 <p>Synthesizable generation can also be steered by a pharmacophore — see section 2.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
@@ -729,7 +730,12 @@ hydrogens.</p>
 <tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">pharmacophore.yaml</span></code></p></td>
 <td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_pharmacophore</span></code></p></td>
 <td class="text-left"><p><strong>Pharmacophore</strong> points, electrostatics, shape</p></td>
-<td class="text-left"><p>ShEPhERD — ligand-based design when you have a reference molecule but <strong>no protein structure</strong>. Reach for it over DiffSMol above when you need electrostatics and pharmacophores as well as shape. Shape matching needs to be trained in; the shipped setup covers pharmacophores and electrostatics. It is also the only model in this table that generates bonds.</p></td>
+<td class="text-left"><p>ShEPhERD — ligand-based design when you have a reference molecule but <strong>no protein structure</strong>. Reach for it over DiffSMol above when you need electrostatics and pharmacophores as well as shape. Shape matching needs to be trained in; the shipped setup covers pharmacophores and electrostatics. Along with ShEPhERD-2 below, it is one of only two models in this table that generate bonds.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_shepherd2.yaml</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">diffusion_shepherd2</span></code></p></td>
+<td class="text-left"><p><strong>Pharmacophore</strong> points, electrostatics, surface</p></td>
+<td class="text-left"><p>ShEPhERD-2 — the one for <strong>arguing with a reference molecule instead of copying it</strong>: mark some pharmacophores as must-haves, pin a scaffold and redesign around it, or ask for a molecule that matches two references at once (or matches one while avoiding the other). Lead-like and drug-sized with explicit hydrogens where ShEPhERD above is small-fragment, and it draws the bonds for you — but the shape channel was never trained, so pure shape matching still belongs to ShEPhERD or DiffSMol.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1100,6 +1106,12 @@ Transformer for Scaling to Higher-Degree Representations.</em> ICLR 2024. <a cla
 <li><p><strong>ShEPhERD</strong> — Adams, Abeywardane, Fromer &amp; Coley. <em>ShEPhERD: Diffusing shape,
 electrostatics, and pharmacophores for bioisosteric drug design.</em> ICLR 2025.
 <a class="reference external" href="https://arxiv.org/abs/2411.04130">arXiv:2411.04130</a></p></li>
+<li><p><strong>ShEPhERD-2</strong> — Abeywardane, Walker &amp; Coley. <em>Interaction Profiles as a
+Universal Language for Generative Molecular Design with ShEPhERD-2.</em> bioRxiv
+2026. <a class="reference external" href="https://doi.org/10.64898/2026.09.10.750648">doi:10.64898/2026.09.10.750648</a>
+— the successor to <strong>ShEPhERD</strong> (above), replacing its DDPM objective and
+EquiformerV2 backbone with an EDM/Karras formulation over EquiformerV3, and
+adding composition over several reference profiles.</p></li>
 <li><p><strong>LoQI</strong> — Nikitin, Anstine, Zubatyuk, Paliwal &amp; Isayev. <em>Scalable
 Low-Energy Molecular Conformer Generation with Quantum Mechanical Accuracy.</em>
 ChemRxiv 2025.

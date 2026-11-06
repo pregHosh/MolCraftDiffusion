@@ -1,0 +1,113 @@
+MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.so2_ops
+============================================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.so2_ops
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.so2_ops.SO2Linear
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.so2_ops.SO2MLinear
+
+
+Module Contents
+---------------
+
+.. py:class:: SO2Linear(num_in_channels, num_out_channels, lmax, mmax, extra_m0_out_channels=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Perform SO(2) linear operations to all m (orders) components
+
+   :param num_in_channels: Number of input channels
+   :type num_in_channels: int
+   :param num_out_channels: Number of output channels
+   :type num_out_channels: int
+   :param lmax: Maximum degrees (l)
+   :type lmax: int
+   :param mmax: Maximum order (m)
+   :type mmax: int
+   :param extra_m0_out_channels: If not None, return `outputs` (torch.Tensor) and `extra_m0_features` (torch.Tensor).
+   :type extra_m0_out_channels: int
+
+
+   .. py:method:: forward(x)
+
+      1.  `x` shape: [num_edges, num_m_components, num_channels]
+      2.  We assume the layout of m components is (0, 0, ...), (1, 1, ...), ...
+
+
+
+   .. py:attribute:: extra_m0_out_channels
+      :value: None
+
+
+
+   .. py:attribute:: fc_m0
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mmax
+
+
+   .. py:attribute:: num_in_channels
+
+
+   .. py:attribute:: num_out_channels
+
+
+   .. py:attribute:: so2_m_linear
+
+
+.. py:class:: SO2MLinear(m, num_in_channels, num_out_channels, lmax, mmax)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Perform an SO(2) linear operation to features corresponding to +- m
+
+   :param m: Order of the spherical harmonic coefficients
+   :type m: int
+   :param num_in_channels: Number of input channels
+   :type num_in_channels: int
+   :param num_out_channels: Number of output channels
+   :type num_out_channels: int
+   :param lmax: Maximum degrees (l)
+   :type lmax: int
+   :param mmax: Maximum order (m)
+   :type mmax: int
+
+
+   .. py:method:: forward(x_m, concat_outputs=True)
+
+
+   .. py:attribute:: fc
+
+
+   .. py:attribute:: in_features
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: m
+
+
+   .. py:attribute:: mmax
+
+
+   .. py:attribute:: num_in_channels
+
+
+   .. py:attribute:: num_out_channels
+
+
+   .. py:attribute:: out_features
+
+

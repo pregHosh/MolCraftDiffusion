@@ -316,6 +316,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../../../../data/component/pmdm_data/index.html">MolecularDiffusion.data.component.pmdm_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../data/component/pointcloud/index.html">MolecularDiffusion.data.component.pointcloud</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../data/component/reaction_data/index.html">MolecularDiffusion.data.component.reaction_data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/shepherd2/index.html">MolecularDiffusion.data.component.shepherd2</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../data/dataloader/index.html">MolecularDiffusion.data.dataloader</a></li>
@@ -618,7 +619,7 @@ heavy atoms</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conf</strong> (<em>rdkit Mol object with a conformer.</em>)</p></li>
 <li><p><strong>featAtoms</strong> (<em>list containing rdkit Atom object</em><em> of </em><em>atom attributed as an acceptor.</em>)</p></li>
-<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em> (</em><em>default = 1.</em><em>) </em><a class="reference internal" href="../../../../modules/models/syncogen/models/semla/index.html#MolecularDiffusion.modules.models.syncogen.models.semla.SemlaGenerator.length" title="MolecularDiffusion.modules.models.syncogen.models.semla.SemlaGenerator.length"><em>length</em></a><em> of </em><em>direction vector.</em>)</p></li>
+<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em> (</em><em>default = 1.</em><em>) </em><a class="reference internal" href="../../../../modules/models/shepherd2/data_utils/hdf5_dataset/index.html#MolecularDiffusion.modules.models.shepherd2.data_utils.hdf5_dataset.HeteroDatasetHDF5.length" title="MolecularDiffusion.modules.models.shepherd2.data_utils.hdf5_dataset.HeteroDatasetHDF5.length"><em>length</em></a><em> of </em><em>direction vector.</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -675,7 +676,7 @@ is the last fourth arm of the sp3 arrangement</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conf</strong> (<em>rdkit Mol object with a conformer.</em>)</p></li>
 <li><p><strong>featAtoms</strong> (<em>list containing rdkit Atom object</em><em> of </em><em>atom attributed as an acceptor.</em>)</p></li>
-<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em> (</em><em>default = 1.</em><em>) </em><a class="reference internal" href="../../../../modules/models/syncogen/models/semla/index.html#MolecularDiffusion.modules.models.syncogen.models.semla.SemlaGenerator.length" title="MolecularDiffusion.modules.models.syncogen.models.semla.SemlaGenerator.length"><em>length</em></a><em> of </em><em>direction vector.</em>)</p></li>
+<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em> (</em><em>default = 1.</em><em>) </em><a class="reference internal" href="../../../../modules/models/shepherd2/data_utils/hdf5_dataset/index.html#MolecularDiffusion.modules.models.shepherd2.data_utils.hdf5_dataset.HeteroDatasetHDF5.length" title="MolecularDiffusion.modules.models.shepherd2.data_utils.hdf5_dataset.HeteroDatasetHDF5.length"><em>length</em></a><em> of </em><em>direction vector.</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -865,7 +866,7 @@ list of hydrogen rdkit Atom objects</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conf</strong> (<em>rdkit Mol object with a conformer.</em>)</p></li>
 <li><p><strong>featAtoms</strong> (<em>list containing rdkit Atom object</em><em> of </em><em>atom attributed as a donor.</em>)</p></li>
-<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em> (</em><em>default = 1.</em><em>) </em><a class="reference internal" href="../../../../modules/models/syncogen/models/semla/index.html#MolecularDiffusion.modules.models.syncogen.models.semla.SemlaGenerator.length" title="MolecularDiffusion.modules.models.syncogen.models.semla.SemlaGenerator.length"><em>length</em></a><em> of </em><em>direction vector.</em>)</p></li>
+<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em> (</em><em>default = 1.</em><em>) </em><a class="reference internal" href="../../../../modules/models/shepherd2/data_utils/hdf5_dataset/index.html#MolecularDiffusion.modules.models.shepherd2.data_utils.hdf5_dataset.HeteroDatasetHDF5.length" title="MolecularDiffusion.modules.models.shepherd2.data_utils.hdf5_dataset.HeteroDatasetHDF5.length"><em>length</em></a><em> of </em><em>direction vector.</em>)</p></li>
 <li><p><strong>exclude</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><em>list</em></a><em> of </em><em>atom indices that should not be included as a donatable H.</em>)</p></li>
 </ul>
 </dd>
@@ -890,7 +891,7 @@ Assumes only one connection.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conf</strong> (<em>rdkit Mol object with a conformer.</em>)</p></li>
 <li><p><strong>featAtoms</strong> (<em>list containing rdkit Atom object</em><em> of </em><em>atom attributed as an acceptor.</em>)</p></li>
-<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em> (</em><em>default = 1.</em><em>) </em><a class="reference internal" href="../../../../modules/models/syncogen/models/semla/index.html#MolecularDiffusion.modules.models.syncogen.models.semla.SemlaGenerator.length" title="MolecularDiffusion.modules.models.syncogen.models.semla.SemlaGenerator.length"><em>length</em></a><em> of </em><em>direction vector.</em>)</p></li>
+<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em> (</em><em>default = 1.</em><em>) </em><a class="reference internal" href="../../../../modules/models/shepherd2/data_utils/hdf5_dataset/index.html#MolecularDiffusion.modules.models.shepherd2.data_utils.hdf5_dataset.HeteroDatasetHDF5.length" title="MolecularDiffusion.modules.models.shepherd2.data_utils.hdf5_dataset.HeteroDatasetHDF5.length"><em>length</em></a><em> of </em><em>direction vector.</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

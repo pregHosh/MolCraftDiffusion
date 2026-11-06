@@ -1,0 +1,78 @@
+MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.drop
+=========================================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.drop
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.drop.EquivariantDropout
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.drop.GraphDropPath
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.drop.drop_path
+
+
+Module Contents
+---------------
+
+.. py:class:: EquivariantDropout(lmax, mmax, drop_prob, use_m_primary=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   1.  When dropping one type-L vector, we set all the m components to zeros.
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: drop
+
+
+   .. py:attribute:: drop_prob
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mmax
+
+
+   .. py:attribute:: use_m_primary
+      :value: False
+
+
+
+.. py:class:: GraphDropPath(drop_prob=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Consider batch for graph data when dropping paths.
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: forward(x, batch)
+
+
+   .. py:attribute:: drop_prob
+      :value: None
+
+
+
+.. py:function:: drop_path(x, drop_prob: float = 0.0, training: bool = False)
+

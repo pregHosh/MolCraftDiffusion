@@ -1,0 +1,19 @@
+MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.edge_rot_mat
+=================================================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.edge_rot_mat
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.edge_rot_mat.init_edge_rot_mat
+
+
+Module Contents
+---------------
+
+.. py:function:: init_edge_rot_mat(edge_distance_vec, use_rotation_mask=False)
+

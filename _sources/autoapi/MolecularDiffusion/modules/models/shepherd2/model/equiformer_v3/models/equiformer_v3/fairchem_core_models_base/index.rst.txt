@@ -1,0 +1,86 @@
+MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_core_models_base
+==============================================================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_core_models_base
+
+.. autoapi-nested-parse::
+
+   Copyright (c) Meta, Inc. and its affiliates.
+
+   This source code is licensed under the MIT license found in the
+   LICENSE file in the root directory of this source tree.
+
+   Copied from fairchem.core.models.base.py
+   - only kept GraphData and GraphModelMixin classes
+   - deleted pbc-related code; removed cell_offsets and offset_distances
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_core_models_base.GraphData
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_core_models_base.GraphModelMixin
+
+
+Module Contents
+---------------
+
+.. py:class:: GraphData
+
+   Class to keep graph attributes nicely packaged.
+
+
+   .. py:attribute:: atomic_numbers_full
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: batch_full
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: edge_distance
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: edge_distance_vec
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: edge_index
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: neighbors
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: node_offset
+      :type:  int
+      :value: 0
+
+
+
+.. py:class:: GraphModelMixin
+
+   Mixin Model class implementing some general convenience properties and methods.
+
+   Edited to remove pbc-related code. Removed cell_offsets and offset_distances.
+
+
+   .. py:method:: generate_graph(data, cutoff=None, max_neighbors=None, otf_graph=None, enforce_max_neighbors_strictly=None)
+
+
+   .. py:method:: no_weight_decay() -> list
+
+      Returns a list of parameters with no weight decay.
+
+
+
+   .. py:property:: num_params
+      :type: int
+
+
+

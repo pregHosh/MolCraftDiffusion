@@ -1,0 +1,30 @@
+MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3
+====================================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/equiformer_v3/models/equiformer_v3/activation/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/equiformer_v3/models/equiformer_v3/drop/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/equiformer_v3/models/equiformer_v3/edge_rot_mat/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/equiformer_v3/models/equiformer_v3/envelope/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/equiformer_v3/models/equiformer_v3/fairchem_core_models_base/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/equiformer_v3/models/equiformer_v3/fairchem_utils/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/equiformer_v3/models/equiformer_v3/input_block/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/equiformer_v3/models/equiformer_v3/layer_norm/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/equiformer_v3/models/equiformer_v3/output_block/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/equiformer_v3/models/equiformer_v3/radial_function/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/equiformer_v3/models/equiformer_v3/so2_ops/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/equiformer_v3/models/equiformer_v3/so3/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/equiformer_v3/models/equiformer_v3/softmax/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/equiformer_v3/models/equiformer_v3/transformer_block/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/equiformer_v3/models/equiformer_v3/utils/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/equiformer_v3/models/equiformer_v3/wigner/index
+
+

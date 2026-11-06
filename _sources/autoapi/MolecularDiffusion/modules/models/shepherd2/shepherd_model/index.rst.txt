@@ -1,0 +1,313 @@
+MolecularDiffusion.modules.models.shepherd2.shepherd_model
+==========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.shepherd_model
+
+.. autoapi-nested-parse::
+
+   Thin wrapper for the lightning module.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.shepherd_model.ShepherdModel
+
+
+Module Contents
+---------------
+
+.. py:class:: ShepherdModel(lightning_module, *, checkpoint_path: str | None = None)
+
+   Wraps a loaded `LightningModule` so that users can call
+       - `model.generate(...)`
+       - `model.generate_composition(...)`
+
+   All LightningModule attributes are available (`.params`, `.model`, `.device`, `.eval()`, etc.)
+
+
+   .. py:method:: generate(batch_size: int, N_x1: int | list[int], N_x4: int | list[int], condition: MolecularDiffusion.modules.models.shepherd2.interaction_profile.InteractionProfile | None = None, condition_modalities: str | set[str] = 'all', condition_center_of_mass: Literal['origin', 'auto'] | numpy.ndarray = 'origin', inpaint: MolecularDiffusion.modules.models.shepherd2.interaction_profile.InpaintAdvancedOptions | None = None, scaffold_conditioning: bool = False, pharmacophore_conditioning: bool = False, pharmacophore_prioritization: list[int] | None = None, num_steps: int = 400, early_stop_edm: int | float = 0.9, shepherd_pred: bool = True, sigma_max: float | None = 3.0, sigma_min: float | None = 0.001, rho: float | None = 7.0, use_stochastic: bool = False, S_churn: float = 40.0, S_noise: float = 1.0, use_2nd_order_correction: bool = False, verbose: bool = True, store_trajectories: bool = False, store_trajectories_x0: bool = False) -> list[MolecularDiffusion.modules.models.shepherd2.generated_sample.GeneratedSample]
+
+      Sample molecules. See :func:`shepherd.inference.sampler.generate`.
+
+      Omit ``condition`` for unconditional generation. For traditional
+      conditional generation from a reference molecule::
+
+          from MolecularDiffusion.modules.models.shepherd2.interaction_profile import extract_interaction_profile
+
+          profile = extract_interaction_profile(mol)
+          samples = model.generate(
+              batch_size=48, N_x1=profile.n_atoms, N_x4=profile.n_pharms,
+              condition=profile,
+          )
+
+      To scaffold-condition on a subset of atoms *together with* the
+      surface/ESP/pharmacophore conditioning above, extract with
+      ``condition_atom_inds=...`` and pass ``scaffold_conditioning=True``::
+
+          profile = extract_interaction_profile(
+              mol, condition_atom_inds=scaffold_atom_inds,
+          )
+          samples = model.generate(
+              batch_size=48, N_x1=profile.n_atoms, N_x4=profile.n_pharms,
+              condition=profile, scaffold_conditioning=True,
+          )
+
+      ``InteractionProfile.from_condition_atoms(mol, inds=...)`` builds a
+      profile with *only* the atom subset (no surface/ESP/pharmacophores) —
+      use it only when there is no other conditioning target.
+
+      Advanced inpainting (x1 atom/bond inpainting, stop times, add-noise)
+      is controlled by ``inpaint=InpaintAdvancedOptions(...)``.
+
+      :param batch_size:
+      :type batch_size: int Number of molecules to sample in a single batch.
+      :param N_x1: Number of atoms to diffuse. Pass a list[int] of length batch_size.
+                   Only available during conditional generation (not unconditional).
+                   With scaffold conditioning, every count must be at least the number of shared scaffold atoms;
+                   extra atoms are freely diffused. Variable counts do not support x1 inpainting.
+      :type N_x1: int | list[int]
+      :param N_x4: Number of pharmacophores to diffuse. Pass a list[int] of length batch_size to
+                   use a different pharmacophore count per molecule in a conditional batch. If
+                   inpainting/conditioning, every count must be greater than or equal to len(pharm_types).
+                   Extra pharmacophores will be freely diffused by the model.
+      :type N_x4: int | list[int]
+      :param condition: Interaction-profile target for conditional generation.
+                        - ``None`` (default): unconditional generation.
+                        - ``InteractionProfile``: conditional generation on the given profile.
+                            Use flags on ``condition_modalities`` to set which interactions to condition on.
+                            By default, we inpaint shape, ESP, and pharmacophores if they are present in the
+                            provided InteractionProfile. You may additionally condition on atoms if
+                            ``InteractionProfile.condition_atoms`` is set and ``scaffold_conditioning=True``
+                            is passed below.
+      :type condition: InteractionProfile (default = None)
+      :param condition_modalities:
+                                   - ``'all'`` (default): inpaint-condition on all interactions.
+                                   - ``'shape'``: inpaint-condition on shape.
+                                   - ``'esp'``: inpaint-condition on ESP and shape.
+                                   - ``'pharm'``: inpaint-condition on pharmacophores.
+                                   - ``{'shape', 'pharm'}``: inpaint-condition on shape and pharmacophores but not ESP.
+                                   Ignored if ``condition`` is None.
+      :type condition_modalities: str | set[str] (default = 'all')
+      :param condition_center_of_mass: Coordinate-frame handling for the condition. ``'origin'`` uses profile
+                                       coordinates as supplied; ``'auto'`` centers scaffold/pharmacophore
+                                       conditioning and restores the offset on output; a length-3 array subtracts
+                                       that explicit offset from all condition positions.
+                                       We suggest using 'origin' for most cases.
+      :type condition_center_of_mass: {'origin', 'auto'} | np.ndarray (3,), default='origin'
+      :param inpaint: Optional overrides for
+                      - which modalities to inpaint (including atom pos, bonds, etc.)
+                      - granular control over when to stop inpainting for each modality.
+                        ``stop_inpainting_at_time_*`` uses the same convention as
+                        ``early_stop_edm``: ``1.0`` (default) is the data; ``0.0`` is the prior.
+      :type inpaint: InpaintAdvancedOptions (default = None)
+      :param scaffold_conditioning: Enable scaffold-conditioned generation (distinct from inpainting).
+                                    Requires ``condition.condition_atoms`` (types/positions, or ``mol`` plus atom indices)
+                                    on the profile.
+                                    When True:
+                                    - Scaffold positions are fixed throughout denoising (unless released; see below)
+                                    - COM is NOT removed from predicted noise
+                                    - scaffold frame is controlled by ``condition_center_of_mass``
+                                    Release scaffold atoms ``InpaintAdvancedOptions.stop_inpainting_at_time_x1_*`` < 1.0.
+                                    Use ``condition_center_of_mass='auto'`` to center on the scaffold COM.
+                                    We suggest using 'origin' for most cases.
+      :type scaffold_conditioning: bool (default = False)
+      :param pharmacophore_conditioning: Enable fixed pharmacophore-conditioned generation. Requires ``condition``.
+                                         When True:
+                                         - Pharmacophore positions are fixed throughout denoising
+                                         - pharmacophore frame is controlled by ``condition_center_of_mass``
+      :type pharmacophore_conditioning: bool (default = False)
+      :param pharmacophore_prioritization: Prioritizes pharmacophores between high and low priority via balance of fixed
+                                           and inpainting. If None, all pharmacophores are treated equally.
+                                           Ignored if `pharmacophore_conditioning` is False.
+                                           1: high priority (conditional), 0: low priority (inpainting): ex) [1, 1, 1, 0, 0]
+                                           The length of the list must be equal to the number of pharmacophores in the profile.
+      :type pharmacophore_prioritization: list[int] | None (default = None)
+      :param num_steps: Number of steps used for constructing the denoising noise schedule and sampling.
+      :type num_steps: int (default = 400)
+      :param early_stop_edm: Number of EDM denoising steps to actually run. The full ``num_steps``
+                             schedule is still constructed; this only truncates the sampling loop.
+                             By default, we stop at 90% of the total number of steps for our default EDM parameters.
+                             - ``-1``: no early stop (run all ``num_steps``)
+                             - ``int``: run this many steps
+                             - ``float`` in ``[0, 1]``: run ``int(early_stop_edm * num_steps)`` steps
+      :type early_stop_edm: int | float (default = 0.9)
+      :param sigma_max: Controls the prior standard deviation.
+      :type sigma_max: float | None (default = 3.0)
+      :param sigma_min: Controls the minimum standard deviation for the nonise schedule.
+      :type sigma_min: float | None (default = 0.001)
+      :param rho: Controls the shape of the noise schedule.
+                  >1 denoises quickly with more timesteps concentrated close to sigma_min.
+      :type rho: float | None (default = 7.0)
+      :param # parameters for EDM unconditional generation:
+      :param use_stochastic: Whether to use stochastic sampling for unconditional generation.
+      :type use_stochastic: bool (default = False)
+      :param S_churn: Controls the strength of the churn noise for unconditional generation.
+      :type S_churn: float (default = 40.0)
+      :param S_noise: Controls the strength of the noise for unconditional generation.
+      :type S_noise: float (default = 1.0)
+      :param use_2nd_order_correction: Whether to use 2nd order correction for the EDM denoising process.
+                                       This is not applicable to the shepherd_pred=True (predict-renoise) sampler.
+      :type use_2nd_order_correction: bool (default = False)
+      :param # property conditioning:
+      :param do_property_cfg:
+      :type do_property_cfg: bool (default = False) Whether to use property conditioning.
+      :param cfg_weight: Sampling blends denoiser outputs as ``(1 + w) * f_cond - w * f_uncond`` per step.
+                         Set ``w = 0`` for no guidance.
+      :type cfg_weight: float (default = 0.0) Classifier-free guidance scale ``w`` for property conditioning.
+      :param property_dict: Keys are the property names and values are the property values.
+                            If None, ``global_props`` is all zeros and ``global_props_mask`` is all False (no property conditioning).
+                            {
+                                'single_point_property_name': property_value,
+                                'range_property_name': (property_value_min, property_value_max),
+                            }
+                            If a single-point property is not provided, it will be set to None.
+                            If a range property is not provided, it will be set to (None, None).
+                            Only properties whose names appear in this dict (before normalization) get
+                            ``global_props_mask`` True; others stay unconditional with neutral stored values.
+      :type property_dict: dict | None (default = None) Dictionary containing the property values.
+      :param verbose:
+      :type verbose: bool (default = True) Whether to print progress bar.
+      :param store_trajectories:
+      :type store_trajectories: bool (default = False) Whether to store the trajectories.
+      :param store_trajectories_x0:
+      :type store_trajectories_x0: bool (default = False) Whether to store the trajectories of the x0 predictions.
+
+      :returns: **generated_structures** -- One GeneratedSample (a dict subclass with typed accessors and
+                `.to_rdkit_mol()`/`.to_smiles()`/`.to_interaction_profile()` helpers) per
+                molecule. The underlying dict is structured as:
+                {
+                'x1': {
+                    'atoms': np.ndarray (N_x1,) of ints for atomic numbers.
+                    'bonds': np.ndarray of bond types between every atom pair.
+                    'positions': np.ndarray (N_x1, 3) Coordinates of atoms.
+                },
+                'x3': {
+                    'charges': np.ndarray (75, 3) ESP at surface points.
+                    'positions': np.ndarray (75, 3) Coordinates of surface points.
+                },
+                'x4': {
+                    'types': np.ndarray (N_x4,) of ints for pharmacophore types.
+                    'positions': np.ndarray (N_x4, 3) Coordinates of pharmacophores.
+                    'directions': np.ndarray (N_x4, 3) Unit vectors of pharmacophores.
+                },
+                }
+      :rtype: list[GeneratedSample]
+
+
+
+   .. py:method:: generate_composition(N_x1: int, N_x4: int, batch_size: int, *, profiles: list[MolecularDiffusion.modules.models.shepherd2.interaction_profile.InteractionProfile], weights_conditions: numpy.ndarray, composition_mode: str = 'default', atom_condition: MolecularDiffusion.modules.models.shepherd2.interaction_profile.InteractionProfile | MolecularDiffusion.modules.models.shepherd2.interaction_profile.ConditionAtoms | None = None, condition_modalities: str | set[str] = 'all', pharmacophore_conditioning: bool = False, scaffold_conditioning: bool = False, condition_center_of_mass: Literal['origin', 'auto'] | numpy.ndarray = 'origin', inpaint: MolecularDiffusion.modules.models.shepherd2.interaction_profile.InpaintAdvancedOptions | None = None, num_steps: int = 400, use_stochastic: bool = False, S_churn: float = 40.0, S_noise: float = 1.0, shepherd_pred: bool = True, early_stop_edm: int | float = -1, sigma_max: float | None = 3.0, sigma_min: float | None = 0.001, rho: float | None = 7.0, store_trajectories: bool = False, verbose: bool = True, alignment_start_frac: float = 0.0, alignment_interval: int = 10, alignment_mode: str = 'so3', alignment_ema_alpha: float = 1.0) -> list[MolecularDiffusion.modules.models.shepherd2.generated_sample.GeneratedSample]
+
+      Compositional EDM generation mirroring gen_composition3 from comp_inference.
+
+      Multiple interaction-profile conditions are composed via weighted combination
+      of EDM D_theta predictions, then denoised with an EDM ODE step.
+
+      :param model_pl:
+      :type model_pl: LightningModule
+      :param N_x1: Number of atoms / pharmacophores to generate.
+      :type N_x1: int
+      :param N_x4: Number of atoms / pharmacophores to generate.
+      :type N_x4: int
+      :param batch_size:
+      :type batch_size: int
+      :param conditions: Each dict is passed to gen_edm_inpainting_dict as keyword arguments.
+      :type conditions: list[dict]
+      :param atom_conditions: Passed to gen_x1_edm_inpainting_dict as keyword arguments.
+      :type atom_conditions: dict
+      :param weights_conditions: Per-condition weights (excluding the implicit unconditional component).
+      :type weights_conditions: np.ndarray
+      :param composition_mode: "default" prepends an unconditional condition (weight = 1 - sum(weights)).
+                               "conditional" uses only the supplied conditions.
+      :type composition_mode: str
+      :param num_steps: Number of EDM denoising steps.
+      :type num_steps: int
+      :param use_stochastic: If True, adds churn noise per EDM Algorithm 2.
+      :type use_stochastic: bool
+      :param S_churn: Churn parameters for stochastic sampling.
+      :type S_churn: float
+      :param S_noise: Churn parameters for stochastic sampling.
+      :type S_noise: float
+      :param sigma_max: Override the EDM schedule from params['edm'].
+      :type sigma_max: float, optional
+      :param sigma_min: Override the EDM schedule from params['edm'].
+      :type sigma_min: float, optional
+      :param rho: Override the EDM schedule from params['edm'].
+      :type rho: float, optional
+      :param store_trajectories:
+      :type store_trajectories: bool
+
+      :returns: **list[dict]**
+      :rtype: generated structures, one per batch element.
+
+
+
+   .. py:method:: generate_composition_distributed(N_x1: int, N_x4: int, batch_size: int, *, profiles: list[MolecularDiffusion.modules.models.shepherd2.interaction_profile.InteractionProfile], weights_conditions: numpy.ndarray, composition_mode: str = 'default', atom_condition: MolecularDiffusion.modules.models.shepherd2.interaction_profile.InteractionProfile | MolecularDiffusion.modules.models.shepherd2.interaction_profile.ConditionAtoms | None = None, condition_modalities: str | set[str] = 'all', pharmacophore_conditioning: bool = False, scaffold_conditioning: bool = False, condition_center_of_mass: Literal['origin', 'auto'] | numpy.ndarray = 'origin', inpaint: MolecularDiffusion.modules.models.shepherd2.interaction_profile.InpaintAdvancedOptions | None = None, num_steps: int = 400, use_stochastic: bool = False, S_churn: float = 40.0, S_noise: float = 1.0, shepherd_pred: bool = True, early_stop_edm: int | float = -1, sigma_max: float | None = 3.0, sigma_min: float | None = 0.001, rho: float | None = 7.0, verbose: bool = True, alignment_start_frac: float = 0.0, alignment_interval: int = 10, alignment_mode: str = 'so3', alignment_ema_alpha: float = 1.0, devices: int | Sequence[int] | None = None, seed: int | None = None, checkpoint_path: str | None = None) -> list[MolecularDiffusion.modules.models.shepherd2.generated_sample.GeneratedSample]
+
+      Run :meth:`generate_composition` as independent shards across GPUs.
+
+      ``batch_size`` is the total sample count across the selected devices. See
+      :meth:`generate_distributed` for process-launching and checkpoint behavior.
+
+
+
+   .. py:method:: generate_distributed(batch_size: int, N_x1: int | list[int], N_x4: int | list[int], condition: MolecularDiffusion.modules.models.shepherd2.interaction_profile.InteractionProfile | None = None, condition_modalities: str | set[str] = 'all', condition_center_of_mass: Literal['origin', 'auto'] | numpy.ndarray = 'origin', inpaint: MolecularDiffusion.modules.models.shepherd2.interaction_profile.InpaintAdvancedOptions | None = None, scaffold_conditioning: bool = False, pharmacophore_conditioning: bool = False, pharmacophore_prioritization: list[int] | None = None, num_steps: int = 400, early_stop_edm: int | float = 0.9, shepherd_pred: bool = True, sigma_max: float | None = 3.0, sigma_min: float | None = 0.001, rho: float | None = 7.0, use_stochastic: bool = False, S_churn: float = 40.0, S_noise: float = 1.0, use_2nd_order_correction: bool = False, verbose: bool = True, *, devices: int | Sequence[int] | None = None, seed: int | None = None, checkpoint_path: str | None = None) -> list[MolecularDiffusion.modules.models.shepherd2.generated_sample.GeneratedSample]
+
+      Generate independent sample shards concurrently on multiple GPUs.
+
+      ``batch_size`` is the total number of samples across all selected GPUs. A
+      sequence-valued ``N_x1`` or ``N_x4`` is sliced consistently with the sample
+      shards; all other generation arguments are copied to every worker.
+
+      Each worker loads its own checkpoint replica. Models returned by
+      :func:`shepherd.load_model` remember that checkpoint automatically. Pass
+      ``checkpoint_path`` only for a manually constructed ``ShepherdModel`` or to
+      intentionally generate from a different checkpoint than the loaded instance.
+
+      :param devices: Number of visible CUDA devices to use, explicit local CUDA indices, or
+                      ``None`` to use every visible GPU.
+      :type devices: int | sequence[int] | None
+      :param seed: Base seed for worker random streams. Defaults to ``torch.initial_seed()``.
+      :type seed: int | None
+      :param checkpoint_path: Checkpoint each worker reloads. Defaults to the path recorded by
+                              :func:`shepherd.load_model`.
+      :type checkpoint_path: str | None
+      :param Generation parameters mirror :meth:`generate`; ``batch_size`` denotes the:
+      :param total distributed batch size.:
+
+      .. rubric:: Notes
+
+      This method uses spawned CUDA processes, so call it from a Python script under
+      an ``if __name__ == '__main__':`` guard. It increases sample throughput; it
+      does not split one molecule's denoising trajectory across GPUs.
+
+      ``store_trajectories`` or ``store_trajectories_x0`` are deliberately unavailable.
+
+
+
+   .. py:method:: to_shepherd_score_inputs(samples: list[dict], condition: MolecularDiffusion.modules.models.shepherd2.interaction_profile.InteractionProfile | shepherd_score.container.Molecule | None = None, *, condition_modalities: str | set[str] = 'all', num_surf_points: int = 400, probe_radius: float = 1.2, pharm_multi_vector: bool | None = False, pharmacophore_prioritization: list[int] | None = None, priority_pharm_indices: list[int] | None = None, partial_charges=None) -> dict
+
+      Convert generated samples into a ``shepherd_score`` input batch.
+
+      Supply an InteractionProfile or Molecule to ``condition`` to return the inputs necessary
+      for the ConditionalEvalPipeline. Note that the reference molecule
+      (InteractionProfile.mol) is rebuilt for evaluation (400 surface points and probe radius
+      1.2) which differs from the generation defaults (75 / 0.6).
+
+      ``pharmacophore_prioritization`` accepts the same 0/1 mask as :meth:`generate` and
+      converts it to the indices of priority pharmacophores expected by
+      ``ConditionalEvalPipeline``. An all-zero or all-one mask produces ``None``, because
+      shepherd-score's priority comparison requires both priority and non-priority
+      pharmacophores.
+
+      ``priority_pharm_indices`` are the indices of priority pharmacophores and are
+      mutually exclusive with ``pharmacophore_prioritization``.
+
+
+
+   .. py:attribute:: lightning_module
+
+

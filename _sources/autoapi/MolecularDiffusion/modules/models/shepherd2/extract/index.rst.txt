@@ -1,0 +1,181 @@
+MolecularDiffusion.modules.models.shepherd2.extract
+===================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.extract
+
+.. autoapi-nested-parse::
+
+   Utility functions for ShEPhERD inference scaling.
+
+   This module provides helper functions for working with ShEPhERD's inference output.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.extract.create_mols_from_samples_xtb_optimized
+   MolecularDiffusion.modules.models.shepherd2.extract.create_rdkit_molecule
+   MolecularDiffusion.modules.models.shepherd2.extract.create_rdkit_molecule_xtb_optimized
+   MolecularDiffusion.modules.models.shepherd2.extract.create_smiles_from_samples_xtb_optimized
+   MolecularDiffusion.modules.models.shepherd2.extract.get_xyz_content
+   MolecularDiffusion.modules.models.shepherd2.extract.mol_charges_from_sample
+   MolecularDiffusion.modules.models.shepherd2.extract.mol_charges_from_samples
+   MolecularDiffusion.modules.models.shepherd2.extract.remove_overlaps
+   MolecularDiffusion.modules.models.shepherd2.extract.remove_side_groups_with_geometry
+
+
+Module Contents
+---------------
+
+.. py:function:: create_mols_from_samples_xtb_optimized(samples, solvent: str = 'water', num_processes: int = 2, num_workers: int = 2, mp_context: Literal['spawn', 'forkserver'] = 'spawn')
+
+.. py:function:: create_rdkit_molecule(sample, charge: int | None = None)
+
+   Create an RDKit molecule from ShEPhERD output using its XYZ geometry.
+
+   When ``charge`` is ``None`` (the default), bond determination tries 0,
+   +1, -1, +2, and -2 in that order. Supplying a charge restricts bond
+   determination to that charge, without optimizing the geometry.
+
+   :param sample: ShEPhERD output dictionary with x1 containing atoms and positions.
+   :type sample: dict
+   :param charge: Fixed molecular charge for bond determination. If omitted, infer a
+                  workable charge by trying 0, +1, -1, +2, and -2.
+   :type charge: int, optional
+
+   :returns: **Chem.Mol**
+   :rtype: RDKit molecule object or None if conversion fails.
+
+
+.. py:function:: create_rdkit_molecule_xtb_optimized(sample, solvent: str = 'water', num_processes: int = 1, charge: int = 0)
+
+   Create an RDKit molecule from ShEPhERD output with xtb at a fixed charge.
+
+   Unlike :func:`mol_charges_from_sample`, xtb is run at ``charge``
+   (default 0) rather than inferring charge from the xyz. If xtb fails
+   (e.g. strained geometry):
+     1. Determine bonds from the raw coordinates
+     2. Pre-relax with MMFF94/UFF force field to fix clashes
+     3. Retry xtb on the relaxed geometry
+     4. If xtb still fails, use the force-field-relaxed geometry
+
+   :param sample (dict):
+   :type sample (dict): ShEPhERD output dictionary with x1 containing atoms and positions.
+   :param solvent: Implicit solvent for xtb (default: 'water').
+   :type solvent: str
+   :param num_processes: Number of CPU cores for xtb (default: 1).
+   :type num_processes: int
+   :param charge: Molecular charge (default: 0).
+   :type charge: int
+
+   :returns: **Chem.Mol**
+   :rtype: RDKit molecule object or None if conversion fails.
+
+
+.. py:function:: create_smiles_from_samples_xtb_optimized(samples, solvent: str = 'water', num_processes: int = 2, num_workers: int = 2, mp_context: Literal['spawn', 'forkserver'] = 'spawn')
+
+.. py:function:: get_xyz_content(sample)
+
+   Generate XYZ file content string from a ShEPhERD sample.
+
+   :param sample: ShEPhERD output dictionary with x1 containing atoms and positions.
+   :type sample: dict
+
+   :returns: XYZ file content or None if input is invalid.
+   :rtype: str
+
+
+.. py:function:: mol_charges_from_sample(sample: MolecularDiffusion.modules.models.shepherd2.generated_sample.GeneratedSample | dict, solvent: str = 'water', xtb_optimize: bool = True, charge: int | None = None, num_processes: int = 1, xtb_timeout: int = 60) -> tuple[rdkit.Chem.Mol | None, numpy.ndarray | None]
+
+   Convert a generated sample to an RDKit molecule and calculate xTB charges.
+
+   Uses :func:`create_rdkit_molecule` to infer molecular charge from the XYZ
+   coordinates (trying 0, +1, -1, +2, -2) and reject fragments or radicals.
+
+   Always runs a single-point xtb calculation on the initial conformation.
+   If ``xtb_optimize=True``, also relaxes with xtb (a few seconds).
+   If ``xtb_optimize=False``, returns the unrelaxed mol and its partial charges.
+
+   :param sample: ShEPhERD output dictionary with x1 containing atoms and positions.
+   :type sample: GeneratedSample | dict
+   :param solvent: Implicit solvent for xtb (default: 'water').
+   :type solvent: str
+   :param xtb_optimize: Whether to geometry-optimize with xtb (default: True). ``False`` still
+                        runs a single-point xtb calculation for partial charges.
+   :type xtb_optimize: bool
+   :param charge: Molecular charge used for bond inference and xTB. If omitted, infer
+                  the charge from the generated coordinates.
+   :type charge: int | None
+   :param num_processes: Number of CPU cores for xtb (default: 1).
+   :type num_processes: int
+   :param xtb_timeout: Timeout for xtb (default: 60 seconds).
+   :type xtb_timeout: int
+
+   :returns: (mol, xtb partial_charges) for the sample
+   :rtype: tuple[Chem.Mol | None, np.ndarray | None]
+
+
+.. py:function:: mol_charges_from_samples(samples: list[MolecularDiffusion.modules.models.shepherd2.generated_sample.GeneratedSample], num_workers: int = -1, solvent: str = 'water', xtb_optimize: bool = True, charge: int | None = None, xtb_timeout: int = 60, verbose: bool = False) -> list[tuple[rdkit.Chem.Mol | None, numpy.ndarray | None]]
+
+   Convert ShEPhERD outputs to RDKit molecules via xtb (shepherd-score /
+   :func:`mol_charges_from_sample` path).
+
+   :param samples: Batch of GeneratedSample objects from inference.
+   :type samples: list[GeneratedSample]
+   :param num_workers: Worker processes for parallel conversion across samples.
+   :type num_workers: int (default: -1, uses min(num_samples, num_cpus))
+   :param solvent: Implicit solvent passed to xtb.
+   :type solvent: str (default: 'water')
+   :param xtb_optimize: Whether to geometry-optimize with xtb (default: True). ``False`` still
+                        runs a single-point xtb calculation for partial charges.
+   :type xtb_optimize: bool (default: True)
+   :param charge: Molecular charge used for bond inference and xTB. If omitted, infer
+                  the charge from the generated coordinates.
+   :type charge: int | None
+   :param xtb_timeout: Per-molecule xtb timeout in seconds.
+   :type xtb_timeout: int (default: 60)
+   :param verbose: Show a progress bar with tqdm.
+   :type verbose: bool (default: False)
+
+   :returns: List of tuples containing (mol, xtb partial_charges) for each sample.
+   :rtype: list[tuple[Chem.Mol | None, np.ndarray | None]]
+
+
+.. py:function:: remove_overlaps(generated_sample: dict, inpainted_atom_positions: numpy.ndarray, cutoff: float = 0.7, keep_dummy_atoms: bool = True, verbose: bool = False) -> dict
+
+   Remove atoms that overlap with inpainted atoms.
+   Assumes `inpainted_atom_positions` are the first `num_inpainted_atoms` atoms in `generated_sample['x1']['positions']`.
+
+   :param generated_sample: ShEPhERD output dictionary with x1 containing atoms and positions.
+   :type generated_sample: dict
+   :param inpainted_atom_positions: Array of inpainted atom positions.
+   :type inpainted_atom_positions: np.ndarray
+   :param cutoff: Cutoff distance (RMSD) for overlap.
+   :type cutoff: float (default: 0.7)
+   :param keep_dummy_atoms: Whether to keep dummy atoms.
+   :type keep_dummy_atoms: bool (default: True)
+   :param verbose: Whether to print verbose output.
+   :type verbose: bool (default: False)
+
+   :returns: ShEPhERD output dictionary where atoms that overlap with inpainted atoms are removed.
+             Note that this does not alter the bond information.
+   :rtype: dict
+
+
+.. py:function:: remove_side_groups_with_geometry(mol: rdkit.Chem.Mol, atoms_to_remove: list[int]) -> rdkit.Chem.Mol
+
+   Remove atoms in `atoms_to_remove` and add hydrogens using RDKit's AddHs(addCoords=True)
+   to preserve 3D geometry. Returns a new RDKit molecule.
+
+   :param mol: RDKit molecule with conformer
+   :type mol: Chem.Mol
+   :param atoms_to_remove: List of atom indices to delete
+   :type atoms_to_remove: list[int]
+
+   :returns: RDKit molecule with hydrogens added and side groups removed.
+   :rtype: Chem.Mol
+
+

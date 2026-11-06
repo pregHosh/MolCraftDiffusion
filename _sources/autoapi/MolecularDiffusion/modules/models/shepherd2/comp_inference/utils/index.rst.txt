@@ -1,0 +1,387 @@
+MolecularDiffusion.modules.models.shepherd2.comp_inference.utils
+================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.comp_inference.utils
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.comp_inference.utils.align_batchwise
+   MolecularDiffusion.modules.models.shepherd2.comp_inference.utils.align_model_states
+   MolecularDiffusion.modules.models.shepherd2.comp_inference.utils.align_two_ref_mol
+   MolecularDiffusion.modules.models.shepherd2.comp_inference.utils.align_two_ref_mol_from_mol_charge
+   MolecularDiffusion.modules.models.shepherd2.comp_inference.utils.atom_condition_kwargs_from_profile
+   MolecularDiffusion.modules.models.shepherd2.comp_inference.utils.center
+   MolecularDiffusion.modules.models.shepherd2.comp_inference.utils.combine_list_of_dicts
+   MolecularDiffusion.modules.models.shepherd2.comp_inference.utils.condition_kwargs_from_profile
+   MolecularDiffusion.modules.models.shepherd2.comp_inference.utils.get_random_conditions
+   MolecularDiffusion.modules.models.shepherd2.comp_inference.utils.mol_to_gen_mol
+   MolecularDiffusion.modules.models.shepherd2.comp_inference.utils.optimize_SO3_esp_overlay
+   MolecularDiffusion.modules.models.shepherd2.comp_inference.utils.return_atom_condition_dict
+   MolecularDiffusion.modules.models.shepherd2.comp_inference.utils.return_condition_dict
+   MolecularDiffusion.modules.models.shepherd2.comp_inference.utils.unflatten_dict
+   MolecularDiffusion.modules.models.shepherd2.comp_inference.utils.unflatten_dict_values
+   MolecularDiffusion.modules.models.shepherd2.comp_inference.utils.unflatten_tensor
+
+
+Module Contents
+---------------
+
+.. py:function:: align_batchwise(pos, se3_transforms, mode='so3')
+
+   Apply a different SE3/SO3 transform to each batch element's slice of a stacked tensor.
+
+   :param pos: Positions stacked batchwise; split into len(se3_transforms) equal-sized slices.
+   :type pos: torch.Tensor (len(se3_transforms) * w, ...)
+   :param se3_transforms: One SE3 transform per batch element.
+   :type se3_transforms: list[torch.Tensor (4, 4)]
+   :param mode: 'so3' applies rotation only; 'se3' applies the full SE3 transform.
+   :type mode: str (default='so3')
+
+   :returns: **torch.Tensor**
+   :rtype: pos with each batch slice transformed in-place.
+
+
+.. py:function:: align_model_states(model_outputs, D_theta, cdt_dict, params, num_repeats: int = 5, trans_init: bool = False, lr: float = 0.1, max_steps: int = 10, mode: str = 'so3', verbose: bool = True)
+
+   EDM version of align_model_states.
+
+   Identical to the DDPM version except D_theta (the EDM denoiser output) is
+   passed instead of x0_pred.  For EDM, D_theta IS the clean x0 prediction,
+   so the surface point positions and ESP charges are read from:
+       D_theta['x3_pos']   (vs DDPM x0_pred['x3_pos_0'])
+       D_theta['x3_x']     (vs DDPM x0_pred['x3_x_0'])
+
+   :param model_outputs: All positional outputs keyed by modality; every 'pos' key is transformed
+                         under the recovered SE3/SO3 alignment.
+   :type model_outputs: dict
+   :param D_theta: EDM denoiser output from _inference_step_comp_edm. Keys include
+                   'x3_pos' (surface point positions) and 'x3_x' (ESP features).
+   :type D_theta: dict
+   :param cdt_dict: Condition dict with 'surface' (ref surface points) and
+                    'electrostatics' (ref ESP values).
+   :type cdt_dict: dict
+   :param params: Model params dict (used for x3 feature scaling).
+   :type params: dict
+   :param num_repeats: Number of SE3 init restarts for the overlay optimiser.
+   :type num_repeats: int
+   :param lr: Learning rate for the overlay optimiser.
+   :type lr: float
+   :param max_steps: Max optimisation steps.
+   :type max_steps: int
+   :param mode: 'so3'  - apply rotation only (strip translation after fitting).
+                'se3'  - apply full SE3 transform.
+   :type mode: str
+   :param verbose:
+   :type verbose: bool
+
+   :returns: * **model_outputs** (*dict  (positions transformed in-place)*)
+             * **se3_transform** (*torch.Tensor (4, 4)*)
+
+
+.. py:function:: align_two_ref_mol(molblocks_and_charges, mol_to_align_i: int, ref_mol_i: int, condition: str, num_surf_points: int | None = 400, pharm_multi_vector: bool | None = False, probe_radius: float | None = 0.6, do_center: bool | None = True)
+
+   Aligns two molecules from mol_block
+
+   :param molblocks_and_charges: Data structure of mol blocks and partial charges calculated with xtb
+   :type molblocks_and_charges: List[Tuple(Mol Block, xtb charges))]
+   :param mol_to_align_i: Index on molblocks for molecule to align
+   :type mol_to_align_i: int
+   :param ref_mol_i: Index on molblock for reference molecule for alignment
+   :type ref_mol_i: int
+   :param num_surf_points: If None, the surface point cloud is not generated. More efficient if only doing volumentric.
+   :type num_surf_points: Optional[int] Number of surface points to sample.
+   :param probe_radius: surface". Default is 1.2 if `None` is passed.
+   :type probe_radius: Optional[float] the radius of a probe atom to act as a "solvent accessible
+   :param partial_charges: If `None` is passed and ESP surface is generated, it will default to MMFF94 partial charges.
+   :type partial_charges: Optional[np.ndarray] (N,) Partial charges for each atom.
+   :param do_center: THIS IS CRUCIAL
+                     Whether to initially align molecule centers together. For global optimizations, set to
+                     True. For scoring of current alignment or local alignment set to False.
+   :type do_center: bool (default = True)
+
+   :returns: **mol_aligned**
+   :rtype: aligned rdkit.Chem.Mol
+
+
+.. py:function:: align_two_ref_mol_from_mol_charge(mol_to_align_mol: rdkit.Chem.Mol, ref_mol: rdkit.Chem.Mol, condition: str, num_surf_points: int | None = 400, pharm_multi_vector: bool | None = False, probe_radius: float | None = 0.6, do_center: bool | None = False)
+
+   Aligns two molecules given directly as rdkit Mol objects with charges already set.
+
+   :param mol_to_align_mol: Molecule to align; must already have partial charges set as an atom property.
+   :type mol_to_align_mol: rdkit.Chem.Mol
+   :param ref_mol: Reference molecule for alignment; must already have partial charges set.
+   :type ref_mol: rdkit.Chem.Mol
+   :param condition: 'surface', 'esp', 'pharm', or 'all'; which alignment(s) to compute.
+   :type condition: str
+   :param num_surf_points: Number of surface points to sample. If None, the surface point cloud is not generated.
+   :type num_surf_points: Optional[int] (default=400)
+   :param pharm_multi_vector:
+   :type pharm_multi_vector: Optional[bool] (default=False)
+   :param probe_radius: Radius of a probe atom to act as a "solvent accessible surface".
+   :type probe_radius: Optional[float] (default=0.6)
+   :param do_center: Whether to initially align molecule centers together.
+   :type do_center: Optional[bool] (default=False)
+
+   :returns: **mol_aligned**
+   :rtype: aligned rdkit.Chem.Mol
+
+
+.. py:function:: atom_condition_kwargs_from_profile(profile: MolecularDiffusion.modules.models.shepherd2.interaction_profile.InteractionProfile | MolecularDiffusion.modules.models.shepherd2.interaction_profile.ConditionAtoms, scaffold_conditioning: bool = False, inpaint: MolecularDiffusion.modules.models.shepherd2.interaction_profile.InpaintAdvancedOptions | None = None, center_of_mass: numpy.ndarray | None = np.zeros(3)) -> dict
+
+   Translate an InteractionProfile/ConditionAtoms (+ optional InpaintAdvancedOptions)
+   into the kwargs dict expected by gen_x1_edm_inpainting_dict — the same shape
+   produced by return_atom_condition_dict.
+
+   Pure interface adapter: does not change what gen_x1_edm_inpainting_dict or
+   generate_composition compute. Note gen_x1_edm_inpainting_dict has no exit-vector-
+   aware bond inpainting (unlike the newer inference.sampler.generate), so
+   ConditionAtoms.exit_vector_inds is not forwarded — carrying it through would not
+   change behavior, since it isn't consumed downstream.
+
+   :param profile: An InteractionProfile with `condition_atoms` set (e.g. via
+                   `with_condition_atoms`/`from_condition_atoms`), or a bare ConditionAtoms.
+   :type profile: InteractionProfile | ConditionAtoms
+   :param scaffold_conditioning:
+   :type scaffold_conditioning: bool (default=False)
+   :param inpaint: Overrides for x1 inpaint flags / stop-time knobs, merged and resolved the
+                   same way `generate()` does.
+   :type inpaint: Optional[InpaintAdvancedOptions] (default=None)
+   :param center_of_mass: Resolved coordinate-frame offset to center atom positions about, as
+                          produced by generate_composition's ``condition_center_of_mass``
+                          handling (``np.zeros(3)`` for ``'origin'``, ``None`` for ``'auto'`` --
+                          auto-derive from the scaffold COM inside gen_x1_edm_inpainting_dict --
+                          or an explicit length-3 array). Not derived from ``profile`` itself:
+                          ``InteractionProfile.to_generate_kwargs()['center_of_mass']`` is always
+                          ``np.zeros(3)`` and is intentionally ignored here.
+   :type center_of_mass: np.ndarray (3,) | None (default=np.zeros(3))
+
+   :returns: **dict**
+   :rtype: kwargs suitable for gen_x1_edm_inpainting_dict.
+
+
+.. py:function:: center(mol, ref_center=None)
+
+   Recenter a molecule's conformer coordinates.
+
+   :param mol: Molecule with a conformer to recenter.
+   :type mol: rdkit.Chem.Mol
+   :param ref_center: Center to subtract. If None, centers on the molecule's own coordinate mean.
+   :type ref_center: Optional[np.ndarray] (3,) (default=None)
+
+   :returns: **rdkit.Chem.Mol**
+   :rtype: mol with recentered conformer coordinates.
+
+
+.. py:function:: combine_list_of_dicts(xs)
+
+   Inverse of unflatten_dict: stack a list of per-batch-element dicts back into one dict.
+
+   :param xs: Length B, each dict holding tensors of shape (C, A, ...).
+   :type xs: list[dict]
+
+   :returns: **dict**
+   :rtype: each key maps to a tensor of shape (C, B*A, ...).
+
+
+.. py:function:: condition_kwargs_from_profile(profile: MolecularDiffusion.modules.models.shepherd2.interaction_profile.InteractionProfile, condition_modalities='all', pharmacophore_conditioning: bool = False, inpaint: MolecularDiffusion.modules.models.shepherd2.interaction_profile.InpaintAdvancedOptions | None = None) -> dict
+
+   Translate an InteractionProfile (+ optional InpaintAdvancedOptions) into the
+   kwargs dict expected by gen_edm_inpainting_dict — the same surface/ESP/
+   pharmacophore condition dict shape produced by return_condition_dict.
+
+   This is a pure interface adapter: it does not change what gen_edm_inpainting_dict
+   or generate_composition compute.
+
+   :param profile:
+   :type profile: InteractionProfile
+   :param condition_modalities:
+   :type condition_modalities: see InteractionProfile.to_generate_kwargs.
+   :param pharmacophore_conditioning: Not derived from the profile (mirrors the `generate()` signature, where
+                                      pharmacophore_conditioning is a separate argument from `condition`).
+   :type pharmacophore_conditioning: bool (default=False)
+   :param inpaint: Overrides for inpaint flags / stop-time / add-noise knobs, merged the same
+                   way `generate()` merges them (non-default fields win, then resolved to
+                   hard defaults).
+   :type inpaint: Optional[InpaintAdvancedOptions] (default=None)
+
+   :returns: **dict**
+   :rtype: kwargs suitable for gen_edm_inpainting_dict.
+
+
+.. py:function:: get_random_conditions(n_cond=2, n_samples=100, max_len=100, seed=42)
+
+   Sample random combinations of indices, e.g. for picking random condition pairs.
+
+   :param n_cond: Number of indices per combination.
+   :type n_cond: int (default=2)
+   :param n_samples: Number of combinations to sample.
+   :type n_samples: int (default=100)
+   :param max_len: Indices are sampled from range(max_len).
+   :type max_len: int (default=100)
+   :param seed:
+   :type seed: int (default=42)
+
+   :returns: **np.ndarray**
+   :rtype: n_samples combinations, each of length n_cond.
+
+
+.. py:function:: mol_to_gen_mol(mol)
+
+   Extract atomic numbers and coordinates from a molecule's conformer.
+
+   :param mol: Molecule with a conformer.
+   :type mol: rdkit.Chem.Mol
+
+   :returns: **tuple[np.ndarray, np.ndarray]**
+   :rtype: (atomic numbers, coordinates).
+
+
+.. py:function:: optimize_SO3_esp_overlay(ref_points: torch.Tensor, fit_points: torch.Tensor, ref_charges: torch.Tensor, fit_charges: torch.Tensor, alpha: float, lam: float, num_repeats: int = 50, lr: float = 0.1, max_num_steps: int = 200, verbose: bool = False) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+
+   Same interface as optimize_ROCS_esp_overlay but restricts optimization to SO3 (rotation only).
+   Translation is frozen at the CoM-aligning value computed during initialization - gradients are
+   never propagated through the translation indices of se3_params.
+
+   The trick: split the (num_repeats, 7) initialization into
+     quat_params  (num_repeats, 4)  requires_grad=True   <- optimized
+     fixed_trans  (num_repeats, 3)  requires_grad=False  <- frozen
+   then rebuild se3_params = cat([quat_params, fixed_trans]) each step so autograd only
+   touches the rotation leaf. No changes to any underlying objective or transform functions.
+
+   :param ref_points: Reference and fit point clouds to align.
+   :type ref_points: torch.Tensor
+   :param fit_points: Reference and fit point clouds to align.
+   :type fit_points: torch.Tensor
+   :param ref_charges: Per-point charges/features used by the ESP similarity objective.
+   :type ref_charges: torch.Tensor
+   :param fit_charges: Per-point charges/features used by the ESP similarity objective.
+   :type fit_charges: torch.Tensor
+   :param alpha: ESP similarity scoring hyperparameters.
+   :type alpha: float
+   :param lam: ESP similarity scoring hyperparameters.
+   :type lam: float
+   :param num_repeats: Number of random restarts.
+   :type num_repeats: int (default=50)
+   :param lr:
+   :type lr: float (default=0.1)
+   :param max_num_steps:
+   :type max_num_steps: int (default=200)
+   :param verbose:
+   :type verbose: bool (default=False)
+
+   :returns: * **aligned_points** (*torch.Tensor (M, 3)*)
+             * **SE3_transform** (*torch.Tensor (4, 4)*)
+             * **score** (*torch.Tensor (1,)*)
+
+
+.. py:function:: return_atom_condition_dict(inpaint_x1_pos: bool = False, inpaint_x1_x: bool = False, inpaint_x1_bonds: bool = False, inpaint_x1_formal_charge: bool = False, scaffold_conditioning: bool = False, stop_inpainting_at_time_x1_pos: float = 1.0, stop_inpainting_at_time_x1_x: float = 1.0, stop_inpainting_at_time_x1_bonds: float = 1.0, mol: rdkit.Chem.Mol | None = None, ref_center: numpy.ndarray | None = None, atom_inds_to_inpaint: list[int] | None = None, atom_types: list[int] | None = None, atom_pos: numpy.ndarray | None = None, atom_formal_charges: numpy.ndarray | None = None, center_of_mass: numpy.ndarray = np.zeros(3))
+
+   Build an atom (x1) condition kwargs dict, centering mol on ref_center if provided.
+
+   :param inpaint_x1_pos:
+   :type inpaint_x1_pos: bool (default=False)
+   :param inpaint_x1_x:
+   :type inpaint_x1_x: bool (default=False)
+   :param inpaint_x1_bonds:
+   :type inpaint_x1_bonds: bool (default=False)
+   :param inpaint_x1_formal_charge:
+   :type inpaint_x1_formal_charge: bool (default=False)
+   :param scaffold_conditioning:
+   :type scaffold_conditioning: bool (default=False)
+   :param stop_inpainting_at_time_x1_pos: Progress fraction at which to stop inpainting (1.0 = data; 0.0 = prior).
+   :type stop_inpainting_at_time_x1_pos: float (default=1.0)
+   :param stop_inpainting_at_time_x1_x: Progress fraction at which to stop inpainting (1.0 = data; 0.0 = prior).
+   :type stop_inpainting_at_time_x1_x: float (default=1.0)
+   :param stop_inpainting_at_time_x1_bonds:
+   :type stop_inpainting_at_time_x1_bonds: float (default=1.0)
+   :param mol: Target molecule; recentered on ref_center (or its own mean) if provided.
+   :type mol: Optional[Chem.Mol] (default=None)
+   :param ref_center:
+   :type ref_center: Optional[np.ndarray] (3,) (default=None)
+   :param atom_inds_to_inpaint:
+   :type atom_inds_to_inpaint: Optional[list[int]] (default=None)
+   :param atom_types:
+   :type atom_types: Optional[list[int]] (default=None)
+   :param atom_pos:
+   :type atom_pos: Optional[np.ndarray] (default=None)
+   :param atom_formal_charges:
+   :type atom_formal_charges: Optional[np.ndarray] (default=None)
+   :param center_of_mass:
+   :type center_of_mass: np.ndarray (3,) (default=np.zeros(3))
+
+   :returns: **dict**
+   :rtype: kwargs suitable for gen_x1_edm_inpainting_dict / gen_x1_inpainting_dict.
+
+
+.. py:function:: return_condition_dict(mol, charges, params, mode='all', inds=None, ref_center=None)
+
+   Build a surface/ESP/pharmacophore condition dict (plus a drawing-friendly variant)
+   from a molecule and its partial charges.
+
+   :param mol: Molecule with a conformer; recentered on ref_center (or its own mean) before scoring.
+   :type mol: rdkit.Chem.Mol
+   :param charges: Partial charges per atom, passed to Molecule for ESP surface generation.
+   :type charges: np.ndarray
+   :param params: Model params dict (surface point count, probe radius, pharmacophore settings).
+   :type params: dict
+   :param mode: Which modalities to mark for inpainting: 'x2', 'x3', 'x4', 'x2_x4', or 'all'.
+   :type mode: str (default='all')
+   :param inds: If provided, subset the pharmacophore arrays to these indices.
+   :type inds: optional (default=None)
+   :param ref_center:
+   :type ref_center: Optional[np.ndarray] (3,) (default=None)
+
+   :returns: * **condition_dict** (*dict of surface/ESP/pharmacophore targets and inpaint_* toggles,*) -- suitable for gen_edm_inpainting_dict / gen_inpainting_dict.
+             * **condition_dict_draw** (*dict*) -- Same underlying data, laid out for visualization.
+
+
+.. py:function:: unflatten_dict(d, cdtn_size, B)
+
+   Unflatten a condition-batched dict into a list of per-batch-element dicts.
+
+   :param d: Tensors of shape (cdtn_size * B * A, ...).
+   :type d: dict
+   :param cdtn_size: Number of conditions batched together.
+   :type cdtn_size: int
+   :param B: Batch size.
+   :type B: int
+
+   :returns: **list[dict]**
+   :rtype: length B, each dict holding tensors of shape (cdtn_size, A, ...).
+
+
+.. py:function:: unflatten_dict_values(d, cdtn_size, B)
+
+   Same as unflatten_dict, but keeps one dict with a per-batch-element list per key
+   instead of a list of per-batch-element dicts.
+
+   :param d: Tensors of shape (cdtn_size * B * A, ...).
+   :type d: dict
+   :param cdtn_size: Number of conditions batched together.
+   :type cdtn_size: int
+   :param B: Batch size.
+   :type B: int
+
+   :returns: **dict**
+   :rtype: each key maps to a list of length B of tensors shaped (cdtn_size, A, ...).
+
+
+.. py:function:: unflatten_tensor(v, cdtn_size, B)
+
+   Same as unflatten_dict, but for a single tensor instead of a dict.
+
+   :param v: Shape (cdtn_size * B * A, ...).
+   :type v: torch.Tensor
+   :param cdtn_size: Number of conditions batched together.
+   :type cdtn_size: int
+   :param B: Batch size.
+   :type B: int
+
+   :returns: **list[torch.Tensor]**
+   :rtype: length B, each shaped (cdtn_size, A, ...).
+
+

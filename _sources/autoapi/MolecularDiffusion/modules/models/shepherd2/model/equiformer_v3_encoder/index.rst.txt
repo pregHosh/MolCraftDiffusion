@@ -1,0 +1,403 @@
+MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3_encoder
+=======================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3_encoder
+
+.. autoapi-nested-parse::
+
+   Copied from equiformer_v3/models/equiformer_v3/equiformer_v3.py
+   and modified with the following changes:
+   - removed pbc-related code
+   - removed cell_offsets and offset_distances
+   - unlike ShEPhERDv1, we edit EdgeDegreeEmbedding directly in equiformer_v3.input_block.py
+   - adjusted TransformerBlock directly in equiformer_v3/models/equiformer_v3/transformer_block.py
+   - changed avg_num_nodes and avg_degree to dataset parameters (directly from ShEPhERD v1)
+   - added final_block_channels, input_sphere_channels, edge_attr_input_channels args
+   - removed regress_forces and regress_stress args
+   - deleted forces and stress blocks
+   - deleted _forward_gradient method
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3_encoder.EquiformerV3
+
+
+Module Contents
+---------------
+
+.. py:class:: EquiformerV3(final_block_channels=0, input_sphere_channels=128, edge_attr_input_channels=0, otf_graph=False, direct_prediction=True, cutoff=5.0, num_radial_basis=100, num_layers=12, num_channels=128, attn_hidden_channels=64, num_heads=8, attn_alpha_channels=32, attn_value_channels=16, ffn_hidden_channels=128, norm_type='merge_layer_norm', lmax=6, mmax=2, attn_grid_resolution_list=[20, 8], ffn_grid_resolution_list=[20, 20], edge_channels=128, use_atom_edge_embedding=True, use_envelope=True, attn_activation='sep-merge_gates2_swiglu', use_attn_renorm=True, use_add_merge=False, use_rad_l_parametrization=True, softcap=None, attn_eps=1e-16, ffn_activation='sep-merge_gates2_swiglu', use_grid_mlp=True, alpha_drop=0.0, attn_mask_rate=0.0, attn_weights_drop=0.1, value_drop=0.0, drop_path_rate=0.05, proj_drop=0.0, ffn_drop=0.0, use_head_reg=False, gradient_checkpointing_block_list=None, avg_num_nodes=_AVG_NUM_NODES, avg_degree=_AVG_DEGREE, enforce_max_neighbors_strictly=True)
+
+   Bases: :py:obj:`torch.nn.Module`, :py:obj:`MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_core_models_base.GraphModelMixin`
+
+
+   Edits for ShEPhERDv2
+   - removed pbc-related code (cell_offsets and offset_distances)
+   - removed max_num_elements arg (not used since we use linear instead of embedding)
+   - set otf_graph to False since we build our own graphs
+   - set num_radial_basis to 100
+   - deleted forces and stress blocks
+   - deleted _forward_gradient method
+
+   Args for ShEPhERDv2: (added)
+       final_block_channels (int): Number of spherical channels in final x embedding; if 0, there is no final block.
+       input_sphere_channels (int): Number of spherical channels in input x embedding, used for edge embedding.
+       edge_attr_input_channels (int): Number of channels in edge attributes, used for edge embedding.
+           optionally used for bond type features
+
+   :param otf_graph: Compute graph On The Fly (OTF) (ShEPhERDv2: set to False since we build our own graphs)
+   :type otf_graph: bool
+   :param [deleted] regress_forces: Compute forces (ShEPhERDv2: set to False)
+   :type [deleted] regress_forces: bool
+   :param [deleted] regress_stress: Compute stress
+   :type [deleted] regress_stress: bool
+   :param direct_prediction: Whether to use direct methods to predict forces and stress
+                             (ShEPhERDv2: kept to True to stay on the same path, but don't regress forces or stress)
+   :type direct_prediction: bool
+   :param [deleted] max_neighbors: Maximum number of neighbors per atom
+   :type [deleted] max_neighbors: int
+   :param cutoff: Maximum distance between nieghboring atoms in Angstroms
+                  [renamed] from max_radius to match ShEPhERDv1
+   :type cutoff: float
+   :param num_radial_basis: Number of radial basis functions
+   :type num_radial_basis: int
+   :param [Deleted] max_num_elements: Maximum atomic number
+   :type [Deleted] max_num_elements: int
+   :param num_layers: Number of layers in the GNN
+   :type num_layers: int
+   :param num_channels: Number of channels in node embeddings
+   :type num_channels: int
+   :param attn_hidden_channels: Number of hidden channels in equivariant graph attention
+   :type attn_hidden_channels: int
+   :param num_heads: Number of attention heads
+   :type num_heads: int
+   :param attn_alpha_channels: Number of channels for alpha vector in each attention head
+   :type attn_alpha_channels: int
+   :param attn_value_channels: Number of channels for value vector in each attention head
+   :type attn_value_channels: int
+   :param ffn_hidden_channels: Number of hidden channels in feedforward network
+   :type ffn_hidden_channels: int
+   :param norm_type: Type of normalization layer
+                     (['sep_layer_norm', 'merge_layer_norm',
+                     'merge_layer_norm_attn_rms_norm', 'merge_rms_norm'])
+   :type norm_type: str
+   :param lmax: Maximum degrees (l)
+   :type lmax: int
+   :param mmax: Maximum order (m)
+   :type mmax: int
+   :param attn_grid_resolution_list (list: int):
+                                           Grid resolution list in class `SO3Grid` in attention
+   :param ffn_grid_resolution_list (list: int):
+                                          Grid resolution list in class `SO3Grid` in feedforward network
+   :param edge_channels: Number of channels for edge-wise invariant features
+   :type edge_channels: int
+   :param use_atom_edge_embedding: Whether to use atomic embedding along with relative distance for edge scalar features
+   :type use_atom_edge_embedding: bool
+   :param use_envelope: Whether to apply an envelope function to attention
+   :type use_envelope: bool
+   :param attn_activation: Type of activation function in equivariant graph attention
+   :type attn_activation: str
+   :param use_attn_renorm: Whether to re-normalize attention weights
+   :type use_attn_renorm: bool
+   :param use_add_merge: Default: False
+                         If True, use addition to merge the source/target node features instead of concat,
+                         which can save 2x compute when rotating with Wigner-D matrices.
+   :type use_add_merge: bool
+   :param use_rad_l_parametrization: Default: True
+                                     If True, all the m components within the same type-L vector will share the same
+                                     weight from the radial function.
+   :type use_rad_l_parametrization: bool
+   :param softcap: Default: None
+                   If not None, use soft capping to limit the range of attention logits to
+                   [- `softcap`, + `softcap`].
+   :type softcap: float
+   :param attn_eps: Default: 1e-16
+                    Epsilon value used in the softmax operation of attention
+   :type attn_eps: float
+   :param ffn_activation: Type of activation function for feedforward network
+   :type ffn_activation: str
+   :param use_grid_mlp: If `True`, use projecting to grids and performing MLPs for FFNs.
+   :type use_grid_mlp: bool
+   :param [deleted] use_gate_force_head: If `True`, use `GateActivation` in the equivariant attention of the force prediction head.
+   :type [deleted] use_gate_force_head: bool
+   :param alpha_drop: Dropout rate for the hidden features in non-linear MLP attention
+   :type alpha_drop: float
+   :param attn_mask_rate: Mask rate for neighbors considered in attention
+   :type attn_mask_rate: float
+   :param attn_weights_drop: Dropout rate for attention weights
+   :type attn_weights_drop: float
+   :param value_drop: Dropout rate for the hidden features in non-linear value vectors
+   :type value_drop: float
+   :param drop_path_rate: Drop path rate
+   :type drop_path_rate: float
+   :param proj_drop: Dropout rate for outputs of attention and FFN in Transformer blocks
+   :type proj_drop: float
+   :param ffn_drop: Dropout rate for the hidden features in FFN
+   :type ffn_drop: float
+   :param use_head_reg: Whether to apply regularization to output head (dummy argument for backend compatibility)
+   :type use_head_reg: bool
+   :param gradient_checkpointing_block_list: A list indicating which block we apply gradient/activation checkpointing to save memory.
+   :type gradient_checkpointing_block_list: list
+   :param avg_num_nodes: Normalization factor for sum aggregation over nodes
+   :type avg_num_nodes: float
+   :param avg_degree: Normalization factor for sum aggregation over edges
+   :type avg_degree: float
+   :param enforce_max_neighbors_strictly: When edges are subselected based on the `max_neighbors` arg, arbitrarily select amongst equidistant / degenerate edges to have exactly the correct number.
+   :type enforce_max_neighbors_strictly: bool
+
+
+   .. py:method:: forward(x_input, pos, edge_index, edge_distance, edge_distance_vec, batch, edge_attr=None)
+
+      Adjusted for ShEPhERDv2: removed _forward_gradient method
+
+
+
+   .. py:method:: no_weight_decay()
+
+      Returns a list of parameters with no weight decay.
+
+
+
+   .. py:attribute:: alpha_drop
+      :value: 0.0
+
+
+
+   .. py:attribute:: attn_activation
+      :value: 'sep-merge_gates2_swiglu'
+
+
+
+   .. py:attribute:: attn_alpha_channels
+      :value: 32
+
+
+
+   .. py:attribute:: attn_eps
+      :value: 1e-16
+
+
+
+   .. py:attribute:: attn_grid_resolution_list
+      :value: [20, 8]
+
+
+
+   .. py:attribute:: attn_hidden_channels
+      :value: 64
+
+
+
+   .. py:attribute:: attn_mask_rate
+      :value: 0.0
+
+
+
+   .. py:attribute:: attn_value_channels
+      :value: 16
+
+
+
+   .. py:attribute:: attn_weights_drop
+      :value: 0.1
+
+
+
+   .. py:attribute:: avg_degree
+      :value: 15.57930850982666
+
+
+
+   .. py:attribute:: avg_num_nodes
+      :value: 18.03065905448718
+
+
+
+   .. py:attribute:: blocks
+
+
+   .. py:attribute:: cutoff
+      :value: 5.0
+
+
+
+   .. py:attribute:: direct_prediction
+      :value: True
+
+
+
+   .. py:attribute:: distance_expansion
+
+
+   .. py:attribute:: drop_path_rate
+      :value: 0.05
+
+
+
+   .. py:attribute:: edge_attr_embedding
+      :value: None
+
+
+
+   .. py:attribute:: edge_attr_input_channels
+      :value: 0
+
+
+
+   .. py:attribute:: edge_channels
+      :value: 128
+
+
+
+   .. py:attribute:: edge_channels_list
+
+
+   .. py:attribute:: edge_degree_embedding
+
+
+   .. py:attribute:: enforce_max_neighbors_strictly
+      :value: True
+
+
+
+   .. py:attribute:: envelope_func
+
+
+   .. py:attribute:: ffn_activation
+      :value: 'sep-merge_gates2_swiglu'
+
+
+
+   .. py:attribute:: ffn_drop
+      :value: 0.0
+
+
+
+   .. py:attribute:: ffn_grid_resolution_list
+      :value: [20, 20]
+
+
+
+   .. py:attribute:: ffn_hidden_channels
+      :value: 128
+
+
+
+   .. py:attribute:: final_block_channels
+      :value: 0
+
+
+
+   .. py:attribute:: gradient_checkpointing_block_list
+      :value: None
+
+
+
+   .. py:attribute:: input_sphere_channels
+      :value: 128
+
+
+
+   .. py:attribute:: lmax
+      :value: 6
+
+
+
+   .. py:attribute:: mmax
+      :value: 2
+
+
+
+   .. py:attribute:: norm
+
+
+   .. py:attribute:: norm_type
+      :value: 'merge_layer_norm'
+
+
+
+   .. py:attribute:: num_channels
+      :value: 128
+
+
+
+   .. py:attribute:: num_heads
+      :value: 8
+
+
+
+   .. py:attribute:: num_layers
+      :value: 12
+
+
+
+   .. py:property:: num_params
+
+
+   .. py:attribute:: num_radial_basis
+      :value: 100
+
+
+
+   .. py:attribute:: otf_graph
+      :value: False
+
+
+
+   .. py:attribute:: proj_drop
+      :value: 0.0
+
+
+
+   .. py:attribute:: so3_rotation
+
+
+   .. py:attribute:: softcap
+      :value: None
+
+
+
+   .. py:attribute:: use_add_merge
+      :value: False
+
+
+
+   .. py:attribute:: use_atom_edge_embedding
+      :value: True
+
+
+
+   .. py:attribute:: use_attn_renorm
+      :value: True
+
+
+
+   .. py:attribute:: use_envelope
+      :value: True
+
+
+
+   .. py:attribute:: use_grid_mlp
+      :value: True
+
+
+
+   .. py:attribute:: use_head_reg
+      :value: False
+
+
+
+   .. py:attribute:: use_rad_l_parametrization
+      :value: True
+
+
+
+   .. py:attribute:: value_drop
+      :value: 0.0
+
+
+

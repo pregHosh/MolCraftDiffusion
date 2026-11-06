@@ -1,0 +1,73 @@
+MolecularDiffusion.modules.models.shepherd2.data_utils.hdf5_dataset
+===================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.data_utils.hdf5_dataset
+
+.. autoapi-nested-parse::
+
+   Optimized Lazy-loading HDF5 dataset.
+
+   This class inherits from HeteroDataset and assumes the parent
+   provides a `process_item(self, molblock, charges, k)` method.
+
+   This version is:
+   - Memory-efficient: Only loads data from HDF5 on demand.
+   - Multiprocessing-safe: Handles file opening within each worker process.
+   - Simple: Indexes all files on init and removes complex/unnecessary file-reloading logic.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.data_utils.hdf5_dataset.HeteroDatasetHDF5
+
+
+Module Contents
+---------------
+
+.. py:class:: HeteroDatasetHDF5(hdf5_data_dir, cache_molecules=False, **hetero_kwargs)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.models.shepherd2.datasets.HeteroDataset`
+
+
+   Dataset that lazily loads molecules from HDF5 files only when __getitem__
+   is called. It uses the parent's `process_item` method to perform
+   all data processing (noise, graph creation, etc.).
+
+   :param hdf5_files: List of paths to HDF5 files.
+   :param cache_molecules: If True, cache loaded molblocks/charges in RAM.
+                           (Trades memory for speed after first epoch).
+   :param \*\*hetero_kwargs: All parameters normally passed to HeteroDataset
+
+
+   .. py:method:: get(idx)
+
+
+   .. py:method:: len()
+
+
+   .. py:attribute:: cache_molecules
+      :value: False
+
+
+
+   .. py:attribute:: hdf5_data_dir
+
+
+   .. py:attribute:: hdf5_files
+
+
+   .. py:attribute:: length
+      :value: 0
+
+
+
+   .. py:attribute:: molecule_cache
+
+
+   .. py:attribute:: open_files
+
+

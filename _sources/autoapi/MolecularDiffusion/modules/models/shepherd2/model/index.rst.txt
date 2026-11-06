@@ -1,0 +1,25 @@
+MolecularDiffusion.modules.models.shepherd2.model
+=================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.model
+
+.. autoapi-nested-parse::
+
+   ShEPhERD model components.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/egnn/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/equiformer_operations/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/equiformer_v3/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/equiformer_v3_encoder/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/model/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/utils/index
+
+

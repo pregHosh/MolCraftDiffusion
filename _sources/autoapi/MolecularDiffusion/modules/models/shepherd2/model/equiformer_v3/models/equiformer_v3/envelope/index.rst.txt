@@ -1,0 +1,56 @@
+MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.envelope
+=============================================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.envelope
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.envelope.PolynomialEnvelope
+
+
+Module Contents
+---------------
+
+.. py:class:: PolynomialEnvelope(cutoff: float = 6.0, exponent: int = 5)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   1.  Polynomial envelope function that ensures a smooth cutoff.
+   2.  Reference: https://github.com/facebookresearch/fairchem/blob/518d0ea12110548bd5ffaf9a43060b8eae152e13/src/fairchem/core/models/esen/nn/radial.py#L22
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: forward(distance: torch.Tensor) -> torch.Tensor
+
+
+   .. py:attribute:: a
+      :type:  float
+
+
+   .. py:attribute:: b
+      :type:  float
+
+
+   .. py:attribute:: c
+      :type:  float
+
+
+   .. py:attribute:: cutoff
+
+
+   .. py:attribute:: exponent
+      :value: 5
+
+
+
+   .. py:attribute:: p
+      :type:  float
+
+

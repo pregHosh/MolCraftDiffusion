@@ -1,0 +1,49 @@
+MolecularDiffusion.modules.models.shepherd2.inference.noise
+===========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.inference.noise
+
+.. autoapi-nested-parse::
+
+   This module contains the noise functions for the inference sampler.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.inference.noise.forward_trajectory_edm
+
+
+Module Contents
+---------------
+
+.. py:function:: forward_trajectory_edm(x: torch.Tensor, sigma_steps: numpy.ndarray, remove_COM_from_noise: bool = False, mask: torch.Tensor | None = None, deterministic: bool = False, batch: torch.Tensor | None = None, batch_size: int | None = None) -> dict[int, torch.Tensor]
+
+   Simulate an EDM forward noising trajectory: for each step index,
+   trajectory[step_idx] = x + sigma_steps[step_idx] * noise.
+
+   sigma_steps has shape (num_steps + 1,) with high to low sigma.
+   Returns dict keyed by step index 0..num_steps for use in EDM inpainting.
+
+   :param x:
+   :type x: Clean target tensor.
+   :param sigma_steps:
+   :type sigma_steps: Sigma at each step, shape (num_steps + 1,), high to low.
+   :param remove_COM_from_noise:
+   :type remove_COM_from_noise: Whether to remove center of mass from noise.
+   :param mask:
+   :type mask: True for positions to noise; non-masked are left as x (or caller uses slice).
+   :param deterministic:
+   :type deterministic: If True, noise = 0 (clean trajectory).
+   :param batch:
+   :type batch: Batch indices for COM removal when mask is used.
+   :param batch_size:
+   :type batch_size: If > 1, repeat x (and mask/batch) for batch_size independent trajectories.
+
+   :returns: **dict[int, torch.Tensor]**
+   :rtype: trajectory[step_idx] for step_idx in 0..len(sigma_steps)-1.
+
+

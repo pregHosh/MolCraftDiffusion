@@ -1,0 +1,19 @@
+MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.utils
+==========================================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.utils
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.utils.reduce_edge
+
+
+Module Contents
+---------------
+
+.. py:function:: reduce_edge(inputs, edge_index, output_shape)
+

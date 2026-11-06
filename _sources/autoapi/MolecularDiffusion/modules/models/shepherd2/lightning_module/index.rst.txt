@@ -1,0 +1,170 @@
+MolecularDiffusion.modules.models.shepherd2.lightning_module
+============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.lightning_module
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.lightning_module.ChainedExponentialLRScheduleFunc
+   MolecularDiffusion.modules.models.shepherd2.lightning_module.CosineWarmupLRScheduleFunc
+   MolecularDiffusion.modules.models.shepherd2.lightning_module.ExponentialLRScheduleFunc
+   MolecularDiffusion.modules.models.shepherd2.lightning_module.LightningModule
+   MolecularDiffusion.modules.models.shepherd2.lightning_module.MultiStageExponentialLRScheduleFunc
+
+
+Module Contents
+---------------
+
+.. py:class:: ChainedExponentialLRScheduleFunc(gamma1, min_ratio1, milestone, lr2_ratio, gamma2, min_ratio2)
+
+   Exponential decay to min_lr, then jump to chain_exp_lr and decay again.
+
+   LambdaLR multiplies the optimizer's initial lr (phase-1 peak). Phase 2 uses
+   absolute chain_exp_lr via lr2_ratio = chain_exp_lr / lr.
+
+
+   .. py:attribute:: gamma1
+
+
+   .. py:attribute:: gamma2
+
+
+   .. py:attribute:: lr2_ratio
+
+
+   .. py:attribute:: milestone
+
+
+   .. py:attribute:: min_ratio1
+
+
+   .. py:attribute:: min_ratio2
+
+
+.. py:class:: CosineWarmupLRScheduleFunc(warmup_steps, min_lr_ratio)
+
+   Picklable learning rate schedule function for cosine warmup.
+
+
+   .. py:attribute:: min_lr_ratio
+
+
+   .. py:attribute:: warmup_steps
+
+
+.. py:class:: ExponentialLRScheduleFunc(gamma, min_lr_ratio)
+
+   Picklable learning rate schedule function for exponential decay.
+
+
+   .. py:attribute:: gamma
+
+
+   .. py:attribute:: min_lr_ratio
+
+
+.. py:class:: LightningModule(params)
+
+   Bases: :py:obj:`pytorch_lightning.LightningModule`
+
+
+   .. py:method:: configure_optimizers()
+
+
+   .. py:method:: forward_training(input_dict)
+
+
+   .. py:method:: get_training_input_dict(data)
+
+
+   .. py:method:: on_validation_epoch_end()
+
+
+   .. py:method:: optimizer_step(*args, **kwargs)
+
+
+   .. py:method:: training_step(train_batch, batch_idx)
+
+
+   .. py:method:: validation_step(val_batch, batch_idx)
+
+      Check the consistency of generated molecules.
+
+
+
+   .. py:method:: x1_denoising_loss(input_dict, output_dict)
+
+
+   .. py:method:: x2_denoising_loss(input_dict, output_dict)
+
+
+   .. py:method:: x3_denoising_loss(input_dict, output_dict)
+
+
+   .. py:method:: x4_denoising_loss(input_dict, output_dict)
+
+
+   .. py:attribute:: lr
+
+
+   .. py:attribute:: lr_steps
+
+
+   .. py:attribute:: min_lr
+
+
+   .. py:attribute:: model
+
+
+   .. py:attribute:: params
+
+
+   .. py:attribute:: train_x1_denoising
+
+
+   .. py:attribute:: train_x2_denoising
+
+
+   .. py:attribute:: train_x3_denoising
+
+
+   .. py:attribute:: train_x4_denoising
+
+
+   .. py:attribute:: warmup_steps
+
+
+.. py:class:: MultiStageExponentialLRScheduleFunc(base_lr, starts, peaks, gammas, floors)
+
+   Picklable multi-stage exponential LR schedule.
+
+   Generalizes ChainedExponentialLRScheduleFunc to an arbitrary number of decay
+   stages. Stage i begins at absolute step ``starts[i]``, starts at peak lr
+   ``peaks[i]``, and decays exponentially with rate ``gammas[i]`` toward floor
+   ``floors[i]`` (reaching the floor after that stage's decay_steps). The active
+   stage at a given step is the last stage whose start <= step. Two stages
+   reproduce ChainedExponentialLRScheduleFunc exactly.
+
+   LambdaLR multiplies the optimizer's initial lr (base_lr == peaks[0]), so all
+   returned values are absolute-lr / base_lr ratios.
+
+
+   .. py:attribute:: base_lr
+
+
+   .. py:attribute:: floors
+
+
+   .. py:attribute:: gammas
+
+
+   .. py:attribute:: peaks
+
+
+   .. py:attribute:: starts
+
+

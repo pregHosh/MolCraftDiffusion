@@ -1,0 +1,175 @@
+MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils
+===================================================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils
+
+.. autoapi-nested-parse::
+
+   Copyright (c) Meta, Inc. and its affiliates.
+
+   This source code is licensed under the MIT license found in the
+   LICENSE file in the root directory of this source tree.
+
+   Copied from fairchem.core.common.utils.py
+   - most crucial functions for eqV3 encoder are: conditional_grad and compute_neighbors
+   - otherwise kept (
+       add_edge_distance_to_graph,
+       dict_set_recursively,
+       parse_value,
+       create_dict_from_args,
+       find_relative_file_in_paths,
+       load_config,
+       build_config,
+       sum_partitions,
+       get_counts,
+       get_max_neighbors_mask,
+       merge_dicts,
+       setup_env_vars,
+       tensor_stats,
+       get_weight_table,
+   )
+   - deleted pbc-related code
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils.DEFAULT_ENV_VARS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils.UniqueKeyLoader
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils.add_edge_distance_to_graph
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils.build_config
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils.compute_neighbors
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils.conditional_grad
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils.create_dict_from_args
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils.dict_set_recursively
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils.find_relative_file_in_paths
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils.get_counts
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils.get_max_neighbors_mask
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils.get_pruned_edge_idx
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils.get_weight_table
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils.load_config
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils.merge_dicts
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils.parse_value
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils.print_cuda_usage
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils.setup_env_vars
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils.sum_partitions
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.fairchem_utils.tensor_stats
+
+
+Module Contents
+---------------
+
+.. py:class:: UniqueKeyLoader(stream)
+
+   Bases: :py:obj:`yaml.SafeLoader`
+
+
+   
+   Initialize the scanner.
+
+
+   .. py:method:: construct_mapping(node, deep=False)
+
+
+.. py:function:: add_edge_distance_to_graph(batch, device='cpu', dmin: float = 0.0, dmax: float = 6.0, num_gaussians: int = 50)
+
+.. py:function:: build_config(args, args_override, include_paths=None)
+
+.. py:function:: compute_neighbors(data, edge_index)
+
+.. py:function:: conditional_grad(dec)
+
+   Decorator to enable/disable grad depending on whether force/energy predictions are being made
+
+
+.. py:function:: create_dict_from_args(args: list, sep: str = '.')
+
+   Create a (nested) dictionary from console arguments.
+   Keys in different dictionary levels are separated by sep.
+
+
+.. py:function:: dict_set_recursively(dictionary, key_sequence, val) -> None
+
+.. py:function:: find_relative_file_in_paths(filename, include_paths)
+
+.. py:function:: get_counts(x: torch.Tensor, length: int)
+
+.. py:function:: get_max_neighbors_mask(natoms, index, atom_distance, max_num_neighbors_threshold, degeneracy_tolerance: float = 0.01, enforce_max_strictly: bool = False)
+
+   Give a mask that filters out edges so that each atom has at most
+   `max_num_neighbors_threshold` neighbors.
+   Assumes that `index` is sorted.
+
+   Enforcing the max strictly can force the arbitrary choice between
+   degenerate edges. This can lead to undesired behaviors; for
+   example, bulk formation energies which are not invariant to
+   unit cell choice.
+
+   A degeneracy tolerance can help prevent sudden changes in edge
+   existence from small changes in atom position, for example,
+   rounding errors, slab relaxation, temperature, etc.
+
+
+.. py:function:: get_pruned_edge_idx(edge_index, num_atoms: int, max_neigh: float = 1000000000.0) -> torch.Tensor
+
+.. py:function:: get_weight_table(model: torch.nn.Module) -> tuple[list, list]
+
+.. py:function:: load_config(path: str, files_previously_included: list | None = None, include_paths: list | None = None)
+
+   Load a given config with any defined imports
+
+   When imports are present this is a recursive function called on imports.
+   To prevent any cyclic imports we keep track of already imported yml files
+   using files_previously_included
+
+
+.. py:function:: merge_dicts(dict1: dict, dict2: dict)
+
+   Recursively merge two dictionaries.
+   Values in dict2 override values in dict1. If dict1 and dict2 contain a dictionary as a
+   value, this will call itself recursively to merge these dictionaries.
+   This does not modify the input dictionaries (creates an internal copy).
+   Additionally returns a list of detected duplicates.
+   Adapted from https://github.com/TUM-DAML/seml/blob/master/seml/utils.py
+
+   :param dict1: First dict.
+   :type dict1: dict
+   :param dict2: Second dict. Values in dict2 will override values from dict1 in case they share the same key.
+   :type dict2: dict
+
+   :returns: **return_dict** -- Merged dictionaries.
+   :rtype: dict
+
+
+.. py:function:: parse_value(value)
+
+   Parse string as Python literal if possible and fallback to string.
+
+
+.. py:function:: print_cuda_usage() -> None
+
+.. py:function:: setup_env_vars() -> None
+
+.. py:function:: sum_partitions(x: torch.Tensor, partition_idxs: torch.Tensor) -> torch.Tensor
+
+.. py:function:: tensor_stats(name: str, x: torch.Tensor) -> dict
+
+.. py:data:: DEFAULT_ENV_VARS
+

@@ -1,0 +1,44 @@
+MolecularDiffusion.modules.models.shepherd2.data_utils.hdf5
+===========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.data_utils.hdf5
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.data_utils.hdf5.convert_all_files
+   MolecularDiffusion.modules.models.shepherd2.data_utils.hdf5.convert_pickle_to_hdf5
+   MolecularDiffusion.modules.models.shepherd2.data_utils.hdf5.load_hdf5_to_list
+
+
+Module Contents
+---------------
+
+.. py:function:: convert_all_files(data_dir, output_dir)
+
+   Convert all pickle files in a directory to HDF5.
+
+
+.. py:function:: convert_pickle_to_hdf5(pickle_path, hdf5_path)
+
+   Convert pickle file with List[Tuple[str, np.array]] to HDF5.
+
+   HDF5 structure:
+   - /molblocks: variable-length string dataset
+   - /charges: dataset with shape (n_molecules, max_atoms)
+   - /charges_lengths: actual number of atoms per molecule (for masking)
+
+
+.. py:function:: load_hdf5_to_list(hdf5_path)
+
+   Load HDF5 file back to List[Tuple[str, np.array]] format in the same order.
+
+   :param hdf5_path: Path to HDF5 file
+
+   :returns: List of (molblock, charges) tuples
+   :rtype: List[Tuple[str, np.array]]
+
+

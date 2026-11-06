@@ -1,0 +1,159 @@
+MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.output_block
+=================================================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.output_block
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.output_block.EquivariantGraphAttentionStressHead
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.output_block.FeedForwardNetworkStressHead
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.output_block.ScalarFeedForwardNetwork
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.output_block.get_stress_cg_change_mat
+
+
+Module Contents
+---------------
+
+.. py:class:: EquivariantGraphAttentionStressHead(input_sphere_channels, num_in_channels, num_hidden_channels, num_heads, attn_alpha_channels, attn_value_channels, num_out_channels, lmax, mmax, so3_rotation, grid_resolution_list, max_num_elements, edge_channels_list, use_atom_edge_embedding=True, activation='sep-merge_s2_swiglu', use_attn_renorm=True, use_add_merge=False, use_rad_l_parametrization=True, softcap=None, alpha_drop=0.0, attn_mask_rate=0.0, attn_weights_drop=0.0, value_drop=0.0)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.transformer_block.EquivariantGraphAttention`
+
+
+   :param input_sphere_channels: Number of input spherical channels (for nodes) # not in original eqV3
+   :type input_sphere_channels: int
+   :param num_in_channels: Number of input channels
+   :type num_in_channels: int
+   :param num_hidden_channels: Number of hidden channels
+   :type num_hidden_channels: int
+   :param num_heads: Number of attention heads
+   :type num_heads: int
+   :param attn_alpha_head: Number of channels for alpha vector in each attention head
+   :type attn_alpha_head: int
+   :param attn_value_head: Number of channels for value vector in each attention head
+   :type attn_value_head: int
+   :param num_out_channels: Number of output channels
+   :type num_out_channels: int
+   :param lmax: Maximum degrees (l)
+   :type lmax: int
+   :param mmax: Maximum order (m)
+   :type mmax: int
+   :param so3_rotation: Class to calculate Wigner-D matrices and rotate embeddings
+   :type so3_rotation: SO3Rotation
+   :param grid_resolution_list (list: int):
+                                      Grid resolution list in class `SO3Grid`
+   :param max_num_elements: Maximum number of atomic numbers
+   :type max_num_elements: int
+   :param edge_channels_list (list: int):  List of sizes of invariant edge embedding. For example, [input_channels, hidden_channels, hidden_channels].
+                                    The last one will be used as hidden size when `use_atom_edge_embedding` is `True`.
+   :param use_atom_edge_embedding: Whether to use atomic embedding along with relative distance for edge scalar features
+   :type use_atom_edge_embedding: bool
+   :param activation: Type of activation function.
+                      Please see `check_activation_name()` in `./activation.py`.
+   :type activation: str
+   :param use_attn_renorm: Whether to re-normalize attention weights
+   :type use_attn_renorm: bool
+   :param use_add_merge: Default: False
+                         If True, use addition to merge the source/target node features instead of concat,
+                         which can save 2x compute when rotating with Wigner-D matrices.
+   :type use_add_merge: bool
+   :param use_rad_l_parametrization: Default: True
+                                     If True, all the m components within the same type-L vector will share the same
+                                     weight from the radial function.
+   :type use_rad_l_parametrization: bool
+   :param softcap: Default: None
+                   If not None, use soft capping to limit the range of attention logits to
+                   [- `softcap`, + `softcap`].
+   :type softcap: float
+   :param alpha_drop: Dropout rate for the hidden features in non-linear MLP attention
+   :type alpha_drop: float
+   :param attn_mask_rate: Mask rate for neighbors considered in attention
+   :type attn_mask_rate: float
+   :param attn_weights_drop: Dropout rate for attention weights
+   :type attn_weights_drop: float
+   :param value_drop: Dropout rate for the hidden features in non-linear value vectors
+   :type value_drop: float
+
+
+   .. py:method:: forward(x, source_features, target_features, edge_distance, edge_index, edge_envelope_weight=None, batch_size=None, batch=None)
+
+
+.. py:class:: FeedForwardNetworkStressHead(num_in_channels, num_hidden_channels, num_out_channels, lmax, mmax, grid_resolution_list, activation='sep-merge_s2_swiglu', use_grid_mlp=True, dropout=0.0)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.transformer_block.FeedForwardNetwork`
+
+
+   :param num_in_channels: Number of input channels
+   :type num_in_channels: int
+   :param num_hidden_channels: Number of hidden channels
+   :type num_hidden_channels: int
+   :param num_out_channels: Number of output channels
+   :type num_out_channels: int
+   :param lmax: Maximum degrees (l)
+   :type lmax: int
+   :param mmax: Maximum order (m)
+   :type mmax: int
+   :param grid_resolution_list (list: int):
+                                      Grid resolution list in class `SO3Grid`
+   :param activation: Type of activation function
+   :type activation: str
+   :param use_grid_mlp: If `True`, use projecting to grids and performing MLPs.
+   :type use_grid_mlp: bool
+   :param dropout: Dropout rate for the hidden features.
+   :type dropout: float
+
+
+   .. py:method:: forward(x, batch_size, batch)
+
+
+.. py:class:: ScalarFeedForwardNetwork(num_in_channels, num_hidden_channels, num_out_channels, dropout=0.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   :param num_in_channels: Number of input channels
+   :type num_in_channels: int
+   :param num_hidden_channels: Number of hidden channels
+   :type num_hidden_channels: int
+   :param num_out_channels: Number of output channels
+   :type num_out_channels: int
+   :param dropout: Dropout rate for the hidden features.
+   :type dropout: float
+
+
+   .. py:method:: forward(inputs)
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: dropout
+
+
+   .. py:attribute:: linear_1
+
+
+   .. py:attribute:: linear_2
+
+
+   .. py:attribute:: num_hidden_channels
+
+
+   .. py:attribute:: num_in_channels
+
+
+   .. py:attribute:: num_out_channels
+
+
+.. py:function:: get_stress_cg_change_mat()
+

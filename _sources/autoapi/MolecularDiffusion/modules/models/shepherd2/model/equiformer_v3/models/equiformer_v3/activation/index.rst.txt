@@ -1,0 +1,383 @@
+MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation
+===============================================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.GateActivation
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.LinearSquare
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.LinearSwiGLU
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.S2Activation
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.S2Activation_SwiGLU
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.S2Activation_SwiGLU_MemoryEfficient
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.SeparableGateS2Activation_SwiGLU_Merge
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.SeparableGateS2Activation_SwiGLU_Merge_MemoryEfficient
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.SeparableS2Activation
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.SeparableS2Activation_Square
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.SeparableS2Activation_SwiGLU
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.SeparableS2Activation_SwiGLU_MemoryEfficient
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.SeparableS2Activation_SwiGLU_Merge
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.SeparableS2Activation_SwiGLU_Merge_MemoryEfficient
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.SmoothLeakyReLU
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.Square
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.SwiGLU
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.add_dropout
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.check_activation_name
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.get_activation
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.has_scalars
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.prepare_activation_forward_param
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.activation.swiglu_torch
+
+
+Module Contents
+---------------
+
+.. py:class:: GateActivation(lmax, mmax, use_m_primary=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: forward(inputs, scalars)
+
+      `inputs`: shape  [N, (lmax + 1) ** 2, num_channels]
+      `scalars`: shape [N, lmax * num_channels]
+
+
+
+   .. py:attribute:: gate_act
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mmax
+
+
+   .. py:attribute:: scalar_act
+
+
+   .. py:attribute:: use_m_primary
+      :value: False
+
+
+
+.. py:class:: LinearSquare(in_channels, out_channels, bias=True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(inputs)
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: in_channels
+
+
+   .. py:attribute:: linear
+
+
+   .. py:attribute:: out_channels
+
+
+.. py:class:: LinearSwiGLU(in_channels, out_channels, bias=True, backend='torch')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(inputs)
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: in_channels
+
+
+   .. py:attribute:: linear
+
+
+   .. py:attribute:: out_channels
+
+
+.. py:class:: S2Activation(lmax, mmax, grid_resolution_list=None, use_m_primary=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(inputs)
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mmax
+
+
+   .. py:attribute:: so3_grid
+
+
+.. py:class:: S2Activation_SwiGLU(lmax, mmax, grid_resolution_list=None, use_m_primary=False, backend='torch')
+
+   Bases: :py:obj:`S2Activation`
+
+
+   1.  Assume we only have one resolution.
+   2.  Use SwiGLU after projecting to grids.
+
+
+   .. py:attribute:: act
+
+
+.. py:class:: S2Activation_SwiGLU_MemoryEfficient(lmax, mmax, grid_resolution_list=None, use_m_primary=False, backend='torch')
+
+   Bases: :py:obj:`S2Activation_SwiGLU`
+
+
+   1.  Assume we only have one resolution.
+   2.  Use SwiGLU after projecting to grids.
+   3.  We use gradient checkpointing for this activation function.
+
+
+   .. py:method:: forward(inputs)
+
+
+   .. py:method:: kernel(inputs)
+
+
+.. py:class:: SeparableGateS2Activation_SwiGLU_Merge(lmax, mmax, grid_resolution_list=None, use_m_primary=False, backend='torch')
+
+   Bases: :py:obj:`GateActivation`
+
+
+   1.  'Separable' means that we have two paths (type-0 vectors and type-L vectors (L >= 0)).
+   2.  We divide type-0 vectors into two parts for 3. and 4.
+   3.  We apply SwiGLU to the first part of type-0 path ('SwiGLU').
+   4.  We apply Sigmoid to the second part of type-0 path ('Gate'), which is to be used in 5.
+   5.  For the type-L path, we project to S2 grid signals ('S2') and divide into two parts of
+       equal sizes.
+       We use the nonlinear weights in 4. to gate the first part of the S2 grid signals
+       ('GateS2Activation').
+       Then, we perform elementwise multiplication, which is equivalent to the self tensor product for
+       many-body interactions.
+       After elementwise multiplication, we optionally apply dropout, which enables training in a
+       non-equivariant manner.
+       Finally, we project S2 grid signals back to equivariant features.
+       Note that this is similar to SwiGLU (but without SiLU activation) in 3.
+   6.  We merge the two paths mentioned in 1. by adding the type-0 parts ('Merge').
+
+
+   .. py:method:: forward(inputs, scalars)
+
+      `inputs`: shape  [N, (lmax + 1) ** 2, 2 * num_channels]
+      `scalars`: shape [N, 2 * num_channels + num_channels] or
+                       [N, 1, 2 * num_channels + num_channels]
+
+
+
+   .. py:attribute:: grid_drop
+
+
+   .. py:attribute:: scalar_act
+
+
+   .. py:attribute:: so3_grid
+
+
+.. py:class:: SeparableGateS2Activation_SwiGLU_Merge_MemoryEfficient(lmax, mmax, grid_resolution_list=None, use_m_primary=False, backend='torch')
+
+   Bases: :py:obj:`SeparableGateS2Activation_SwiGLU_Merge`
+
+
+   1.  Add gradient checkpointing to `SeparableGateS2Activation_SwiGLU_Merge`
+
+
+   .. py:method:: forward(inputs, scalars)
+
+      `inputs`: shape  [N, (lmax + 1) ** 2, 2 * num_channels]
+      `scalars`: shape [N, 2 * num_channels + num_channels] or
+                       [N, 1, 2 * num_channels + num_channels]
+
+
+
+   .. py:method:: kernel(inputs, scalars)
+
+      `inputs`: shape  [N, (lmax + 1) ** 2, 2 * num_channels]
+      `scalars`: shape [N, 2 * num_channels + num_channels] or
+                       [N, 1, 2 * num_channels + num_channels]
+
+
+
+.. py:class:: SeparableS2Activation(lmax, mmax, grid_resolution_list=None, use_m_primary=False)
+
+   Bases: :py:obj:`S2Activation`
+
+
+   .. py:method:: forward(inputs, scalars)
+
+
+.. py:class:: SeparableS2Activation_Square(lmax, mmax, grid_resolution_list=None, use_m_primary=False)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(inputs, scalars)
+
+
+   .. py:attribute:: act
+
+
+   .. py:attribute:: lmax
+
+
+   .. py:attribute:: mmax
+
+
+   .. py:attribute:: so3_grid
+
+
+.. py:class:: SeparableS2Activation_SwiGLU(lmax, mmax, grid_resolution_list=None, use_m_primary=False, backend='torch')
+
+   Bases: :py:obj:`S2Activation_SwiGLU`
+
+
+   1.  Assume we only have one resolution.
+   2.  Use SwiGLU after projecting to grids.
+
+
+   .. py:method:: forward(inputs, scalars)
+
+
+.. py:class:: SeparableS2Activation_SwiGLU_MemoryEfficient(lmax, mmax, grid_resolution_list=None, use_m_primary=False, backend='torch')
+
+   Bases: :py:obj:`S2Activation_SwiGLU_MemoryEfficient`
+
+
+   1.  Assume we only have one resolution.
+   2.  Use SwiGLU after projecting to grids.
+   3.  We use gradient checkpointing for this activation function.
+
+
+   .. py:method:: forward(inputs, scalars)
+
+
+.. py:class:: SeparableS2Activation_SwiGLU_Merge(lmax, mmax, grid_resolution_list=None, use_m_primary=False, backend='torch')
+
+   Bases: :py:obj:`S2Activation_SwiGLU`
+
+
+   1.  Assume we only have one resolution.
+   2.  Use SwiGLU after projecting to grids.
+
+
+   .. py:method:: forward(inputs, scalars)
+
+
+.. py:class:: SeparableS2Activation_SwiGLU_Merge_MemoryEfficient(lmax, mmax, grid_resolution_list=None, use_m_primary=False, backend='torch')
+
+   Bases: :py:obj:`S2Activation_SwiGLU_MemoryEfficient`
+
+
+   1.  Assume we only have one resolution.
+   2.  Use SwiGLU after projecting to grids.
+   3.  We use gradient checkpointing for this activation function.
+
+
+   .. py:method:: forward(inputs, scalars)
+
+
+   .. py:method:: kernel(inputs, scalars)
+
+
+.. py:class:: SmoothLeakyReLU(negative_slope=0.2)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:attribute:: alpha
+      :value: 0.2
+
+
+
+.. py:class:: Square
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   The number of output channels is the half of that of input channels.
+
+
+   .. py:method:: forward(inputs)
+
+
+.. py:class:: SwiGLU(backend='torch')
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   1.  The module only contains the activation.
+   2.  The number of output channels is the half of that of input channels.
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: forward(inputs)
+
+
+   .. py:attribute:: backend
+      :value: 'torch'
+
+
+
+   .. py:attribute:: func
+
+
+.. py:function:: add_dropout(act, drop)
+
+   1.  Add extra dropout to original activation functions
+
+
+.. py:function:: check_activation_name(act_name)
+
+.. py:function:: get_activation(act_name, lmax, mmax, grid_resolution_list=None, use_m_primary=False)
+
+   use_m_primary (bool):   Default: False
+                           Whether to change the layout of m components.
+                           If `False`, the layout of m is (0), (-1, 0, +1), (-2, -1, 0, +1, +2), ...
+                           If `True`, the layout of m is (0, 0, ...), (1, 1, ...), ...
+                           The second one is used in SO(2) linear operations to avoid redundant
+                           matrix multiplications.
+
+
+.. py:function:: has_scalars(act_name)
+
+.. py:function:: prepare_activation_forward_param(act_name, inputs, scalars)
+
+.. py:function:: swiglu_torch(gate, up_states)
+

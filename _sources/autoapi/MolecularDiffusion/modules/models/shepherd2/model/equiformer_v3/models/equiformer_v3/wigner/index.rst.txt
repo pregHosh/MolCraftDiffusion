@@ -1,0 +1,19 @@
+MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.wigner
+===========================================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.wigner
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.wigner.wigner_D
+
+
+Module Contents
+---------------
+
+.. py:function:: wigner_D(l, alpha, beta, gamma)
+

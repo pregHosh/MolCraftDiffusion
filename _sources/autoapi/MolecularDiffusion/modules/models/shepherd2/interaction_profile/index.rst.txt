@@ -1,0 +1,672 @@
+MolecularDiffusion.modules.models.shepherd2.interaction_profile
+===============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.interaction_profile
+
+.. autoapi-nested-parse::
+
+   Interaction profile extraction and representation.
+
+   An InteractionProfile holds the surface point cloud, electrostatic potential (ESP),
+   and pharmacophore features.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.interaction_profile.ConditionAtoms
+   MolecularDiffusion.modules.models.shepherd2.interaction_profile.InpaintAdvancedOptions
+   MolecularDiffusion.modules.models.shepherd2.interaction_profile.InteractionProfile
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.interaction_profile.compute_neutralized_esp
+   MolecularDiffusion.modules.models.shepherd2.interaction_profile.extract_interaction_profile
+
+
+Module Contents
+---------------
+
+.. py:class:: ConditionAtoms
+
+   Subset of atoms to condition on for generation.
+
+   Supply one of the two:
+   - ``inds`` and ``mol`` (can use ``.from_mol()``)
+   - ``types``, ``pos``, and ``formal_charges``.
+
+   .. attribute:: inds
+
+      Indices of the atoms to condition on.
+
+      :type: list[int]
+
+   .. attribute:: types
+
+      Atom types corresponding to ``inds``.
+
+      :type: list[int] | None
+
+   .. attribute:: pos
+
+      Atom positions corresponding to ``inds``.
+
+      :type: np.ndarray | None
+
+   .. attribute:: formal_charges
+
+      Atom formal charges corresponding to ``inds``.
+
+      :type: np.ndarray | None
+
+   .. attribute:: exit_vector_inds
+
+      Optional for atom-inpainting only (not fixed conditioning). The indices of
+      the atoms within ``inds``to use as "exit vectors" for inpainting any "bond"
+      between inpainted atoms, but excludes bonds between non-inpainted atoms and
+      exit vector atoms.
+
+      :type: list[int] | None
+
+
+   .. py:method:: from_dict(d: dict) -> ConditionAtoms
+      :classmethod:
+
+
+
+   .. py:method:: from_mol(mol: rdkit.Chem.Mol, inds: list[int], exit_vector_inds: list[int] | None = None) -> ConditionAtoms
+      :classmethod:
+
+
+      Fill types, positions, and charges from ``mol`` at ``inds``.
+
+
+
+   .. py:method:: to_dict() -> dict
+
+
+   .. py:attribute:: exit_vector_inds
+      :type:  list[int] | None
+      :value: None
+
+
+
+   .. py:attribute:: formal_charges
+      :type:  numpy.ndarray | None
+      :value: None
+
+
+
+   .. py:attribute:: inds
+      :type:  list[int]
+
+
+   .. py:attribute:: pos
+      :type:  numpy.ndarray | None
+      :value: None
+
+
+
+   .. py:attribute:: types
+      :type:  list[int] | None
+      :value: None
+
+
+
+.. py:class:: InpaintAdvancedOptions
+
+   Extra inpainting options for :func:`shepherd.inference.sampler.generate`.
+
+   inpaint_x{i}_{modality} : bool | None
+       Whether to inpaint the {modality} of the {i}th representation.
+   stop_inpainting_at_time_{i}_{modality} : float | None
+       The time at which to stop inpainting the {modality} of the {i}th representation.
+       0.0 is the noise prior, 1.0 is the data/end of denoising. For example,
+       0.9 means inpaint 90% of the way through the denoising process.
+
+
+   .. py:method:: merge_overrides(other: InpaintAdvancedOptions) -> InpaintAdvancedOptions
+
+      Return a copy of ``self`` with explicitly-set (non-``None``) fields from ``other`` applied.
+
+
+
+   .. py:method:: resolved() -> InpaintAdvancedOptions
+
+      Return a copy with any remaining ``None`` fields filled with their hard defaults.
+
+
+
+   .. py:attribute:: add_noise_to_inpainted_x3_pos
+      :type:  float | None
+      :value: None
+
+
+
+   .. py:attribute:: add_noise_to_inpainted_x3_x
+      :type:  float | None
+      :value: None
+
+
+
+   .. py:attribute:: add_noise_to_inpainted_x4_direction
+      :type:  float | None
+      :value: None
+
+
+
+   .. py:attribute:: add_noise_to_inpainted_x4_pos
+      :type:  float | None
+      :value: None
+
+
+
+   .. py:attribute:: add_noise_to_inpainted_x4_type
+      :type:  float | None
+      :value: None
+
+
+
+   .. py:attribute:: inpaint_x1_bonds
+      :type:  bool | None
+      :value: None
+
+
+
+   .. py:attribute:: inpaint_x1_formal_charge
+      :type:  bool | None
+      :value: None
+
+
+
+   .. py:attribute:: inpaint_x1_pos
+      :type:  bool | None
+      :value: None
+
+
+
+   .. py:attribute:: inpaint_x1_x
+      :type:  bool | None
+      :value: None
+
+
+
+   .. py:attribute:: inpaint_x3_pos
+      :type:  bool | None
+      :value: None
+
+
+
+   .. py:attribute:: inpaint_x3_x
+      :type:  bool | None
+      :value: None
+
+
+
+   .. py:attribute:: inpaint_x4_direction
+      :type:  bool | None
+      :value: None
+
+
+
+   .. py:attribute:: inpaint_x4_pos
+      :type:  bool | None
+      :value: None
+
+
+
+   .. py:attribute:: inpaint_x4_type
+      :type:  bool | None
+      :value: None
+
+
+
+   .. py:attribute:: stop_inpainting_at_time_x1_bonds
+      :type:  float | None
+      :value: None
+
+
+
+   .. py:attribute:: stop_inpainting_at_time_x1_pos
+      :type:  float | None
+      :value: None
+
+
+
+   .. py:attribute:: stop_inpainting_at_time_x1_x
+      :type:  float | None
+      :value: None
+
+
+
+   .. py:attribute:: stop_inpainting_at_time_x3
+      :type:  float | None
+      :value: None
+
+
+
+   .. py:attribute:: stop_inpainting_at_time_x4
+      :type:  float | None
+      :value: None
+
+
+
+.. py:class:: InteractionProfile
+
+   Interaction profile: consists of surface point cloud,
+   electrostatic potential computed at each surface point, and pharmacophore features.
+
+   `com_before_centering` is the center of mass (COM) before centering which
+   can be used to recover the original positions. Assumes the profiles are already centered.
+
+   .. attribute:: surface
+
+      Surface point cloud coordinates.
+
+      :type: np.ndarray | None (M, 3)
+
+   .. attribute:: electrostatics
+
+      Electrostatic potential at each surface point.
+
+      :type: np.ndarray | None (M,)
+
+   .. attribute:: partial_charges
+
+      Atomic partial charges (incl. H) used to compute ``electrostatics``,
+      if known (e.g. from xTB).
+
+      :type: np.ndarray | None (n_atoms,)
+
+   .. attribute:: pharm_types
+
+      Integer pharmacophore type labels.
+
+      :type: np.ndarray | None (P,)
+
+   .. attribute:: pharm_positions
+
+      Pharmacophore anchor positions.
+
+      :type: np.ndarray | None (P, 3)
+
+   .. attribute:: pharm_direction
+
+      Pharmacophore direction unit vectors.
+
+      :type: np.ndarray | None (P, 3)
+
+   .. attribute:: com_before_centering
+
+      Mean atom position before coords were shifted to the origin.
+
+      :type: np.ndarray (3,)
+
+   .. attribute:: smiles
+
+      SMILES string of the source molecule, if known.
+
+      :type: str | None
+
+   .. attribute:: mol
+
+      An rdkit molecule used to extract the interaction profile, if known.
+
+      :type: Chem.Mol | None
+
+   .. attribute:: condition_atoms
+
+      Subset of atoms to condition on (x1 inpainting or scaffold).
+      Indices refer to ``mol``.
+
+      :type: ConditionAtoms | None
+
+   .. attribute:: neutralize_esp
+
+      If True, ``electrostatics`` was (or should be) computed with net
+      charge smeared uniformly over atoms so ``sum(q) == 0``. Applied at
+      extraction time via :func:`compute_neutralized_esp`.
+
+      :type: bool
+
+
+   .. py:method:: from_condition_atoms(mol: rdkit.Chem.Mol, inds: list[int], exit_vector_inds: list[int] | None = None) -> InteractionProfile
+      :classmethod:
+
+
+      Build a profile with *only* a conditioned atom and no interaction profile.
+
+      To scaffold-condition *and* condition on x2/x3/x4 together (the
+      common case), call :func:`extract_interaction_profile` with
+      ``condition_atom_inds=...`` instead, or attach atoms to an
+      already-extracted profile via :meth:`InteractionProfile.with_condition_atoms`.
+
+      ``mol`` is assumed to already be in the desired coordinate frame
+      (typically centered). Types, positions, and formal charges are taken
+      from ``mol`` at ``inds``.
+
+
+
+   .. py:method:: from_dict(d: dict) -> InteractionProfile
+      :classmethod:
+
+
+      Reconstruct from a dict produced by :meth:`to_dict`.
+
+
+
+   .. py:method:: from_generated_sample(sample: dict | MolecularDiffusion.modules.models.shepherd2.generated_sample.GeneratedSample, center: bool = True, xtb_optimize: bool = True, conversion: Literal['inferred', 'fixed'] = 'inferred', solvent: str = 'water', num_processes: int = 1, charge: int = 0, xtb_timeout: int = 60, neutralize_esp: bool = False) -> InteractionProfile | None
+      :classmethod:
+
+
+      Build an :class:`InteractionProfile` from a ShEPhERD generated-sample
+      dict (`GeneratedSample`).
+
+      ``xtb_optimize`` selects whether to geometry-optimize with xtb before
+      re-extracting surface / ESP / pharmacophores.
+
+      ``conversion`` selects how molecular charge is obtained
+      - ``'inferred'`` (default): :func:`~shepherd.extract.mol_charges_from_sample`
+        — infers formal charge from xyz (trying 0, ±1, ±2).
+      - ``'fixed'``: bond determination at a given charge (default 0)
+
+      :param sample: A generated sample.
+      :type sample: dict | GeneratedSample
+      :param center: Whether to translate the molecule's center of mass to the origin.
+      :type center: bool (default: True)
+      :param xtb_optimize: Whether to xtb-relax the generated geometry before re-extracting
+                           the profile.
+      :type xtb_optimize: bool (default: True)
+      :param conversion: How molecular charge is obtained.
+      :type conversion: {'inferred', 'fixed'} (default: 'inferred')
+      :param solvent: Implicit solvent used by xTB.
+      :type solvent: str (default: 'water')
+      :param num_processes: CPU cores used by xTB.
+      :type num_processes: int (default: 1)
+      :param charge: Molecular charge for ``conversion='fixed'``.
+      :type charge: int (default: 0)
+      :param xtb_timeout: xTB timeout in seconds for ``conversion='inferred'``.
+                          Increase for larger molecules.
+      :type xtb_timeout: int (default: 60)
+      :param neutralize_esp: If True, recompute ESP with net charge smeared over atoms
+                             (see :func:`compute_neutralized_esp`).
+      :type neutralize_esp: bool (default: False)
+
+      :rtype: InteractionProfile, or None if no valid molecule can be extracted.
+
+
+
+   .. py:method:: pharm_prioritization_labels(atom_inds: list[int], min_ring_priority_atoms: int = 1)
+
+      Get the pharmacophore prioritization labels for a given set of atoms indices.
+      For pharmacophore prioritization, ShepherdModel.generate() requires a list of ints
+      with length equal to the number of pharmacophores in the profile, with 1 for high priority
+      and 0 for low priority. This function sets pharmacophores associated (SMARTS patterns) with
+      atoms in `atom_inds` as high priority, and the rest as low priority.
+
+      :param atom_inds: The indices of the atoms to get the pharmacophore prioritization labels for.
+      :type atom_inds: list[int]
+      :param min_ring_priority_atoms: For aromatic and ring-derived hydrophobe pharmacophores, the minimum
+                                      number of selected ring heavy atoms (from ``atom_inds``) required to
+                                      label the pharmacophore high priority. Default ``1``: any single
+                                      selected ring atom is enough. Use a larger value (e.g. ``3``) when
+                                      you want whole-ring pharmacophores only if several ring atoms were
+                                      selected, not just one atom that happens to lie on a ring.
+      :type min_ring_priority_atoms: int, optional
+
+      :returns: The pharmacophore prioritization labels for the given atoms where len == number of pharmacophores
+                1: high priority (conditional), 0: low priority (inpainting)
+                ex) [1, 1, 1, 0, 0]
+      :rtype: list[int]
+
+
+
+   .. py:method:: subselection(atom_inds: list[int], surface_atom_inds: list[int] | None = None, expand_pharm_consistent: bool = True, min_ring_priority_atoms: int = 1, restrict_esp: bool = True, probe_radius: float = 0.6, radial_buffer: float = 0.0, include_h: bool = False) -> InteractionProfile
+
+      Return a copy of ``self`` with surface / electrostatics / pharmacophore
+      data restricted to a chosen atom subset.
+
+      :param atom_inds: Seed atom indices into ``self.mol`` that drive the pharmacophore
+                        subselection. Also used for the surface/ESP restriction when
+                        ``surface_atom_inds`` is ``None``.
+      :type atom_inds: list[int]
+      :param surface_atom_inds: If given, used in place of ``atom_inds`` to restrict the
+                                surface/ESP -- so ``atom_inds`` dictates which pharmacophores are
+                                kept while ``surface_atom_inds`` independently dictates which
+                                atoms the surface/ESP are regenerated over. Expanded via
+                                ``expand_pharm_consistent`` the same way ``atom_inds`` is
+                                (independently -- its expansion never affects which
+                                pharmacophores are kept).
+      :type surface_atom_inds: list[int] | None (default: None)
+      :param expand_pharm_consistent: Whether to expand ``atom_inds`` (and, independently,
+                                      ``surface_atom_inds`` when given) to the pharmacophore-consistent
+                                      superset before restricting (see
+                                      ``Pharmacophore.expand_atom_selection``).
+      :type expand_pharm_consistent: bool (default: True)
+      :param min_ring_priority_atoms: Forwarded to the underlying pharmacophore expansion/filtering.
+      :type min_ring_priority_atoms: int (default: 1)
+      :param restrict_esp: If True, electrostatics are recomputed using only the selected
+                           atoms' charges. If False, ESP still reflects all atoms' charges,
+                           evaluated at the restricted surface.
+      :type restrict_esp: bool (default: True)
+      :param probe_radius: Probe radius used to regenerate the restricted surface. Should
+                           match the value originally passed to `extract_interaction_profile`
+                           -- it isn't persisted on `InteractionProfile`, so pass it
+                           explicitly if it wasn't the default.
+      :type probe_radius: float (default: 0.6)
+      :param radial_buffer: Flat padding (in Angstroms) added to every retained atom's vdW
+                            radius before regenerating the surface.
+      :type radial_buffer: float (default: 0.0)
+      :param include_h: If True, the directly-bonded hydrogen neighbors of every atom in
+                        the surface/ESP atom set are added before regenerating the
+                        surface/ESP.
+      :type include_h: bool (default: False)
+
+      :rtype: InteractionProfile
+
+
+
+   .. py:method:: subselection_pharm(atom_inds: list[int] | None = None, min_ring_priority_atoms: int = 1, pharm_prioritization_labels: list[int] | None = None) -> InteractionProfile
+
+      Return a copy of ``self`` with only the pharmacophores with high priority (1) kept.
+      ``atom_inds`` and ``pharm_prioritization_labels`` are mutually exclusive.
+
+      If ``atom_inds`` is provided, only the pharmacophores associated with the atoms in ``atom_inds`` are kept.
+      If ``pharm_prioritization_labels`` is provided, only the pharmacophores with high priority (1) are kept.
+      If both are provided, the pharmacophores with high priority (1) associated with the atoms in ``atom_inds`` are kept.
+
+
+
+   .. py:method:: to_dict() -> dict
+
+      Serialize to a plain dict (numpy arrays + strings only).
+
+
+
+   .. py:method:: to_generate_kwargs(condition_modalities: str | set[str] = 'all') -> dict
+
+      Construct kwargs for `generate()`.
+
+      `condition_modalities` selects which modalities to condition on:
+      - 'all' (default): inpaint every channel that is present on this profile
+        (missing surface / ESP / pharmacophore fields are skipped).
+
+      Alternatively, specify with a single string or a list/set of strings:
+      - 'surface' | 'shape' | 'surf' | 'x2'
+      - 'electrostatics' | 'esp' | 'x3'
+          Note that esp implies surface since ESP is computed at surface point locations.
+      - 'pharmacophores' | 'pharm' | 'x4'
+          Inpaints all positions, directions, and types.
+          Alternatively, specify individual sub-fields: 'pharm_positions',
+          'pharm_directions', 'pharm_type' (aliases: 'pharm_pos', 'pharm_direction').
+
+      Examples:
+      - {{'shape', 'pharm'}}
+          Surface + all pharmacophore sub-fields.
+      - 'esp'
+          Surface + ESP.
+      - {{'pharm_positions', 'pharm_type'}}
+          Inpaints positions and types, but not directions nor surface/ESP.
+
+      The ``center_of_mass`` kwarg in the returned dict is always
+      ``np.zeros(3)`` -- coordinate-frame handling for the condition
+      (using it as given, centering on the scaffold/pharmacophore COM, or
+      an explicit offset) is controlled by the ``condition_center_of_mass``
+      argument of ``generate()`` / ``generate_composition()`` instead, not
+      by this profile's ``com_before_centering``.
+
+
+
+   .. py:method:: to_molecule(num_surf_points: int = 400, probe_radius: float = 1.2, pharm_multi_vector: bool | None = False, partial_charges: numpy.ndarray | None = None) -> shepherd_score.container.Molecule
+
+      Build a shepherd-score Molecule object for evaluation.
+
+      Evaluation with shepherd-score uses 400 surface points and a probe radius of 1.2,
+      which differ from the generation defaults of 75 and 0.6, respectively.
+
+
+
+   .. py:method:: translated(offset: numpy.ndarray) -> InteractionProfile
+
+      Return a copy with ``surface`` and ``pharm_positions`` shifted by ``-offset``.
+
+
+
+
+   .. py:method:: with_condition_atoms(inds: list[int], exit_vector_inds: list[int] | None = None) -> InteractionProfile
+
+      Return a copy of ``self`` with ``condition_atoms`` set from ``self.mol`` at ``inds``.
+
+      Use this to add scaffold-conditioning atoms to a profile that already
+      carries surface / electrostatics / pharmacophore data (e.g. from
+      :func:`extract_interaction_profile`), so x2/x3/x4 conditioning and
+      scaffold conditioning apply together in ``generate()``.
+
+
+
+   .. py:attribute:: com_before_centering
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: condition_atoms
+      :type:  ConditionAtoms | None
+      :value: None
+
+
+
+   .. py:attribute:: electrostatics
+      :type:  numpy.ndarray | None
+      :value: None
+
+
+
+   .. py:attribute:: mol
+      :type:  rdkit.Chem.Mol | None
+      :value: None
+
+
+
+   .. py:attribute:: n_atoms
+      :type:  int
+      :value: 0
+
+
+
+   .. py:attribute:: n_pharms
+      :type:  int
+
+
+   .. py:attribute:: neutralize_esp
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: partial_charges
+      :type:  numpy.ndarray | None
+      :value: None
+
+
+
+   .. py:attribute:: pharm_directions
+      :type:  numpy.ndarray | None
+      :value: None
+
+
+
+   .. py:attribute:: pharm_positions
+      :type:  numpy.ndarray | None
+      :value: None
+
+
+
+   .. py:attribute:: pharm_types
+      :type:  numpy.ndarray | None
+      :value: None
+
+
+
+   .. py:attribute:: smiles
+      :type:  str | None
+      :value: None
+
+
+
+   .. py:attribute:: surface
+      :type:  numpy.ndarray | None
+      :value: None
+
+
+
+.. py:function:: compute_neutralized_esp(molecule: shepherd_score.container.Molecule) -> numpy.ndarray
+
+   Recompute surface ESP after smearing net charge uniformly over atoms.
+
+   Sets ``q_i -= Q/N`` so ``sum(q) == 0``, then evaluates Coulomb ESP on the
+   same ``surf_pos``. Matches the neutral training distribution while preserving
+   relative charge differences (dipole-and-higher). When formal charge is already
+   0, returns ``molecule.surf_esp`` without recomputing.
+
+
+.. py:function:: extract_interaction_profile(mol: rdkit.Chem.Mol, xtb_optimize: bool = True, partial_charges: numpy.ndarray | None = None, center: bool = True, solvent: str = 'water', condition_atom_inds: list[int] | None = None, exit_vector_atom_inds: list[int] | None = None, num_surf_points: int = 75, probe_radius: float = 0.6, neutralize_esp: bool = False) -> InteractionProfile | None
+
+   Extract an :class:`InteractionProfile` from an RDKit molecule.
+
+   :param mol: The molecule with a 3D conformer and explicit hydrogens.
+   :type mol: Chem.Mol
+   :param partial_charges: Pre-computed partial charges (e.g. from xTB).  If ``None``,
+                           a single point xTB calculation is performed.
+   :type partial_charges: np.ndarray, optional
+   :param center: Whether to translate the molecule so its center of mass is at the origin.
+   :type center: bool
+   :param solvent: The solvent to use for the xTB partial charges. Default is 'water'.
+   :type solvent: str
+   :param condition_atom_inds: Indices of the atoms to fix/inpaint; matches the atom order of the input ``mol``.
+                               If given, sets ``condition_atoms`` on the returned profile so the profile is
+                               ready for scaffold conditioning, if desired.
+   :type condition_atom_inds: list[int], optional
+   :param exit_vector_atom_inds: Forwarded to :meth:`ConditionAtoms.from_mol` when ``condition_atom_inds``
+                                 is given. Only applies to atom-inpainting.
+   :type exit_vector_atom_inds: list[int], optional
+   :param num_surf_points: Number of surface points. ShEPhERD is trained only on 75 and cannot be changed
+                           for generation purposes.
+                           Evaluation uses ``num_surf_points=400``.
+   :type num_surf_points: int (default = 75)
+   :param probe_radius: Probe radius (Å). ShEPhERD is trained only on 0.6, but this can be adjusted as desired.
+                        Evaluation uses ``probe_radius=1.2``.
+   :type probe_radius: float (default = 0.6)
+   :param neutralize_esp: If True, replace raw surface ESP with
+                          :func:`compute_neutralized_esp` (no-op when formal charge is 0).
+                          Stored on the returned profile.
+   :type neutralize_esp: bool
+
+   :rtype: InteractionProfile
+
+

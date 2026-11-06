@@ -1,0 +1,114 @@
+MolecularDiffusion.modules.models.shepherd2.loader.checkpoint_manager
+=====================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.loader.checkpoint_manager
+
+.. autoapi-nested-parse::
+
+   Checkpoint manager for downloading and caching ShEPhERD model weights from Hugging Face.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.loader.checkpoint_manager.HF_REPO_ID
+   MolecularDiffusion.modules.models.shepherd2.loader.checkpoint_manager.MODEL_CHECKPOINTS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.loader.checkpoint_manager.CheckpointManager
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.loader.checkpoint_manager.get_checkpoint_filename
+   MolecularDiffusion.modules.models.shepherd2.loader.checkpoint_manager.get_checkpoint_path
+
+
+Module Contents
+---------------
+
+.. py:class:: CheckpointManager(cache_dir: str | None = None)
+
+   Manages downloading and caching of ShEPhERD model checkpoints.
+
+   Initialize checkpoint manager.
+
+   :param cache_dir: Typically this is: ~/.cache/huggingface/
+   :type cache_dir: Directory to cache checkpoints. If None, uses default HF cache.
+
+
+   .. py:method:: clear_cache(model_type: str | None = None)
+
+      Clear cached checkpoints.
+
+      :param model_type:
+      :type model_type: Specific model type to clear, or None to clear all
+
+
+
+   .. py:method:: get_available_models() -> dict
+
+      Get information about available model checkpoints.
+
+      :rtype: Dictionary with model types and their descriptions
+
+
+
+   .. py:method:: get_checkpoint_path(model_type: Literal['mosesaq'], force_download: bool = False, inference_only: bool = True) -> str
+
+      Download or retrieve cached checkpoint for the specified model type.
+
+      :param model_type:
+      :type model_type: Type of model checkpoint to retrieve
+      :param force_download:
+      :type force_download: Whether to force re-download even if cached
+      :param inference_only: if False, download the full training-resume checkpoint
+      :type inference_only: If True, download the stripped inference checkpoint;
+
+      :rtype: Path to the downloaded checkpoint file
+
+
+
+   .. py:attribute:: cache_dir
+      :value: None
+
+
+
+.. py:function:: get_checkpoint_filename(model_type: str, inference_only: bool = True) -> str
+
+   Return the Hugging Face filename for a model type and checkpoint variant.
+
+
+.. py:function:: get_checkpoint_path(model_type: Literal['mosesaq'], cache_dir: str | None = None, force_download: bool = False, inference_only: bool = True) -> str
+
+   Download or retrieve a cached checkpoint from Hugging Face.
+
+   :param model_type:
+   :type model_type: Type of model checkpoint to retrieve
+   :param cache_dir:
+   :type cache_dir: Directory to cache downloaded checkpoints (optional)
+   :param force_download:
+   :type force_download: Whether to force download even if cached
+   :param inference_only: if False, prefer the full training-resume checkpoint
+   :type inference_only: If True, prefer the stripped inference checkpoint;
+
+   :rtype: Path to the checkpoint file
+
+
+.. py:data:: HF_REPO_ID
+   :value: 'kabeywar/shepherd2'
+
+
+.. py:data:: MODEL_CHECKPOINTS
+

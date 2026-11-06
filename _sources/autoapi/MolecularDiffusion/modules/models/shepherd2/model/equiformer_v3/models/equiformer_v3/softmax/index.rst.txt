@@ -1,0 +1,65 @@
+MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.softmax
+============================================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.softmax
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.softmax.GraphSoftmax
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.softmax.SoftCap
+
+
+Module Contents
+---------------
+
+.. py:class:: GraphSoftmax(eps=1e-16, exp_dropout=0.0, softcap=None)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   1.  Reference: https://pytorch-geometric.readthedocs.io/en/2.3.1/_modules/torch_geometric/utils/softmax.html
+   2.  Add `exp_dropout` so that we can remove the contributions of some neighbors while keeping
+       the sum equal to 1.
+   3.  Add `exp_rescale` to rescale the outputs of the exponentation function so that we can downscale the
+       contributions of some neighbors with an envelope function.
+   4.  Add `softcap` to limit input logits to the range [- `softcap`, + `softcap`].
+   5.  Add `eps` for numerical stability.
+
+
+   .. py:method:: extra_repr()
+
+
+   .. py:method:: forward(src, index=None, ptr=None, num_nodes=None, dim=0, exp_rescale=None)
+
+
+   .. py:attribute:: dropout
+
+
+   .. py:attribute:: eps
+      :value: 1e-16
+
+
+
+   .. py:attribute:: exp_dropout
+      :value: 0.0
+
+
+
+   .. py:attribute:: softcap
+
+
+.. py:class:: SoftCap(cap)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(inputs)
+
+
+   .. py:attribute:: cap
+
+

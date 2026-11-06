@@ -1,0 +1,34 @@
+MolecularDiffusion.modules.models.shepherd2.loader
+==================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.loader
+
+.. autoapi-nested-parse::
+
+   Model and checkpoint loading.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/loader/checkpoint_manager/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/loader/model_loader/index
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.loader.load_model
+
+
+Package Contents
+----------------
+
+.. py:function:: load_model(*args, **kwargs)
+

@@ -1,0 +1,24 @@
+MolecularDiffusion.modules.models.shepherd2.comp_inference
+==========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.comp_inference
+
+.. autoapi-nested-parse::
+
+   Shepherd Compositional Inference submodule.
+
+   Provides the main compositional sampling function.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/comp_inference/sampler/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/comp_inference/steps/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/comp_inference/utils/index
+
+

@@ -1,0 +1,61 @@
+MolecularDiffusion.modules.models.shepherd2.inference.edm_sampler
+=================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.inference.edm_sampler
+
+.. autoapi-nested-parse::
+
+   ShEPhERD-2 EDM-based sampler.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.inference.edm_sampler.generate_edm_conditional
+   MolecularDiffusion.modules.models.shepherd2.inference.edm_sampler.generate_edm_unconditional
+   MolecularDiffusion.modules.models.shepherd2.inference.edm_sampler.get_edm_sigma_schedule
+
+
+Module Contents
+---------------
+
+.. py:function:: generate_edm_conditional(model_pl: MolecularDiffusion.modules.models.shepherd2.lightning_module.LightningModule, batch_size: int, N_x1: int | list[int], N_x4: int | list[int], num_steps: int, edm_inpainting_dict: dict, early_stop_edm: int | float = -1, shepherd_pred: bool = True, verbose: bool = True, store_trajectories: bool = False, store_trajectories_x0: bool = False, use_stochastic: bool = False, S_churn: float = 40.0, S_noise: float = 1.0, use_2nd_order_correction: bool = False, recenter_offset: numpy.ndarray | None = None) -> list[MolecularDiffusion.modules.models.shepherd2.generated_sample.GeneratedSample]
+
+   EDM conditional generation.
+
+   Default is to use predict-renoise (shepherd_pred=True) mode and uses inpainting
+   for conditional generation (replacement guidance).
+   x_next = D_theta(x_curr) + noise*sigma_next
+
+   When ``property_cfg`` is provided (same structure as ``generate`` builds),
+   is True and ``cfg_weight`` is non-zero, classifier-free guidance uses two forward
+   passes per step (masked-off vs masked-on properties), matching ``_inference_step``.
+
+
+.. py:function:: generate_edm_unconditional(model_pl: MolecularDiffusion.modules.models.shepherd2.lightning_module.LightningModule, batch_size: int, N_x1: int, N_x4: int, num_steps: int, early_stop_edm: int | float = -1, sigma_max: float | None = 3.0, sigma_min: float | None = 0.001, rho: float | None = 7.0, shepherd_pred: bool = True, verbose: bool = True, store_trajectories: bool = False, store_trajectories_x0: bool = False, use_stochastic: bool = False, S_churn: float = 40.0, S_noise: float = 1.0, use_2nd_order_correction: bool = False) -> list[MolecularDiffusion.modules.models.shepherd2.generated_sample.GeneratedSample]
+
+   EDM unconditional generation. Default is to use predict-renoise (shepherd_pred=True) mode.
+   This leads to better results than the traditional EDM Markov sampler.
+   use_stochastic should be False when using shepherd_pred=True.
+
+   When use_stochastic is True (default), uses EDM Algorithm 2: churn noise in
+   [sigma_min, sigma_max], then ODE step, then optional 2nd-order (Heun) correction.
+
+
+.. py:function:: get_edm_sigma_schedule(num_steps: int, edm_params: dict) -> numpy.ndarray
+
+   Build EDM noise schedule.
+
+   :param num_steps: Number of denoising steps.
+   :type num_steps: int
+   :param edm_params: EDM config from params['edm']. Uses sigma_data (or sigma_data_pos as
+                      fallback), sigma_min (default 1e-3), sigma_max (default 3.0), rho (default 7).
+   :type edm_params: dict
+
+   :returns: Shape (num_steps + 1,). Sigma values from high to low.
+   :rtype: np.ndarray
+
+

@@ -1,0 +1,217 @@
+MolecularDiffusion.modules.models.shepherd2.diffusion.edm
+=========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.diffusion.edm
+
+.. autoapi-nested-parse::
+
+   Module contains code for the EDM diffusion noise schedule.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.diffusion.edm.EDMNoiseSchedule
+   MolecularDiffusion.modules.models.shepherd2.diffusion.edm.EDMNoiseScheduleOutput
+   MolecularDiffusion.modules.models.shepherd2.diffusion.edm.EDMPreconditioner
+   MolecularDiffusion.modules.models.shepherd2.diffusion.edm.EDMScalingFactors
+
+
+Module Contents
+---------------
+
+.. py:class:: EDMNoiseSchedule(sigma_data, P_mean=-1.2, P_std=1.2, sigma_min=0.001, sigma_max=80, rho=7)
+
+   .. py:method:: forward_noise(clean_input: numpy.ndarray, sigma: float, remove_COM_from_noise: bool = False, mask: numpy.ndarray | None = None) -> numpy.ndarray
+
+      Given a clean data sample, it adds noise to the data sample for a given noise level, sigma.
+
+      :param clean_input:
+      :type clean_input: (N, D) array of input features.
+      :param sigma:
+      :type sigma: float of noise level.
+      :param c_in:
+      :type c_in: float of input scaling factor.
+      :param remove_COM_from_noise:
+      :type remove_COM_from_noise: boolean flag to remove COM from noise.
+      :param mask:
+      :type mask: boolean mask where virtual node is False and non-virtual node is True.
+      :param scale_by_sigma_data: Helpful for models that expect input features to be in the same units as the data.
+      :type scale_by_sigma_data: boolean flag to scale output by sigma_data.
+
+      :returns: c_in * (inp + noise)
+                optionally scaled by sigma_data if scale_by_sigma_data is True
+      :rtype: (N, D) array of forward-noised features
+
+
+
+   .. py:method:: get_loss_weight(sigma: numpy.ndarray) -> numpy.ndarray
+
+
+   .. py:method:: get_noise(sigma: float, shape: tuple, remove_COM_from_noise: bool = False, mask: numpy.ndarray | None = None, scale_by_sigma_data: bool = False) -> numpy.ndarray
+
+      Gets noise for a given noise level, sigma, and shape.
+
+      :param sigma:
+      :type sigma: float of noise level.
+      :param shape:
+      :type shape: tuple of shape of noise.
+      :param remove_COM_from_noise:
+      :type remove_COM_from_noise: boolean flag to remove COM from noise.
+      :param mask:
+      :type mask: boolean mask where virtual node is True and non-virtual node is False.
+
+      :returns: noise * sigma if scale_by_sigma_data is True
+                noise if scale_by_sigma_data is False
+      :rtype: (N, D) array of noise
+
+
+
+   .. py:method:: get_scaling_factors(sigma: float | numpy.ndarray) -> EDMNoiseScheduleOutput
+
+
+   .. py:method:: get_sigma(t: numpy.ndarray) -> numpy.ndarray
+
+
+   .. py:method:: sample_sigma(num_samples: int) -> numpy.ndarray
+
+
+   .. py:method:: scale_network_input(inp: numpy.ndarray, c_in: float, scale_by_sigma_data: bool = True) -> numpy.ndarray
+
+      Scales the input by the input scaling factor, c_in, and optionally by the sigma_data.
+
+      :param inp:
+      :type inp: (N, D) array of input features.
+      :param c_in:
+      :type c_in: float of input scaling factor.
+      :param scale_by_sigma_data:
+      :type scale_by_sigma_data: boolean flag to scale input by sigma_data.
+
+      :returns: c_in * inp * sigma_data if scale_by_sigma_data is True
+                c_in * inp if scale_by_sigma_data is False
+      :rtype: (N, D) array of scaled input features
+
+
+
+   .. py:method:: scale_network_output(inp: numpy.ndarray, c_out: float) -> numpy.ndarray
+
+      Scales the output of the networkby the output scaling factor, c_out.
+
+      :param inp:
+      :type inp: (N, D) array of input features.
+      :param c_out:
+      :type c_out: float of output scaling factor.
+
+      :returns: c_out * inp
+      :rtype: (N, D) array of scaled output features
+
+
+
+   .. py:attribute:: P_mean
+      :value: -1.2
+
+
+
+   .. py:attribute:: P_std
+      :value: 1.2
+
+
+
+   .. py:attribute:: rho
+      :value: 7
+
+
+
+   .. py:attribute:: sigma_data
+
+
+   .. py:attribute:: sigma_max
+      :value: 80
+
+
+
+   .. py:attribute:: sigma_min
+      :value: 0.001
+
+
+
+.. py:class:: EDMNoiseScheduleOutput
+
+   .. py:attribute:: c_in
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: c_noise
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: c_noise_edm
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: c_out
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: c_skip
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: sigma
+      :type:  numpy.ndarray
+
+
+.. py:class:: EDMPreconditioner(sigma_data: float = 3.0, dtype: torch.dtype = torch.float32, clip_loss_weighting_max: float | None = None)
+
+   .. py:method:: get_loss_weight(sigma: torch.Tensor) -> torch.Tensor
+
+      sigma: (N,) noise levels. Returns loss weight (N,1 ) for broadcast with (N, D).
+
+
+
+   .. py:method:: get_scaling_factors(sigma: torch.Tensor, unsqueeze: bool = True) -> EDMScalingFactors
+
+      sigma: (N,) noise levels. Returns factors (N, 1) for broadcast with (N, D).
+
+
+
+   .. py:attribute:: clip_loss_weighting_max
+      :value: None
+
+
+
+   .. py:attribute:: sigma_data
+
+
+.. py:class:: EDMScalingFactors
+
+   Scaling factors from EDM; all tensors shape (N,) or (N, 1) for broadcasting with (N, D).
+
+
+   .. py:attribute:: c_in
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: c_noise
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: c_noise_edm
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: c_out
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: c_skip
+      :type:  torch.Tensor
+
+
+   .. py:attribute:: sigma
+      :type:  torch.Tensor
+
+

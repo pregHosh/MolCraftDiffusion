@@ -1,0 +1,76 @@
+MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.radial_function
+====================================================================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.radial_function
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.radial_function.GaussianSmearing
+   MolecularDiffusion.modules.models.shepherd2.model.equiformer_v3.models.equiformer_v3.radial_function.RadialFunction
+
+
+Module Contents
+---------------
+
+.. py:class:: GaussianSmearing(start: float = -5.0, stop: float = 5.0, num_gaussians: int = 50, basis_width_scalar: float = 1.0)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   .. py:method:: forward(dist) -> torch.Tensor
+
+
+   .. py:attribute:: coeff
+
+
+   .. py:attribute:: num_output
+      :value: 50
+
+
+
+.. py:class:: RadialFunction(channels_list, lmax=None, mmax=None, use_rad_l_parametrization=True, use_expand=True)
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   1.  Contruct a radial function (linear layers + layer normalization + SiLU) given a list of channels
+   2.  If `use_rad_l_parametrization` == True and `use_expand` == True, all the m components
+       within a type-L vector will share the same weight.
+       We expand the outputs so that they can be directly multiplied with SO(3) features.
+   3.  If `use_rad_l_parametrization` == False and `use_expand` == True, the +=m within the same
+       type-L vector will share the same weight while different m will have different weights.
+       Thus, this will have more parameters than 3.
+       Different from 2., We expand the outputs so that they can be directly multiplied with SO(2) features.
+   4.  If `use_expand` == False, we simply return the outputs of radial functions.
+
+
+   .. py:method:: forward(inputs)
+
+
+   .. py:attribute:: lmax
+      :value: None
+
+
+
+   .. py:attribute:: mmax
+      :value: None
+
+
+
+   .. py:attribute:: net
+
+
+   .. py:attribute:: use_expand
+      :value: True
+
+
+
+   .. py:attribute:: use_rad_l_parametrization
+      :value: True
+
+
+

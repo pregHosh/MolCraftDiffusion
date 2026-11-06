@@ -316,6 +316,7 @@
 <li class="toctree-l5"><a class="reference internal" href="../../../../data/component/pmdm_data/index.html">MolecularDiffusion.data.component.pmdm_data</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../data/component/pointcloud/index.html">MolecularDiffusion.data.component.pointcloud</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../../data/component/reaction_data/index.html">MolecularDiffusion.data.component.reaction_data</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../data/component/shepherd2/index.html">MolecularDiffusion.data.component.shepherd2</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../data/dataloader/index.html">MolecularDiffusion.data.dataloader</a></li>
@@ -582,7 +583,7 @@ upstream, so the ported code stays diffable against JODO.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>t</strong> (<em>[</em><em>B</em><em>] </em><em>time steps in</em><em> [</em><em>0</em><em>, </em><em>1</em><em>]</em>)</p></li>
-<li><p><strong>xh</strong> (<em>[</em><em>B</em><em>, </em><em>N</em><em>, </em><em>ch1</em><em>] </em><em>atom feature</em><em> (</em><a class="reference internal" href="../../ditmc/graphs/index.html#MolecularDiffusion.modules.models.ditmc.graphs.LatentGraph.positions" title="MolecularDiffusion.modules.models.ditmc.graphs.LatentGraph.positions"><em>positions</em></a><em>, </em><a class="reference internal" href="../../../tasks/diffusion_nextmol/index.html#MolecularDiffusion.modules.tasks.diffusion_nextmol.MoleculeFeatureCache.types" title="MolecularDiffusion.modules.tasks.diffusion_nextmol.MoleculeFeatureCache.types"><em>types</em></a><em>, </em><em>formal charges</em><em>)</em>)</p></li>
+<li><p><strong>xh</strong> (<em>[</em><em>B</em><em>, </em><em>N</em><em>, </em><em>ch1</em><em>] </em><em>atom feature</em><em> (</em><a class="reference internal" href="../../ditmc/graphs/index.html#MolecularDiffusion.modules.models.ditmc.graphs.LatentGraph.positions" title="MolecularDiffusion.modules.models.ditmc.graphs.LatentGraph.positions"><em>positions</em></a><em>, </em><a class="reference internal" href="../../shepherd2/interaction_profile/index.html#id6" title="MolecularDiffusion.modules.models.shepherd2.interaction_profile.ConditionAtoms.types"><em>types</em></a><em>, </em><em>formal charges</em><em>)</em>)</p></li>
 <li><p><strong>node_mask</strong> (<em>[</em><em>B</em><em>, </em><em>N</em><em>, </em><em>1</em><em>]</em>)</p></li>
 <li><p><strong>edge_mask</strong> (<em>[</em><em>B*N*N</em><em>, </em><em>1</em><em>]</em>)</p></li>
 <li><p><strong>context</strong></p></li>
@@ -666,7 +667,7 @@ upstream, so the ported code stays diffable against JODO.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>t</strong> (<em>[</em><em>B</em><em>] </em><em>time steps in</em><em> [</em><em>0</em><em>, </em><em>1</em><em>]</em>)</p></li>
-<li><p><strong>xh</strong> (<em>[</em><em>B</em><em>, </em><em>N</em><em>, </em><em>ch1</em><em>] </em><em>atom feature</em><em> (</em><a class="reference internal" href="../../ditmc/graphs/index.html#MolecularDiffusion.modules.models.ditmc.graphs.LatentGraph.positions" title="MolecularDiffusion.modules.models.ditmc.graphs.LatentGraph.positions"><em>positions</em></a><em>, </em><a class="reference internal" href="../../../tasks/diffusion_nextmol/index.html#MolecularDiffusion.modules.tasks.diffusion_nextmol.MoleculeFeatureCache.types" title="MolecularDiffusion.modules.tasks.diffusion_nextmol.MoleculeFeatureCache.types"><em>types</em></a><em>, </em><em>formal charges</em><em>)</em>)</p></li>
+<li><p><strong>xh</strong> (<em>[</em><em>B</em><em>, </em><em>N</em><em>, </em><em>ch1</em><em>] </em><em>atom feature</em><em> (</em><a class="reference internal" href="../../ditmc/graphs/index.html#MolecularDiffusion.modules.models.ditmc.graphs.LatentGraph.positions" title="MolecularDiffusion.modules.models.ditmc.graphs.LatentGraph.positions"><em>positions</em></a><em>, </em><a class="reference internal" href="../../shepherd2/interaction_profile/index.html#id6" title="MolecularDiffusion.modules.models.shepherd2.interaction_profile.ConditionAtoms.types"><em>types</em></a><em>, </em><em>formal charges</em><em>)</em>)</p></li>
 <li><p><strong>node_mask</strong> (<em>[</em><em>B</em><em>, </em><em>N</em><em>, </em><em>1</em><em>]</em>)</p></li>
 <li><p><strong>edge_mask</strong> (<em>[</em><em>B*N*N</em><em>, </em><em>1</em><em>]</em>)</p></li>
 <li><p><strong>context</strong></p></li>

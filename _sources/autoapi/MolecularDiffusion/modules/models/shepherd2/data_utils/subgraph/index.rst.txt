@@ -1,0 +1,83 @@
+MolecularDiffusion.modules.models.shepherd2.data_utils.subgraph
+===============================================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2.data_utils.subgraph
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.data_utils.subgraph.MAX_SUBGRAPH_BONDS
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.data_utils.subgraph.bond_inds_to_atom_inds
+   MolecularDiffusion.modules.models.shepherd2.data_utils.subgraph.get_multiple_subgraph_inds
+   MolecularDiffusion.modules.models.shepherd2.data_utils.subgraph.get_subgraph_inds
+   MolecularDiffusion.modules.models.shepherd2.data_utils.subgraph.sample_fracs
+   MolecularDiffusion.modules.models.shepherd2.data_utils.subgraph.sample_random_or_subgraphs
+   MolecularDiffusion.modules.models.shepherd2.data_utils.subgraph.select_brics_scaffold_indices
+   MolecularDiffusion.modules.models.shepherd2.data_utils.subgraph.select_hetero_scaffold_indices
+
+
+Module Contents
+---------------
+
+.. py:function:: bond_inds_to_atom_inds(mol: rdkit.Chem.Mol, bond_inds: list[int]) -> list[int]
+
+.. py:function:: get_multiple_subgraph_inds(mol: rdkit.Chem.Mol, upper_bound_fractions: list[float]) -> list[int]
+
+.. py:function:: get_subgraph_inds(mol: rdkit.Chem.Mol, upper_bound_fraction: float = 0.2) -> list[int]
+
+   Get a random subgraph of the molecule with a number of bonds between 1 and
+   ``upper_bound_fraction * num_bonds``.
+
+   The enumerated chain length is capped at ``MAX_SUBGRAPH_BONDS`` so large molecules
+   do not trigger full enumeration of very long paths.
+
+   Returns a list of **atom** indices corresponding to the subgraph.
+
+
+.. py:function:: sample_fracs(num_fracs: int = 4, options: list[float] = [0.1, 0.2, 0.3]) -> list[float]
+
+.. py:function:: sample_random_or_subgraphs(mol: rdkit.Chem.Mol, prob_random_vs_subgraphs: float = 0.5, frac_random: float = 0.1, hydrogen_weight: float = 0.3, num_fracs: int = 4, upper_bound_fraction_options: list[float] = [0.1, 0.2, 0.3]) -> list[int]
+
+   Sample either random atoms or subgraphs of the molecule.
+
+   :param mol:
+   :type mol: Chem.Mol
+   :param prob_random_vs_subgraphs: Probability of sampling random atoms instead of subgraphs.
+   :type prob_random_vs_subgraphs: float (default = 0.5)
+   :param frac_random: Max number of fraction of atoms to sample if random atoms are sampled.
+   :type frac_random: float (default = 0.1)
+   :param hydrogen_weight: Weight of hydrogens in the probability distribution for random atoms.
+   :type hydrogen_weight: float (default = 0.3)
+   :param num_fracs: Max number of subgraphs to sample if subgraphs are sampled.
+   :type num_fracs: int (default = 4)
+   :param upper_bound_fraction_options: Options for the upper bound fraction of the subgraphs.
+   :type upper_bound_fraction_options: list[float] (default = [0.1, 0.2, 0.3])
+
+   :returns: **atom_inds** -- Atom indices of the subgraph or random atoms.
+   :rtype: list[int]
+
+
+.. py:function:: select_brics_scaffold_indices(mol: rdkit.Chem.Mol, seed: int) -> list[int]
+
+   Selects BRICS scaffold atoms at random (min 10 atoms)
+
+
+.. py:function:: select_hetero_scaffold_indices(mol: rdkit.Chem.Mol, seed: int) -> list[int]
+
+   Select hetero/non-ring-carbon atoms and attached atoms
+
+
+.. py:data:: MAX_SUBGRAPH_BONDS
+   :value: 6
+
+

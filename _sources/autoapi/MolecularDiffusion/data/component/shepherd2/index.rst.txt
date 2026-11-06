@@ -1,0 +1,206 @@
+MolecularDiffusion.data.component.shepherd2
+===========================================
+
+.. py:module:: MolecularDiffusion.data.component.shepherd2
+
+.. autoapi-nested-parse::
+
+   ShEPhERD-2 DataModule (``data_type: shepherd2_hetero``).
+
+   ShEPhERD-2 is routed to its own PyG ``HeteroData`` representation rather than
+   ``pointcloud`` / ``pyg`` / ``graph3d``: three of its four modalities (the 75-point
+   molecular surface ``x2``, the surface electrostatic potential ``x3``, and the
+   10-class pharmacophore points *with direction vectors* ``x4``) and the per-atom
+   xTB partial charges the ESP is derived from have no channel in any of the shared
+   representations.  See ``docs/model_integrations/shepherd2/INTEGRATION_PLAN.md``
+   ("Representation Routing").
+
+   Nothing here re-implements the dataset.  All item construction -- surface
+   sampling, ESP evaluation, pharmacophore extraction, the fully-connected
+   upper-triangular bond edge list, the per-sample EDM forward noising and the
+   scaffold/pharmacophore masks -- is upstream's own
+   ``shepherd.datasets.HeteroDataset.process_item``, vendored verbatim at
+   ``MolecularDiffusion.modules.models.shepherd2.datasets``.  This file is a thin
+   seam adapter that
+
+   1. picks the on-disk source (pickle ``list[(molblock, charges)]`` or HDF5 shards),
+   2. translates one ``params`` dict into ``HeteroDataset``'s keyword arguments using
+      *upstream's own* mapping (``training/train.py:74-114`` of the ShEPhERD-2 repo,
+      reproduced key-for-key below), and
+   3. exposes the ``train_set``/``valid_set``/``test_set``/``collate_fn``/``batch_size``
+      surface ``cli/train.py`` instantiates.
+
+   Single source of truth for ``params``
+   -------------------------------------
+   ``configs/data/shepherd2_dataset.yaml`` does **not** restate the hyperparameters.
+   It interpolates them straight out of the task config
+   (``model_params: ${tasks.model_params}``), so the architecture and the dataset
+   can never drift apart.  Set ``checkpoint_path`` to override both from a
+   checkpoint's ``hyper_parameters['params']`` instead (the ShEPhERD-v1 precedent).
+
+   open3d
+   ------
+   ``HeteroDataset`` imports ``open3d`` lazily, inside the first ``process_item``
+   call, deliberately: open3d initialises thread locks that cannot be pickled under
+   ``spawn`` multiprocessing (upstream comment at ``datasets.py:1-2, 13``).  Do not
+   hoist that import.  open3d is a *hard* requirement of this integration -- the
+   Poisson-disk surface sampling it provides is what the released weights were
+   trained on, and there is no acceptable fallback.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.shepherd2.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.shepherd2.Shepherd2DataModule
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.data.component.shepherd2.hetero_dataset_kwargs
+   MolecularDiffusion.data.component.shepherd2.shepherd2_collate_fn
+
+
+Module Contents
+---------------
+
+.. py:class:: Shepherd2DataModule(source: str = 'pkl', pkl_files: Optional[List[str]] = None, hdf5_data_dir: Optional[str] = None, cache_molecules: bool = False, model_params: Optional[Dict[str, Any]] = None, checkpoint_path: Optional[str] = None, num_samples: Optional[int] = None, data_fraction: float = 1.0, batch_size: int = 2, num_workers: int = 0, train_ratio: float = 0.9, task_type: str = 'diffusion_shepherd2', **kwargs: Any)
+
+   DataModule for ShEPhERD-2's four-modality ``HeteroData`` batches.
+
+   Two on-disk sources, both funnelling into the identical
+   ``HeteroDataset.process_item``:
+
+   ``source="pkl"``
+       ``pkl_files``: pickles holding ``list[(molblock, partial_charges)]`` --
+       the format the target repo ships its MOSES-aq conformers in and the same
+       one the platform's ShEPhERD-v1 data module already reads.
+
+   ``source="hdf5"``
+       ``hdf5_data_dir``: a directory of ``*.h5`` shards, read through upstream's
+       ``HeteroDatasetHDF5``, a lazy-loading subclass that indexes the shards on
+       init and delegates every item to the parent's ``process_item``.  Needs
+       ``h5py``.  Shards: Zenodo doi:10.5281/zenodo.22675705.
+
+
+   .. py:method:: load() -> None
+
+      Build train/valid/test ``HeteroDataset``s.
+
+
+
+   .. py:attribute:: batch_size
+      :value: 2
+
+
+
+   .. py:attribute:: cache_molecules
+      :value: False
+
+
+
+   .. py:attribute:: checkpoint_path
+      :value: None
+
+
+
+   .. py:attribute:: collate_fn
+
+
+   .. py:attribute:: data_fraction
+      :value: 1.0
+
+
+
+   .. py:attribute:: hdf5_data_dir
+      :value: None
+
+
+
+   .. py:attribute:: kwargs
+
+
+   .. py:attribute:: model_params
+
+
+   .. py:attribute:: num_samples
+      :value: None
+
+
+
+   .. py:attribute:: num_workers
+      :value: 0
+
+
+
+   .. py:attribute:: pkl_files
+      :value: []
+
+
+
+   .. py:attribute:: source
+      :value: 'pkl'
+
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_shepherd2'
+
+
+
+   .. py:attribute:: test_set
+      :value: None
+
+
+
+   .. py:attribute:: train_ratio
+      :value: 0.9
+
+
+
+   .. py:attribute:: train_set
+      :value: None
+
+
+
+   .. py:attribute:: valid_set
+      :value: None
+
+
+
+.. py:function:: hetero_dataset_kwargs(params: Dict[str, Any]) -> Dict[str, Any]
+
+   Translate a ShEPhERD-2 ``params`` dict into ``HeteroDataset`` kwargs.
+
+   Reproduced key-for-key from upstream ``training/train.py:74-114`` so that a
+   platform-trained dataset is byte-for-byte the one upstream would have built
+   from the same config.  Do not "tidy" this mapping: a silently renamed key
+   would change the training distribution without changing any error message.
+
+
+.. py:function:: shepherd2_collate_fn(batch: List[Any])
+
+   Collate ``HeteroData`` items exactly as upstream's PyG DataLoader does.
+
+   Upstream drives training through ``torch_geometric.loader.DataLoader``
+   (``data_utils/datamodule.py:131``), whose collater is
+   ``Batch.from_data_list``.  The platform's DataLoader takes a ``collate_fn``
+   instead, so this is that same collater behind a module-level (picklable)
+   name.
+
+
+.. py:data:: logger
+

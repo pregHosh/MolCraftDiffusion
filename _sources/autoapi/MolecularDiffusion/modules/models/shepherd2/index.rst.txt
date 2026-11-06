@@ -1,0 +1,44 @@
+MolecularDiffusion.modules.models.shepherd2
+===========================================
+
+.. py:module:: MolecularDiffusion.modules.models.shepherd2
+
+.. autoapi-nested-parse::
+
+   ShEPhERD-2: Diffusing Shape, Electrostatics, and Pharmacophores for Drug Design.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/comp_inference/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/data_utils/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/datasets/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/diffusion/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/extract/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/generated_sample/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/inference/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/interaction_profile/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/lightning_module/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/loader/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/model/index
+   /autoapi/MolecularDiffusion/modules/models/shepherd2/shepherd_model/index
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.shepherd2.load_model
+
+
+Package Contents
+----------------
+
+.. py:function:: load_model(*args, **kwargs)
+
