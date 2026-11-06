@@ -99,10 +99,10 @@ the bonds are thrown away.
 
 Generation steered by an external input — a shape, a pocket, a set of fragments,
 a pharmacophore. These need **paired** data (the condition alongside the
-molecule); a plain molecule dataset is not enough. Except for ShEPhERD, none
-of them generate bonds — you get atoms in space and the chemistry is perceived
-afterwards. Most are heavy-atom only; KGDiff, PMDM and Apo2Mol also place
-hydrogens.
+molecule); a plain molecule dataset is not enough. Except for the two ShEPhERD
+rows, none of them generate bonds — you get atoms in space and the chemistry is
+perceived afterwards. Most are heavy-atom only; KGDiff, PMDM and Apo2Mol also
+place hydrogens.
 
 Synthesizable generation can also be steered by a pharmacophore — see section 2.
 
@@ -118,7 +118,8 @@ Synthesizable generation can also be steered by a pharmacophore — see section 
 | `diffusion_apo2mol.yaml` | `diffusion_apo2mol` | **Apo protein pocket** | The one for **targets with no known binder**: it takes a ligand-free structure and reshapes the pocket as it designs, instead of assuming the pocket is already the right shape. Run the full sampling schedule: shorten it and the pocket never moves, which defeats the point. On the one complex tested, the shipped weights moved the pocket *away* from the true bound shape — validate before relying on it. |
 | `diffusion_difflinker.yaml` | `diffusion_difflinker` | **Fragments** to join, optionally a **protein pocket** | **Linker design**: hold fragments (and, for the three pocket-conditioned checkpoints, a fixed pocket too) fixed, generate the atoms joining them. You choose the linker length yourself, or pair a checkpoint with the zoo's `difflinker_size_gnn` checkpoint to have it auto-picked from fragment geometry. |
 | `diffusion_diffdec.yaml` | `diffusion_diffdec` | **Scaffold** + anchor atom + **protein pocket** | **R-group decoration**: keep a scaffold fixed, pick one attachment point, and grow a substituent there inside the pocket. Choose it over DiffLinker when you are growing off a scaffold rather than bridging two fragments. One R-group per run, and the model picks its size for you, up to about 10 heavy atoms. |
-| `pharmacophore.yaml` | `diffusion_pharmacophore` | **Pharmacophore** points, electrostatics, shape | ShEPhERD — ligand-based design when you have a reference molecule but **no protein structure**. Reach for it over DiffSMol above when you need electrostatics and pharmacophores as well as shape. Shape matching needs to be trained in; the shipped setup covers pharmacophores and electrostatics. It is also the only model in this table that generates bonds. |
+| `pharmacophore.yaml` | `diffusion_pharmacophore` | **Pharmacophore** points, electrostatics, shape | ShEPhERD — ligand-based design when you have a reference molecule but **no protein structure**. Reach for it over DiffSMol above when you need electrostatics and pharmacophores as well as shape. Shape matching needs to be trained in; the shipped setup covers pharmacophores and electrostatics. Along with ShEPhERD-2 below, it is one of only two models in this table that generate bonds. |
+| `diffusion_shepherd2.yaml` | `diffusion_shepherd2` | **Pharmacophore** points, electrostatics, surface | ShEPhERD-2 — the one for **arguing with a reference molecule instead of copying it**: mark some pharmacophores as must-haves, pin a scaffold and redesign around it, or ask for a molecule that matches two references at once (or matches one while avoiding the other). Lead-like and drug-sized with explicit hydrogens where ShEPhERD above is small-fragment, and it draws the bonds for you — but the shape channel was never trained, so pure shape matching still belongs to ShEPhERD or DiffSMol. |
 
 ## 4. Conformer generation
 
@@ -363,6 +364,12 @@ Backbones and objectives integrated here are based on the following work.
 - **ShEPhERD** — Adams, Abeywardane, Fromer & Coley. *ShEPhERD: Diffusing shape,
   electrostatics, and pharmacophores for bioisosteric drug design.* ICLR 2025.
   [arXiv:2411.04130](https://arxiv.org/abs/2411.04130)
+- **ShEPhERD-2** — Abeywardane, Walker & Coley. *Interaction Profiles as a
+  Universal Language for Generative Molecular Design with ShEPhERD-2.* bioRxiv
+  2026. [doi:10.64898/2026.09.10.750648](https://doi.org/10.64898/2026.09.10.750648)
+  — the successor to **ShEPhERD** (above), replacing its DDPM objective and
+  EquiformerV2 backbone with an EDM/Karras formulation over EquiformerV3, and
+  adding composition over several reference profiles.
 - **LoQI** — Nikitin, Anstine, Zubatyuk, Paliwal & Isayev. *Scalable
   Low-Energy Molecular Conformer Generation with Quantum Mechanical Accuracy.*
   ChemRxiv 2025.
