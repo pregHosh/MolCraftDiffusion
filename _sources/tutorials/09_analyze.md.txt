@@ -17,15 +17,24 @@ This tutorial covers the **analyse** command group, which provides tools for pos
 
 ## Overview
 
-The analysis command group includes five subcommands:
+The analysis command group includes seven subcommands:
 
 | Command | Description |
 |---------|-------------|
 | `optimize` | XTB geometry optimisation |
 | `metrics` | Validity/connectivity metrics, plus the paired `conformer` set |
+| `dock` | Dock an arbitrary library into one fixed pocket: pose RMSD and actives-vs-decoys enrichment |
+| `bias` | Check whether a docking score tracks molecule size, logP or charge: top picks against the pool |
 | `xyz2mol` | XYZ to SMILES + fingerprints |
 | `xtb-electronic` | XTB electronic properties |
 | `featurize` | Fixed-size molecular feature vectors (SOAP / UMA / SSL3D) |
+
+> **`metrics --metrics sbdd` vs `dock`.** Both use AutoDock Vina. Use
+> `--metrics sbdd` to score **molecules your model generated**: they already
+> sit in the pocket frame, so each is boxed on its own coordinates. Use `dock`
+> for **any other set of molecules** (an SDF, a SMILES library, a published
+> benchmark), which needs one shared pocket box and can report pose RMSD
+> against a known crystal pose. See [Part 3](#part-3-dock--library-docking-pose-recovery-and-enrichment).
 
 Access the CLI with:
 ```bash
@@ -56,7 +65,7 @@ MolCraftDiff analyze optimize gen_xyz/ --level gfn2 --charge 0
 
 ### Output
 
-Optimised XYZ files are saved to `output_dir/`, each with an `_opt` suffix (e.g. `mol_0000.xyz` → `mol_0000_opt.xyz`). Part 3's `--metrics conformer` expects exactly these `*_opt.xyz` files.
+Optimised XYZ files are saved to `output_dir/`, each with an `_opt` suffix (e.g. `mol_0000.xyz` → `mol_0000_opt.xyz`). Part 4's `--metrics conformer` expects exactly these `*_opt.xyz` files.
 
 ---
 
@@ -195,10 +204,189 @@ Two things worth knowing:
   in the summary against your input count.
 * `sbdd` is **not** part of `--metrics all`, because it needs a receptor and
   costs seconds per molecule (`--dock-mode score` is far cheaper than `dock`).
+* It reads only an XYZ directory or an ASE `.db`. For an SDF or a SMILES
+  library, use `analyze dock` (Part 3).
 
 ---
 
-## Part 3: Conformer Metrics (paired generated-vs-reference)
+## Part 3: Dock — Library Docking, Pose Recovery and Enrichment
+
+Dock molecules that did **not** come from a pocket-conditioned model into one
+fixed pocket box. Needs the `[sbdd]` extra (`vina` + `meeko` + `gemmi`).
+
+```bash
+MolCraftDiff analyze dock --receptor receptor.pdb \
+    --box-ref-ligand crystal.sdf \
+    --actives actives.smi --decoys decoys.smi
+```
+
+### Why the box matters
+
+`--metrics sbdd` boxes each molecule on its own coordinates, which is correct
+for a generated ligand already posed in the pocket. A molecule embedded from
+SMILES sits at an arbitrary origin, so that box would chase the ligand instead
+of staying on the site. Pin it one of two ways:
+
+| Option | Use |
+|--------|-----|
+| `--box-ref-ligand crystal.sdf` | **Recommended.** Box = the crystal ligand's extent + 5 Å buffer |
+| `--box-center X Y Z` + `--box-size X Y Z` | Explicit box, when there is no reference ligand |
+
+Omit both and each molecule is boxed on its own coordinates; the command logs
+a warning, because that is almost never what you want here.
+
+### Input
+
+| Option | Label | Accepts |
+|--------|-------|---------|
+| `--ligands` | none | `.sdf`, `.smi`, `.txt`, `.smiles`, `.ism`, `.csv` |
+| `--actives` | 1 | same |
+| `--decoys` | 0 | same |
+
+All three are repeatable. Labels come from **which file** a molecule was in —
+no join and no SMILES matching, because that is how DUD-E and LIT-PCBA ship.
+SDF records keep their crystal coordinates; SMILES are embedded with ETKDGv3,
+the same recipe `utils/conformer_pool` uses. A molecule that cannot be parsed
+or embedded is reported with an `error` rather than dropped.
+
+### Pose recovery
+
+Pass `--rmsd-ref` a known crystal pose and three columns appear:
+
+| Column | Meaning |
+|--------|---------|
+| `rmsd_top` | RMSD of the pose Vina scored **best** |
+| `rmsd_best` | RMSD of the **closest** pose at any rank |
+| `rmsd_best_rank` | Which rank that closest pose was at |
+
+**Read `rmsd_top` and `rmsd_best` against each other.** A tool that finds the
+right pose but ranks it fourth passes on `rmsd_best` and fails on `rmsd_top`,
+and only `rmsd_top` is available on a real screen where the answer is unknown.
+Under 2 Å is the field's conventional "same pose" bar; the summary reports
+`rmsd_top_under_2A` and `rmsd_best_under_2A` as fractions.
+
+Self-docking — redocking a crystal ligand into its own receptor — is the
+standard sanity check, since the answer is known in advance:
+
+```bash
+MolCraftDiff analyze dock --receptor receptor.pdb \
+    --ligands ligand.sdf --rmsd-ref ligand.sdf \
+    --n-poses 5 --default-altloc A
+```
+
+### Enrichment
+
+With `--actives`/`--decoys`, the summary adds:
+
+| Metric | Meaning |
+|--------|---------|
+| `roc_auc` | Ranking quality over the whole library; 0.5 is random |
+| `ef_1pct`, `ef_5pct` | Enrichment factor: how many more actives in the top 1% / 5% than chance gives |
+| `log_auc` | Adjusted LogAUC: early enrichment on a log-scaled x axis (see below) |
+| `n_actives`, `n_decoys` | What the above was computed on |
+
+Returns nothing rather than a fabricated 0.5 when either class is empty.
+Scores are negated internally because Vina affinities are lower-is-better.
+
+`log_auc` is computed by `dock_library.log_auc(scores, labels, lam=0.001)`.
+Sort the library by score, let x be the fraction of the library screened and y
+the fraction of actives found, then integrate y against log10(x) from
+`lam` to 1. The log scale weights the first few percent of the list far more
+than the rest. The integral is divided by log10(1/`lam`) and the value for a
+random ranking (0.14462 at `lam` = 0.001) is subtracted, so random scores 0, a
+perfect ranking about 0.855 and the worst possible about -0.145. With fewer
+than 1,000 molecules a warning is logged and `lam` is set to 1/n. **The
+formula is written from memory and is not yet checked against the paper;
+verify it before citing a LogAUC number.** NaN is returned, with a message,
+when there are no actives.
+
+### Options
+
+| Option | Default | Meaning |
+|--------|---------|---------|
+| `--receptor` | required | `.pdbqt`, or a `.pdb` that meeko prepares |
+| `--mode` | `dock` | `score` (in place) / `min` (local opt) / `dock` (full search) |
+| `--exhaustiveness` | 8 | Vina search effort |
+| `--n-poses` | 1 | Poses kept per molecule; > 1 forces a full dock |
+| `--rmsd-ref` | None | Crystal pose SDF for pose recovery |
+| `--seed` | 42 | Vina seed — docking is stochastic; vary it to size the noise |
+| `--default-altloc` | None | Altloc to keep, e.g. `A`, when the PDB has alternates |
+| `--allow-bad-res` | off | Let meeko accept residues that don't match its templates |
+| `--out-dir` | next to receptor | Where the prepared `.pdbqt` is written |
+| `--output` / `-o` | `dock_library.csv` | Output CSV; summary JSON lands beside it |
+
+### Two things that will bite
+
+* **Real PDB files fail receptor prep without `--default-altloc`.** meeko
+  refuses to guess between alternate conformations and errors with the list of
+  offending residues. Pass `--default-altloc A` to take the first everywhere —
+  but check whether any of those residues is near your site before accepting
+  that choice silently.
+* **One molecule per Vina invocation, no batch parallelism.** Measured on 32
+  cores: ~330–840 molecules/hour at `--mode dock` depending on ligand size, and
+  ~4,000/hour at `--mode score`. `score` and `min` evaluate a ligand where it
+  already sits, so they apply only to molecules posed in the pocket frame
+  (generated ones). A library embedded from SMILES sits at the origin, Vina
+  rejects it as outside the grid box, and `dock` is the only mode that works.
+
+A worked example on a real structure, with the numbers it produced, is in
+[docs/drug_design/GETTING_STARTED.md](../drug_design/GETTING_STARTED.md).
+
+### Bias check with `analyze bias`
+
+A docking score tends to reward big, oily molecules because they touch more of
+the pocket, whether or not they bind. If the top-ranked molecules are simply
+the largest ones, the ranking says little about the target. `analyze bias`
+reads the CSV that `dock` wrote and measures this. It needs no Vina; it runs
+on the CSV alone. Terms: *heavy atoms* are the non-hydrogen atoms, a size
+measure; *logP* is how oily a molecule is (RDKit Crippen estimate); *formal
+charge* is the sum of the +/- charges in the SMILES; *Spearman* is a rank
+correlation that ignores outliers, *Pearson* is the ordinary linear one.
+
+```bash
+MolCraftDiff analyze bias dock_library.csv
+MolCraftDiff analyze bias out/full_0.csv out/full_1.csv --top 10 --top 174 --out-dir bias/
+MolCraftDiff analyze bias out.csv --labels master.csv --id-col cache_id --label-col hit29
+```
+
+Input: one or more CSVs with `name`, `smiles` and the score column
+(`vina_dock`, lower is better). Other columns are ignored. Rows with a missing
+or non-numeric score are dropped, a repeated `name` keeps its lowest score, an
+unparseable SMILES is dropped, and each count is logged. For salts the largest
+piece (by heavy atoms) is measured, so `[Na+].CC(=O)[O-]` is 4 heavy atoms,
+charge -1. Under 20 scored molecules it logs "too few for a correlation" and
+stops.
+
+What it reports:
+
+| Section | Meaning |
+|---------|---------|
+| Score vs property | Spearman and Pearson of score against heavy atoms, logP and charge, each with a 95% bootstrap interval (2,000 resamples, seed 0). A negative value means bigger or oilier molecules score better. If over 90% of the pool is uncharged it says charge is nearly constant and uninformative |
+| Top-k vs pool | For each k (default 10 and 1% of the pool, at least 10): the top-k mean, the pool mean and median, the difference, and a one-sided permutation p-value (20,000 random k-subsets, seed 0; the share of random picks at least as extreme). Also the share of top-k molecules that are charged. A k above half the pool is skipped |
+| Hits vs pool | With `--labels`: the same comparison for the known hits, joined on `name` |
+
+A warning is logged when the top-k mean is more than `--sd-flag` pool standard
+deviations above the pool mean (default 0.5) and the permutation p is below
+0.01, for heavy atoms or logP; when the charged share differs from the pool's
+by more than 20 percentage points; and when |Spearman| of score against a
+property exceeds 0.5. The 0.5 SD cut-off is a conventional "medium effect"
+default, not calibrated on this domain. The command is a diagnostic and never
+exits non-zero. A biased library makes the pool itself biased, so the
+comparison is only as good as the pool.
+
+| Option | Default | Meaning |
+|--------|---------|---------|
+| `INPUTS` | required | One or more `dock` CSVs |
+| `--labels` | None | CSV of known hits; adds the hits-vs-pool section |
+| `--id-col` / `--label-col` | `name` / `label` | Columns of the `--labels` file; a label above 0 is a hit |
+| `--score-col` | `vina_dock` | Score column, lower is better |
+| `--top` | 10 and 1% of pool | Top-k to test; repeatable |
+| `--sd-flag` | 0.5 | Warning threshold in pool standard deviations |
+| `--out-dir` | None | Writes `property_bias_correlations.csv`, `property_bias_topk.csv` (also holds the hits rows) and `property_bias_props.csv` (one row per molecule). Nothing is written without it |
+
+---
+
+## Part 4: Conformer Metrics (paired generated-vs-reference)
 
 `--metrics conformer` is the home for every metric that needs a **pair** of
 structures — a generated one and the reference it should correspond to. It
@@ -258,7 +446,7 @@ ordering is not guaranteed to agree and **stereo columns are not emitted**
 
 ---
 
-## Part 4: XYZ to SMILES Conversion
+## Part 5: XYZ to SMILES Conversion
 
 Convert 3D XYZ files to 2D SMILES and extract molecular fingerprints.
 
@@ -279,7 +467,7 @@ MolCraftDiff analyze xyz2mol gen_xyz/ --bits 2048
 
 ---
 
-## Part 5: XTB Electronic Properties
+## Part 6: XTB Electronic Properties
 
 Compute quantum-chemical descriptors at GFN-xTB level using morfeus.
 
@@ -341,7 +529,7 @@ MolCraftDiff analyze xtb-electronic gen_xyz/ -p all -f ase -o results.db
 
 ---
 
-## Part 6: Featurise — Fixed-Size Molecular Vectors
+## Part 7: Featurise — Fixed-Size Molecular Vectors
 
 Convert a directory of XYZ files into a fixed-size feature matrix for downstream
 machine learning (clustering, regression, dimensionality reduction, etc.).

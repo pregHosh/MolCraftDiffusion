@@ -1,0 +1,112 @@
+MolecularDiffusion.runmodes.analyze.dock_library
+================================================
+
+.. py:module:: MolecularDiffusion.runmodes.analyze.dock_library
+
+.. autoapi-nested-parse::
+
+   Dock a library of molecules into one fixed pocket and rank them.
+
+   Backs ``MolCraftDiff analyze dock``. Where ``--metrics sbdd`` scores the
+   ``.xyz`` files a generative model produced -- each in its own box, because a
+   generated ligand already sits in the pocket frame -- this scores an
+   *arbitrary* library (SDF, or SMILES embedded on the fly) inside a single
+   shared box, which is what a retrospective benchmark needs.
+
+   Two questions it answers:
+
+   * **pose recovery** -- with ``--rmsd-ref``, how far the docked pose is from a
+     known crystal pose. Reported as ``rmsd_top`` (Vina's own best-scored pose),
+     ``rmsd_best`` (closest pose at any rank) and ``rmsd_best_rank``. A program
+     that finds the right pose but ranks it fourth passes the second and fails
+     the first, and only the first is available on a real screen.
+   * **enrichment** -- with ``--actives``/``--decoys``, whether known actives
+     rank above known inactives: ROC-AUC plus enrichment factor at 1% and 5%.
+
+   Labels come from *which file* a molecule was in, so there is no SMILES
+   matching and no join: that is how DUD-E and LIT-PCBA actually ship.
+
+   Needs the ``[sbdd]`` extra; every heavy import is deferred, so importing
+   this module costs nothing.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.dock_library.LIBRARY_SUFFIXES
+   MolecularDiffusion.runmodes.analyze.dock_library.RMSD_SAME_POSE_A
+   MolecularDiffusion.runmodes.analyze.dock_library.SMILES_SUFFIXES
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.dock_library.load_library
+   MolecularDiffusion.runmodes.analyze.dock_library.log_auc
+   MolecularDiffusion.runmodes.analyze.dock_library.ranking_metrics
+   MolecularDiffusion.runmodes.analyze.dock_library.runner
+
+
+Module Contents
+---------------
+
+.. py:function:: load_library(path: pathlib.Path) -> list[tuple[str, Any]]
+
+   Read one library file into ``(name, mol)`` pairs.
+
+   ``mol`` is ``None`` where a SMILES could not be parsed or embedded --
+   a molecule we failed on is data, and the caller records it with an
+   ``error`` rather than dropping it silently.
+
+
+.. py:function:: log_auc(scores: collections.abc.Sequence[float], labels: collections.abc.Sequence[int], lam: float = 0.001) -> float
+
+   Adjusted LogAUC: early enrichment on a log-scaled x axis.
+
+   FORMULA SOURCE UNVERIFIED. Written from memory of the adjusted LogAUC in
+   the docking-benchmark literature and not checked against any paper; check
+   the original before citing it. As implemented: sort by score (lower is
+   better, ties keep input order), take x as the fraction of the library
+   screened and y as the fraction of actives found, integrate y against
+   log10(x) from ``lam`` to 1 exactly (y is a step function, so no
+   interpolation), divide by ``log10(1 / lam)``, and subtract the same value
+   for random ranking (y = x, 0.14462 for ``lam`` = 0.001). A perfect ranking
+   gives about 0.855, a random one 0 and the worst possible about -0.145.
+
+   With fewer than 1,000 molecules a warning is logged and ``lam`` becomes
+   ``1 / n`` (an unverified convention, a labelled default). Returns NaN,
+   with a logged message, when there are no actives.
+
+
+.. py:function:: ranking_metrics(scores: collections.abc.Sequence[float], labels: collections.abc.Sequence[int], fractions: collections.abc.Sequence[float] = (0.01, 0.05)) -> dict[str, float]
+
+   ROC-AUC and enrichment factor over a scored, labelled library.
+
+   ``scores`` are Vina affinities (lower is better), ``labels`` are 1 for
+   an active and 0 for a decoy. Returns ``{}`` when either class is empty
+   -- enrichment is undefined then, and a fabricated 0.5 would read as a
+   real result.
+
+
+.. py:function:: runner(args: argparse.Namespace) -> None
+
+   Dock every molecule, write a CSV, and summarise.
+
+
+.. py:data:: LIBRARY_SUFFIXES
+   :value: ('.sdf', '.csv', '.smi', '.txt', '.smiles', '.ism')
+
+
+.. py:data:: RMSD_SAME_POSE_A
+   :value: 2.0
+
+
+.. py:data:: SMILES_SUFFIXES
+   :value: ('.smi', '.txt', '.smiles', '.ism')
+
+

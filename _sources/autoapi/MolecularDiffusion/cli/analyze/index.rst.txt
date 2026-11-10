@@ -30,6 +30,8 @@ Functions
 .. autoapisummary::
 
    MolecularDiffusion.cli.analyze.analyze
+   MolecularDiffusion.cli.analyze.bias
+   MolecularDiffusion.cli.analyze.dock
    MolecularDiffusion.cli.analyze.featurize
    MolecularDiffusion.cli.analyze.metrics
    MolecularDiffusion.cli.analyze.optimize
@@ -48,9 +50,61 @@ Module Contents
    Subcommands:
      optimize        xTB geometry optimization
      metrics         Validity/connectivity metrics
+     dock            Dock a library into one fixed pocket; pose RMSD
+                     and actives-vs-decoys enrichment
+     bias            Check whether a docking score tracks molecule size,
+                     logP or charge (top picks vs the pool)
      xyz2mol         Convert XYZ to SMILES + fingerprints
      featurize       Fixed-size feature vectors for XYZ molecules
      xtb-electronic  xTB electronic properties
+
+
+.. py:function:: bias(inputs, labels, id_col, label_col, score_col, top, sd_flag, out_dir)
+
+   Check whether a docking score is really measuring molecule size.
+
+   
+   Reads the CSVs written by `analyze dock` (columns name, smiles and the
+   score). Reports how the score correlates with heavy atoms, logP and
+   formal charge, and whether the top-ranked molecules differ from the whole
+   pool. It is a diagnostic: it warns, and never exits non-zero.
+
+   
+   .. rubric:: Examples
+
+   MolCraftDiff analyze bias dock_results.csv
+   MolCraftDiff analyze bias out/full_0.csv out/full_1.csv --top 10 --top 174
+   MolCraftDiff analyze bias out.csv --labels master.csv \
+     --id-col cache_id --label-col hit29 --out-dir bias/
+
+
+.. py:function:: dock(receptor, ligands, actives, decoys, box_ref_ligand, box_center, box_size, mode, exhaustiveness, n_poses, rmsd_ref, save_poses, seed, allow_bad_res, default_altloc, out_dir, output)
+
+   Dock a library of molecules into one fixed pocket and rank them.
+
+   
+   Unlike `metrics --metrics sbdd`, which scores generated .xyz files each
+   in its own box, this scores an arbitrary library (SDF, or SMILES
+   embedded on the fly) inside a single shared pocket box -- what a
+   retrospective benchmark needs. Needs the [sbdd] extra.
+
+   
+   Pose recovery (is the top-scored pose the crystal pose?):
+     MolCraftDiff analyze dock --receptor receptor.pdb \
+       --ligands ligand.sdf --rmsd-ref ligand.sdf --n-poses 5
+     -> rmsd_top, rmsd_best, rmsd_best_rank; under 2 A is the usual bar
+
+   
+   Enrichment (do known actives rank above decoys?):
+     MolCraftDiff analyze dock --receptor receptor.pdb \
+       --box-ref-ligand crystal.sdf \
+       --actives actives.smi --decoys decoys.smi
+     -> roc_auc, ef_1pct, ef_5pct
+
+   
+   Without --box-ref-ligand or --box-center each molecule is boxed on its
+   OWN coordinates, which is only correct for molecules already posed in
+   the pocket frame. A warning is printed in that case.
 
 
 .. py:function:: featurize(input_dir, backend, output, recursive, r_cut, n_max, l_max, sigma, autodetect_species, species, pooling, soap_jobs, checkpoint, task_name, device, batch_size, all_components, charge, spin, ssl3d_checkpoint, edge_radius)

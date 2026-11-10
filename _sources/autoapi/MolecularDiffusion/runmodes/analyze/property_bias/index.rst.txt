@@ -1,0 +1,154 @@
+MolecularDiffusion.runmodes.analyze.property_bias
+=================================================
+
+.. py:module:: MolecularDiffusion.runmodes.analyze.property_bias
+
+.. autoapi-nested-parse::
+
+   Check whether a docking score is really measuring molecule size.
+
+   Backs ``MolCraftDiff analyze bias``. A docking score such as Vina's rewards
+   big, oily molecules because they touch more of the pocket, whether or not they
+   bind. If the top-ranked molecules are simply the largest ones, the ranking
+   carries little information about the target. This reads the CSVs written by
+   ``analyze dock`` and reports, for heavy atoms (non-hydrogen atoms, a size
+   measure), logP (how oily a molecule is, RDKit Crippen estimate) and formal
+   charge (the sum of the +/- charges in the SMILES):
+
+   * the correlation of score with each property (Spearman is rank-based and
+     robust to outliers, Pearson is the plain linear one), with a bootstrap 95%
+     interval;
+   * how the top-k molecules differ from the whole pool, with a permutation
+     p-value (how often a random k-subset looks at least as extreme);
+   * optionally, the same comparison for known hits (``--labels``).
+
+   It is a diagnostic: it logs warnings and never fails the run.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.property_bias.CHARGE_CONSTANT_SHARE
+   MolecularDiffusion.runmodes.analyze.property_bias.CHARGE_SHARE_GAP
+   MolecularDiffusion.runmodes.analyze.property_bias.MIN_MOLECULES
+   MolecularDiffusion.runmodes.analyze.property_bias.N_BOOT
+   MolecularDiffusion.runmodes.analyze.property_bias.N_PERM
+   MolecularDiffusion.runmodes.analyze.property_bias.PERM_P_FLAG
+   MolecularDiffusion.runmodes.analyze.property_bias.PROPERTIES
+   MolecularDiffusion.runmodes.analyze.property_bias.RHO_FLAG
+   MolecularDiffusion.runmodes.analyze.property_bias.SEED
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.runmodes.analyze.property_bias.bias_warnings
+   MolecularDiffusion.runmodes.analyze.property_bias.load_scores
+   MolecularDiffusion.runmodes.analyze.property_bias.molecule_properties
+   MolecularDiffusion.runmodes.analyze.property_bias.runner
+   MolecularDiffusion.runmodes.analyze.property_bias.score_correlations
+   MolecularDiffusion.runmodes.analyze.property_bias.subset_vs_pool
+   MolecularDiffusion.runmodes.analyze.property_bias.topk_vs_pool
+
+
+Module Contents
+---------------
+
+.. py:function:: bias_warnings(corr: pandas.DataFrame | None, topk: list[dict[str, Any]], sd_flag: float = 0.5) -> list[str]
+
+   Plain-English warnings from the correlation and top-k tables.
+
+   ``topk`` is the output of ``topk_vs_pool`` for one k; ``corr`` may be
+   ``None`` to skip the correlation lines. Empty list means nothing was
+   flagged.
+
+
+.. py:function:: load_scores(paths: collections.abc.Sequence[str], score_col: str = 'vina_dock') -> tuple[pandas.DataFrame, dict[str, int]]
+
+   Read dock CSVs into one ``name, smiles, score`` frame, plus row counts.
+
+   Drops rows with an empty or non-numeric score (a docking error), then
+   keeps the lowest score for a repeated ``name``. Both counts are returned
+   so the caller can log them.
+
+
+.. py:function:: molecule_properties(smiles: str, *, largest_fragment: bool = True) -> dict[str, float] | None
+
+   Heavy atoms, logP and formal charge of one SMILES, or ``None``.
+
+   With ``largest_fragment`` a counter-ion (a separate salt piece after a
+   dot, such as ``[Na+]``) is ignored: the largest piece by heavy atoms is
+   measured.
+
+
+.. py:function:: runner(args: argparse.Namespace) -> None
+
+   Read dock CSVs, report score-vs-property bias, optionally write CSVs.
+
+
+.. py:function:: score_correlations(props: pandas.DataFrame, n_boot: int = N_BOOT, seed: int = SEED) -> pandas.DataFrame
+
+   Spearman and Pearson of score against each property, with 95% CIs.
+
+   One row per property. Correlations are NaN where a property is constant
+   (the caller writes those as blanks). The bootstrap resamples molecules
+   with replacement and reports the 2.5th and 97.5th percentiles.
+
+
+.. py:function:: subset_vs_pool(props: pandas.DataFrame, picked: numpy.ndarray, n_perm: int = N_PERM, seed: int = SEED) -> list[dict[str, Any]]
+
+   Compare the rows at positions ``picked`` with the whole pool.
+
+   One dict per property (plus ``nonzero_charge``, the charged share):
+   subset mean, pool mean, pool median, pool SD, difference and one-sided
+   permutation p (is the subset higher than chance?).
+
+
+.. py:function:: topk_vs_pool(props: pandas.DataFrame, k: int, n_perm: int = N_PERM, seed: int = SEED) -> list[dict[str, Any]]
+
+   Compare the k best-scored molecules (lowest score) with the pool.
+
+   Ties in score are broken by a seeded random order.
+
+
+.. py:data:: CHARGE_CONSTANT_SHARE
+   :value: 0.9
+
+
+.. py:data:: CHARGE_SHARE_GAP
+   :value: 0.2
+
+
+.. py:data:: MIN_MOLECULES
+   :value: 20
+
+
+.. py:data:: N_BOOT
+   :value: 2000
+
+
+.. py:data:: N_PERM
+   :value: 20000
+
+
+.. py:data:: PERM_P_FLAG
+   :value: 0.01
+
+
+.. py:data:: PROPERTIES
+   :value: ('heavy_atoms', 'logp', 'charge')
+
+
+.. py:data:: RHO_FLAG
+   :value: 0.5
+
+
+.. py:data:: SEED
+   :value: 0
+
+

@@ -333,9 +333,11 @@
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/compare_to_optimized/index.html">MolecularDiffusion.runmodes.analyze.compare_to_optimized</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/compute_metrics/index.html">MolecularDiffusion.runmodes.analyze.compute_metrics</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/conformer_metrics/index.html">MolecularDiffusion.runmodes.analyze.conformer_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/dock_library/index.html">MolecularDiffusion.runmodes.analyze.dock_library</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/docking/index.html">MolecularDiffusion.runmodes.analyze.docking</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/druglike/index.html">MolecularDiffusion.runmodes.analyze.druglike</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/featurize/index.html">MolecularDiffusion.runmodes.analyze.featurize</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/property_bias/index.html">MolecularDiffusion.runmodes.analyze.property_bias</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/similarity3d/index.html">MolecularDiffusion.runmodes.analyze.similarity3d</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/ssl3d_embed/index.html">MolecularDiffusion.runmodes.analyze.ssl3d_embed</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../autoapi/MolecularDiffusion/runmodes/analyze/uma_embeddings/index.html">MolecularDiffusion.runmodes.analyze.uma_embeddings</a></li>
@@ -509,7 +511,7 @@
 <hr class="docutils" />
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
-<p>The analysis command group includes five subcommands:</p>
+<p>The analysis command group includes seven subcommands:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -524,6 +526,12 @@
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">metrics</span></code></p></td>
 <td><p>Validity/connectivity metrics, plus the paired <code class="docutils literal notranslate"><span class="pre">conformer</span></code> set</p></td>
 </tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dock</span></code></p></td>
+<td><p>Dock an arbitrary library into one fixed pocket: pose RMSD and actives-vs-decoys enrichment</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bias</span></code></p></td>
+<td><p>Check whether a docking score tracks molecule size, logP or charge: top picks against the pool</p></td>
+</tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">xyz2mol</span></code></p></td>
 <td><p>XYZ to SMILES + fingerprints</p></td>
 </tr>
@@ -536,6 +544,14 @@
 </tbody>
 </table>
 </div>
+<blockquote>
+<div><p><strong><code class="docutils literal notranslate"><span class="pre">metrics</span> <span class="pre">--metrics</span> <span class="pre">sbdd</span></code> vs <code class="docutils literal notranslate"><span class="pre">dock</span></code>.</strong> Both use AutoDock Vina. Use
+<code class="docutils literal notranslate"><span class="pre">--metrics</span> <span class="pre">sbdd</span></code> to score <strong>molecules your model generated</strong>: they already
+sit in the pocket frame, so each is boxed on its own coordinates. Use <code class="docutils literal notranslate"><span class="pre">dock</span></code>
+for <strong>any other set of molecules</strong> (an SDF, a SMILES library, a published
+benchmark), which needs one shared pocket box and can report pose RMSD
+against a known crystal pose. See <a class="reference internal" href="#part-3-dock--library-docking-pose-recovery-and-enrichment"><span class="xref myst">Part 3</span></a>.</p>
+</div></blockquote>
 <p>Access the CLI with:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>--help
 </pre></div>
@@ -588,7 +604,7 @@
 </section>
 <section id="output">
 <h3>Output<a class="headerlink" href="#output" title="Link to this heading">¶</a></h3>
-<p>Optimised XYZ files are saved to <code class="docutils literal notranslate"><span class="pre">output_dir/</span></code>, each with an <code class="docutils literal notranslate"><span class="pre">_opt</span></code> suffix (e.g. <code class="docutils literal notranslate"><span class="pre">mol_0000.xyz</span></code> → <code class="docutils literal notranslate"><span class="pre">mol_0000_opt.xyz</span></code>). Part 3’s <code class="docutils literal notranslate"><span class="pre">--metrics</span> <span class="pre">conformer</span></code> expects exactly these <code class="docutils literal notranslate"><span class="pre">*_opt.xyz</span></code> files.</p>
+<p>Optimised XYZ files are saved to <code class="docutils literal notranslate"><span class="pre">output_dir/</span></code>, each with an <code class="docutils literal notranslate"><span class="pre">_opt</span></code> suffix (e.g. <code class="docutils literal notranslate"><span class="pre">mol_0000.xyz</span></code> → <code class="docutils literal notranslate"><span class="pre">mol_0000_opt.xyz</span></code>). Part 4’s <code class="docutils literal notranslate"><span class="pre">--metrics</span> <span class="pre">conformer</span></code> expects exactly these <code class="docutils literal notranslate"><span class="pre">*_opt.xyz</span></code> files.</p>
 </section>
 </section>
 <hr class="docutils" />
@@ -861,12 +877,324 @@ conformer, or that come back as several fragments are reported with an
 in the summary against your input count.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">sbdd</span></code> is <strong>not</strong> part of <code class="docutils literal notranslate"><span class="pre">--metrics</span> <span class="pre">all</span></code>, because it needs a receptor and
 costs seconds per molecule (<code class="docutils literal notranslate"><span class="pre">--dock-mode</span> <span class="pre">score</span></code> is far cheaper than <code class="docutils literal notranslate"><span class="pre">dock</span></code>).</p></li>
+<li><p>It reads only an XYZ directory or an ASE <code class="docutils literal notranslate"><span class="pre">.db</span></code>. For an SDF or a SMILES
+library, use <code class="docutils literal notranslate"><span class="pre">analyze</span> <span class="pre">dock</span></code> (Part 3).</p></li>
 </ul>
 </section>
 </section>
 <hr class="docutils" />
-<section id="part-3-conformer-metrics-paired-generated-vs-reference">
-<h2>Part 3: Conformer Metrics (paired generated-vs-reference)<a class="headerlink" href="#part-3-conformer-metrics-paired-generated-vs-reference" title="Link to this heading">¶</a></h2>
+<section id="part-3-dock-library-docking-pose-recovery-and-enrichment">
+<h2>Part 3: Dock — Library Docking, Pose Recovery and Enrichment<a class="headerlink" href="#part-3-dock-library-docking-pose-recovery-and-enrichment" title="Link to this heading">¶</a></h2>
+<p>Dock molecules that did <strong>not</strong> come from a pocket-conditioned model into one
+fixed pocket box. Needs the <code class="docutils literal notranslate"><span class="pre">[sbdd]</span></code> extra (<code class="docutils literal notranslate"><span class="pre">vina</span></code> + <code class="docutils literal notranslate"><span class="pre">meeko</span></code> + <code class="docutils literal notranslate"><span class="pre">gemmi</span></code>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>dock<span class="w"> </span>--receptor<span class="w"> </span>receptor.pdb<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--box-ref-ligand<span class="w"> </span>crystal.sdf<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--actives<span class="w"> </span>actives.smi<span class="w"> </span>--decoys<span class="w"> </span>decoys.smi
+</pre></div>
+</div>
+<section id="why-the-box-matters">
+<h3>Why the box matters<a class="headerlink" href="#why-the-box-matters" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">--metrics</span> <span class="pre">sbdd</span></code> boxes each molecule on its own coordinates, which is correct
+for a generated ligand already posed in the pocket. A molecule embedded from
+SMILES sits at an arbitrary origin, so that box would chase the ligand instead
+of staying on the site. Pin it one of two ways:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--box-ref-ligand</span> <span class="pre">crystal.sdf</span></code></p></td>
+<td><p><strong>Recommended.</strong> Box = the crystal ligand’s extent + 5 Å buffer</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--box-center</span> <span class="pre">X</span> <span class="pre">Y</span> <span class="pre">Z</span></code> + <code class="docutils literal notranslate"><span class="pre">--box-size</span> <span class="pre">X</span> <span class="pre">Y</span> <span class="pre">Z</span></code></p></td>
+<td><p>Explicit box, when there is no reference ligand</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Omit both and each molecule is boxed on its own coordinates; the command logs
+a warning, because that is almost never what you want here.</p>
+</section>
+<section id="input">
+<h3>Input<a class="headerlink" href="#input" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Accepts</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--ligands</span></code></p></td>
+<td><p>none</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.sdf</span></code>, <code class="docutils literal notranslate"><span class="pre">.smi</span></code>, <code class="docutils literal notranslate"><span class="pre">.txt</span></code>, <code class="docutils literal notranslate"><span class="pre">.smiles</span></code>, <code class="docutils literal notranslate"><span class="pre">.ism</span></code>, <code class="docutils literal notranslate"><span class="pre">.csv</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--actives</span></code></p></td>
+<td><p>1</p></td>
+<td><p>same</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--decoys</span></code></p></td>
+<td><p>0</p></td>
+<td><p>same</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>All three are repeatable. Labels come from <strong>which file</strong> a molecule was in —
+no join and no SMILES matching, because that is how DUD-E and LIT-PCBA ship.
+SDF records keep their crystal coordinates; SMILES are embedded with ETKDGv3,
+the same recipe <code class="docutils literal notranslate"><span class="pre">utils/conformer_pool</span></code> uses. A molecule that cannot be parsed
+or embedded is reported with an <code class="docutils literal notranslate"><span class="pre">error</span></code> rather than dropped.</p>
+</section>
+<section id="pose-recovery">
+<h3>Pose recovery<a class="headerlink" href="#pose-recovery" title="Link to this heading">¶</a></h3>
+<p>Pass <code class="docutils literal notranslate"><span class="pre">--rmsd-ref</span></code> a known crystal pose and three columns appear:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rmsd_top</span></code></p></td>
+<td><p>RMSD of the pose Vina scored <strong>best</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rmsd_best</span></code></p></td>
+<td><p>RMSD of the <strong>closest</strong> pose at any rank</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rmsd_best_rank</span></code></p></td>
+<td><p>Which rank that closest pose was at</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Read <code class="docutils literal notranslate"><span class="pre">rmsd_top</span></code> and <code class="docutils literal notranslate"><span class="pre">rmsd_best</span></code> against each other.</strong> A tool that finds the
+right pose but ranks it fourth passes on <code class="docutils literal notranslate"><span class="pre">rmsd_best</span></code> and fails on <code class="docutils literal notranslate"><span class="pre">rmsd_top</span></code>,
+and only <code class="docutils literal notranslate"><span class="pre">rmsd_top</span></code> is available on a real screen where the answer is unknown.
+Under 2 Å is the field’s conventional “same pose” bar; the summary reports
+<code class="docutils literal notranslate"><span class="pre">rmsd_top_under_2A</span></code> and <code class="docutils literal notranslate"><span class="pre">rmsd_best_under_2A</span></code> as fractions.</p>
+<p>Self-docking — redocking a crystal ligand into its own receptor — is the
+standard sanity check, since the answer is known in advance:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>dock<span class="w"> </span>--receptor<span class="w"> </span>receptor.pdb<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--ligands<span class="w"> </span>ligand.sdf<span class="w"> </span>--rmsd-ref<span class="w"> </span>ligand.sdf<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--n-poses<span class="w"> </span><span class="m">5</span><span class="w"> </span>--default-altloc<span class="w"> </span>A
+</pre></div>
+</div>
+</section>
+<section id="enrichment">
+<h3>Enrichment<a class="headerlink" href="#enrichment" title="Link to this heading">¶</a></h3>
+<p>With <code class="docutils literal notranslate"><span class="pre">--actives</span></code>/<code class="docutils literal notranslate"><span class="pre">--decoys</span></code>, the summary adds:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Metric</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">roc_auc</span></code></p></td>
+<td><p>Ranking quality over the whole library; 0.5 is random</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ef_1pct</span></code>, <code class="docutils literal notranslate"><span class="pre">ef_5pct</span></code></p></td>
+<td><p>Enrichment factor: how many more actives in the top 1% / 5% than chance gives</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">log_auc</span></code></p></td>
+<td><p>Adjusted LogAUC: early enrichment on a log-scaled x axis (see below)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">n_actives</span></code>, <code class="docutils literal notranslate"><span class="pre">n_decoys</span></code></p></td>
+<td><p>What the above was computed on</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Returns nothing rather than a fabricated 0.5 when either class is empty.
+Scores are negated internally because Vina affinities are lower-is-better.</p>
+<p><code class="docutils literal notranslate"><span class="pre">log_auc</span></code> is computed by <code class="docutils literal notranslate"><span class="pre">dock_library.log_auc(scores,</span> <span class="pre">labels,</span> <span class="pre">lam=0.001)</span></code>.
+Sort the library by score, let x be the fraction of the library screened and y
+the fraction of actives found, then integrate y against log10(x) from
+<code class="docutils literal notranslate"><span class="pre">lam</span></code> to 1. The log scale weights the first few percent of the list far more
+than the rest. The integral is divided by log10(1/<code class="docutils literal notranslate"><span class="pre">lam</span></code>) and the value for a
+random ranking (0.14462 at <code class="docutils literal notranslate"><span class="pre">lam</span></code> = 0.001) is subtracted, so random scores 0, a
+perfect ranking about 0.855 and the worst possible about -0.145. With fewer
+than 1,000 molecules a warning is logged and <code class="docutils literal notranslate"><span class="pre">lam</span></code> is set to 1/n. <strong>The
+formula is written from memory and is not yet checked against the paper;
+verify it before citing a LogAUC number.</strong> NaN is returned, with a message,
+when there are no actives.</p>
+</section>
+<section id="id3">
+<h3>Options<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--receptor</span></code></p></td>
+<td><p>required</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.pdbqt</span></code>, or a <code class="docutils literal notranslate"><span class="pre">.pdb</span></code> that meeko prepares</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--mode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dock</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">score</span></code> (in place) / <code class="docutils literal notranslate"><span class="pre">min</span></code> (local opt) / <code class="docutils literal notranslate"><span class="pre">dock</span></code> (full search)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--exhaustiveness</span></code></p></td>
+<td><p>8</p></td>
+<td><p>Vina search effort</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--n-poses</span></code></p></td>
+<td><p>1</p></td>
+<td><p>Poses kept per molecule; &gt; 1 forces a full dock</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--rmsd-ref</span></code></p></td>
+<td><p>None</p></td>
+<td><p>Crystal pose SDF for pose recovery</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--seed</span></code></p></td>
+<td><p>42</p></td>
+<td><p>Vina seed — docking is stochastic; vary it to size the noise</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--default-altloc</span></code></p></td>
+<td><p>None</p></td>
+<td><p>Altloc to keep, e.g. <code class="docutils literal notranslate"><span class="pre">A</span></code>, when the PDB has alternates</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--allow-bad-res</span></code></p></td>
+<td><p>off</p></td>
+<td><p>Let meeko accept residues that don’t match its templates</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--out-dir</span></code></p></td>
+<td><p>next to receptor</p></td>
+<td><p>Where the prepared <code class="docutils literal notranslate"><span class="pre">.pdbqt</span></code> is written</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--output</span></code> / <code class="docutils literal notranslate"><span class="pre">-o</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dock_library.csv</span></code></p></td>
+<td><p>Output CSV; summary JSON lands beside it</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="two-things-that-will-bite">
+<h3>Two things that will bite<a class="headerlink" href="#two-things-that-will-bite" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Real PDB files fail receptor prep without <code class="docutils literal notranslate"><span class="pre">--default-altloc</span></code>.</strong> meeko
+refuses to guess between alternate conformations and errors with the list of
+offending residues. Pass <code class="docutils literal notranslate"><span class="pre">--default-altloc</span> <span class="pre">A</span></code> to take the first everywhere —
+but check whether any of those residues is near your site before accepting
+that choice silently.</p></li>
+<li><p><strong>One molecule per Vina invocation, no batch parallelism.</strong> Measured on 32
+cores: ~330–840 molecules/hour at <code class="docutils literal notranslate"><span class="pre">--mode</span> <span class="pre">dock</span></code> depending on ligand size, and
+~4,000/hour at <code class="docutils literal notranslate"><span class="pre">--mode</span> <span class="pre">score</span></code>. <code class="docutils literal notranslate"><span class="pre">score</span></code> and <code class="docutils literal notranslate"><span class="pre">min</span></code> evaluate a ligand where it
+already sits, so they apply only to molecules posed in the pocket frame
+(generated ones). A library embedded from SMILES sits at the origin, Vina
+rejects it as outside the grid box, and <code class="docutils literal notranslate"><span class="pre">dock</span></code> is the only mode that works.</p></li>
+</ul>
+<p>A worked example on a real structure, with the numbers it produced, is in
+<a class="reference internal" href="#../drug_design/GETTING_STARTED.md"><span class="xref myst">docs/drug_design/GETTING_STARTED.md</span></a>.</p>
+</section>
+<section id="bias-check-with-analyze-bias">
+<h3>Bias check with <code class="docutils literal notranslate"><span class="pre">analyze</span> <span class="pre">bias</span></code><a class="headerlink" href="#bias-check-with-analyze-bias" title="Link to this heading">¶</a></h3>
+<p>A docking score tends to reward big, oily molecules because they touch more of
+the pocket, whether or not they bind. If the top-ranked molecules are simply
+the largest ones, the ranking says little about the target. <code class="docutils literal notranslate"><span class="pre">analyze</span> <span class="pre">bias</span></code>
+reads the CSV that <code class="docutils literal notranslate"><span class="pre">dock</span></code> wrote and measures this. It needs no Vina; it runs
+on the CSV alone. Terms: <em>heavy atoms</em> are the non-hydrogen atoms, a size
+measure; <em>logP</em> is how oily a molecule is (RDKit Crippen estimate); <em>formal
+charge</em> is the sum of the +/- charges in the SMILES; <em>Spearman</em> is a rank
+correlation that ignores outliers, <em>Pearson</em> is the ordinary linear one.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>bias<span class="w"> </span>dock_library.csv
+MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>bias<span class="w"> </span>out/full_0.csv<span class="w"> </span>out/full_1.csv<span class="w"> </span>--top<span class="w"> </span><span class="m">10</span><span class="w"> </span>--top<span class="w"> </span><span class="m">174</span><span class="w"> </span>--out-dir<span class="w"> </span>bias/
+MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>bias<span class="w"> </span>out.csv<span class="w"> </span>--labels<span class="w"> </span>master.csv<span class="w"> </span>--id-col<span class="w"> </span>cache_id<span class="w"> </span>--label-col<span class="w"> </span>hit29
+</pre></div>
+</div>
+<p>Input: one or more CSVs with <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">smiles</span></code> and the score column
+(<code class="docutils literal notranslate"><span class="pre">vina_dock</span></code>, lower is better). Other columns are ignored. Rows with a missing
+or non-numeric score are dropped, a repeated <code class="docutils literal notranslate"><span class="pre">name</span></code> keeps its lowest score, an
+unparseable SMILES is dropped, and each count is logged. For salts the largest
+piece (by heavy atoms) is measured, so <code class="docutils literal notranslate"><span class="pre">[Na+].CC(=O)[O-]</span></code> is 4 heavy atoms,
+charge -1. Under 20 scored molecules it logs “too few for a correlation” and
+stops.</p>
+<p>What it reports:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Section</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Score vs property</p></td>
+<td><p>Spearman and Pearson of score against heavy atoms, logP and charge, each with a 95% bootstrap interval (2,000 resamples, seed 0). A negative value means bigger or oilier molecules score better. If over 90% of the pool is uncharged it says charge is nearly constant and uninformative</p></td>
+</tr>
+<tr class="row-odd"><td><p>Top-k vs pool</p></td>
+<td><p>For each k (default 10 and 1% of the pool, at least 10): the top-k mean, the pool mean and median, the difference, and a one-sided permutation p-value (20,000 random k-subsets, seed 0; the share of random picks at least as extreme). Also the share of top-k molecules that are charged. A k above half the pool is skipped</p></td>
+</tr>
+<tr class="row-even"><td><p>Hits vs pool</p></td>
+<td><p>With <code class="docutils literal notranslate"><span class="pre">--labels</span></code>: the same comparison for the known hits, joined on <code class="docutils literal notranslate"><span class="pre">name</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>A warning is logged when the top-k mean is more than <code class="docutils literal notranslate"><span class="pre">--sd-flag</span></code> pool standard
+deviations above the pool mean (default 0.5) and the permutation p is below
+0.01, for heavy atoms or logP; when the charged share differs from the pool’s
+by more than 20 percentage points; and when |Spearman| of score against a
+property exceeds 0.5. The 0.5 SD cut-off is a conventional “medium effect”
+default, not calibrated on this domain. The command is a diagnostic and never
+exits non-zero. A biased library makes the pool itself biased, so the
+comparison is only as good as the pool.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">INPUTS</span></code></p></td>
+<td><p>required</p></td>
+<td><p>One or more <code class="docutils literal notranslate"><span class="pre">dock</span></code> CSVs</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--labels</span></code></p></td>
+<td><p>None</p></td>
+<td><p>CSV of known hits; adds the hits-vs-pool section</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--id-col</span></code> / <code class="docutils literal notranslate"><span class="pre">--label-col</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">name</span></code> / <code class="docutils literal notranslate"><span class="pre">label</span></code></p></td>
+<td><p>Columns of the <code class="docutils literal notranslate"><span class="pre">--labels</span></code> file; a label above 0 is a hit</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--score-col</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">vina_dock</span></code></p></td>
+<td><p>Score column, lower is better</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--top</span></code></p></td>
+<td><p>10 and 1% of pool</p></td>
+<td><p>Top-k to test; repeatable</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--sd-flag</span></code></p></td>
+<td><p>0.5</p></td>
+<td><p>Warning threshold in pool standard deviations</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--out-dir</span></code></p></td>
+<td><p>None</p></td>
+<td><p>Writes <code class="docutils literal notranslate"><span class="pre">property_bias_correlations.csv</span></code>, <code class="docutils literal notranslate"><span class="pre">property_bias_topk.csv</span></code> (also holds the hits rows) and <code class="docutils literal notranslate"><span class="pre">property_bias_props.csv</span></code> (one row per molecule). Nothing is written without it</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="part-4-conformer-metrics-paired-generated-vs-reference">
+<h2>Part 4: Conformer Metrics (paired generated-vs-reference)<a class="headerlink" href="#part-4-conformer-metrics-paired-generated-vs-reference" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">--metrics</span> <span class="pre">conformer</span></code> is the home for every metric that needs a <strong>pair</strong> of
 structures — a generated one and the reference it should correspond to. It
 replaces the old <code class="docutils literal notranslate"><span class="pre">analyze</span> <span class="pre">compare</span></code> command and the removed <code class="docutils literal notranslate"><span class="pre">--check-strain</span></code>
@@ -927,8 +1255,8 @@ ordering is not guaranteed to agree and <strong>stereo columns are not emitted</
 </table>
 </div>
 </section>
-<section id="id3">
-<h3>Output<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<section id="id4">
+<h3>Output<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">conformer_metrics.csv</span></code> (one row per conformer) plus a
 <code class="docutils literal notranslate"><span class="pre">conformer_metrics_summary.json</span></code> with <code class="docutils literal notranslate"><span class="pre">rs_score</span></code>, <code class="docutils literal notranslate"><span class="pre">ez_score</span></code>, <code class="docutils literal notranslate"><span class="pre">n_rs_scored</span></code>,
 <code class="docutils literal notranslate"><span class="pre">n_skipped</span></code>, <code class="docutils literal notranslate"><span class="pre">rmsd_median</span></code>, <code class="docutils literal notranslate"><span class="pre">rmsd_best_per_mol_mean</span></code>,
@@ -936,11 +1264,11 @@ ordering is not guaranteed to agree and <strong>stereo columns are not emitted</
 </section>
 </section>
 <hr class="docutils" />
-<section id="part-4-xyz-to-smiles-conversion">
-<h2>Part 4: XYZ to SMILES Conversion<a class="headerlink" href="#part-4-xyz-to-smiles-conversion" title="Link to this heading">¶</a></h2>
+<section id="part-5-xyz-to-smiles-conversion">
+<h2>Part 5: XYZ to SMILES Conversion<a class="headerlink" href="#part-5-xyz-to-smiles-conversion" title="Link to this heading">¶</a></h2>
 <p>Convert 3D XYZ files to 2D SMILES and extract molecular fingerprints.</p>
-<section id="id4">
-<h3>Usage<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<section id="id5">
+<h3>Usage<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>xyz2mol<span class="w"> </span>gen_xyz/<span class="w"> </span>--bits<span class="w"> </span><span class="m">2048</span>
 </pre></div>
 </div>
@@ -973,11 +1301,11 @@ ordering is not guaranteed to agree and <strong>stereo columns are not emitted</
 </section>
 </section>
 <hr class="docutils" />
-<section id="part-5-xtb-electronic-properties">
-<h2>Part 5: XTB Electronic Properties<a class="headerlink" href="#part-5-xtb-electronic-properties" title="Link to this heading">¶</a></h2>
+<section id="part-6-xtb-electronic-properties">
+<h2>Part 6: XTB Electronic Properties<a class="headerlink" href="#part-6-xtb-electronic-properties" title="Link to this heading">¶</a></h2>
 <p>Compute quantum-chemical descriptors at GFN-xTB level using morfeus.</p>
-<section id="id5">
-<h3>Usage<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<section id="id6">
+<h3>Usage<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Basic energy properties</span>
 MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>xtb-electronic<span class="w"> </span>gen_xyz/<span class="w"> </span>-p<span class="w"> </span>energy
 
@@ -1066,8 +1394,8 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>xtb-electroni
 </table>
 </div>
 </section>
-<section id="id6">
-<h3>Options<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
+<section id="id7">
+<h3>Options<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -1127,8 +1455,8 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>xtb-electroni
 </section>
 </section>
 <hr class="docutils" />
-<section id="part-6-featurise-fixed-size-molecular-vectors">
-<h2>Part 6: Featurise — Fixed-Size Molecular Vectors<a class="headerlink" href="#part-6-featurise-fixed-size-molecular-vectors" title="Link to this heading">¶</a></h2>
+<section id="part-7-featurise-fixed-size-molecular-vectors">
+<h2>Part 7: Featurise — Fixed-Size Molecular Vectors<a class="headerlink" href="#part-7-featurise-fixed-size-molecular-vectors" title="Link to this heading">¶</a></h2>
 <p>Convert a directory of XYZ files into a fixed-size feature matrix for downstream
 machine learning (clustering, regression, dimensionality reduction, etc.).</p>
 <p>Three backends are available:</p>
@@ -1156,8 +1484,8 @@ machine learning (clustering, regression, dimensionality reduction, etc.).</p>
 </tbody>
 </table>
 </div>
-<section id="id7">
-<h3>Usage<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
+<section id="id8">
+<h3>Usage<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># SOAP (default) — uses the built-in species list</span>
 MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<span class="w"> </span>gen_xyz/
 
@@ -1436,8 +1764,8 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 </div>
 </section>
 <hr class="docutils" />
-<section id="id8">
-<h2>Python API<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h2>
+<section id="id9">
+<h2>Python API<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h2>
 <p>The analysis functions are also available programmatically:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">MolecularDiffusion.runmodes.analyze</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">optimize_molecule</span><span class="p">,</span>
@@ -1574,26 +1902,36 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 <li><a class="reference internal" href="#what-sbdd-reports">What <code class="docutils literal notranslate"><span class="pre">sbdd</span></code> reports</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#part-3-conformer-metrics-paired-generated-vs-reference">Part 3: Conformer Metrics (paired generated-vs-reference)</a><ul>
-<li><a class="reference internal" href="#two-accepted-input-layouts">Two accepted input layouts</a></li>
-<li><a class="reference internal" href="#computed-metrics">Computed metrics</a></li>
-<li><a class="reference internal" href="#id3">Output</a></li>
+<li><a class="reference internal" href="#part-3-dock-library-docking-pose-recovery-and-enrichment">Part 3: Dock — Library Docking, Pose Recovery and Enrichment</a><ul>
+<li><a class="reference internal" href="#why-the-box-matters">Why the box matters</a></li>
+<li><a class="reference internal" href="#input">Input</a></li>
+<li><a class="reference internal" href="#pose-recovery">Pose recovery</a></li>
+<li><a class="reference internal" href="#enrichment">Enrichment</a></li>
+<li><a class="reference internal" href="#id3">Options</a></li>
+<li><a class="reference internal" href="#two-things-that-will-bite">Two things that will bite</a></li>
+<li><a class="reference internal" href="#bias-check-with-analyze-bias">Bias check with <code class="docutils literal notranslate"><span class="pre">analyze</span> <span class="pre">bias</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#part-4-xyz-to-smiles-conversion">Part 4: XYZ to SMILES Conversion</a><ul>
-<li><a class="reference internal" href="#id4">Usage</a></li>
+<li><a class="reference internal" href="#part-4-conformer-metrics-paired-generated-vs-reference">Part 4: Conformer Metrics (paired generated-vs-reference)</a><ul>
+<li><a class="reference internal" href="#two-accepted-input-layouts">Two accepted input layouts</a></li>
+<li><a class="reference internal" href="#computed-metrics">Computed metrics</a></li>
+<li><a class="reference internal" href="#id4">Output</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#part-5-xyz-to-smiles-conversion">Part 5: XYZ to SMILES Conversion</a><ul>
+<li><a class="reference internal" href="#id5">Usage</a></li>
 <li><a class="reference internal" href="#output-files-in-xyz-dir-2d-reprs">Output Files (in <code class="docutils literal notranslate"><span class="pre">xyz_dir/2d_reprs/</span></code>)</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#part-5-xtb-electronic-properties">Part 5: XTB Electronic Properties</a><ul>
-<li><a class="reference internal" href="#id5">Usage</a></li>
+<li><a class="reference internal" href="#part-6-xtb-electronic-properties">Part 6: XTB Electronic Properties</a><ul>
+<li><a class="reference internal" href="#id6">Usage</a></li>
 <li><a class="reference internal" href="#property-groups">Property Groups</a></li>
 <li><a class="reference internal" href="#output-formats">Output Formats</a></li>
-<li><a class="reference internal" href="#id6">Options</a></li>
+<li><a class="reference internal" href="#id7">Options</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#part-6-featurise-fixed-size-molecular-vectors">Part 6: Featurise — Fixed-Size Molecular Vectors</a><ul>
-<li><a class="reference internal" href="#id7">Usage</a></li>
+<li><a class="reference internal" href="#part-7-featurise-fixed-size-molecular-vectors">Part 7: Featurise — Fixed-Size Molecular Vectors</a><ul>
+<li><a class="reference internal" href="#id8">Usage</a></li>
 <li><a class="reference internal" href="#soap-options">SOAP Options</a></li>
 <li><a class="reference internal" href="#uma-options">UMA Options</a></li>
 <li><a class="reference internal" href="#ssl3d-options">SSL3D Options</a></li>
@@ -1603,7 +1941,7 @@ MolCraftDiff<span class="w"> </span>analyze<span class="w"> </span>featurize<spa
 </ul>
 </li>
 <li><a class="reference internal" href="#example-workflow">Example Workflow</a></li>
-<li><a class="reference internal" href="#id8">Python API</a></li>
+<li><a class="reference internal" href="#id9">Python API</a></li>
 <li><a class="reference internal" href="#verify-the-result">Verify the Result</a></li>
 <li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
 </ul>

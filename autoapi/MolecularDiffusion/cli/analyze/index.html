@@ -333,9 +333,11 @@
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/compare_to_optimized/index.html">MolecularDiffusion.runmodes.analyze.compare_to_optimized</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/compute_metrics/index.html">MolecularDiffusion.runmodes.analyze.compute_metrics</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/conformer_metrics/index.html">MolecularDiffusion.runmodes.analyze.conformer_metrics</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/dock_library/index.html">MolecularDiffusion.runmodes.analyze.dock_library</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/docking/index.html">MolecularDiffusion.runmodes.analyze.docking</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/druglike/index.html">MolecularDiffusion.runmodes.analyze.druglike</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/featurize/index.html">MolecularDiffusion.runmodes.analyze.featurize</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/property_bias/index.html">MolecularDiffusion.runmodes.analyze.property_bias</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/similarity3d/index.html">MolecularDiffusion.runmodes.analyze.similarity3d</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/ssl3d_embed/index.html">MolecularDiffusion.runmodes.analyze.ssl3d_embed</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../runmodes/analyze/uma_embeddings/index.html">MolecularDiffusion.runmodes.analyze.uma_embeddings</a></li>
@@ -503,6 +505,12 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.analyze" title="MolecularDiffusion.cli.analyze.analyze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">analyze</span></code></a>()</p></td>
 <td><p>Analyze 3D molecular structures.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.bias" title="MolecularDiffusion.cli.analyze.bias"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bias</span></code></a>(inputs, labels, id_col, label_col, score_col, ...)</p></td>
+<td><p>Check whether a docking score is really measuring molecule size.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.dock" title="MolecularDiffusion.cli.analyze.dock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dock</span></code></a>(receptor, ligands, actives, decoys, ...)</p></td>
+<td><p>Dock a library of molecules into one fixed pocket and rank them.</p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.analyze.featurize" title="MolecularDiffusion.cli.analyze.featurize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">featurize</span></code></a>(input_dir, backend, output, recursive, ...)</p></td>
 <td><p>Featurize 3D XYZ molecules into fixed-size feature vectors.</p></td>
 </tr>
@@ -533,10 +541,70 @@ Subcommands:</p>
 <blockquote>
 <div><p>optimize        xTB geometry optimization
 metrics         Validity/connectivity metrics
-xyz2mol         Convert XYZ to SMILES + fingerprints
+dock            Dock a library into one fixed pocket; pose RMSD</p>
+<blockquote>
+<div><p>and actives-vs-decoys enrichment</p>
+</div></blockquote>
+<dl class="simple">
+<dt>bias            Check whether a docking score tracks molecule size,</dt><dd><p>logP or charge (top picks vs the pool)</p>
+</dd>
+</dl>
+<p>xyz2mol         Convert XYZ to SMILES + fingerprints
 featurize       Fixed-size feature vectors for XYZ molecules
 xtb-electronic  xTB electronic properties</p>
 </div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.cli.analyze.bias">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.analyze.</span></span><span class="sig-name descname"><span class="pre">bias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sd_flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.analyze.bias" title="Link to this definition">¶</a></dt>
+<dd><p>Check whether a docking score is really measuring molecule size.</p>
+<p>
+Reads the CSVs written by <cite>analyze dock</cite> (columns name, smiles and the
+score). Reports how the score correlates with heavy atoms, logP and
+formal charge, and whether the top-ranked molecules differ from the whole
+pool. It is a diagnostic: it warns, and never exits non-zero.</p>
+<p>
+.. rubric:: Examples</p>
+<p>MolCraftDiff analyze bias dock_results.csv
+MolCraftDiff analyze bias out/full_0.csv out/full_1.csv –top 10 –top 174
+MolCraftDiff analyze bias out.csv –labels master.csv </p>
+<blockquote>
+<div><p>–id-col cache_id –label-col hit29 –out-dir bias/</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.cli.analyze.dock">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.analyze.</span></span><span class="sig-name descname"><span class="pre">dock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">receptor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ligands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actives</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_ref_ligand</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exhaustiveness</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_poses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rmsd_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_poses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_bad_res</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_altloc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.analyze.dock" title="Link to this definition">¶</a></dt>
+<dd><p>Dock a library of molecules into one fixed pocket and rank them.</p>
+<p>
+Unlike <cite>metrics –metrics sbdd</cite>, which scores generated .xyz files each
+in its own box, this scores an arbitrary library (SDF, or SMILES
+embedded on the fly) inside a single shared pocket box – what a
+retrospective benchmark needs. Needs the [sbdd] extra.</p>
+<p>
+Pose recovery (is the top-scored pose the crystal pose?):</p>
+<blockquote>
+<div><dl class="simple">
+<dt>MolCraftDiff analyze dock –receptor receptor.pdb </dt><dd><p>–ligands ligand.sdf –rmsd-ref ligand.sdf –n-poses 5</p>
+</dd>
+</dl>
+<p>-&gt; rmsd_top, rmsd_best, rmsd_best_rank; under 2 A is the usual bar</p>
+</div></blockquote>
+<p>
+Enrichment (do known actives rank above decoys?):</p>
+<blockquote>
+<div><dl class="simple">
+<dt>MolCraftDiff analyze dock –receptor receptor.pdb </dt><dd><p>–box-ref-ligand crystal.sdf –actives actives.smi –decoys decoys.smi</p>
+</dd>
+</dl>
+<p>-&gt; roc_auc, ef_1pct, ef_5pct</p>
+</div></blockquote>
+<p>
+Without –box-ref-ligand or –box-center each molecule is boxed on its
+OWN coordinates, which is only correct for molecules already posed in
+the pocket frame. A warning is printed in that case.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -764,6 +832,8 @@ MolCraftDiff analyze xyz2mol gen_xyz/ –bits 1024 -v</p>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.analyze.analyze"><code class="docutils literal notranslate"><span class="pre">analyze()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.cli.analyze.bias"><code class="docutils literal notranslate"><span class="pre">bias()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.cli.analyze.dock"><code class="docutils literal notranslate"><span class="pre">dock()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.analyze.featurize"><code class="docutils literal notranslate"><span class="pre">featurize()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.analyze.metrics"><code class="docutils literal notranslate"><span class="pre">metrics()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.analyze.optimize"><code class="docutils literal notranslate"><span class="pre">optimize()</span></code></a></li>
