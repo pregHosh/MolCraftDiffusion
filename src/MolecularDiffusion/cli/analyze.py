@@ -35,6 +35,10 @@ def analyze():
     Subcommands:
       optimize        xTB geometry optimization
       metrics         Validity/connectivity metrics
+      dock            Dock a library into one fixed pocket; pose RMSD
+                      and actives-vs-decoys enrichment
+      bias            Check whether a docking score tracks molecule size,
+                      logP or charge (top picks vs the pool)
       xyz2mol         Convert XYZ to SMILES + fingerprints
       featurize       Fixed-size feature vectors for XYZ molecules
       xtb-electronic  xTB electronic properties
@@ -224,6 +228,161 @@ def metrics(input_path, output, filter_column, filtered_output, metrics_type, re
     )
     
     click.echo(f"Computing {metrics_type} metrics for: {input_path}")
+    try:
+        runner(args)
+    except ValueError as exc:
+        raise click.ClickException(str(exc)) from exc
+
+
+# ============================================================================
+# DOCK: dock an arbitrary library into ONE fixed pocket
+# ============================================================================
+
+@analyze.command("dock", context_settings=CONTEXT_SETTINGS)
+@click.option("--receptor", required=True, type=click.Path(exists=True),
+              help="Receptor .pdbqt, or a .pdb to prepare via meeko")
+@click.option("--ligands", multiple=True, type=click.Path(exists=True),
+              help="Unlabelled library (.sdf/.smi/.txt/.smiles/.ism/.csv)")
+@click.option("--actives", multiple=True, type=click.Path(exists=True),
+              help="Known actives -> label 1 (enables enrichment metrics)")
+@click.option("--decoys", multiple=True, type=click.Path(exists=True),
+              help="Known inactives -> label 0 (enables enrichment metrics)")
+@click.option("--box-ref-ligand", default=None, type=click.Path(exists=True),
+              help="Crystal-ligand SDF defining the pocket box (recommended)")
+@click.option("--box-center", nargs=3, type=float, default=None,
+              help="Box centre 'X Y Z', as an alternative to a ref ligand")
+@click.option("--box-size", nargs=3, type=float, default=None,
+              help="Box size 'X Y Z' in angstrom")
+@click.option("--mode", default="dock",
+              type=click.Choice(["score", "min", "dock"]),
+              help="Cost/fidelity: score (in place), min, dock (default)")
+@click.option("--exhaustiveness", default=8, type=int,
+              help="Vina search exhaustiveness (default: 8)")
+@click.option("--n-poses", default=1, type=int,
+              help="Poses to keep per molecule; >1 forces a full dock")
+@click.option("--rmsd-ref", default=None, type=click.Path(exists=True),
+              help="Crystal pose SDF to measure pose recovery against")
+@click.option("--save-poses", default=None, type=click.Path(),
+              help="Write docked poses to this SDF (tagged rank/score/RMSD)")
+@click.option("--seed", default=42, type=int, help="Vina seed (default: 42)")
+@click.option("--allow-bad-res", is_flag=True,
+              help="Let meeko accept incomplete residues in the receptor")
+@click.option("--default-altloc", default=None,
+              help="Altloc to keep, e.g. A, when the PDB has alternates")
+@click.option("--out-dir", default=None, type=click.Path(),
+              help="Where to write the prepared receptor .pdbqt")
+@click.option("--output", "-o", "--o", default=None, type=click.Path(),
+              help="Output CSV (default: dock_library.csv)")
+def dock(receptor, ligands, actives, decoys, box_ref_ligand, box_center,
+         box_size, mode, exhaustiveness, n_poses, rmsd_ref, save_poses, seed,
+         allow_bad_res, default_altloc, out_dir, output):
+    """Dock a library of molecules into one fixed pocket and rank them.
+
+    \b
+    Unlike `metrics --metrics sbdd`, which scores generated .xyz files each
+    in its own box, this scores an arbitrary library (SDF, or SMILES
+    embedded on the fly) inside a single shared pocket box -- what a
+    retrospective benchmark needs. Needs the [sbdd] extra.
+
+    \b
+    Pose recovery (is the top-scored pose the crystal pose?):
+      MolCraftDiff analyze dock --receptor receptor.pdb \\
+        --ligands ligand.sdf --rmsd-ref ligand.sdf --n-poses 5
+      -> rmsd_top, rmsd_best, rmsd_best_rank; under 2 A is the usual bar
+
+    \b
+    Enrichment (do known actives rank above decoys?):
+      MolCraftDiff analyze dock --receptor receptor.pdb \\
+        --box-ref-ligand crystal.sdf \\
+        --actives actives.smi --decoys decoys.smi
+      -> roc_auc, ef_1pct, ef_5pct
+
+    \b
+    Without --box-ref-ligand or --box-center each molecule is boxed on its
+    OWN coordinates, which is only correct for molecules already posed in
+    the pocket frame. A warning is printed in that case.
+    """
+    import argparse
+    runner = _load_analyze_module("dock_library").runner
+
+    args = argparse.Namespace(
+        receptor=receptor,
+        ligands=list(ligands) if ligands else None,
+        actives=list(actives) if actives else None,
+        decoys=list(decoys) if decoys else None,
+        box_ref_ligand=box_ref_ligand,
+        box_center=list(box_center) if box_center else None,
+        box_size=list(box_size) if box_size else None,
+        mode=mode,
+        exhaustiveness=exhaustiveness,
+        n_poses=n_poses,
+        rmsd_ref=rmsd_ref,
+        save_poses=save_poses,
+        seed=seed,
+        allow_bad_res=allow_bad_res,
+        default_altloc=default_altloc,
+        out_dir=out_dir,
+        output=output,
+    )
+
+    click.echo(f"Docking into {receptor}")
+    try:
+        runner(args)
+    except ValueError as exc:
+        raise click.ClickException(str(exc)) from exc
+
+
+# ============================================================================
+# BIAS: is the docking score just measuring size?
+# ============================================================================
+
+@analyze.command("bias", context_settings=CONTEXT_SETTINGS)
+@click.argument("inputs", nargs=-1, required=True,
+                type=click.Path(exists=True))
+@click.option("--labels", default=None, type=click.Path(exists=True),
+              help="CSV of known hits; adds a hits-vs-pool section")
+@click.option("--id-col", default="name",
+              help="--labels column holding the molecule name (default: name)")
+@click.option("--label-col", default="label",
+              help="--labels column, > 0 means hit (default: label)")
+@click.option("--score-col", default="vina_dock",
+              help="Score column, lower is better (default: vina_dock)")
+@click.option("--top", multiple=True, type=click.IntRange(min=1),
+              help="Top-k to test; repeatable (default: 10 and 1% of pool)")
+@click.option("--sd-flag", default=0.5, type=float,
+              help="Warn when the top-k mean is this many pool SDs above "
+                   "the pool mean (default: 0.5)")
+@click.option("--out-dir", default=None, type=click.Path(),
+              help="Write property_bias_*.csv here (none written otherwise)")
+def bias(inputs, labels, id_col, label_col, score_col, top, sd_flag, out_dir):
+    """Check whether a docking score is really measuring molecule size.
+
+    \b
+    Reads the CSVs written by `analyze dock` (columns name, smiles and the
+    score). Reports how the score correlates with heavy atoms, logP and
+    formal charge, and whether the top-ranked molecules differ from the whole
+    pool. It is a diagnostic: it warns, and never exits non-zero.
+
+    \b
+    Examples:
+      MolCraftDiff analyze bias dock_results.csv
+      MolCraftDiff analyze bias out/full_0.csv out/full_1.csv --top 10 --top 174
+      MolCraftDiff analyze bias out.csv --labels master.csv \\
+        --id-col cache_id --label-col hit29 --out-dir bias/
+    """
+    import argparse
+    runner = _load_analyze_module("property_bias").runner
+
+    args = argparse.Namespace(
+        inputs=list(inputs),
+        labels=labels,
+        id_col=id_col,
+        label_col=label_col,
+        score_col=score_col,
+        top=list(top) if top else None,
+        sd_flag=sd_flag,
+        out_dir=out_dir,
+    )
     try:
         runner(args)
     except ValueError as exc:

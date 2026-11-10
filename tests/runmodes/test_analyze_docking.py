@@ -116,3 +116,125 @@ class TestPrepareReceptor:
         rec = tmp_path / "rec.pdbqt"
         rec.write_text("ATOM\n")
         assert prepare_receptor(str(rec)) == str(rec)
+
+
+def _ethanol():
+    from rdkit import Chem
+    from rdkit.Chem import AllChem
+
+    mol = Chem.AddHs(Chem.MolFromSmiles("CCO"))
+    AllChem.EmbedMolecule(mol, randomSeed=42)
+    return mol
+
+
+class _FakeVina:
+    """Records the box it was handed; runs no docking."""
+
+    last_maps = None
+
+    def __init__(self, **_kwargs):
+        pass
+
+    def set_receptor(self, _path):
+        pass
+
+    def set_ligand_from_string(self, _text):
+        pass
+
+    def compute_vina_maps(self, center=None, box_size=None):
+        type(self).last_maps = (list(center), list(box_size))
+
+    def score(self):
+        return [-7.5]
+
+    def optimize(self):
+        return [-8.0]
+
+    def dock(self, **_kwargs):
+        pass
+
+    def energies(self, n_poses=1):
+        return [[-8.5]] * n_poses
+
+
+class TestFixedBox:
+    """The pocket-box override -- the part catalogue compounds need."""
+
+    def test_omitting_the_override_keeps_the_per_ligand_box(self, monkeypatch):
+        import vina as vina_mod
+
+        from MolecularDiffusion.runmodes.analyze import docking
+
+        monkeypatch.setattr(vina_mod, "Vina", _FakeVina)
+        mol = _ethanol()
+        docking.score_pose(mol, "unused.pdbqt", mode="score")
+
+        from rdkit import Chem
+
+        expected = docking.box_for(Chem.AddHs(mol, addCoords=True))
+        assert _FakeVina.last_maps[0] == pytest.approx(expected[0])
+        assert _FakeVina.last_maps[1] == pytest.approx(expected[1])
+
+    def test_explicit_box_overrides_the_ligand_extent(self, monkeypatch):
+        import vina as vina_mod
+
+        from MolecularDiffusion.runmodes.analyze import docking
+
+        monkeypatch.setattr(vina_mod, "Vina", _FakeVina)
+        docking.score_pose(
+            _ethanol(), "unused.pdbqt", mode="score",
+            center=[1.0, 2.0, 3.0], box_size=[20.0, 20.0, 20.0],
+        )
+        assert _FakeVina.last_maps == ([1.0, 2.0, 3.0], [20.0, 20.0, 20.0])
+
+    def test_box_from_ligand_matches_box_for(self, tmp_path):
+        from rdkit import Chem
+
+        from MolecularDiffusion.runmodes.analyze import docking
+
+        mol = _ethanol()
+        sdf = tmp_path / "ref.sdf"
+        with Chem.SDWriter(str(sdf)) as writer:
+            writer.write(mol)
+
+        center, size = docking.box_from_ligand(str(sdf))
+        # round-trips through SDF, so compare on the re-read molecule
+        reread = Chem.MolFromMolFile(str(sdf), sanitize=True)
+        expected = docking.box_for(Chem.AddHs(reread, addCoords=True))
+        assert center == pytest.approx(expected[0])
+        assert size == pytest.approx(expected[1])
+
+
+class TestReceptorFlags:
+    """The altloc/bad-residue flags real PDB files need."""
+
+    def _argv_for(self, monkeypatch, tmp_path, **kwargs):
+        import subprocess
+
+        from MolecularDiffusion.runmodes.analyze import docking
+
+        seen = {}
+
+        def fake_run(argv, **_kw):
+            seen["argv"] = argv
+            # pretend meeko wrote the output so no exception is raised
+            (tmp_path / "rec.pdbqt").write_text("ATOM\n")
+            return subprocess.CompletedProcess(argv, 0, "", "")
+
+        monkeypatch.setattr(subprocess, "run", fake_run)
+        pdb = tmp_path / "rec.pdb"
+        pdb.write_text("ATOM\n")
+        docking.prepare_receptor(str(pdb), out_dir=str(tmp_path), **kwargs)
+        return seen["argv"]
+
+    def test_flags_absent_by_default(self, monkeypatch, tmp_path):
+        argv = self._argv_for(monkeypatch, tmp_path)
+        assert "--allow_bad_res" not in argv
+        assert "--default_altloc" not in argv
+
+    def test_flags_added_when_asked(self, monkeypatch, tmp_path):
+        argv = self._argv_for(
+            monkeypatch, tmp_path, allow_bad_res=True, default_altloc="A",
+        )
+        assert "--allow_bad_res" in argv
+        assert argv[argv.index("--default_altloc") + 1] == "A"

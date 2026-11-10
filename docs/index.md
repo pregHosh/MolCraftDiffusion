@@ -114,6 +114,13 @@ workflows/index
 
 ```{toctree}
 :maxdepth: 1
+:caption: Structure-Based Drug Design
+
+drug_design/index
+```
+
+```{toctree}
+:maxdepth: 1
 :caption: Configuration Templates
 
 config_templates

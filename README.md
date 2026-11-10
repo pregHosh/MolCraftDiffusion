@@ -138,7 +138,7 @@ MolCraftDiff analyze metrics generated_molecules/
 MolCraftDiff analyze --help
 ```
 
-The analysis suite covers structural validation, geometry optimisation and comparison, electronic properties, molecular representations, and feature extraction. See the [analysis tutorial](https://preghosh.github.io/MolCraftDiffusion/tutorials/09_analyze.html) for commands and optional dependencies.
+The analysis suite covers structural validation, geometry optimisation and comparison, electronic properties, molecular representations, feature extraction, and structure-based drug-design checks: library docking into a fixed pocket (`analyze dock`, `analyze bias`, with MD and MM-GBSA practice in [`docs/drug_design/`](./docs/drug_design)). See the [analysis tutorial](https://preghosh.github.io/MolCraftDiffusion/tutorials/09_analyze.html) for commands and optional dependencies.
 
 ## Tutorials and Tests
 
