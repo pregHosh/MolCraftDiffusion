@@ -1,0 +1,21 @@
+MolecularDiffusion.modules.models.edm
+=====================================
+
+.. py:module:: MolecularDiffusion.modules.models.edm
+
+.. autoapi-nested-parse::
+
+   EDM-style diffusion and flow-matching wrappers (models that sample and train).
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/edm/en_diffusion/index
+   /autoapi/MolecularDiffusion/modules/models/edm/noisemodel/index
+
+

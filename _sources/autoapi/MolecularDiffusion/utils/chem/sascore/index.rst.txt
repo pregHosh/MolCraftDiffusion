@@ -1,0 +1,38 @@
+MolecularDiffusion.utils.chem.sascore
+=====================================
+
+.. py:module:: MolecularDiffusion.utils.chem.sascore
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.chem.sascore.module
+   MolecularDiffusion.utils.chem.sascore.path
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.chem.sascore.calculateScore
+   MolecularDiffusion.utils.chem.sascore.numBridgeheadsAndSpiro
+   MolecularDiffusion.utils.chem.sascore.readFragmentScores
+
+
+Module Contents
+---------------
+
+.. py:function:: calculateScore(m)
+
+.. py:function:: numBridgeheadsAndSpiro(mol, ri=None)
+
+.. py:function:: readFragmentScores()
+
+.. py:data:: module
+
+.. py:data:: path
+

@@ -3,71 +3,13 @@ MolecularDiffusion.modules.models.noisemodel
 
 .. py:module:: MolecularDiffusion.modules.models.noisemodel
 
+.. autoapi-nested-parse::
 
-Classes
--------
+   Alias of ``MolecularDiffusion.modules.models.edm.noisemodel``.
 
-.. autoapisummary::
+   The module moved into ``edm/``. This path keeps working: it is the same module
+   object, so imports, ``_target_`` strings and checkpoints pickled under the old
+   path still resolve.
 
-   MolecularDiffusion.modules.models.noisemodel.NoiseModel
-
-
-Functions
----------
-
-.. autoapisummary::
-
-   MolecularDiffusion.modules.models.noisemodel.clip_noise_schedule
-   MolecularDiffusion.modules.models.noisemodel.cosine_schedule
-   MolecularDiffusion.modules.models.noisemodel.plot_cosine_scheduler
-   MolecularDiffusion.modules.models.noisemodel.polynomial_schedule
-
-
-Module Contents
----------------
-
-.. py:class:: NoiseModel(timestep, noise_precision=1e-05, nu_arr=[0.5, 0.5, 0.5, 0.5], mapping=['pos', 'categorical', 'integer', 'extra'], device='cpu')
-
-   .. py:method:: get_alpha_bar(t_normalized=None, t_int=None, key=None)
-
-
-   .. py:method:: get_alpha_sigma_t(t_int)
-
-
-   .. py:method:: get_sigma_bar(t_normalized=None, t_int=None, key=None)
-
-
-   .. py:attribute:: T
-
-
-   .. py:attribute:: inverse_mapping
-
-
-   .. py:attribute:: mapping
-      :value: ['pos', 'categorical', 'integer', 'extra']
-
-
-
-   .. py:attribute:: nu_arr
-      :value: [0.5, 0.5, 0.5, 0.5]
-
-
-
-.. py:function:: clip_noise_schedule(alphas2, clip_value=0.001)
-
-   For a noise schedule given by alpha^2, this clips alpha_t / alpha_t-1. This may help improve stability during
-   sampling.
-
-
-.. py:function:: cosine_schedule(timesteps: int, nu_array: List[float], s: float = 0.0001)
-
-   A noise schedule based on the cosine schedule from Nichol & Dhariwal 2021.
-
-
-.. py:function:: plot_cosine_scheduler(timesteps, powers=[2], s=0.0001)
-
-.. py:function:: polynomial_schedule(timesteps: int, powers: list = [2], s: float = 0.0001)
-
-   A noise schedule based on a simple polynomial equation: 1 - x^power.
 
 

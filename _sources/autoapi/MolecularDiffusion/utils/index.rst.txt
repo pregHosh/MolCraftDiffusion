@@ -10,6 +10,7 @@ Submodules
 .. toctree::
    :maxdepth: 1
 
+   /autoapi/MolecularDiffusion/utils/chem/index
    /autoapi/MolecularDiffusion/utils/comm/index
    /autoapi/MolecularDiffusion/utils/conformer_pool/index
    /autoapi/MolecularDiffusion/utils/diffusion_utils/index
@@ -20,10 +21,13 @@ Submodules
    /autoapi/MolecularDiffusion/utils/geom_metrics/index
    /autoapi/MolecularDiffusion/utils/geom_stability/index
    /autoapi/MolecularDiffusion/utils/geom_utils/index
+   /autoapi/MolecularDiffusion/utils/geometry/index
    /autoapi/MolecularDiffusion/utils/io/index
+   /autoapi/MolecularDiffusion/utils/metrics/index
    /autoapi/MolecularDiffusion/utils/molgraph_utils/index
    /autoapi/MolecularDiffusion/utils/plot_function/index
    /autoapi/MolecularDiffusion/utils/pretty/index
+   /autoapi/MolecularDiffusion/utils/runtime/index
    /autoapi/MolecularDiffusion/utils/sascore/index
    /autoapi/MolecularDiffusion/utils/shape_measure/index
    /autoapi/MolecularDiffusion/utils/shepherd_score/index

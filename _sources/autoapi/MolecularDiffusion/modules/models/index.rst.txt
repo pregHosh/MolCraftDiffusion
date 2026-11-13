@@ -7,6 +7,12 @@ MolecularDiffusion.modules.models
 
    Model classes, imported on first use (PEP 562).
 
+   Layout: ``edm/`` holds the diffusion / flow-matching wrappers, ``dynamics/`` the
+   denoising networks they call, and every other sub-package is one architecture.
+   The old flat paths (``models.egcl``, ``models.en_diffusion``, ...) are aliases
+   of the moved modules, so existing imports, ``_target_`` strings and pickled
+   checkpoints keep working.
+
    ``import MolecularDiffusion.modules.models.<anything>`` runs this file, and
    loading every EDM variant eagerly cost ~6 s and ~900 MB. The public names and
    ``from MolecularDiffusion.modules.models import EGNN`` keep working; the
@@ -28,6 +34,8 @@ Submodules
    /autoapi/MolecularDiffusion/modules/models/diffsmol/index
    /autoapi/MolecularDiffusion/modules/models/diffspectra/index
    /autoapi/MolecularDiffusion/modules/models/ditmc/index
+   /autoapi/MolecularDiffusion/modules/models/dynamics/index
+   /autoapi/MolecularDiffusion/modules/models/edm/index
    /autoapi/MolecularDiffusion/modules/models/egcl/index
    /autoapi/MolecularDiffusion/modules/models/egt/index
    /autoapi/MolecularDiffusion/modules/models/en_diffusion/index

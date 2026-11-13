@@ -1,0 +1,28 @@
+MolecularDiffusion.modules.models.dynamics
+==========================================
+
+.. py:module:: MolecularDiffusion.modules.models.dynamics
+
+.. autoapi-nested-parse::
+
+   Denoising networks (dynamics / backbones) that the wrappers in ``edm`` call.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/models/dynamics/egcl/index
+   /autoapi/MolecularDiffusion/modules/models/dynamics/egt/index
+   /autoapi/MolecularDiffusion/modules/models/dynamics/equiformer_v2_backbone/index
+   /autoapi/MolecularDiffusion/modules/models/dynamics/equiformer_v2_dynamics/index
+   /autoapi/MolecularDiffusion/modules/models/dynamics/esen/index
+   /autoapi/MolecularDiffusion/modules/models/dynamics/painn_backbone/index
+   /autoapi/MolecularDiffusion/modules/models/dynamics/painn_dynamics/index
+   /autoapi/MolecularDiffusion/modules/models/dynamics/pharmacophore_dynamics/index
+   /autoapi/MolecularDiffusion/modules/models/dynamics/transformer_dynamics/index
+
+

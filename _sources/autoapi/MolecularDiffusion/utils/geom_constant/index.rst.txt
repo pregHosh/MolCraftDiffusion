@@ -3,29 +3,13 @@ MolecularDiffusion.utils.geom_constant
 
 .. py:module:: MolecularDiffusion.utils.geom_constant
 
+.. autoapi-nested-parse::
 
-Attributes
-----------
+   Alias of ``MolecularDiffusion.utils.geometry.geom_constant``.
 
-.. autoapisummary::
-
-   MolecularDiffusion.utils.geom_constant.allow_n_bonds
-   MolecularDiffusion.utils.geom_constant.allowed_shape
-   MolecularDiffusion.utils.geom_constant.degree_angles_ref
-   MolecularDiffusion.utils.geom_constant.valid_valencies
-   MolecularDiffusion.utils.geom_constant.vertices_labels
+   The module moved into ``geometry/``. This path keeps working: it is the same module
+   object, so imports and ``_target_`` strings written against the old path still
+   resolve.
 
 
-Module Contents
----------------
-
-.. py:data:: allow_n_bonds
-
-.. py:data:: allowed_shape
-
-.. py:data:: degree_angles_ref
-
-.. py:data:: valid_valencies
-
-.. py:data:: vertices_labels
 

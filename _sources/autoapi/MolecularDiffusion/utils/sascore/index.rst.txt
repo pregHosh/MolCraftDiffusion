@@ -3,36 +3,13 @@ MolecularDiffusion.utils.sascore
 
 .. py:module:: MolecularDiffusion.utils.sascore
 
+.. autoapi-nested-parse::
 
-Attributes
-----------
+   Alias of ``MolecularDiffusion.utils.chem.sascore``.
 
-.. autoapisummary::
-
-   MolecularDiffusion.utils.sascore.module
-   MolecularDiffusion.utils.sascore.path
-
-
-Functions
----------
-
-.. autoapisummary::
-
-   MolecularDiffusion.utils.sascore.calculateScore
-   MolecularDiffusion.utils.sascore.numBridgeheadsAndSpiro
-   MolecularDiffusion.utils.sascore.readFragmentScores
+   The module moved into ``chem/``. This path keeps working: it is the same module
+   object, so imports and ``_target_`` strings written against the old path still
+   resolve.
 
 
-Module Contents
----------------
-
-.. py:function:: calculateScore(m)
-
-.. py:function:: numBridgeheadsAndSpiro(mol, ri=None)
-
-.. py:function:: readFragmentScores()
-
-.. py:data:: module
-
-.. py:data:: path
 

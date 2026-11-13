@@ -1,0 +1,25 @@
+MolecularDiffusion.utils.geometry
+=================================
+
+.. py:module:: MolecularDiffusion.utils.geometry
+
+.. autoapi-nested-parse::
+
+   Coordinates, rotations, shape measures, molecular surfaces and substituent geometry.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/utils/geometry/geom_constant/index
+   /autoapi/MolecularDiffusion/utils/geometry/geom_utils/index
+   /autoapi/MolecularDiffusion/utils/geometry/shape_measure/index
+   /autoapi/MolecularDiffusion/utils/geometry/shepherd_utils/index
+   /autoapi/MolecularDiffusion/utils/geometry/substituent_builder/index
+   /autoapi/MolecularDiffusion/utils/geometry/substituent_geometries/index
+
+

@@ -1,0 +1,24 @@
+MolecularDiffusion.utils.chem
+=============================
+
+.. py:module:: MolecularDiffusion.utils.chem
+
+.. autoapi-nested-parse::
+
+   Molecule graphs and chemistry scores (analysis, SMILES, SA/SC score, conformer pools).
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/utils/chem/conformer_pool/index
+   /autoapi/MolecularDiffusion/utils/chem/geom_analyzer/index
+   /autoapi/MolecularDiffusion/utils/chem/molgraph_utils/index
+   /autoapi/MolecularDiffusion/utils/chem/sascore/index
+   /autoapi/MolecularDiffusion/utils/chem/smilify/index
+
+

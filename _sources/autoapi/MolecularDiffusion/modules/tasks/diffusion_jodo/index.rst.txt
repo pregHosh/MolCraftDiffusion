@@ -79,7 +79,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:class:: JodoDiffusionTask(atom_vocab: list, nf: int, n_layers: int, n_heads: int, n_extra_heads: int, dropout: float, mlp_ratio: int, spatial_cut_off: float, edge_ch: int, include_fc_charge: bool, cond_time: bool, dist_gbf: bool, gbf_name: str, trans_name: str, softmax_inf: bool, edge_quan_th: float, com: bool, pred_data: bool, self_cond: bool, noise_align: bool, centered: bool, normalize_factors: list, loss_weights: list, reduce_mean: bool, noise_schedule: str, beta_0: float, beta_1: float, sampling_steps: int, condition: list, normalize_condition: str, sdf_output_path: Optional[str], n_atoms_hist: dict, prop_dist_model: Optional[MolecularDiffusion.modules.models.en_diffusion.DistributionProperty] = None, property_norms: Optional[dict] = None)
+.. py:class:: JodoDiffusionTask(atom_vocab: list, nf: int, n_layers: int, n_heads: int, n_extra_heads: int, dropout: float, mlp_ratio: int, spatial_cut_off: float, edge_ch: int, include_fc_charge: bool, cond_time: bool, dist_gbf: bool, gbf_name: str, trans_name: str, softmax_inf: bool, edge_quan_th: float, com: bool, pred_data: bool, self_cond: bool, noise_align: bool, centered: bool, normalize_factors: list, loss_weights: list, reduce_mean: bool, noise_schedule: str, beta_0: float, beta_1: float, sampling_steps: int, condition: list, normalize_condition: str, sdf_output_path: Optional[str], n_atoms_hist: dict, prop_dist_model: Optional[MolecularDiffusion.modules.models.edm.en_diffusion.DistributionProperty] = None, property_norms: Optional[dict] = None)
 
    Bases: :py:obj:`torch.nn.Module`
 

@@ -1,0 +1,31 @@
+MolecularDiffusion.utils.geometry.geom_constant
+===============================================
+
+.. py:module:: MolecularDiffusion.utils.geometry.geom_constant
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.geometry.geom_constant.allow_n_bonds
+   MolecularDiffusion.utils.geometry.geom_constant.allowed_shape
+   MolecularDiffusion.utils.geometry.geom_constant.degree_angles_ref
+   MolecularDiffusion.utils.geometry.geom_constant.valid_valencies
+   MolecularDiffusion.utils.geometry.geom_constant.vertices_labels
+
+
+Module Contents
+---------------
+
+.. py:data:: allow_n_bonds
+
+.. py:data:: allowed_shape
+
+.. py:data:: degree_angles_ref
+
+.. py:data:: valid_valencies
+
+.. py:data:: vertices_labels
+

@@ -1,0 +1,324 @@
+MolecularDiffusion.utils.metrics.geom_metrics
+=============================================
+
+.. py:module:: MolecularDiffusion.utils.metrics.geom_metrics
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.metrics.geom_metrics.ALPHA_DEFAULT
+   MolecularDiffusion.utils.metrics.geom_metrics.COULOMB_SCALING
+   MolecularDiffusion.utils.metrics.geom_metrics.Chem
+   MolecularDiffusion.utils.metrics.geom_metrics.Data
+   MolecularDiffusion.utils.metrics.geom_metrics.EDGE_THRESHOLD
+   MolecularDiffusion.utils.metrics.geom_metrics.LAM_SCALING
+   MolecularDiffusion.utils.metrics.geom_metrics.P_ALPHAS
+   MolecularDiffusion.utils.metrics.geom_metrics.P_TYPES
+   MolecularDiffusion.utils.metrics.geom_metrics.PoseBusters
+   MolecularDiffusion.utils.metrics.geom_metrics.SCALE_FACTOR
+   MolecularDiffusion.utils.metrics.geom_metrics.SCORES_THRESHOLD
+   MolecularDiffusion.utils.metrics.geom_metrics.covalent_radii
+   MolecularDiffusion.utils.metrics.geom_metrics.logger
+   MolecularDiffusion.utils.metrics.geom_metrics.pybel
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.utils.metrics.geom_metrics.check_chem_validity
+   MolecularDiffusion.utils.metrics.geom_metrics.check_neutrality
+   MolecularDiffusion.utils.metrics.geom_metrics.check_validity_v0
+   MolecularDiffusion.utils.metrics.geom_metrics.check_validity_v1
+   MolecularDiffusion.utils.metrics.geom_metrics.compare_graph_topology
+   MolecularDiffusion.utils.metrics.geom_metrics.compute_drug_likeness
+   MolecularDiffusion.utils.metrics.geom_metrics.is_fully_connected
+   MolecularDiffusion.utils.metrics.geom_metrics.kabsch_align
+   MolecularDiffusion.utils.metrics.geom_metrics.load_molecules_from_xyz
+   MolecularDiffusion.utils.metrics.geom_metrics.pca_align
+   MolecularDiffusion.utils.metrics.geom_metrics.run_postbuster
+   MolecularDiffusion.utils.metrics.geom_metrics.smilify_wrapper
+   MolecularDiffusion.utils.metrics.geom_metrics.xyz_to_pdb
+   MolecularDiffusion.utils.metrics.geom_metrics.xyz_to_rdkit_mol
+
+
+Module Contents
+---------------
+
+.. py:function:: check_chem_validity(mol_list, skip_idx=[], verbose=0)
+
+.. py:function:: check_neutrality(filename)
+
+   Checks if a molecule (specified by an XYZ file) is neutral by running an xTB calculation.
+
+   It runs 'xtb <filename> --ptb' and checks the output log for messages indicating
+   a mismatch between electrons and spin multiplicity.
+
+   :param filename: Path to the XYZ file containing the molecule.
+   :type filename: str
+
+   :returns: True if the molecule is neutral (no mismatch found), False
+             otherwise, or None when xTB is unavailable or failed.
+   :rtype: bool
+
+
+.. py:function:: check_validity_v0(data, angle_relax=10, scale_factor=1.3, verbose=False)
+
+   Validate a molecular structure based on atomic distances and angles (Version 0).
+
+   :param data: A dictionary containing molecular information.
+                - 'atomic_numbers': List of integers representing the atomic number of each atom.
+                - 'positions': List of tuples (x, y, z) representing the position of each atom.
+   :param angle_relax: Tolerance allowed for bond angles in degrees. Default is 10.0.
+   :type angle_relax: float
+   :param scale_factor: The scaling factor to apply to the covalent radii. Default is 1.3.
+   :type scale_factor: float
+   :param verbose: Whether to print debug messages during validation. Default is False.
+   :type verbose: bool
+
+   :returns:
+
+             Contains the following elements:
+                 - is_valid (bool): Boolean indicating if the structure is valid.
+                 - percent_atom_valid (float): Percentage of atoms that meet the criteria.
+                 - num_components (int): Number of connected components in the molecular graph.
+                 - bad_atoms (list): List of indices for atoms that do not meet the criteria.
+                 - needs_rechecking (bool): Whether further checks are needed due to borderline cases or special conditions.
+   :rtype: tuple
+
+   .. rubric:: Notes
+
+   This function assumes that 'data' contains valid atomic numbers and positions.
+   The validation process involves checking bond distances and angles against predefined reference values.
+   Special handling is applied for atoms with certain atomic numbers, such as carbon (atomic number 6), which may require different criteria due to their bonding behavior.
+
+
+.. py:function:: check_validity_v1(data, score_threshold=3, scale_factor=1.3, skip_indices=[], verbose=False)
+
+   Validate a molecular structure based on atomic distances and angles (Version 1).
+
+   :param data: A dictionary containing molecular information.
+                - 'atomic_numbers': List of integers representing the atomic number of each atom.
+                - 'positions': List of tuples (x, y, z) representing the position of each atom.
+   :param score_threshold: Tolerance allowed for shape values. Default is 3.0.
+   :type score_threshold: float
+   :param scale_factor: The scaling factor to apply to the covalent radii. Default is 1.3.
+   :type scale_factor: float
+   :param skip_indices: List of atom indices to skip during validation.
+   :type skip_indices: list
+   :param verbose: Whether to print debug messages during validation. Default is False.
+   :type verbose: bool
+
+   :returns:
+
+             Contains the following elements:
+                 - is_valid (bool): Boolean indicating if the structure is valid.
+                 - percent_atom_valid (float): Percentage of atoms that meet the criteria.
+                 - num_components (int): Number of connected components in the molecular graph.
+                 - bad_atom_chem (list): List of indices for atoms that do not meet chemical valency criteria.
+                 - bad_atom_distort (list): List of indices for atoms that are geometrically distorted.
+   :rtype: tuple
+
+   .. rubric:: Notes
+
+   This function assumes that 'data' contains valid atomic numbers and positions.
+   The validation process involves checking bond distances and angles against predefined reference values.
+   Special handling is applied for atoms with certain atomic numbers, such as carbon (atomic number 6), which may require different criteria due to their bonding behavior.
+
+
+.. py:function:: compare_graph_topology(graph1, graph2)
+
+   Compare the topology of two PyG graphs by checking their edge indices.
+
+   :param graph1: The first PyG graph.
+   :type graph1: torch_geometric.data.Data
+   :param graph2: The second PyG graph.
+   :type graph2: torch_geometric.data.Data
+
+   :returns: True if the graphs have the same topology, False otherwise.
+   :rtype: bool
+
+
+.. py:function:: compute_drug_likeness(mol) -> dict
+
+   Compute RDKit-based drug-likeness metrics including SAScore and QED.
+
+
+.. py:function:: is_fully_connected(edge_index, num_nodes)
+
+   Determines if the graph is fully connected.
+
+   :param edge_index: The edge indices of the graph.
+   :type edge_index: torch.Tensor
+   :param num_nodes: The number of nodes in the graph.
+   :type num_nodes: int
+
+   :returns:
+
+             (bool, int)
+                 - bool: True if the graph is fully connected, False otherwise.
+                 - int: The number of connected components in the graph.
+   :rtype: tuple
+
+
+.. py:function:: kabsch_align(pts_fit: numpy.ndarray, pts_ref: numpy.ndarray) -> numpy.ndarray
+
+   Standard Kabsch alignment for 1:1 corresponding point sets.
+   Returns pts_fit rotated and translated to align with pts_ref.
+
+
+.. py:function:: load_molecules_from_xyz(xyz_dir)
+
+   Converts all XYZ files in a directory to RDKit Mol objects.
+
+   It first converts XYZ files to PDB using OpenBabel, then loads the PDBs into RDKit.
+
+   :param xyz_dir: Directory containing XYZ files.
+   :type xyz_dir: str
+
+   :returns:
+
+             (valid_molecules, pass_xyz_files)
+                 - valid_molecules (list of RDKit Mol): Successfully loaded molecules.
+                 - pass_xyz_files (list of str): Filenames of the successfully loaded molecules.
+   :rtype: tuple
+
+
+.. py:function:: pca_align(pts_fit: numpy.ndarray, pts_ref: numpy.ndarray) -> numpy.ndarray
+
+   Rotate pts_fit to align its principal axes with those of pts_ref.
+
+   Works for point clouds of **different sizes** (no correspondence required).
+   Tries all 4 axis-flip combinations and returns the rotation that maximises
+   the sum of dot products between corresponding principal axes (best sign match).
+
+   Both inputs must already be centered at the origin.
+
+   :param pts_fit:
+   :type pts_fit: np.ndarray (N, 3)  — points to rotate (pre-centered)
+   :param pts_ref:
+   :type pts_ref: np.ndarray (M, 3)  — reference points (pre-centered)
+
+   :returns: **pts_fit_rotated**
+   :rtype: np.ndarray (N, 3)
+
+
+.. py:function:: run_postbuster(mols, timeout=60, batch_size=1, names=None)
+
+   Run PoseBusters on a list of RDKit molecules, optionally in batches, with a timeout per batch.
+
+   This function processes molecules using the PoseBusters library to compute various geometric checks.
+   Processing happens in separate processes to enforce timeouts.
+
+   :param mols: List of molecules to evaluate.
+   :type mols: list of RDKit Mol
+   :param timeout: Maximum time (in seconds) allowed for each batch calculation. Default is 60.
+   :type timeout: int, optional
+   :param batch_size: Number of molecules to process in a single batch.
+                      If None, processes all molecules in one batch. Default is None.
+   :type batch_size: int, optional
+   :param names: One label per molecule. When given, every row gets a
+                 ``filename`` column, and a batch that fails or times out
+                 yields one row per molecule (checks NaN, ``posebuster_error``
+                 set) instead of being dropped. Default None keeps the old
+                 drop-the-batch behaviour that training eval relies on.
+   :type names: list of str, optional
+
+   :returns:
+
+             DataFrame containing PoseBusters results for all processed molecules.
+                                   Returns None if no results could be obtained.
+   :rtype: pd.DataFrame or None
+
+
+.. py:function:: smilify_wrapper(xyzs, xyz2mol)
+
+   Convert a list of XYZ files to SMILES strings using a provided xyz2mol function.
+
+   :param xyzs: List of paths to XYZ files.
+   :type xyzs: list of str
+   :param xyz2mol: A function that takes an XYZ file path and returns (smiles, mol).
+   :type xyz2mol: callable
+
+   :returns:
+
+             (validity, smiles_list, mol_list, dicts)
+                 - validity (float): Fraction of successful conversions.
+                 - smiles_list (list of str): List of SMILES strings (None for failures).
+                 - mol_list (list of RDKit Mol): List of RDKit Mol objects (None for failures).
+                 - dicts (dict): Dictionary with 'smiles' and 'filename' lists.
+   :rtype: tuple
+
+
+.. py:function:: xyz_to_pdb(xyz_file_path, pdb_file_path)
+
+   Converts an XYZ file to a PDB file using OpenBabel (via pybel).
+
+   :param xyz_file_path: Path to input XYZ file.
+   :type xyz_file_path: str
+   :param pdb_file_path: Path to output PDB file.
+   :type pdb_file_path: str
+
+
+.. py:function:: xyz_to_rdkit_mol(xyz_path: str, charges: list = None)
+
+   Convert an XYZ file to an RDKit molecule with perceived bonds.
+   Tries multiple charges to find a valid structure without radicals.
+
+   :param charges: candidate total charges to try, in order. Defaults to
+                   ``[0, 1, -1, 2, -2]`` (a blind sweep); pass e.g. ``[total_charge]``
+                   to try only a single, already-known charge instead of sweeping.
+
+
+.. py:data:: ALPHA_DEFAULT
+   :value: 0.81
+
+
+.. py:data:: COULOMB_SCALING
+
+.. py:data:: Chem
+   :value: None
+
+
+.. py:data:: Data
+   :value: None
+
+
+.. py:data:: EDGE_THRESHOLD
+   :value: 4
+
+
+.. py:data:: LAM_SCALING
+
+.. py:data:: P_ALPHAS
+
+.. py:data:: P_TYPES
+   :value: ['Acceptor', 'Donor', 'Aromatic', 'Hydrophobe', 'Halogen', 'Cation', 'Anion', 'ZnBinder', 'Dummy']
+
+
+.. py:data:: PoseBusters
+   :value: None
+
+
+.. py:data:: SCALE_FACTOR
+   :value: 1.2
+
+
+.. py:data:: SCORES_THRESHOLD
+   :value: 3.0
+
+
+.. py:data:: covalent_radii
+   :value: None
+
+
+.. py:data:: logger
+
+.. py:data:: pybel
+   :value: None
+
+
