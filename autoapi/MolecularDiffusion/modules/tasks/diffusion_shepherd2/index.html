@@ -186,7 +186,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -525,210 +525,17 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
           <section id="module-MolecularDiffusion.modules.tasks.diffusion_shepherd2">
 <span id="moleculardiffusion-modules-tasks-diffusion-shepherd2"></span><h1>MolecularDiffusion.modules.tasks.diffusion_shepherd2<a class="headerlink" href="#module-MolecularDiffusion.modules.tasks.diffusion_shepherd2" title="Link to this heading">¶</a></h1>
-<p>ShEPhERD-2 platform task (<code class="docutils literal notranslate"><span class="pre">task_type:</span> <span class="pre">diffusion_shepherd2</span></code>).</p>
-<p>A <strong>thin delegator</strong>, by design. Every number this task produces is computed by
-upstream’s own vendored <code class="docutils literal notranslate"><span class="pre">LightningModule</span></code>
-(<code class="docutils literal notranslate"><span class="pre">MolecularDiffusion.modules.models.shepherd2.lightning_module</span></code>): the
-batch-&gt;input_dict mapping is its <code class="docutils literal notranslate"><span class="pre">get_training_input_dict</span></code>, the forward is its
-<code class="docutils literal notranslate"><span class="pre">forward_training</span></code>, and the four losses are its <code class="docutils literal notranslate"><span class="pre">x{1,2,3,4}_denoising_loss</span></code>.
-Nothing here re-derives any of them. Re-deriving them is specifically what
-INTEGRATION_PLAN.md’s directive D1 (“stay as close as possible to the shepherd2
-git”) forbids, because the EDM per-modality loss weighting
-<code class="docutils literal notranslate"><span class="pre">(sigma^2</span> <span class="pre">+</span> <span class="pre">sd^2)/(sigma^2</span> <span class="pre">*</span> <span class="pre">sd^2)</span></code> and the 50/50 real/non-bond balance are
-easy to reproduce <em>almost</em> correctly and impossible to notice getting wrong.</p>
-<p>How this differs from ShEPhERD-v1 (<code class="docutils literal notranslate"><span class="pre">modules/tasks/pharmacophore.py</span></code>), i.e. why
-it is a new task rather than a config of the old one:</p>
-<ul class="simple">
-<li><p><strong>objective</strong> – v1 regresses eps against <code class="docutils literal notranslate"><span class="pre">x_noise</span></code>/<code class="docutils literal notranslate"><span class="pre">pos_noise</span></code> with unit
-weights; v2 regresses the <em>clean</em> structure with per-modality EDM weights.</p></li>
-<li><p><strong>noise process</strong> – v1 passes a discrete <code class="docutils literal notranslate"><span class="pre">timestep</span></code> indexed into
-<code class="docutils literal notranslate"><span class="pre">alpha_ts</span></code>/<code class="docutils literal notranslate"><span class="pre">sigma_ts</span></code> arrays; v2 passes a continuous per-molecule <code class="docutils literal notranslate"><span class="pre">sigma</span></code>
-and does pre/post-conditioning inside <code class="docutils literal notranslate"><span class="pre">Model.forward</span></code>.</p></li>
-<li><p><strong>backbone</strong> – EquiformerV3, not V2. Different modules, different state-dict
-keys, no weight compatibility.</p></li>
-<li><p><strong>feature widths</strong> – 13 atom types (the <code class="docutils literal notranslate"><span class="pre">Dummy</span></code> class is new in v2) -&gt; 18
-node channels, against v1’s 12 -&gt; 17.</p></li>
-</ul>
-<p>ShEPhERD-v1 and its <code class="docutils literal notranslate"><span class="pre">shepherd-gdb17</span></code> zoo checkpoint are untouched by this file.</p>
-<section id="generation">
-<h2>Generation<a class="headerlink" href="#generation" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">sample()</span></code> and <code class="docutils literal notranslate"><span class="pre">sample_composition()</span></code> are thin wrappers over the vendored
-samplers. Note the hazard they exist to manage: <code class="docutils literal notranslate"><span class="pre">inference/</span></code> and
-<code class="docutils literal notranslate"><span class="pre">comp_inference/</span></code> read exactly three attributes off the object they are handed
-– <code class="docutils literal notranslate"><span class="pre">.params</span></code>, <code class="docutils literal notranslate"><span class="pre">.model</span></code> and <code class="docutils literal notranslate"><span class="pre">.device</span></code> – and the vendored <code class="docutils literal notranslate"><span class="pre">LightningModule</span></code>
-already exposes all three. So <code class="docutils literal notranslate"><span class="pre">self.model</span></code> is handed over directly and no
-wrapper class exists. <code class="docutils literal notranslate"><span class="pre">device</span></code> and <code class="docutils literal notranslate"><span class="pre">to()</span></code> are overridden below because the
-inner module’s device is what the samplers actually use; see the <code class="docutils literal notranslate"><span class="pre">.to()</span></code>
-docstring.</p>
-</section>
-<section id="attributes">
-<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.logger" title="MolecularDiffusion.modules.tasks.diffusion_shepherd2.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative" title="MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Shepherd2Generative</span></code></a></p></td>
-<td><p>Multi-modal EDM diffusion task for ShEPhERD-2.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.diffusion_shepherd2.</span></span><span class="sig-name descname"><span class="pre">Shepherd2Generative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modality_weights</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkpoint_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../task/index.html#MolecularDiffusion.modules.tasks.task.Task" title="MolecularDiffusion.modules.tasks.task.Task"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MolecularDiffusion.modules.tasks.task.Task</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">MolecularDiffusion.core.Configurable</span></code></p>
-<p>Multi-modal EDM diffusion task for ShEPhERD-2.</p>
-<p>Modalities: <code class="docutils literal notranslate"><span class="pre">x1</span></code> molecular structure (atoms + bonds + formal charges),
-<code class="docutils literal notranslate"><span class="pre">x2</span></code> shape point cloud (present but untrained in the release), <code class="docutils literal notranslate"><span class="pre">x3</span></code>
-surface electrostatic potential, <code class="docutils literal notranslate"><span class="pre">x4</span></code> pharmacophore points + direction
-vectors.</p>
-<p>This class is both the Hydra factory and the task: <code class="docutils literal notranslate"><span class="pre">build()</span></code> returns
-<code class="docutils literal notranslate"><span class="pre">self</span></code>, and <code class="docutils literal notranslate"><span class="pre">self.task</span></code> points at <code class="docutils literal notranslate"><span class="pre">self</span></code>, matching the ShEPhERD-v1
-precedent and what <code class="docutils literal notranslate"><span class="pre">cli/train.py</span></code> (<code class="docutils literal notranslate"><span class="pre">task_module.build()</span></code> then
-<code class="docutils literal notranslate"><span class="pre">task_module.task</span></code>) and <code class="docutils literal notranslate"><span class="pre">cli/generate.py</span></code>
-(<code class="docutils literal notranslate"><span class="pre">task</span> <span class="pre">=</span> <span class="pre">task_factory.build()</span></code>) each expect.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.build">
-<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative" title="MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative"><span class="pre">Shepherd2Generative</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.build" title="Link to this definition">¶</a></dt>
-<dd><p>Return the task. Both CLI seams call this; generate.py uses the result.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.evaluate">
-<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.evaluate" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.forward" title="Link to this definition">¶</a></dt>
-<dd><p>One training step: upstream’s input_dict -&gt; forward -&gt; four losses.</p>
-<p>Returns <code class="docutils literal notranslate"><span class="pre">(total_loss,</span> <span class="pre">metrics)</span></code>, the shape <code class="docutils literal notranslate"><span class="pre">cli/train.py</span></code>’s engines
-expect and the same shape ShEPhERD-v1’s task returns.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.predict" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.preprocess">
-<span class="sig-name descname"><span class="pre">preprocess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_set</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_set</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_set</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.preprocess" title="Link to this definition">¶</a></dt>
-<dd><p>No dataset statistics are needed at construction.</p>
-<p>ShEPhERD-2 reads no marginals, no valency table and no size histogram –
-which is why the factory deliberately does not declare a <code class="docutils literal notranslate"><span class="pre">train_set</span></code>
-parameter and so never opts into <code class="docutils literal notranslate"><span class="pre">cli/train.py</span></code>’s train_set-injection
-seam.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.sample">
-<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.sample" title="Link to this definition">¶</a></dt>
-<dd><p>Thin wrapper over the vendored <code class="docutils literal notranslate"><span class="pre">inference.sampler.generate</span></code>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">N_x1</span></code>/<code class="docutils literal notranslate"><span class="pre">N_x4</span></code> accept <code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">|</span> <span class="pre">list[int]</span></code>. Returns
-<code class="docutils literal notranslate"><span class="pre">list[GeneratedSample]</span></code>, each a dict subclass carrying <code class="docutils literal notranslate"><span class="pre">x1</span></code>
-(<code class="docutils literal notranslate"><span class="pre">atoms</span></code>, <code class="docutils literal notranslate"><span class="pre">positions</span></code>, <code class="docutils literal notranslate"><span class="pre">bonds</span></code>, <code class="docutils literal notranslate"><span class="pre">formal_charges</span></code>), <code class="docutils literal notranslate"><span class="pre">x2</span></code>, <code class="docutils literal notranslate"><span class="pre">x3</span></code>
-and <code class="docutils literal notranslate"><span class="pre">x4</span></code> blocks – plus <code class="docutils literal notranslate"><span class="pre">trajectories</span></code> / <code class="docutils literal notranslate"><span class="pre">trajectories_x0</span></code> when
-those were requested.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.sample_composition">
-<span class="sig-name descname"><span class="pre">sample_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.sample_composition" title="Link to this definition">¶</a></dt>
-<dd><p>Thin wrapper over <code class="docutils literal notranslate"><span class="pre">comp_inference.sampler.generate_composition</span></code>.</p>
-<p>Multi-profile composition: logical AND over several interaction profiles
-(<code class="docutils literal notranslate"><span class="pre">composition_mode='default'</span></code>) or AND-NOT with negative weights
-(<code class="docutils literal notranslate"><span class="pre">composition_mode='conditional'</span></code>). Same <code class="docutils literal notranslate"><span class="pre">model_pl</span></code>, so no extra
-plumbing beyond this delegation.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.target">
-<span class="sig-name descname"><span class="pre">target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.target" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.to">
-<span class="sig-name descname"><span class="pre">to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.to" title="Link to this definition">¶</a></dt>
-<dd><p>Move the task, forwarding explicitly to the inner Lightning module.</p>
-<p><code class="docutils literal notranslate"><span class="pre">nn.Module.to</span></code> already moves <code class="docutils literal notranslate"><span class="pre">self.model</span></code>’s parameters, since it is a
-registered submodule. The explicit forward exists for the <em>non-parameter</em>
-state: a <code class="docutils literal notranslate"><span class="pre">pl.LightningModule</span></code> caches its own <code class="docutils literal notranslate"><span class="pre">device</span></code>/dtype on
-<code class="docutils literal notranslate"><span class="pre">_device</span></code>, and <code class="docutils literal notranslate"><span class="pre">inference/edm_sampler.py</span></code> allocates its noise tensors
-on <code class="docutils literal notranslate"><span class="pre">model_pl.device</span></code>. Without this, parameters sit on the GPU while the
-sampler builds noise on the CPU and every sample dies on a device
-mismatch.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.atom_vocab">
-<span class="sig-name descname"><span class="pre">atom_vocab</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.atom_vocab" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.device">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">device</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensor_attributes.html#torch.device" title="(in PyTorch v2.15)"><span class="pre">torch.device</span></a></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.device" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.modality_weights">
-<span class="sig-name descname"><span class="pre">modality_weights</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.modality_weights" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.model">
-<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.model" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.n_node_dist">
-<span class="sig-name descname"><span class="pre">n_node_dist</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.n_node_dist" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.node_dist_model">
-<span class="sig-name descname"><span class="pre">node_dist_model</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.node_dist_model" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.params">
-<span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.params" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.task_type">
-<span class="sig-name descname"><span class="pre">task_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'diffusion_shepherd2'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.task_type" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_shepherd2.logger">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.diffusion_shepherd2.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.logger" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</section>
+<p>Alias of <code class="docutils literal notranslate"><span class="pre">MolecularDiffusion.modules.tasks.conditional.shepherd2</span></code>.</p>
+<p>The module moved into <code class="docutils literal notranslate"><span class="pre">tasks/conditional/</span></code>. This path keeps working: it is the same
+module object, so imports, <code class="docutils literal notranslate"><span class="pre">_target_</span></code> strings and checkpoints written against
+the old path still resolve.</p>
 </section>
 
         </article>
@@ -773,53 +580,8 @@ mismatch.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">MolecularDiffusion.modules.tasks.diffusion_shepherd2</a><ul>
-<li><a class="reference internal" href="#generation">Generation</a></li>
-<li><a class="reference internal" href="#attributes">Attributes</a></li>
-<li><a class="reference internal" href="#classes">Classes</a></li>
-<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative"><code class="docutils literal notranslate"><span class="pre">Shepherd2Generative</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.build"><code class="docutils literal notranslate"><span class="pre">Shepherd2Generative.build()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.evaluate"><code class="docutils literal notranslate"><span class="pre">Shepherd2Generative.evaluate()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.forward"><code class="docutils literal notranslate"><span class="pre">Shepherd2Generative.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.predict"><code class="docutils literal notranslate"><span class="pre">Shepherd2Generative.predict()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.preprocess"><code class="docutils literal notranslate"><span class="pre">Shepherd2Generative.preprocess()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.sample"><code class="docutils literal notranslate"><span class="pre">Shepherd2Generative.sample()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.sample_composition"><code class="docutils literal notranslate"><span class="pre">Shepherd2Generative.sample_composition()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.target"><code class="docutils literal notranslate"><span class="pre">Shepherd2Generative.target()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.to"><code class="docutils literal notranslate"><span class="pre">Shepherd2Generative.to()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.atom_vocab"><code class="docutils literal notranslate"><span class="pre">Shepherd2Generative.atom_vocab</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.device"><code class="docutils literal notranslate"><span class="pre">Shepherd2Generative.device</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.modality_weights"><code class="docutils literal notranslate"><span class="pre">Shepherd2Generative.modality_weights</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.model"><code class="docutils literal notranslate"><span class="pre">Shepherd2Generative.model</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.n_node_dist"><code class="docutils literal notranslate"><span class="pre">Shepherd2Generative.n_node_dist</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.node_dist_model"><code class="docutils literal notranslate"><span class="pre">Shepherd2Generative.node_dist_model</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.params"><code class="docutils literal notranslate"><span class="pre">Shepherd2Generative.params</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.Shepherd2Generative.task_type"><code class="docutils literal notranslate"><span class="pre">Shepherd2Generative.task_type</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_shepherd2.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

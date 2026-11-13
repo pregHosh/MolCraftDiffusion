@@ -186,7 +186,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -525,159 +525,17 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
           <section id="module-MolecularDiffusion.modules.tasks.ts_generator">
 <span id="moleculardiffusion-modules-tasks-ts-generator"></span><h1>MolecularDiffusion.modules.tasks.ts_generator<a class="headerlink" href="#module-MolecularDiffusion.modules.tasks.ts_generator" title="Link to this heading">¶</a></h1>
-<p>The one <code class="docutils literal notranslate"><span class="pre">run()</span></code> loop behind every transition-state generator.</p>
-<p>A transition-state model asks for the same thing every pocket-conditioned
-model asks for – <em>load one fixed structural context, tile it to a batch,
-sample the unknown part into it, write .xyz</em> – so this is not a second
-loop. <a class="reference internal" href="#MolecularDiffusion.modules.tasks.ts_generator.TSGenerator" title="MolecularDiffusion.modules.tasks.ts_generator.TSGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">TSGenerator</span></code></a> subclasses
-<a class="reference internal" href="../pocket_generator/index.html#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator" title="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">PocketGenerator</span></code></a>
-and fills its hooks once, for the whole family, in terms of the shared
-<code class="xref py py-class docutils literal notranslate"><span class="pre">Reaction</span></code>
-container. A TS model then supplies two things and nothing else:</p>
-<div class="table-wrapper docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>hook</p></th>
-<th class="head"><p>what it decides</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">_reactions</span></code></p></td>
-<td><p>where reactions come from (which Dataset, which
-filters), as anything with <code class="docutils literal notranslate"><span class="pre">__len__</span></code> /
-<code class="docutils literal notranslate"><span class="pre">__getitem__</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">_collate</span></code></p></td>
-<td><p>how one reaction becomes a batch of <code class="docutils literal notranslate"><span class="pre">n</span></code> copies,
-in whatever layout that model’s <code class="docutils literal notranslate"><span class="pre">sample()</span></code> reads</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>and may override three more, all defaulted:
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">_label()</span></code> (how the reaction prints),
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">_settings_note()</span></code> (extra sampler knobs in the header) and
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">_sample_kwargs()</span></code> (the model-specific kwargs of
-<code class="docutils literal notranslate"><span class="pre">task.sample()</span></code>). Everything else – seeding, the retry loop, size
-selection, writing the samples, writing the reference structures beside
-them – is inherited.</p>
-<p><strong>Why the context is a ``Reaction``, not a geometry.</strong> Of the three TS
-models surveyed when the container was designed, only OA-ReactDiff conditions
-on reactant and product <em>coordinates</em>; GoFlow and RitS are connectivity-only
-condensed graphs of reaction and never read an endpoint geometry at sampling
-time. So this class must never assume a side has 3D. It asks
-<code class="xref py py-attr docutils literal notranslate">
-<span class="pre">has_geometry</span></code> and writes <code class="docutils literal notranslate"><span class="pre">reactant.xyz</span></code> / <code class="docutils literal notranslate"><span class="pre">product.xyz</span></code> only for the
-sides that actually have coordinates – a connectivity-only model gets
-<code class="docutils literal notranslate"><span class="pre">reference_ts.xyz</span></code> alone, and no lie on disk.</p>
-<p><strong>What is deliberately NOT here.</strong> No RMSD scoring and no best-of-N ranking.
-Both siblings do rank samples, but offline, in their own analysis scripts and
-against metrics they disagree about (GoFlow: permutation-matched, mirror-
-allowed, median-consensus; RitS: none at all in the sampling path). Writing
-<code class="docutils literal notranslate"><span class="pre">reference_ts.xyz</span></code> next to the samples is what a shared loop can honestly
-do; the ranking belongs to whoever knows the metric.</p>
-<p><strong>Interference-key naming.</strong> The base takes <code class="docutils literal notranslate"><span class="pre">reaction_source</span></code> /
-<code class="docutils literal notranslate"><span class="pre">reaction_index</span></code>, not <code class="docutils literal notranslate"><span class="pre">pocket_db</span></code> / <code class="docutils literal notranslate"><span class="pre">pocket_index</span></code>: a config should
-never say “pocket” for a reaction. A subclass whose corpus has a more honest
-name declares <a class="reference internal" href="#MolecularDiffusion.modules.tasks.ts_generator.TSGenerator.source_key" title="MolecularDiffusion.modules.tasks.ts_generator.TSGenerator.source_key"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TSGenerator.source_key</span></code></a> (OA-ReactDiff:
-<code class="docutils literal notranslate"><span class="pre">reaction_pkl</span></code>); both that name and <code class="docutils literal notranslate"><span class="pre">reaction_source</span></code> then work, so the
-shared config drives every model and each model’s own config keeps its own
-vocabulary. Anything that is neither still raises.</p>
-<p><strong>Two ways to reach a generator</strong>, exactly as for pockets:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">interference/gen_&lt;model&gt;_ts.yaml</span></code> names the concrete subclass and
-carries that model’s own knobs (OA-ReactDiff: RePaint’s <code class="docutils literal notranslate"><span class="pre">resamplings</span></code> /
-<code class="docutils literal notranslate"><span class="pre">jump_length</span></code> / <code class="docutils literal notranslate"><span class="pre">noise_schedule</span></code>);</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">interference/gen_ts.yaml</span></code> names <a class="reference internal" href="#MolecularDiffusion.modules.tasks.ts_generator.TSGenerator" title="MolecularDiffusion.modules.tasks.ts_generator.TSGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">TSGenerator</span></code></a> itself and carries
-only the keys every TS model shares – the concrete subclass is then picked
-off the loaded task (see <code class="xref py py-func docutils literal notranslate"><span class="pre">_for_task()</span></code>).</p></li>
-</ul>
-<section id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.ts_generator.ReactionSource" title="MolecularDiffusion.modules.tasks.ts_generator.ReactionSource"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReactionSource</span></code></a></p></td>
-<td><p>Anything indexable that yields <code class="xref py py-class docutils literal notranslate"><span class="pre">Reaction</span></code> objects.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.ts_generator.TSGenerator" title="MolecularDiffusion.modules.tasks.ts_generator.TSGenerator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TSGenerator</span></code></a></p></td>
-<td><p>Load one reaction, sample <code class="docutils literal notranslate"><span class="pre">num_generate</span></code> transition states.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.ts_generator.ReactionSource">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.ts_generator.</span></span><span class="sig-name descname"><span class="pre">ReactionSource</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.ts_generator.ReactionSource" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Protocol</span></code></p>
-<p>Anything indexable that yields <code class="xref py py-class docutils literal notranslate"><span class="pre">Reaction</span></code> objects.</p>
-<p>A <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code> of reactions satisfies this, which is what
-every TS corpus in-tree already is. Declared structurally so a model whose
-reactions come from somewhere else – a list, an HDF5 view, a parsed
-reaction SMARTS – needs no base class.</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.ts_generator.TSGenerator">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.ts_generator.</span></span><span class="sig-name descname"><span class="pre">TSGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reaction_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reaction_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_generate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'generated_ts'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">42</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.ts_generator.TSGenerator" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../pocket_generator/index.html#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator" title="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator</span></code></a></p>
-<p>Load one reaction, sample <code class="docutils literal notranslate"><span class="pre">num_generate</span></code> transition states.</p>
-<p>Not instantiable from a config on its own – <code class="xref py py-meth docutils literal notranslate"><span class="pre">_reactions()</span></code> and
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">_collate()</span></code> are the two things a model must supply. See the module
-docstring for the full hook table.</p>
-<p>Configure the run.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>task</strong> – the loaded TS task; its <code class="docutils literal notranslate"><span class="pre">sample()</span></code> is what gets called.</p></li>
-<li><p><strong>reaction_source</strong> – where reactions are read from, forwarded to the
-base as <code class="docutils literal notranslate"><span class="pre">pocket_db</span></code>.</p></li>
-<li><p><strong>reaction_index</strong> – which reaction in that source to generate for.</p></li>
-<li><p><strong>num_generate</strong> – how many transition states to sample for it.</p></li>
-<li><p><strong>batch_size</strong> – how many of those to sample at once.</p></li>
-<li><p><strong>num_steps</strong> – reverse-process steps; <code class="docutils literal notranslate"><span class="pre">None</span></code> =&gt; the model’s default.</p></li>
-<li><p><strong>output_path</strong> – directory for the .xyz files.</p></li>
-<li><p><strong>seed</strong> – torch/random/numpy seed.</p></li>
-<li><p><strong>device</strong> – <code class="docutils literal notranslate"><span class="pre">None</span></code> =&gt; cuda if available.</p></li>
-<li><p><strong>**kwargs</strong> – rejected by the base, on purpose – an unknown
-interference key is a typo, not a no-op.</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>There is no <code class="docutils literal notranslate"><span class="pre">mol_size</span></code>. A transition state has exactly the atoms
-of its reaction, so a size prior would be a lie; <code class="xref py py-meth docutils literal notranslate"><span class="pre">_sizes()</span></code>
-reads the count off the reaction instead.</p>
-</div>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.ts_generator.TSGenerator.db_required_msg">
-<span class="sig-name descname"><span class="pre">db_required_msg</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&quot;interference.reaction_source</span> <span class="pre">is</span> <span class="pre">required:</span> <span class="pre">a</span> <span class="pre">transition-state</span> <span class="pre">generator</span> <span class="pre">conditions</span> <span class="pre">on</span> <span class="pre">a...</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.ts_generator.TSGenerator.db_required_msg" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.ts_generator.TSGenerator.source_key">
-<span class="sig-name descname"><span class="pre">source_key</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'reaction_source'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.ts_generator.TSGenerator.source_key" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.ts_generator.TSGenerator.tag">
-<span class="sig-name descname"><span class="pre">tag</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ts'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.ts_generator.TSGenerator.tag" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-</section>
+<p>Alias of <code class="docutils literal notranslate"><span class="pre">MolecularDiffusion.modules.tasks.reaction.ts_generator</span></code>.</p>
+<p>The module moved into <code class="docutils literal notranslate"><span class="pre">tasks/reaction/</span></code>. This path keeps working: it is the same
+module object, so imports, <code class="docutils literal notranslate"><span class="pre">_target_</span></code> strings and checkpoints written against
+the old path still resolve.</p>
 </section>
 
         </article>
@@ -722,37 +580,8 @@ reads the count off the reaction instead.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">MolecularDiffusion.modules.tasks.ts_generator</a><ul>
-<li><a class="reference internal" href="#classes">Classes</a></li>
-<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.ts_generator.ReactionSource"><code class="docutils literal notranslate"><span class="pre">ReactionSource</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.ts_generator.TSGenerator"><code class="docutils literal notranslate"><span class="pre">TSGenerator</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.ts_generator.TSGenerator.db_required_msg"><code class="docutils literal notranslate"><span class="pre">TSGenerator.db_required_msg</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.ts_generator.TSGenerator.source_key"><code class="docutils literal notranslate"><span class="pre">TSGenerator.source_key</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.ts_generator.TSGenerator.tag"><code class="docutils literal notranslate"><span class="pre">TSGenerator.tag</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

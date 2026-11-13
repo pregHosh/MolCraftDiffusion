@@ -186,7 +186,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -525,246 +525,17 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
           <section id="module-MolecularDiffusion.modules.tasks.diffusion_diffpharma">
 <span id="moleculardiffusion-modules-tasks-diffusion-diffpharma"></span><h1>MolecularDiffusion.modules.tasks.diffusion_diffpharma<a class="headerlink" href="#module-MolecularDiffusion.modules.tasks.diffusion_diffpharma" title="Link to this heading">¶</a></h1>
-<p>DiffPharma task: pocket- and pharmacophore-conditioned ligand diffusion.</p>
-<p>Three objects live here, mirroring the platform’s usual layout:</p>
-<ul class="simple">
-<li><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask" title="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiffPharmaTask</span></code></a> – the duck-typed Task (docs/adding_new_models.md
-Section 2.1) wrapping <code class="xref py py-class docutils literal notranslate"><span class="pre">ConditionalDDPM</span></code>.</p></li>
-<li><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory" title="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiffPharmaTaskFactory</span></code></a> – the <code class="docutils literal notranslate"><span class="pre">_target_</span></code> of
-<code class="docutils literal notranslate"><span class="pre">configs/tasks/diffusion_diffpharma.yaml</span></code>.</p></li>
-<li><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator" title="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiffPharmaPocketGenerator</span></code></a> – the <code class="docutils literal notranslate"><span class="pre">_target_</span></code> of
-<code class="docutils literal notranslate"><span class="pre">configs/interference/gen_diffpharma_pocket.yaml</span></code>. <code class="docutils literal notranslate"><span class="pre">GenerativeFactory</span></code>
-cannot express “sample inside this pocket”; a generator behind its own
-<code class="docutils literal notranslate"><span class="pre">_target_</span></code> is the in-tree pattern for that (cf. <code class="docutils literal notranslate"><span class="pre">DiffSMolShapeGenerator</span></code>)
-and needs no core change – <code class="docutils literal notranslate"><span class="pre">cli/generate.py</span></code> only does
-<code class="docutils literal notranslate"><span class="pre">instantiate(cfg.interference,</span> <span class="pre">task=task)</span></code> then <code class="docutils literal notranslate"><span class="pre">run()</span></code>.</p></li>
-</ul>
-<p>The batch is NOT a PointCloud dict: DiffPharma needs four node sets
-(ligand, pocket, H-bond particles, hydrophobic particles), flat-concatenated
-with scatter masks. See <code class="docutils literal notranslate"><span class="pre">data/component/diffpharma_data.py</span></code>.</p>
-<section id="attributes">
-<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DIFFPHARMA_ATOM_VOCAB" title="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DIFFPHARMA_ATOM_VOCAB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DIFFPHARMA_ATOM_VOCAB</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.FLOAT_TYPE" title="MolecularDiffusion.modules.tasks.diffusion_diffpharma.FLOAT_TYPE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FLOAT_TYPE</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.INT_TYPE" title="MolecularDiffusion.modules.tasks.diffusion_diffpharma.INT_TYPE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">INT_TYPE</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.NODE_SETS" title="MolecularDiffusion.modules.tasks.diffusion_diffpharma.NODE_SETS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NODE_SETS</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator" title="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DiffPharmaPocketGenerator</span></code></a></p></td>
-<td><p>Pocket-conditioned generation behind <code class="docutils literal notranslate"><span class="pre">interference/gen_diffpharma_pocket</span></code>.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask" title="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DiffPharmaTask</span></code></a></p></td>
-<td><p>Task contract around <code class="docutils literal notranslate"><span class="pre">ConditionalDDPM</span></code>.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory" title="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DiffPharmaTaskFactory</span></code></a></p></td>
-<td><p>Hydra entry point for <code class="docutils literal notranslate"><span class="pre">configs/tasks/diffusion_diffpharma.yaml</span></code>.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.diffusion_diffpharma.</span></span><span class="sig-name descname"><span class="pre">DiffPharmaPocketGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pocket_db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pocket_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pocket_pdb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_sdf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_generate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mol_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'generated_diffpharma'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">42</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../pocket_generator/index.html#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator" title="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator</span></code></a></p>
-<p>Pocket-conditioned generation behind <code class="docutils literal notranslate"><span class="pre">interference/gen_diffpharma_pocket</span></code>.</p>
-<p>Two mutually exclusive pocket sources:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">pocket_db</span></code> + <code class="docutils literal notranslate"><span class="pre">pocket_index</span></code> – a row of a converted ASE db
-(<code class="docutils literal notranslate"><span class="pre">scripts/convert_dataset.py</span></code>), read with <code class="docutils literal notranslate"><span class="pre">center=False</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pocket_pdb</span></code> + <code class="docutils literal notranslate"><span class="pre">ref_sdf</span></code> – a novel pocket, built on the fly by
-<code class="docutils literal notranslate"><span class="pre">data.component.diffpharma_prep.complex_from_files</span></code>. The SDF is
-required, not optional: it is both the 8 A pocket-selection reference
-and the ligand ODDT detects the interactions against.</p></li>
-</ul>
-<p>Either way the downstream dict is identical.</p>
-<p>The sampling loop itself lives in <code class="xref py py-class docutils literal notranslate"><span class="pre">PocketGenerator</span></code>.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.pocket_pdb">
-<span class="sig-name descname"><span class="pre">pocket_pdb</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.pocket_pdb" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.ref_sdf">
-<span class="sig-name descname"><span class="pre">ref_sdf</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.ref_sdf" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.seed_numpy">
-<span class="sig-name descname"><span class="pre">seed_numpy</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.seed_numpy" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.tag">
-<span class="sig-name descname"><span class="pre">tag</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'diffpharma'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.tag" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.diffusion_diffpharma.</span></span><span class="sig-name descname"><span class="pre">DiffPharmaTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MolecularDiffusion.modules.models.diffpharma.ConditionalDDPM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_vocab</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<p>Task contract around <code class="docutils literal notranslate"><span class="pre">ConditionalDDPM</span></code>.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.evaluate">
-<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.evaluate" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.forward" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.predict_and_target">
-<span class="sig-name descname"><span class="pre">predict_and_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.predict_and_target" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.sample">
-<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodesxsample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.sample" title="Link to this definition">¶</a></dt>
-<dd><p>Sample ligands inside the pocket carried by <code class="docutils literal notranslate"><span class="pre">batch</span></code>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">batch</span></code> must hold the <code class="docutils literal notranslate"><span class="pre">pocket_*</span></code>/<code class="docutils literal notranslate"><span class="pre">interh_*</span></code>/<code class="docutils literal notranslate"><span class="pre">interhp_*</span></code> keys
-of a collated DiffPharma batch (the generator builds it). There is no
-unconditional mode – mirroring upstream’s own hard refusal.</p>
-<p>Returns <code class="docutils literal notranslate"><span class="pre">(one_hot,</span> <span class="pre">charges,</span> <span class="pre">coords,</span> <span class="pre">node_mask)</span></code> padded to
-<code class="docutils literal notranslate"><span class="pre">(B,</span> <span class="pre">N,</span> <span class="pre">.)</span></code>, in the ORIGINAL pocket frame (the reverse process
-re-centres on the ligand CoM; the shift is undone here).</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.atom_vocab">
-<span class="sig-name descname"><span class="pre">atom_vocab</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.atom_vocab" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.device">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">device</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.device" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.model">
-<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.model" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.n_node_dist">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_node_dist</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.n_node_dist" title="Link to this definition">¶</a></dt>
-<dd><p>Ligand-size marginal. Not on the generation path (see module doc).</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.node_dist_model">
-<span class="sig-name descname"><span class="pre">node_dist_model</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.node_dist_model" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.prop_dist_model">
-<span class="sig-name descname"><span class="pre">prop_dist_model</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.prop_dist_model" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.split">
-<span class="sig-name descname"><span class="pre">split</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'train'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.split" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.diffusion_diffpharma.</span></span><span class="sig-name descname"><span class="pre">DiffPharmaTaskFactory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'diffusion_diffpharma'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_distribution_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_nf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">11</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residue_nf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">11</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interh_nf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interhp_nf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_dims</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">joint_nf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_nf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_layers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tanh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_constant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inv_sublayers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sin_embedding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregation_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sum'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_cutoff_ligand</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_cutoff_pocket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_cutoff_interaction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reflection_equivariant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffusion_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffusion_noise_schedule</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'polynomial_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffusion_noise_precision</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffusion_loss_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'l2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_factors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_vocab</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory" title="Link to this definition">¶</a></dt>
-<dd><p>Hydra entry point for <code class="docutils literal notranslate"><span class="pre">configs/tasks/diffusion_diffpharma.yaml</span></code>.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.build">
-<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask" title="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask"><span class="pre">DiffPharmaTask</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.build" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.atom_vocab">
-<span class="sig-name descname"><span class="pre">atom_vocab</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.atom_vocab" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.condition_names">
-<span class="sig-name descname"><span class="pre">condition_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.condition_names" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.ddpm_kwargs">
-<span class="sig-name descname"><span class="pre">ddpm_kwargs</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.ddpm_kwargs" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.egnn_kwargs">
-<span class="sig-name descname"><span class="pre">egnn_kwargs</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.egnn_kwargs" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.size_distribution_path">
-<span class="sig-name descname"><span class="pre">size_distribution_path</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.size_distribution_path" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.task">
-<span class="sig-name descname"><span class="pre">task</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask" title="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask"><span class="pre">DiffPharmaTask</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.task" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.task_type">
-<span class="sig-name descname"><span class="pre">task_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'diffusion_diffpharma'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.task_type" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.DIFFPHARMA_ATOM_VOCAB">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.diffusion_diffpharma.</span></span><span class="sig-name descname"><span class="pre">DIFFPHARMA_ATOM_VOCAB</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['C',</span> <span class="pre">'N',</span> <span class="pre">'O',</span> <span class="pre">'S',</span> <span class="pre">'B',</span> <span class="pre">'Br',</span> <span class="pre">'Cl',</span> <span class="pre">'P',</span> <span class="pre">'I',</span> <span class="pre">'F',</span> <span class="pre">'others']</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DIFFPHARMA_ATOM_VOCAB" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.FLOAT_TYPE">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.diffusion_diffpharma.</span></span><span class="sig-name descname"><span class="pre">FLOAT_TYPE</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.FLOAT_TYPE" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.INT_TYPE">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.diffusion_diffpharma.</span></span><span class="sig-name descname"><span class="pre">INT_TYPE</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.INT_TYPE" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffpharma.NODE_SETS">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.diffusion_diffpharma.</span></span><span class="sig-name descname"><span class="pre">NODE_SETS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('lig',</span> <span class="pre">'pocket',</span> <span class="pre">'interh',</span> <span class="pre">'interhp')</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.NODE_SETS" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</section>
+<p>Alias of <code class="docutils literal notranslate"><span class="pre">MolecularDiffusion.modules.tasks.conditional.diffpharma</span></code>.</p>
+<p>The module moved into <code class="docutils literal notranslate"><span class="pre">tasks/conditional/</span></code>. This path keeps working: it is the same
+module object, so imports, <code class="docutils literal notranslate"><span class="pre">_target_</span></code> strings and checkpoints written against
+the old path still resolve.</p>
 </section>
 
         </article>
@@ -809,67 +580,8 @@ re-centres on the ligand CoM; the shift is undone here).</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">MolecularDiffusion.modules.tasks.diffusion_diffpharma</a><ul>
-<li><a class="reference internal" href="#attributes">Attributes</a></li>
-<li><a class="reference internal" href="#classes">Classes</a></li>
-<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator"><code class="docutils literal notranslate"><span class="pre">DiffPharmaPocketGenerator</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.pocket_pdb"><code class="docutils literal notranslate"><span class="pre">DiffPharmaPocketGenerator.pocket_pdb</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.ref_sdf"><code class="docutils literal notranslate"><span class="pre">DiffPharmaPocketGenerator.ref_sdf</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.seed_numpy"><code class="docutils literal notranslate"><span class="pre">DiffPharmaPocketGenerator.seed_numpy</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaPocketGenerator.tag"><code class="docutils literal notranslate"><span class="pre">DiffPharmaPocketGenerator.tag</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTask</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.evaluate"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTask.evaluate()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.forward"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTask.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.predict_and_target"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTask.predict_and_target()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.sample"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTask.sample()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.atom_vocab"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTask.atom_vocab</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.device"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTask.device</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.model"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTask.model</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.n_node_dist"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTask.n_node_dist</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.node_dist_model"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTask.node_dist_model</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.prop_dist_model"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTask.prop_dist_model</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTask.split"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTask.split</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTaskFactory</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.build"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTaskFactory.build()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.atom_vocab"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTaskFactory.atom_vocab</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.condition_names"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTaskFactory.condition_names</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.ddpm_kwargs"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTaskFactory.ddpm_kwargs</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.egnn_kwargs"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTaskFactory.egnn_kwargs</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.size_distribution_path"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTaskFactory.size_distribution_path</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.task"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTaskFactory.task</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DiffPharmaTaskFactory.task_type"><code class="docutils literal notranslate"><span class="pre">DiffPharmaTaskFactory.task_type</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.DIFFPHARMA_ATOM_VOCAB"><code class="docutils literal notranslate"><span class="pre">DIFFPHARMA_ATOM_VOCAB</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.FLOAT_TYPE"><code class="docutils literal notranslate"><span class="pre">FLOAT_TYPE</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.INT_TYPE"><code class="docutils literal notranslate"><span class="pre">INT_TYPE</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffpharma.NODE_SETS"><code class="docutils literal notranslate"><span class="pre">NODE_SETS</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

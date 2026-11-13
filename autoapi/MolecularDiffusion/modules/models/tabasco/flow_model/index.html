@@ -555,8 +555,11 @@
 - <cite>forward</cite>:    called during training to compute loss and optional stats.
 - <cite>sample</cite>:     runs the Euler sampler to generate new molecules at inference.</p>
 <p>Args:
-net: The neural network predicting velocity fields.
-coords_interpolant: Interpolant for Cartesian coordinates.
+net: The neural network predicting velocity fields</p>
+<blockquote>
+<div><p>(calling convention: <code class="docutils literal notranslate"><span class="pre">models._protocols.PaddedBackbone</span></code>).</p>
+</div></blockquote>
+<p>coords_interpolant: Interpolant for Cartesian coordinates.
 atomics_interpolant: Interpolant for one-hot atom types.
 time_distribution: <cite>uniform</cite>, <cite>beta</cite>, or <cite>histogram</cite>.
 time_alpha_factor: Alpha for beta distribution (ignored otherwise).

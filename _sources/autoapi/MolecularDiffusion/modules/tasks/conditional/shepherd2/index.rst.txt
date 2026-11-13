@@ -1,0 +1,192 @@
+MolecularDiffusion.modules.tasks.conditional.shepherd2
+======================================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.conditional.shepherd2
+
+.. autoapi-nested-parse::
+
+   ShEPhERD-2 platform task (``task_type: diffusion_shepherd2``).
+
+   A **thin delegator**, by design. Every number this task produces is computed by
+   upstream's own vendored ``LightningModule``
+   (``MolecularDiffusion.modules.models.shepherd2.lightning_module``): the
+   batch->input_dict mapping is its ``get_training_input_dict``, the forward is its
+   ``forward_training``, and the four losses are its ``x{1,2,3,4}_denoising_loss``.
+   Nothing here re-derives any of them. Re-deriving them is specifically what
+   INTEGRATION_PLAN.md's directive D1 ("stay as close as possible to the shepherd2
+   git") forbids, because the EDM per-modality loss weighting
+   ``(sigma^2 + sd^2)/(sigma^2 * sd^2)`` and the 50/50 real/non-bond balance are
+   easy to reproduce *almost* correctly and impossible to notice getting wrong.
+
+   How this differs from ShEPhERD-v1 (``modules/tasks/pharmacophore.py``), i.e. why
+   it is a new task rather than a config of the old one:
+
+   * **objective** -- v1 regresses eps against ``x_noise``/``pos_noise`` with unit
+     weights; v2 regresses the *clean* structure with per-modality EDM weights.
+   * **noise process** -- v1 passes a discrete ``timestep`` indexed into
+     ``alpha_ts``/``sigma_ts`` arrays; v2 passes a continuous per-molecule ``sigma``
+     and does pre/post-conditioning inside ``Model.forward``.
+   * **backbone** -- EquiformerV3, not V2. Different modules, different state-dict
+     keys, no weight compatibility.
+   * **feature widths** -- 13 atom types (the ``Dummy`` class is new in v2) -> 18
+     node channels, against v1's 12 -> 17.
+
+   ShEPhERD-v1 and its ``shepherd-gdb17`` zoo checkpoint are untouched by this file.
+
+   Generation
+   ----------
+   ``sample()`` and ``sample_composition()`` are thin wrappers over the vendored
+   samplers. Note the hazard they exist to manage: ``inference/`` and
+   ``comp_inference/`` read exactly three attributes off the object they are handed
+   -- ``.params``, ``.model`` and ``.device`` -- and the vendored ``LightningModule``
+   already exposes all three. So ``self.model`` is handed over directly and no
+   wrapper class exists. ``device`` and ``to()`` are overridden below because the
+   inner module's device is what the samplers actually use; see the ``.to()``
+   docstring.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.conditional.shepherd2.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.tasks.conditional.shepherd2.Shepherd2Generative
+
+
+Module Contents
+---------------
+
+.. py:class:: Shepherd2Generative(model_params: Optional[Dict[str, Any]] = None, modality_weights: Optional[Dict[str, float]] = None, checkpoint_path: Optional[str] = None, **kwargs: Any)
+
+   Bases: :py:obj:`MolecularDiffusion.modules.tasks.task.Task`, :py:obj:`MolecularDiffusion.core.Configurable`
+
+
+   Multi-modal EDM diffusion task for ShEPhERD-2.
+
+   Modalities: ``x1`` molecular structure (atoms + bonds + formal charges),
+   ``x2`` shape point cloud (present but untrained in the release), ``x3``
+   surface electrostatic potential, ``x4`` pharmacophore points + direction
+   vectors.
+
+   This class is both the Hydra factory and the task: ``build()`` returns
+   ``self``, and ``self.task`` points at ``self``, matching the ShEPhERD-v1
+   precedent and what ``cli/train.py`` (``task_module.build()`` then
+   ``task_module.task``) and ``cli/generate.py``
+   (``task = task_factory.build()``) each expect.
+
+
+   .. py:method:: build() -> Shepherd2Generative
+
+      Return the task. Both CLI seams call this; generate.py uses the result.
+
+
+
+   .. py:method:: evaluate(pred, target)
+
+
+   .. py:method:: forward(batch)
+
+      One training step: upstream's input_dict -> forward -> four losses.
+
+      Returns ``(total_loss, metrics)``, the shape ``cli/train.py``'s engines
+      expect and the same shape ShEPhERD-v1's task returns.
+
+
+
+   .. py:method:: predict(batch, all_loss=None, metric=None)
+
+
+   .. py:method:: preprocess(train_set=None, valid_set=None, test_set=None) -> None
+
+      No dataset statistics are needed at construction.
+
+      ShEPhERD-2 reads no marginals, no valency table and no size histogram --
+      which is why the factory deliberately does not declare a ``train_set``
+      parameter and so never opts into ``cli/train.py``'s train_set-injection
+      seam.
+
+
+
+   .. py:method:: sample(**kwargs: Any) -> List[Any]
+
+      Thin wrapper over the vendored ``inference.sampler.generate``.
+
+      ``N_x1``/``N_x4`` accept ``int | list[int]``. Returns
+      ``list[GeneratedSample]``, each a dict subclass carrying ``x1``
+      (``atoms``, ``positions``, ``bonds``, ``formal_charges``), ``x2``, ``x3``
+      and ``x4`` blocks -- plus ``trajectories`` / ``trajectories_x0`` when
+      those were requested.
+
+
+
+   .. py:method:: sample_composition(**kwargs: Any) -> List[Any]
+
+      Thin wrapper over ``comp_inference.sampler.generate_composition``.
+
+      Multi-profile composition: logical AND over several interaction profiles
+      (``composition_mode='default'``) or AND-NOT with negative weights
+      (``composition_mode='conditional'``). Same ``model_pl``, so no extra
+      plumbing beyond this delegation.
+
+
+
+   .. py:method:: target(batch)
+
+
+   .. py:method:: to(*args: Any, **kwargs: Any)
+
+      Move the task, forwarding explicitly to the inner Lightning module.
+
+      ``nn.Module.to`` already moves ``self.model``'s parameters, since it is a
+      registered submodule. The explicit forward exists for the *non-parameter*
+      state: a ``pl.LightningModule`` caches its own ``device``/dtype on
+      ``_device``, and ``inference/edm_sampler.py`` allocates its noise tensors
+      on ``model_pl.device``. Without this, parameters sit on the GPU while the
+      sampler builds noise on the CPU and every sample dies on a device
+      mismatch.
+
+
+
+   .. py:attribute:: atom_vocab
+
+
+   .. py:property:: device
+      :type: torch.device
+
+
+
+   .. py:attribute:: modality_weights
+
+
+   .. py:attribute:: model
+
+
+   .. py:attribute:: n_node_dist
+      :value: None
+
+
+
+   .. py:attribute:: node_dist_model
+      :value: None
+
+
+
+   .. py:attribute:: params
+
+
+   .. py:attribute:: task_type
+      :value: 'diffusion_shepherd2'
+
+
+
+.. py:data:: logger
+

@@ -10,6 +10,7 @@ Submodules
 .. toctree::
    :maxdepth: 1
 
+   /autoapi/MolecularDiffusion/modules/tasks/conditional/index
    /autoapi/MolecularDiffusion/modules/tasks/diffusion/index
    /autoapi/MolecularDiffusion/modules/tasks/diffusion_apo2mol/index
    /autoapi/MolecularDiffusion/modules/tasks/diffusion_chefnmr/index
@@ -46,12 +47,18 @@ Submodules
    /autoapi/MolecularDiffusion/modules/tasks/diffusion_tabasco_equiformer/index
    /autoapi/MolecularDiffusion/modules/tasks/diffusion_tabasco_gvp/index
    /autoapi/MolecularDiffusion/modules/tasks/elucidation_generator/index
+   /autoapi/MolecularDiffusion/modules/tasks/flow/index
+   /autoapi/MolecularDiffusion/modules/tasks/graph/index
+   /autoapi/MolecularDiffusion/modules/tasks/latent/index
    /autoapi/MolecularDiffusion/modules/tasks/metrics/index
    /autoapi/MolecularDiffusion/modules/tasks/pharmacophore/index
    /autoapi/MolecularDiffusion/modules/tasks/pocket_generator/index
+   /autoapi/MolecularDiffusion/modules/tasks/predict/index
+   /autoapi/MolecularDiffusion/modules/tasks/reaction/index
    /autoapi/MolecularDiffusion/modules/tasks/regression/index
    /autoapi/MolecularDiffusion/modules/tasks/shepherd2_generator/index
    /autoapi/MolecularDiffusion/modules/tasks/ssl3d/index
+   /autoapi/MolecularDiffusion/modules/tasks/synth/index
    /autoapi/MolecularDiffusion/modules/tasks/task/index
    /autoapi/MolecularDiffusion/modules/tasks/ts_generator/index
    /autoapi/MolecularDiffusion/modules/tasks/vae_geoldm/index

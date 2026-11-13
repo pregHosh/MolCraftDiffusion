@@ -1,0 +1,23 @@
+MolecularDiffusion.modules.tasks.graph
+======================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.graph
+
+.. autoapi-nested-parse::
+
+   Tasks that generate molecular graphs with explicit bonds (MiDi, JODO, NExT-Mol, LOQI).
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/tasks/graph/jodo/index
+   /autoapi/MolecularDiffusion/modules/tasks/graph/loqi/index
+   /autoapi/MolecularDiffusion/modules/tasks/graph/midi/index
+   /autoapi/MolecularDiffusion/modules/tasks/graph/nextmol/index
+
+

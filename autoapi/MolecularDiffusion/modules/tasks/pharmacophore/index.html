@@ -186,7 +186,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -525,133 +525,17 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
           <section id="module-MolecularDiffusion.modules.tasks.pharmacophore">
 <span id="moleculardiffusion-modules-tasks-pharmacophore"></span><h1>MolecularDiffusion.modules.tasks.pharmacophore<a class="headerlink" href="#module-MolecularDiffusion.modules.tasks.pharmacophore" title="Link to this heading">¶</a></h1>
-<p>Pharmacophore Diffusion Task.</p>
-<p>Multi-modal diffusion task for generating molecules with 4 modalities:
-- x1: Molecular structure (atoms + bonds)
-- x2: Shape (point cloud)
-- x3: Electrostatics (point cloud)
-- x4: Pharmacophores (points + directions)</p>
-<section id="attributes">
-<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pharmacophore.logger" title="MolecularDiffusion.modules.tasks.pharmacophore.logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logger</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative" title="MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PharmacophoreGenerative</span></code></a></p></td>
-<td><p>Generative diffusion task for pharmacophore model.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.pharmacophore.</span></span><span class="sig-name descname"><span class="pre">PharmacophoreGenerative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modality_weights</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mse'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../task/index.html#MolecularDiffusion.modules.tasks.task.Task" title="MolecularDiffusion.modules.tasks.task.Task"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MolecularDiffusion.modules.tasks.task.Task</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">MolecularDiffusion.core.Configurable</span></code></p>
-<p>Generative diffusion task for pharmacophore model.</p>
-<p>Handles training of the 4-modal pharmacophore diffusion model
-with per-modality loss weighting.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.build">
-<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.build" title="Link to this definition">¶</a></dt>
-<dd><p>Build the task (no-op, model already instantiated).</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.evaluate">
-<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.evaluate" title="Link to this definition">¶</a></dt>
-<dd><p>Return empty metrics for generative models (evaluation not supported).</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.forward" title="Link to this definition">¶</a></dt>
-<dd><p>Forward pass through the model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>batch</strong> – HeteroData batch from pharmacophore_collate_fn</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Tuple of (total_loss, metrics_dict)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.predict" title="Link to this definition">¶</a></dt>
-<dd><p>Return empty predictions for generative models (evaluation not supported).</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.preprocess">
-<span class="sig-name descname"><span class="pre">preprocess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_set</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_set</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_set</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.preprocess" title="Link to this definition">¶</a></dt>
-<dd><p>Preprocess datasets.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>train_set</strong> – Training dataset</p></li>
-<li><p><strong>valid_set</strong> – Validation dataset</p></li>
-<li><p><strong>test_set</strong> – Test dataset</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.target">
-<span class="sig-name descname"><span class="pre">target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.target" title="Link to this definition">¶</a></dt>
-<dd><p>Return empty targets for generative models (evaluation not supported).</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.loss_type">
-<span class="sig-name descname"><span class="pre">loss_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mse'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.loss_type" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.modality_weights">
-<span class="sig-name descname"><span class="pre">modality_weights</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.modality_weights" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.model">
-<span class="sig-name descname"><span class="pre">model</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.model" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.task_type">
-<span class="sig-name descname"><span class="pre">task_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'diffusion_pharmacophore'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.task_type" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pharmacophore.logger">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.pharmacophore.</span></span><span class="sig-name descname"><span class="pre">logger</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pharmacophore.logger" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</section>
+<p>Alias of <code class="docutils literal notranslate"><span class="pre">MolecularDiffusion.modules.tasks.conditional.pharmacophore</span></code>.</p>
+<p>The module moved into <code class="docutils literal notranslate"><span class="pre">tasks/conditional/</span></code>. This path keeps working: it is the same
+module object, so imports, <code class="docutils literal notranslate"><span class="pre">_target_</span></code> strings and checkpoints written against
+the old path still resolve.</p>
 </section>
 
         </article>
@@ -696,45 +580,8 @@ with per-modality loss weighting.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">MolecularDiffusion.modules.tasks.pharmacophore</a><ul>
-<li><a class="reference internal" href="#attributes">Attributes</a></li>
-<li><a class="reference internal" href="#classes">Classes</a></li>
-<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative"><code class="docutils literal notranslate"><span class="pre">PharmacophoreGenerative</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.build"><code class="docutils literal notranslate"><span class="pre">PharmacophoreGenerative.build()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.evaluate"><code class="docutils literal notranslate"><span class="pre">PharmacophoreGenerative.evaluate()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.forward"><code class="docutils literal notranslate"><span class="pre">PharmacophoreGenerative.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.predict"><code class="docutils literal notranslate"><span class="pre">PharmacophoreGenerative.predict()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.preprocess"><code class="docutils literal notranslate"><span class="pre">PharmacophoreGenerative.preprocess()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.target"><code class="docutils literal notranslate"><span class="pre">PharmacophoreGenerative.target()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.loss_type"><code class="docutils literal notranslate"><span class="pre">PharmacophoreGenerative.loss_type</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.modality_weights"><code class="docutils literal notranslate"><span class="pre">PharmacophoreGenerative.modality_weights</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.model"><code class="docutils literal notranslate"><span class="pre">PharmacophoreGenerative.model</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pharmacophore.PharmacophoreGenerative.task_type"><code class="docutils literal notranslate"><span class="pre">PharmacophoreGenerative.task_type</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pharmacophore.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

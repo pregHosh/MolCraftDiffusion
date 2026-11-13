@@ -1,0 +1,20 @@
+MolecularDiffusion.modules.tasks.synth
+======================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.synth
+
+.. autoapi-nested-parse::
+
+   Synthesis-aware tasks (SyNCoGen and the DualSyn family).
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/tasks/synth/syncogen/index
+
+

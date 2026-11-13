@@ -1,0 +1,38 @@
+MolecularDiffusion.modules.tasks.conditional
+============================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.conditional
+
+.. autoapi-nested-parse::
+
+   Conditional generation: pocket / pharmacophore / spectra / NMR conditioned tasks and their generators.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/tasks/conditional/apo2mol/index
+   /autoapi/MolecularDiffusion/modules/tasks/conditional/chefnmr/index
+   /autoapi/MolecularDiffusion/modules/tasks/conditional/diffdec/index
+   /autoapi/MolecularDiffusion/modules/tasks/conditional/diffint/index
+   /autoapi/MolecularDiffusion/modules/tasks/conditional/difflinker/index
+   /autoapi/MolecularDiffusion/modules/tasks/conditional/diffpharma/index
+   /autoapi/MolecularDiffusion/modules/tasks/conditional/diffsbdd/index
+   /autoapi/MolecularDiffusion/modules/tasks/conditional/diffsmol/index
+   /autoapi/MolecularDiffusion/modules/tasks/conditional/diffspectra/index
+   /autoapi/MolecularDiffusion/modules/tasks/conditional/elucidation_generator/index
+   /autoapi/MolecularDiffusion/modules/tasks/conditional/ipdiff/index
+   /autoapi/MolecularDiffusion/modules/tasks/conditional/kgdiff/index
+   /autoapi/MolecularDiffusion/modules/tasks/conditional/ligandiff/index
+   /autoapi/MolecularDiffusion/modules/tasks/conditional/ligandiff_multi/index
+   /autoapi/MolecularDiffusion/modules/tasks/conditional/pharmacophore/index
+   /autoapi/MolecularDiffusion/modules/tasks/conditional/pmdm/index
+   /autoapi/MolecularDiffusion/modules/tasks/conditional/pocket_generator/index
+   /autoapi/MolecularDiffusion/modules/tasks/conditional/shepherd2/index
+   /autoapi/MolecularDiffusion/modules/tasks/conditional/shepherd2_generator/index
+
+

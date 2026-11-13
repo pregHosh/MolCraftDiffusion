@@ -732,7 +732,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dynamics</strong> (<em>nn.Module</em>) – Neural network that predicts noise or x.</p></li>
+<li><p><strong>dynamics</strong> (<em>nn.Module</em>) – Neural network that predicts noise or x
+(calling convention: <code class="docutils literal notranslate"><span class="pre">models._protocols.DenseDynamics</span></code>).</p></li>
 <li><p><strong>dynamics_teacher</strong> (<em>Optional</em><em>[</em><em>nn.Module</em><em>]</em>) – Teacher model for distillation.</p></li>
 <li><p><strong>in_node_nf</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – Total number of input node features per atom.</p></li>
 <li><p><strong>n_dims</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – Dimensionality of spatial coordinates (typically 3).</p></li>

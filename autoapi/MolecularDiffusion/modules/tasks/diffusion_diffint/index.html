@@ -186,7 +186,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -525,120 +525,17 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
           <section id="module-MolecularDiffusion.modules.tasks.diffusion_diffint">
 <span id="moleculardiffusion-modules-tasks-diffusion-diffint"></span><h1>MolecularDiffusion.modules.tasks.diffusion_diffint<a class="headerlink" href="#module-MolecularDiffusion.modules.tasks.diffusion_diffint" title="Link to this heading">¶</a></h1>
-<p>DiffInt task: DiffSBDD conditioned on explicit H-bond interaction nodes.</p>
-<p><strong>No new model code.</strong> DiffInt’s <code class="docutils literal notranslate"><span class="pre">equivariant_diffusion/*</span></code> is functionally
-identical to the already-ported <code class="docutils literal notranslate"><span class="pre">modules/models/diffsbdd/</span></code>; the paper’s
-contribution is entirely data-level (two H-bond pseudo-atoms per protein-
-ligand hydrogen bond, appended to the <em>pocket</em> node set with two extra
-one-hot channels, widening <code class="docutils literal notranslate"><span class="pre">residue_nf</span></code> 20 -&gt; 22). The pseudo-atoms are
-conditioning and are never diffused, so <code class="xref py py-class docutils literal notranslate"><span class="pre">DiffSBDDTask</span></code> runs them
-unmodified.</p>
-<p>What this module adds is therefore two one-method overrides plus a generator:</p>
-<ul class="simple">
-<li><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.ModelTaskFactory" title="MolecularDiffusion.modules.tasks.diffusion_diffint.ModelTaskFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelTaskFactory</span></code></a> – <code class="docutils literal notranslate"><span class="pre">diffusion_diffsbdd.ModelTaskFactory</span></code> with a
-different <code class="xref py py-meth docutils literal notranslate"><span class="pre">_size_histogram()</span></code>. Upstream keys the size prior on the
-<strong>residue</strong> count, excluding the particles (<code class="docutils literal notranslate"><span class="pre">dataset.py:65</span></code>), and the
-released checkpoint’s (107, 113) histogram is on that scale; keying it on
-<code class="docutils literal notranslate"><span class="pre">len(pocket_coords)</span></code> would mis-score every sample’s <code class="docutils literal notranslate"><span class="pre">log_pN</span></code>.</p></li>
-<li><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator" title="MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiffIntPocketGenerator</span></code></a> – <code class="docutils literal notranslate"><span class="pre">DiffSBDDPocketGenerator</span></code> reading
-<code class="xref py py-class docutils literal notranslate"><span class="pre">DiffIntDataset</span></code> rows, plus the novel-PDB path (<code class="docutils literal notranslate"><span class="pre">pocket_pdb</span></code> +
-<code class="docutils literal notranslate"><span class="pre">ref_sdf</span></code>), and passing the residue count as <code class="docutils literal notranslate"><span class="pre">num_pocket_nodes</span></code>.</p></li>
-</ul>
-<p>The task class itself is <code class="xref py py-class docutils literal notranslate"><span class="pre">DiffSBDDTask</span></code>, reused verbatim: it already
-reads <code class="docutils literal notranslate"><span class="pre">pocket[&quot;size&quot;]</span></code> from <code class="docutils literal notranslate"><span class="pre">num_pocket_nodes</span></code> while <code class="docutils literal notranslate"><span class="pre">pocket[&quot;mask&quot;]</span></code>
-spans every pocket node, which is exactly the residues/particles split
-DiffInt needs.</p>
-<p>Out of scope this pass (see the integration plan): the auxiliary interaction
-loss (<code class="docutils literal notranslate"><span class="pre">loss_inter_xh</span></code> / <code class="docutils literal notranslate"><span class="pre">loss_inter_2</span></code> – commented out in the release and
-never active for the shipped checkpoint), <code class="docutils literal notranslate"><span class="pre">joint</span></code> mode (DiffInt ships only
-<code class="docutils literal notranslate"><span class="pre">pocket_conditioning</span></code> weights and its forked <code class="docutils literal notranslate"><span class="pre">inpaint()</span></code> lost the
-<code class="docutils literal notranslate"><span class="pre">pocket_fixed</span></code> argument <code class="docutils literal notranslate"><span class="pre">lightning_modules.py:967</span></code> still passes),
-inpainting, trajectories and virtual nodes.</p>
-<section id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator" title="MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DiffIntPocketGenerator</span></code></a></p></td>
-<td><p>Pocket-conditioned generation behind <code class="docutils literal notranslate"><span class="pre">interference/gen_diffint_pocket</span></code>.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.ModelTaskFactory" title="MolecularDiffusion.modules.tasks.diffusion_diffint.ModelTaskFactory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModelTaskFactory</span></code></a></p></td>
-<td><p>Hydra entry point for <code class="docutils literal notranslate"><span class="pre">configs/tasks/diffusion_diffint.yaml</span></code>.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.diffusion_diffint.</span></span><span class="sig-name descname"><span class="pre">DiffIntPocketGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pocket_db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pocket_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pocket_pdb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_sdf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_cutoff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'generated_diffint'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../diffusion_diffsbdd/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator" title="MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MolecularDiffusion.modules.tasks.diffusion_diffsbdd.DiffSBDDPocketGenerator</span></code></a></p>
-<p>Pocket-conditioned generation behind <code class="docutils literal notranslate"><span class="pre">interference/gen_diffint_pocket</span></code>.</p>
-<p>Two mutually exclusive pocket sources:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">pocket_db</span></code> + <code class="docutils literal notranslate"><span class="pre">pocket_index</span></code> – a row of a converted ASE db
-(<code class="docutils literal notranslate"><span class="pre">scripts/convert_dataset.py</span></code>), read with <code class="docutils literal notranslate"><span class="pre">center=False</span></code> so samples
-come back in that pocket’s own frame.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pocket_pdb</span></code> + <code class="docutils literal notranslate"><span class="pre">ref_sdf</span></code> – a novel protein + reference ligand pose,
-preprocessed on the fly by
-<code class="docutils literal notranslate"><span class="pre">data.component.diffint_prep.complex_from_files</span></code>. The SDF is
-required, not optional: it is both the 8 A pocket-selection reference
-and the ligand ODDT detects the H-bonds against, since hydrogen bonds
-are protein&lt;-&gt;ligand.</p></li>
-</ul>
-<p><strong>Do not “simplify” the novel-PDB path back onto upstream’s
-``generate_ligands()``</strong>: <code class="docutils literal notranslate"><span class="pre">lightning_modules.py:852-890</span></code> zero-pads the
-20-class CA one-hot to 22 and never appends the particles, so the
-<code class="docutils literal notranslate"><span class="pre">DD</span></code>/<code class="docutils literal notranslate"><span class="pre">AC</span></code> columns stay all-zero and the model silently degrades to
-plain DiffSBDD with no error. This follows <code class="docutils literal notranslate"><span class="pre">test_single.py:157-192</span></code>
-instead.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.dist_cutoff">
-<span class="sig-name descname"><span class="pre">dist_cutoff</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8.0</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.dist_cutoff" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.pocket_db">
-<span class="sig-name descname"><span class="pre">pocket_db</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.pocket_db" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.pocket_pdb">
-<span class="sig-name descname"><span class="pre">pocket_pdb</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.pocket_pdb" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.ref_sdf">
-<span class="sig-name descname"><span class="pre">ref_sdf</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.ref_sdf" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.tag">
-<span class="sig-name descname"><span class="pre">tag</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'diffint'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.tag" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.diffusion_diffint.ModelTaskFactory">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.diffusion_diffint.</span></span><span class="sig-name descname"><span class="pre">ModelTaskFactory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'diffusion_diffint'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residue_nf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">NUM_POCKET_CLASSES</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_n_pocket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">113</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.ModelTaskFactory" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../diffusion_diffsbdd/index.html#MolecularDiffusion.modules.tasks.diffusion_diffsbdd.ModelTaskFactory" title="MolecularDiffusion.modules.tasks.diffusion_diffsbdd.ModelTaskFactory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MolecularDiffusion.modules.tasks.diffusion_diffsbdd.ModelTaskFactory</span></code></a></p>
-<p>Hydra entry point for <code class="docutils literal notranslate"><span class="pre">configs/tasks/diffusion_diffint.yaml</span></code>.</p>
-<p>Everything – <code class="docutils literal notranslate"><span class="pre">build()</span></code>, the EGNN/diffusion kwargs, the <code class="docutils literal notranslate"><span class="pre">train_set</span></code>
-injection seam – is inherited. Only the size histogram’s pocket axis
-changes; see the module docstring.</p>
-</dd></dl>
-
-</section>
+<p>Alias of <code class="docutils literal notranslate"><span class="pre">MolecularDiffusion.modules.tasks.conditional.diffint</span></code>.</p>
+<p>The module moved into <code class="docutils literal notranslate"><span class="pre">tasks/conditional/</span></code>. This path keeps working: it is the same
+module object, so imports, <code class="docutils literal notranslate"><span class="pre">_target_</span></code> strings and checkpoints written against
+the old path still resolve.</p>
 </section>
 
         </article>
@@ -683,39 +580,8 @@ changes; see the module docstring.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">MolecularDiffusion.modules.tasks.diffusion_diffint</a><ul>
-<li><a class="reference internal" href="#classes">Classes</a></li>
-<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator"><code class="docutils literal notranslate"><span class="pre">DiffIntPocketGenerator</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.dist_cutoff"><code class="docutils literal notranslate"><span class="pre">DiffIntPocketGenerator.dist_cutoff</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.pocket_db"><code class="docutils literal notranslate"><span class="pre">DiffIntPocketGenerator.pocket_db</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.pocket_pdb"><code class="docutils literal notranslate"><span class="pre">DiffIntPocketGenerator.pocket_pdb</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.ref_sdf"><code class="docutils literal notranslate"><span class="pre">DiffIntPocketGenerator.ref_sdf</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.DiffIntPocketGenerator.tag"><code class="docutils literal notranslate"><span class="pre">DiffIntPocketGenerator.tag</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.diffusion_diffint.ModelTaskFactory"><code class="docutils literal notranslate"><span class="pre">ModelTaskFactory</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

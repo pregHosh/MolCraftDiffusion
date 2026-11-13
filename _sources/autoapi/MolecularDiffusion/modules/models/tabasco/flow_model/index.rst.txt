@@ -27,7 +27,8 @@ Module Contents
    - `sample`:     runs the Euler sampler to generate new molecules at inference.
 
    Args:
-   net: The neural network predicting velocity fields.
+   net: The neural network predicting velocity fields
+       (calling convention: ``models._protocols.PaddedBackbone``).
    coords_interpolant: Interpolant for Cartesian coordinates.
    atomics_interpolant: Interpolant for one-hot atom types.
    time_distribution: `uniform`, `beta`, or `histogram`.

@@ -1,0 +1,28 @@
+MolecularDiffusion.modules.tasks.flow
+=====================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.flow
+
+.. autoapi-nested-parse::
+
+   Flow-matching and joint-diffusion tasks (EquiFM, FlowMol, ET-Flow, DiTMC, ZATOM, TABASCO).
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/tasks/flow/ditmc/index
+   /autoapi/MolecularDiffusion/modules/tasks/flow/equifm/index
+   /autoapi/MolecularDiffusion/modules/tasks/flow/etflow/index
+   /autoapi/MolecularDiffusion/modules/tasks/flow/flowmol/index
+   /autoapi/MolecularDiffusion/modules/tasks/flow/flowmol_graph3d/index
+   /autoapi/MolecularDiffusion/modules/tasks/flow/tabasco/index
+   /autoapi/MolecularDiffusion/modules/tasks/flow/tabasco_egnn/index
+   /autoapi/MolecularDiffusion/modules/tasks/flow/tabasco_equiformer/index
+   /autoapi/MolecularDiffusion/modules/tasks/flow/tabasco_gvp/index
+
+

@@ -1,0 +1,23 @@
+MolecularDiffusion.modules.tasks.reaction
+=========================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.reaction
+
+.. autoapi-nested-parse::
+
+   Reaction and transition-state tasks (GoFlow, OA-ReactDiff, ReactOT).
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/tasks/reaction/goflow/index
+   /autoapi/MolecularDiffusion/modules/tasks/reaction/oareactdiff/index
+   /autoapi/MolecularDiffusion/modules/tasks/reaction/reactot/index
+   /autoapi/MolecularDiffusion/modules/tasks/reaction/ts_generator/index
+
+

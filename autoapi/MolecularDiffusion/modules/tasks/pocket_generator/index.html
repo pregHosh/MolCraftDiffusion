@@ -186,7 +186,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -525,206 +525,17 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
           <section id="module-MolecularDiffusion.modules.tasks.pocket_generator">
 <span id="moleculardiffusion-modules-tasks-pocket-generator"></span><h1>MolecularDiffusion.modules.tasks.pocket_generator<a class="headerlink" href="#module-MolecularDiffusion.modules.tasks.pocket_generator" title="Link to this heading">¶</a></h1>
-<p>The one <code class="docutils literal notranslate"><span class="pre">run()</span></code> loop behind every pocket-conditioned generator.</p>
-<p>Seven models (DiffSBDD, DiffInt, KGDiff, IPDiff, PMDM, Apo2Mol, DiffPharma)
-each need “load one pocket, tile it, sample ligands into it, write .xyz”.
-That loop used to be copy-pasted seven times. It lives here once; what
-genuinely differs per model lives in a handful of hooks:</p>
-<div class="table-wrapper docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>hook</p></th>
-<th class="head"><p>what it decides</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">tag</span></code></p></td>
-<td><p>log prefix</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">seed_numpy</span></code></p></td>
-<td><p>whether <code class="docutils literal notranslate"><span class="pre">np.random.seed</span></code> is called (see below)</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">max_retries</span></code></p></td>
-<td><p>bound on resampling rounds; <code class="docutils literal notranslate"><span class="pre">None</span></code> =&gt; unbounded</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">db_required_msg</span></code></p></td>
-<td><p>the “pocket_db is required” error, or <code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_pocket()</span></code></p></td>
-<td><p>read one pocket item (which Dataset, which centering)</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_repeat()</span></code></p></td>
-<td><p>tile that item <code class="docutils literal notranslate"><span class="pre">n</span></code> times, with fresh scatter indices</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_sizes()</span></code> /</p></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_pick_sizes()</span></code></p></td>
-<td><p>how many atoms each sampled ligand gets</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_sample_kwargs()</span></code></p></td>
-<td><p>the model-specific kwargs of <code class="docutils literal notranslate"><span class="pre">task.sample()</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_accept()</span></code></p></td>
-<td><p>which of a batch’s molecules are written out</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_after_batch()</span></code></p></td>
-<td><p>side outputs per batch (Apo2Mol’s pocket .pdb)</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_start()</span></code> /</p></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_summary()</span></code></p></td>
-<td><p>the header / footer the run prints</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><strong>``seed_numpy`` is not a style knob.</strong> PMDM and DiffPharma have never seeded
-numpy, the other five always have. Seeding it everywhere would change what
-those two generate; that is a behaviour change, not a fix.</p>
-<p>The loop is not pocket-only. A second family rides it through
-<a class="reference internal" href="../ts_generator/index.html#MolecularDiffusion.modules.tasks.ts_generator.TSGenerator" title="MolecularDiffusion.modules.tasks.ts_generator.TSGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">TSGenerator</span></code></a>, which
-fills these hooks once for transition-state models – the fixed structural
-context there is a reaction rather than a protein pocket. Add a new TS model
-by subclassing <em>that</em>, not this.</p>
-<p>Two ways to reach a generator:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">interference/gen_&lt;model&gt;_pocket.yaml</span></code> names the concrete subclass, and
-carries that model’s own knobs (guidance weights, sampler settings,
-inpainting);</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">interference/gen_pocket.yaml</span></code> names <a class="reference internal" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator" title="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">PocketGenerator</span></code></a> itself and
-carries only the nine keys all seven share – the concrete subclass is then
-picked from the loaded task (see <code class="xref py py-func docutils literal notranslate"><span class="pre">_for_task()</span></code>).</p></li>
-</ul>
-<p>Because that second path bypasses per-model Hydra key checking, the base
-<code class="docutils literal notranslate"><span class="pre">__init__</span></code> rejects any key that no generator in the resolved chain declares,
-instead of ignoring it: a typo’d <code class="docutils literal notranslate"><span class="pre">guide_mdoe</span></code> must not silently do nothing.
-Note this is <em>not</em> a claim that per-model keys are refused on the shared
-config – dispatch reaches the concrete subclass first, so a key that subclass
-declares is consumed and honoured there.</p>
-<section id="attributes">
-<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pocket_generator.INT_TYPE" title="MolecularDiffusion.modules.tasks.pocket_generator.INT_TYPE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">INT_TYPE</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator" title="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PocketGenerator</span></code></a></p></td>
-<td><p>Load one pocket, sample <code class="docutils literal notranslate"><span class="pre">num_generate</span></code> ligands into it, write .xyz.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.pocket_generator.</span></span><span class="sig-name descname"><span class="pre">PocketGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pocket_db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pocket_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_generate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mol_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'generated_pocket'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">42</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator" title="Link to this definition">¶</a></dt>
-<dd><p>Load one pocket, sample <code class="docutils literal notranslate"><span class="pre">num_generate</span></code> ligands into it, write .xyz.</p>
-<p>Instantiating this class directly (what <code class="docutils literal notranslate"><span class="pre">gen_pocket.yaml</span></code> does) returns
-the concrete subclass for the task that was passed in.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.run" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.batch_size">
-<span class="sig-name descname"><span class="pre">batch_size</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.batch_size" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.db_required_msg">
-<span class="sig-name descname"><span class="pre">db_required_msg</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.db_required_msg" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.device">
-<span class="sig-name descname"><span class="pre">device</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.device" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.max_retries">
-<span class="sig-name descname"><span class="pre">max_retries</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.max_retries" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.mol_size">
-<span class="sig-name descname"><span class="pre">mol_size</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.mol_size" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.num_generate">
-<span class="sig-name descname"><span class="pre">num_generate</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.num_generate" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.num_steps">
-<span class="sig-name descname"><span class="pre">num_steps</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.num_steps" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.output_path">
-<span class="sig-name descname"><span class="pre">output_path</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'generated_pocket'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.output_path" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.pocket_db">
-<span class="sig-name descname"><span class="pre">pocket_db</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.pocket_db" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.pocket_index">
-<span class="sig-name descname"><span class="pre">pocket_index</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.pocket_index" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.seed">
-<span class="sig-name descname"><span class="pre">seed</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">42</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.seed" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.seed_numpy">
-<span class="sig-name descname"><span class="pre">seed_numpy</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.seed_numpy" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.tag">
-<span class="sig-name descname"><span class="pre">tag</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pocket'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.tag" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.task">
-<span class="sig-name descname"><span class="pre">task</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.task" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.pocket_generator.INT_TYPE">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.pocket_generator.</span></span><span class="sig-name descname"><span class="pre">INT_TYPE</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.pocket_generator.INT_TYPE" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</section>
+<p>Alias of <code class="docutils literal notranslate"><span class="pre">MolecularDiffusion.modules.tasks.conditional.pocket_generator</span></code>.</p>
+<p>The module moved into <code class="docutils literal notranslate"><span class="pre">tasks/conditional/</span></code>. This path keeps working: it is the same
+module object, so imports, <code class="docutils literal notranslate"><span class="pre">_target_</span></code> strings and checkpoints written against
+the old path still resolve.</p>
 </section>
 
         </article>
@@ -769,50 +580,8 @@ the concrete subclass for the task that was passed in.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">MolecularDiffusion.modules.tasks.pocket_generator</a><ul>
-<li><a class="reference internal" href="#attributes">Attributes</a></li>
-<li><a class="reference internal" href="#classes">Classes</a></li>
-<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator"><code class="docutils literal notranslate"><span class="pre">PocketGenerator</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.run"><code class="docutils literal notranslate"><span class="pre">PocketGenerator.run()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.batch_size"><code class="docutils literal notranslate"><span class="pre">PocketGenerator.batch_size</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.db_required_msg"><code class="docutils literal notranslate"><span class="pre">PocketGenerator.db_required_msg</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.device"><code class="docutils literal notranslate"><span class="pre">PocketGenerator.device</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.max_retries"><code class="docutils literal notranslate"><span class="pre">PocketGenerator.max_retries</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.mol_size"><code class="docutils literal notranslate"><span class="pre">PocketGenerator.mol_size</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.num_generate"><code class="docutils literal notranslate"><span class="pre">PocketGenerator.num_generate</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.num_steps"><code class="docutils literal notranslate"><span class="pre">PocketGenerator.num_steps</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.output_path"><code class="docutils literal notranslate"><span class="pre">PocketGenerator.output_path</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.pocket_db"><code class="docutils literal notranslate"><span class="pre">PocketGenerator.pocket_db</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.pocket_index"><code class="docutils literal notranslate"><span class="pre">PocketGenerator.pocket_index</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.seed"><code class="docutils literal notranslate"><span class="pre">PocketGenerator.seed</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.seed_numpy"><code class="docutils literal notranslate"><span class="pre">PocketGenerator.seed_numpy</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.tag"><code class="docutils literal notranslate"><span class="pre">PocketGenerator.tag</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pocket_generator.PocketGenerator.task"><code class="docutils literal notranslate"><span class="pre">PocketGenerator.task</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.pocket_generator.INT_TYPE"><code class="docutils literal notranslate"><span class="pre">INT_TYPE</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

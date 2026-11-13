@@ -186,7 +186,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -525,262 +525,17 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
           <section id="module-MolecularDiffusion.modules.tasks.vae_geoldm">
 <span id="moleculardiffusion-modules-tasks-vae-geoldm"></span><h1>MolecularDiffusion.modules.tasks.vae_geoldm<a class="headerlink" href="#module-MolecularDiffusion.modules.tasks.vae_geoldm" title="Link to this heading">¶</a></h1>
-<p>GeoLDM stage 1: E(n) hierarchical VAE task.</p>
-<p>Thin subclass of <cite>MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative</cite>
-wrapping the ported <cite>EnHierarchicalVAE</cite> (<cite>modules/models/geoldm/diffusion.py</cite>)
-as <cite>self.model</cite>. See docs/model_integrations/geoldm/INTEGRATION_PLAN.md for
-the full integration plan (revision 2).</p>
-<p>Everything except <cite>density_estimation</cite>/<cite>sample</cite>/<cite>predict_and_target</cite>/
-<cite>evaluate</cite> is inherited unmodified from <cite>GeomMolecularGenerative</cite> –
-<cite>__init__</cite>, <cite>preprocess</cite>. <cite>density_estimation</cite> is overridden because the
-base class’s version subtracts a <cite>-log_pN</cite> node-count correction that
-converts a density into an NLL over (x, h, N) jointly; that correction
-doesn’t apply to a VAE ELBO over (x, h) alone (see plan). <cite>forward</cite> needs no
-separate override – the base class’s <cite>forward</cite> just calls
-<cite>self.density_estimation(batch)</cite>, so overriding <cite>density_estimation</cite> alone
-is enough (polymorphic dispatch). <cite>sample</cite> raises <cite>NotImplementedError</cite>: a
-VAE alone has no cardinality-varying unconditional prior over (x, h),
-matching vanilla GeoLDM where a VAE-only run never calls <cite>sample()</cite>.</p>
-<p><cite>predict_and_target</cite>/<cite>evaluate</cite> are overridden (attempt 2 fix, see
-INTEGRATION_PLAN.md Tester attempt_1 diagnosis and Executor attempt 2 log):
-<cite>task_type=’vae_geoldm’</cite> prefix-matches <cite>TASK_REGISTRY[‘vae’]</cite> in
-<cite>runmodes/train/eval.py</cite>, which hardcodes <cite>metric_key=’match_rate’</cite>. The
-base class’s inherited <cite>evaluate()</cite> only returns
-<cite>{‘val_negative_log_likelihood’: …}</cite>, so <cite>val_metric_dict[‘match_rate’]</cite>
-KeyErrors after validation. Fix: <cite>predict_and_target</cite> additionally computes
-a real per-atom reconstruction match rate (encode to the latent mode, decode
-back, compare argmax categorical atom types against the input, masked by
-<cite>node_mask</cite>) using <cite>EnHierarchicalVAE.encode</cite>/<cite>decode</cite> – both already
-implemented on the ported model, so this needs no new model-side plumbing –
-and packs it as a second column alongside the NLL so <cite>evaluate()</cite> can emit
-both <cite>val_negative_log_likelihood</cite> and <cite>match_rate</cite> from one aggregated
-tensor (matching the <cite>Engine.evaluate</cite> pred/target cat-then-evaluate
-contract in <cite>core/engine.py:530-567</cite>).</p>
-<section id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETask" title="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GeoLDMVAETask</span></code></a></p></td>
-<td><p>GeoLDM's <cite>EnHierarchicalVAE</cite> wrapped in the platform's <cite>Task</cite> contract.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory" title="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory</span></code></a></p></td>
-<td><p>Factory matching <cite>train.py</cite>'s <cite>task_module.build()</cite> /</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETask">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.vae_geoldm.</span></span><span class="sig-name descname"><span class="pre">GeoLDMVAETask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diffusion_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_dist_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop_dist_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_node_dist</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">augment_noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_augmentation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_random_augmentations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_condition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sp_regularizer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MolecularDiffusion.callbacks.SP_regularizer</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_freeze_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETask" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../diffusion/index.html#MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative" title="MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MolecularDiffusion.modules.tasks.diffusion.GeomMolecularGenerative</span></code></a></p>
-<p>GeoLDM’s <cite>EnHierarchicalVAE</cite> wrapped in the platform’s <cite>Task</cite> contract.</p>
-<p>Generative Diffusion model for molecular structures.
-Parameters:
-- diffusion_model: The dynamic functional model for diffusion.
-- node_dist_model (Optional[NodeDistributionModel]): The model for number of node distribution. Default is None.
-- prop_dist_model (Optional[PropertyDistributionModel]): The model for property distribution. Default is None.
-- n_node_dist (Dict): The distribution of number of nodes. Default is {}.
-- augment_noise (float): The amount of noise to add to the coordinates for data augmentation. Default is 0.
-- data_augmentation (bool): Whether to apply data augmentation by symmetry operations. Default is False.
-- num_random_augmentations (int): Dense/pointcloud path only. When</p>
-<blockquote>
-<div><p>&gt; 0, replaces the single in-place rotation <cite>data_augmentation</cite>
-applies with TABASCO’s batch-expansion scheme
-(<cite>modules/models/tabasco/flow_model.py::FlowMatchingModel.forward</cite>):
-each molecule in the batch is replicated into
-<cite>num_random_augmentations + 1</cite> copies, each independently
-rotated by a Haar-uniform SO(3) sample
-(<cite>sample_uniform_rotation_matrices</cite>, Haar-uniform unlike
-<cite>random_rotation</cite>’s Euler-angle composition). Every copy
-contributes its own loss term in the same step – this
-multiplies the per-step compute cost by
-<cite>num_random_augmentations + 1</cite>. Takes precedence over
-<cite>data_augmentation</cite> when both are set (mutually exclusive, not
-additive). Default 0 preserves every existing config’s
-behavior exactly. Not implemented for the PyG (<cite>“graph” in
-batch</cite>) path – out of scope, no current caller needs it.</p>
-</div></blockquote>
-<ul class="simple">
-<li><p>condition (List): The list of conditions for the model. Default is [].</p></li>
-<li><p>normalize_condition (str): The normalization method for the condition. Default is None. [None, “maxmin”, “mad”]</p></li>
-<li><p>sp_regularizer (SP_regularizer): The self-pace learning regularizer for the model. Default is None.</p></li>
-</ul>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETask.density_estimation">
-<span class="sig-name descname"><span class="pre">density_estimation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETask.density_estimation" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETask.evaluate">
-<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETask.evaluate" title="Link to this definition">¶</a></dt>
-<dd><p>Emits <cite>val_negative_log_likelihood</cite> (unchanged) plus <cite>match_rate</cite>
-(attempt 2 fix – see module docstring).</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETask.predict_and_target">
-<span class="sig-name descname"><span class="pre">predict_and_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETask.predict_and_target" title="Link to this definition">¶</a></dt>
-<dd><p>See module docstring – packs <cite>match_rate</cite> as a second column
-alongside the base class’s NLL so <cite>evaluate()</cite> can emit both.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETask.sample">
-<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETask.sample" title="Link to this definition">¶</a></dt>
-<dd><p>Sample molecular structures.</p>
-<p>Parameters:
-- nodesxsample (Tensor): Number of nodes per sample.
-- context (Optional[Tensor]): Context tensor for sampling. Default is None.
-- condition_tensor (Optional[Tensor]): Condition tensor for sampling. Default is None.</p>
-<blockquote>
-<div><p>Note that it has to be normalized the same way as the training set.
-Size = [batch size, n_atom, n_features]</p>
-</div></blockquote>
-<ul class="simple">
-<li><dl class="simple">
-<dt>condition_mode (Optional[str]): Mode for conditioning. Default is None.</dt><dd><p>Format: [condition_name]_[component_alg]
-component name can be x, h, or xh
-component_alg: SSGD, …</p>
-</dd>
-</dl>
-</li>
-<li><p>fix_noise (bool): Fix noise for visualization purposes. Default is False.</p></li>
-<li><p>n_frames (int): Number of frames to keep. Default is 0.</p></li>
-<li><p>n_retrys (int): Number of retry attempts in the event of bad molecules . Default is 0.</p></li>
-<li><p>t_retrys (int): Timestep to start retrying. Default is 180.</p></li>
-<li><p>mode (str): Mode for sampling. Default is “ddpm [“ddpm”, “ddim”].</p></li>
-</ul>
-<p>Returns:
-Tuple[Tensor, Tensor, Tensor, Tensor]: One-hot encoding of atoms, charges, positions, and node mask.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.tasks.vae_geoldm.</span></span><span class="sig-name descname"><span class="pre">GeoLDMVAETaskFactory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_dims</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_nf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latent_nf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_layers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tanh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'egnn_dynamics'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_constant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inv_sublayers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sin_embedding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregation_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sum'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_charges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kl_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_factors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(1.0,</span> <span class="pre">4.0,</span> <span class="pre">10.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">augment_noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_augmentation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_vocab</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory" title="Link to this definition">¶</a></dt>
-<dd><p>Factory matching <cite>train.py</cite>’s <cite>task_module.build()</cite> /
-<cite>task_module.task</cite> instantiation pattern (see
-<cite>diffusion_difflinker.py::DiffLinkerTaskFactory</cite> for the precedent).</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.build">
-<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETask" title="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETask"><span class="pre">GeoLDMVAETask</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.build" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.aggregation_method">
-<span class="sig-name descname"><span class="pre">aggregation_method</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sum'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.aggregation_method" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.atom_vocab">
-<span class="sig-name descname"><span class="pre">atom_vocab</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.atom_vocab" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.attention">
-<span class="sig-name descname"><span class="pre">attention</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.attention" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.augment_noise">
-<span class="sig-name descname"><span class="pre">augment_noise</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.augment_noise" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.data_augmentation">
-<span class="sig-name descname"><span class="pre">data_augmentation</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.data_augmentation" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.hidden_nf">
-<span class="sig-name descname"><span class="pre">hidden_nf</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">64</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.hidden_nf" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.include_charges">
-<span class="sig-name descname"><span class="pre">include_charges</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.include_charges" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.inv_sublayers">
-<span class="sig-name descname"><span class="pre">inv_sublayers</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.inv_sublayers" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.kl_weight">
-<span class="sig-name descname"><span class="pre">kl_weight</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.01</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.kl_weight" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.kwargs">
-<span class="sig-name descname"><span class="pre">kwargs</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.kwargs" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.latent_nf">
-<span class="sig-name descname"><span class="pre">latent_nf</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.latent_nf" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.model_mode">
-<span class="sig-name descname"><span class="pre">model_mode</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'egnn_dynamics'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.model_mode" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.n_dims">
-<span class="sig-name descname"><span class="pre">n_dims</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.n_dims" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.n_layers">
-<span class="sig-name descname"><span class="pre">n_layers</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.n_layers" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.norm_constant">
-<span class="sig-name descname"><span class="pre">norm_constant</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.norm_constant" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.normalization_factor">
-<span class="sig-name descname"><span class="pre">normalization_factor</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.normalization_factor" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.normalize_factors">
-<span class="sig-name descname"><span class="pre">normalize_factors</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(1.0,</span> <span class="pre">4.0,</span> <span class="pre">10.0)</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.normalize_factors" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.sin_embedding">
-<span class="sig-name descname"><span class="pre">sin_embedding</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.sin_embedding" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.tanh">
-<span class="sig-name descname"><span class="pre">tanh</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.tanh" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.task_type">
-<span class="sig-name descname"><span class="pre">task_type</span></span><a class="headerlink" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.task_type" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-</section>
+<p>Alias of <code class="docutils literal notranslate"><span class="pre">MolecularDiffusion.modules.tasks.latent.vae_geoldm</span></code>.</p>
+<p>The module moved into <code class="docutils literal notranslate"><span class="pre">tasks/latent/</span></code>. This path keeps working: it is the same
+module object, so imports, <code class="docutils literal notranslate"><span class="pre">_target_</span></code> strings and checkpoints written against
+the old path still resolve.</p>
 </section>
 
         </article>
@@ -825,61 +580,8 @@ Tuple[Tensor, Tensor, Tensor, Tensor]: One-hot encoding of atoms, charges, posit
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">MolecularDiffusion.modules.tasks.vae_geoldm</a><ul>
-<li><a class="reference internal" href="#classes">Classes</a></li>
-<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETask"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETask</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETask.density_estimation"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETask.density_estimation()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETask.evaluate"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETask.evaluate()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETask.predict_and_target"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETask.predict_and_target()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETask.sample"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETask.sample()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.build"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.build()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.aggregation_method"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.aggregation_method</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.atom_vocab"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.atom_vocab</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.attention"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.attention</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.augment_noise"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.augment_noise</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.data_augmentation"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.data_augmentation</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.hidden_nf"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.hidden_nf</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.include_charges"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.include_charges</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.inv_sublayers"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.inv_sublayers</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.kl_weight"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.kl_weight</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.kwargs"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.kwargs</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.latent_nf"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.latent_nf</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.model_mode"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.model_mode</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.n_dims"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.n_dims</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.n_layers"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.n_layers</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.norm_constant"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.norm_constant</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.normalization_factor"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.normalization_factor</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.normalize_factors"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.normalize_factors</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.sin_embedding"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.sin_embedding</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.tanh"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.tanh</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.tasks.vae_geoldm.GeoLDMVAETaskFactory.task_type"><code class="docutils literal notranslate"><span class="pre">GeoLDMVAETaskFactory.task_type</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

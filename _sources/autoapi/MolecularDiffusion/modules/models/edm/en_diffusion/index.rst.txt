@@ -128,7 +128,8 @@ Module Contents
 
    E(n) Equivariant Variational Diffusion Model.
 
-   :param dynamics: Neural network that predicts noise or x.
+   :param dynamics: Neural network that predicts noise or x
+                    (calling convention: ``models._protocols.DenseDynamics``).
    :type dynamics: nn.Module
    :param dynamics_teacher: Teacher model for distillation.
    :type dynamics_teacher: Optional[nn.Module]

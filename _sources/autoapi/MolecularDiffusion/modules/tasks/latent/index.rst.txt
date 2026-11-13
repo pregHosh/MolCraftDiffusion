@@ -1,0 +1,22 @@
+MolecularDiffusion.modules.tasks.latent
+=======================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.latent
+
+.. autoapi-nested-parse::
+
+   Latent-diffusion tasks (GeoLDM and its VAE).
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/tasks/latent/geoldm/index
+   /autoapi/MolecularDiffusion/modules/tasks/latent/ldm/index
+   /autoapi/MolecularDiffusion/modules/tasks/latent/vae_geoldm/index
+
+

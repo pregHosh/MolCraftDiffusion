@@ -557,7 +557,7 @@ anywhere</strong>, in training or in sampling. Run it twice, get the same answer
 <p>There is no ELBO, no KL prior, no <code class="docutils literal notranslate"><span class="pre">loss_0</span></code> term and no per-object
 <code class="docutils literal notranslate"><span class="pre">scales</span></code> weighting – <code class="docutils literal notranslate"><span class="pre">scales</span></code> reaches only upstream’s dead <code class="docutils literal notranslate"><span class="pre">DDPMModule</span></code>
 path, never <code class="docutils literal notranslate"><span class="pre">EnSB</span></code>. That is why
-<a class="reference internal" href="../../../tasks/diffusion_reactot/index.html#MolecularDiffusion.modules.tasks.diffusion_reactot.ReactOTTask" title="MolecularDiffusion.modules.tasks.diffusion_reactot.ReactOTTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReactOTTask</span></code></a>’s
+<code class="xref py py-class docutils literal notranslate"><span class="pre">ReactOTTask</span></code>’s
 <code class="docutils literal notranslate"><span class="pre">forward</span></code> is four lines where OA-ReactDiff’s is sixty.</p>
 <section id="what-is-reused-rather-than-re-vendored">
 <h2>What is reused rather than re-vendored<a class="headerlink" href="#what-is-reused-rather-than-re-vendored" title="Link to this heading">¶</a></h2>

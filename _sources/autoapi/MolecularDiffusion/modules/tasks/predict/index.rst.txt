@@ -1,0 +1,21 @@
+MolecularDiffusion.modules.tasks.predict
+========================================
+
+.. py:module:: MolecularDiffusion.modules.tasks.predict
+
+.. autoapi-nested-parse::
+
+   Property-prediction and self-supervised tasks.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/modules/tasks/predict/regression/index
+   /autoapi/MolecularDiffusion/modules/tasks/predict/ssl3d/index
+
+
