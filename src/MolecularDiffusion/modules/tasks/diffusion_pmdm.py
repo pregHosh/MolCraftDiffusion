@@ -45,7 +45,7 @@ import numpy as np
 import torch
 from torch import nn
 
-from MolecularDiffusion.data.component.pmdm_data import (
+from MolecularDiffusion.data.integrations.pmdm_data import (
     MAX_NUM_AA,
     PMDM_ATOM_VOCAB,
     PMDMDataset,

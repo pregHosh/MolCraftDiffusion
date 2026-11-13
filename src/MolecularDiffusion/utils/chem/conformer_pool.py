@@ -38,7 +38,7 @@ def _graph3d():
     """
     import MolecularDiffusion.data.dataset  # noqa: F401
 
-    from MolecularDiffusion.data.component import graph3d_dataset
+    from MolecularDiffusion.data.datasets import graph3d_dataset
 
     return graph3d_dataset
 

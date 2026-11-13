@@ -51,7 +51,7 @@ import torch
 from MolecularDiffusion.device import get_device
 import torch.nn as nn
 
-from MolecularDiffusion.data.component.diffdec_data import (
+from MolecularDiffusion.data.integrations.diffdec_data import (
     DIFFDEC_ATOM_VOCAB,
     FAKE_ATOM_INDEX,
     DiffDecDataset,

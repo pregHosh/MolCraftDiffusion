@@ -43,7 +43,7 @@ from typing import Any, Dict, List, Optional
 import torch
 from torch import nn
 
-from MolecularDiffusion.data.component.kgdiff_data import (
+from MolecularDiffusion.data.integrations.kgdiff_data import (
     KGDIFF_ATOM_VOCAB,
     KGDIFF_ELEMENTS,
     LIGAND_INDEX_TO_Z,

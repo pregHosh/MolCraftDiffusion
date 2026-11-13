@@ -63,7 +63,7 @@ from torch import nn
 from torch_geometric.data import Batch, Data
 from torch_scatter import scatter_mean
 
-from MolecularDiffusion.data.component.graph3d_dataset import build_rdkit_mol
+from MolecularDiffusion.data.datasets.graph3d_dataset import build_rdkit_mol
 from MolecularDiffusion.modules.models.loqi import (
     N_EDGE_CLASSES,
     BaseSelfConditioningModule,

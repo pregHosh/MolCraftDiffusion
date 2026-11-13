@@ -3,10 +3,10 @@ import time
 import logging
 import torch
 from MolecularDiffusion.data.dataset import pointcloud_dataset, pointcloud_dataset_pyG
-from MolecularDiffusion.data.component.dataset import (
+from MolecularDiffusion.data.datasets.dataset import (
     PointCloudDataset, LazyChunkedDataset, LazyChunkedGraphDataset,
 )
-from MolecularDiffusion.data.component.graph3d_dataset import (
+from MolecularDiffusion.data.datasets.graph3d_dataset import (
     Graph3DDataset, graph3d_dense_collate,
 )
 from MolecularDiffusion.data.dataloader import pointcloud_collate, graph_collate, pointcloud_collate_v0

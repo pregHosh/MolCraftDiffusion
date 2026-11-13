@@ -202,7 +202,7 @@ class MoleculeFeatureCache:
         # pre-existing platform behaviour, not something to fix from here.
         import MolecularDiffusion.data.dataset  # noqa: F401
 
-        from MolecularDiffusion.data.component.graph3d_dataset import build_rdkit_mol
+        from MolecularDiffusion.data.datasets.graph3d_dataset import build_rdkit_mol
 
         try:
             mol = build_rdkit_mol(z, bond_index, bond_type, formal_charge=fc)

@@ -21,8 +21,8 @@ import torch
 from MolecularDiffusion.device import get_device
 from torch_geometric.data import Batch, Data
 from torch_geometric.nn import radius_graph
-from MolecularDiffusion.data.component.pointcloud import PointCloud_Mol
-from MolecularDiffusion.data.component.feature import onehot
+from MolecularDiffusion.data.datasets.pointcloud import PointCloud_Mol
+from MolecularDiffusion.data.features.feature import onehot
 from ase.data import atomic_masses, atomic_numbers
 
 logger = logging.getLogger(__name__)
@@ -314,7 +314,7 @@ class GenerativeFactory:
         try:
             from rdkit import Chem
 
-            from MolecularDiffusion.data.component.graph3d_dataset import (
+            from MolecularDiffusion.data.datasets.graph3d_dataset import (
                 build_rdkit_mol,
             )
             from ase.data import atomic_numbers as _atomic_numbers

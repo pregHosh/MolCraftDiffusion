@@ -409,14 +409,14 @@ class DiffPharmaPocketGenerator(PocketGenerator):
 
     def _complex(self) -> Dict[str, torch.Tensor]:
         if self.pocket_db:
-            from MolecularDiffusion.data.component.diffpharma_data import (
+            from MolecularDiffusion.data.integrations.diffpharma_data import (
                 DiffPharmaDataset,
             )
 
             dataset = DiffPharmaDataset(self.pocket_db, center=False)
             return dataset[self.pocket_index]
 
-        from MolecularDiffusion.data.component.diffpharma_prep import (
+        from MolecularDiffusion.data.integrations.diffpharma_prep import (
             complex_from_files,
         )
 

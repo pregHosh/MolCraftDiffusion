@@ -38,11 +38,11 @@ from typing import Any, Dict, Optional
 
 import torch
 
-from MolecularDiffusion.data.component.diffint_data import (
+from MolecularDiffusion.data.integrations.diffint_data import (
     DiffIntDataset,
     make_item,
 )
-from MolecularDiffusion.data.component.diffint_prep import NUM_POCKET_CLASSES
+from MolecularDiffusion.data.integrations.diffint_prep import NUM_POCKET_CLASSES
 from MolecularDiffusion.modules.tasks.diffusion_diffsbdd import (
     INT_TYPE,
     DiffSBDDPocketGenerator,
@@ -171,7 +171,7 @@ class DiffIntPocketGenerator(DiffSBDDPocketGenerator):
                 self.pocket_index
             ]
 
-        from MolecularDiffusion.data.component.diffint_prep import (  # noqa: PLC0415
+        from MolecularDiffusion.data.integrations.diffint_prep import (  # noqa: PLC0415
             complex_from_files,
         )
 

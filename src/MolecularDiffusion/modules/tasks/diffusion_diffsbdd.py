@@ -58,7 +58,7 @@ import torch
 from torch import nn
 from torch_scatter import scatter_mean
 
-from MolecularDiffusion.data.component.diffsbdd_data import (
+from MolecularDiffusion.data.integrations.diffsbdd_data import (
     DIFFSBDD_ATOM_VOCAB,
     NUM_ATOM_CLASSES,
     DiffSBDDDataset,

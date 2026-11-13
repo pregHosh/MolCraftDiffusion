@@ -117,7 +117,7 @@ logger = logging.getLogger(__name__)
 
 def _to_mol(item: Any, coords) -> Any:
     """graph3d ``Data`` + coordinates -> RDKit mol. ``None`` if unbuildable."""
-    from MolecularDiffusion.data.component.graph3d_dataset import (
+    from MolecularDiffusion.data.datasets.graph3d_dataset import (
         build_rdkit_mol,
     )
 

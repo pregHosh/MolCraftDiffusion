@@ -1,0 +1,6 @@
+core/lightning_callbacks/generative_eval_callback.py -> runmodes [module]
+data/datasets/dataset.py -> core [module]
+data/integrations/shepherd2.py -> modules [lazy]
+modules/tasks/shepherd2_generator.py -> runmodes [module]
+utils/chem/conformer_pool.py -> data [lazy]
+utils/runtime/torch.py -> data [module]

@@ -40,7 +40,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F  # noqa: N812
 
-from MolecularDiffusion.data.component.graph3d_dataset import (
+from MolecularDiffusion.data.datasets.graph3d_dataset import (
     N_BOND_CLASSES,
     build_rdkit_mol,
 )

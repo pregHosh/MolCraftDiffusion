@@ -51,11 +51,11 @@ from typing import Any, Dict, List, Optional
 import torch
 from torch import nn
 
-from MolecularDiffusion.data.component.apo2mol_data import (
+from MolecularDiffusion.data.integrations.apo2mol_data import (
     APO2MOL_ATOM_VOCAB,
     Apo2MolDataset,
 )
-from MolecularDiffusion.data.component.kgdiff_data import (
+from MolecularDiffusion.data.integrations.kgdiff_data import (
     NUM_LIGAND_CLASSES,
     PROTEIN_FEATURE_DIM,
 )

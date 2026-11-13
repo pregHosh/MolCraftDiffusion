@@ -52,7 +52,7 @@ from MolecularDiffusion.device import get_device
 from torch import nn
 from torch.nn import functional as F  # noqa: N812
 
-from MolecularDiffusion.data.component.graph3d_dataset import build_rdkit_mol
+from MolecularDiffusion.data.datasets.graph3d_dataset import build_rdkit_mol
 from MolecularDiffusion.modules.models.edm.en_diffusion import DistributionProperty
 from MolecularDiffusion.modules.models.jodo import (
     Cond_DGT_concat,

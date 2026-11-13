@@ -75,7 +75,7 @@ def mol_to_row(
     from ase import Atoms
     from rdkit import Chem
 
-    from MolecularDiffusion.data.component.graph3d_dataset import BOND_ORDER_TO_CLASS
+    from MolecularDiffusion.data.datasets.graph3d_dataset import BOND_ORDER_TO_CLASS
 
     conf = mol.GetConformer()
     positions = np.array(conf.GetPositions(), dtype=np.float64)
@@ -369,7 +369,7 @@ def verify_db(out_path: str, expected: int, n_check: int = 25) -> None:
     """
     from ase.db import connect
 
-    from MolecularDiffusion.data.component.graph3d_dataset import build_rdkit_mol
+    from MolecularDiffusion.data.datasets.graph3d_dataset import build_rdkit_mol
 
     db = connect(out_path)
     count = db.count()

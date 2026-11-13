@@ -71,7 +71,7 @@ import torch
 from ase.data import chemical_symbols
 from torch import Tensor
 
-from MolecularDiffusion.data.component.reaction_data import Reaction
+from MolecularDiffusion.data.datasets.reaction_data import Reaction
 from MolecularDiffusion.modules.tasks.pocket_generator import (
     INT_TYPE,
     PocketGenerator,

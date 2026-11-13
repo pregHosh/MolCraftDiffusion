@@ -97,13 +97,13 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 import torch
 from torch import Tensor, nn
 
-from MolecularDiffusion.data.component.oareactdiff_data import (
+from MolecularDiffusion.data.integrations.oareactdiff_data import (
     OAREACTDIFF_ATOM_VOCAB,
     TS_INDEX,
     OAReactDiffTS1xDataset,
     oareactdiff_collate,
 )
-from MolecularDiffusion.data.component.reaction_data import Reaction
+from MolecularDiffusion.data.datasets.reaction_data import Reaction
 from MolecularDiffusion.modules.models.oareactdiff import (
     FEATURE_MAPPING,
     EGNNDynamics,

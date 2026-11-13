@@ -43,7 +43,7 @@ from MolecularDiffusion.device import get_device
 import torch.nn.functional as F  # noqa: N812
 from torch import nn
 
-from MolecularDiffusion.data.component.graph3d_dataset import (
+from MolecularDiffusion.data.datasets.graph3d_dataset import (
     build_rdkit_mol,
     remap_bonds_after_atom_removal,
 )

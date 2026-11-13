@@ -77,12 +77,12 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor, nn
 
-from MolecularDiffusion.data.component.goflow_data import (
+from MolecularDiffusion.data.integrations.goflow_data import (
     GoFlowRDB7Dataset,
     goflow_collate,
 )
-from MolecularDiffusion.data.component.oareactdiff_data import ATOM_MAPPING
-from MolecularDiffusion.data.component.reaction_data import Reaction
+from MolecularDiffusion.data.integrations.oareactdiff_data import ATOM_MAPPING
+from MolecularDiffusion.data.datasets.reaction_data import Reaction
 from MolecularDiffusion.modules.models.goflow import (
     Atomwise3DOut,
     GotenNet,

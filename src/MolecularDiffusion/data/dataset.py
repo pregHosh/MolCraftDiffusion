@@ -3,7 +3,7 @@ from glob import glob
 import os
 
 import pandas as pd
-from MolecularDiffusion.data.component import dataset as data
+from MolecularDiffusion.data.datasets import dataset as data
 import logging
 
 logger = logging.getLogger(__name__)

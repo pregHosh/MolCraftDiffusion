@@ -17,8 +17,8 @@ from torch_geometric.nn import knn_graph, radius_graph
 from tqdm import tqdm
 
 from MolecularDiffusion.core import Engine
-from MolecularDiffusion.data.component.pointcloud import PointCloud_Mol
-from MolecularDiffusion.data.component.feature import (
+from MolecularDiffusion.data.datasets.pointcloud import PointCloud_Mol
+from MolecularDiffusion.data.features.feature import (
     NodeFeaturizer,
 )
 from MolecularDiffusion.utils import RankedLogger, seed_everything

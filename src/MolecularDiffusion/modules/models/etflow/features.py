@@ -145,7 +145,7 @@ class ETFlowFeatureCache:
         import MolecularDiffusion.data.dataset  # noqa: F401
         from rdkit import Chem
 
-        from MolecularDiffusion.data.component.graph3d_dataset import (
+        from MolecularDiffusion.data.datasets.graph3d_dataset import (
             build_rdkit_mol,
         )
 
