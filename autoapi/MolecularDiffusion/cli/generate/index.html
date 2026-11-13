@@ -497,22 +497,19 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.generate.generate" title="MolecularDiffusion.cli.generate.generate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate</span></code></a>(cfg) → Tuple[Dict[str, Any], Dict[str, Any]]</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.generate.generate" title="MolecularDiffusion.cli.generate.generate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate</span></code></a>(cfg) → None</p></td>
 <td><p>Main generation function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.generate.generate_main" title="MolecularDiffusion.cli.generate.generate_main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_main</span></code></a>(cfg)</p></td>
 <td><p>Entry point for CLI generate command.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.generate.is_rank_zero" title="MolecularDiffusion.cli.generate.is_rank_zero"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_rank_zero</span></code></a>()</p></td>
-<td><p>Check if current process is rank zero.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.generate.load_lightning_model" title="MolecularDiffusion.cli.generate.load_lightning_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_lightning_model</span></code></a>(chkpt_path, task_config[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.generate.load_lightning_model" title="MolecularDiffusion.cli.generate.load_lightning_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_lightning_model</span></code></a>(chkpt_path, task_config[, ...])</p></td>
 <td><p>Load model from Lightning checkpoint (.ckpt).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.generate.load_model" title="MolecularDiffusion.cli.generate.load_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_model</span></code></a>(chkpt_directory[, task_config, atom_vocab, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.generate.load_model" title="MolecularDiffusion.cli.generate.load_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_model</span></code></a>(chkpt_directory[, task_config, atom_vocab, ...])</p></td>
 <td><p>Load model from checkpoint directory with auto-detection.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.generate.log_hyperparameters" title="MolecularDiffusion.cli.generate.log_hyperparameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_hyperparameters</span></code></a>(object_dict)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.generate.log_hyperparameters" title="MolecularDiffusion.cli.generate.log_hyperparameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_hyperparameters</span></code></a>(object_dict)</p></td>
 <td><p>Log hyperparameters for debugging.</p></td>
 </tr>
 </tbody>
@@ -523,7 +520,7 @@
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.cli.generate.generate">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.generate.</span></span><span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">omegaconf.DictConfig</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#MolecularDiffusion.cli.generate.generate" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.generate.</span></span><span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">omegaconf.DictConfig</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.cli.generate.generate" title="Link to this definition">¶</a></dt>
 <dd><p>Main generation function.</p>
 </dd></dl>
 
@@ -531,12 +528,6 @@
 <dt class="sig sig-object py" id="MolecularDiffusion.cli.generate.generate_main">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.generate.</span></span><span class="sig-name descname"><span class="pre">generate_main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">omegaconf.DictConfig</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.generate.generate_main" title="Link to this definition">¶</a></dt>
 <dd><p>Entry point for CLI generate command.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.cli.generate.is_rank_zero">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.generate.</span></span><span class="sig-name descname"><span class="pre">is_rank_zero</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.generate.is_rank_zero" title="Link to this definition">¶</a></dt>
-<dd><p>Check if current process is rank zero.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -647,7 +638,6 @@ reconstructed as base weights + LoRA delta.</p>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.generate.generate"><code class="docutils literal notranslate"><span class="pre">generate()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.generate.generate_main"><code class="docutils literal notranslate"><span class="pre">generate_main()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.cli.generate.is_rank_zero"><code class="docutils literal notranslate"><span class="pre">is_rank_zero()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.generate.load_lightning_model"><code class="docutils literal notranslate"><span class="pre">load_lightning_model()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.generate.load_model"><code class="docutils literal notranslate"><span class="pre">load_model()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.generate.log_hyperparameters"><code class="docutils literal notranslate"><span class="pre">log_hyperparameters()</span></code></a></li>

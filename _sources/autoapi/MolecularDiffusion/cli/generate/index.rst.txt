@@ -26,7 +26,6 @@ Functions
 
    MolecularDiffusion.cli.generate.generate
    MolecularDiffusion.cli.generate.generate_main
-   MolecularDiffusion.cli.generate.is_rank_zero
    MolecularDiffusion.cli.generate.load_lightning_model
    MolecularDiffusion.cli.generate.load_model
    MolecularDiffusion.cli.generate.log_hyperparameters
@@ -35,7 +34,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: generate(cfg: omegaconf.DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]
+.. py:function:: generate(cfg: omegaconf.DictConfig) -> None
 
    Main generation function.
 
@@ -43,11 +42,6 @@ Module Contents
 .. py:function:: generate_main(cfg: omegaconf.DictConfig)
 
    Entry point for CLI generate command.
-
-
-.. py:function:: is_rank_zero()
-
-   Check if current process is rank zero.
 
 
 .. py:function:: load_lightning_model(chkpt_path, task_config, atom_vocab=None, total_step=0, use_ema=False)

@@ -500,22 +500,19 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.predict.count_atoms_from_xyz" title="MolecularDiffusion.cli.predict.count_atoms_from_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_atoms_from_xyz</span></code></a>(path) → int</p></td>
 <td><p>Fast atom counter for XYZ files.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.predict.is_rank_zero" title="MolecularDiffusion.cli.predict.is_rank_zero"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_rank_zero</span></code></a>()</p></td>
-<td><p>Check if current process is rank zero.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.predict.load_model" title="MolecularDiffusion.cli.predict.load_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_model</span></code></a>(chkpt_path[, task_config, atom_vocab])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.predict.load_model" title="MolecularDiffusion.cli.predict.load_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_model</span></code></a>(chkpt_path[, task_config, atom_vocab])</p></td>
 <td><p>Load a pre-trained model from checkpoint with auto-detection.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.predict.log_hyperparameters" title="MolecularDiffusion.cli.predict.log_hyperparameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_hyperparameters</span></code></a>(object_dict)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.predict.log_hyperparameters" title="MolecularDiffusion.cli.predict.log_hyperparameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_hyperparameters</span></code></a>(object_dict)</p></td>
 <td><p>Log hyperparameters for debugging.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.predict.predict_main" title="MolecularDiffusion.cli.predict.predict_main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict_main</span></code></a>(cfg)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.predict.predict_main" title="MolecularDiffusion.cli.predict.predict_main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict_main</span></code></a>(cfg)</p></td>
 <td><p>Entry point for CLI predict command.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.predict.runner" title="MolecularDiffusion.cli.predict.runner"><code class="xref py py-obj docutils literal notranslate"><span class="pre">runner</span></code></a>(cfg) → Tuple[Dict[str, Any], Dict[str, Any]]</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.predict.runner" title="MolecularDiffusion.cli.predict.runner"><code class="xref py py-obj docutils literal notranslate"><span class="pre">runner</span></code></a>(cfg) → None</p></td>
 <td><p>Property prediction run.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.predict.xyz2mol" title="MolecularDiffusion.cli.predict.xyz2mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz2mol</span></code></a>(xyz_file, atom_vocab, node_feature[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.predict.xyz2mol" title="MolecularDiffusion.cli.predict.xyz2mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz2mol</span></code></a>(xyz_file, atom_vocab, node_feature[, ...])</p></td>
 <td><p>Convert an XYZ file into a PyTorch Geometric Data object.</p></td>
 </tr>
 </tbody>
@@ -528,12 +525,6 @@
 <dt class="sig sig-object py" id="MolecularDiffusion.cli.predict.count_atoms_from_xyz">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.predict.</span></span><span class="sig-name descname"><span class="pre">count_atoms_from_xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.cli.predict.count_atoms_from_xyz" title="Link to this definition">¶</a></dt>
 <dd><p>Fast atom counter for XYZ files.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.cli.predict.is_rank_zero">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.predict.</span></span><span class="sig-name descname"><span class="pre">is_rank_zero</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.predict.is_rank_zero" title="Link to this definition">¶</a></dt>
-<dd><p>Check if current process is rank zero.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -556,7 +547,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.cli.predict.runner">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.predict.</span></span><span class="sig-name descname"><span class="pre">runner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">omegaconf.DictConfig</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#MolecularDiffusion.cli.predict.runner" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.predict.</span></span><span class="sig-name descname"><span class="pre">runner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">omegaconf.DictConfig</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.cli.predict.runner" title="Link to this definition">¶</a></dt>
 <dd><p>Property prediction run.</p>
 </dd></dl>
 
@@ -651,7 +642,6 @@
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.predict.count_atoms_from_xyz"><code class="docutils literal notranslate"><span class="pre">count_atoms_from_xyz()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.cli.predict.is_rank_zero"><code class="docutils literal notranslate"><span class="pre">is_rank_zero()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.predict.load_model"><code class="docutils literal notranslate"><span class="pre">load_model()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.predict.log_hyperparameters"><code class="docutils literal notranslate"><span class="pre">log_hyperparameters()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.predict.predict_main"><code class="docutils literal notranslate"><span class="pre">predict_main()</span></code></a></li>

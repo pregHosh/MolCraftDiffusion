@@ -25,7 +25,6 @@ Functions
 .. autoapisummary::
 
    MolecularDiffusion.cli.predict.count_atoms_from_xyz
-   MolecularDiffusion.cli.predict.is_rank_zero
    MolecularDiffusion.cli.predict.load_model
    MolecularDiffusion.cli.predict.log_hyperparameters
    MolecularDiffusion.cli.predict.predict_main
@@ -39,11 +38,6 @@ Module Contents
 .. py:function:: count_atoms_from_xyz(path: str) -> int
 
    Fast atom counter for XYZ files.
-
-
-.. py:function:: is_rank_zero()
-
-   Check if current process is rank zero.
 
 
 .. py:function:: load_model(chkpt_path, task_config=None, atom_vocab=None)
@@ -61,7 +55,7 @@ Module Contents
    Entry point for CLI predict command.
 
 
-.. py:function:: runner(cfg: omegaconf.DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]
+.. py:function:: runner(cfg: omegaconf.DictConfig) -> None
 
    Property prediction run.
 

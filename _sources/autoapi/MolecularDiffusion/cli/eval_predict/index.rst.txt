@@ -26,7 +26,6 @@ Functions
 
    MolecularDiffusion.cli.eval_predict.engine_wrapper
    MolecularDiffusion.cli.eval_predict.eval_predict_main
-   MolecularDiffusion.cli.eval_predict.is_rank_zero
    MolecularDiffusion.cli.eval_predict.load_checkpoint_weights
    MolecularDiffusion.cli.eval_predict.log_hyperparameters
    MolecularDiffusion.cli.eval_predict.predict
@@ -45,11 +44,6 @@ Module Contents
    Entry point for CLI eval-predict command.
 
 
-.. py:function:: is_rank_zero()
-
-   Check if current process is rank zero.
-
-
 .. py:function:: load_checkpoint_weights(task, chkpt_path)
 
    Load weights from checkpoint with support for Engine and Lightning formats.
@@ -60,7 +54,7 @@ Module Contents
    Log hyperparameters for debugging.
 
 
-.. py:function:: predict(cfg: omegaconf.DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]
+.. py:function:: predict(cfg: omegaconf.DictConfig) -> None
 
    Evaluate predictions on validation/test sets.
 
