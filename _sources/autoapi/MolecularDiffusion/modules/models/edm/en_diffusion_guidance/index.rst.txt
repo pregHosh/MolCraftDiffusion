@@ -1,0 +1,447 @@
+MolecularDiffusion.modules.models.edm.en_diffusion_guidance
+===========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.edm.en_diffusion_guidance
+
+.. autoapi-nested-parse::
+
+   Guided, conditional, inpainting and outpainting sampling for ``EnVariationalDiffusion``.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.edm.en_diffusion_guidance.logger
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.edm.en_diffusion_guidance.EnDiffusionGuidanceMixin
+
+
+Module Contents
+---------------
+
+.. py:class:: EnDiffusionGuidanceMixin
+
+   Guided, conditional, inpainting and outpainting sampling for ``EnVariationalDiffusion``.
+
+   Plain mixin: no parameters or state of its own, so the ``state_dict`` of
+   ``EnVariationalDiffusion`` is unchanged. Methods use attributes set in its ``__init__``.
+
+
+   .. py:method:: sample_guidance(n_samples, target_function, node_mask, edge_mask, context=None, context_negative=None, gg_scale=1, cfg_scale=1, cfg_scale_schedule=None, max_norm=10, fix_noise=False, std=1.0, scheduler=None, guidance_at=1, guidance_stop=0, guidance_ver=1, n_backwards=0, h_weight=1, x_weight=1, condition_tensor=None, condition_mode=None, inpaint_cfgs={}, outpaint_cfgs={}, use_noised_conditioning=False, n_frames=0, debug=False)
+
+              Guided sampling from the generative model.
+
+              Parameters:
+              - n_samples (int): Number of samples to generate.
+              - target_function (Callable[[Tensor], Tensor]): Target function for guidance. The higher the value, the better.
+              - node_mask (Tensor): Mask indicating valid nodes.
+              - edge_mask (Tensor): Mask indicating valid edges.
+              - context (Tensor): Conditonal properties. Default is None.
+              - context_negative (Tensor): Conditonal properties. Default is None.
+              - gg_scale (float): Scale factor for gradient guidance. Default is 1.0.
+              - cfg_scale (float): Scale factor for classifier-free guidance. Default is 1.0.
+              - cfg_scale_schedule (str|optional): The schedule for cfg_scale. Can be "linear", "exponential", or "cosine". Default is None.
+              - max_norm (float): Initial maximum norm for the gradients. Default is 10.0.
+              - fix_noise (bool): Fix noise for visualization purposes. Default is False.
+              - std (float): Standard deviation of the noise. Default is 1.0.
+              - scheduler (RateScheduler): Rate scheduler. Default is None.
+                  The scheduler should have a step method that takes the energy and the current scale as input.
+              - guidance_at (int): The timestep at which to apply guidance [0-1]  0 = since beginning. Default is 1.
+              - guidance_stop (int): The timestep at which to stop applying guidance [0-1]  1 = until the end. Default is 0.
+              - guidance_ver (int): The version of the guidance. Default is 1. [0,1,2,cfg,cfg_gg]
+              - n_backwards (int): Number of backward steps. Default is 0.
+              - h_weight (float): Weight for the gradient of atom feature. Default is 1.0.
+              - x_weight (float): Weight for the gradient of cartesian coordinate. Default is 1.0.
+              - n_frames (int, optional): Number of frames for sampling. Defaults to 0.
+              - debug (bool): Debug mode. Default is False.
+                  Save gradient norms, max gradients, clipping coefficients, and energies to files.
+              - condition_tensor (torch.Tensor, optional): Tensor for conditional guidance. Defaults to None.
+              - condition_mode (str, optional): Mode for conditional guidance. Defaults to None.
+              - inpaint_cfgs (dict, optional): Configuration for inpainting.
+                  The dictionary must contains:
+                      - mask_node_index (torch.Tensor, optional): Indices of nodes to be inpainted. Defaults to an empty tensor.
+                      - denoising_strength (float, optional): Strength of denoising for inpainting
+                      - noise_initial_mask (bool, optional): Whether to noise the initial masked region. Defaults to False.
+              - outpaint_cfgs (dict, optional): Configuration for outpainting.
+                  The dictionary must contains:
+                      - t_start (float, optional): Timestep to start the generation. Defaults to 1.0.
+                      - t_critical (float, optional): Timestep threshold for applying reference tensor constraints. Defaults to None.
+      `               - connector_index (torch.Tensor, optional): Indices of connector nodes for outpainting. Defaults to an empty tensor.
+                      - seed_dist (float, optional): Distance of the seed from the connector atom (used if n_bq_atom == 0)..
+                      - min_dist (float, optional): Minimum distance from any existing atom in xh_cond (except the connector itself). Defaults to 1.
+                      - spread (float, optional): Random-walk angular dispersion, or
+                          legacy seed-cloud position spread. Defaults to 1.
+                      - jitter_scale (float): Explicit positional noise magnitude
+                          when forward_noise is "jitter".
+                      - n_bq_atom (int, optional): Number of dummy atoms. Defaults is 0.
+
+              Returns:
+              Tuple[Tensor, Tensor]: Sampled positions and features.
+
+
+
+
+   .. py:method:: sample_p_zs_given_zt_guidance_cfg(s, t, zt, node_mask, edge_mask, context, scale, fix_noise=False, context_negative=None, structure_guidance=False, t_critical=0, mask_node_index=[], scale_schedule_type=None)
+
+      Samples from zs ~ p(zs | zt) using classifier-free guidance (CFG).
+
+      This method adjusts the diffusion sampling process by guiding the noise prediction
+      towards a conditional distribution and away from an unconditional (or negative) one.
+      It also supports inpainting-style generation where a reference part of the structure
+      can be fixed.
+
+      :param s: The current timestep, s.
+      :type s: torch.Tensor
+      :param t: The next timestep, t.
+      :type t: torch.Tensor
+      :param zt: The noisy data at timestep t.
+      :type zt: torch.Tensor
+      :param node_mask: Mask for nodes in the graph.
+      :type node_mask: torch.Tensor
+      :param edge_mask: Mask for edges in the graph.
+      :type edge_mask: torch.Tensor
+      :param context: The conditional information for guidance.
+      :type context: torch.Tensor
+      :param scale: The strength of the classifier-free guidance.
+      :type scale: float
+      :param fix_noise: If True, uses fixed noise for sampling. Defaults to False.
+      :type fix_noise: bool, optional
+      :param context_negative: Negative conditional information for guidance.
+                               If None, unconditional generation is used as the negative target. Defaults to None.
+      :type context_negative: torch.Tensor, optional
+      :param structure_guidance: If inpaint or outpaint, applies structure guidance. Defaults to False.
+      :type structure_guidance: bool, optional
+      :param t_critical: Timestep threshold for applying reference tensor constraints. Defaults to None.
+      :type t_critical: float, optional
+      :param mask_node_index: List of node indices to mask during inpaiting. Defaults to [].
+      :type mask_node_index: list, optional
+      :param scale_schedule_type: Type of scheduler for CFG scale. [Available: 'linear', 'cosine']. Defaults to None.
+      :type scale_schedule_type: str, optional
+
+      :returns: The sampled data `zs` at timestep `s`.
+      :rtype: torch.Tensor
+
+
+
+   .. py:method:: sample_p_zs_given_zt_guidance_cfg_gg(s, t, zt, node_mask, edge_mask, context, target_function, cfg_scale, gg_scale, max_norm=20, n_backward=0, h_weight=1, x_weight=1, fix_noise=False, context_negative=None, structure_guidance=False, t_critical=0, mask_node_index=[], scale_schedule_type=None)
+
+      Combines Classifier-Free Guidance (CFG) with Gradient-Based Guidance (GG).
+
+      This method first computes the noise prediction using CFG and then applies a
+      gradient-based correction to the mean of the sampling distribution.
+
+      :param s: The current timestep, s.
+      :type s: torch.Tensor
+      :param t: The next timestep, t.
+      :type t: torch.Tensor
+      :param zt: The noisy data at timestep t.
+      :type zt: torch.Tensor
+      :param node_mask: Mask for nodes in the graph.
+      :type node_mask: torch.Tensor
+      :param edge_mask: Mask for edges in the graph.
+      :type edge_mask: torch.Tensor
+      :param context: The conditional information for guidance.
+      :type context: torch.Tensor
+      :param target_function: A function that takes z0 and t and returns an energy value.
+      :type target_function: callable
+      :param cfg_scale: The strength of the classifier-free guidance.
+      :type cfg_scale: float
+      :param gg_scale: The strength of the gradient-based guidance.
+      :type gg_scale: float
+      :param max_norm: Maximum norm for gradient clipping. Defaults to 20.
+      :type max_norm: int, optional
+      :param n_backward: Number of backward steps for refining the gradient. Defaults to 0.
+      :type n_backward: int, optional
+      :param h_weight: Weight for the feature component of the gradient. Defaults to 1.
+      :type h_weight: int, optional
+      :param x_weight: Weight for the position component of the gradient. Defaults to 1.
+      :type x_weight: int, optional
+      :param fix_noise: If True, uses fixed noise for sampling. Defaults to False.
+      :type fix_noise: bool, optional
+      :param context_negative: Negative conditional information for guidance.
+                               If None, unconditional generation is used as the negative target. Defaults to None.
+      :type context_negative: torch.Tensor, optional
+      :param structure_guidance: If inpaint or outpaint, applies structure guidance. Defaults to False.
+      :type structure_guidance: bool, optional
+      :param t_critical: Timestep threshold for applying reference tensor constraints. Defaults to None.
+      :type t_critical: float, optional
+      :param mask_node_index: List of node indices to mask during inpaiting. Defaults to [].
+      :type mask_node_index: list, optional
+      :param scale_schedule_type: Type of scheduler for CFG scale. [Available: 'linear', 'cosine']. Defaults to None.
+      :type scale_schedule_type: str, optional
+
+      :returns: The guided sample zs and an opt_info dict
+                with keys mu0_norm, mu1_norm, grad_norms, energies, z_norm.
+      :rtype: Tuple[torch.Tensor, dict]
+
+
+
+   .. py:method:: sample_p_zs_given_zt_guidance_v0(s, t, zt, node_mask, edge_mask, context, target_function, scale, fix_noise=False, max_norm=20, n_backward=0)
+
+      Samples from zs ~ p(zs | zt) with guidance applied directly to the latent sample zs.
+
+      This method computes the gradient of a target function with respect to the latent
+      variable zs and uses it to guide the sampling process.
+
+      :param s: The current timestep, s.
+      :type s: torch.Tensor
+      :param t: The next timestep, t.
+      :type t: torch.Tensor
+      :param zt: The noisy data at timestep t.
+      :type zt: torch.Tensor
+      :param node_mask: Mask for nodes in the graph.
+      :type node_mask: torch.Tensor
+      :param edge_mask: Mask for edges in the graph.
+      :type edge_mask: torch.Tensor
+      :param context: The conditional information for guidance.
+      :type context: torch.Tensor
+      :param target_function: A function that takes zs and s and returns an energy value.
+      :type target_function: callable
+      :param scale: The strength of the guidance.
+      :type scale: float
+      :param fix_noise: If True, uses fixed noise for sampling. Defaults to False.
+      :type fix_noise: bool, optional
+      :param max_norm: Maximum norm for gradient clipping. Defaults to 20.
+      :type max_norm: int, optional
+      :param n_backward: Number of backward steps for refining the gradient. Defaults to 0.
+      :type n_backward: int, optional
+
+      :returns: The guided sample zs and a dictionary with optimization info.
+      :rtype: Tuple[torch.Tensor, dict]
+
+
+
+   .. py:method:: sample_p_zs_given_zt_guidance_v1(s, t, zt, node_mask, edge_mask, context, target_function, scale, fix_noise=False, max_norm=20, n_backward=0, h_weight=1, x_weight=1)
+
+      Samples from zs ~ p(zs | zt) with guidance applied to the mean of the distribution.
+
+      This method computes the gradient of a target function with respect to the predicted
+      clean data z0 and uses it to guide the mean of the sampling distribution.
+
+      :param s: The current timestep, s.
+      :type s: torch.Tensor
+      :param t: The next timestep, t.
+      :type t: torch.Tensor
+      :param zt: The noisy data at timestep t.
+      :type zt: torch.Tensor
+      :param node_mask: Mask for nodes in the graph.
+      :type node_mask: torch.Tensor
+      :param edge_mask: Mask for edges in the graph.
+      :type edge_mask: torch.Tensor
+      :param context: The conditional information for guidance.
+      :type context: torch.Tensor
+      :param target_function: A function that takes z0 and t and returns an energy value.
+      :type target_function: callable
+      :param scale: The strength of the guidance.
+      :type scale: float
+      :param fix_noise: If True, uses fixed noise for sampling. Defaults to False.
+      :type fix_noise: bool, optional
+      :param max_norm: Maximum norm for gradient clipping. Defaults to 20.
+      :type max_norm: int, optional
+      :param n_backward: Number of backward steps for refining the gradient. Defaults to 0.
+      :type n_backward: int, optional
+      :param h_weight: Weight for the feature component of the gradient. Defaults to 1.
+      :type h_weight: int, optional
+      :param x_weight: Weight for the position component of the gradient. Defaults to 1.
+      :type x_weight: int, optional
+
+      :returns: The guided sample zs and a dictionary with optimization info.
+      :rtype: Tuple[torch.Tensor, dict]
+
+
+
+   .. py:method:: sample_p_zs_given_zt_guidance_v2(s, t, zt, node_mask, edge_mask, context, target_function, scale, fix_noise=False, max_norm=20, n_backward=0, h_weight=1, x_weight=1, structure_guidance=False, t_critical=0, mask_node_index=[])
+
+      Samples from zs ~ p(zs | zt) with guidance inspired by GeoGuide.
+
+      This method applies guidance to the mean of the sampling distribution, similar to v1,
+      but with modifications inspired by the GeoGuide paper. It also supports conditional
+      generation using a reference tensor.
+
+      :param s: The current timestep, s.
+      :type s: torch.Tensor
+      :param t: The next timestep, t.
+      :type t: torch.Tensor
+      :param zt: The noisy data at timestep t.
+      :type zt: torch.Tensor
+      :param node_mask: Mask for nodes in the graph.
+      :type node_mask: torch.Tensor
+      :param edge_mask: Mask for edges in the graph.
+      :type edge_mask: torch.Tensor
+      :param context: The conditional information for guidance.
+      :type context: torch.Tensor
+      :param target_function: A function that takes z0 and t and returns an energy value.
+      :type target_function: callable
+      :param scale: The strength of the guidance.
+      :type scale: float
+      :param fix_noise: If True, uses fixed noise for sampling. Defaults to False.
+      :type fix_noise: bool, optional
+      :param max_norm: Maximum norm for gradient clipping. Defaults to 20.
+      :type max_norm: int, optional
+      :param n_backward: Number of backward steps for refining the gradient. Defaults to 0.
+      :type n_backward: int, optional
+      :param h_weight: Weight for the feature component of the gradient. Defaults to 1.
+      :type h_weight: int, optional
+      :param x_weight: Weight for the position component of the gradient. Defaults to 1.
+      :type x_weight: int, optional
+      :param structure_guidance: If inpaint or outpaint, applies structure guidance. Defaults to False.
+      :type structure_guidance: bool, optional
+      :param t_critical: Timestep threshold for applying reference tensor constraints. Defaults to None.
+      :type t_critical: float, optional
+      :param mask_node_index: List of node indices to mask during inpaiting. Defaults to [].
+      :type mask_node_index: list, optional
+
+      :returns: The guided sample zs and a dictionary with optimization info.
+      :rtype: Tuple[torch.Tensor, dict]
+
+
+
+   .. py:method:: sample_p_zs_given_zt_ip(s, t, zt, node_mask, edge_mask, context, mask_node_index, connector_dicts, constraint_strength=0.8, scale_factor=1.1, fix_noise=False)
+
+      Performs inpainting on a molecular structure.
+
+      This method fills in a missing part of a molecule, defined by `mask_node_index`,
+      while keeping the rest of the structure fixed. It uses geometric constraints to
+      ensure the generated part is chemically plausible.
+
+      :param s: The current timestep, s.
+      :type s: torch.Tensor
+      :param t: The next timestep, t.
+      :type t: torch.Tensor
+      :param zt: The noisy data at timestep t.
+      :type zt: torch.Tensor
+      :param node_mask: Mask for nodes in the graph.
+      :type node_mask: torch.Tensor
+      :param edge_mask: Mask for edges in the graph.
+      :type edge_mask: torch.Tensor
+      :param context: The conditional information for guidance.
+      :type context: torch.Tensor
+      :param mask_node_index: Indices of the nodes to be inpainted.
+      :type mask_node_index: torch.Tensor
+      :param connector_dicts: A dictionary defining the connector atoms and their degrees.
+      :type connector_dicts: dict
+      :param constraint_strength: Controls when geometric constraints are
+                                  applied. Constraints activate for diffusion steps s < constraint_strength.
+                                  Higher values apply constraints over a wider window. Defaults to 0.8.
+      :type constraint_strength: float, optional
+      :param scale_factor: Scale factor applied to covalent radii when
+                           computing bond-distance tolerances. Increase to allow more spacing between
+                           generated and scaffold atoms. Defaults to 1.1.
+      :type scale_factor: float, optional
+      :param fix_noise: If True, uses fixed noise for sampling. Defaults to False.
+      :type fix_noise: bool, optional
+
+      :returns: The inpainted sample zs.
+      :rtype: torch.Tensor
+
+
+
+   .. py:method:: sample_p_zs_given_zt_op(s, t, zt, node_mask, edge_mask, context, mask_bools, connector_dicts, constraint_strength=0.8, scale_factor=1.1, fix_noise=False)
+
+      Performs outpainting on a molecular structure.
+
+      This method extends a given molecular fragment by generating new atoms and connecting
+      them to the fragment at specified connector points.
+
+      :param s: The current timestep, s.
+      :type s: torch.Tensor
+      :param t: The next timestep, t.
+      :type t: torch.Tensor
+      :param zt: The noisy data at timestep t.
+      :type zt: torch.Tensor
+      :param node_mask: Mask for nodes in the graph.
+      :type node_mask: torch.Tensor
+      :param edge_mask: Mask for edges in the graph.
+      :type edge_mask: torch.Tensor
+      :param context: The conditional information for guidance.
+      :type context: torch.Tensor
+      :param mask_bools: A boolean mask indicating which atoms are part of the generated structure.
+      :type mask_bools: torch.Tensor
+      :param connector_dicts: A dictionary defining the connector atoms and their degrees.
+      :type connector_dicts: dict
+      :param constraint_strength: Controls when geometric constraints are
+                                  applied. Constraints activate for diffusion steps s < constraint_strength.
+                                  Bonding constraints (enforce + ensure_intact) are additionally restricted to
+                                  the upper half of the window (s > constraint_strength / 2). Defaults to 0.8.
+      :type constraint_strength: float, optional
+      :param scale_factor: Scale factor applied to covalent radii when
+                           computing bond-distance tolerances. Increase to allow more spacing between
+                           generated and scaffold atoms. Defaults to 1.1.
+      :type scale_factor: float, optional
+      :param fix_noise: If True, uses fixed noise for sampling. Defaults to False.
+      :type fix_noise: bool, optional
+
+      :returns: The outpainted sample zs.
+      :rtype: torch.Tensor
+
+
+
+   .. py:method:: sample_p_zs_given_zt_op_ft(s, t, zt, reference_tensor, node_mask, edge_mask, context, t_critical=0.05, fix_noise=False)
+
+      Performs outpainting with fine-tuning to a reference structure.
+
+      This method guides the outpainting process by fine-tuning the generated structure
+      to a given reference tensor.
+
+      :param s: The current timestep, s.
+      :type s: torch.Tensor
+      :param t: The next timestep, t.
+      :type t: torch.Tensor
+      :param zt: The noisy data at timestep t.
+      :type zt: torch.Tensor
+      :param reference_tensor: The reference structure to fine-tune to.
+      :type reference_tensor: torch.Tensor
+      :param node_mask: Mask for nodes in the graph.
+      :type node_mask: torch.Tensor
+      :param edge_mask: Mask for edges in the graph.
+      :type edge_mask: torch.Tensor
+      :param context: The conditional information for guidance.
+      :type context: torch.Tensor
+      :param t_critical: Timestep threshold for applying reference tensor constraints. Defaults to 0.05.
+      :type t_critical: float, optional
+      :param fix_noise: If True, uses fixed noise for sampling. Defaults to False.
+      :type fix_noise: bool, optional
+
+      :returns: The outpainted and fine-tuned sample zs.
+      :rtype: torch.Tensor
+
+
+
+   .. py:method:: sample_p_zs_given_zt_silvr(s, t, zt, node_mask, edge_mask, context, xh_ref, silvr_rate, ref_node_mask, total_shift, condition_component, fix_noise=False)
+
+      One SILVR reverse step (Runcie & Mey, JCIM 2023, 63, 5996-6005).
+
+      Reproduces the published sampler's per-step block verbatim
+      (docs/model_integrations/silvr/reference_source/
+      silvr_fork_en_diffusion.py L893-976):
+
+      1. re-centre zt on its own coordinate mean (over node_mask.sum());
+      2. rebuild + re-centre the padded reference, accumulating the removed
+         mean into ``total_shift``;
+      3. take the ordinary, unmodified EDM reverse step;
+      4. blend the reference's noised latent into the reference rows.
+
+      ``alpha_t``/``sigma_t`` come from ``gamma(t)`` -- the higher-noise
+      timestep, one level noisier than the ``z`` step 3 just produced. That
+      is what the source does; it is not a typo for ``gamma(s)``.
+
+      :returns: ``(zs, xh_ref, total_shift)`` -- the latter two are carried
+                into the next step by the caller.
+      :rtype: tuple
+
+
+
+   .. py:method:: sample_p_zs_given_zt_ssgd(s, t, zt, node_mask, edge_mask, context, condition_tensor, condition_component, guidance_strength=0.0, fix_noise=False)
+
+
+.. py:data:: logger
+

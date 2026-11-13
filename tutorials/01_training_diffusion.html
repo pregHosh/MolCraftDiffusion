@@ -627,6 +627,36 @@ MolCraftDiff<span class="w"> </span>train<span class="w"> </span>my_first_run.ya
 <li><p>You are running in a SLURM environment where <code class="docutils literal notranslate"><span class="pre">SLURM_PROCID</span></code> / <code class="docutils literal notranslate"><span class="pre">SLURM_GPUS_ON_NODE</span></code> are used for device assignment.</p></li>
 <li><p>You need step-based termination (<code class="docutils literal notranslate"><span class="pre">num_steps</span></code>).</p></li>
 </ul>
+<p><strong>Behaviour that differs between the engines:</strong></p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p></p></th>
+<th class="head text-left"><p><code class="docutils literal notranslate"><span class="pre">engine:</span> <span class="pre">original</span></code></p></th>
+<th class="head text-left"><p><code class="docutils literal notranslate"><span class="pre">engine:</span> <span class="pre">lightning</span></code></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">trainer.validation_interval:</span> <span class="pre">N</span></code></p></td>
+<td class="text-left"><p>validates at epochs 0, N, 2N, …</p></td>
+<td class="text-left"><p>validates after epochs N, 2N, … (never after epoch 0)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Validation loss (with <code class="docutils literal notranslate"><span class="pre">trainer.ema_decay</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>)</p></td>
+<td class="text-left"><p>EMA weights</p></td>
+<td class="text-left"><p>EMA weights</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Samples drawn by <code class="docutils literal notranslate"><span class="pre">tasks.generative_analysis</span></code> (with <code class="docutils literal notranslate"><span class="pre">trainer.ema_decay</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>)</p></td>
+<td class="text-left"><p>EMA weights</p></td>
+<td class="text-left"><p>raw weights; set <code class="docutils literal notranslate"><span class="pre">generative_eval_use_ema:</span> <span class="pre">true</span></code> at the top level of your config (or under <code class="docutils literal notranslate"><span class="pre">tasks:</span></code>) to use the EMA weights</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">trainer.precision</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">32</span></code>, <code class="docutils literal notranslate"><span class="pre">16</span></code>, <code class="docutils literal notranslate"><span class="pre">bf16</span></code></p></td>
+<td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">32</span></code>, <code class="docutils literal notranslate"><span class="pre">16</span></code>, <code class="docutils literal notranslate"><span class="pre">bf16</span></code>, or a Lightning name such as <code class="docutils literal notranslate"><span class="pre">bf16-mixed</span></code> or <code class="docutils literal notranslate"><span class="pre">64-true</span></code>; any other value logs a warning and runs in fp32</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>When you compare a metric logged during training with the same checkpoint evaluated later by <code class="docutils literal notranslate"><span class="pre">MolCraftDiff</span> <span class="pre">generate</span></code>, remember that generation loads the EMA weights.</p>
 </section>
 <section id="step-3-understand-the-defaults-list">
 <h3>Step 3: Understand the <code class="docutils literal notranslate"><span class="pre">defaults</span></code> List<a class="headerlink" href="#step-3-understand-the-defaults-list" title="Link to this heading">¶</a></h3>

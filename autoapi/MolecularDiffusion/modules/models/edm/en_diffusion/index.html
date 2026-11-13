@@ -579,52 +579,19 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.atomic_numbers" title="MolecularDiffusion.modules.models.edm.en_diffusion.atomic_numbers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_numbers</span></code></a>(model, h_int, h_cat) → torch.Tensor</p></td>
-<td><p>Per-atom atomic numbers for the geometry/quality checks.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.cdf_standard_gaussian" title="MolecularDiffusion.modules.models.edm.en_diffusion.cdf_standard_gaussian"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cdf_standard_gaussian</span></code></a>(x)</p></td>
-<td><p></p></td>
-</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.clip_noise_schedule" title="MolecularDiffusion.modules.models.edm.en_diffusion.clip_noise_schedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip_noise_schedule</span></code></a>(alphas2[, clip_value])</p></td>
 <td><p>For a noise schedule given by alpha^2, this clips alpha_t / alpha_t-1. This may help improve stability during</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.cosine_beta_schedule" title="MolecularDiffusion.modules.models.edm.en_diffusion.cosine_beta_schedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cosine_beta_schedule</span></code></a>(timesteps[, s, raise_to_power])</p></td>
 <td><p>cosine schedule</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.expm1" title="MolecularDiffusion.modules.models.edm.en_diffusion.expm1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expm1</span></code></a>(x) → torch.Tensor</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.gaussian_KL" title="MolecularDiffusion.modules.models.edm.en_diffusion.gaussian_KL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gaussian_KL</span></code></a>(q_mu, q_sigma, p_mu, p_sigma, node_mask)</p></td>
-<td><p>Computes the KL distance between two normal distributions.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.gaussian_KL_for_dimension" title="MolecularDiffusion.modules.models.edm.en_diffusion.gaussian_KL_for_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gaussian_KL_for_dimension</span></code></a>(q_mu, q_sigma, p_mu, p_sigma, d)</p></td>
-<td><p>Computes the KL distance between two normal distributions.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.gaussian_entropy" title="MolecularDiffusion.modules.models.edm.en_diffusion.gaussian_entropy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gaussian_entropy</span></code></a>(mu, sigma)</p></td>
-<td><p></p></td>
-</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.polynomial_schedule" title="MolecularDiffusion.modules.models.edm.en_diffusion.polynomial_schedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">polynomial_schedule</span></code></a>(timesteps[, s, power])</p></td>
 <td><p>A noise schedule based on a simple polynomial equation: 1 - x^power.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.softplus" title="MolecularDiffusion.modules.models.edm.en_diffusion.softplus"><code class="xref py py-obj docutils literal notranslate"><span class="pre">softplus</span></code></a>(x) → torch.Tensor</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.split_feature_axis" title="MolecularDiffusion.modules.models.edm.en_diffusion.split_feature_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split_feature_axis</span></code></a>(model, t, n_cat) → tuple[torch.Tensor, torch.Tensor, torch.Tensor]</p></td>
-<td><p>Split <code class="docutils literal notranslate"><span class="pre">[...,</span> <span class="pre">n_dims</span> <span class="pre">|</span> <span class="pre">n_cat</span> <span class="pre">|</span> <span class="pre">n_int]</span></code> along the last axis.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.split_frame" title="MolecularDiffusion.modules.models.edm.en_diffusion.split_frame"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split_frame</span></code></a>(model, xh) → tuple[torch.Tensor, torch.Tensor, torch.Tensor]</p></td>
-<td><p>Split an unnormalized chain frame into <code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">h_cat,</span> <span class="pre">h_int)</span></code>.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.split_z" title="MolecularDiffusion.modules.models.edm.en_diffusion.split_z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split_z</span></code></a>(model, z) → tuple[torch.Tensor, torch.Tensor, torch.Tensor]</p></td>
-<td><p>Split a normalized latent into <code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">h_cat</span> <span class="pre">(+extra),</span> <span class="pre">h_int)</span></code>.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.sum_except_batch" title="MolecularDiffusion.modules.models.edm.en_diffusion.sum_except_batch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum_except_batch</span></code></a>(x)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.vp_issnr_schedule" title="MolecularDiffusion.modules.models.edm.en_diffusion.vp_issnr_schedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vp_issnr_schedule</span></code></a>(timesteps[, eta, kappa, tmin, tmax])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.vp_issnr_schedule" title="MolecularDiffusion.modules.models.edm.en_diffusion.vp_issnr_schedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vp_issnr_schedule</span></code></a>(timesteps[, eta, kappa, tmin, tmax])</p></td>
 <td><p>Variance-Preserving Inverse Sigmoid SNR (VP-ISSNR) schedule based on:</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.vp_smld_schedule" title="MolecularDiffusion.modules.models.edm.en_diffusion.vp_smld_schedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vp_smld_schedule</span></code></a>(timesteps[, sigma_min, sigma_max])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.vp_smld_schedule" title="MolecularDiffusion.modules.models.edm.en_diffusion.vp_smld_schedule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vp_smld_schedule</span></code></a>(timesteps[, sigma_min, sigma_max])</p></td>
 <td><p>Variance-Preserving SMLD schedule.</p></td>
 </tr>
 </tbody>
@@ -727,7 +694,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.edm.en_diffusion.</span></span><span class="sig-name descname"><span class="pre">EnVariationalDiffusion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dynamics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><span class="pre">torch.nn.Module</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynamics_teacher</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><span class="pre">torch.nn.Module</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_node_nf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_dims</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timesteps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parametrization</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'eps'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_schedule</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'learned'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_precision</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'vlb'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(1.0,</span> <span class="pre">1.0,</span> <span class="pre">1.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_norm_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_biases</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(None,</span> <span class="pre">0.0,</span> <span class="pre">0.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_charges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_mask_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_vocab</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_noised_conditioning</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="../en_diffusion_loss/index.html#MolecularDiffusion.modules.models.edm.en_diffusion_loss.EnDiffusionLossMixin" title="MolecularDiffusion.modules.models.edm.en_diffusion_loss.EnDiffusionLossMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MolecularDiffusion.modules.models.edm.en_diffusion_loss.EnDiffusionLossMixin</span></code></a>, <a class="reference internal" href="../en_diffusion_sampling/index.html#MolecularDiffusion.modules.models.edm.en_diffusion_sampling.EnDiffusionSamplingMixin" title="MolecularDiffusion.modules.models.edm.en_diffusion_sampling.EnDiffusionSamplingMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MolecularDiffusion.modules.models.edm.en_diffusion_sampling.EnDiffusionSamplingMixin</span></code></a>, <a class="reference internal" href="../en_diffusion_guidance/index.html#MolecularDiffusion.modules.models.edm.en_diffusion_guidance.EnDiffusionGuidanceMixin" title="MolecularDiffusion.modules.models.edm.en_diffusion_guidance.EnDiffusionGuidanceMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MolecularDiffusion.modules.models.edm.en_diffusion_guidance.EnDiffusionGuidanceMixin</span></code></a>, <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
 <p>E(n) Equivariant Variational Diffusion Model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -804,104 +771,6 @@ if the current molecule is “unclean”. Defaults to 4.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_error">
-<span class="sig-name descname"><span class="pre">compute_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_error" title="Link to this definition">¶</a></dt>
-<dd><p>Computes error, i.e. the most likely prediction of x.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_error_pyG">
-<span class="sig-name descname"><span class="pre">compute_error_pyG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">natom</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_error_pyG" title="Link to this definition">¶</a></dt>
-<dd><p>Vectorized per-molecule loss computation without Python loops.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>net_out</strong> – Tensor of shape (N_total, F)</p></li>
-<li><p><strong>eps</strong> – Tensor of shape (N_total, F)</p></li>
-<li><p><strong>natom</strong> – LongTensor of shape (batch_size,) summing to N_total</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict of (batch_size,) tensors: ‘pos’,’integer’,’categorical’, and optionally ‘h_extra’</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>errors</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_loss">
-<span class="sig-name descname"><span class="pre">compute_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0_always</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_freeze_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_loss" title="Link to this definition">¶</a></dt>
-<dd><p>Computes the total training loss (VLB or L2) based on a randomly sampled timestep t.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<a class="reference internal" href="../../../layers/e3x/modules/index.html#MolecularDiffusion.modules.layers.e3x.modules.Tensor" title="MolecularDiffusion.modules.layers.e3x.modules.Tensor"><em>Tensor</em></a>) – [B, N, 3] atom positions</p></li>
-<li><p><strong>h</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a>) – dictionary with ‘categorical’, ‘integer’, and optionally ‘extra’ features</p></li>
-<li><p><strong>node_mask</strong> (<a class="reference internal" href="../../../layers/e3x/modules/index.html#MolecularDiffusion.modules.layers.e3x.modules.Tensor" title="MolecularDiffusion.modules.layers.e3x.modules.Tensor"><em>Tensor</em></a>) – [B, N, 1] indicating which nodes are valid</p></li>
-<li><p><strong>edge_mask</strong> (<a class="reference internal" href="../../../layers/e3x/modules/index.html#MolecularDiffusion.modules.layers.e3x.modules.Tensor" title="MolecularDiffusion.modules.layers.e3x.modules.Tensor"><em>Tensor</em></a>) – [B, N, N] adjacency mask</p></li>
-<li><p><strong>context</strong> (<a class="reference internal" href="../../../layers/e3x/modules/index.html#MolecularDiffusion.modules.layers.e3x.modules.Tensor" title="MolecularDiffusion.modules.layers.e3x.modules.Tensor"><em>Tensor</em></a><em> or </em><em>None</em>) – [B, N, D] per-node context or None</p></li>
-<li><p><strong>t0_always</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a>) – whether to explicitly include the loss at t = 0</p></li>
-<li><p><strong>reference_indices</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><em>list</em></a><em> or </em><a class="reference internal" href="../../../layers/e3x/modules/index.html#MolecularDiffusion.modules.layers.e3x.modules.Tensor" title="MolecularDiffusion.modules.layers.e3x.modules.Tensor"><em>Tensor</em></a><em>, </em><em>optional</em>) – atom indices to freeze during loss</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Tensor of shape [B], diagnostics: dict)</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Tuple of (loss</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_loss_distillation">
-<span class="sig-name descname"><span class="pre">compute_loss_distillation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0_always</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">masked_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_loss_distillation" title="Link to this definition">¶</a></dt>
-<dd><p>Computes an estimator for the variational lower bound, or the simple loss (MSE).</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_loss_per_graph">
-<span class="sig-name descname"><span class="pre">compute_loss_per_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol_graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_indices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_freeze_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_loss_per_graph" title="Link to this definition">¶</a></dt>
-<dd><p>Returns raw per-graph error for sp_regularizer filtering (PyG path).</p>
-<p>Returns loss_t (the per-graph prediction error before T multiplication
-and neg_log_constants), so the scale is comparable to FM’s per-graph MSE.
-Only valid when batch uses PyG format (‘graph’ key).</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_loss_pyG">
-<span class="sig-name descname"><span class="pre">compute_loss_pyG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol_graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0_always</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_indices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_freeze_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_loss_pyG" title="Link to this definition">¶</a></dt>
-<dd><p>Computes an estimator for the variational lower bound, or the simple loss (MSE).</p>
-<p>If reference_indices is specified, their atoms are frozen during the forward pass.
-The loss is computed only for the unfrozen atoms.</p>
-<dl class="simple">
-<dt>mol_graph: pyGraph, containing the following attributes:</dt><dd><p>x: torch.Tensor, shape [N, D] (node features)
-pos: torch.Tensor, shape [N, 3] (positions)
-charges: torch.Tensor, shape [N, 1] (charges)
-natoms: int, number of atoms
-edge_index: torch.Tensor, shape [2, E] (edge indices)</p>
-</dd>
-</dl>
-<p>context: torch.Tensor, shape [B, D]
-t0_always: bool, whether to include loss term 0 always.
-reference_indices: list of int, indices of reference nodes</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_x_pred">
-<span class="sig-name descname"><span class="pre">compute_x_pred</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma_t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_x_pred" title="Link to this definition">¶</a></dt>
-<dd><p>Commputes x_pred, i.e. the most likely prediction of x.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_indices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_freeze_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mol_graph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.forward" title="Link to this definition">¶</a></dt>
-<dd><p>Computes the loss (type l2 or NLL) if training. And if eval then always computes NLL.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.inflate_batch_array">
 <span class="sig-name descname"><span class="pre">inflate_batch_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.inflate_batch_array" title="Link to this definition">¶</a></dt>
 <dd><p>Inflates the batch array (array) with only a single axis (i.e. shape = (batch_size,), or possibly more empty
@@ -909,40 +778,10 @@ axes (i.e. shape (batch_size, 1, …, 1)) to match the target shape.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.kl_prior">
-<span class="sig-name descname"><span class="pre">kl_prior</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.kl_prior" title="Link to this definition">¶</a></dt>
-<dd><p>Computes the KL between q(z1 | x) and the prior p(z1) = Normal(0, 1).</p>
-<p>This is essentially a lot of work for something that is in practice negligible in the loss. However, you
-compute it so that you see it when you’ve made a mistake in your noise schedule.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.log_constants_p_x_given_z0">
-<span class="sig-name descname"><span class="pre">log_constants_p_x_given_z0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.log_constants_p_x_given_z0" title="Link to this definition">¶</a></dt>
-<dd><p>Computes p(x|z0).</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.log_constants_p_x_given_z0_pyG">
-<span class="sig-name descname"><span class="pre">log_constants_p_x_given_z0_pyG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_nodes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.log_constants_p_x_given_z0_pyG" title="Link to this definition">¶</a></dt>
-<dd><p>Computes p(x|z0).</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.log_info">
 <span class="sig-name descname"><span class="pre">log_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.log_info" title="Link to this definition">¶</a></dt>
 <dd><p>Some info logging of the model.</p>
 </dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.log_pxh_given_z0_without_constants">
-<span class="sig-name descname"><span class="pre">log_pxh_given_z0_without_constants</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_indices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.log_pxh_given_z0_without_constants" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.log_pxh_given_z0_without_constants_pyG">
-<span class="sig-name descname"><span class="pre">log_pxh_given_z0_without_constants_pyG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">natom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_indices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.log_pxh_given_z0_without_constants_pyG" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.normalize">
@@ -975,475 +814,6 @@ compute it so that you see it when you’ve made a mistake in your noise schedul
 </dd>
 </dl>
 </dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.phi">
-<span class="sig-name descname"><span class="pre">phi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.phi" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.phi_distillation">
-<span class="sig-name descname"><span class="pre">phi_distillation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.phi_distillation" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.phi_pyg">
-<span class="sig-name descname"><span class="pre">phi_pyg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol_graph</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.phi_pyg" title="Link to this definition">¶</a></dt>
-<dd><p>mol_graph containing
-- x : node_feature [N, nf]
-- pos L position [N, 3]
-- edge_index
-- context: properties conditioning the model [N, n_prop]
-- time: t_float [N,1]</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample">
-<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inpaint_cfgs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpaint_cfgs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_noised_conditioning</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_retry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">180</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_retrys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silvr_cfgs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample" title="Link to this definition">¶</a></dt>
-<dd><p>Draw samples from the generative model.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_chain">
-<span class="sig-name descname"><span class="pre">sample_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_chain" title="Link to this definition">¶</a></dt>
-<dd><p>Draw samples from the generative model, keep the intermediate states for visualization purposes.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_combined_position_feature_noise">
-<span class="sig-name descname"><span class="pre">sample_combined_position_feature_noise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_combined_position_feature_noise" title="Link to this definition">¶</a></dt>
-<dd><p>Samples mean-centered normal noise for z_x, and standard normal noise for z_h.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_ddim">
-<span class="sig-name descname"><span class="pre">sample_ddim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_ddim" title="Link to this definition">¶</a></dt>
-<dd><p>DDIM sampling: deterministic, optionally fewer steps.
-eta=0.0 corresponds to the original DDIM (no noise),
-eta &gt; 0 adds noise (reverts toward DDPM-like).</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_ddim_step">
-<span class="sig-name descname"><span class="pre">sample_ddim_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_ddim_step" title="Link to this definition">¶</a></dt>
-<dd><p>Deterministic DDIM step: z_s ← z_t - f(eps_theta), no stochasticity when eta=0.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_guidance">
-<span class="sig-name descname"><span class="pre">sample_guidance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_negative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gg_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_scale_schedule</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guidance_at</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guidance_stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guidance_ver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_backwards</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition_tensor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inpaint_cfgs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpaint_cfgs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_noised_conditioning</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_guidance" title="Link to this definition">¶</a></dt>
-<dd><blockquote>
-<div><p>Guided sampling from the generative model.</p>
-<p>Parameters:
-- n_samples (int): Number of samples to generate.
-- target_function (Callable[[Tensor], Tensor]): Target function for guidance. The higher the value, the better.
-- node_mask (Tensor): Mask indicating valid nodes.
-- edge_mask (Tensor): Mask indicating valid edges.
-- context (Tensor): Conditonal properties. Default is None.
-- context_negative (Tensor): Conditonal properties. Default is None.
-- gg_scale (float): Scale factor for gradient guidance. Default is 1.0.
-- cfg_scale (float): Scale factor for classifier-free guidance. Default is 1.0.
-- cfg_scale_schedule (str|optional): The schedule for cfg_scale. Can be “linear”, “exponential”, or “cosine”. Default is None.
-- max_norm (float): Initial maximum norm for the gradients. Default is 10.0.
-- fix_noise (bool): Fix noise for visualization purposes. Default is False.
-- std (float): Standard deviation of the noise. Default is 1.0.
-- scheduler (RateScheduler): Rate scheduler. Default is None.</p>
-<blockquote>
-<div><p>The scheduler should have a step method that takes the energy and the current scale as input.</p>
-</div></blockquote>
-<ul class="simple">
-<li><p>guidance_at (int): The timestep at which to apply guidance [0-1]  0 = since beginning. Default is 1.</p></li>
-<li><p>guidance_stop (int): The timestep at which to stop applying guidance [0-1]  1 = until the end. Default is 0.</p></li>
-<li><p>guidance_ver (int): The version of the guidance. Default is 1. [0,1,2,cfg,cfg_gg]</p></li>
-<li><p>n_backwards (int): Number of backward steps. Default is 0.</p></li>
-<li><p>h_weight (float): Weight for the gradient of atom feature. Default is 1.0.</p></li>
-<li><p>x_weight (float): Weight for the gradient of cartesian coordinate. Default is 1.0.</p></li>
-<li><p>n_frames (int, optional): Number of frames for sampling. Defaults to 0.</p></li>
-<li><dl class="simple">
-<dt>debug (bool): Debug mode. Default is False.</dt><dd><p>Save gradient norms, max gradients, clipping coefficients, and energies to files.</p>
-</dd>
-</dl>
-</li>
-<li><p>condition_tensor (torch.Tensor, optional): Tensor for conditional guidance. Defaults to None.</p></li>
-<li><p>condition_mode (str, optional): Mode for conditional guidance. Defaults to None.</p></li>
-<li><dl class="simple">
-<dt>inpaint_cfgs (dict, optional): Configuration for inpainting.</dt><dd><dl class="simple">
-<dt>The dictionary must contains:</dt><dd><ul>
-<li><p>mask_node_index (torch.Tensor, optional): Indices of nodes to be inpainted. Defaults to an empty tensor.</p></li>
-<li><p>denoising_strength (float, optional): Strength of denoising for inpainting</p></li>
-<li><p>noise_initial_mask (bool, optional): Whether to noise the initial masked region. Defaults to False.</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>outpaint_cfgs (dict, optional): Configuration for outpainting.</dt><dd><dl class="simple">
-<dt>The dictionary must contains:</dt><dd><ul>
-<li><p>t_start (float, optional): Timestep to start the generation. Defaults to 1.0.</p></li>
-<li><p>t_critical (float, optional): Timestep threshold for applying reference tensor constraints. Defaults to None.</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</li>
-</ul>
-</div></blockquote>
-<dl>
-<dt>`               - connector_index (torch.Tensor, optional): Indices of connector nodes for outpainting. Defaults to an empty tensor.</dt><dd><blockquote>
-<div><ul class="simple">
-<li><p>seed_dist (float, optional): Distance of the seed from the connector atom (used if n_bq_atom == 0)..</p></li>
-<li><p>min_dist (float, optional): Minimum distance from any existing atom in xh_cond (except the connector itself). Defaults to 1.</p></li>
-<li><dl class="simple">
-<dt>spread (float, optional): Random-walk angular dispersion, or</dt><dd><p>legacy seed-cloud position spread. Defaults to 1.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>jitter_scale (float): Explicit positional noise magnitude</dt><dd><p>when forward_noise is “jitter”.</p>
-</dd>
-</dl>
-</li>
-<li><p>n_bq_atom (int, optional): Number of dummy atoms. Defaults is 0.</p></li>
-</ul>
-</div></blockquote>
-<p>Returns:
-Tuple[Tensor, Tensor]: Sampled positions and features.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_normal">
-<span class="sig-name descname"><span class="pre">sample_normal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_normal" title="Link to this definition">¶</a></dt>
-<dd><p>Samples from a Normal distribution.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_xh_given_z0">
-<span class="sig-name descname"><span class="pre">sample_p_xh_given_z0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_xh_given_z0" title="Link to this definition">¶</a></dt>
-<dd><p>Samples x ~ p(x|z0).</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt">
-<span class="sig-name descname"><span class="pre">sample_p_zs_given_zt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt" title="Link to this definition">¶</a></dt>
-<dd><p>Samples from zs ~ p(zs | zt). Only used during sampling.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_guidance_cfg">
-<span class="sig-name descname"><span class="pre">sample_p_zs_given_zt_guidance_cfg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_negative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure_guidance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_critical</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_node_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_schedule_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_guidance_cfg" title="Link to this definition">¶</a></dt>
-<dd><p>Samples from zs ~ p(zs | zt) using classifier-free guidance (CFG).</p>
-<p>This method adjusts the diffusion sampling process by guiding the noise prediction
-towards a conditional distribution and away from an unconditional (or negative) one.
-It also supports inpainting-style generation where a reference part of the structure
-can be fixed.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>s</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The current timestep, s.</p></li>
-<li><p><strong>t</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The next timestep, t.</p></li>
-<li><p><strong>zt</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The noisy data at timestep t.</p></li>
-<li><p><strong>node_mask</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Mask for nodes in the graph.</p></li>
-<li><p><strong>edge_mask</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Mask for edges in the graph.</p></li>
-<li><p><strong>context</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The conditional information for guidance.</p></li>
-<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – The strength of the classifier-free guidance.</p></li>
-<li><p><strong>fix_noise</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, uses fixed noise for sampling. Defaults to False.</p></li>
-<li><p><strong>context_negative</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a><em>, </em><em>optional</em>) – Negative conditional information for guidance.
-If None, unconditional generation is used as the negative target. Defaults to None.</p></li>
-<li><p><strong>structure_guidance</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>optional</em>) – If inpaint or outpaint, applies structure guidance. Defaults to False.</p></li>
-<li><p><strong>t_critical</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – Timestep threshold for applying reference tensor constraints. Defaults to None.</p></li>
-<li><p><strong>mask_node_index</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><em>list</em></a><em>, </em><em>optional</em>) – List of node indices to mask during inpaiting. Defaults to [].</p></li>
-<li><p><strong>scale_schedule_type</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>optional</em>) – Type of scheduler for CFG scale. [Available: ‘linear’, ‘cosine’]. Defaults to None.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The sampled data <cite>zs</cite> at timestep <cite>s</cite>.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)">torch.Tensor</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_guidance_cfg_gg">
-<span class="sig-name descname"><span class="pre">sample_p_zs_given_zt_guidance_cfg_gg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg_scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gg_scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_backward</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_negative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure_guidance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_critical</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_node_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_schedule_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_guidance_cfg_gg" title="Link to this definition">¶</a></dt>
-<dd><p>Combines Classifier-Free Guidance (CFG) with Gradient-Based Guidance (GG).</p>
-<p>This method first computes the noise prediction using CFG and then applies a
-gradient-based correction to the mean of the sampling distribution.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>s</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The current timestep, s.</p></li>
-<li><p><strong>t</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The next timestep, t.</p></li>
-<li><p><strong>zt</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The noisy data at timestep t.</p></li>
-<li><p><strong>node_mask</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Mask for nodes in the graph.</p></li>
-<li><p><strong>edge_mask</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Mask for edges in the graph.</p></li>
-<li><p><strong>context</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The conditional information for guidance.</p></li>
-<li><p><strong>target_function</strong> (<em>callable</em>) – A function that takes z0 and t and returns an energy value.</p></li>
-<li><p><strong>cfg_scale</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – The strength of the classifier-free guidance.</p></li>
-<li><p><strong>gg_scale</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – The strength of the gradient-based guidance.</p></li>
-<li><p><strong>max_norm</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Maximum norm for gradient clipping. Defaults to 20.</p></li>
-<li><p><strong>n_backward</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Number of backward steps for refining the gradient. Defaults to 0.</p></li>
-<li><p><strong>h_weight</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Weight for the feature component of the gradient. Defaults to 1.</p></li>
-<li><p><strong>x_weight</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Weight for the position component of the gradient. Defaults to 1.</p></li>
-<li><p><strong>fix_noise</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, uses fixed noise for sampling. Defaults to False.</p></li>
-<li><p><strong>context_negative</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a><em>, </em><em>optional</em>) – Negative conditional information for guidance.
-If None, unconditional generation is used as the negative target. Defaults to None.</p></li>
-<li><p><strong>structure_guidance</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>optional</em>) – If inpaint or outpaint, applies structure guidance. Defaults to False.</p></li>
-<li><p><strong>t_critical</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – Timestep threshold for applying reference tensor constraints. Defaults to None.</p></li>
-<li><p><strong>mask_node_index</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><em>list</em></a><em>, </em><em>optional</em>) – List of node indices to mask during inpaiting. Defaults to [].</p></li>
-<li><p><strong>scale_schedule_type</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>optional</em>) – Type of scheduler for CFG scale. [Available: ‘linear’, ‘cosine’]. Defaults to None.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The guided sample zs and an opt_info dict
-with keys mu0_norm, mu1_norm, grad_norms, energies, z_norm.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Tuple[<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)">torch.Tensor</a>, <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)">dict</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_guidance_v0">
-<span class="sig-name descname"><span class="pre">sample_p_zs_given_zt_guidance_v0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_backward</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_guidance_v0" title="Link to this definition">¶</a></dt>
-<dd><p>Samples from zs ~ p(zs | zt) with guidance applied directly to the latent sample zs.</p>
-<p>This method computes the gradient of a target function with respect to the latent
-variable zs and uses it to guide the sampling process.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>s</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The current timestep, s.</p></li>
-<li><p><strong>t</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The next timestep, t.</p></li>
-<li><p><strong>zt</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The noisy data at timestep t.</p></li>
-<li><p><strong>node_mask</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Mask for nodes in the graph.</p></li>
-<li><p><strong>edge_mask</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Mask for edges in the graph.</p></li>
-<li><p><strong>context</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The conditional information for guidance.</p></li>
-<li><p><strong>target_function</strong> (<em>callable</em>) – A function that takes zs and s and returns an energy value.</p></li>
-<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – The strength of the guidance.</p></li>
-<li><p><strong>fix_noise</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, uses fixed noise for sampling. Defaults to False.</p></li>
-<li><p><strong>max_norm</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Maximum norm for gradient clipping. Defaults to 20.</p></li>
-<li><p><strong>n_backward</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Number of backward steps for refining the gradient. Defaults to 0.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The guided sample zs and a dictionary with optimization info.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Tuple[<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)">torch.Tensor</a>, <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)">dict</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_guidance_v1">
-<span class="sig-name descname"><span class="pre">sample_p_zs_given_zt_guidance_v1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_backward</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_guidance_v1" title="Link to this definition">¶</a></dt>
-<dd><p>Samples from zs ~ p(zs | zt) with guidance applied to the mean of the distribution.</p>
-<p>This method computes the gradient of a target function with respect to the predicted
-clean data z0 and uses it to guide the mean of the sampling distribution.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>s</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The current timestep, s.</p></li>
-<li><p><strong>t</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The next timestep, t.</p></li>
-<li><p><strong>zt</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The noisy data at timestep t.</p></li>
-<li><p><strong>node_mask</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Mask for nodes in the graph.</p></li>
-<li><p><strong>edge_mask</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Mask for edges in the graph.</p></li>
-<li><p><strong>context</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The conditional information for guidance.</p></li>
-<li><p><strong>target_function</strong> (<em>callable</em>) – A function that takes z0 and t and returns an energy value.</p></li>
-<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – The strength of the guidance.</p></li>
-<li><p><strong>fix_noise</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, uses fixed noise for sampling. Defaults to False.</p></li>
-<li><p><strong>max_norm</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Maximum norm for gradient clipping. Defaults to 20.</p></li>
-<li><p><strong>n_backward</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Number of backward steps for refining the gradient. Defaults to 0.</p></li>
-<li><p><strong>h_weight</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Weight for the feature component of the gradient. Defaults to 1.</p></li>
-<li><p><strong>x_weight</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Weight for the position component of the gradient. Defaults to 1.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The guided sample zs and a dictionary with optimization info.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Tuple[<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)">torch.Tensor</a>, <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)">dict</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_guidance_v2">
-<span class="sig-name descname"><span class="pre">sample_p_zs_given_zt_guidance_v2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_backward</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure_guidance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_critical</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_node_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_guidance_v2" title="Link to this definition">¶</a></dt>
-<dd><p>Samples from zs ~ p(zs | zt) with guidance inspired by GeoGuide.</p>
-<p>This method applies guidance to the mean of the sampling distribution, similar to v1,
-but with modifications inspired by the GeoGuide paper. It also supports conditional
-generation using a reference tensor.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>s</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The current timestep, s.</p></li>
-<li><p><strong>t</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The next timestep, t.</p></li>
-<li><p><strong>zt</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The noisy data at timestep t.</p></li>
-<li><p><strong>node_mask</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Mask for nodes in the graph.</p></li>
-<li><p><strong>edge_mask</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Mask for edges in the graph.</p></li>
-<li><p><strong>context</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The conditional information for guidance.</p></li>
-<li><p><strong>target_function</strong> (<em>callable</em>) – A function that takes z0 and t and returns an energy value.</p></li>
-<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – The strength of the guidance.</p></li>
-<li><p><strong>fix_noise</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, uses fixed noise for sampling. Defaults to False.</p></li>
-<li><p><strong>max_norm</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Maximum norm for gradient clipping. Defaults to 20.</p></li>
-<li><p><strong>n_backward</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Number of backward steps for refining the gradient. Defaults to 0.</p></li>
-<li><p><strong>h_weight</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Weight for the feature component of the gradient. Defaults to 1.</p></li>
-<li><p><strong>x_weight</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Weight for the position component of the gradient. Defaults to 1.</p></li>
-<li><p><strong>structure_guidance</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>optional</em>) – If inpaint or outpaint, applies structure guidance. Defaults to False.</p></li>
-<li><p><strong>t_critical</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – Timestep threshold for applying reference tensor constraints. Defaults to None.</p></li>
-<li><p><strong>mask_node_index</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><em>list</em></a><em>, </em><em>optional</em>) – List of node indices to mask during inpaiting. Defaults to [].</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The guided sample zs and a dictionary with optimization info.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Tuple[<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)">torch.Tensor</a>, <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)">dict</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_ip">
-<span class="sig-name descname"><span class="pre">sample_p_zs_given_zt_ip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_node_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connector_dicts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraint_strength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_ip" title="Link to this definition">¶</a></dt>
-<dd><p>Performs inpainting on a molecular structure.</p>
-<p>This method fills in a missing part of a molecule, defined by <cite>mask_node_index</cite>,
-while keeping the rest of the structure fixed. It uses geometric constraints to
-ensure the generated part is chemically plausible.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>s</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The current timestep, s.</p></li>
-<li><p><strong>t</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The next timestep, t.</p></li>
-<li><p><strong>zt</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The noisy data at timestep t.</p></li>
-<li><p><strong>node_mask</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Mask for nodes in the graph.</p></li>
-<li><p><strong>edge_mask</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Mask for edges in the graph.</p></li>
-<li><p><strong>context</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The conditional information for guidance.</p></li>
-<li><p><strong>mask_node_index</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Indices of the nodes to be inpainted.</p></li>
-<li><p><strong>connector_dicts</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a>) – A dictionary defining the connector atoms and their degrees.</p></li>
-<li><p><strong>constraint_strength</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – Controls when geometric constraints are
-applied. Constraints activate for diffusion steps s &lt; constraint_strength.
-Higher values apply constraints over a wider window. Defaults to 0.8.</p></li>
-<li><p><strong>scale_factor</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – Scale factor applied to covalent radii when
-computing bond-distance tolerances. Increase to allow more spacing between
-generated and scaffold atoms. Defaults to 1.1.</p></li>
-<li><p><strong>fix_noise</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, uses fixed noise for sampling. Defaults to False.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The inpainted sample zs.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)">torch.Tensor</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_op">
-<span class="sig-name descname"><span class="pre">sample_p_zs_given_zt_op</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_bools</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connector_dicts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraint_strength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_op" title="Link to this definition">¶</a></dt>
-<dd><p>Performs outpainting on a molecular structure.</p>
-<p>This method extends a given molecular fragment by generating new atoms and connecting
-them to the fragment at specified connector points.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>s</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The current timestep, s.</p></li>
-<li><p><strong>t</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The next timestep, t.</p></li>
-<li><p><strong>zt</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The noisy data at timestep t.</p></li>
-<li><p><strong>node_mask</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Mask for nodes in the graph.</p></li>
-<li><p><strong>edge_mask</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Mask for edges in the graph.</p></li>
-<li><p><strong>context</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The conditional information for guidance.</p></li>
-<li><p><strong>mask_bools</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – A boolean mask indicating which atoms are part of the generated structure.</p></li>
-<li><p><strong>connector_dicts</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a>) – A dictionary defining the connector atoms and their degrees.</p></li>
-<li><p><strong>constraint_strength</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – Controls when geometric constraints are
-applied. Constraints activate for diffusion steps s &lt; constraint_strength.
-Bonding constraints (enforce + ensure_intact) are additionally restricted to
-the upper half of the window (s &gt; constraint_strength / 2). Defaults to 0.8.</p></li>
-<li><p><strong>scale_factor</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – Scale factor applied to covalent radii when
-computing bond-distance tolerances. Increase to allow more spacing between
-generated and scaffold atoms. Defaults to 1.1.</p></li>
-<li><p><strong>fix_noise</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, uses fixed noise for sampling. Defaults to False.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The outpainted sample zs.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)">torch.Tensor</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_op_ft">
-<span class="sig-name descname"><span class="pre">sample_p_zs_given_zt_op_ft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_critical</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_op_ft" title="Link to this definition">¶</a></dt>
-<dd><p>Performs outpainting with fine-tuning to a reference structure.</p>
-<p>This method guides the outpainting process by fine-tuning the generated structure
-to a given reference tensor.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>s</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The current timestep, s.</p></li>
-<li><p><strong>t</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The next timestep, t.</p></li>
-<li><p><strong>zt</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The noisy data at timestep t.</p></li>
-<li><p><strong>reference_tensor</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The reference structure to fine-tune to.</p></li>
-<li><p><strong>node_mask</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Mask for nodes in the graph.</p></li>
-<li><p><strong>edge_mask</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Mask for edges in the graph.</p></li>
-<li><p><strong>context</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The conditional information for guidance.</p></li>
-<li><p><strong>t_critical</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – Timestep threshold for applying reference tensor constraints. Defaults to 0.05.</p></li>
-<li><p><strong>fix_noise</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, uses fixed noise for sampling. Defaults to False.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The outpainted and fine-tuned sample zs.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)">torch.Tensor</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_silvr">
-<span class="sig-name descname"><span class="pre">sample_p_zs_given_zt_silvr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xh_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silvr_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_shift</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition_component</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_silvr" title="Link to this definition">¶</a></dt>
-<dd><p>One SILVR reverse step (Runcie &amp; Mey, JCIM 2023, 63, 5996-6005).</p>
-<p>Reproduces the published sampler’s per-step block verbatim
-(docs/model_integrations/silvr/reference_source/
-silvr_fork_en_diffusion.py L893-976):</p>
-<ol class="arabic simple">
-<li><p>re-centre zt on its own coordinate mean (over node_mask.sum());</p></li>
-<li><p>rebuild + re-centre the padded reference, accumulating the removed
-mean into <code class="docutils literal notranslate"><span class="pre">total_shift</span></code>;</p></li>
-<li><p>take the ordinary, unmodified EDM reverse step;</p></li>
-<li><p>blend the reference’s noised latent into the reference rows.</p></li>
-</ol>
-<p><code class="docutils literal notranslate"><span class="pre">alpha_t</span></code>/<code class="docutils literal notranslate"><span class="pre">sigma_t</span></code> come from <code class="docutils literal notranslate"><span class="pre">gamma(t)</span></code> – the higher-noise
-timestep, one level noisier than the <code class="docutils literal notranslate"><span class="pre">z</span></code> step 3 just produced. That
-is what the source does; it is not a typo for <code class="docutils literal notranslate"><span class="pre">gamma(s)</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">(zs,</span> <span class="pre">xh_ref,</span> <span class="pre">total_shift)</span></code> – the latter two are carried
-into the next step by the caller.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)">tuple</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_ssgd">
-<span class="sig-name descname"><span class="pre">sample_p_zs_given_zt_ssgd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition_tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition_component</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guidance_strength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_ssgd" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.scale_schedule">
@@ -1746,22 +1116,6 @@ sigma t given s = sqrt(1 - (alpha t given s) ^2 ).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.atomic_numbers">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.edm.en_diffusion.</span></span><span class="sig-name descname"><span class="pre">atomic_numbers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><span class="pre">torch.nn.Module</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_int</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_cat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.atomic_numbers" title="Link to this definition">¶</a></dt>
-<dd><p>Per-atom atomic numbers for the geometry/quality checks.</p>
-<p>Returns the model’s integer channel when it has one – the same tensor
-object callers used before. Models built with <code class="docutils literal notranslate"><span class="pre">include_charges=False</span></code>
-carry no such channel, so the numbers are decoded from the categorical
-one-hot through <code class="docutils literal notranslate"><span class="pre">atom_vocab</span></code> instead, falling back to the empty
-integer block when no vocabulary was configured.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.cdf_standard_gaussian">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.edm.en_diffusion.</span></span><span class="sig-name descname"><span class="pre">cdf_standard_gaussian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.cdf_standard_gaussian" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.clip_noise_schedule">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.edm.en_diffusion.</span></span><span class="sig-name descname"><span class="pre">clip_noise_schedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alphas2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.clip_noise_schedule" title="Link to this definition">¶</a></dt>
 <dd><p>For a noise schedule given by alpha^2, this clips alpha_t / alpha_t-1. This may help improve stability during
@@ -1776,93 +1130,10 @@ as proposed in <a class="reference external" href="https://openreview.net/forum?
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.expm1">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.edm.en_diffusion.</span></span><span class="sig-name descname"><span class="pre">expm1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.expm1" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.gaussian_KL">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.edm.en_diffusion.</span></span><span class="sig-name descname"><span class="pre">gaussian_KL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q_mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q_sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_mask</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.gaussian_KL" title="Link to this definition">¶</a></dt>
-<dd><p>Computes the KL distance between two normal distributions.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>q_mu</strong> – Mean of distribution q.</p></li>
-<li><p><strong>q_sigma</strong> – Standard deviation of distribution q.</p></li>
-<li><p><strong>p_mu</strong> – Mean of distribution p.</p></li>
-<li><p><strong>p_sigma</strong> – Standard deviation of distribution p.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The KL distance, summed over all dimensions except the batch dim.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.gaussian_KL_for_dimension">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.edm.en_diffusion.</span></span><span class="sig-name descname"><span class="pre">gaussian_KL_for_dimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q_mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q_sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.gaussian_KL_for_dimension" title="Link to this definition">¶</a></dt>
-<dd><p>Computes the KL distance between two normal distributions.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>q_mu</strong> – Mean of distribution q.</p></li>
-<li><p><strong>q_sigma</strong> – Standard deviation of distribution q.</p></li>
-<li><p><strong>p_mu</strong> – Mean of distribution p.</p></li>
-<li><p><strong>p_sigma</strong> – Standard deviation of distribution p.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The KL distance, summed over all dimensions except the batch dim.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.gaussian_entropy">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.edm.en_diffusion.</span></span><span class="sig-name descname"><span class="pre">gaussian_entropy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.gaussian_entropy" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.polynomial_schedule">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.edm.en_diffusion.</span></span><span class="sig-name descname"><span class="pre">polynomial_schedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timesteps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.polynomial_schedule" title="Link to this definition">¶</a></dt>
 <dd><p>A noise schedule based on a simple polynomial equation: 1 - x^power.</p>
 </dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.softplus">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.edm.en_diffusion.</span></span><span class="sig-name descname"><span class="pre">softplus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.softplus" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.split_feature_axis">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.edm.en_diffusion.</span></span><span class="sig-name descname"><span class="pre">split_feature_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><span class="pre">torch.nn.Module</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_cat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.split_feature_axis" title="Link to this definition">¶</a></dt>
-<dd><p>Split <code class="docutils literal notranslate"><span class="pre">[...,</span> <span class="pre">n_dims</span> <span class="pre">|</span> <span class="pre">n_cat</span> <span class="pre">|</span> <span class="pre">n_int]</span></code> along the last axis.</p>
-<p>The integer block is empty for models built with
-<code class="docutils literal notranslate"><span class="pre">include_charges=False</span></code>, which keeps every downstream <code class="docutils literal notranslate"><span class="pre">cat</span></code> / mask /
-<code class="docutils literal notranslate"><span class="pre">sum_except_batch</span></code> shape-correct without per-site branching. With
-<code class="docutils literal notranslate"><span class="pre">include_charges=True</span></code> these slices are exactly the <code class="docutils literal notranslate"><span class="pre">[...,</span> <span class="pre">:-1]</span></code> /
-<code class="docutils literal notranslate"><span class="pre">[...,</span> <span class="pre">-1:]</span></code> arithmetic they replace.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.split_frame">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.edm.en_diffusion.</span></span><span class="sig-name descname"><span class="pre">split_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><span class="pre">torch.nn.Module</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">xh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.split_frame" title="Link to this definition">¶</a></dt>
-<dd><p>Split an unnormalized chain frame into <code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">h_cat,</span> <span class="pre">h_int)</span></code>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">unnormalize_z</span></code> strips the extra-feature block, so frames carry only
-the core categorical features.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.split_z">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.edm.en_diffusion.</span></span><span class="sig-name descname"><span class="pre">split_z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><span class="pre">torch.nn.Module</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.split_z" title="Link to this definition">¶</a></dt>
-<dd><p>Split a normalized latent into <code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">h_cat</span> <span class="pre">(+extra),</span> <span class="pre">h_int)</span></code>.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.sum_except_batch">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.models.edm.en_diffusion.</span></span><span class="sig-name descname"><span class="pre">sum_except_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.models.edm.en_diffusion.sum_except_batch" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.modules.models.edm.en_diffusion.vp_issnr_schedule">
@@ -1987,45 +1258,10 @@ the core categorical features.</p>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.alpha"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.alpha()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.check_issues_norm_values"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.check_issues_norm_values()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.check_sanity_xh"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.check_sanity_xh()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_error"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.compute_error()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_error_pyG"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.compute_error_pyG()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_loss"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.compute_loss()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_loss_distillation"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.compute_loss_distillation()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_loss_per_graph"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.compute_loss_per_graph()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_loss_pyG"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.compute_loss_pyG()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.compute_x_pred"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.compute_x_pred()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.forward"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.forward()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.inflate_batch_array"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.inflate_batch_array()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.kl_prior"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.kl_prior()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.log_constants_p_x_given_z0"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.log_constants_p_x_given_z0()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.log_constants_p_x_given_z0_pyG"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.log_constants_p_x_given_z0_pyG()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.log_info"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.log_info()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.log_pxh_given_z0_without_constants"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.log_pxh_given_z0_without_constants()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.log_pxh_given_z0_without_constants_pyG"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.log_pxh_given_z0_without_constants_pyG()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.normalize"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.normalize()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.normalize_pyG"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.normalize_pyG()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.phi"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.phi()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.phi_distillation"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.phi_distillation()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.phi_pyg"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.phi_pyg()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sample()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_chain"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sample_chain()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_combined_position_feature_noise"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sample_combined_position_feature_noise()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_ddim"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sample_ddim()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_ddim_step"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sample_ddim_step()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_guidance"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sample_guidance()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_normal"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sample_normal()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_xh_given_z0"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sample_p_xh_given_z0()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sample_p_zs_given_zt()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_guidance_cfg"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sample_p_zs_given_zt_guidance_cfg()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_guidance_cfg_gg"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sample_p_zs_given_zt_guidance_cfg_gg()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_guidance_v0"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sample_p_zs_given_zt_guidance_v0()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_guidance_v1"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sample_p_zs_given_zt_guidance_v1()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_guidance_v2"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sample_p_zs_given_zt_guidance_v2()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_ip"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sample_p_zs_given_zt_ip()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_op"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sample_p_zs_given_zt_op()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_op_ft"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sample_p_zs_given_zt_op_ft()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_silvr"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sample_p_zs_given_zt_silvr()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sample_p_zs_given_zt_ssgd"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sample_p_zs_given_zt_ssgd()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.scale_schedule"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.scale_schedule()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sigma"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sigma()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.EnVariationalDiffusion.sigma_and_alpha_t_given_s"><code class="docutils literal notranslate"><span class="pre">EnVariationalDiffusion.sigma_and_alpha_t_given_s()</span></code></a></li>
@@ -2087,20 +1323,9 @@ the core categorical features.</p>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.SinusoidalPosEmb.dim"><code class="docutils literal notranslate"><span class="pre">SinusoidalPosEmb.dim</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.atomic_numbers"><code class="docutils literal notranslate"><span class="pre">atomic_numbers()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.cdf_standard_gaussian"><code class="docutils literal notranslate"><span class="pre">cdf_standard_gaussian()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.clip_noise_schedule"><code class="docutils literal notranslate"><span class="pre">clip_noise_schedule()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.cosine_beta_schedule"><code class="docutils literal notranslate"><span class="pre">cosine_beta_schedule()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.expm1"><code class="docutils literal notranslate"><span class="pre">expm1()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.gaussian_KL"><code class="docutils literal notranslate"><span class="pre">gaussian_KL()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.gaussian_KL_for_dimension"><code class="docutils literal notranslate"><span class="pre">gaussian_KL_for_dimension()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.gaussian_entropy"><code class="docutils literal notranslate"><span class="pre">gaussian_entropy()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.polynomial_schedule"><code class="docutils literal notranslate"><span class="pre">polynomial_schedule()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.softplus"><code class="docutils literal notranslate"><span class="pre">softplus()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.split_feature_axis"><code class="docutils literal notranslate"><span class="pre">split_feature_axis()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.split_frame"><code class="docutils literal notranslate"><span class="pre">split_frame()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.split_z"><code class="docutils literal notranslate"><span class="pre">split_z()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.sum_except_batch"><code class="docutils literal notranslate"><span class="pre">sum_except_batch()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.vp_issnr_schedule"><code class="docutils literal notranslate"><span class="pre">vp_issnr_schedule()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.vp_smld_schedule"><code class="docutils literal notranslate"><span class="pre">vp_smld_schedule()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.modules.models.edm.en_diffusion.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>

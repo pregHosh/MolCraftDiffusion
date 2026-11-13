@@ -1,0 +1,80 @@
+MolecularDiffusion.modules.models.edm.en_diffusion_sampling
+===========================================================
+
+.. py:module:: MolecularDiffusion.modules.models.edm.en_diffusion_sampling
+
+.. autoapi-nested-parse::
+
+   Unguided sampling for ``EnVariationalDiffusion``: ancestral steps, DDIM, ``sample``, ``sample_chain``.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.edm.en_diffusion_sampling.EnDiffusionSamplingMixin
+
+
+Module Contents
+---------------
+
+.. py:class:: EnDiffusionSamplingMixin
+
+   Unguided sampling for ``EnVariationalDiffusion``: ancestral steps, DDIM, ``sample``, ``sample_chain``.
+
+   Plain mixin: no parameters or state of its own, so the ``state_dict`` of
+   ``EnVariationalDiffusion`` is unchanged. Methods use attributes set in its ``__init__``.
+
+
+   .. py:method:: sample(n_samples, n_nodes, node_mask, edge_mask, context, condition_tensor=None, condition_mode=None, inpaint_cfgs={}, outpaint_cfgs={}, use_noised_conditioning=False, fix_noise=False, n_frames=0, t_retry=180, n_retrys=0, silvr_cfgs=None)
+
+      Draw samples from the generative model.
+
+
+
+   .. py:method:: sample_chain(n_samples, n_nodes, node_mask, edge_mask, context, keep_frames=None)
+
+      Draw samples from the generative model, keep the intermediate states for visualization purposes.
+
+
+
+   .. py:method:: sample_combined_position_feature_noise(n_samples, n_nodes, node_mask, std=1.0)
+
+      Samples mean-centered normal noise for z_x, and standard normal noise for z_h.
+
+
+
+   .. py:method:: sample_ddim(n_samples, n_nodes, node_mask, edge_mask, context, fix_noise=False, n_steps=None, eta=0.0, n_frames=0)
+
+      DDIM sampling: deterministic, optionally fewer steps.
+      eta=0.0 corresponds to the original DDIM (no noise),
+      eta > 0 adds noise (reverts toward DDPM-like).
+
+
+
+   .. py:method:: sample_ddim_step(zt, s, t, node_mask, edge_mask, context, eta=0.0)
+
+      Deterministic DDIM step: z_s ← z_t - f(eps_theta), no stochasticity when eta=0.
+
+
+
+   .. py:method:: sample_normal(mu, sigma, node_mask, fix_noise=False)
+
+      Samples from a Normal distribution.
+
+
+
+   .. py:method:: sample_p_xh_given_z0(z0, node_mask, edge_mask, context, fix_noise=False)
+
+      Samples x ~ p(x|z0).
+
+
+
+   .. py:method:: sample_p_zs_given_zt(s, t, zt, node_mask, edge_mask, context, fix_noise=False)
+
+      Samples from zs ~ p(zs | zt). Only used during sampling.
+
+
+

@@ -1,0 +1,164 @@
+MolecularDiffusion.modules.models.edm.en_diffusion_loss
+=======================================================
+
+.. py:module:: MolecularDiffusion.modules.models.edm.en_diffusion_loss
+
+.. autoapi-nested-parse::
+
+   Training objective of ``EnVariationalDiffusion``: loss terms, KL, likelihood of the final denoising step, ``forward``.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   MolecularDiffusion.modules.models.edm.en_diffusion_loss.EnDiffusionLossMixin
+
+
+Module Contents
+---------------
+
+.. py:class:: EnDiffusionLossMixin
+
+   Training objective of ``EnVariationalDiffusion``: loss terms, KL, likelihood of the final denoising step, ``forward``.
+
+   Plain mixin: no parameters or state of its own, so the ``state_dict`` of
+   ``EnVariationalDiffusion`` is unchanged. Methods use attributes set in its ``__init__``.
+
+
+   .. py:method:: compute_error(net_out, gamma_t, eps)
+
+      Computes error, i.e. the most likely prediction of x.
+
+
+
+   .. py:method:: compute_error_pyG(net_out, eps, natom)
+
+      Vectorized per-molecule loss computation without Python loops.
+
+      :param net_out: Tensor of shape (N_total, F)
+      :param eps: Tensor of shape (N_total, F)
+      :param natom: LongTensor of shape (batch_size,) summing to N_total
+
+      :returns: dict of (batch_size,) tensors: 'pos','integer','categorical', and optionally 'h_extra'
+      :rtype: errors
+
+
+
+   .. py:method:: compute_loss(x: torch.Tensor, h: dict, node_mask: torch.Tensor, edge_mask: torch.Tensor, context: Optional[torch.Tensor], t0_always: bool, reference_indices: Optional[Union[list, torch.Tensor]] = None, reference_freeze_mode: str = 'all') -> Tuple[torch.Tensor, dict]
+
+      Computes the total training loss (VLB or L2) based on a randomly sampled timestep t.
+
+      :param x: [B, N, 3] atom positions
+      :type x: Tensor
+      :param h: dictionary with 'categorical', 'integer', and optionally 'extra' features
+      :type h: dict
+      :param node_mask: [B, N, 1] indicating which nodes are valid
+      :type node_mask: Tensor
+      :param edge_mask: [B, N, N] adjacency mask
+      :type edge_mask: Tensor
+      :param context: [B, N, D] per-node context or None
+      :type context: Tensor or None
+      :param t0_always: whether to explicitly include the loss at t = 0
+      :type t0_always: bool
+      :param reference_indices: atom indices to freeze during loss
+      :type reference_indices: list or Tensor, optional
+
+      :returns: Tensor of shape [B], diagnostics: dict)
+      :rtype: Tuple of (loss
+
+
+
+   .. py:method:: compute_loss_distillation(x, h, node_mask, edge_mask, context, t0_always, masked_context=0)
+
+      Computes an estimator for the variational lower bound, or the simple loss (MSE).
+
+
+
+   .. py:method:: compute_loss_per_graph(mol_graph, context=None, reference_indices=None, reference_freeze_mode='all')
+
+      Returns raw per-graph error for sp_regularizer filtering (PyG path).
+
+      Returns loss_t (the per-graph prediction error before T multiplication
+      and neg_log_constants), so the scale is comparable to FM's per-graph MSE.
+      Only valid when batch uses PyG format ('graph' key).
+
+
+
+   .. py:method:: compute_loss_pyG(mol_graph, context, t0_always, reference_indices=None, reference_freeze_mode='all')
+
+      Computes an estimator for the variational lower bound, or the simple loss (MSE).
+
+      If reference_indices is specified, their atoms are frozen during the forward pass.
+      The loss is computed only for the unfrozen atoms.
+
+      mol_graph: pyGraph, containing the following attributes:
+          x: torch.Tensor, shape [N, D] (node features)
+          pos: torch.Tensor, shape [N, 3] (positions)
+          charges: torch.Tensor, shape [N, 1] (charges)
+          natoms: int, number of atoms
+          edge_index: torch.Tensor, shape [2, E] (edge indices)
+      context: torch.Tensor, shape [B, D]
+      t0_always: bool, whether to include loss term 0 always.
+      reference_indices: list of int, indices of reference nodes
+
+
+
+   .. py:method:: compute_x_pred(net_out, zt, gamma_t)
+
+      Commputes x_pred, i.e. the most likely prediction of x.
+
+
+
+   .. py:method:: forward(x, h, node_mask=None, edge_mask=None, context=None, reference_indices=None, reference_freeze_mode='all', mol_graph=None)
+
+      Computes the loss (type l2 or NLL) if training. And if eval then always computes NLL.
+
+
+
+   .. py:method:: kl_prior(xh, node_mask)
+
+      Computes the KL between q(z1 | x) and the prior p(z1) = Normal(0, 1).
+
+      This is essentially a lot of work for something that is in practice negligible in the loss. However, you
+      compute it so that you see it when you've made a mistake in your noise schedule.
+
+
+
+   .. py:method:: log_constants_p_x_given_z0(x, node_mask)
+
+      Computes p(x|z0).
+
+
+
+   .. py:method:: log_constants_p_x_given_z0_pyG(x, batch_size, n_nodes)
+
+      Computes p(x|z0).
+
+
+
+   .. py:method:: log_pxh_given_z0_without_constants(x, h, z_t, t_int, eps, net_out, node_mask, reference_indices=None, epsilon=1e-10)
+
+
+   .. py:method:: log_pxh_given_z0_without_constants_pyG(x, h, z_t, t_int, eps, net_out, natom, reference_indices=None, epsilon=1e-10)
+
+
+   .. py:method:: phi(x, t, node_mask, edge_mask, context)
+
+
+   .. py:method:: phi_distillation(x, t, node_mask, edge_mask, context)
+
+
+   .. py:method:: phi_pyg(mol_graph)
+
+      mol_graph containing
+      - x : node_feature [N, nf]
+      - pos L position [N, 3]
+      - edge_index
+      - context: properties conditioning the model [N, n_prop]
+      - time: t_float [N,1]
+
+
+

@@ -246,7 +246,7 @@ a warning, because that is almost never what you want here.
 All three are repeatable. Labels come from **which file** a molecule was in —
 no join and no SMILES matching, because that is how DUD-E and LIT-PCBA ship.
 SDF records keep their crystal coordinates; SMILES are embedded with ETKDGv3,
-the same recipe `utils/conformer_pool` uses. A molecule that cannot be parsed
+the same recipe `utils/chem/conformer_pool` uses. A molecule that cannot be parsed
 or embedded is reported with an `error` rather than dropped.
 
 ### Pose recovery
