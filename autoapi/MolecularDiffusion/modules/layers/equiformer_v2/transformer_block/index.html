@@ -13,7 +13,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
-    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx-design.min.css?v=6a604523" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=e7d56144" />
     
@@ -775,11 +775,11 @@ The last one will be used as hidden size when <cite>use_atom_edge_embedding</cit
 <li><p><strong>attn_value_head</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – Number of channels for value vector in each attention head</p></li>
 <li><p><strong>ffn_hidden_channels</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – Number of hidden channels used during feedforward network</p></li>
 <li><p><strong>output_channels</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – Number of output channels</p></li>
-<li><p><strong>(</strong><strong>list</strong> (<a class="reference internal" href="../equiformer_v2_oc20/index.html#MolecularDiffusion.modules.layers.equiformer_v2.equiformer_v2_oc20.EquiformerV2_OC20.edge_channels_list" title="MolecularDiffusion.modules.layers.equiformer_v2.equiformer_v2_oc20.EquiformerV2_OC20.edge_channels_list"><em>edge_channels_list</em></a>) – int):       List of degrees (l) for each resolution</p></li>
+<li><p><strong>(</strong><strong>list</strong> (<a class="reference internal" href="../input_block/index.html#MolecularDiffusion.modules.layers.equiformer_v2.input_block.EdgeDegreeEmbedding.edge_channels_list" title="MolecularDiffusion.modules.layers.equiformer_v2.input_block.EdgeDegreeEmbedding.edge_channels_list"><em>edge_channels_list</em></a>) – int):       List of degrees (l) for each resolution</p></li>
 <li><p><strong>(</strong><strong>list</strong> – int):       List of orders (m) for each resolution</p></li>
 <li><p><strong>(</strong><strong>list</strong> – SO3_Rotation): Class to calculate Wigner-D matrices and rotate embeddings</p></li>
 <li><p><strong>mappingReduced</strong> (<a class="reference internal" href="../so3/index.html#MolecularDiffusion.modules.layers.equiformer_v2.so3.CoefficientMappingModule" title="MolecularDiffusion.modules.layers.equiformer_v2.so3.CoefficientMappingModule"><em>CoefficientMappingModule</em></a>) – Class to convert l and m indices once node embedding is rotated</p></li>
-<li><p><strong>SO3_grid</strong> (<a class="reference internal" href="../equiformer_v2_oc20/index.html#MolecularDiffusion.modules.layers.equiformer_v2.equiformer_v2_oc20.EquiformerV2_OC20.SO3_grid" title="MolecularDiffusion.modules.layers.equiformer_v2.equiformer_v2_oc20.EquiformerV2_OC20.SO3_grid"><em>SO3_grid</em></a>) – Class used to convert from grid the spherical harmonic representations</p></li>
+<li><p><strong>SO3_grid</strong> (<a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2.transformer_block.FeedForwardNetwork.SO3_grid" title="MolecularDiffusion.modules.layers.equiformer_v2.transformer_block.FeedForwardNetwork.SO3_grid"><em>SO3_grid</em></a>) – Class used to convert from grid the spherical harmonic representations</p></li>
 <li><p><strong>max_num_elements</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – Maximum number of atomic numbers</p></li>
 <li><p><strong>(</strong><strong>list</strong> – int):  List of sizes of invariant edge embedding. For example, [input_channels, hidden_channels, hidden_channels].
 The last one will be used as hidden size when <cite>use_atom_edge_embedding</cite> is <cite>True</cite>.</p></li>
@@ -971,6 +971,6 @@ The last one will be used as hidden size when <cite>use_atom_edge_embedding</cit
     <script src="../../../../../../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../../../../../../_static/design-tabs.js?v=fcb327ea"></script>
     </body>
 </html>
