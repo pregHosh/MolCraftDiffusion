@@ -48,6 +48,7 @@ tasks:
   num_layers: 12
   condition_names: ${contexts}
   generative_analysis: True
+  # generative_eval_use_ema: true   # lightning engine: sample from the EMA weights (default: raw)
   use_posebuster: True
   n_samples: 64
   sp_regularizer_deploy: False

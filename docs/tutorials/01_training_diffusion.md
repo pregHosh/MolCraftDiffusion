@@ -68,6 +68,17 @@ If `engine:` is omitted the framework falls back to the original engine.
 - You are running in a SLURM environment where `SLURM_PROCID` / `SLURM_GPUS_ON_NODE` are used for device assignment.
 - You need step-based termination (`num_steps`).
 
+**Behaviour that differs between the engines:**
+
+| | `engine: original` | `engine: lightning` |
+| :--- | :--- | :--- |
+| `trainer.validation_interval: N` | validates at epochs 0, N, 2N, … | validates after epochs N, 2N, … (never after epoch 0) |
+| Validation loss (with `trainer.ema_decay > 0`) | EMA weights | EMA weights |
+| Samples drawn by `tasks.generative_analysis` (with `trainer.ema_decay > 0`) | EMA weights | raw weights; set `generative_eval_use_ema: true` at the top level of your config (or under `tasks:`) to use the EMA weights |
+| `trainer.precision` | `32`, `16`, `bf16` | `32`, `16`, `bf16`, or a Lightning name such as `bf16-mixed` or `64-true`; any other value logs a warning and runs in fp32 |
+
+When you compare a metric logged during training with the same checkpoint evaluated later by `MolCraftDiff generate`, remember that generation loads the EMA weights.
+
 ### Step 3: Understand the `defaults` List
 
 The `defaults` list at the top of the file loads a set of pre-defined "templates" for each part of your experiment (data, model, trainer, etc.) that are bundled with the package.
