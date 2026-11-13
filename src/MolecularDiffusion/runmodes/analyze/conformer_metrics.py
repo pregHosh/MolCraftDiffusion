@@ -172,7 +172,7 @@ def _weighted_mean(stats: dict) -> float | None:
 
 def _geometry_diffs(gen: Any, ref: Any) -> dict:
     """Mean bond-length / angle / torsion deviation for one pair."""
-    from MolecularDiffusion.utils.geom_stability import (  # noqa: PLC0415
+    from MolecularDiffusion.utils.metrics.geom_stability import (  # noqa: PLC0415
         compute_bond_angles_diff,
         compute_bond_lengths_diff,
         compute_differences,
@@ -195,7 +195,7 @@ def _geometry_diffs(gen: Any, ref: Any) -> dict:
 
 
 def _mmff_strain(mol: Any) -> float | None:
-    from MolecularDiffusion.utils.geom_stability import (  # noqa: PLC0415
+    from MolecularDiffusion.utils.metrics.geom_stability import (  # noqa: PLC0415
         compute_mmff_energy_drop,
     )
 

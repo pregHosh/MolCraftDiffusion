@@ -36,7 +36,7 @@ except ImportError:
 from MolecularDiffusion.utils.xyz2mol import xyz2mol
 
 try:
-    from MolecularDiffusion.utils.smilify import Molecule, read_xyz_ob, simple_idx_match_check
+    from MolecularDiffusion.utils.chem.smilify import Molecule, read_xyz_ob, simple_idx_match_check
 except ImportError:
     # Fallback if utils not available or circular import (should not happen)
     Molecule = None
@@ -666,7 +666,7 @@ def _smilify_rdkit_core(filename, total_charge=0):
     charge sweep -- the caller already knows total_charge for this row).
     Returns (smiles, mol, failure_reason); failure_reason is None on success.
     """
-    from MolecularDiffusion.utils.geom_metrics import xyz_to_rdkit_mol
+    from MolecularDiffusion.utils.metrics.geom_metrics import xyz_to_rdkit_mol
 
     atoms = ase_read(filename)
     ref_symbols = atoms.get_chemical_symbols()

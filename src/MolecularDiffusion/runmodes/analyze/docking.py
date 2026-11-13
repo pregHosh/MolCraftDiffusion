@@ -45,7 +45,7 @@ def load_pose(xyz_path):
     """
     from rdkit import Chem  # noqa: PLC0415
 
-    from MolecularDiffusion.utils.smilify import smilify_openbabel  # noqa: PLC0415
+    from MolecularDiffusion.utils.chem.smilify import smilify_openbabel  # noqa: PLC0415
 
     try:
         smiles, mol = smilify_openbabel(xyz_path)

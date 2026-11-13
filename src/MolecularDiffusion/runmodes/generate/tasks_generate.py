@@ -2,7 +2,7 @@
 
 from MolecularDiffusion.modules.tasks.task import Task
 from MolecularDiffusion.modules.tasks.pharmacophore import PharmacophoreGenerative  # noqa: F401 — registers class in Registry
-from MolecularDiffusion.utils.geom_utils import (
+from MolecularDiffusion.utils.geometry.geom_utils import (
     remove_mean_with_mask,
     save_xyz_file,
     save_xyz_file_atomic_numbers,
@@ -1767,7 +1767,7 @@ class PharmacophoreConditionGenerator:
         without reimplementing :meth:`run`. The default writes exactly what
         ``run()`` has always written.
         """
-        from MolecularDiffusion.utils.geom_utils import save_shepherd_outputs
+        from MolecularDiffusion.utils.geometry.geom_utils import save_shepherd_outputs
 
         save_shepherd_outputs(
             self.output_path, structures, idx_offset=idx_offset, save_modalities=self.save_modalities
@@ -1825,7 +1825,7 @@ class PharmacophoreConditionGenerator:
         centers = mol.GetConformer().GetPositions().astype(np.float32)
         num_surf = self.task.model.dynamics.params.get('dataset', {}).get('x2', {}).get('num_points', 75)
 
-        from MolecularDiffusion.utils.shepherd_utils import (
+        from MolecularDiffusion.utils.geometry.shepherd_utils import (
             get_molecular_surface, get_atomic_vdw_radii, get_electrostatics_given_point_charges,
             get_pharmacophores
         )

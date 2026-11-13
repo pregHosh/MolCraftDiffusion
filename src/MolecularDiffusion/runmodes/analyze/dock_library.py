@@ -384,7 +384,7 @@ def runner(args: argparse.Namespace) -> None:  # noqa: C901, PLR0912, PLR0915
     from MolecularDiffusion.runmodes.analyze.compute_metrics import (  # noqa: PLC0415
         _write_summary,
     )
-    from MolecularDiffusion.utils.geom_metrics import (  # noqa: PLC0415
+    from MolecularDiffusion.utils.metrics.geom_metrics import (  # noqa: PLC0415
         compute_drug_likeness,
     )
 

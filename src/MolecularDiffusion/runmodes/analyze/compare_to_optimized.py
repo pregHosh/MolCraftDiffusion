@@ -27,10 +27,10 @@ try:
 except ImportError:
     pass
 
-from MolecularDiffusion.utils.geom_utils import read_xyz_file
+from MolecularDiffusion.utils.geometry.geom_utils import read_xyz_file
 # Import from local package assuming this script is in src/MolecularDiffusion/runmodes/analyze/
 from MolecularDiffusion.runmodes.analyze.xtb_optimization import check_xyz
-from MolecularDiffusion.utils.geom_stability import (
+from MolecularDiffusion.utils.metrics.geom_stability import (
     compute_bond_lengths_diff,
     compute_bond_angles_diff,
     compute_torsion_angles_diff,
@@ -69,7 +69,7 @@ def xyz2mol_openbabel(xyz_file: str) -> Optional[Chem.Mol]:
 
 def xyz2mol_converter(xyz_file: str, timeout: int = 10) -> Optional[Chem.Mol]:
     """Convert XYZ to RDKit Mol using xyz2mol logic."""
-    from MolecularDiffusion.utils.smilify import smilify_xyz2mol
+    from MolecularDiffusion.utils.chem.smilify import smilify_xyz2mol
     try:
         _, mol = smilify_xyz2mol(str(xyz_file), timeout=timeout)
         return mol

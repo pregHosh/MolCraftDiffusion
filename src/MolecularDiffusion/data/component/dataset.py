@@ -27,7 +27,7 @@ except ImportError:
 from torch_geometric.data import Data
 from torch_geometric.nn import knn_graph, radius_graph
 
-from MolecularDiffusion.utils import sascore
+from MolecularDiffusion.utils.chem import sascore
 from MolecularDiffusion import core, utils
 from .feature import NodeFeaturizer
 from .pointcloud import PointCloud_Mol

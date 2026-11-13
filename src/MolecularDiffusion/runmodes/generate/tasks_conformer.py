@@ -110,7 +110,7 @@ from typing import Any
 import pandas as pd
 import torch
 
-from MolecularDiffusion.utils.geom_utils import save_xyz_file
+from MolecularDiffusion.utils.geometry.geom_utils import save_xyz_file
 
 logger = logging.getLogger(__name__)
 
@@ -275,7 +275,7 @@ class ConformerFactory:
     def _pool(self) -> list[Any]:
         """The input molecules, from `sample_input` or from the task."""
         if self.sample_input is not None:
-            from MolecularDiffusion.utils.conformer_pool import (
+            from MolecularDiffusion.utils.chem.conformer_pool import (
                 load_conditioning_pool,
             )
 

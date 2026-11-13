@@ -251,7 +251,7 @@ class PocketGenerator:
     # --- the loop --------------------------------------------------------
 
     def run(self) -> None:
-        from MolecularDiffusion.utils.geom_utils import (  # noqa: PLC0415
+        from MolecularDiffusion.utils.geometry.geom_utils import (  # noqa: PLC0415
             save_xyz_file,
         )
 

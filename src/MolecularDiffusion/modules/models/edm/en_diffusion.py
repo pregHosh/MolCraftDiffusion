@@ -30,7 +30,7 @@ from MolecularDiffusion.utils import (
     sample_center_gravity_zero_gaussian_with_mask,
     sample_gaussian_with_mask
 )
-from MolecularDiffusion.utils.geom_analyzer import symbol2num
+from MolecularDiffusion.utils.chem.geom_analyzer import symbol2num
 
 
 def _resolve_jitter_scale(config, init_method, forward_noise):

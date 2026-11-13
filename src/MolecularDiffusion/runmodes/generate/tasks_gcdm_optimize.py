@@ -85,7 +85,7 @@ from typing import Optional, Sequence
 
 import torch
 
-from MolecularDiffusion.utils.geom_utils import (
+from MolecularDiffusion.utils.geometry.geom_utils import (
     assert_mean_zero_with_mask,
     remove_mean_with_mask,
     save_xyz_file,

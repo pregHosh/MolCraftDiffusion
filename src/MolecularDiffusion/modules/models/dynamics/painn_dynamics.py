@@ -25,7 +25,7 @@ from MolecularDiffusion.modules.models.dynamics.painn_backbone import (
     EquivNetHParams,
     GaussianLinearRBFLayer,
 )
-from MolecularDiffusion.utils.geom_utils import remove_mean_with_mask_v2
+from MolecularDiffusion.utils.geometry.geom_utils import remove_mean_with_mask_v2
 
 
 class FourierTimeFeatures(nn.Module):

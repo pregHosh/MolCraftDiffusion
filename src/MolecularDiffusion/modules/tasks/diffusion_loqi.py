@@ -109,7 +109,7 @@ def _plain(cfg: Any) -> dict:
 # conformer models share them, and ``runmodes/generate/tasks_conformer.py``
 # must reach them without importing this (heavy) task module. Re-exported so
 # existing imports from here keep working unchanged.
-from MolecularDiffusion.utils.conformer_pool import (  # noqa: E402
+from MolecularDiffusion.utils.chem.conformer_pool import (  # noqa: E402
     _mol_to_data,
     _pool_from_smiles,
     load_conditioning_pool,

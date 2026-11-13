@@ -35,7 +35,7 @@ try:
 except ImportError:
     o3d = None
 
-from MolecularDiffusion.utils.shepherd_utils import (
+from MolecularDiffusion.utils.geometry.shepherd_utils import (
     get_atomic_vdw_radii,
     get_molecular_surface,
     get_electrostatics_given_point_charges,

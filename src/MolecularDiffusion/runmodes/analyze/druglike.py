@@ -134,7 +134,7 @@ def compute(mol, with_rdkit_rmsd=False, n_conf=20):
     ``mol`` must already be sanitized. Returns a flat dict ready for a
     DataFrame row.
     """
-    from MolecularDiffusion.utils.geom_metrics import compute_drug_likeness  # noqa: PLC0415
+    from MolecularDiffusion.utils.metrics.geom_metrics import compute_drug_likeness  # noqa: PLC0415
 
     row = dict(compute_drug_likeness(mol))  # QED, SA_score, LogP, fsp3, MW, HBD, HBA
     row["SCScore"] = _scscore(mol)

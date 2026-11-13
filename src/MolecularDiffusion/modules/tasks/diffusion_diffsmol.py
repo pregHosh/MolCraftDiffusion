@@ -678,7 +678,7 @@ class DiffSMolShapeGenerator:
     def run(self) -> None:
         import os
 
-        from MolecularDiffusion.utils.geom_utils import save_xyz_file
+        from MolecularDiffusion.utils.geometry.geom_utils import save_xyz_file
 
         torch.manual_seed(self.seed)
         random.seed(self.seed)

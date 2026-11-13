@@ -155,7 +155,7 @@ class VAETask(nn.Module):
         # Reconstruction evaluator (optional)
         if self.eval_reconstruction:
             try:
-                from MolecularDiffusion.utils.geom_utils import MoleculeReconstructionEvaluator
+                from MolecularDiffusion.utils.geometry.geom_utils import MoleculeReconstructionEvaluator
                 self.reconstruction_evaluator = MoleculeReconstructionEvaluator()
             except ImportError as e:
                 print(f"Warning: Could not import MoleculeReconstructionEvaluator: {e}")

@@ -15,7 +15,7 @@ from rdkit.Chem import AllChem
 
 from MolecularDiffusion.utils.xyz2mol import ElementData
 
-from MolecularDiffusion.utils.shape_measure import shape_measure
+from MolecularDiffusion.utils.geometry.shape_measure import shape_measure
 
 
 # less than 4 bonds

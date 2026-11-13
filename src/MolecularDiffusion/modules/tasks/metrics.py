@@ -8,7 +8,7 @@ from torch.nn import functional as F
 from torch_scatter import scatter_add, scatter_mean, scatter_max
 
 from MolecularDiffusion.modules.layers import functional
-from MolecularDiffusion.utils import sascore
+from MolecularDiffusion.utils.chem import sascore
 
 
 @contextmanager

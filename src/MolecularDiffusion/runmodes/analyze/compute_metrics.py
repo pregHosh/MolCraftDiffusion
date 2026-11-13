@@ -14,8 +14,8 @@ from MolecularDiffusion.optional import OptionalDependencyError, optional_import
 
 _IMPORT_ERROR = None
 try:
-    from MolecularDiffusion.utils.geom_utils import read_xyz_file, create_pyg_graph, correct_edges
-    from MolecularDiffusion.utils.geom_metrics import (check_validity_v1,
+    from MolecularDiffusion.utils.geometry.geom_utils import read_xyz_file, create_pyg_graph, correct_edges
+    from MolecularDiffusion.utils.metrics.geom_metrics import (check_validity_v1,
                                                        check_chem_validity,
                                                        run_postbuster,
                                                        load_molecules_from_xyz,
@@ -33,7 +33,7 @@ try:
     from MolecularDiffusion.utils.shepherd_score.alignment import (
         optimize_ROCS_overlay, optimize_ROCS_esp_overlay, optimize_pharm_overlay)
     from MolecularDiffusion.utils import smilify_xyz2mol, smilify_openbabel
-    from MolecularDiffusion.utils.geom_stability import compute_molecules_stability
+    from MolecularDiffusion.utils.metrics.geom_stability import compute_molecules_stability
 except ImportError as exc:
     _IMPORT_ERROR = optional_import_error("analyze", exc)
 
@@ -731,8 +731,8 @@ def runner(args):
     # =========================================================================
     if args.metrics in ["all", "geom_revised"]:
         from rdkit import Chem
-        from MolecularDiffusion.utils.smilify import smilify_xyz2mol
-        from MolecularDiffusion.utils.geom_stability import (
+        from MolecularDiffusion.utils.chem.smilify import smilify_xyz2mol
+        from MolecularDiffusion.utils.metrics.geom_stability import (
             compute_bond_lengths_diff,
             compute_bond_angles_diff,
             compute_torsion_angles_diff,

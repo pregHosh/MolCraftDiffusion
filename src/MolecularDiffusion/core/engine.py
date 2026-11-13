@@ -13,7 +13,8 @@ from torch.amp import GradScaler, autocast
 from torch.utils import data as torch_data
 
 from MolecularDiffusion import utils, core, data
-from MolecularDiffusion.utils import comm, pretty, recursive_module_to_device
+from MolecularDiffusion.utils import pretty, recursive_module_to_device
+from MolecularDiffusion.utils.runtime import comm
 from MolecularDiffusion.callbacks import EMA, Queue, gradient_clipping
 from MolecularDiffusion.device import get_device, to_device
 

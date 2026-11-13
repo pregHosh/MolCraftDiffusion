@@ -1,4 +1,4 @@
-from .geom_utils import (
+from .geometry.geom_utils import (
     remove_mean,
     remove_mean_with_mask,
     remove_mean_with_mask_v2, 
@@ -18,14 +18,14 @@ from .geom_utils import (
     MoleculeReconstructionEvaluator
 )
 
-from .molgraph_utils import (
+from .chem.molgraph_utils import (
     create_pyg_graph,
     correct_edges,
     remove_mean_pyG
     
 )
 
-from .geom_analyzer import (
+from .chem.geom_analyzer import (
     check_connected,
     check_quality,
     check_stability
@@ -47,7 +47,7 @@ from .diffusion_utils import (
     compute_mean_mad_from_dataloader
 )
 
-from .torch import (
+from .runtime.torch import (
     cpu,
     cuda,
     detach,
@@ -83,16 +83,17 @@ from .io import (
 from .pretty import task_wrapper
 
 
-from . import sascore
+from .chem import sascore
 
-from . import geom_metrics, geom_utils
+from .metrics import geom_metrics
+from .geometry import geom_utils
 
-from .smilify import (
+from .chem.smilify import (
     smilify_xyz2mol,
     smilify_openbabel,
 )
 
-from .geom_stability import (
+from .metrics.geom_stability import (
     compute_molecules_stability,
     compute_molecules_stability_from_graph,
     load_valency_table,

@@ -303,7 +303,7 @@ def _rdkit_candidate_from_xyz(xyz_path: str, charge: int) -> _ChargeCandidate:
 
 def _xyz2mol_candidate_from_xyz(xyz_path: str, charge: int) -> _ChargeCandidate:
     from rdkit import Chem
-    from MolecularDiffusion.utils.smilify import smilify_xyz2mol
+    from MolecularDiffusion.utils.chem.smilify import smilify_xyz2mol
 
     smiles, mol = smilify_xyz2mol(xyz_path, timeout=30, total_charge=charge)
     if mol is None:

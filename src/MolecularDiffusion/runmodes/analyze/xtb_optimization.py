@@ -11,8 +11,8 @@ from ase import io
 import ase.db
 
 from MolecularDiffusion.utils import create_pyg_graph, correct_edges
-from MolecularDiffusion.utils.geom_utils import read_xyz_file
-from MolecularDiffusion.utils.geom_metrics import is_fully_connected
+from MolecularDiffusion.utils.geometry.geom_utils import read_xyz_file
+from MolecularDiffusion.utils.metrics.geom_metrics import is_fully_connected
 
 def check_neutrality(filename: str,
                      charge: int = 0,

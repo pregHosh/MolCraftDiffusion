@@ -11,7 +11,7 @@ from torch_geometric.utils import to_networkx
 import logging
 from typing import List, Optional
 from ase.data import covalent_radii
-from .substituent_builder import select_fragment, place_fragment
+from .geometry.substituent_builder import select_fragment, place_fragment
 
 logger = logging.getLogger(__name__)
 

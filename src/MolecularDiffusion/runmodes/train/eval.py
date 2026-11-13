@@ -12,12 +12,12 @@ import numpy as np
 from ase.data import atomic_numbers
 
 from MolecularDiffusion.core import Engine
-from MolecularDiffusion.utils.geom_analyzer import (
+from MolecularDiffusion.utils.chem.geom_analyzer import (
     create_pyg_graph,
     correct_edges,
 )
-from MolecularDiffusion.utils.geom_metrics import check_validity_v0, load_molecules_from_xyz, run_postbuster
-from MolecularDiffusion.utils.geom_utils import (
+from MolecularDiffusion.utils.metrics.geom_metrics import check_validity_v0, load_molecules_from_xyz, run_postbuster
+from MolecularDiffusion.utils.geometry.geom_utils import (
     read_xyz_file, save_xyz_file, save_xyz_file_atomic_numbers)
 
 from dataclasses import dataclass, replace as dataclass_replace

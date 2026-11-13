@@ -15,8 +15,8 @@ from rdkit.Chem import BRICS
 from ase.data import chemical_symbols
 from rdkit import Chem
 
-from MolecularDiffusion.utils.smilify import smilify_xyz2mol, smilify_openbabel
-from MolecularDiffusion.utils.geom_utils import read_xyz_file   
+from MolecularDiffusion.utils.chem.smilify import smilify_xyz2mol, smilify_openbabel
+from MolecularDiffusion.utils.geometry.geom_utils import read_xyz_file   
 
 def extract_scaffold_and_fingerprints(smiles_iter, fp_bits=2048):
     """

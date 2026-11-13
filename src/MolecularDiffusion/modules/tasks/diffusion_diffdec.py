@@ -611,7 +611,7 @@ class DiffDecScaffoldGenerator:
 
     # ------------------------------------------------------------------- run
     def run(self) -> None:
-        from MolecularDiffusion.utils.geom_utils import save_xyz_file
+        from MolecularDiffusion.utils.geometry.geom_utils import save_xyz_file
 
         torch.manual_seed(self.seed)
         random.seed(self.seed)
@@ -677,7 +677,7 @@ class DiffDecScaffoldGenerator:
         """Write the input scaffold and the ground-truth molecule alongside
         the samples, as upstream ``sample_single.py`` l. 132-138 does. Without
         them there is nothing to judge a decoration against."""
-        from MolecularDiffusion.utils.geom_utils import save_xyz_file
+        from MolecularDiffusion.utils.geometry.geom_utils import save_xyz_file
 
         batch = self._batch(item, 1)
         one_hot, coords = batch["one_hot"], batch["positions"]

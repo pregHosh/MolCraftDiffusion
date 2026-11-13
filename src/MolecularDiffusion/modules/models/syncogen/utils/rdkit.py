@@ -294,7 +294,7 @@ def mol_to_pharm_cond(
     # the identical function (utils/shepherd_score/pharm_utils/pharmacophore.py:569,
     # re-exported from utils/shepherd_utils.py:391) and ShEPhERD's own
     # PharmacophoreConditionGenerator calls it with this exact signature.
-    from MolecularDiffusion.utils.shepherd_utils import get_pharmacophores
+    from MolecularDiffusion.utils.geometry.shepherd_utils import get_pharmacophores
     from MolecularDiffusion.modules.models.syncogen.constants.constants import N_PHARM
 
     if center:

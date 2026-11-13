@@ -59,7 +59,7 @@ from MolecularDiffusion.modules.models.diffsmol.common import (
     norm_no_nan,
     outer_product,
 )
-from MolecularDiffusion.utils.geom_analyzer import bonds1, bonds2, bonds3
+from MolecularDiffusion.utils.chem.geom_analyzer import bonds1, bonds2, bonds3
 
 EPS = 1e-6
 

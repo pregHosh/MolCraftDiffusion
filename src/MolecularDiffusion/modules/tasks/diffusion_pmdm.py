@@ -595,7 +595,7 @@ class PMDMPocketGenerator(PocketGenerator):
         # ponytail: geometric proxy, not real reconstruction. Swap in
         # utils/smilify.smilify_xyz2mol if the [analyze] extra is a given.
         """
-        from MolecularDiffusion.utils.smilify import check_connected, get_cutoffs
+        from MolecularDiffusion.utils.chem.smilify import check_connected, get_cutoffs
 
         if len(symbols) < 2:
             return "too_small"

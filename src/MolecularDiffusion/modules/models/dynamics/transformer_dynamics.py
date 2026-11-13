@@ -50,7 +50,7 @@ from MolecularDiffusion.modules.models.ldm.denoisers.dit import (
     DiTBlock,
     FinalLayer,
 )
-from MolecularDiffusion.utils.geom_utils import remove_mean_with_mask_v2
+from MolecularDiffusion.utils.geometry.geom_utils import remove_mean_with_mask_v2
 
 
 class TransformerDynamics(nn.Module):
