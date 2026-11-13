@@ -436,6 +436,25 @@ class GenerativeFactory:
         match = re.search(r"molecule_(\d+)\.xyz$", os.path.basename(path))
         return int(match.group(1)) if match else -1
         
+    def _record_batch_failure(self, i, exc):
+        """Count a failed sampling batch; `_assert_produced` reports the first error."""
+        self._fail_count += 1
+        if self._first_exc is None:
+            self._first_exc = exc
+        tqdm.write(f"[Batch {i}] Sampling failed: {exc}")
+        logger.debug("[Batch %s] sampling traceback", i, exc_info=exc)
+
+    @staticmethod
+    def _set_batch_postfix(progress_bar, i, fail_count, per_batch=1):
+        """Update the sampling progress bar (`per_batch` scales batch counts to samples)."""
+        done = (i + 1) * per_batch
+        progress_bar.set_postfix({
+            "completed": done,
+            "failed": fail_count,
+            "success": done - fail_count * per_batch,
+            "success_rate": f"{100 * (i + 1 - fail_count) / (i + 1):.1f}%",
+        })
+
     def _assert_produced(self):
         """Raise if every sampling batch failed.
 
@@ -571,17 +590,9 @@ class GenerativeFactory:
                             self._write_molecule_sdf(idx, j, one_hot, charges, x, node_mask)
             except Exception as e:
                 fail_count += 1
-                self._fail_count += 1
-                if self._first_exc is None:
-                    self._first_exc = e
-                tqdm.write(f"[Batch {i}] Sampling failed: {e}")
+                self._record_batch_failure(i, e)
 
-            progress_bar.set_postfix({
-                "completed": i + 1,
-                "failed": fail_count,
-                "success": (i + 1 - fail_count),
-                "success_rate": f"{100 * (i + 1 - fail_count) / (i + 1):.1f}%",
-            })
+            self._set_batch_postfix(progress_bar, i, fail_count)
     
     def conditional_generation(self):
         assert len(self.target_values) > 0, "Target values must be provided for conditional generation"
@@ -716,17 +727,9 @@ class GenerativeFactory:
                     df_dict["size"].append(nodesxsample.item())
             except Exception as e:
                 fail_count += 1
-                self._fail_count += 1
-                if self._first_exc is None:
-                    self._first_exc = e
-                tqdm.write(f"[Batch {i}] Sampling failed: {e}")
+                self._record_batch_failure(i, e)
 
-            progress_bar.set_postfix({
-                "completed": i + 1,
-                "failed": fail_count,
-                "success": (i + 1 - fail_count),
-                "success_rate": f"{100 * (i + 1 - fail_count) / (i + 1):.1f}%",
-            })
+            self._set_batch_postfix(progress_bar, i, fail_count)
         if property_eval:    
             self.df = pd.DataFrame(df_dict)
     
@@ -855,17 +858,9 @@ class GenerativeFactory:
                             
             except Exception as e:
                 fail_count += 1
-                self._fail_count += 1
-                if self._first_exc is None:
-                    self._first_exc = e
-                tqdm.write(f"[Batch {i}] Sampling failed: {e}")
+                self._record_batch_failure(i, e)
 
-            progress_bar.set_postfix({
-                "completed": (i + 1) * self.batch_size,
-                "failed": fail_count,
-                "success": ((i + 1) * self.batch_size - fail_count * self.batch_size),
-                "success_rate": f"{100 * (i + 1 - fail_count) / (i + 1):.1f}%",
-            })
+            self._set_batch_postfix(progress_bar, i, fail_count, per_batch=self.batch_size)
             
         if property_eval:    
             self.df = pd.DataFrame(df_dict)
@@ -1164,17 +1159,9 @@ class GenerativeFactory:
 
             except Exception as e:
                 fail_count += 1
-                self._fail_count += 1
-                if self._first_exc is None:
-                    self._first_exc = e
-                tqdm.write(f"[Batch {i}] Sampling failed: {e}")
+                self._record_batch_failure(i, e)
 
-            progress_bar.set_postfix({
-                "completed": i + 1,
-                "failed": fail_count,
-                "success": (i + 1 - fail_count),
-                "success_rate": f"{100 * (i + 1 - fail_count) / (i + 1):.1f}%",
-            })
+            self._set_batch_postfix(progress_bar, i, fail_count)
 
     def hybrid_guidance(self):
 
@@ -1349,17 +1336,9 @@ class GenerativeFactory:
                     df_dict["size"].append(nodesxsample.item())    
             except Exception as e:
                 fail_count += 1
-                self._fail_count += 1
-                if self._first_exc is None:
-                    self._first_exc = e
-                tqdm.write(f"[Batch {i}] Sampling failed: {e}")
+                self._record_batch_failure(i, e)
 
-            progress_bar.set_postfix({
-                "completed": i + 1,
-                "failed": fail_count,
-                "success": (i + 1 - fail_count),
-                "success_rate": f"{100 * (i + 1 - fail_count) / (i + 1):.1f}%",
-            })
+            self._set_batch_postfix(progress_bar, i, fail_count)
             
         if property_eval:    
             self.df = pd.DataFrame(df_dict)
