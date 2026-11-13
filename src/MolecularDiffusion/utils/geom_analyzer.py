@@ -421,127 +421,6 @@ def check_quality(cartesian_coordinates_tensor, atomic_numbers_tensor):
     
 
 # %% Utilis functions
-def analyze_node_distribution(mol_list):
-    hist_nodes = Histogram_discrete("Histogram # nodes (stable molecules)")
-    hist_atom_type = Histogram_discrete("Histogram of atom types")
-
-    for molecule in mol_list:
-        positions, atom_type = molecule
-        hist_nodes.add([positions.shape[0]])
-        hist_atom_type.add(atom_type)
-    print("Histogram of #nodes ", hist_nodes.bins)
-    print("Histogram of # atom types ", hist_atom_type.bins)
-    hist_nodes.normalize()
-
-
-class Histogram_discrete:
-    def __init__(self, name="histogram"):
-        self.name = name
-        self.bins = {}
-
-    def add(self, elements):
-        for e in elements:
-            if e in self.bins:
-                self.bins[e] += 1
-            else:
-                self.bins[e] = 1
-
-    def normalize(self):
-        total = 0.0
-        for key in self.bins:
-            total += self.bins[key]
-        for key in self.bins:
-            self.bins[key] = self.bins[key] / total
-
-    def plot(self, save_path=None):
-        width = 1  # the width of the bars
-        fig, ax = plt.subplots()
-        x, y = [], []
-        for key in self.bins:
-            x.append(key)
-            y.append(self.bins[key])
-
-        ax.bar(x, y, width)
-        plt.title(self.name)
-        if save_path is not None:
-            plt.savefig(save_path)
-        else:
-            plt.show()
-        plt.close()
-
-
-class Histogram_cont:
-    def __init__(
-        self, num_bins=100, range=(0.0, 13.0), name="histogram", ignore_zeros=False
-    ):
-        self.name = name
-        self.bins = [0] * num_bins
-        self.range = range
-        self.ignore_zeros = ignore_zeros
-
-    def add(self, elements):
-        for e in elements:
-            if not self.ignore_zeros or e > 1e-8:
-                i = int(float(e) / self.range[1] * len(self.bins))
-                i = min(i, len(self.bins) - 1)
-                self.bins[i] += 1
-
-    def plot(self, save_path=None):
-        width = (self.range[1] - self.range[0]) / len(
-            self.bins
-        )  # the width of the bars
-        fig, ax = plt.subplots()
-
-        x = (
-            np.linspace(self.range[0], self.range[1], num=len(self.bins) + 1)[:-1]
-            + width / 2
-        )
-        ax.bar(x, self.bins, width)
-        plt.title(self.name)
-
-        if save_path is not None:
-            plt.savefig(save_path)
-        else:
-            plt.show()
-        plt.close()
-
-    def plot_both(self, hist_b, save_path=None, wandb_obj=None):
-        ## TO DO: Check if the relation of bins and linspace is correct
-        hist_a = normalize_histogram(self.bins)
-        hist_b = normalize_histogram(hist_b)
-
-        # width = (self.range[1] - self.range[0]) / len(self.bins)  # the width of the bars
-        fig, ax = plt.subplots()
-        x = np.linspace(self.range[0], self.range[1], num=len(self.bins) + 1)[:-1]
-        ax.step(x, hist_b)
-        ax.step(x, hist_a)
-        ax.legend(["True", "Learned"])
-        plt.title(self.name)
-
-        if save_path is not None:
-            plt.savefig(save_path)
-            if wandb is not None:
-                if wandb_obj is not None:
-                    # Log image(s)
-                    im = plt.imread(save_path)
-                    wandb_obj.log({save_path: [wandb.Image(im, caption=save_path)]})
-        else:
-            plt.show()
-        plt.close()
-
-
-def normalize_histogram(hist):
-    hist = np.array(hist)
-    prob = hist / np.sum(hist)
-    return prob
-
-
-def mol2smiles(mol):
-    try:
-        Chem.SanitizeMol(mol)
-    except ValueError:
-        return None
-    return Chem.MolToSmiles(mol)
 
 
 def build_molecule(positions, atom_types, atom_decoder):
@@ -596,22 +475,6 @@ def build_xae_molecule(positions, atom_types, atom_decoder):
     return X, A, E
 
 
-
-def check_consistency_bond_dictionaries():
-    for bonds_dict in [bonds1, bonds2, bonds3]:
-        for atom1 in bonds1:
-            for atom2 in bonds_dict[atom1]:
-                bond = bonds_dict[atom1][atom2]
-                try:
-                    bond_check = bonds_dict[atom2][atom1]
-                except KeyError:
-                    raise ValueError("Not in dict " + str((atom1, atom2)))
-
-                assert (
-                    bond == bond_check
-                ), f"{bond} != {bond_check} for {atom1}, {atom2}"
-
-
 def get_bond_order(atom1, atom2, distance, check_exists=False):
     distance = 100 * distance  # We change the metric
 
@@ -643,12 +506,6 @@ def get_bond_order(atom1, atom2, distance, check_exists=False):
                 return 2  # Double
         return 1  # Single
     return 0  # No bond
-
-
-def single_bond_only(threshold, length, margin1=5):
-    if length < threshold + margin1:
-        return 1
-    return 0
 
 
 def geom_predictor(p, l, margin1=5, limit_bonds_to_one=False):
@@ -684,47 +541,6 @@ def check_connected(am, tol=1e-8):
     eigvals, eigvects = np.linalg.eig(lap)
     return len(np.where(abs(eigvals) < tol)[0]) < 2
 
-def check_stability(positions, atom_type):
-    """
-    Check the stability of a molecule based on atom positions and types.
-
-    Parameters:
-    - positions (np.ndarray): An array of shape (N, 3) containing the 3D coordinates of the atoms.
-    - atom_type (List[int]): A list of atom types corresponding to the positions.
-    - atom_decoder (Dict[int, str]): A dictionary mapping atom type indices to atom symbols.
-
-    Returns:
-    Tuple[bool, int, int]: A tuple containing a boolean indicating if the molecule is stable,
-                        the number of stable bonds, and the total number of atoms.
-    """
-    molecule_stable = 0
-    ratio_stable_atoms = 0
-    n_stable_atom = 0
-    TMP_XYZ_PATH = "tmp_analyze.xyz"
-    atom_symbols = [num2symbol[atom] for atom in atom_type]
-    save_xyz_tmp(TMP_XYZ_PATH, atom_symbols, positions)
-    smiles, mol, AC = smilify(TMP_XYZ_PATH)
-    if smiles is not None and mol is not None:
-        molecule = Chem.MolFromSmiles(smiles)
-        smiles = Chem.MolToSmiles(molecule, canonical=True)
-        molecule_stable = 1
-        ratio_stable_atoms = 1
-    else:
-        k = 0
-        for atom, bond in zip(atom_symbols, AC):
-            nbond = len(np.where(bond == 1)[0])
-            if nbond <= allowed_bonds[atom]:
-                n_stable_atom += 1
-            else:
-                continue
-                # print(f"{atom}{k} has {nbond} bonds")
-            k += 1
-        ratio_stable_atoms = n_stable_atom / len(atom_type)
-
-    if os.path.exists(TMP_XYZ_PATH):
-        os.remove(TMP_XYZ_PATH)
-
-    return molecule_stable, ratio_stable_atoms, smiles
 
 def check_stability(positions, atom_type):
     """

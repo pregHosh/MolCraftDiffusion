@@ -69,13 +69,6 @@ def init_process_group(backend, init_method=None, **kwargs):
         cpu_group = gpu_group
 
 
-def get_cpu_count():
-    """
-    Get the number of CPUs on this node.
-    """
-    return multiprocessing.cpu_count()
-
-
 def synchronize():
     """
     Synchronize among all distributed processes.

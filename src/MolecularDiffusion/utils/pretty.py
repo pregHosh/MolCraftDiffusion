@@ -66,20 +66,6 @@ def time(seconds):
         return "%.2f secs" % seconds
 
 
-def long_array(array, truncation=10, display=3):
-    """
-    Format an array as a string.
-
-    Parameters:
-        array (array_like): array-like data
-        truncation (int, optional): truncate array if its length exceeds this threshold
-        display (int, optional): number of elements to display at the beginning and the end in truncated mode
-    """
-    if len(array) <= truncation:
-        return "%s" % array
-    return "%s, ..., %s" % (str(array[:display])[:-1], str(array[-display:])[1:])
-
-
 def task_wrapper(task_func: Callable) -> Callable:
     """Optional decorator that controls the failure behavior when executing the task function.
 

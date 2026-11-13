@@ -16,6 +16,7 @@ import hydra
 import torch
 from omegaconf import DictConfig, OmegaConf
 
+from MolecularDiffusion.core.checkpoint import engine_weights
 from MolecularDiffusion.core import Engine
 from MolecularDiffusion.runmodes.train import (
     evaluate,
@@ -84,7 +85,7 @@ def load_weights(task, ckpt_path, task_module=None):
     cleaned_state_dict = None
     if "ema_model" in checkpoint or "model" in checkpoint:
         # Original engine format: prefer EMA weights (matches engine.load() behaviour)
-        raw_state_dict = checkpoint.get("ema_model") or checkpoint.get("model")
+        raw_state_dict = engine_weights(checkpoint)
         cleaned_state_dict = raw_state_dict
     else:
         # Lightning format: strip "task." / "task.ema_model." prefixes

@@ -16,6 +16,7 @@ import logging
 
 import torch
 
+from MolecularDiffusion.core.checkpoint import engine_weights
 from MolecularDiffusion.modules.models.gfmdiff.dynamics import GFMDiffDynamics
 from MolecularDiffusion.modules.models.en_diffusion import EnVariationalDiffusion
 from MolecularDiffusion.modules.tasks.diffusion import GeomMolecularGenerative
@@ -143,7 +144,7 @@ class ModelTaskFactory:
                         f"Update your config to use tasks: {ckpt_task_type} or point to the correct checkpoint."
                     )
 
-                chk_point = ckpt.get("ema_model") or ckpt.get("model")
+                chk_point = engine_weights(ckpt)
                 if chk_point is None:
                     raise KeyError("Checkpoint missing both 'ema_model' and 'model'")
 

@@ -22,6 +22,7 @@ import logging
 
 import torch
 
+from MolecularDiffusion.core.checkpoint import engine_weights
 from MolecularDiffusion.modules.models.en_diffusion import EnVariationalDiffusion
 from MolecularDiffusion.modules.models.gcdm.dynamics import GCDMDynamics
 from MolecularDiffusion.modules.models.gcdm.gcp_layers import (
@@ -180,7 +181,7 @@ class ModelTaskFactory:
                         f"checkpoint."
                     )
 
-                chk_point = ckpt.get("ema_model") or ckpt.get("model")
+                chk_point = engine_weights(ckpt)
                 if chk_point is None:
                     raise KeyError(
                         "Checkpoint missing both 'ema_model' and 'model'"

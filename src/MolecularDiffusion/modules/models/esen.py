@@ -171,7 +171,10 @@ class eSEN_Backbone(nn.Module, GraphModelMixin):
         self.use_envelope = use_envelope
         self.update_position = update_position
         # rotation utils
-        Jd_list = torch.load(os.path.join(os.path.dirname(__file__), "../layers/esen/Jd.pt"))
+        Jd_list = torch.load(
+            os.path.join(os.path.dirname(__file__), "../layers/equiformer_v2/Jd.pt"),
+            weights_only=True,
+        )
         for l in range(self.lmax + 1):
             self.register_buffer(f"Jd_{l}", Jd_list[l])
         self.sph_feature_size = int((self.lmax + 1) ** 2)

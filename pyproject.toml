@@ -262,6 +262,8 @@ where = ["src"]
     "configs/**/*.xyz",
     "zoo.yaml",
     "**/*.pt", "**/*.npz",
+    # runtime data and licences that sit next to the code
+    "**/*.fdef", "**/LICENSE*", "utils/*.gz",
 ]
 
 [tool.ruff]

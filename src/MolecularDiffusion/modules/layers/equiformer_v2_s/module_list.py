@@ -1,11 +1,12 @@
-import torch
+"""Alias of ``equiformer_v2.module_list``.
 
+``equiformer_v2_s`` carried a copy of this file that is identical in behaviour.
+Both import paths now give the same module object, so classes keep one identity
+and checkpoints pickled under either path keep loading.
+"""
 
-class ModuleListInfo(torch.nn.ModuleList):
-    def __init__(self, info_str, modules=None):
-        super().__init__(modules)
-        self.info_str = str(info_str)
-    
+import sys
 
-    def __repr__(self): 
-        return self.info_str
+from MolecularDiffusion.modules.layers.equiformer_v2 import module_list as _impl
+
+sys.modules[__name__] = _impl

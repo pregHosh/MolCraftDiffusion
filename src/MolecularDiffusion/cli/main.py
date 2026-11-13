@@ -12,6 +12,14 @@ import platform
 
 import click
 
+# Printed on every CLI run (incl. --help/--version), not on library import.
+_BANNER = r"""
+░█▄█░█▀█░█░░░█▀▀░█▀▄░█▀█░█▀▀░▀█▀░█▀▄░▀█▀░█▀▀░█▀▀
+░█░█░█░█░█░░░█░░░█▀▄░█▀█░█▀▀░░█░░█░█░░█░░█▀▀░█▀▀
+░▀░▀░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀░▀░▀░░░░▀░░▀▀░░▀▀▀░▀░░░▀░░"""
+
+print(_BANNER)
+
 # Setup logging
 logging.basicConfig(
     level=logging.INFO,

@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import torch
+from MolecularDiffusion.core.checkpoint import engine_weights
 from MolecularDiffusion.device import get_device
 import torch.nn as nn
 
@@ -119,7 +120,7 @@ def _load_engine_task(ckpt: dict, device: str) -> nn.Module:
         t_embedding=task_cfg.get("t_embedding", "sinusoidal"),
     )
 
-    sd = ckpt.get("ema_model") or ckpt.get("model")
+    sd = engine_weights(ckpt)
     task.load_state_dict(sd, strict=False)
     return task.to(device).eval()
 

@@ -1,3 +1,4 @@
+from MolecularDiffusion.core.checkpoint import engine_weights
 from MolecularDiffusion.modules.tasks import ProperyPrediction, GuidanceModelPrediction
 from MolecularDiffusion.modules.tasks import SSL3D
 from MolecularDiffusion.modules.layers.common import SinusoidsEmbeddingNew
@@ -292,7 +293,7 @@ class ModelTaskFactory:
                         f"Update your config to use tasks: {ckpt_task_type} or point to the correct checkpoint."
                     )
 
-                chk_point = ckpt.get("ema_model") or ckpt.get("model")
+                chk_point = engine_weights(ckpt)
                 if chk_point is None:
                     raise KeyError("Checkpoint missing both 'ema_model' and 'model'")
                 if is_main_process:

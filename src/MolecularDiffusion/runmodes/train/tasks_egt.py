@@ -1,3 +1,4 @@
+from MolecularDiffusion.core.checkpoint import engine_weights
 from MolecularDiffusion.callbacks.train_helper import SP_regularizer
 from MolecularDiffusion.modules.tasks import ProperyPrediction, GuidanceModelPrediction, GeomMolecularGenerative
 from MolecularDiffusion.modules.models import EGT_dynamics, GraphTransformer, NoiseModel, EnVariationalDiffusion # type: ignore
@@ -261,7 +262,7 @@ class ModelTaskFactory:
                         f"Update your config to use tasks: {ckpt_task_type} or point to the correct checkpoint."
                     )
 
-                chk_point = ckpt.get("ema_model") or ckpt.get("model")
+                chk_point = engine_weights(ckpt)
                 if chk_point is None:
                     raise KeyError("Checkpoint missing both 'ema_model' and 'model'")
 

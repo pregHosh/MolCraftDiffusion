@@ -1,31 +1,12 @@
-import torch
-import torch.nn as nn
+"""Alias of ``equiformer_v2.radial_function``.
 
+``equiformer_v2_s`` carried a copy of this file that is identical in behaviour.
+Both import paths now give the same module object, so classes keep one identity
+and checkpoints pickled under either path keep loading.
+"""
 
-class RadialFunction(nn.Module):
-    '''
-        Contruct a radial function (linear layers + layer normalization + SiLU) given a list of channels
-    '''
-    def __init__(self, channels_list):
-        super().__init__()
-        modules = []
-        input_channels = channels_list[0]
-        for i in range(len(channels_list)):
-            if i == 0:
-                continue
-            
-            modules.append(nn.Linear(input_channels, channels_list[i], bias=True))
-            input_channels = channels_list[i]
-            
-            if i == len(channels_list) - 1:
-                break
-            
-            modules.append(nn.LayerNorm(channels_list[i]))
-            modules.append(torch.nn.SiLU())
-        
-        self.net = nn.Sequential(*modules)
+import sys
 
-        
-    def forward(self, inputs):
-        return self.net(inputs)
-        
+from MolecularDiffusion.modules.layers.equiformer_v2 import radial_function as _impl
+
+sys.modules[__name__] = _impl

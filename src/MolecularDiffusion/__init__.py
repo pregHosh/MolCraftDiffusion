@@ -11,13 +11,6 @@ from importlib.metadata import PackageNotFoundError, version
 if _sys.platform == "darwin":
     _os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
 
-_BANNER = r"""
-░█▄█░█▀█░█░░░█▀▀░█▀▄░█▀█░█▀▀░▀█▀░█▀▄░▀█▀░█▀▀░█▀▀
-░█░█░█░█░█░░░█░░░█▀▄░█▀█░█▀▀░░█░░█░█░░█░░█▀▀░█▀▀
-░▀░▀░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀░▀░▀░░░░▀░░▀▀░░▀▀▀░▀░░░▀░░"""
-
-print(_BANNER)
-
 try:
     __version__ = version("molcraftdiffusion")
 except PackageNotFoundError:
