@@ -13,7 +13,7 @@ from rdkit import Chem
 from MolecularDiffusion import core
 from MolecularDiffusion.callbacks import SP_regularizer
 from MolecularDiffusion.modules.layers import common, functional
-from MolecularDiffusion.modules.tasks.regression import MLPRegressor_padded, MLPRegressor_pernode
+from MolecularDiffusion.modules.tasks.predict.regression import MLPRegressor_padded, MLPRegressor_pernode
 from MolecularDiffusion.modules.models.edm.en_diffusion import (
     DistributionNodes,
     DistributionProperty,
