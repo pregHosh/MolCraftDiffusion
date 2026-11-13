@@ -14,7 +14,7 @@ from MolecularDiffusion import core
 from MolecularDiffusion.callbacks import SP_regularizer
 from MolecularDiffusion.modules.layers import common, functional
 from MolecularDiffusion.modules.tasks.regression import MLPRegressor_padded, MLPRegressor_pernode
-from MolecularDiffusion.modules.models.en_diffusion import (
+from MolecularDiffusion.modules.models.edm.en_diffusion import (
     DistributionNodes,
     DistributionProperty,
     split_frame,

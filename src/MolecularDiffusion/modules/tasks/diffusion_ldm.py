@@ -19,7 +19,7 @@ from torch_scatter import scatter
 from omegaconf import OmegaConf, DictConfig
 from hydra.utils import instantiate
 from torch_geometric.utils import to_dense_batch
-from MolecularDiffusion.modules.models.en_diffusion import DistributionNodes
+from MolecularDiffusion.modules.models.edm.en_diffusion import DistributionNodes
 
 
 class DiagonalGaussianDistribution:

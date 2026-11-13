@@ -18,7 +18,7 @@ import torch
 
 from MolecularDiffusion.core.checkpoint import engine_weights
 from MolecularDiffusion.modules.models.gfmdiff.dynamics import GFMDiffDynamics
-from MolecularDiffusion.modules.models.en_diffusion import EnVariationalDiffusion
+from MolecularDiffusion.modules.models.edm.en_diffusion import EnVariationalDiffusion
 from MolecularDiffusion.modules.tasks.diffusion import GeomMolecularGenerative
 
 logger = logging.getLogger(__name__)

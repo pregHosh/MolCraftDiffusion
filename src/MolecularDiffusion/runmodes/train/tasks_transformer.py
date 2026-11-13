@@ -22,10 +22,10 @@ import logging
 import torch
 
 from MolecularDiffusion.core.checkpoint import engine_weights
-from MolecularDiffusion.modules.models.en_diffusion import (
+from MolecularDiffusion.modules.models.edm.en_diffusion import (
     EnVariationalDiffusion,
 )
-from MolecularDiffusion.modules.models.transformer_dynamics import (
+from MolecularDiffusion.modules.models.dynamics.transformer_dynamics import (
     TransformerDynamics,
 )
 from MolecularDiffusion.modules.tasks.diffusion import (

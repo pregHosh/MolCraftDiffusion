@@ -3,7 +3,7 @@ from MolecularDiffusion.modules.tasks import ProperyPrediction, GuidanceModelPre
 from MolecularDiffusion.modules.tasks import SSL3D
 from MolecularDiffusion.modules.layers.common import SinusoidsEmbeddingNew
 from MolecularDiffusion.runmodes.train.tasks_egcl import _build_ssl3d_objectives
-from MolecularDiffusion.modules.models.esen import eSEN_Backbone, eSEN_dynamics
+from MolecularDiffusion.modules.models.dynamics.esen import eSEN_Backbone, eSEN_dynamics
 from MolecularDiffusion.modules.models import NoiseModel
 
 import torch

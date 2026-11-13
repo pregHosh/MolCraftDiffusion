@@ -46,7 +46,7 @@ class PharmacophoreGenerative(Task, core.Configurable):
 
         # Create model if not provided
         if model is None:
-            from MolecularDiffusion.modules.models.pharmacophore_dynamics import PharmacophoreEnVariationalDiff
+            from MolecularDiffusion.modules.models.dynamics.pharmacophore_dynamics import PharmacophoreEnVariationalDiff
             model = PharmacophoreEnVariationalDiff(
                 model_params=model_params,
             )

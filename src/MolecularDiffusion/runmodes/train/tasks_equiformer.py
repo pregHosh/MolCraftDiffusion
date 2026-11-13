@@ -4,12 +4,12 @@ import logging
 from MolecularDiffusion.modules.tasks import SSL3D, ProperyPrediction
 from MolecularDiffusion.modules.tasks.diffusion import GeomMolecularGenerative
 from MolecularDiffusion.runmodes.train.tasks_egcl import _build_ssl3d_objectives
-from MolecularDiffusion.modules.models.en_diffusion import (
+from MolecularDiffusion.modules.models.edm.en_diffusion import (
     EnVariationalDiffusion,
 )
 from MolecularDiffusion.modules.models.shepherd_arch.equiformer_v2_encoder import EquiformerV2
-from MolecularDiffusion.modules.models.equiformer_v2_dynamics import EquiformerV2_dynamics
-from MolecularDiffusion.modules.models.equiformer_v2_backbone import EquiformerV2Backbone
+from MolecularDiffusion.modules.models.dynamics.equiformer_v2_dynamics import EquiformerV2_dynamics
+from MolecularDiffusion.modules.models.dynamics.equiformer_v2_backbone import EquiformerV2Backbone
 
 logger = logging.getLogger(__name__)
 

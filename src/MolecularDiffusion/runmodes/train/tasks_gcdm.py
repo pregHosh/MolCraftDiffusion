@@ -23,7 +23,7 @@ import logging
 import torch
 
 from MolecularDiffusion.core.checkpoint import engine_weights
-from MolecularDiffusion.modules.models.en_diffusion import EnVariationalDiffusion
+from MolecularDiffusion.modules.models.edm.en_diffusion import EnVariationalDiffusion
 from MolecularDiffusion.modules.models.gcdm.dynamics import GCDMDynamics
 from MolecularDiffusion.modules.models.gcdm.gcp_layers import (
     GCPLayerConfig,

@@ -35,7 +35,7 @@ from typing import Optional, Tuple
 import torch
 import torch.nn as nn
 
-from MolecularDiffusion.modules.models.egcl import EGNN
+from MolecularDiffusion.modules.models.dynamics.egcl import EGNN
 
 _ACTIVATIONS = {"SiLU": nn.SiLU, "ReLU": nn.ReLU}
 

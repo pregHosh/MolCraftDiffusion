@@ -17,10 +17,10 @@ import logging
 import torch
 
 from MolecularDiffusion.core.checkpoint import engine_weights
-from MolecularDiffusion.modules.models.en_diffusion import (
+from MolecularDiffusion.modules.models.edm.en_diffusion import (
     EnVariationalDiffusion,
 )
-from MolecularDiffusion.modules.models.painn_dynamics import PaiNNDynamics
+from MolecularDiffusion.modules.models.dynamics.painn_dynamics import PaiNNDynamics
 from MolecularDiffusion.modules.tasks.diffusion import (
     GeomMolecularGenerative,
 )
