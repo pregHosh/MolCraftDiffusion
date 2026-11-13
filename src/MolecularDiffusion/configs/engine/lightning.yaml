@@ -11,7 +11,9 @@ trainer_config:
   devices: auto
   strategy: auto  # Lightning auto-selects ddp/ddp_spawn based on devices
 
-  # Precision - will be converted to Lightning format in Python
+  # Precision - converted to Lightning format in Python. Accepts 32, 16, bf16
+  # (16 and bf16 mean mixed precision) or a Lightning name such as bf16-mixed,
+  # 16-mixed, 64-true. Any other value falls back to 32 with a warning.
   precision: ${trainer.precision}
 
   # Optimization
@@ -21,6 +23,8 @@ trainer_config:
 
   # Logging & Validation
   log_every_n_steps: ${logger.log_interval}
+  # Lightning validates AFTER epochs N, 2N, ... (so never after epoch 0); the original
+  # engine validates at epoch indices 0, N, 2N, .... Same number, different schedule.
   check_val_every_n_epoch: ${trainer.validation_interval}
 
   # Checkpointing
@@ -51,3 +55,8 @@ persistent_workers: false
 # shape (e.g. a task added/removed a get_extra_state() key since that
 # checkpoint was written) without a hard "Missing key(s)" failure.
 strict_loading: true
+
+# Generative evaluation (generative_analysis: true) generates from the RAW weights here,
+# while the validation loss uses the EMA copy. The original engine uses EMA for both.
+# Set at the top level of your config (or under tasks:) to generate from the EMA weights:
+#   generative_eval_use_ema: true

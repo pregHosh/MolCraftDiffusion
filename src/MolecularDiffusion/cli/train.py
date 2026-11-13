@@ -25,7 +25,7 @@ from MolecularDiffusion.runmodes.train import (
     OptimSchedulerFactory,
     get_versioned_output_path,
 )
-from MolecularDiffusion.runmodes.train.eval import _resolve_task_config
+from MolecularDiffusion.runmodes.train.eval import initial_best_metric
 from MolecularDiffusion.utils import (
     RankedLogger,
     task_wrapper,
@@ -281,12 +281,13 @@ def engine_wrapper(task_module, data_module, trainer_module, logger_module,
             with open(os.path.join(trainer_module.output_path, "edm_stat.pkl"), "wb") as f:
                 pickle.dump(models_to_save, f)
 
-    # Determine correct initial sentinel from registry + engine overrides
-    _eval_cfg = _resolve_task_config(task_module.task_type)
-    if kwargs.get("eval_higher_is_better") is not None:
-        from dataclasses import replace as _dcreplace
-        _eval_cfg = _dcreplace(_eval_cfg, higher_is_better=kwargs["eval_higher_is_better"])
-    best_metrics = -torch.inf if _eval_cfg.higher_is_better else torch.inf
+    # Initial sentinel: same direction rule as `evaluate` (registry, engine override,
+    # and lowest-loss for a generative run without generative_analysis).
+    best_metrics = initial_best_metric(
+        task_module.task_type,
+        kwargs.get("generative_analysis", False),
+        kwargs.get("eval_higher_is_better"),
+    )
     
     # Create versioned checkpoint folder (like Lightning's version_X folders)
     versioned_ckpt_path = get_versioned_output_path(trainer_module.output_path)
@@ -314,6 +315,34 @@ def engine_wrapper(task_module, data_module, trainer_module, logger_module,
                 best_checkpoints=best_checkpoints, **kwargs
             )
     return best_metrics, solver
+
+
+# Platform spellings -> Lightning (`precision: 16` / `bf16` mean mixed precision here).
+_PRECISION_ALIASES = {32: 32, 16: "16-mixed", "16": "16-mixed", "bf16": "bf16-mixed"}
+# Lightning's own spellings, passed through unchanged.
+_PRECISION_NATIVE = {
+    "32", "64", 64, "64-true", "32-true", "16-true", "bf16-true", "16-mixed", "bf16-mixed",
+}
+
+
+def resolve_lightning_precision(value):
+    """Map the ``precision`` setting to what ``pl.Trainer`` expects.
+
+    Platform spellings (32, 16, "bf16") map as before and Lightning's own names
+    ("bf16-mixed", "64-true", ...) pass through. Anything else used to fall back
+    to fp32 silently; it still does, but now says so.
+    """
+    if value is None:
+        return 32
+    if value in _PRECISION_ALIASES:
+        return _PRECISION_ALIASES[value]
+    if value in _PRECISION_NATIVE:
+        return value
+    log.warning(
+        f"Unrecognised trainer precision {value!r}; falling back to 32. "
+        f"Use 32, 16, bf16, or a Lightning name such as 'bf16-mixed' or '16-mixed'."
+    )
+    return 32
 
 
 def lightning_wrapper(task_module, data_module, trainer_module, logger_module, engine_cfg, 
@@ -394,6 +423,7 @@ def lightning_wrapper(task_module, data_module, trainer_module, logger_module, e
             output_dir=os.path.join(trainer_module.output_path, "generated_molecules"),
             use_posebuster=kwargs.get("use_posebuster", False),
             monitor_metric=monitor_metric,
+            use_ema=bool(kwargs.get("generative_eval_use_ema", False)),
         ))
     
     # Checkpoint callback
@@ -469,8 +499,7 @@ def lightning_wrapper(task_module, data_module, trainer_module, logger_module, e
     else:
         trainer_config["max_epochs"] = trainer_module.num_epochs
 
-    precision_map = {32: 32, 16: "16-mixed", "16": "16-mixed", "bf16": "bf16-mixed"}
-    trainer_config["precision"] = precision_map.get(trainer_config.get("precision", 32), 32)
+    trainer_config["precision"] = resolve_lightning_precision(trainer_config.get("precision", 32))
     
     if logger_module.logger == "wandb":
         pl_logger = pl.loggers.WandbLogger(
@@ -734,6 +763,8 @@ def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     n_samples = cfg.get("n_samples", tasks_cfg.get("n_samples", 100))
     metric = cfg.get("metrics", cfg.get("metric", tasks_cfg.get("metrics", "Validity Relax and connected")))
     use_posebuster = cfg.get("use_posebuster", tasks_cfg.get("use_posebuster", False))
+    # Lightning only: generate from the EMA weights (the original engine always does).
+    gen_use_ema = cfg.get("generative_eval_use_ema", tasks_cfg.get("generative_eval_use_ema", False))
     # Preference: cli/top-level -> tasks -> data -> default
     gen_batch_size = cfg.get("batch_size", tasks_cfg.get("batch_size", cfg.data.get("batch_size", 100)))
 
@@ -750,6 +781,7 @@ def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
                 engine_cfg=engine_cfg,
                 generative_analysis=gen_analysis, n_samples=n_samples,
                 metric=metric, use_posebuster=use_posebuster, batch_size=gen_batch_size,
+                generative_eval_use_ema=gen_use_ema,
                 ckpt_path=cfg.trainer.get("resume_from_checkpoint", None),
                 monitor_metric=cfg.trainer.get("monitor_metric", None),
                 monitor_mode=cfg.trainer.get("monitor_mode", None),

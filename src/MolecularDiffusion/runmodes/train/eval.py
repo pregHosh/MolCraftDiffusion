@@ -115,6 +115,37 @@ def _resolve_task_config(task_type: str) -> TaskEvalConfig:
         f"Known prefixes: {list(TASK_REGISTRY.keys())}"
     )
 
+
+def resolve_higher_is_better(
+    cfg: TaskEvalConfig,
+    generative_analysis: bool = False,
+    override: Optional[bool] = None,
+) -> bool:
+    """Direction in which the selection metric improves, for one run.
+
+    ``engine.eval_higher_is_better`` (``override``) always wins. A generative
+    task trained *without* ``generative_analysis`` is selected on its test
+    loss, so lower is better there; the registry's ``higher_is_better=True``
+    describes the validity metric of the generative path and used to keep the
+    HIGHEST loss as ``best`` for these runs.
+    """
+    if override is not None:
+        return bool(override)
+    if cfg.needs_generative and not generative_analysis:
+        return False
+    return cfg.higher_is_better
+
+
+def initial_best_metric(
+    task_type: str,
+    generative_analysis: bool = False,
+    override: Optional[bool] = None,
+) -> float:
+    """Starting value of the running best, matching :func:`resolve_higher_is_better`."""
+    cfg = _resolve_task_config(task_type)
+    return -torch.inf if resolve_higher_is_better(cfg, generative_analysis, override) else torch.inf
+
+
 DIST_THRESHOLD = 3
 DIST_RELAX_BOND = 0.25
 ANGLE_RELAX = 20
@@ -348,8 +379,12 @@ def evaluate(
     # Apply engine-level overrides (from cfg.engine.eval_metric_key / eval_higher_is_better)
     if kwargs.get("eval_metric_key") is not None:
         cfg = dataclass_replace(cfg, metric_key=kwargs["eval_metric_key"])
-    if kwargs.get("eval_higher_is_better") is not None:
-        cfg = dataclass_replace(cfg, higher_is_better=kwargs["eval_higher_is_better"])
+    cfg = dataclass_replace(
+        cfg,
+        higher_is_better=resolve_higher_is_better(
+            cfg, kwargs.get("generative_analysis", False), kwargs.get("eval_higher_is_better")
+        ),
+    )
     save_top_k = kwargs.get("save_top_k", 3)
     save_every_val_epoch = kwargs.get("save_every_val_epoch", False)
 

@@ -30,6 +30,9 @@ class GenerativeEvalCallback(Callback):
         output_dir (str): Directory to save generated molecules
         use_posebuster (bool): Whether to use posebuster for validation
         posebuster_timeout (int): Timeout for posebuster validation
+        use_ema (bool): Generate from the EMA copy of the weights when the run
+            keeps one (what the original engine always does and what the
+            validation loss uses). Default False keeps the raw weights.
     """
 
     def __init__(
@@ -41,8 +44,11 @@ class GenerativeEvalCallback(Callback):
         use_posebuster: bool = False,
         posebuster_timeout: int = 60,
         monitor_metric: Any = None,
+        use_ema: bool = False,
     ):
         super().__init__()
+        self.use_ema = use_ema
+        self._warned_raw_weights = False
         self.n_samples = n_samples
         self.batch_size = batch_size
         self.metric = metric
@@ -68,9 +74,20 @@ class GenerativeEvalCallback(Callback):
         logger.info(f"Running generative evaluation: {self.n_samples} samples")
 
         try:
-            # Use the task model (which should be EMA if EMA callback is active)
+            ema = getattr(pl_module, "ema_model", None)
+            if self.use_ema and ema is not None:
+                model = ema
+            else:
+                model = pl_module.task
+                if ema is not None and not self._warned_raw_weights:
+                    self._warned_raw_weights = True
+                    logger.info(
+                        "Generative evaluation uses the raw weights although the run keeps an "
+                        "EMA copy (validation loss uses the EMA). Set generative_eval_use_ema: "
+                        "true to generate from the EMA weights, as the original engine does."
+                    )
             stats = analyze_and_save(
-                model=pl_module.task,
+                model=model,
                 epoch=trainer.current_epoch,
                 n_samples=self.n_samples,
                 batch_size=self.batch_size,

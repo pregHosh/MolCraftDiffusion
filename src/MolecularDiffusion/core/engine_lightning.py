@@ -906,10 +906,14 @@ class EngineLightning(pl.LightningModule, core.Configurable):
             scheduler = optim.lr_scheduler.StepLR(optimizer, **scheduler_kwargs)
         elif scheduler_name_lower == "multisteplr":
             scheduler = optim.lr_scheduler.MultiStepLR(optimizer, **scheduler_kwargs)
-        elif scheduler_name_lower == "exponentiallr":
+        elif scheduler_name_lower in ("exponentiallr", "exponentiarlr"):  # 2nd = original engine's spelling
             scheduler = optim.lr_scheduler.ExponentialLR(optimizer, **scheduler_kwargs)
         elif scheduler_name_lower == "cosineannealing":
             scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, **scheduler_kwargs)
+        elif scheduler_name_lower == "caws":
+            scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, **scheduler_kwargs)
+        elif scheduler_name_lower == "lambdalr":
+            scheduler = optim.lr_scheduler.LambdaLR(optimizer, **scheduler_kwargs)
         elif scheduler_name_lower == "onecyclelr":
             scheduler = optim.lr_scheduler.OneCycleLR(optimizer, max_lr=lr, **scheduler_kwargs)
         elif scheduler_name_lower == "reducelronplateau":
