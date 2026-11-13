@@ -459,7 +459,7 @@ class EngineLightning(pl.LightningModule, core.Configurable):
             self._pending_ema_state = checkpoint['ema_model_state_dict']
             logger.info("Found EMA state in checkpoint (new format), will load after model init")
 
-        # Handle old format: ema_model.* keys in state_dict from EMACallback
+        # Handle old format: ema_model.* keys in state_dict (old EMA callback)
         if 'state_dict' in checkpoint:
             state_dict = checkpoint['state_dict']
             ema_keys = [k for k in state_dict.keys() if k.startswith('ema_model.')]

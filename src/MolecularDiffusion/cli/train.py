@@ -212,34 +212,6 @@ except ImportError as e:
 
 
 def evaluate_and_save(i, solver, task_module, trainer_module, logger_module, versioned_ckpt_path, use_amp, **kwargs):
-    """Helper to run evaluation and save checkpoints."""
-    if hasattr(task_module.task, "sample"):
-        output_generated_dir = os.path.join(versioned_ckpt_path, "generated_molecules")
-        os.makedirs(output_generated_dir, exist_ok=True)
-        return evaluate(
-            task_module.task_type, solver, i, kwargs.get("best_metrics", torch.inf), kwargs.get("best_checkpoints", []),
-            logger_module.logger, output_generated_dir=output_generated_dir,
-            generative_analysis=kwargs.get("generative_analysis", False),
-            n_samples=kwargs.get("n_samples", 100),
-            metric=kwargs.get("metric", "Validity Relax and connected"),
-            output_path=versioned_ckpt_path,
-            use_amp=use_amp, precision=trainer_module.precision,
-            use_posebuster=kwargs.get("use_posebuster", False),
-            batch_size=kwargs.get("batch_size", 1),
-            save_top_k=getattr(trainer_module, "save_top_k", 3),
-            save_every_val_epoch=getattr(trainer_module, "save_every_val_epoch", False),
-        )
-    else:
-        return evaluate(
-            task_module.task_type, solver, i, kwargs.get("best_metrics", torch.inf), kwargs.get("best_checkpoints", []),
-            logger_module.logger, output_path=versioned_ckpt_path,
-            save_top_k=getattr(trainer_module, "save_top_k", 3),
-            save_every_val_epoch=getattr(trainer_module, "save_every_val_epoch", False),
-        )
-
-
-
-def evaluate_and_save(i, solver, task_module, trainer_module, logger_module, versioned_ckpt_path, use_amp, **kwargs):
     """Run evaluation for any task type — routing is handled by TASK_REGISTRY inside evaluate()."""
     output_generated_dir = os.path.join(versioned_ckpt_path, "generated_molecules")
     os.makedirs(output_generated_dir, exist_ok=True)
@@ -647,7 +619,7 @@ def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         try:
             node_feature_0 = getattr(data_point_chk, "x", None)
             n_dim = node_feature_0.shape[1]
-        except:
+        except Exception:
             n_dim = 0
 
     factory_cfg = cfg.tasks

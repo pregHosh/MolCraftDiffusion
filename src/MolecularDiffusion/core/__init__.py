@@ -7,11 +7,10 @@ from .meter import Meter
 try:
     from .engine_lightning import EngineLightning
     from MolecularDiffusion.data.lightning_data_module import MolecularDiffusionDataModule
-    from .lightning_callbacks import EMACallback, GenerativeEvalCallback
+    from .lightning_callbacks import GenerativeEvalCallback
     _LIGHTNING_EXPORTS = [
         "EngineLightning",
         "MolecularDiffusionDataModule",
-        "EMACallback",
         "GenerativeEvalCallback",
     ]
 except ImportError:
@@ -23,8 +22,6 @@ __all__ = [
     "Registry",
     "Configurable",
     "Engine",
-    "EngineCV",
-    "EngineRL",
     "Meter",
     "LoggerBase",
     "LoggingLogger",
