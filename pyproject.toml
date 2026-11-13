@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "molcraftdiffusion"
-version = "1.12.1"
+version = "1.13.0"
 description = "A unified generative AI framework for 3D molecular generation using diffusion models"
 readme = "README.md"
 requires-python = ">=3.10,<3.14"
@@ -318,6 +318,7 @@ module = []
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
+testpaths = ["tests"]
 markers = [
   "diffusion: diffusion model compatibility tests",
   "generation: generation config and runtime compatibility tests",
