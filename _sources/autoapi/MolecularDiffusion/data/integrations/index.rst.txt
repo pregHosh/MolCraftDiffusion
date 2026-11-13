@@ -1,0 +1,32 @@
+MolecularDiffusion.data.integrations
+====================================
+
+.. py:module:: MolecularDiffusion.data.integrations
+
+.. autoapi-nested-parse::
+
+   Dataset / collate / DataModule adapters for individual models (Apo2Mol, DiffInt, GoFlow, PMDM, ...).
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/data/integrations/apo2mol_data/index
+   /autoapi/MolecularDiffusion/data/integrations/diffdec_data/index
+   /autoapi/MolecularDiffusion/data/integrations/diffint_data/index
+   /autoapi/MolecularDiffusion/data/integrations/diffint_prep/index
+   /autoapi/MolecularDiffusion/data/integrations/diffpharma_data/index
+   /autoapi/MolecularDiffusion/data/integrations/diffpharma_prep/index
+   /autoapi/MolecularDiffusion/data/integrations/diffsbdd_data/index
+   /autoapi/MolecularDiffusion/data/integrations/goflow_data/index
+   /autoapi/MolecularDiffusion/data/integrations/kgdiff_data/index
+   /autoapi/MolecularDiffusion/data/integrations/oareactdiff_data/index
+   /autoapi/MolecularDiffusion/data/integrations/pharmacophore/index
+   /autoapi/MolecularDiffusion/data/integrations/pmdm_data/index
+   /autoapi/MolecularDiffusion/data/integrations/shepherd2/index
+
+

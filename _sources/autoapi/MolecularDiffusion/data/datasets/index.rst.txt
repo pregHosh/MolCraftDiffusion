@@ -1,0 +1,23 @@
+MolecularDiffusion.data.datasets
+================================
+
+.. py:module:: MolecularDiffusion.data.datasets
+
+.. autoapi-nested-parse::
+
+   Core dataset classes: base ``Dataset``, graph3d (explicit bonds), point clouds, reactions.
+
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/MolecularDiffusion/data/datasets/dataset/index
+   /autoapi/MolecularDiffusion/data/datasets/graph3d_dataset/index
+   /autoapi/MolecularDiffusion/data/datasets/pointcloud/index
+   /autoapi/MolecularDiffusion/data/datasets/reaction_data/index
+
+

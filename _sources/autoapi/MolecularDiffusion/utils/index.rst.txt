@@ -3,6 +3,16 @@ MolecularDiffusion.utils
 
 .. py:module:: MolecularDiffusion.utils
 
+.. autoapi-nested-parse::
+
+   Shared helpers, imported on first use (PEP 562).
+
+   Importing this package used to load every helper eagerly (about 5 s and 850 MB,
+   mostly rdkit); now a name is imported when it is first read. All public names,
+   ``from MolecularDiffusion.utils import X`` and ``import *`` work as before, and any
+   submodule is reachable as an attribute (``utils.comm``, ``utils.file``, ...).
+
+
 
 Submodules
 ----------
