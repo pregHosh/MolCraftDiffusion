@@ -11,7 +11,8 @@ import pytest
 
 PKG = "MolecularDiffusion.modules.models"
 MODELS = Path(__file__).resolve().parents[1] / "src/MolecularDiffusion/modules/models"
-FLAT = sorted(p.stem for p in MODELS.glob("*.py") if p.stem != "__init__")
+# private helper modules (``_protocols``) are real modules, not aliases
+FLAT = sorted(p.stem for p in MODELS.glob("*.py") if p.stem != "__init__" and not p.stem.startswith("_"))
 
 
 def test_flat_files_exist() -> None:

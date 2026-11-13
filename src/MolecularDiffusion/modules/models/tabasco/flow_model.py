@@ -35,7 +35,8 @@ class FlowMatchingModel(nn.Module):
         compile: bool = False,
     ):
         """Args:
-        net: The neural network predicting velocity fields.
+        net: The neural network predicting velocity fields
+            (calling convention: ``models._protocols.PaddedBackbone``).
         coords_interpolant: Interpolant for Cartesian coordinates.
         atomics_interpolant: Interpolant for one-hot atom types.
         time_distribution: `uniform`, `beta`, or `histogram`.

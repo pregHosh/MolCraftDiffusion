@@ -123,7 +123,8 @@ class EnVariationalDiffusion(torch.nn.Module):
     E(n) Equivariant Variational Diffusion Model.
 
     Args:
-        dynamics (nn.Module): Neural network that predicts noise or x.
+        dynamics (nn.Module): Neural network that predicts noise or x
+            (calling convention: ``models._protocols.DenseDynamics``).
         dynamics_teacher (Optional[nn.Module]): Teacher model for distillation.
         in_node_nf (int): Total number of input node features per atom.
         n_dims (int): Dimensionality of spatial coordinates (typically 3).
