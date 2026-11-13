@@ -462,7 +462,10 @@ def test_diffusion_retry_with_frames_returns_original_chain(monkeypatch):
             (True, 1, [0, 0]),
         ]
     )
-    monkeypatch.setattr(en_diffusion, "check_quality", lambda *args: next(quality_results))
+    # `sample` lives in the sampling mixin; patch the name where it is looked up
+    from MolecularDiffusion.modules.models.edm import en_diffusion_sampling
+
+    monkeypatch.setattr(en_diffusion_sampling, "check_quality", lambda *args: next(quality_results))
 
     node_mask = torch.ones(1, 2, 1)
     edge_mask = torch.ones(4, 1)
@@ -487,6 +490,8 @@ def test_diffusion_retry_with_frames_returns_original_chain(monkeypatch):
     assert x.shape == (2, 2, 3)
     assert h["categorical"].shape == (2, 2, 2)
     assert chain.shape == (2, 1, 2, 6)
+    # both scripted quality results were used: the patch really drove the retry
+    assert next(quality_results, None) is None
 
 
 def test_random_walk_spread_controls_skeleton_geometry():
