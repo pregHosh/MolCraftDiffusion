@@ -186,7 +186,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -285,6 +285,7 @@
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/checkpoint/index.html">MolecularDiffusion.core.checkpoint</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../core/core/index.html">MolecularDiffusion.core.core</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../core/engine/index.html">MolecularDiffusion.core.engine</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../core/engine_lightning/index.html">MolecularDiffusion.core.engine_lightning</a></li>
@@ -470,284 +471,17 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
           <section id="module-MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm">
 <span id="moleculardiffusion-modules-layers-equiformer-v2-s-layer-norm"></span><h1>MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm<a class="headerlink" href="#module-MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm" title="Link to this heading">¶</a></h1>
-<p>1. Normalize features of shape (N, sphere_basis, C),
-with sphere_basis = (lmax + 1) ** 2.</p>
-<p>2. The difference from <cite>layer_norm.py</cite> is that all type-L vectors have
-the same number of channels and input features are of shape (N, sphere_basis, C).</p>
-<section id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantDegreeLayerScale" title="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantDegreeLayerScale"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EquivariantDegreeLayerScale</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray" title="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EquivariantLayerNormArray</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics" title="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EquivariantLayerNormArraySphericalHarmonics</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics" title="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EquivariantRMSNormArraySphericalHarmonics</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2" title="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EquivariantRMSNormArraySphericalHarmonicsV2</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="functions">
-<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.get_l_to_all_m_expand_index" title="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.get_l_to_all_m_expand_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_l_to_all_m_expand_index</span></code></a>(lmax)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.get_normalization_layer" title="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.get_normalization_layer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_normalization_layer</span></code></a>(norm_type, lmax, num_channels)</p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantDegreeLayerScale">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.</span></span><span class="sig-name descname"><span class="pre">EquivariantDegreeLayerScale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantDegreeLayerScale" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<ol class="arabic simple">
-<li><p>Similar to Layer Scale used in CaiT (Going Deeper With Image Transformers (ICCV’21)), we scale the output of both attention and FFN.</p></li>
-<li><p>For degree L &gt; 0, we scale down the square root of 2 * L, which is to emulate halving the number of channels when using higher L.</p></li>
-</ol>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantDegreeLayerScale.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantDegreeLayerScale.forward" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantDegreeLayerScale.affine_weight">
-<span class="sig-name descname"><span class="pre">affine_weight</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantDegreeLayerScale.affine_weight" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantDegreeLayerScale.lmax">
-<span class="sig-name descname"><span class="pre">lmax</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantDegreeLayerScale.lmax" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantDegreeLayerScale.num_channels">
-<span class="sig-name descname"><span class="pre">num_channels</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantDegreeLayerScale.num_channels" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantDegreeLayerScale.scale_factor">
-<span class="sig-name descname"><span class="pre">scale_factor</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2.0</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantDegreeLayerScale.scale_factor" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.</span></span><span class="sig-name descname"><span class="pre">EquivariantLayerNormArray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">affine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'component'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray.forward" title="Link to this definition">¶</a></dt>
-<dd><p>Assume input is of shape [N, sphere_basis, C]</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray.affine">
-<span class="sig-name descname"><span class="pre">affine</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray.affine" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray.eps">
-<span class="sig-name descname"><span class="pre">eps</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1e-05</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray.eps" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray.lmax">
-<span class="sig-name descname"><span class="pre">lmax</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray.lmax" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray.normalization">
-<span class="sig-name descname"><span class="pre">normalization</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'component'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray.normalization" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray.num_channels">
-<span class="sig-name descname"><span class="pre">num_channels</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray.num_channels" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.</span></span><span class="sig-name descname"><span class="pre">EquivariantLayerNormArraySphericalHarmonics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">affine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'component'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std_balance_degrees</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<ol class="arabic simple">
-<li><p>Normalize over L = 0.</p></li>
-<li><p>Normalize across all m components from degrees L &gt; 0.</p></li>
-<li><p>Do not normalize separately for different L (L &gt; 0).</p></li>
-</ol>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.forward" title="Link to this definition">¶</a></dt>
-<dd><p>Assume input is of shape [N, sphere_basis, C]</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.affine">
-<span class="sig-name descname"><span class="pre">affine</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.affine" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.eps">
-<span class="sig-name descname"><span class="pre">eps</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1e-05</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.eps" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.lmax">
-<span class="sig-name descname"><span class="pre">lmax</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.lmax" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.norm_l0">
-<span class="sig-name descname"><span class="pre">norm_l0</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.norm_l0" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.normalization">
-<span class="sig-name descname"><span class="pre">normalization</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'component'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.normalization" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.num_channels">
-<span class="sig-name descname"><span class="pre">num_channels</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.num_channels" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.std_balance_degrees">
-<span class="sig-name descname"><span class="pre">std_balance_degrees</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.std_balance_degrees" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.</span></span><span class="sig-name descname"><span class="pre">EquivariantRMSNormArraySphericalHarmonics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">affine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'component'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<ol class="arabic simple">
-<li><p>Normalize across all m components from degrees L &gt;= 0.</p></li>
-</ol>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics.forward" title="Link to this definition">¶</a></dt>
-<dd><p>Assume input is of shape [N, sphere_basis, C]</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics.affine">
-<span class="sig-name descname"><span class="pre">affine</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics.affine" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics.eps">
-<span class="sig-name descname"><span class="pre">eps</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1e-05</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics.eps" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics.lmax">
-<span class="sig-name descname"><span class="pre">lmax</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics.lmax" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics.normalization">
-<span class="sig-name descname"><span class="pre">normalization</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'component'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics.normalization" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics.num_channels">
-<span class="sig-name descname"><span class="pre">num_channels</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics.num_channels" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.</span></span><span class="sig-name descname"><span class="pre">EquivariantRMSNormArraySphericalHarmonicsV2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">affine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'component'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std_balance_degrees</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<ol class="arabic simple">
-<li><p>Normalize across all m components from degrees L &gt;= 0.</p></li>
-<li><p>Expand weights and multiply with normalized feature to prevent slicing and concatenation.</p></li>
-</ol>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.forward" title="Link to this definition">¶</a></dt>
-<dd><p>Assume input is of shape [N, sphere_basis, C]</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.affine">
-<span class="sig-name descname"><span class="pre">affine</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.affine" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.centering">
-<span class="sig-name descname"><span class="pre">centering</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.centering" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.eps">
-<span class="sig-name descname"><span class="pre">eps</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1e-05</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.eps" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.lmax">
-<span class="sig-name descname"><span class="pre">lmax</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.lmax" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.normalization">
-<span class="sig-name descname"><span class="pre">normalization</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'component'</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.normalization" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.num_channels">
-<span class="sig-name descname"><span class="pre">num_channels</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.num_channels" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.std_balance_degrees">
-<span class="sig-name descname"><span class="pre">std_balance_degrees</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.std_balance_degrees" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.get_l_to_all_m_expand_index">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.</span></span><span class="sig-name descname"><span class="pre">get_l_to_all_m_expand_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lmax</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.get_l_to_all_m_expand_index" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.get_normalization_layer">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.</span></span><span class="sig-name descname"><span class="pre">get_normalization_layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">norm_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">affine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'component'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.get_normalization_layer" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</section>
+<p>Alias of <code class="docutils literal notranslate"><span class="pre">equiformer_v2.layer_norm</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">equiformer_v2_s</span></code> carried a copy of this file that is identical in behaviour.
+Both import paths now give the same module object, so classes keep one identity
+and checkpoints pickled under either path keep loading.</p>
 </section>
 
         </article>
@@ -792,81 +526,8 @@ the same number of channels and input features are of shape (N, sphere_basis, C)
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm</a><ul>
-<li><a class="reference internal" href="#classes">Classes</a></li>
-<li><a class="reference internal" href="#functions">Functions</a></li>
-<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantDegreeLayerScale"><code class="docutils literal notranslate"><span class="pre">EquivariantDegreeLayerScale</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantDegreeLayerScale.forward"><code class="docutils literal notranslate"><span class="pre">EquivariantDegreeLayerScale.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantDegreeLayerScale.affine_weight"><code class="docutils literal notranslate"><span class="pre">EquivariantDegreeLayerScale.affine_weight</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantDegreeLayerScale.lmax"><code class="docutils literal notranslate"><span class="pre">EquivariantDegreeLayerScale.lmax</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantDegreeLayerScale.num_channels"><code class="docutils literal notranslate"><span class="pre">EquivariantDegreeLayerScale.num_channels</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantDegreeLayerScale.scale_factor"><code class="docutils literal notranslate"><span class="pre">EquivariantDegreeLayerScale.scale_factor</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray"><code class="docutils literal notranslate"><span class="pre">EquivariantLayerNormArray</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray.forward"><code class="docutils literal notranslate"><span class="pre">EquivariantLayerNormArray.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray.affine"><code class="docutils literal notranslate"><span class="pre">EquivariantLayerNormArray.affine</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray.eps"><code class="docutils literal notranslate"><span class="pre">EquivariantLayerNormArray.eps</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray.lmax"><code class="docutils literal notranslate"><span class="pre">EquivariantLayerNormArray.lmax</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray.normalization"><code class="docutils literal notranslate"><span class="pre">EquivariantLayerNormArray.normalization</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArray.num_channels"><code class="docutils literal notranslate"><span class="pre">EquivariantLayerNormArray.num_channels</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics"><code class="docutils literal notranslate"><span class="pre">EquivariantLayerNormArraySphericalHarmonics</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.forward"><code class="docutils literal notranslate"><span class="pre">EquivariantLayerNormArraySphericalHarmonics.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.affine"><code class="docutils literal notranslate"><span class="pre">EquivariantLayerNormArraySphericalHarmonics.affine</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.eps"><code class="docutils literal notranslate"><span class="pre">EquivariantLayerNormArraySphericalHarmonics.eps</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.lmax"><code class="docutils literal notranslate"><span class="pre">EquivariantLayerNormArraySphericalHarmonics.lmax</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.norm_l0"><code class="docutils literal notranslate"><span class="pre">EquivariantLayerNormArraySphericalHarmonics.norm_l0</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.normalization"><code class="docutils literal notranslate"><span class="pre">EquivariantLayerNormArraySphericalHarmonics.normalization</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.num_channels"><code class="docutils literal notranslate"><span class="pre">EquivariantLayerNormArraySphericalHarmonics.num_channels</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantLayerNormArraySphericalHarmonics.std_balance_degrees"><code class="docutils literal notranslate"><span class="pre">EquivariantLayerNormArraySphericalHarmonics.std_balance_degrees</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics"><code class="docutils literal notranslate"><span class="pre">EquivariantRMSNormArraySphericalHarmonics</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics.forward"><code class="docutils literal notranslate"><span class="pre">EquivariantRMSNormArraySphericalHarmonics.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics.affine"><code class="docutils literal notranslate"><span class="pre">EquivariantRMSNormArraySphericalHarmonics.affine</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics.eps"><code class="docutils literal notranslate"><span class="pre">EquivariantRMSNormArraySphericalHarmonics.eps</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics.lmax"><code class="docutils literal notranslate"><span class="pre">EquivariantRMSNormArraySphericalHarmonics.lmax</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics.normalization"><code class="docutils literal notranslate"><span class="pre">EquivariantRMSNormArraySphericalHarmonics.normalization</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonics.num_channels"><code class="docutils literal notranslate"><span class="pre">EquivariantRMSNormArraySphericalHarmonics.num_channels</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2"><code class="docutils literal notranslate"><span class="pre">EquivariantRMSNormArraySphericalHarmonicsV2</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.forward"><code class="docutils literal notranslate"><span class="pre">EquivariantRMSNormArraySphericalHarmonicsV2.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.affine"><code class="docutils literal notranslate"><span class="pre">EquivariantRMSNormArraySphericalHarmonicsV2.affine</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.centering"><code class="docutils literal notranslate"><span class="pre">EquivariantRMSNormArraySphericalHarmonicsV2.centering</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.eps"><code class="docutils literal notranslate"><span class="pre">EquivariantRMSNormArraySphericalHarmonicsV2.eps</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.lmax"><code class="docutils literal notranslate"><span class="pre">EquivariantRMSNormArraySphericalHarmonicsV2.lmax</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.normalization"><code class="docutils literal notranslate"><span class="pre">EquivariantRMSNormArraySphericalHarmonicsV2.normalization</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.num_channels"><code class="docutils literal notranslate"><span class="pre">EquivariantRMSNormArraySphericalHarmonicsV2.num_channels</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.EquivariantRMSNormArraySphericalHarmonicsV2.std_balance_degrees"><code class="docutils literal notranslate"><span class="pre">EquivariantRMSNormArraySphericalHarmonicsV2.std_balance_degrees</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.get_l_to_all_m_expand_index"><code class="docutils literal notranslate"><span class="pre">get_l_to_all_m_expand_index()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.layer_norm.get_normalization_layer"><code class="docutils literal notranslate"><span class="pre">get_normalization_layer()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

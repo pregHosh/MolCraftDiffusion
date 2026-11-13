@@ -3,72 +3,13 @@ MolecularDiffusion.modules.layers.equiformer_v2_s.gaussian_rbf
 
 .. py:module:: MolecularDiffusion.modules.layers.equiformer_v2_s.gaussian_rbf
 
+.. autoapi-nested-parse::
 
-Classes
--------
+   Alias of ``equiformer_v2.gaussian_rbf``.
 
-.. autoapisummary::
-
-   MolecularDiffusion.modules.layers.equiformer_v2_s.gaussian_rbf.GaussianRadialBasisLayer
-
-
-Functions
----------
-
-.. autoapisummary::
-
-   MolecularDiffusion.modules.layers.equiformer_v2_s.gaussian_rbf.gaussian
+   ``equiformer_v2_s`` carried a copy of this file that is identical in behaviour.
+   Both import paths now give the same module object, so classes keep one identity
+   and checkpoints pickled under either path keep loading.
 
 
-Module Contents
----------------
-
-.. py:class:: GaussianRadialBasisLayer(num_basis, cutoff)
-
-   Bases: :py:obj:`torch.nn.Module`
-
-
-   .. py:method:: extra_repr()
-
-
-   .. py:method:: forward(dist, node_atom=None, edge_src=None, edge_dst=None)
-
-
-   .. py:attribute:: bias
-
-
-   .. py:attribute:: cutoff
-
-
-   .. py:attribute:: mean
-
-
-   .. py:attribute:: mean_init_max
-      :value: 1.0
-
-
-
-   .. py:attribute:: mean_init_min
-      :value: 0
-
-
-
-   .. py:attribute:: num_basis
-
-
-   .. py:attribute:: std
-
-
-   .. py:attribute:: std_init_max
-      :value: 1.0
-
-
-
-   .. py:attribute:: std_init_min
-
-
-   .. py:attribute:: weight
-
-
-.. py:function:: gaussian(x, mean, std)
 

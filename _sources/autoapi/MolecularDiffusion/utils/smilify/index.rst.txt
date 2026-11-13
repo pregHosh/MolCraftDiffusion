@@ -43,7 +43,6 @@ Functions
    MolecularDiffusion.utils.smilify.read_xyz_ob
    MolecularDiffusion.utils.smilify.simple_idx_match_check
    MolecularDiffusion.utils.smilify.simple_idx_match_check
-   MolecularDiffusion.utils.smilify.smilfy_xtb
    MolecularDiffusion.utils.smilify.smilify_openbabel
    MolecularDiffusion.utils.smilify.smilify_xyz2mol
 
@@ -109,16 +108,6 @@ Module Contents
 
 
 .. py:function:: simple_idx_match_check(mol, ase_atoms)
-
-.. py:function:: smilfy_xtb(filename)
-
-   Assume neutral molecule
-   If fails, change charge to +1 (there could be a better method to detect charge as either +1 or-1)
-
-   Then if fails again, loosen the critaria to not sanitize the molecule.
-
-
-
 
 .. py:function:: smilify_openbabel(filename)
 

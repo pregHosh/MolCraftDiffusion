@@ -186,7 +186,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -285,6 +285,7 @@
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/checkpoint/index.html">MolecularDiffusion.core.checkpoint</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../core/core/index.html">MolecularDiffusion.core.core</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../core/engine/index.html">MolecularDiffusion.core.engine</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../core/engine_lightning/index.html">MolecularDiffusion.core.engine_lightning</a></li>
@@ -470,39 +471,17 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
           <section id="module-MolecularDiffusion.modules.layers.equiformer_v2_s.module_list">
 <span id="moleculardiffusion-modules-layers-equiformer-v2-s-module-list"></span><h1>MolecularDiffusion.modules.layers.equiformer_v2_s.module_list<a class="headerlink" href="#module-MolecularDiffusion.modules.layers.equiformer_v2_s.module_list" title="Link to this heading">¶</a></h1>
-<section id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.module_list.ModuleListInfo" title="MolecularDiffusion.modules.layers.equiformer_v2_s.module_list.ModuleListInfo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModuleListInfo</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.module_list.ModuleListInfo">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.module_list.</span></span><span class="sig-name descname"><span class="pre">ModuleListInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">info_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.module_list.ModuleListInfo" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.ModuleList.html#torch.nn.ModuleList" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.ModuleList</span></code></a></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.module_list.ModuleListInfo.info_str">
-<span class="sig-name descname"><span class="pre">info_str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.module_list.ModuleListInfo.info_str" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-</section>
+<p>Alias of <code class="docutils literal notranslate"><span class="pre">equiformer_v2.module_list</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">equiformer_v2_s</span></code> carried a copy of this file that is identical in behaviour.
+Both import paths now give the same module object, so classes keep one identity
+and checkpoints pickled under either path keep loading.</p>
 </section>
 
         </article>
@@ -547,34 +526,8 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">MolecularDiffusion.modules.layers.equiformer_v2_s.module_list</a><ul>
-<li><a class="reference internal" href="#classes">Classes</a></li>
-<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.module_list.ModuleListInfo"><code class="docutils literal notranslate"><span class="pre">ModuleListInfo</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.module_list.ModuleListInfo.info_str"><code class="docutils literal notranslate"><span class="pre">ModuleListInfo.info_str</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

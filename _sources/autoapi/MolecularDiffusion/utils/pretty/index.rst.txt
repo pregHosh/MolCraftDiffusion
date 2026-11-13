@@ -30,7 +30,6 @@ Functions
 .. autoapisummary::
 
    MolecularDiffusion.utils.pretty.format
-   MolecularDiffusion.utils.pretty.long_array
    MolecularDiffusion.utils.pretty.print
    MolecularDiffusion.utils.pretty.task_wrapper
    MolecularDiffusion.utils.pretty.time
@@ -90,18 +89,6 @@ Module Contents
 .. py:function:: format(object, *args, **kwargs)
 
    Format a python object as a string.
-
-
-.. py:function:: long_array(array, truncation=10, display=3)
-
-   Format an array as a string.
-
-   :param array: array-like data
-   :type array: array_like
-   :param truncation: truncate array if its length exceeds this threshold
-   :type truncation: int, optional
-   :param display: number of elements to display at the beginning and the end in truncated mode
-   :type display: int, optional
 
 
 .. py:function:: print(object, *args, **kwargs)

@@ -285,6 +285,7 @@
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../core/checkpoint/index.html">MolecularDiffusion.core.checkpoint</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../core/core/index.html">MolecularDiffusion.core.core</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../core/engine/index.html">MolecularDiffusion.core.engine</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../core/engine_lightning/index.html">MolecularDiffusion.core.engine_lightning</a></li>
@@ -548,13 +549,10 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#id0" title="MolecularDiffusion.utils.smilify.simple_idx_match_check"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simple_idx_match_check</span></code></a>(mol, ase_atoms)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.smilify.smilfy_xtb" title="MolecularDiffusion.utils.smilify.smilfy_xtb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilfy_xtb</span></code></a>(filename)</p></td>
-<td><p>Assume neutral molecule</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.smilify.smilify_openbabel" title="MolecularDiffusion.utils.smilify.smilify_openbabel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilify_openbabel</span></code></a>(filename)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.smilify.smilify_openbabel" title="MolecularDiffusion.utils.smilify.smilify_openbabel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilify_openbabel</span></code></a>(filename)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.smilify.smilify_xyz2mol" title="MolecularDiffusion.utils.smilify.smilify_xyz2mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilify_xyz2mol</span></code></a>(filename[, z, coordinates, timeout, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.smilify.smilify_xyz2mol" title="MolecularDiffusion.utils.smilify.smilify_xyz2mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilify_xyz2mol</span></code></a>(filename[, z, coordinates, timeout, ...])</p></td>
 <td><p>Convert XYZ to mol using xyz2mol with optional timeout.</p></td>
 </tr>
 </tbody>
@@ -650,14 +648,6 @@ formal charges when perceiving bond orders.</p>
 <dt class="sig sig-object py" id="id0">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.smilify.</span></span><span class="sig-name descname"><span class="pre">simple_idx_match_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ase_atoms</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.smilify.smilfy_xtb">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.smilify.</span></span><span class="sig-name descname"><span class="pre">smilfy_xtb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.smilify.smilfy_xtb" title="Link to this definition">¶</a></dt>
-<dd><p>Assume neutral molecule
-If fails, change charge to +1 (there could be a better method to detect charge as either +1 or-1)</p>
-<p>Then if fails again, loosen the critaria to not sanitize the molecule.</p>
-</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.smilify.smilify_openbabel">
@@ -784,7 +774,6 @@ If fails, change charge to +1 (there could be a better method to detect charge a
 <li><a class="reference internal" href="#MolecularDiffusion.utils.smilify.read_xyz_ob"><code class="docutils literal notranslate"><span class="pre">read_xyz_ob()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.smilify.simple_idx_match_check"><code class="docutils literal notranslate"><span class="pre">simple_idx_match_check()</span></code></a></li>
 <li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">simple_idx_match_check()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.smilify.smilfy_xtb"><code class="docutils literal notranslate"><span class="pre">smilfy_xtb()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.smilify.smilify_openbabel"><code class="docutils literal notranslate"><span class="pre">smilify_openbabel()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.smilify.smilify_xyz2mol"><code class="docutils literal notranslate"><span class="pre">smilify_xyz2mol()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.smilify.TIMEOUT"><code class="docutils literal notranslate"><span class="pre">TIMEOUT</span></code></a></li>

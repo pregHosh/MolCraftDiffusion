@@ -285,6 +285,7 @@
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../core/checkpoint/index.html">MolecularDiffusion.core.checkpoint</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../core/core/index.html">MolecularDiffusion.core.core</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../core/engine/index.html">MolecularDiffusion.core.engine</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../core/engine_lightning/index.html">MolecularDiffusion.core.engine_lightning</a></li>
@@ -477,6 +478,11 @@
         <article role="main" id="furo-main-content">
           <section id="module-MolecularDiffusion.modules.models">
 <span id="moleculardiffusion-modules-models"></span><h1>MolecularDiffusion.modules.models<a class="headerlink" href="#module-MolecularDiffusion.modules.models" title="Link to this heading">¶</a></h1>
+<p>Model classes, imported on first use (PEP 562).</p>
+<p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">MolecularDiffusion.modules.models.&lt;anything&gt;</span></code> runs this file, and
+loading every EDM variant eagerly cost ~6 s and ~900 MB. The public names and
+<code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">MolecularDiffusion.modules.models</span> <span class="pre">import</span> <span class="pre">EGNN</span></code> keep working; the
+submodule behind a name is imported when the name is first read.</p>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">

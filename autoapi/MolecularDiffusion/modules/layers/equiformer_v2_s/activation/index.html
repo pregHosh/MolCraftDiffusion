@@ -186,7 +186,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -285,6 +285,7 @@
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/checkpoint/index.html">MolecularDiffusion.core.checkpoint</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../core/core/index.html">MolecularDiffusion.core.core</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../core/engine/index.html">MolecularDiffusion.core.engine</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../core/engine_lightning/index.html">MolecularDiffusion.core.engine_lightning</a></li>
@@ -470,299 +471,17 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
           <section id="module-MolecularDiffusion.modules.layers.equiformer_v2_s.activation">
 <span id="moleculardiffusion-modules-layers-equiformer-v2-s-activation"></span><h1>MolecularDiffusion.modules.layers.equiformer_v2_s.activation<a class="headerlink" href="#module-MolecularDiffusion.modules.layers.equiformer_v2_s.activation" title="Link to this heading">¶</a></h1>
-<section id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation" title="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GateActivation</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.S2Activation" title="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.S2Activation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">S2Activation</span></code></a></p></td>
-<td><p>Assume we only have one resolution</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSiLU" title="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSiLU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScaledSiLU</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSigmoid" title="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSigmoid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScaledSigmoid</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSmoothLeakyReLU" title="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSmoothLeakyReLU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScaledSmoothLeakyReLU</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU" title="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScaledSwiGLU</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation" title="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SeparableS2Activation</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SmoothLeakyReLU" title="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SmoothLeakyReLU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SmoothLeakyReLU</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU" title="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SwiGLU</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.activation.</span></span><span class="sig-name descname"><span class="pre">GateActivation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_channels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gating_scalars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensors</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation.forward" title="Link to this definition">¶</a></dt>
-<dd><p><cite>gating_scalars</cite>: shape [N, lmax * num_channels]
-<cite>input_tensors</cite>: shape  [N, (lmax + 1) ** 2, num_channels]</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation.gate_act">
-<span class="sig-name descname"><span class="pre">gate_act</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation.gate_act" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation.lmax">
-<span class="sig-name descname"><span class="pre">lmax</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation.lmax" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation.mmax">
-<span class="sig-name descname"><span class="pre">mmax</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation.mmax" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation.num_channels">
-<span class="sig-name descname"><span class="pre">num_channels</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation.num_channels" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation.scalar_act">
-<span class="sig-name descname"><span class="pre">scalar_act</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation.scalar_act" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.S2Activation">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.activation.</span></span><span class="sig-name descname"><span class="pre">S2Activation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mmax</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.S2Activation" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<p>Assume we only have one resolution</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.S2Activation.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SO3_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.S2Activation.forward" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.S2Activation.act">
-<span class="sig-name descname"><span class="pre">act</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.S2Activation.act" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.S2Activation.lmax">
-<span class="sig-name descname"><span class="pre">lmax</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.S2Activation.lmax" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.S2Activation.mmax">
-<span class="sig-name descname"><span class="pre">mmax</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.S2Activation.mmax" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSiLU">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.activation.</span></span><span class="sig-name descname"><span class="pre">ScaledSiLU</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSiLU" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSiLU.extra_repr">
-<span class="sig-name descname"><span class="pre">extra_repr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSiLU.extra_repr" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSiLU.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSiLU.forward" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSiLU.inplace">
-<span class="sig-name descname"><span class="pre">inplace</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSiLU.inplace" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSiLU.scale_factor">
-<span class="sig-name descname"><span class="pre">scale_factor</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.6791767923989418</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSiLU.scale_factor" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSigmoid">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.activation.</span></span><span class="sig-name descname"><span class="pre">ScaledSigmoid</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSigmoid" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSigmoid.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSigmoid.forward" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSigmoid.scale_factor">
-<span class="sig-name descname"><span class="pre">scale_factor</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.8467055342154763</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSigmoid.scale_factor" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSmoothLeakyReLU">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.activation.</span></span><span class="sig-name descname"><span class="pre">ScaledSmoothLeakyReLU</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSmoothLeakyReLU" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSmoothLeakyReLU.extra_repr">
-<span class="sig-name descname"><span class="pre">extra_repr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSmoothLeakyReLU.extra_repr" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSmoothLeakyReLU.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSmoothLeakyReLU.forward" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSmoothLeakyReLU.act">
-<span class="sig-name descname"><span class="pre">act</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSmoothLeakyReLU.act" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSmoothLeakyReLU.scale_factor">
-<span class="sig-name descname"><span class="pre">scale_factor</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.531320475574866</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSmoothLeakyReLU.scale_factor" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.activation.</span></span><span class="sig-name descname"><span class="pre">ScaledSwiGLU</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU.forward" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU.act">
-<span class="sig-name descname"><span class="pre">act</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU.act" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU.in_channels">
-<span class="sig-name descname"><span class="pre">in_channels</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU.in_channels" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU.out_channels">
-<span class="sig-name descname"><span class="pre">out_channels</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU.out_channels" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU.w">
-<span class="sig-name descname"><span class="pre">w</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU.w" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.activation.</span></span><span class="sig-name descname"><span class="pre">SeparableS2Activation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mmax</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_scalars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tensors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SO3_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation.forward" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation.lmax">
-<span class="sig-name descname"><span class="pre">lmax</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation.lmax" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation.mmax">
-<span class="sig-name descname"><span class="pre">mmax</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation.mmax" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation.s2_act">
-<span class="sig-name descname"><span class="pre">s2_act</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation.s2_act" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation.scalar_act">
-<span class="sig-name descname"><span class="pre">scalar_act</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation.scalar_act" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SmoothLeakyReLU">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.activation.</span></span><span class="sig-name descname"><span class="pre">SmoothLeakyReLU</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">negative_slope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SmoothLeakyReLU" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SmoothLeakyReLU.extra_repr">
-<span class="sig-name descname"><span class="pre">extra_repr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SmoothLeakyReLU.extra_repr" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SmoothLeakyReLU.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SmoothLeakyReLU.forward" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SmoothLeakyReLU.alpha">
-<span class="sig-name descname"><span class="pre">alpha</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.2</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SmoothLeakyReLU.alpha" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.activation.</span></span><span class="sig-name descname"><span class="pre">SwiGLU</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU.forward" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU.act">
-<span class="sig-name descname"><span class="pre">act</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU.act" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU.in_channels">
-<span class="sig-name descname"><span class="pre">in_channels</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU.in_channels" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU.out_channels">
-<span class="sig-name descname"><span class="pre">out_channels</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU.out_channels" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU.w">
-<span class="sig-name descname"><span class="pre">w</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU.w" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-</section>
+<p>Alias of <code class="docutils literal notranslate"><span class="pre">equiformer_v2.activation</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">equiformer_v2_s</span></code> carried a copy of this file that is identical in behaviour.
+Both import paths now give the same module object, so classes keep one identity
+and checkpoints pickled under either path keep loading.</p>
 </section>
 
         </article>
@@ -807,95 +526,8 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">MolecularDiffusion.modules.layers.equiformer_v2_s.activation</a><ul>
-<li><a class="reference internal" href="#classes">Classes</a></li>
-<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation"><code class="docutils literal notranslate"><span class="pre">GateActivation</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation.forward"><code class="docutils literal notranslate"><span class="pre">GateActivation.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation.gate_act"><code class="docutils literal notranslate"><span class="pre">GateActivation.gate_act</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation.lmax"><code class="docutils literal notranslate"><span class="pre">GateActivation.lmax</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation.mmax"><code class="docutils literal notranslate"><span class="pre">GateActivation.mmax</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation.num_channels"><code class="docutils literal notranslate"><span class="pre">GateActivation.num_channels</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.GateActivation.scalar_act"><code class="docutils literal notranslate"><span class="pre">GateActivation.scalar_act</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.S2Activation"><code class="docutils literal notranslate"><span class="pre">S2Activation</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.S2Activation.forward"><code class="docutils literal notranslate"><span class="pre">S2Activation.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.S2Activation.act"><code class="docutils literal notranslate"><span class="pre">S2Activation.act</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.S2Activation.lmax"><code class="docutils literal notranslate"><span class="pre">S2Activation.lmax</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.S2Activation.mmax"><code class="docutils literal notranslate"><span class="pre">S2Activation.mmax</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSiLU"><code class="docutils literal notranslate"><span class="pre">ScaledSiLU</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSiLU.extra_repr"><code class="docutils literal notranslate"><span class="pre">ScaledSiLU.extra_repr()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSiLU.forward"><code class="docutils literal notranslate"><span class="pre">ScaledSiLU.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSiLU.inplace"><code class="docutils literal notranslate"><span class="pre">ScaledSiLU.inplace</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSiLU.scale_factor"><code class="docutils literal notranslate"><span class="pre">ScaledSiLU.scale_factor</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSigmoid"><code class="docutils literal notranslate"><span class="pre">ScaledSigmoid</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSigmoid.forward"><code class="docutils literal notranslate"><span class="pre">ScaledSigmoid.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSigmoid.scale_factor"><code class="docutils literal notranslate"><span class="pre">ScaledSigmoid.scale_factor</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSmoothLeakyReLU"><code class="docutils literal notranslate"><span class="pre">ScaledSmoothLeakyReLU</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSmoothLeakyReLU.extra_repr"><code class="docutils literal notranslate"><span class="pre">ScaledSmoothLeakyReLU.extra_repr()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSmoothLeakyReLU.forward"><code class="docutils literal notranslate"><span class="pre">ScaledSmoothLeakyReLU.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSmoothLeakyReLU.act"><code class="docutils literal notranslate"><span class="pre">ScaledSmoothLeakyReLU.act</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSmoothLeakyReLU.scale_factor"><code class="docutils literal notranslate"><span class="pre">ScaledSmoothLeakyReLU.scale_factor</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU"><code class="docutils literal notranslate"><span class="pre">ScaledSwiGLU</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU.forward"><code class="docutils literal notranslate"><span class="pre">ScaledSwiGLU.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU.act"><code class="docutils literal notranslate"><span class="pre">ScaledSwiGLU.act</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU.in_channels"><code class="docutils literal notranslate"><span class="pre">ScaledSwiGLU.in_channels</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU.out_channels"><code class="docutils literal notranslate"><span class="pre">ScaledSwiGLU.out_channels</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.ScaledSwiGLU.w"><code class="docutils literal notranslate"><span class="pre">ScaledSwiGLU.w</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation"><code class="docutils literal notranslate"><span class="pre">SeparableS2Activation</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation.forward"><code class="docutils literal notranslate"><span class="pre">SeparableS2Activation.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation.lmax"><code class="docutils literal notranslate"><span class="pre">SeparableS2Activation.lmax</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation.mmax"><code class="docutils literal notranslate"><span class="pre">SeparableS2Activation.mmax</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation.s2_act"><code class="docutils literal notranslate"><span class="pre">SeparableS2Activation.s2_act</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SeparableS2Activation.scalar_act"><code class="docutils literal notranslate"><span class="pre">SeparableS2Activation.scalar_act</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SmoothLeakyReLU"><code class="docutils literal notranslate"><span class="pre">SmoothLeakyReLU</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SmoothLeakyReLU.extra_repr"><code class="docutils literal notranslate"><span class="pre">SmoothLeakyReLU.extra_repr()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SmoothLeakyReLU.forward"><code class="docutils literal notranslate"><span class="pre">SmoothLeakyReLU.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SmoothLeakyReLU.alpha"><code class="docutils literal notranslate"><span class="pre">SmoothLeakyReLU.alpha</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU"><code class="docutils literal notranslate"><span class="pre">SwiGLU</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU.forward"><code class="docutils literal notranslate"><span class="pre">SwiGLU.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU.act"><code class="docutils literal notranslate"><span class="pre">SwiGLU.act</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU.in_channels"><code class="docutils literal notranslate"><span class="pre">SwiGLU.in_channels</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU.out_channels"><code class="docutils literal notranslate"><span class="pre">SwiGLU.out_channels</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.activation.SwiGLU.w"><code class="docutils literal notranslate"><span class="pre">SwiGLU.w</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

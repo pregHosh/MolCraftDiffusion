@@ -10,8 +10,6 @@ Functions
 .. autoapisummary::
 
    MolecularDiffusion.utils.plot_function.plot_correlation_with_histograms
-   MolecularDiffusion.utils.plot_function.plot_correlation_with_kde
-   MolecularDiffusion.utils.plot_function.plot_embedding
    MolecularDiffusion.utils.plot_function.plot_histogram_distribution
    MolecularDiffusion.utils.plot_function.plot_kde_distribution
    MolecularDiffusion.utils.plot_function.plot_kde_distribution_multiple
@@ -34,37 +32,6 @@ Module Contents
    :type unit: str
    :param output_path: If provided, path to save the figure.
    :type output_path: Optional[str]
-
-
-.. py:function:: plot_correlation_with_kde(true_values: numpy.ndarray, predicted_values: numpy.ndarray, property_name: str = 'E', output_path: Optional[str] = None) -> None
-
-   Plot a correlation scatter plot between predicted and true values,
-   with probability density coloring, R² and MAE.
-
-   :param true_values: Array of true values.
-   :type true_values: np.ndarray
-   :param predicted_values: Array of predicted values.
-   :type predicted_values: np.ndarray
-   :param property_name: Name of the property being compared (for axis labels). Defaults to 'E'.
-   :type property_name: str
-   :param output_path: Path to save the figure. If None, the plot is not saved.
-   :type output_path: Optional[str]
-
-
-.. py:function:: plot_embedding(embedding: numpy.ndarray, labels: Optional[numpy.ndarray] = None, label_names: Optional[Union[str, List[str]]] = None, label_type: str = 'reg', output_path: str = 'tSNE.png') -> None
-
-   Plot a 2D embedding with optional labels (for classification or regression).
-
-   :param embedding: 2D array of shape (n_samples, 2) representing t-SNE embedding.
-   :type embedding: np.ndarray
-   :param labels: 1D array of target labels (regression values or class indices).
-   :type labels: Optional[np.ndarray]
-   :param label_names: Name of the regression label or list of class names.
-   :type label_names: Optional[Union[str, List[str]]]
-   :param label_type: Type of label ("reg" for regression, "class" for classification).
-   :type label_type: str
-   :param output_path: Path to save the output image. Defaults to 'tSNE.png'.
-   :type output_path: str
 
 
 .. py:function:: plot_histogram_distribution(predictions: numpy.ndarray, task_name: str, output_path: Optional[str] = None, num_bins: int = 50) -> None

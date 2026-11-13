@@ -285,6 +285,7 @@
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../core/checkpoint/index.html">MolecularDiffusion.core.checkpoint</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../core/core/index.html">MolecularDiffusion.core.core</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../core/engine/index.html">MolecularDiffusion.core.engine</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../core/engine_lightning/index.html">MolecularDiffusion.core.engine_lightning</a></li>
@@ -500,28 +501,25 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.comm.cat" title="MolecularDiffusion.utils.comm.cat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cat</span></code></a>(obj[, dst])</p></td>
 <td><p>Concatenate any nested container of tensors along the 0-th axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.comm.get_cpu_count" title="MolecularDiffusion.utils.comm.get_cpu_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cpu_count</span></code></a>()</p></td>
-<td><p>Get the number of CPUs on this node.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.comm.get_group" title="MolecularDiffusion.utils.comm.get_group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_group</span></code></a>(device)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.comm.get_group" title="MolecularDiffusion.utils.comm.get_group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_group</span></code></a>(device)</p></td>
 <td><p>Get the process group corresponding to the given device.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.comm.get_rank" title="MolecularDiffusion.utils.comm.get_rank"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_rank</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.comm.get_rank" title="MolecularDiffusion.utils.comm.get_rank"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_rank</span></code></a>()</p></td>
 <td><p>Get the rank of this process in distributed processes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.comm.get_world_size" title="MolecularDiffusion.utils.comm.get_world_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_world_size</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.comm.get_world_size" title="MolecularDiffusion.utils.comm.get_world_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_world_size</span></code></a>()</p></td>
 <td><p>Get the total number of distributed processes.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.comm.init_process_group" title="MolecularDiffusion.utils.comm.init_process_group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_process_group</span></code></a>(backend[, init_method])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.comm.init_process_group" title="MolecularDiffusion.utils.comm.init_process_group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_process_group</span></code></a>(backend[, init_method])</p></td>
 <td><p>Initialize CPU and/or GPU process groups.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.comm.reduce" title="MolecularDiffusion.utils.comm.reduce"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reduce</span></code></a>(obj[, op, dst])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.comm.reduce" title="MolecularDiffusion.utils.comm.reduce"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reduce</span></code></a>(obj[, op, dst])</p></td>
 <td><p>Reduce any nested container of tensors.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.comm.stack" title="MolecularDiffusion.utils.comm.stack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stack</span></code></a>(obj[, dst])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.comm.stack" title="MolecularDiffusion.utils.comm.stack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stack</span></code></a>(obj[, dst])</p></td>
 <td><p>Stack any nested container of tensors. The new dimension will be added at the 0-th axis.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.comm.synchronize" title="MolecularDiffusion.utils.comm.synchronize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">synchronize</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.comm.synchronize" title="MolecularDiffusion.utils.comm.synchronize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">synchronize</span></code></a>()</p></td>
 <td><p>Synchronize among all distributed processes.</p></td>
 </tr>
 </tbody>
@@ -551,12 +549,6 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s2">"range"</span><span class="p">],</span> <span class="n">rng</span><span class="p">)</span>
 </pre></div>
 </div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.comm.get_cpu_count">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.comm.</span></span><span class="sig-name descname"><span class="pre">get_cpu_count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.comm.get_cpu_count" title="Link to this definition">¶</a></dt>
-<dd><p>Get the number of CPUs on this node.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -743,7 +735,6 @@ Available operators are <code class="docutils literal notranslate"><span class="
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.comm.cat"><code class="docutils literal notranslate"><span class="pre">cat()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.comm.get_cpu_count"><code class="docutils literal notranslate"><span class="pre">get_cpu_count()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.comm.get_group"><code class="docutils literal notranslate"><span class="pre">get_group()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.comm.get_rank"><code class="docutils literal notranslate"><span class="pre">get_rank()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.comm.get_world_size"><code class="docutils literal notranslate"><span class="pre">get_world_size()</span></code></a></li>

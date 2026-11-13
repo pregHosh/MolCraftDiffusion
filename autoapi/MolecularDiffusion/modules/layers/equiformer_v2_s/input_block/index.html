@@ -186,7 +186,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -285,6 +285,7 @@
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/checkpoint/index.html">MolecularDiffusion.core.checkpoint</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../core/core/index.html">MolecularDiffusion.core.core</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../core/engine/index.html">MolecularDiffusion.core.engine</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../core/engine_lightning/index.html">MolecularDiffusion.core.engine_lightning</a></li>
@@ -470,120 +471,17 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
           <section id="module-MolecularDiffusion.modules.layers.equiformer_v2_s.input_block">
 <span id="moleculardiffusion-modules-layers-equiformer-v2-s-input-block"></span><h1>MolecularDiffusion.modules.layers.equiformer_v2_s.input_block<a class="headerlink" href="#module-MolecularDiffusion.modules.layers.equiformer_v2_s.input_block" title="Link to this heading">¶</a></h1>
-<section id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding" title="MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EdgeDegreeEmbedding</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.</span></span><span class="sig-name descname"><span class="pre">EdgeDegreeEmbedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sphere_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lmax_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mmax_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SO3_rotation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mappingReduced</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_num_elements</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_channels_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_atom_edge_embedding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rescale_factor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sphere_channels</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – Number of spherical channels</p></li>
-<li><p><strong>(</strong><strong>list</strong> (<a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.edge_channels_list" title="MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.edge_channels_list"><em>edge_channels_list</em></a>) – int):       List of degrees (l) for each resolution</p></li>
-<li><p><strong>(</strong><strong>list</strong> – int):       List of orders (m) for each resolution</p></li>
-<li><p><strong>(</strong><strong>list</strong> – SO3_Rotation): Class to calculate Wigner-D matrices and rotate embeddings</p></li>
-<li><p><strong>mappingReduced</strong> (<a class="reference internal" href="../../equiformer_v2/so3/index.html#MolecularDiffusion.modules.layers.equiformer_v2.so3.CoefficientMappingModule" title="MolecularDiffusion.modules.layers.equiformer_v2.so3.CoefficientMappingModule"><em>CoefficientMappingModule</em></a>) – Class to convert l and m indices once node embedding is rotated</p></li>
-<li><p><strong>max_num_elements</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – Maximum number of atomic numbers</p></li>
-<li><p><strong>(</strong><strong>list</strong> – int):  List of sizes of invariant edge embedding. For example, [input_channels, hidden_channels, hidden_channels].
-The last one will be used as hidden size when <cite>use_atom_edge_embedding</cite> is <cite>True</cite>.</p></li>
-<li><p><strong>use_atom_edge_embedding</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a>) – Whether to use atomic embedding along with relative distance for edge scalar features</p></li>
-<li><p><strong>rescale_factor</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – Rescale the sum aggregation</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atomic_numbers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.forward" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.SO3_rotation">
-<span class="sig-name descname"><span class="pre">SO3_rotation</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.SO3_rotation" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.edge_channels_list">
-<span class="sig-name descname"><span class="pre">edge_channels_list</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.edge_channels_list" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.lmax_list">
-<span class="sig-name descname"><span class="pre">lmax_list</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.lmax_list" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.m_0_num_coefficients">
-<span class="sig-name descname"><span class="pre">m_0_num_coefficients</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.m_0_num_coefficients" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.m_all_num_coefficents">
-<span class="sig-name descname"><span class="pre">m_all_num_coefficents</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.m_all_num_coefficents" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.mappingReduced">
-<span class="sig-name descname"><span class="pre">mappingReduced</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.mappingReduced" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.max_num_elements">
-<span class="sig-name descname"><span class="pre">max_num_elements</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.max_num_elements" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.mmax_list">
-<span class="sig-name descname"><span class="pre">mmax_list</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.mmax_list" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.num_resolutions">
-<span class="sig-name descname"><span class="pre">num_resolutions</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.num_resolutions" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.rad_func">
-<span class="sig-name descname"><span class="pre">rad_func</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.rad_func" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.rescale_factor">
-<span class="sig-name descname"><span class="pre">rescale_factor</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.rescale_factor" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.sphere_channels">
-<span class="sig-name descname"><span class="pre">sphere_channels</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.sphere_channels" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.use_atom_edge_embedding">
-<span class="sig-name descname"><span class="pre">use_atom_edge_embedding</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.use_atom_edge_embedding" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-</section>
+<p>Alias of <code class="docutils literal notranslate"><span class="pre">equiformer_v2.input_block</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">equiformer_v2_s</span></code> carried a copy of this file that is identical in behaviour.
+Both import paths now give the same module object, so classes keep one identity
+and checkpoints pickled under either path keep loading.</p>
 </section>
 
         </article>
@@ -628,47 +526,8 @@ The last one will be used as hidden size when <cite>use_atom_edge_embedding</cit
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">MolecularDiffusion.modules.layers.equiformer_v2_s.input_block</a><ul>
-<li><a class="reference internal" href="#classes">Classes</a></li>
-<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding"><code class="docutils literal notranslate"><span class="pre">EdgeDegreeEmbedding</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.forward"><code class="docutils literal notranslate"><span class="pre">EdgeDegreeEmbedding.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.SO3_rotation"><code class="docutils literal notranslate"><span class="pre">EdgeDegreeEmbedding.SO3_rotation</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.edge_channels_list"><code class="docutils literal notranslate"><span class="pre">EdgeDegreeEmbedding.edge_channels_list</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.lmax_list"><code class="docutils literal notranslate"><span class="pre">EdgeDegreeEmbedding.lmax_list</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.m_0_num_coefficients"><code class="docutils literal notranslate"><span class="pre">EdgeDegreeEmbedding.m_0_num_coefficients</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.m_all_num_coefficents"><code class="docutils literal notranslate"><span class="pre">EdgeDegreeEmbedding.m_all_num_coefficents</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.mappingReduced"><code class="docutils literal notranslate"><span class="pre">EdgeDegreeEmbedding.mappingReduced</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.max_num_elements"><code class="docutils literal notranslate"><span class="pre">EdgeDegreeEmbedding.max_num_elements</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.mmax_list"><code class="docutils literal notranslate"><span class="pre">EdgeDegreeEmbedding.mmax_list</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.num_resolutions"><code class="docutils literal notranslate"><span class="pre">EdgeDegreeEmbedding.num_resolutions</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.rad_func"><code class="docutils literal notranslate"><span class="pre">EdgeDegreeEmbedding.rad_func</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.rescale_factor"><code class="docutils literal notranslate"><span class="pre">EdgeDegreeEmbedding.rescale_factor</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.sphere_channels"><code class="docutils literal notranslate"><span class="pre">EdgeDegreeEmbedding.sphere_channels</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.input_block.EdgeDegreeEmbedding.use_atom_edge_embedding"><code class="docutils literal notranslate"><span class="pre">EdgeDegreeEmbedding.use_atom_edge_embedding</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

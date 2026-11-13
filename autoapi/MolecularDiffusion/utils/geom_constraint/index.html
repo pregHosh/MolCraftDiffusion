@@ -285,6 +285,7 @@
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../core/checkpoint/index.html">MolecularDiffusion.core.checkpoint</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../core/core/index.html">MolecularDiffusion.core.core</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../core/engine/index.html">MolecularDiffusion.core.engine</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../core/engine_lightning/index.html">MolecularDiffusion.core.engine_lightning</a></li>
@@ -506,52 +507,31 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.align_target_with_reference" title="MolecularDiffusion.utils.geom_constraint.align_target_with_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">align_target_with_reference</span></code></a>(reference, target) → torch.Tensor</p></td>
-<td><p>Aligns the target coordinates to the reference coordinates by applying</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.build_extra_node_template" title="MolecularDiffusion.utils.geom_constraint.build_extra_node_template"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_extra_node_template</span></code></a>(xh_cond, connector_indices, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.build_extra_node_template" title="MolecularDiffusion.utils.geom_constraint.build_extra_node_template"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_extra_node_template</span></code></a>(xh_cond, connector_indices, ...)</p></td>
 <td><p>Build clean extra-node coordinates for outpaint latent initialization.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.derive_connectors_from_scaffold" title="MolecularDiffusion.utils.geom_constraint.derive_connectors_from_scaffold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">derive_connectors_from_scaffold</span></code></a>(pos, atomic_numbers[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.derive_connectors_from_scaffold" title="MolecularDiffusion.utils.geom_constraint.derive_connectors_from_scaffold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">derive_connectors_from_scaffold</span></code></a>(pos, atomic_numbers[, ...])</p></td>
 <td><p>Heuristically locate open attachment sites on a bare scaffold.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.enforce_min_nodes_per_connector" title="MolecularDiffusion.utils.geom_constraint.enforce_min_nodes_per_connector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">enforce_min_nodes_per_connector</span></code></a>(ref, tgt, ...[, debug]) → torch.Tensor</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.enforce_min_nodes_per_connector" title="MolecularDiffusion.utils.geom_constraint.enforce_min_nodes_per_connector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">enforce_min_nodes_per_connector</span></code></a>(ref, tgt, ...[, debug]) → torch.Tensor</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.ensure_intact" title="MolecularDiffusion.utils.geom_constraint.ensure_intact"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ensure_intact</span></code></a>(ref, tgt[, connector_indices, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.ensure_intact" title="MolecularDiffusion.utils.geom_constraint.ensure_intact"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ensure_intact</span></code></a>(ref, tgt[, connector_indices, ...])</p></td>
 <td><p>Identifies subgraphs of target nodes, detects outlier subgraphs based on their distance to connector nodes,</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.find_close_points_torch" title="MolecularDiffusion.utils.geom_constraint.find_close_points_torch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_close_points_torch</span></code></a>(ref, tgt[, threshold, ...])</p></td>
-<td><p>Find indices of rows in 'tgt' that lie within 'threshold' (in Angstroms)</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.find_close_points_torch_and_push" title="MolecularDiffusion.utils.geom_constraint.find_close_points_torch_and_push"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_close_points_torch_and_push</span></code></a>(ref, tgt[, ...])</p></td>
-<td><p>Identify target points that are too close to reference points and push them away.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.find_close_points_torch_and_push_op" title="MolecularDiffusion.utils.geom_constraint.find_close_points_torch_and_push_op"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_close_points_torch_and_push_op</span></code></a>(ref, tgt, ...[, ...]) → torch.Tensor</p></td>
-<td><p>For each target node, first assign it to the closest connector node in ref (as defined</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.find_close_points_torch_and_push_op2" title="MolecularDiffusion.utils.geom_constraint.find_close_points_torch_and_push_op2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_close_points_torch_and_push_op2</span></code></a>(ref, tgt[, ...])</p></td>
 <td><p>Identifies points in the target tensor that are too close to the reference tensor and adjusts their positions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.find_close_points_torch_and_push_op_v0" title="MolecularDiffusion.utils.geom_constraint.find_close_points_torch_and_push_op_v0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_close_points_torch_and_push_op_v0</span></code></a>(ref, tgt[, ...])</p></td>
-<td><p>For out-painting, we need to push the nodes away from the reference nodes</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.find_connected_components" title="MolecularDiffusion.utils.geom_constraint.find_connected_components"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_connected_components</span></code></a>(edge_index, num_nodes)</p></td>
-<td><p>Find connected components in a graph represented by edge_index.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.find_subgraph_centroids" title="MolecularDiffusion.utils.geom_constraint.find_subgraph_centroids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_subgraph_centroids</span></code></a>(coords[, distance_threshold])</p></td>
-<td><p>Determine the centroids of all subgraphs (connected components) in a radius graph.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.initialize_extra_nodes" title="MolecularDiffusion.utils.geom_constraint.initialize_extra_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize_extra_nodes</span></code></a>(xh_cond, connector_indices, n_extra)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.initialize_extra_nodes" title="MolecularDiffusion.utils.geom_constraint.initialize_extra_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize_extra_nodes</span></code></a>(xh_cond, connector_indices, n_extra)</p></td>
 <td><p>Initializes extra nodes based on clusters of connector atoms.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.initialize_extra_nodes_seed" title="MolecularDiffusion.utils.geom_constraint.initialize_extra_nodes_seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize_extra_nodes_seed</span></code></a>(xh_cond, ...[, seed_dist, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.initialize_extra_nodes_seed" title="MolecularDiffusion.utils.geom_constraint.initialize_extra_nodes_seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize_extra_nodes_seed</span></code></a>(xh_cond, ...[, seed_dist, ...])</p></td>
 <td><p>Initializes extra nodes based on seed locations.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.resolve_connectors" title="MolecularDiffusion.utils.geom_constraint.resolve_connectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resolve_connectors</span></code></a>(outpaint_cfgs) → dict</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.resolve_connectors" title="MolecularDiffusion.utils.geom_constraint.resolve_connectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resolve_connectors</span></code></a>(outpaint_cfgs) → dict</p></td>
 <td><p>Read the growth-site spec out of an outpaint config block.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.translate_to_origine" title="MolecularDiffusion.utils.geom_constraint.translate_to_origine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">translate_to_origine</span></code></a>(coords, node_mask)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.translate_to_origine" title="MolecularDiffusion.utils.geom_constraint.translate_to_origine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">translate_to_origine</span></code></a>(coords, node_mask)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -560,32 +540,6 @@
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_constraint.align_target_with_reference">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_constraint.</span></span><span class="sig-name descname"><span class="pre">align_target_with_reference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reference</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_constraint.align_target_with_reference" title="Link to this definition">¶</a></dt>
-<dd><p>Aligns the target coordinates to the reference coordinates by applying
-a pure translation. The first Nr rows of ‘target’ correspond to
-the same reference nodes in ‘reference’, but in a different coordinate
-system.</p>
-<section id="parameters">
-<h3>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h3>
-<dl class="simple">
-<dt>reference<span class="classifier">torch.Tensor</span></dt><dd><p>Shape (Nr, 3). Reference coordinates of Nr nodes.</p>
-</dd>
-<dt>target<span class="classifier">torch.Tensor</span></dt><dd><p>Shape (N, 3). Coordinates of N nodes, with the first Nr rows
-corresponding to the reference nodes, in a different coordinate system.</p>
-</dd>
-</dl>
-</section>
-<section id="returns">
-<h3>Returns:<a class="headerlink" href="#returns" title="Link to this heading">¶</a></h3>
-<dl class="simple">
-<dt>torch.Tensor</dt><dd><p>A translated version of ‘target’ whose first Nr rows align with ‘reference’.</p>
-</dd>
-</dl>
-</section>
-</dd></dl>
-
 <dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_constraint.build_extra_node_template">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_constraint.</span></span><span class="sig-name descname"><span class="pre">build_extra_node_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xh_cond</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connector_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_extra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'skeleton'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skeleton_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'random_walk'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_bq_atom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bond_len</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_constraint.build_extra_node_template" title="Link to this definition">¶</a></dt>
@@ -690,136 +644,6 @@ torch.Tensor: Updated target tensor with adjusted points.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_constraint.find_close_points_torch">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_constraint.</span></span><span class="sig-name descname"><span class="pre">find_close_points_torch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">tgt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">push_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_constraint.find_close_points_torch" title="Link to this definition">¶</a></dt>
-<dd><p>Find indices of rows in ‘tgt’ that lie within ‘threshold’ (in Angstroms)
-of any row in ‘ref’, and optionally translate those too-close points
-away by ‘push_distance’ along the vector from the closest reference.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ref</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Reference structure of shape (N, 3).</p></li>
-<li><p><strong>tgt</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Target structure of shape (Nt, 3).</p></li>
-<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – Distance threshold (default = 1.0 Å).</p></li>
-<li><p><strong>push_distance</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em> or </em><em>None</em><em>, </em><em>optional</em>) – If not None, each target point within threshold will be translated
-by this distance away from its <em>closest</em> reference point.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>close_indices</strong> (<em>torch.Tensor</em>) – 1D tensor of indices in ‘tgt’ whose distance to any point in ‘ref’
-is below ‘threshold’.</p></li>
-<li><p><strong>updated_tgt</strong> (<em>torch.Tensor</em>) – A new tensor (Nt, 3). If ‘push_distance’ is not None, the points
-that were too close are translated away by ‘push_distance’.
-Otherwise, it’s the same as ‘tgt’.</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_constraint.find_close_points_torch_and_push">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_constraint.</span></span><span class="sig-name descname"><span class="pre">find_close_points_torch_and_push</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">tgt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_threshold_f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_threshold_c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroid_mol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroid_masked</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_constraint.find_close_points_torch_and_push" title="Link to this definition">¶</a></dt>
-<dd><p>Identify target points that are too close to reference points and push them away.
-:param ref: Reference points tensor of shape (N, D).
-:type ref: torch.Tensor
-:param tgt: Target points tensor of shape (Nt, D).
-:type tgt: torch.Tensor
-:param d_threshold_f: Minimum allowed distance between target nodes and frozen nodes. Default is 1.0.
-:type d_threshold_f: float, optional
-:param d_threshold_c: Maximum allowed distance between target points and centroid point. Default is 5.0.
-:type d_threshold_c: float, optional
-:param alpha_max: Maximum step size for binary search. Default is 10.0.
-:type alpha_max: float, optional
-:param steps: Number of steps for binary search. Default is 40.
-:type steps: int, optional
-:param centroid_mol: Centroid of the molecule. Default is None.
-:type centroid_mol: torch.Tensor, optional
-:param centroid_masked: Masked centroid(s) for pushing direction. Default is None.
-:type centroid_masked: torch.Tensor or list of torch.Tensor, optional
-:param b_weight: Weight for the b vector in the combined push direction. Default is 2.</p>
-<blockquote>
-<div><p>b vector is the vector from the target point to the centroid of the molecule.</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><dl class="simple">
-<dt>A tuple containing:</dt><dd><ul class="simple">
-<li><p>close_indices (torch.Tensor): Indices of target points that were too close to reference points.</p></li>
-<li><p>updated_tgt (torch.Tensor): Updated target points tensor with pushed points.</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)">tuple</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_constraint.find_close_points_torch_and_push_op">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_constraint.</span></span><span class="sig-name descname"><span class="pre">find_close_points_torch_and_push_op</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">tgt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">connector_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_threshold_c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_fixed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_threshold_f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_constraint.find_close_points_torch_and_push_op" title="Link to this definition">¶</a></dt>
-<dd><p>For each target node, first assign it to the closest connector node in ref (as defined
-by the provided connector_indices). Then, for each group (i.e. all target nodes that share
-the same connector), do the following:</p>
-<blockquote>
-<div><ol class="arabic">
-<li><p>Compute the group centroid c_group from the target nodes in the group.</p></li>
-<li><dl class="simple">
-<dt>Compute two vectors:</dt><dd><p>a = (connector node of the group) - (c_group)
-b = c_group - (global centroid of ref)</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>Define the push (or pull) vector as:</dt><dd><p>v = a + w_b * b</p>
-</dd>
-</dl>
-<p>and normalize it.</p>
-</li>
-<li><dl class="simple">
-<dt>Update every target node p in the group by translating it along v:</dt><dd><p>p_new = p + d * v</p>
-</dd>
-<dt>where the translation distance d is either:</dt><dd><ul class="simple">
-<li><p>Fixed (if d_fixed is provided) or</p></li>
-<li><p>Determined automatically (via binary search) so that the point in the group
-that is closest to c_group after translation is exactly d_threshold_c away.</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-</ol>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ref</strong> – Tensor of shape (N_ref, D).</p></li>
-<li><p><strong>tgt</strong> – Tensor of shape (N_tgt, D).</p></li>
-<li><p><strong>connector_indices</strong> – 1D Tensor containing indices of ref that are “connector” nodes.</p></li>
-<li><p><strong>d_threshold_c</strong> – In auto mode, the desired minimum distance from the group centroid (c_group)
-after translation.</p></li>
-<li><p><strong>d_fixed</strong> – Optional fixed translation distance. If provided (not None), every group uses
-this distance along the computed push vector.</p></li>
-<li><p><strong>d_threshold_f</strong> – Minimum allowed distance between target nodes and frozen nodes.</p></li>
-<li><p><strong>w_b</strong> – Weight applied to vector b (b = c_group - global centroid of ref) when forming the push vector.</p></li>
-<li><p><strong>d_max</strong> – Maximum (absolute) allowed translation distance (used in auto mode).</p></li>
-<li><p><strong>steps</strong> – Number of binary search iterations (auto mode).</p></li>
-<li><p><strong>tol</strong> – Tolerance for binary search convergence (auto mode).</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The target nodes after translation.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>updated_tgt</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_constraint.find_close_points_torch_and_push_op2">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_constraint.</span></span><span class="sig-name descname"><span class="pre">find_close_points_torch_and_push_op2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">tgt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">connector_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_threshold_f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_threshold_c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_fixed_move</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'binary'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_frozen</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_ref</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_tgt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_constraint.find_close_points_torch_and_push_op2" title="Link to this definition">¶</a></dt>
 <dd><p>Identifies points in the target tensor that are too close to the reference tensor and adjusts their positions.
@@ -879,94 +703,6 @@ torch.Tensor: Updated target tensor with adjusted points.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)">torch.Tensor</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_constraint.find_close_points_torch_and_push_op_v0">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_constraint.</span></span><span class="sig-name descname"><span class="pre">find_close_points_torch_and_push_op_v0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">tgt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">connector_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><span class="pre">torch.Tensor</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_threshold_f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_threshold_c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_constraint.find_close_points_torch_and_push_op_v0" title="Link to this definition">¶</a></dt>
-<dd><p>For out-painting, we need to push the nodes away from the reference nodes
-Identify target points (tgt) that are too close to any reference points (ref).</p>
-<p>The reference tensor <cite>ref</cite> has some nodes potentially serving as connectors (given by
-<cite>connector_indices</cite>) and the rest are implicitly treated as frozen.</p>
-<dl class="simple">
-<dt>If <cite>connector_indices</cite> is specified and non-empty, for each violating node in <cite>tgt</cite>:</dt><dd><ol class="arabic simple">
-<li><p>Identify the closest connector node in <cite>ref</cite>.</p></li>
-<li><p>Push the violating <cite>tgt</cite> node away from that connector node so that
-it is at least <cite>d_threshold_f</cite> away from all <em>frozen</em> nodes (i.e., those not in <cite>connector_indices</cite>)
-and at least <cite>d_threshold_c</cite> away from the chosen connector node.</p></li>
-</ol>
-</dd>
-<dt>If <cite>connector_indices</cite> is None or empty, revert to the old logic:</dt><dd><ul class="simple">
-<li><p>We find all <cite>tgt</cite> points too close to any node in <cite>ref</cite> (threshold = <cite>d_threshold_f</cite>).</p></li>
-<li><p>We push them away from the closest reference node, ensuring they end up
-at least <cite>d_threshold_f</cite> away from all of <cite>ref</cite>.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ref</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Reference points of shape (Nr, D).</p></li>
-<li><p><strong>tgt</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Target points of shape (Nt, D).</p></li>
-<li><p><strong>connector_indices</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a><em>, </em><em>optional</em>) – Indices of connector nodes in <cite>ref</cite>.</p></li>
-<li><p><strong>d_threshold_f</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – Required min distance from frozen nodes.</p></li>
-<li><p><strong>d_threshold_c</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – Required min distance from the chosen connector node.</p></li>
-<li><p><strong>alpha_max</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – Max step size for binary search. Default 10.</p></li>
-<li><p><strong>steps</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Number of binary search steps. Default 40.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p>violating_indices (torch.Tensor): Indices of <cite>tgt</cite> points that were too close.</p></li>
-<li><p>updated_tgt (torch.Tensor): Updated target points tensor with pushed nodes.</p></li>
-</ul>
-</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)">tuple</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_constraint.find_connected_components">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_constraint.</span></span><span class="sig-name descname"><span class="pre">find_connected_components</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_nodes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_constraint.find_connected_components" title="Link to this definition">¶</a></dt>
-<dd><p>Find connected components in a graph represented by edge_index.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>edge_index</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – The edge indices of the graph, shape (2, num_edges).</p></li>
-<li><p><strong>num_nodes</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – Number of nodes in the graph.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>components</strong> – A list where each element is a tensor containing the node indices
-of a connected component.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)">list</a> of <a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)">torch.Tensor</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_constraint.find_subgraph_centroids">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_constraint.</span></span><span class="sig-name descname"><span class="pre">find_subgraph_centroids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_constraint.find_subgraph_centroids" title="Link to this definition">¶</a></dt>
-<dd><p>Determine the centroids of all subgraphs (connected components) in a radius graph.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>coords</strong> (<a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)"><em>torch.Tensor</em></a>) – Cartesian coordinates of nodes, shape (N, 3).</p></li>
-<li><p><strong>distance_threshold</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – Maximum distance for an edge in the graph.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>centroids</strong> – A list of centroid coordinates for each connected component.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)">list</a> of <a class="reference external" href="https://docs.pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v2.15)">torch.Tensor</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1148,18 +884,11 @@ no connectors.</p>
 <li><a class="reference internal" href="#attributes">Attributes</a></li>
 <li><a class="reference internal" href="#functions">Functions</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.align_target_with_reference"><code class="docutils literal notranslate"><span class="pre">align_target_with_reference()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.build_extra_node_template"><code class="docutils literal notranslate"><span class="pre">build_extra_node_template()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.derive_connectors_from_scaffold"><code class="docutils literal notranslate"><span class="pre">derive_connectors_from_scaffold()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.enforce_min_nodes_per_connector"><code class="docutils literal notranslate"><span class="pre">enforce_min_nodes_per_connector()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.ensure_intact"><code class="docutils literal notranslate"><span class="pre">ensure_intact()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.find_close_points_torch"><code class="docutils literal notranslate"><span class="pre">find_close_points_torch()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.find_close_points_torch_and_push"><code class="docutils literal notranslate"><span class="pre">find_close_points_torch_and_push()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.find_close_points_torch_and_push_op"><code class="docutils literal notranslate"><span class="pre">find_close_points_torch_and_push_op()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.find_close_points_torch_and_push_op2"><code class="docutils literal notranslate"><span class="pre">find_close_points_torch_and_push_op2()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.find_close_points_torch_and_push_op_v0"><code class="docutils literal notranslate"><span class="pre">find_close_points_torch_and_push_op_v0()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.find_connected_components"><code class="docutils literal notranslate"><span class="pre">find_connected_components()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.find_subgraph_centroids"><code class="docutils literal notranslate"><span class="pre">find_subgraph_centroids()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.initialize_extra_nodes"><code class="docutils literal notranslate"><span class="pre">initialize_extra_nodes()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.initialize_extra_nodes_seed"><code class="docutils literal notranslate"><span class="pre">initialize_extra_nodes_seed()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_constraint.resolve_connectors"><code class="docutils literal notranslate"><span class="pre">resolve_connectors()</span></code></a></li>

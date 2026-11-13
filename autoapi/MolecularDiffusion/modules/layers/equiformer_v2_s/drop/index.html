@@ -186,7 +186,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -285,6 +285,7 @@
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../core/checkpoint/index.html">MolecularDiffusion.core.checkpoint</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../core/core/index.html">MolecularDiffusion.core.core</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../core/engine/index.html">MolecularDiffusion.core.engine</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../core/engine_lightning/index.html">MolecularDiffusion.core.engine_lightning</a></li>
@@ -470,202 +471,17 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
           <section id="module-MolecularDiffusion.modules.layers.equiformer_v2_s.drop">
 <span id="moleculardiffusion-modules-layers-equiformer-v2-s-drop"></span><h1>MolecularDiffusion.modules.layers.equiformer_v2_s.drop<a class="headerlink" href="#module-MolecularDiffusion.modules.layers.equiformer_v2_s.drop" title="Link to this heading">¶</a></h1>
-<p>Add <cite>extra_repr</cite> into DropPath implemented by timm
-for displaying more info.</p>
-<section id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.DropPath" title="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.DropPath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DropPath</span></code></a></p></td>
-<td><p>Drop paths (Stochastic Depth) per sample  (when applied in main path of residual blocks).</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout" title="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EquivariantDropout</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics" title="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EquivariantDropoutArraySphericalHarmonics</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantScalarsDropout" title="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantScalarsDropout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EquivariantScalarsDropout</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.GraphDropPath" title="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.GraphDropPath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GraphDropPath</span></code></a></p></td>
-<td><p>Consider batch for graph data when dropping paths.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="functions">
-<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.drop_path" title="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.drop_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">drop_path</span></code></a>(x[, drop_prob, training])</p></td>
-<td><p>Drop paths (Stochastic Depth) per sample (when applied in main path of residual blocks).</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.DropPath">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.drop.</span></span><span class="sig-name descname"><span class="pre">DropPath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">drop_prob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.DropPath" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<p>Drop paths (Stochastic Depth) per sample  (when applied in main path of residual blocks).</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.DropPath.extra_repr">
-<span class="sig-name descname"><span class="pre">extra_repr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.DropPath.extra_repr" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.DropPath.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.DropPath.forward" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.DropPath.drop_prob">
-<span class="sig-name descname"><span class="pre">drop_prob</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.DropPath.drop_prob" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.drop.</span></span><span class="sig-name descname"><span class="pre">EquivariantDropout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">irreps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_prob</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout.forward" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout.drop">
-<span class="sig-name descname"><span class="pre">drop</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout.drop" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout.drop_prob">
-<span class="sig-name descname"><span class="pre">drop_prob</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout.drop_prob" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout.irreps">
-<span class="sig-name descname"><span class="pre">irreps</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout.irreps" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout.mul">
-<span class="sig-name descname"><span class="pre">mul</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout.mul" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout.num_irreps">
-<span class="sig-name descname"><span class="pre">num_irreps</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout.num_irreps" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.drop.</span></span><span class="sig-name descname"><span class="pre">EquivariantDropoutArraySphericalHarmonics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">drop_prob</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_graph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics.extra_repr">
-<span class="sig-name descname"><span class="pre">extra_repr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics.extra_repr" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics.forward" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics.drop">
-<span class="sig-name descname"><span class="pre">drop</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics.drop" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics.drop_graph">
-<span class="sig-name descname"><span class="pre">drop_graph</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics.drop_graph" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics.drop_prob">
-<span class="sig-name descname"><span class="pre">drop_prob</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics.drop_prob" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantScalarsDropout">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.drop.</span></span><span class="sig-name descname"><span class="pre">EquivariantScalarsDropout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">irreps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_prob</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantScalarsDropout" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantScalarsDropout.extra_repr">
-<span class="sig-name descname"><span class="pre">extra_repr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantScalarsDropout.extra_repr" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantScalarsDropout.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantScalarsDropout.forward" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantScalarsDropout.drop_prob">
-<span class="sig-name descname"><span class="pre">drop_prob</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantScalarsDropout.drop_prob" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantScalarsDropout.irreps">
-<span class="sig-name descname"><span class="pre">irreps</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantScalarsDropout.irreps" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.GraphDropPath">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.drop.</span></span><span class="sig-name descname"><span class="pre">GraphDropPath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">drop_prob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.GraphDropPath" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v2.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></a></p>
-<p>Consider batch for graph data when dropping paths.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.GraphDropPath.extra_repr">
-<span class="sig-name descname"><span class="pre">extra_repr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.GraphDropPath.extra_repr" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.GraphDropPath.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.GraphDropPath.forward" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.GraphDropPath.drop_prob">
-<span class="sig-name descname"><span class="pre">drop_prob</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.GraphDropPath.drop_prob" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.modules.layers.equiformer_v2_s.drop.drop_path">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.modules.layers.equiformer_v2_s.drop.</span></span><span class="sig-name descname"><span class="pre">drop_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_prob</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">training</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.drop_path" title="Link to this definition">¶</a></dt>
-<dd><p>Drop paths (Stochastic Depth) per sample (when applied in main path of residual blocks).
-This is the same as the DropConnect impl I created for EfficientNet, etc networks, however,
-the original name is misleading as ‘Drop Connect’ is a different form of dropout in a separate paper…
-See discussion: <a class="reference external" href="https://github.com/tensorflow/tpu/issues/494#issuecomment-532968956">https://github.com/tensorflow/tpu/issues/494#issuecomment-532968956</a> … I’ve opted for
-changing the layer and argument names to ‘drop path’ rather than mix DropConnect as a layer name and use
-‘survival rate’ as the argument.</p>
-</dd></dl>
-
-</section>
+<p>Alias of <code class="docutils literal notranslate"><span class="pre">equiformer_v2.drop</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">equiformer_v2_s</span></code> carried a copy of this file that is identical in behaviour.
+Both import paths now give the same module object, so classes keep one identity
+and checkpoints pickled under either path keep loading.</p>
 </section>
 
         </article>
@@ -710,68 +526,8 @@ changing the layer and argument names to ‘drop path’ rather than mix DropCon
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">MolecularDiffusion.modules.layers.equiformer_v2_s.drop</a><ul>
-<li><a class="reference internal" href="#classes">Classes</a></li>
-<li><a class="reference internal" href="#functions">Functions</a></li>
-<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.DropPath"><code class="docutils literal notranslate"><span class="pre">DropPath</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.DropPath.extra_repr"><code class="docutils literal notranslate"><span class="pre">DropPath.extra_repr()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.DropPath.forward"><code class="docutils literal notranslate"><span class="pre">DropPath.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.DropPath.drop_prob"><code class="docutils literal notranslate"><span class="pre">DropPath.drop_prob</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout"><code class="docutils literal notranslate"><span class="pre">EquivariantDropout</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout.forward"><code class="docutils literal notranslate"><span class="pre">EquivariantDropout.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout.drop"><code class="docutils literal notranslate"><span class="pre">EquivariantDropout.drop</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout.drop_prob"><code class="docutils literal notranslate"><span class="pre">EquivariantDropout.drop_prob</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout.irreps"><code class="docutils literal notranslate"><span class="pre">EquivariantDropout.irreps</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout.mul"><code class="docutils literal notranslate"><span class="pre">EquivariantDropout.mul</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropout.num_irreps"><code class="docutils literal notranslate"><span class="pre">EquivariantDropout.num_irreps</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics"><code class="docutils literal notranslate"><span class="pre">EquivariantDropoutArraySphericalHarmonics</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics.extra_repr"><code class="docutils literal notranslate"><span class="pre">EquivariantDropoutArraySphericalHarmonics.extra_repr()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics.forward"><code class="docutils literal notranslate"><span class="pre">EquivariantDropoutArraySphericalHarmonics.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics.drop"><code class="docutils literal notranslate"><span class="pre">EquivariantDropoutArraySphericalHarmonics.drop</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics.drop_graph"><code class="docutils literal notranslate"><span class="pre">EquivariantDropoutArraySphericalHarmonics.drop_graph</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantDropoutArraySphericalHarmonics.drop_prob"><code class="docutils literal notranslate"><span class="pre">EquivariantDropoutArraySphericalHarmonics.drop_prob</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantScalarsDropout"><code class="docutils literal notranslate"><span class="pre">EquivariantScalarsDropout</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantScalarsDropout.extra_repr"><code class="docutils literal notranslate"><span class="pre">EquivariantScalarsDropout.extra_repr()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantScalarsDropout.forward"><code class="docutils literal notranslate"><span class="pre">EquivariantScalarsDropout.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantScalarsDropout.drop_prob"><code class="docutils literal notranslate"><span class="pre">EquivariantScalarsDropout.drop_prob</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.EquivariantScalarsDropout.irreps"><code class="docutils literal notranslate"><span class="pre">EquivariantScalarsDropout.irreps</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.GraphDropPath"><code class="docutils literal notranslate"><span class="pre">GraphDropPath</span></code></a><ul>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.GraphDropPath.extra_repr"><code class="docutils literal notranslate"><span class="pre">GraphDropPath.extra_repr()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.GraphDropPath.forward"><code class="docutils literal notranslate"><span class="pre">GraphDropPath.forward()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.GraphDropPath.drop_prob"><code class="docutils literal notranslate"><span class="pre">GraphDropPath.drop_prob</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MolecularDiffusion.modules.layers.equiformer_v2_s.drop.drop_path"><code class="docutils literal notranslate"><span class="pre">drop_path()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

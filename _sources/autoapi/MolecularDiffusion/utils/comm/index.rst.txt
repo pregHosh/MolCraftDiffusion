@@ -19,7 +19,6 @@ Functions
 .. autoapisummary::
 
    MolecularDiffusion.utils.comm.cat
-   MolecularDiffusion.utils.comm.get_cpu_count
    MolecularDiffusion.utils.comm.get_group
    MolecularDiffusion.utils.comm.get_rank
    MolecularDiffusion.utils.comm.get_world_size
@@ -49,11 +48,6 @@ Module Contents
        >>> obj = {"range": rng[rank * (rank + 1) // 2: (rank + 1) * (rank + 2) // 2]}
        >>> obj = comm.cat(obj)
        >>> assert torch.allclose(obj["range"], rng)
-
-
-.. py:function:: get_cpu_count()
-
-   Get the number of CPUs on this node.
 
 
 .. py:function:: get_group(device)

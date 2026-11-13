@@ -21,27 +21,15 @@ Attributes
    MolecularDiffusion.utils.geom_analyzer.symbol2num
 
 
-Classes
--------
-
-.. autoapisummary::
-
-   MolecularDiffusion.utils.geom_analyzer.Histogram_cont
-   MolecularDiffusion.utils.geom_analyzer.Histogram_discrete
-
-
 Functions
 ---------
 
 .. autoapisummary::
 
-   MolecularDiffusion.utils.geom_analyzer.analyze_node_distribution
    MolecularDiffusion.utils.geom_analyzer.build_molecule
    MolecularDiffusion.utils.geom_analyzer.build_xae_molecule
    MolecularDiffusion.utils.geom_analyzer.check_connected
-   MolecularDiffusion.utils.geom_analyzer.check_consistency_bond_dictionaries
    MolecularDiffusion.utils.geom_analyzer.check_quality
-   MolecularDiffusion.utils.geom_analyzer.check_stability
    MolecularDiffusion.utils.geom_analyzer.check_stability
    MolecularDiffusion.utils.geom_analyzer.check_symmetric
    MolecularDiffusion.utils.geom_analyzer.correct_edges
@@ -50,66 +38,11 @@ Functions
    MolecularDiffusion.utils.geom_analyzer.get_bond_order
    MolecularDiffusion.utils.geom_analyzer.get_cutoffs
    MolecularDiffusion.utils.geom_analyzer.is_fully_connected
-   MolecularDiffusion.utils.geom_analyzer.mol2smiles
-   MolecularDiffusion.utils.geom_analyzer.normalize_histogram
    MolecularDiffusion.utils.geom_analyzer.save_xyz_tmp
-   MolecularDiffusion.utils.geom_analyzer.single_bond_only
 
 
 Module Contents
 ---------------
-
-.. py:class:: Histogram_cont(num_bins=100, range=(0.0, 13.0), name='histogram', ignore_zeros=False)
-
-   .. py:method:: add(elements)
-
-
-   .. py:method:: plot(save_path=None)
-
-
-   .. py:method:: plot_both(hist_b, save_path=None, wandb_obj=None)
-
-
-   .. py:attribute:: bins
-      :value: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...
-
-
-
-   .. py:attribute:: ignore_zeros
-      :value: False
-
-
-
-   .. py:attribute:: name
-      :value: 'histogram'
-
-
-
-   .. py:attribute:: range
-      :value: (0.0, 13.0)
-
-
-
-.. py:class:: Histogram_discrete(name='histogram')
-
-   .. py:method:: add(elements)
-
-
-   .. py:method:: normalize()
-
-
-   .. py:method:: plot(save_path=None)
-
-
-   .. py:attribute:: bins
-
-
-   .. py:attribute:: name
-      :value: 'histogram'
-
-
-
-.. py:function:: analyze_node_distribution(mol_list)
 
 .. py:function:: build_molecule(positions, atom_types, atom_decoder)
 
@@ -127,23 +60,7 @@ Module Contents
 
 .. py:function:: check_connected(am, tol=1e-08)
 
-.. py:function:: check_consistency_bond_dictionaries()
-
 .. py:function:: check_quality(cartesian_coordinates_tensor, atomic_numbers_tensor)
-
-.. py:function:: check_stability(positions, atom_type)
-
-   Check the stability of a molecule based on atom positions and types.
-
-   Parameters:
-   - positions (np.ndarray): An array of shape (N, 3) containing the 3D coordinates of the atoms.
-   - atom_type (List[int]): A list of atom types corresponding to the positions.
-   - atom_decoder (Dict[int, str]): A dictionary mapping atom type indices to atom symbols.
-
-   Returns:
-   Tuple[bool, int, int]: A tuple containing a boolean indicating if the molecule is stable,
-                       the number of stable bonds, and the total number of atoms.
-
 
 .. py:function:: check_stability(positions, atom_type)
 
@@ -217,13 +134,7 @@ Module Contents
    :rtype: bool
 
 
-.. py:function:: mol2smiles(mol)
-
-.. py:function:: normalize_histogram(hist)
-
 .. py:function:: save_xyz_tmp(path, atom_type, position)
-
-.. py:function:: single_bond_only(threshold, length, margin1=5)
 
 .. py:data:: EDGE_THRESHOLD
    :value: 2

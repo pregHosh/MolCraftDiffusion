@@ -3,6 +3,16 @@ MolecularDiffusion.modules.models
 
 .. py:module:: MolecularDiffusion.modules.models
 
+.. autoapi-nested-parse::
+
+   Model classes, imported on first use (PEP 562).
+
+   ``import MolecularDiffusion.modules.models.<anything>`` runs this file, and
+   loading every EDM variant eagerly cost ~6 s and ~900 MB. The public names and
+   ``from MolecularDiffusion.modules.models import EGNN`` keep working; the
+   submodule behind a name is imported when the name is first read.
+
+
 
 Submodules
 ----------

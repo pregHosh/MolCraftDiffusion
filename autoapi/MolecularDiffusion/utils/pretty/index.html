@@ -285,6 +285,7 @@
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../core/checkpoint/index.html">MolecularDiffusion.core.checkpoint</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../core/core/index.html">MolecularDiffusion.core.core</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../core/engine/index.html">MolecularDiffusion.core.engine</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../core/engine_lightning/index.html">MolecularDiffusion.core.engine_lightning</a></li>
@@ -521,16 +522,13 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.pretty.format" title="MolecularDiffusion.utils.pretty.format"><code class="xref py py-obj docutils literal notranslate"><span class="pre">format</span></code></a>(object, *args, **kwargs)</p></td>
 <td><p>Format a python object as a string.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.pretty.long_array" title="MolecularDiffusion.utils.pretty.long_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">long_array</span></code></a>(array[, truncation, display])</p></td>
-<td><p>Format an array as a string.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.pretty.print" title="MolecularDiffusion.utils.pretty.print"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>(object, *args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.pretty.print" title="MolecularDiffusion.utils.pretty.print"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a>(object, *args, **kwargs)</p></td>
 <td><p>Print a python object to a stream.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.pretty.task_wrapper" title="MolecularDiffusion.utils.pretty.task_wrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">task_wrapper</span></code></a>(task_func) → Callable</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.pretty.task_wrapper" title="MolecularDiffusion.utils.pretty.task_wrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">task_wrapper</span></code></a>(task_func) → Callable</p></td>
 <td><p>Optional decorator that controls the failure behavior when executing the task function.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.pretty.time" title="MolecularDiffusion.utils.pretty.time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">time</span></code></a>(seconds)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.pretty.time" title="MolecularDiffusion.utils.pretty.time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">time</span></code></a>(seconds)</p></td>
 <td><p>Format time as a string.</p></td>
 </tr>
 </tbody>
@@ -584,21 +582,6 @@ output stream available at construction will be used.</p>
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.pretty.format">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.pretty.</span></span><span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.pretty.format" title="Link to this definition">¶</a></dt>
 <dd><p>Format a python object as a string.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.pretty.long_array">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.pretty.</span></span><span class="sig-name descname"><span class="pre">long_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truncation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.pretty.long_array" title="Link to this definition">¶</a></dt>
-<dd><p>Format an array as a string.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>array</strong> (<em>array_like</em>) – array-like data</p></li>
-<li><p><strong>truncation</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – truncate array if its length exceeds this threshold</p></li>
-<li><p><strong>display</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – number of elements to display at the beginning and the end in truncated mode</p></li>
-</ul>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -757,7 +740,6 @@ return metric_dict, object_dict</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.pretty.format"><code class="docutils literal notranslate"><span class="pre">format()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.pretty.long_array"><code class="docutils literal notranslate"><span class="pre">long_array()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.pretty.print"><code class="docutils literal notranslate"><span class="pre">print()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.pretty.task_wrapper"><code class="docutils literal notranslate"><span class="pre">task_wrapper()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.pretty.time"><code class="docutils literal notranslate"><span class="pre">time()</span></code></a></li>

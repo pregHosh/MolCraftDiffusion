@@ -3,17 +3,13 @@ MolecularDiffusion.modules.layers.equiformer_v2_s.wigner
 
 .. py:module:: MolecularDiffusion.modules.layers.equiformer_v2_s.wigner
 
+.. autoapi-nested-parse::
 
-Functions
----------
+   Alias of ``equiformer_v2.wigner``.
 
-.. autoapisummary::
+   ``equiformer_v2_s`` carried a copy of this file that is identical in behaviour.
+   Both import paths now give the same module object, so classes keep one identity
+   and checkpoints pickled under either path keep loading.
 
-   MolecularDiffusion.modules.layers.equiformer_v2_s.wigner.wigner_D
 
-
-Module Contents
----------------
-
-.. py:function:: wigner_D(l, alpha, beta, gamma)
 

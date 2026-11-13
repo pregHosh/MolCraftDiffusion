@@ -1,0 +1,94 @@
+MolecularDiffusion.core.checkpoint
+==================================
+
+.. py:module:: MolecularDiffusion.core.checkpoint
+
+.. autoapi-nested-parse::
+
+   Checkpoint helpers shared by the CLI and the task factories.
+
+   Which weights a checkpoint yields differs by format on purpose:
+
+   * ``engine_weights``: original-``Engine`` checkpoints (``ema_model`` /
+     ``model`` keys), EMA preferred.
+   * ``extract_clean_state_dict``: Lightning checkpoints (``state_dict`` with
+     ``task.`` prefixes, new ``ema_model_state_dict`` or old embedded
+     ``ema_model.*`` keys) and ``prefer_ema=False`` for raw/LoRA weights.
+   * ``cli.train.load_weights`` keeps its own fine-tune rules (shape adjustment
+     through ``adjust_state_dict``), so it is not merged into these.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   MolecularDiffusion.core.checkpoint.log
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   MolecularDiffusion.core.checkpoint.apply_total_step_override
+   MolecularDiffusion.core.checkpoint.engine_weights
+   MolecularDiffusion.core.checkpoint.extract_clean_state_dict
+   MolecularDiffusion.core.checkpoint.extract_ema_state_dict
+   MolecularDiffusion.core.checkpoint.get_ckpt_meta
+   MolecularDiffusion.core.checkpoint.select_ckpt_file
+   MolecularDiffusion.core.checkpoint.validate_task_type
+
+
+Module Contents
+---------------
+
+.. py:function:: apply_total_step_override(task, total_step)
+
+   Override the model's sampling-step count (T / fm_num_timesteps / interpolant).
+
+
+.. py:function:: engine_weights(ckpt)
+
+   Weights of an original-Engine checkpoint: the EMA copy, else the raw model.
+
+
+.. py:function:: extract_clean_state_dict(ckpt, prefer_ema=True)
+
+   Return a {name: tensor} dict from a checkpoint, normalized to bare module names.
+
+   Weight preference (when prefer_ema): new-format top-level `ema_model_state_dict`, then
+   old-format `ema_model.*` keys embedded inside `state_dict`, then raw weights. Strips a
+   leading `task.` and any `ema_model.` prefix; the raw fallback drops embedded EMA keys so
+   they don't collide with the real weights.
+
+
+.. py:function:: extract_ema_state_dict(ckpt)
+
+   EMA weights of a checkpoint as {bare module name: tensor}, or None if it has none.
+
+   Looks for the new-format top-level `ema_model_state_dict` first, then old-format
+   `ema_model.*` keys embedded inside `state_dict`.
+
+
+.. py:function:: get_ckpt_meta(checkpoint)
+
+   Extract task_type and condition_names from any checkpoint format.
+
+
+.. py:function:: select_ckpt_file(path)
+
+   Resolve a checkpoint path that may be a .ckpt file or a directory.
+
+   For a directory, pick the highest-metric checkpoint (by filename), else last.ckpt,
+   else the first .ckpt found — mirroring load_model's selection logic.
+
+
+.. py:function:: validate_task_type(checkpoint, expected_task_type)
+
+   Raise ValueError if checkpoint task_type doesn't match expected_task_type.
+
+
+.. py:data:: log
+

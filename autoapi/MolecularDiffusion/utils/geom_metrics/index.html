@@ -285,6 +285,7 @@
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../core/index.html">MolecularDiffusion.core</a><input aria-label="Toggle navigation of MolecularDiffusion.core" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../core/checkpoint/index.html">MolecularDiffusion.core.checkpoint</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../core/core/index.html">MolecularDiffusion.core.core</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../core/engine/index.html">MolecularDiffusion.core.engine</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../core/engine_lightning/index.html">MolecularDiffusion.core.engine_lightning</a></li>
@@ -551,24 +552,6 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_drug_likeness" title="MolecularDiffusion.utils.geom_metrics.compute_drug_likeness"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_drug_likeness</span></code></a>(mol) → dict</p></td>
 <td><p>Compute RDKit-based drug-likeness metrics including SAScore and QED.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_esp_similarity" title="MolecularDiffusion.utils.geom_metrics.compute_esp_similarity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_esp_similarity</span></code></a>(pts_gen, esp_gen, pts_ref, esp_ref) → float</p></td>
-<td><p>Compute ESP similarity using Gaussian-weighted overlap (ESP Tanimoto).</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_mol_esp_values" title="MolecularDiffusion.utils.geom_metrics.compute_mol_esp_values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_mol_esp_values</span></code></a>(mol[, surf_pts]) → numpy.ndarray</p></td>
-<td><p>Compute electrostatic potential (ESP) at surface points or per-atom charges.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_mol_pharmacophores" title="MolecularDiffusion.utils.geom_metrics.compute_mol_pharmacophores"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_mol_pharmacophores</span></code></a>(mol[, multi_vector, ...]) → tuple</p></td>
-<td><p>Extract pharmacophore points and vectors using shepherd-score implementation.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_mol_surface_pts" title="MolecularDiffusion.utils.geom_metrics.compute_mol_surface_pts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_mol_surface_pts</span></code></a>(mol[, num_pts, probe_radius]) → numpy.ndarray</p></td>
-<td><p>Gets the point cloud representation of a molecule's van der Waals surface using</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_pharm_similarity" title="MolecularDiffusion.utils.geom_metrics.compute_pharm_similarity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_pharm_similarity</span></code></a>(pts_gen, types_gen, pts_ref, ...) → float</p></td>
-<td><p>Direction-aware Gaussian overlap Tanimoto for pharmacophores.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_shape_similarity" title="MolecularDiffusion.utils.geom_metrics.compute_shape_similarity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_shape_similarity</span></code></a>(pts_gen, pts_ref[, center, align]) → float</p></td>
-<td><p>Compute shape similarity using Gaussian-weighted volume overlap (Tanimoto).</p></td>
-</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.is_fully_connected" title="MolecularDiffusion.utils.geom_metrics.is_fully_connected"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_fully_connected</span></code></a>(edge_index, num_nodes)</p></td>
 <td><p>Determines if the graph is fully connected.</p></td>
 </tr>
@@ -578,22 +561,19 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.load_molecules_from_xyz" title="MolecularDiffusion.utils.geom_metrics.load_molecules_from_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_molecules_from_xyz</span></code></a>(xyz_dir)</p></td>
 <td><p>Converts all XYZ files in a directory to RDKit Mol objects.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.optimize_shape_alignment" title="MolecularDiffusion.utils.geom_metrics.optimize_shape_alignment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimize_shape_alignment</span></code></a>(pts_gen, pts_ref[, alpha, ...])</p></td>
-<td><p>Optimize alignment of non-corresponding point clouds to maximize Gaussian overlap.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.pca_align" title="MolecularDiffusion.utils.geom_metrics.pca_align"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pca_align</span></code></a>(pts_fit, pts_ref) → numpy.ndarray</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.pca_align" title="MolecularDiffusion.utils.geom_metrics.pca_align"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pca_align</span></code></a>(pts_fit, pts_ref) → numpy.ndarray</p></td>
 <td><p>Rotate pts_fit to align its principal axes with those of pts_ref.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.run_postbuster" title="MolecularDiffusion.utils.geom_metrics.run_postbuster"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_postbuster</span></code></a>(mols[, timeout, batch_size, names])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.run_postbuster" title="MolecularDiffusion.utils.geom_metrics.run_postbuster"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_postbuster</span></code></a>(mols[, timeout, batch_size, names])</p></td>
 <td><p>Run PoseBusters on a list of RDKit molecules, optionally in batches, with a timeout per batch.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.smilify_wrapper" title="MolecularDiffusion.utils.geom_metrics.smilify_wrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilify_wrapper</span></code></a>(xyzs, xyz2mol)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.smilify_wrapper" title="MolecularDiffusion.utils.geom_metrics.smilify_wrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smilify_wrapper</span></code></a>(xyzs, xyz2mol)</p></td>
 <td><p>Convert a list of XYZ files to SMILES strings using a provided xyz2mol function.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.xyz_to_pdb" title="MolecularDiffusion.utils.geom_metrics.xyz_to_pdb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz_to_pdb</span></code></a>(xyz_file_path, pdb_file_path)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.xyz_to_pdb" title="MolecularDiffusion.utils.geom_metrics.xyz_to_pdb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz_to_pdb</span></code></a>(xyz_file_path, pdb_file_path)</p></td>
 <td><p>Converts an XYZ file to a PDB file using OpenBabel (via pybel).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol" title="MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz_to_rdkit_mol</span></code></a>(xyz_path[, charges])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol" title="MolecularDiffusion.utils.geom_metrics.xyz_to_rdkit_mol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz_to_rdkit_mol</span></code></a>(xyz_path[, charges])</p></td>
 <td><p>Convert an XYZ file to an RDKit molecule with perceived bonds.</p></td>
 </tr>
 </tbody>
@@ -731,111 +711,6 @@ Special handling is applied for atoms with certain atomic numbers, such as carbo
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.compute_esp_similarity">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">compute_esp_similarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pts_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pts_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.compute_esp_similarity" title="Link to this definition">¶</a></dt>
-<dd><p>Compute ESP similarity using Gaussian-weighted overlap (ESP Tanimoto).</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.compute_mol_esp_values">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">compute_mol_esp_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surf_pts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.compute_mol_esp_values" title="Link to this definition">¶</a></dt>
-<dd><p>Compute electrostatic potential (ESP) at surface points or per-atom charges.</p>
-<p>Matches shepherd-score implementation: computes Coulomb potential at surface points
-if provided, otherwise returns per-atom Gasteiger charges.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>mol</strong> (<em>rdkit.Chem.Mol</em>) – RDKit molecule with conformer.</p></li>
-<li><p><strong>surf_pts</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Surface point coordinates (M, 3). If provided, computes ESP at these points.
-If None, returns per-atom Gasteiger charges.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>ESP values. If surf_pts provided: (M,) potential at surface points.
-If surf_pts is None: (N,) charges for each atom.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>np.ndarray</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.compute_mol_pharmacophores">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">compute_mol_pharmacophores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_vector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_access</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.compute_mol_pharmacophores" title="Link to this definition">¶</a></dt>
-<dd><p>Extract pharmacophore points and vectors using shepherd-score implementation.</p>
-<dl class="simple">
-<dt>Returns (pharm_pos, pharm_types, pharm_vecs):</dt><dd><ul class="simple">
-<li><p>pharm_pos: (M, 3) float32 anchor positions</p></li>
-<li><p>pharm_types: (M,) int32 type indices</p></li>
-<li><p>pharm_vecs: (M, 3) float32 direction vectors (optional)</p></li>
-</ul>
-</dd>
-<dt>Pharmacophore types:</dt><dd><p>0: Acceptor, 1: Donor, 2: Aromatic, 3: Hydrophobe,
-4: Halogen, 5: Cation, 6: Anion, 7: ZnBinder, 8: Dummy</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>mol</strong> (<em>rdkit.Chem.Mol</em>) – RDKit molecule with conformer.</p></li>
-<li><p><strong>multi_vector</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em> (</em><em>default = True</em><em>)</em>) – Whether to represent pharmacophores with multiple vectors.</p></li>
-<li><p><strong>exclude</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><em>list</em></a><em> (</em><em>default =</em><em> [</em><em>]</em><em>)</em>) – List of hydrogen indices to exclude from HBD detection.</p></li>
-<li><p><strong>check_access</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em> (</em><em>default = False</em><em>)</em>) – Check if HBD/HBA are accessible to molecular surface.</p></li>
-<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em> (</em><em>default = 1.0</em><em>)</em>) – Length of pharmacophore vector in Angstroms.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>(pharm_positions, pharm_types, pharm_vectors) where:
-- pharm_positions: (M, 3) anchor positions
-- pharm_types: (M,) type indices (matching P_TYPES)
-- pharm_vectors: (M, 3) direction vectors</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)">tuple</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.compute_mol_surface_pts">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">compute_mol_surface_pts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_pts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probe_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.compute_mol_surface_pts" title="Link to this definition">¶</a></dt>
-<dd><p>Gets the point cloud representation of a molecule’s van der Waals surface using
-mesh-based surface generation (matching shepherd-score implementation).</p>
-<p>Uses Open3D’s ball-pivoting algorithm for accurate surface mesh generation.
-Takes into account the vdW radii of different atoms. Removes overlapping points
-within vdW radii of neighboring atoms.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>mol</strong> (<em>rdkit.Chem.Mol object</em>) – RDKit molecule object with a conformer.</p></li>
-<li><p><strong>num_pts</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em> (</em><em>default = 75</em><em>)</em>) – The total number of points in the final point cloud.</p></li>
-<li><p><strong>probe_radius</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em> (</em><em>default = 1.2</em><em>)</em>) – The radius of a probe atom to act as a “solvent accessible surface”.
-Default = 1.2 angstroms which is the radius of a Hydrogen atom.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Coordinates of points representing the molecular surface, shape (num_pts, 3).</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>np.ndarray</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.compute_pharm_similarity">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">compute_pharm_similarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pts_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">types_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pts_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">types_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vecs_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vecs_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.compute_pharm_similarity" title="Link to this definition">¶</a></dt>
-<dd><p>Direction-aware Gaussian overlap Tanimoto for pharmacophores.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.compute_shape_similarity">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">compute_shape_similarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pts_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pts_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span></span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.compute_shape_similarity" title="Link to this definition">¶</a></dt>
-<dd><p>Compute shape similarity using Gaussian-weighted volume overlap (Tanimoto).</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.is_fully_connected">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">is_fully_connected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_nodes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.is_fully_connected" title="Link to this definition">¶</a></dt>
 <dd><p>Determines if the graph is fully connected.</p>
@@ -892,14 +767,6 @@ Returns pts_fit rotated and translated to align with pts_ref.</p>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)">tuple</a></p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="MolecularDiffusion.utils.geom_metrics.optimize_shape_alignment">
-<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.utils.geom_metrics.</span></span><span class="sig-name descname"><span class="pre">optimize_shape_alignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pts_gen</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pts_ref</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ALPHA_DEFAULT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.utils.geom_metrics.optimize_shape_alignment" title="Link to this definition">¶</a></dt>
-<dd><p>Optimize alignment of non-corresponding point clouds to maximize Gaussian overlap.
-Matches the ShEPhERD-score ROCS-style optimization logic.
-Returns (aligned_points, rotation_matrix).</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1171,16 +1038,9 @@ to try only a single, already-known charge instead of sweeping.</p>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.check_validity_v1"><code class="docutils literal notranslate"><span class="pre">check_validity_v1()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compare_graph_topology"><code class="docutils literal notranslate"><span class="pre">compare_graph_topology()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_drug_likeness"><code class="docutils literal notranslate"><span class="pre">compute_drug_likeness()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_esp_similarity"><code class="docutils literal notranslate"><span class="pre">compute_esp_similarity()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_mol_esp_values"><code class="docutils literal notranslate"><span class="pre">compute_mol_esp_values()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_mol_pharmacophores"><code class="docutils literal notranslate"><span class="pre">compute_mol_pharmacophores()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_mol_surface_pts"><code class="docutils literal notranslate"><span class="pre">compute_mol_surface_pts()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_pharm_similarity"><code class="docutils literal notranslate"><span class="pre">compute_pharm_similarity()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.compute_shape_similarity"><code class="docutils literal notranslate"><span class="pre">compute_shape_similarity()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.is_fully_connected"><code class="docutils literal notranslate"><span class="pre">is_fully_connected()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.kabsch_align"><code class="docutils literal notranslate"><span class="pre">kabsch_align()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.load_molecules_from_xyz"><code class="docutils literal notranslate"><span class="pre">load_molecules_from_xyz()</span></code></a></li>
-<li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.optimize_shape_alignment"><code class="docutils literal notranslate"><span class="pre">optimize_shape_alignment()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.pca_align"><code class="docutils literal notranslate"><span class="pre">pca_align()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.run_postbuster"><code class="docutils literal notranslate"><span class="pre">run_postbuster()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.utils.geom_metrics.smilify_wrapper"><code class="docutils literal notranslate"><span class="pre">smilify_wrapper()</span></code></a></li>
