@@ -4,7 +4,6 @@ Adapted from scripts/eval_predict.py for package-level execution.
 """
 
 import os
-from typing import Any, Dict, Tuple
 
 import hydra
 import numpy as np
@@ -23,14 +22,12 @@ from MolecularDiffusion.utils.plot_function import (
     plot_correlation_with_histograms,
 )
 
+from MolecularDiffusion.cli._common import (  # noqa: F401  (is_rank_zero stays importable from here)
+    is_rank_zero,
+    log_hyperparameters as _log_hyperparameters,
+)
+
 log = RankedLogger(__name__, rank_zero_only=True)
-
-
-def is_rank_zero():
-    """Check if current process is rank zero."""
-    if torch.distributed.is_available() and torch.distributed.is_initialized():
-        return torch.distributed.get_rank() == 0
-    return True
 
 
 def load_checkpoint_weights(task, chkpt_path):
@@ -146,7 +143,7 @@ def engine_wrapper(task_module, data_module, trainer_module):
     return y_preds, y_trues
 
 
-def predict(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+def predict(cfg: DictConfig) -> None:
     """Evaluate predictions on validation/test sets."""
     if cfg.get("seed"):
         seed_everything(cfg.seed, workers=True)
@@ -353,34 +350,7 @@ def predict(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
 
 def log_hyperparameters(object_dict: dict):
     """Log hyperparameters for debugging."""
-    if not is_rank_zero():
-        return
-
-    log.info("\n========== Logging Hyperparameters ==========\n")
-    for name, obj in object_dict.items():
-        log.info(f"{'=' * 20} {name.upper()} {'=' * 20}")
-        if name == "cfg":
-            if isinstance(obj, dict):
-                log.info("\n" + OmegaConf.to_yaml(OmegaConf.create(obj)))
-            else:
-                log.info("\n" + OmegaConf.to_yaml(obj))
-        else:
-            if hasattr(obj, '__dict__'):
-                for k, v in vars(obj).items():
-                    if not k.startswith("_"):
-                        log.info(f"{k}: {v}")
-        log.info(f"{'=' * (44 + len(name))}\n")
-
-    if "task" in object_dict and hasattr(object_dict["task"], "task"):
-        model = object_dict["task"].task
-        total = sum(p.numel() for p in model.parameters())
-        trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
-        log.info(f"{'=' * 20} MODEL PARAMS {'=' * 20}")
-        log.info(f"model/params/total: {total}")
-        log.info(f"model/params/trainable: {trainable}")
-        log.info("=" * 54 + "\n")
-
-    log.info("========== End of Hyperparameters ==========\n")
+    _log_hyperparameters(object_dict, log)
 
 
 def eval_predict_main(cfg: DictConfig):

@@ -9,7 +9,6 @@ import re
 import time
 import copy
 import pickle
-from typing import Any, Dict, Optional, Tuple
 
 import hydra
 import torch
@@ -33,14 +32,12 @@ from MolecularDiffusion.utils import (
     move_stray_tensor_attrs,
 )
 
+from MolecularDiffusion.cli._common import (  # noqa: F401  (is_rank_zero stays importable from here)
+    is_rank_zero,
+    log_hyperparameters as _log_hyperparameters,
+)
+
 log = RankedLogger(__name__, rank_zero_only=True)
-
-
-def is_rank_zero():
-    """Check if current process is rank zero."""
-    if torch.distributed.is_available() and torch.distributed.is_initialized():
-        return torch.distributed.get_rank() == 0
-    return True
 
 
 def _stamp_condition_names(task, checkpoint):
@@ -573,7 +570,7 @@ def _assert_generate_config(cfg: DictConfig):
         )
 
 
-def generate(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+def generate(cfg: DictConfig) -> None:
     """Main generation function."""
     _assert_generate_config(cfg)
     if cfg.get("seed"):
@@ -738,24 +735,7 @@ def generate(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
 
 def log_hyperparameters(object_dict: dict):
     """Log hyperparameters for debugging."""
-    if not is_rank_zero():
-        return
-
-    log.info("\n========== Logging Hyperparameters ==========\n")
-    for name, obj in object_dict.items():
-        log.info(f"{'=' * 20} {name.upper()} {'=' * 20}")
-        if name == "cfg":
-            if isinstance(obj, dict):
-                log.info("\n" + OmegaConf.to_yaml(OmegaConf.create(obj)))
-            else:
-                log.info("\n" + OmegaConf.to_yaml(obj))
-        else:
-            if hasattr(obj, '__dict__'):
-                for k, v in vars(obj).items():
-                    if not k.startswith("_"):
-                        log.info(f"{k}: {v}")
-        log.info(f"{'=' * (44 + len(name))}\n")
-    log.info("========== End of Hyperparameters ==========\n")
+    _log_hyperparameters(object_dict, log, model_params=False)
 
 
 def generate_main(cfg: DictConfig):
