@@ -33,6 +33,8 @@ Functions
    MolecularDiffusion.runmodes.train.eval.analyze_and_save
    MolecularDiffusion.runmodes.train.eval.evaluate
    MolecularDiffusion.runmodes.train.eval.get_versioned_output_path
+   MolecularDiffusion.runmodes.train.eval.initial_best_metric
+   MolecularDiffusion.runmodes.train.eval.resolve_higher_is_better
 
 
 Module Contents
@@ -108,6 +110,22 @@ Module Contents
 
    :returns: Path to the versioned checkpoint folder (e.g., training_outputs/my_model/engine_logs/version_0)
    :rtype: str
+
+
+.. py:function:: initial_best_metric(task_type: str, generative_analysis: bool = False, override: Optional[bool] = None) -> float
+
+   Starting value of the running best, matching :func:`resolve_higher_is_better`.
+
+
+.. py:function:: resolve_higher_is_better(cfg: TaskEvalConfig, generative_analysis: bool = False, override: Optional[bool] = None) -> bool
+
+   Direction in which the selection metric improves, for one run.
+
+   ``engine.eval_higher_is_better`` (``override``) always wins. A generative
+   task trained *without* ``generative_analysis`` is selected on its test
+   loss, so lower is better there; the registry's ``higher_is_better=True``
+   describes the validity metric of the generative path and used to keep the
+   HIGHEST loss as ``best`` for these runs.
 
 
 .. py:data:: ANGLE_RELAX

@@ -30,7 +30,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: GenerativeEvalCallback(n_samples: int = 100, batch_size: int = 100, metric: str = 'Validity Relax and connected', output_dir: str = 'generated_molecules', use_posebuster: bool = False, posebuster_timeout: int = 60, monitor_metric: Any = None)
+.. py:class:: GenerativeEvalCallback(n_samples: int = 100, batch_size: int = 100, metric: str = 'Validity Relax and connected', output_dir: str = 'generated_molecules', use_posebuster: bool = False, posebuster_timeout: int = 60, monitor_metric: Any = None, use_ema: bool = False)
 
    Bases: :py:obj:`pytorch_lightning.callbacks.Callback`
 
@@ -52,6 +52,10 @@ Module Contents
    :type use_posebuster: bool
    :param posebuster_timeout: Timeout for posebuster validation
    :type posebuster_timeout: int
+   :param use_ema: Generate from the EMA copy of the weights when the run
+                   keeps one (what the original engine always does and what the
+                   validation loss uses). Default False keeps the raw weights.
+   :type use_ema: bool
 
 
    .. py:method:: on_validation_epoch_end(trainer: pytorch_lightning.Trainer, pl_module: pytorch_lightning.LightningModule)
@@ -89,6 +93,11 @@ Module Contents
 
    .. py:attribute:: posebuster_timeout
       :value: 60
+
+
+
+   .. py:attribute:: use_ema
+      :value: False
 
 
 

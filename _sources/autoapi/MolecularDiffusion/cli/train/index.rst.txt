@@ -30,6 +30,7 @@ Functions
    MolecularDiffusion.cli.train.lightning_wrapper
    MolecularDiffusion.cli.train.load_weights
    MolecularDiffusion.cli.train.log_hyperparameters
+   MolecularDiffusion.cli.train.resolve_lightning_precision
    MolecularDiffusion.cli.train.train
    MolecularDiffusion.cli.train.train_main
 
@@ -73,6 +74,15 @@ Module Contents
 .. py:function:: log_hyperparameters(object_dict: dict)
 
    Log hyperparameters for debugging.
+
+
+.. py:function:: resolve_lightning_precision(value)
+
+   Map the ``precision`` setting to what ``pl.Trainer`` expects.
+
+   Platform spellings (32, 16, "bf16") map as before and Lightning's own names
+   ("bf16-mixed", "64-true", ...) pass through. Anything else used to fall back
+   to fp32 silently; it still does, but now says so.
 
 
 .. py:function:: train(cfg: omegaconf.DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]

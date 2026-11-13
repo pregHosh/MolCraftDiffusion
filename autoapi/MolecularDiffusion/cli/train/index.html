@@ -569,10 +569,13 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.train.log_hyperparameters" title="MolecularDiffusion.cli.train.log_hyperparameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_hyperparameters</span></code></a>(object_dict)</p></td>
 <td><p>Log hyperparameters for debugging.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.train.train" title="MolecularDiffusion.cli.train.train"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train</span></code></a>(cfg) → Tuple[Dict[str, Any], Dict[str, Any]]</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.train.resolve_lightning_precision" title="MolecularDiffusion.cli.train.resolve_lightning_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resolve_lightning_precision</span></code></a>(value)</p></td>
+<td><p>Map the <code class="docutils literal notranslate"><span class="pre">precision</span></code> setting to what <code class="docutils literal notranslate"><span class="pre">pl.Trainer</span></code> expects.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.train.train" title="MolecularDiffusion.cli.train.train"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train</span></code></a>(cfg) → Tuple[Dict[str, Any], Dict[str, Any]]</p></td>
 <td><p>Main training function.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.train.train_main" title="MolecularDiffusion.cli.train.train_main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train_main</span></code></a>(cfg)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#MolecularDiffusion.cli.train.train_main" title="MolecularDiffusion.cli.train.train_main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train_main</span></code></a>(cfg)</p></td>
 <td><p>Entry point for CLI train command.</p></td>
 </tr>
 </tbody>
@@ -625,6 +628,15 @@ for handling dimension mismatches.</p></li>
 <dt class="sig sig-object py" id="MolecularDiffusion.cli.train.log_hyperparameters">
 <span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.train.</span></span><span class="sig-name descname"><span class="pre">log_hyperparameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.train.log_hyperparameters" title="Link to this definition">¶</a></dt>
 <dd><p>Log hyperparameters for debugging.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="MolecularDiffusion.cli.train.resolve_lightning_precision">
+<span class="sig-prename descclassname"><span class="pre">MolecularDiffusion.cli.train.</span></span><span class="sig-name descname"><span class="pre">resolve_lightning_precision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#MolecularDiffusion.cli.train.resolve_lightning_precision" title="Link to this definition">¶</a></dt>
+<dd><p>Map the <code class="docutils literal notranslate"><span class="pre">precision</span></code> setting to what <code class="docutils literal notranslate"><span class="pre">pl.Trainer</span></code> expects.</p>
+<p>Platform spellings (32, 16, “bf16”) map as before and Lightning’s own names
+(“bf16-mixed”, “64-true”, …) pass through. Anything else used to fall back
+to fp32 silently; it still does, but now says so.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -733,6 +745,7 @@ for handling dimension mismatches.</p></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.train.lightning_wrapper"><code class="docutils literal notranslate"><span class="pre">lightning_wrapper()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.train.load_weights"><code class="docutils literal notranslate"><span class="pre">load_weights()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.train.log_hyperparameters"><code class="docutils literal notranslate"><span class="pre">log_hyperparameters()</span></code></a></li>
+<li><a class="reference internal" href="#MolecularDiffusion.cli.train.resolve_lightning_precision"><code class="docutils literal notranslate"><span class="pre">resolve_lightning_precision()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.train.train"><code class="docutils literal notranslate"><span class="pre">train()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.train.train_main"><code class="docutils literal notranslate"><span class="pre">train_main()</span></code></a></li>
 <li><a class="reference internal" href="#MolecularDiffusion.cli.train.LIGHTNING_AVAILABLE"><code class="docutils literal notranslate"><span class="pre">LIGHTNING_AVAILABLE</span></code></a></li>
